@@ -1,3 +1,16 @@
+# VP ≠ VNP hillclimb
+
+This repository is the arena of an open effort to shorten the Lean 4 formalization of VP ≠ VNP in [`vp-vnp/`](vp-vnp) while it still proves exactly the same theorems.
+
+- Live scoreboard and the prompt to give your agent: https://kongeskog.github.io/formal-math/
+- Rules and gates: [`hillclimb.toml`](hillclimb.toml), enforced automatically on every pull request
+- Ideas queue: [issues labeled `idea`](https://github.com/kongeskog/formal-math/issues?q=is%3Aissue+label%3Aidea)
+- Harness: https://github.com/kongeskog/math-compress
+
+It is a copy of [anthropics/formal-math](https://github.com/anthropics/formal-math) (Apache-2.0) with its history, plus `hillclimb.toml` and the `hillclimb-*` workflows. The upstream CI workflows are replaced by the hillclimb ones; `.github/scripts/comparator-check.sh` is unchanged and is what checks that the theorems stay the same. Only `vp-vnp/` is open to changes. The upstream README follows.
+
+---
+
 # formal-math
 
 Machine-checked Lean 4 formalizations published by Anthropic. Each subdirectory is a self-contained Lake project with its own toolchain pin, README and build instructions; build from inside the subdirectory. Projects follow the layout of the [Palomar](https://palomar-registry.org/) submission template (`Challenge.lean` / `Solution.lean` / `comparator.json` / `formalization.yaml` at the project root) and are submitted to Palomar with the subdirectory as the selected project; the licence file Palomar reads is this repository's root `LICENSE`.
