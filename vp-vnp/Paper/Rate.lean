@@ -492,11 +492,11 @@ theorem vp_subset_vnp.{u} (F : Type u) [CommSemiring F] : VP F ⊆ VNP F := by
   rintro p ⟨C, hC⟩
   refine ⟨fun _ => 0, fun n => MvPolynomial.rename Sum.inl (p.poly n), ⟨C, fun n => ?_⟩, fun n => ?_⟩
   · obtain ⟨h1, h2, h3⟩ := hC n
-    refine ⟨?_, (MvPolynomial.totalDegree_rename_le _ _).trans h2, h3.rename _⟩
+    refine ⟨?_, (MvPolynomial.totalDegree_rename_le _ _).trans h2, Computes.rename _ h3⟩
     refine le_trans (le_of_eq ?_) h1
     change Fintype.card (p.vars n ⊕ Fin 0) = _
     simp
-  · rw [Fintype.sum_unique, bits_rename]
+  · exact ((Fintype.sum_unique _).trans (bits_rename _ _)).symm
 
 /-- **Paper: Corollary cor:classes.** "Over ℝ, VP is a proper subset of VNP." The witness is the permanent: it is in VNP
 by Ryser's formula and not in VP by Theorem thm:simple. -/
