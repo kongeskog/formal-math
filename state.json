@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:46:22.642130692Z",
+  "updated_at": "2026-11-24T19:47:56.657686109Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "3ac17e8973b24b04f95eb10a805740f15761a57e",
-    "at": "2026-11-24T19:46:22.642130692Z",
+    "sha": "45a5a1306dfc597f02893c84f998bdeebaec35b7",
+    "at": "2026-11-24T19:47:56.657686109Z",
     "metrics": {
-      "tokens": 920620,
-      "loc": 58438,
+      "tokens": 919772,
+      "loc": 58408,
       "decls": 4573,
       "files": 321,
-      "bytes": 3398056,
-      "build_seconds": 462
+      "bytes": 3395604,
+      "build_seconds": 609
     }
   },
   "counts": {
-    "merged": 19,
+    "merged": 20,
     "rejected": 2,
-    "open": 8,
+    "open": 7,
     "contributors": 1,
-    "ideas_open": 8
+    "ideas_open": 5
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 19,
+      "merged": 20,
       "attempts": 29,
-      "saved": 7541
+      "saved": 8389
     }
   ],
   "ideas": [
@@ -146,10 +146,10 @@
     {
       "number": 53,
       "title": "Idea: shorten(Nc/Uni/EvThm): one-line proofs for the eleven inversion lemmas of Fm.ofTree",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T22:47:04Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:42:59Z",
@@ -160,10 +160,10 @@
     {
       "number": 52,
       "title": "Idea: shorten(Nc/Uni/SpecU): prove eleven emPs and emU lemmas by one simp call each",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T22:46:54Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:42:57Z",
@@ -174,10 +174,10 @@
     {
       "number": 51,
       "title": "Idea: shorten(Nc/Uni/Vals): prove each of the 15 emX lemmas by one simp call",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T22:46:48Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:42:55Z",
@@ -277,7 +277,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:04:15Z",
       "pr": 43,
-      "result_delta": null,
+      "result_delta": -848,
       "created_at": "2026-11-24T19:00:22Z",
       "url": "https://github.com/kongeskog/formal-math/issues/35",
       "technique": "shorten",
@@ -467,96 +467,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 43,
-      "title": "shorten(NS1/EvalThm): run the shared preamble of the 11 cases of interp once",
-      "author": "kongeskog",
-      "head_sha": "c06e533f01004b930e9b2e86c2f7e811e7f8ca44",
-      "base_sha": "5f9eef456dd9147e413d71f8fdccc70779a0173b",
-      "status": "stale",
-      "created_at": "2026-11-24T19:08:11Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 923559,
-        "loc": 58512,
-        "decls": 4591,
-        "files": 321,
-        "bytes": 3405222,
-        "build_seconds": 405
-      },
-      "base_metrics": {
-        "tokens": 924407,
-        "loc": 58542,
-        "decls": 4591,
-        "files": 321,
-        "bytes": 3407674,
-        "build_seconds": null
-      },
-      "delta": -848,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "1 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 924407 → 923559 (-848)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 35,
-      "url": "https://github.com/kongeskog/formal-math/pull/43",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45467001339",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "NS1/EvalThm"
-    },
     {
       "pr": 44,
       "title": "restructure(Nc/Grp/GroupThm): state exists_group with GroupOK instead of repeating it",
@@ -832,13 +742,27 @@
       "title": "generalize(NS1/Step): prove stepF_ev from the general round lemma behind stepA_kv",
       "author": "kongeskog",
       "head_sha": "1d7e426420c407e3593841cf428e9c00874b73b3",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "0652dcd6c8529b914cf7819519d3947f43f2a9ed",
+      "status": "stale",
       "created_at": "2026-11-24T19:13:00Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 922147,
+        "loc": 58441,
+        "decls": 4590,
+        "files": 321,
+        "bytes": 3402480,
+        "build_seconds": 472
+      },
+      "base_metrics": {
+        "tokens": 922705,
+        "loc": 58499,
+        "decls": 4589,
+        "files": 321,
+        "bytes": 3403951,
+        "build_seconds": null
+      },
+      "delta": -558,
       "gates": [
         {
           "key": "format",
@@ -846,39 +770,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "2 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 922705 → 922147 (-558)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -889,7 +821,7 @@
       ],
       "idea": 37,
       "url": "https://github.com/kongeskog/formal-math/pull/47",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45468223933",
       "merge_sha": null,
       "reason": null,
       "technique": "generalize",
@@ -1184,8 +1116,8 @@
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
-      "tokens": 12625,
-      "loc": 746
+      "tokens": 12574,
+      "loc": 744
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
