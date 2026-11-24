@@ -85,9 +85,9 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     exact Nat.mul_le_mul_right _ hX10
   have hX2 : 10 * X ≤ X ^ 2 := by rw [pow_two]; exact Nat.mul_le_mul_right _ hX10
   rw [cst_def] at hcst
-  obtain ⟨sU, hsU⟩ : ∃ n, n = UF.code.size := ⟨_, rfl⟩
-  obtain ⟨sW, hsW⟩ : ∃ n, n = WF.code.size := ⟨_, rfl⟩
-  rw [← hsU, ← hsW] at hcst
+  generalize hsU : UF.code.size = sU
+  generalize hsW : WF.code.size = sW
+  rw [hsU, hsW] at hcst
   have hv4 : 2000 ≤ v := by omega
   have hv1 : 1 ≤ v := by omega
   have pu : ∀ a, v ^ (a + 1) = v * v ^ a := fun a => by rw [pow_succ]; ring
@@ -119,7 +119,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
         _ = nB * (14 * X * X) := by ring
         _ ≤ 2 * v ^ 2 := this
     have s5 : p.size ≤ D.size + g.code.size + sW + 500 := by
-      simp only [hp, diagF, app, ZE, Fm.code, Tree.size, size_num, hsW]
+      simp only [hp, diagF, app, ZE, Fm.code, Tree.size, size_num, ← hsW]
       omega
     have s6 : v ^ 2 ≤ v ^ (4 * h) := pow_le_pow hv1 (by omega)
     have s7 : sW + 500 ≤ v ^ (4 * h) := by
@@ -155,7 +155,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     have s3 := pbig (4 * h + 1)
     have s4 : v ^ (4 * h + 1 + 1) ≤ v ^ (16 * h - 32) := pow_le_pow hv1 (by omega)
     simp only [zq, Tree.size]
-    rw [← hsW]
+    rw [hsW]
     omega
   -- its runs
   obtain ⟨lg, eg, rg⟩ := hgev p
@@ -246,25 +246,25 @@ theorem thm_noacc_all_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut :
   have hv1 : 1 ≤ v := by omega
   have hl2 := lg_ge_two hv4
   have hlbig : 100000 * h ^ 3 + 1 ≤ lg v := le_lg_of_two_pow_le (by omega)
-  obtain ⟨l, hl⟩ : ∃ l, l = lg v := ⟨_, rfl⟩
-  rw [← hl] at ha hl2 hlbig
-  obtain ⟨α, hα⟩ : ∃ α, α = max 5 a := ⟨_, rfl⟩
+  generalize hl : lg v = l
+  rw [hl] at ha hl2 hlbig
+  generalize hα : max 5 a = α
   have hα5 : 5 ≤ α := hα ▸ le_max_left _ _
   have haα : a ≤ α := hα ▸ le_max_right _ _
   have hlog : l ^ (C * α) ≤ v := by
     rcases le_total 5 a with h5 | h5
-    · rw [hα, max_eq_right h5]
+    · rw [← hα, max_eq_right h5]
       exact ha
-    · rw [hα, max_eq_left h5]
-      simpa [hl] using hn5 v (by omega)
-  obtain ⟨P, hP⟩ : ∃ P, P = h * α * l := ⟨_, rfl⟩
+    · rw [← hα, max_eq_left h5]
+      simpa [← hl] using hn5 v (by omega)
+  generalize hP : h * α * l = P
   have hVs : lg (max (v ^ (16 * h)) (v ^ a)) ≤ 16 * P := by
     have hmax : max (v ^ (16 * h)) (v ^ a) ≤ v ^ (16 * h * α) := by
       apply max_le
       · exact pow_le_pow hv1 (Nat.le_mul_of_pos_right _ (by omega))
       · exact pow_le_pow hv1 (haα.trans (Nat.le_mul_of_pos_left _ (by omega)))
     refine (lg_mono hmax).trans ((lg_pow_le (Nat.mul_pos (by omega) (by omega))).trans (le_of_eq ?_))
-    rw [hP, ← hl]
+    rw [← hP, hl]
     ring
   have hPpos : 1 ≤ P := hP ▸ Nat.mul_pos (Nat.mul_pos (by omega) (by omega)) (by omega)
   have hB3 : B ≤ 4096 * P ^ 3 := hB.trans ((Nat.pow_le_pow_left hVs 3).trans (le_of_eq (by ring)))
@@ -273,15 +273,15 @@ theorem thm_noacc_all_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut :
     rw [mul_pow]
     exact Nat.mul_le_mul le_rfl (Nat.pow_le_pow_right hPpos (by norm_num))
   have hP4 : 4096 * P ^ 3 ≤ (α * l) ^ 4 := by
-    calc 4096 * P ^ 3 = 4096 * h ^ 3 * (α * l) ^ 3 := by rw [hP]; ring
+    calc 4096 * P ^ 3 = 4096 * h ^ 3 * (α * l) ^ 3 := by rw [← hP]; ring
       _ ≤ α * l * (α * l) ^ 3 := Nat.mul_le_mul_right _ (by
           have : l ≤ α * l := Nat.le_mul_of_pos_left _ (by omega)
           omega)
       _ = (α * l) ^ 4 := by ring
   have hah : a ≤ h * α := haα.trans (Nat.le_mul_of_pos_left _ (by omega))
   obtain ⟨D₁, hD₁, hs₁⟩ := hnext R v (by omega) α hα5 (hl ▸ hlog) K B D hD (hKn.trans (pow_le_pow hv1 hah))
-    (hDs.trans (pow_le_pow hv1 hah)) (by rw [← hl]; omega) (by rw [← hl]; omega)
-  rw [← hl] at hD₁
+    (hDs.trans (pow_le_pow hv1 hah)) (by rw [hl]; omega) (by rw [hl]; omega)
+  rw [hl] at hD₁
   have hinc : 51 * h * α ^ 2 * l ≤ 51 * P ^ 3 := by
     calc 51 * h * α ^ 2 * l ≤ 51 * (h * α * l) ^ 2 := by
           have : h * α ^ 2 * l ≤ h * h * (α ^ 2 * (l * l)) := by
@@ -295,10 +295,10 @@ theorem thm_noacc_all_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut :
     have h1 := le_lg_pow (n := v) (k := α) (by omega)
     have h2 : α * (l - 1) = α * l - α := by rw [Nat.mul_sub, Nat.mul_one]
     have h3 : α * 2 ≤ α * l := Nat.mul_le_mul_left _ hl2
-    rw [← hl] at h1
+    rw [hl] at h1
     omega
   have hcBP : 12500 * P ^ 3 ≤ 100000 * h ^ 3 * lg (v ^ α) ^ 3 := by
-    calc 12500 * P ^ 3 = 12500 * h ^ 3 * (α * l) ^ 3 := by rw [hP]; ring
+    calc 12500 * P ^ 3 = 12500 * h ^ 3 * (α * l) ^ 3 := by rw [← hP]; ring
       _ ≤ 12500 * h ^ 3 * (2 * lg (v ^ α)) ^ 3 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hlgα 3)
       _ = _ := by ring
   have hvα : v ≤ v ^ α := Nat.le_self_pow (by omega) v
@@ -314,15 +314,15 @@ theorem thm_noacc_all_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut :
       omega
     have hh5 := hI.ht
     have hB5 := hI.B_le
-    obtain ⟨L, hL⟩ : ∃ L, L = lg u := ⟨_, rfl⟩
-    rw [← hL] at hlu hlu5 hh5 hB5
+    generalize hL : lg u = L
+    rw [hL] at hlu hlu5 hh5 hB5
     have h4 : 100000 * h ^ 3 * L ^ 3 ≤ (5 * L) ^ 4 := by
       calc 100000 * h ^ 3 * L ^ 3 ≤ L * L ^ 3 := Nat.mul_le_mul_right _ (by omega)
         _ ≤ _ := by rw [← pow_succ']; exact Nat.pow_le_pow_left (by omega) _
     obtain ⟨D'', hD'', hs''⟩ := hnext R u (by omega) 5 le_rfl (by simpa [Nat.mul_comm] using hn5 u (by omega)) K B' D'
       hI.acc (hI.nds.trans (Nat.le_self_pow (Nat.mul_ne_zero (by omega) (by norm_num)) u))
-      (hI.size.trans (pow_le_pow hu1 (by omega))) (by rw [← hL]; omega) (by rw [← hL]; omega)
-    rw [← hL] at hD''
+      (hI.size.trans (pow_le_pow hu1 (by omega))) (by rw [hL]; omega) (by rw [hL]; omega)
+    rw [hL] at hD''
     have h8 : 8 * (100000 * h ^ 3 * L ^ 3) ≤ 100000 * h ^ 3 * lg (u ^ 5) ^ 3 := by
       calc 8 * (100000 * h ^ 3 * L ^ 3) = 100000 * h ^ 3 * (2 * L) ^ 3 := by ring
         _ ≤ _ := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hlu5 3)
@@ -361,8 +361,8 @@ theorem thm_noacc {h : ℕ} (hh : 17 ≤ h) [Algebra.FiniteType ℤ A] {C₀ v�
   obtain ⟨M, red, hM, hred⟩ := thm_noacc_periodic E
   obtain ⟨u, B', D', hu, hI⟩ := hall E v hv a ha K' B D hD' (hn'.trans_le hKn) hDs (hh'.trans_le hKh) hB
     (2 ^ (M + 2000 * h) + cst + n9)
-  obtain ⟨cs, hcs⟩ : ∃ cs, cs = cst := ⟨_, rfl⟩
-  rw [← hcs] at hu
+  generalize hcs : cst = cs
+  rw [hcs] at hu
   have hp : 1 ≤ 2 ^ (M + 2000 * h) := Nat.one_le_two_pow
   have hu1 : 1 ≤ u := by omega
   have hl : M + 2000 * h + 1 ≤ lg u := le_lg_of_two_pow_le (by omega)
@@ -370,8 +370,8 @@ theorem thm_noacc {h : ℕ} (hh : 17 ≤ h) [Algebra.FiniteType ℤ A] {C₀ v�
   have hsmall := hn9 u (by omega)
   have a1 := hI.ht
   have a2 := hI.B_le
-  obtain ⟨L, hL⟩ : ∃ L, L = lg u := ⟨_, rfl⟩
-  rw [← hL] at hl hlt hsmall a1 a2
+  generalize hL : lg u = L
+  rw [hL] at hl hlt hsmall a1 a2
   refine thm_noacc_diagonal hh hI.acc (by omega) hI.nds hI.size hM hred (J := 16 * h * L)
     (X := K'.ht + max B' M + 16 * h * L + 10) ?_ (by omega) (by omega) ?_
   · rw [Nat.mul_comm (16 * h) L, pow_mul]

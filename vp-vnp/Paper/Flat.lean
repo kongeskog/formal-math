@@ -596,20 +596,20 @@ over k with m^C gates for m ≥ m₀." -/
 theorem thm_flat_simple {K : Type} [Field K] (hK : Flat K) (h2 : (2 : K) ≠ 0) (C : ℕ) :
     ∃ m₀ : ℕ, ∀ m ≥ m₀, ¬ Computes (genPerm K m) (m ^ C) := by
   -- √k = 30 (C + 1)
-  obtain ⟨k, hk⟩ : ∃ k : ℕ, k = (30 * (C + 1)) ^ 2 := ⟨_, rfl⟩
+  generalize hk : (30 * (C + 1)) ^ 2 = k
   have hk3 : 3 ≤ k := hk ▸ le_trans (by omega) (Nat.le_self_pow two_ne_zero (30 * (C + 1)))
   obtain ⟨ℓ₀, hℓ₀⟩ := prop_flat_lower hK (show 2 ≤ k by omega)
-  obtain ⟨ℓ₁, hℓ₁⟩ : ∃ ℓ₁, ℓ₁ = ℓ₀ + 3 * k ^ 3 + k + 1 := ⟨_, rfl⟩
+  generalize hℓ₁ : ℓ₀ + 3 * k ^ 3 + k + 1 = ℓ₁
   let size : ℕ → ℕ := fun ℓ => 3 * k ^ 3 * ℓ * 2 ^ (k * ℓ)
   refine ⟨size ℓ₁, fun m hm hcomp => ?_⟩
   have hle : ∀ ℓ, ℓ ≤ size ℓ := fun ℓ => by
     show ℓ ≤ 3 * k ^ 3 * ℓ * 2 ^ (k * ℓ)
     calc ℓ = 1 * ℓ * 1 := by simp
       _ ≤ _ := Nat.mul_le_mul (Nat.mul_le_mul_right _ (by nlinarith [Nat.one_le_pow 3 k (by omega)])) Nat.one_le_two_pow
-  obtain ⟨ℓ, hℓd⟩ : ∃ ℓ, ℓ = Nat.findGreatest (fun ℓ => size ℓ ≤ m) m := ⟨_, rfl⟩
+  generalize hℓd : Nat.findGreatest (fun ℓ => size ℓ ≤ m) m = ℓ
   have hℓ1 : ℓ₁ ≤ ℓ := hℓd ▸ Nat.le_findGreatest ((hle ℓ₁).trans hm) hm
   have hℓm : size ℓ ≤ m := by
-    rw [hℓd]
+    rw [← hℓd]
     exact Nat.findGreatest_spec (P := fun ℓ => size ℓ ≤ m) ((hle ℓ₁).trans hm) hm
   have hnext : m < size (ℓ + 1) := by
     by_contra hh
@@ -635,7 +635,7 @@ theorem thm_flat_simple {K : Type} [Field K] (hK : Flat K) (h2 : (2 : K) ≠ 0) 
     Real.rpow_le_rpow_left_iff (by norm_num)] at h4
   have hk0 : (0 : ℝ) < k := by exact_mod_cast (by omega : 0 < k)
   have hsqrt : √(k : ℝ) = 30 * (C + 1) := by
-    rw [hk, Nat.cast_pow, Real.sqrt_sq (Nat.cast_nonneg _)]
+    rw [← hk, Nat.cast_pow, Real.sqrt_sq (Nat.cast_nonneg _)]
     push_cast
     ring
   rw [show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add hk0, Real.rpow_one, ← Real.sqrt_eq_rpow, hsqrt] at h4

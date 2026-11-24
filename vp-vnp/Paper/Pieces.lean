@@ -459,10 +459,10 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
     ⟨(inp₀ i x).1, by have := (inp₀ i x).2; omega⟩
   have s0 := slp_inputs (slp_cast (inp' := inp) (show D₀ ≤ Y ^ 4 by omega) (fun i x => rfl) hS)
   set H : Set (Dl.NN K N × (TT.sys.N → Fin TT.U1) → ℕ) := H₀ ∪ Set.range fun i x => (inp i x : ℕ) with hH
-  obtain ⟨p₀, hp₀⟩ : ∃ p₀, p₀ = s₀ + Fintype.card ((Fin (K + K) × Fin (K + K)) ⊕ TT.sys.N) := ⟨_, rfl⟩
+  generalize hp₀ : s₀ + Fintype.card ((Fin (K + K) × Fin (K + K)) ⊕ TT.sys.N) = p₀
   have hS0 : SY inp Y p₀ 0 H := by
     unfold SY
-    rw [Nat.zero_mul, Nat.add_zero, hp₀]
+    rw [Nat.zero_mul, Nat.add_zero, ← hp₀]
     exact s0
   have hlt : ∀ f ∈ H₀, ∀ x, f x ≤ Y := fun f hf x => by
     obtain ⟨fn, -, h2⟩ := hS
@@ -518,7 +518,7 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
     (fun _ => (PY.forall_univ hA (by simpa using hKY) fun p => PY.base (f4 p) hA.pos).toCY) (by omega)
   have hsteps : p₀ + (0 + 2 * TT.depth + 9 + 1 + 1 + 1 + 1) * Y ^ 12 ≤ Y ^ 15 := by
     have h1 : p₀ ≤ 2 * Y := by
-      rw [hp₀, Fintype.card_sum, Fintype.card_prod, Fintype.card_fin]
+      rw [← hp₀, Fintype.card_sum, Fintype.card_prod, Fintype.card_fin]
       have := d2.trans hMY
       omega
     have h2 : 0 + 2 * TT.depth + 9 + 1 + 1 + 1 + 1 ≤ 3 * Y := by omega
@@ -664,36 +664,35 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     unfold Nc.Tower.ee
     have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
     omega
-  obtain ⟨e, he⟩ : ∃ e, e = 300 * ee h + 64 := ⟨_, rfl⟩
-  obtain ⟨a', ha'⟩ : ∃ a', a' = (e + 2) * (C₀ + 2) + 300 := ⟨_, rfl⟩
+  generalize he : 300 * ee h + 64 = e
+  generalize ha' : (e + 2) * (C₀ + 2) + 300 = a'
   refine ⟨a' + e + 3, e, by omega, fun Γ S Q _ _ _ _ _ _ mu => ?_⟩
-  obtain ⟨c, hc⟩ : ∃ c, c = Fintype.card (Option Γ) := ⟨_, rfl⟩
-  have hc0 : 0 < c := by rw [hc]; exact Fintype.card_pos
+  generalize hc : Fintype.card (Option Γ) = c
+  have hc0 : 0 < c := by rw [← hc]; exact Fintype.card_pos
   obtain ⟨cb, hcb⟩ : ∃ cb : Option Γ → Fin c → Bool, Function.Injective cb := by
-    refine ⟨fun z j => decide (Fin.cast hc.symm (Fintype.equivFin _ z) = j), fun z z' h => ?_⟩
-    have := congrFun h (Fin.cast hc.symm (Fintype.equivFin _ z'))
+    refine ⟨fun z j => decide (Fin.cast hc (Fintype.equivFin _ z) = j), fun z z' h => ?_⟩
+    have := congrFun h (Fin.cast hc (Fintype.equivFin _ z'))
     simp only [decide_true, decide_eq_true_eq] at this
     exact (Fintype.equivFin _).injective (Fin.ext (by simpa using congrArg Fin.val this))
-  obtain ⟨σ, hσ⟩ : ∃ σ, σ = Fintype.card S + 1 := ⟨_, rfl⟩
-  obtain ⟨bY, hbY⟩ : ∃ b, b = (e + a' + 2) * C₀ + 2 * e + a' + 8 := ⟨_, rfl⟩
-  obtain ⟨Ee, hEe⟩ : ∃ x, x = (e + 2) ^ C₀ := ⟨_, rfl⟩
+  generalize hσ : Fintype.card S + 1 = σ
+  generalize hbY : (e + a' + 2) * C₀ + 2 * e + a' + 8 = bY
+  generalize hEe : (e + 2) ^ C₀ = Ee
   have hEe1 : 1 ≤ Ee := hEe ▸ Nat.one_le_pow _ _ (by omega)
-  obtain ⟨W, hW⟩ : ∃ W, W = 18 * (C₀ + 1) * (4 * c + 5) * Ee := ⟨_, rfl⟩
-  obtain ⟨C, hC⟩ : ∃ C, C = W + C₀ + (1 + C₀ + 2 ^ ee h * Ee) + 16 * bY + c + 8 + (4 * c + 4) := ⟨_, rfl⟩
+  generalize hW : 18 * (C₀ + 1) * (4 * c + 5) * Ee = W
+  generalize hC : W + C₀ + (1 + C₀ + 2 ^ ee h * Ee) + 16 * bY + c + 8 + (4 * c + 4) = C
   refine ⟨C, 8 * c + 2 * σ + 16, fun v hv => ?_⟩
   have hv1 : 1 ≤ v := by omega
   refine ⟨v ^ e, le_rfl, Nat.le_mul_of_pos_left _ (by omega), fun T k hT hk hk' => ?_⟩
-  obtain ⟨K, hK⟩ : ∃ K, K = v ^ e := ⟨_, rfl⟩
-  rw [← hK]
+  generalize hK : v ^ e = K
   have vp : ∀ {x y}, x ≤ y → v ^ x ≤ v ^ y := fun h => Nat.pow_le_pow_right hv1 h
   have hK0 : 0 < K := hK ▸ Nat.pow_pos hv1
   have hMv : K + K ≤ v ^ (e + 1) := by
-    rw [pow_succ, ← hK]
+    rw [pow_succ, hK]
     calc K + K = K * 2 := (Nat.mul_two K).symm
       _ ≤ K * v := Nat.mul_le_mul_left _ (by omega)
   obtain ⟨ub, hub⟩ : ∃ ub, ub = T / v ^ a' := ⟨_, rfl⟩
   obtain ⟨load, hload⟩ : ∃ l, l = 2 * ((T + (K + K) * σ) * c / ub + (K + K)) := ⟨_, rfl⟩
-  obtain ⟨b1, b2, b3, b4, b5, b6, b7⟩ := pieces_numbers (C₀ := C₀) (σ := σ) hc0 (by omega) hv (by omega) hMv ha'.ge hT
+  obtain ⟨b1, b2, b3, b4, b5, b6, b7⟩ := pieces_numbers (C₀ := C₀) (σ := σ) hc0 (by omega) hv (by omega) hMv ha'.le hT
     hub hload
   have hload1 : 1 ≤ load := (Nat.le_add_left 1 _).trans b7
   obtain ⟨TT⟩ := htree A (K + K) (K + K) load ub (by omega) le_rfl hload1 b1
@@ -713,10 +712,10 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     rw [← pow_mul]
     exact (vp (show 300 * ee h ≤ e by omega)).trans (by omega)
   -- bits
-  obtain ⟨L, hL⟩ : ∃ L, L = lg v := ⟨_, rfl⟩
+  generalize hL : lg v = L
   have hL2 : 2 ≤ L := hL ▸ lg_two (by omega)
   have hPL : lg (K + K) ^ C₀ ≤ Ee * L ^ C₀ := by
-    rw [hEe, ← mul_pow]
+    rw [← hEe, ← mul_pow]
     refine Nat.pow_le_pow_left ?_ _
     have h1 : K + K < 2 ^ ((e + 1) * L) := by
       calc K + K ≤ v ^ (e + 1) := hMv
@@ -727,7 +726,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     unfold lg
     omega
   have hWC : ∀ X, X ≤ W * L ^ C₀ * (K * T) → X ≤ K * T * lg v ^ C := fun X hX => by
-    rw [← hL, Nat.mul_comm (K * T)]
+    rw [hL, Nat.mul_comm (K * T)]
     exact hX.trans (Nat.mul_le_mul_right _ (const_mul_pow_le hL2 (by omega)))
   have hYub : yhat load (K + K) C₀ * ub ≤ 2 * (4 * c + 5) * Ee * L ^ C₀ * (K * T) := by
     calc yhat load (K + K) C₀ * ub = lg (K + K) ^ C₀ * (K + K) * (load * ub + (K + K) ^ 2 * ub) := by unfold yhat; ring
@@ -799,7 +798,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     all_le := fun n o hn hg g => ?_
     steps_le := ?_
     value := fun i e' u ℓ' hℓ hu => ?_ }⟩
-  · rw [← hL, Nat.mul_comm T]
+  · rw [hL, Nat.mul_comm T]
     refine b3.trans (Nat.mul_le_mul_right _ (le_trans (le_of_eq ?_) (const_mul_pow_le (e := 0) hL2 (show 4 * c + 4 + 0 ≤ C by omega))))
     simp
   · exact Nat.one_lt_pow (by norm_num) (Nat.one_lt_pow (by omega) (by omega))
@@ -813,7 +812,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
         exact List.mem_cons_self
     exact List.mem_flatMap.2 ⟨_, hk', List.mem_map.2 ⟨r.2, by simp, rfl⟩⟩
   · refine (min_le_left _ _).trans ?_
-    rw [← hL]
+    rw [hL]
     calc 1 + C₀ + 2 ^ ee h * (TT.depth * k) ≤ (1 + C₀) * (L ^ C₀ * k) + 2 ^ ee h * (Ee * L ^ C₀ * k) :=
           Nat.add_le_add (Nat.le_mul_of_pos_right _ (Nat.mul_pos hL1 (by omega)))
             (Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ hdep))
@@ -832,7 +831,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       _ = (2 * (4 * c + 5) * Ee + 1) * L ^ C₀ * (K * T) := by ring
       _ ≤ _ := by
           refine Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ ?_)
-          rw [hW]
+          rw [← hW]
           nlinarith
   · refine hWC _ ?_
     have h1 := piece_all hn hg hK0 le_rfl (by omega) hk64 hnode hkM g
@@ -849,7 +848,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       _ = (8 * C₀ * (4 * c + 5) * Ee + 8 * (4 * c + 4) * Ee + 2 * C₀) * L ^ C₀ * (K * T) := by ring
       _ ≤ _ := by
           refine Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ ?_)
-          rw [hW]
+          rw [← hW]
           nlinarith [Nat.zero_le (C₀ * c * Ee)]
   · obtain ⟨-, -, -, -, -, -, d3, d4, d5, -⟩ := TT.computed
     have hMY := hMN.trans (vp (show (e + a' + 2) * C₀ ≤ C by omega))
@@ -858,7 +857,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       exact vp (by omega)
     · rw [← pow_mul]
       exact vp (by omega)
-  · have hU : (T + (Fintype.card S + 1)) * c / ub + 1 ≤ load := by rwa [← hσ]
+  · have hU : (T + (Fintype.card S + 1)) * c / ub + 1 ≤ load := by rwa [hσ]
     obtain ⟨hr1, hr2⟩ := lem_runnet (U0 := load) (U1 := TT.U1) (A' := TT.A') mu cb hcb hc0 b1 hU TT.sys.np i e' u hℓ hu
     rw [hr1]
     refine Finset.sum_congr rfl fun q _ => if_congr Iff.rfl ?_ rfl
@@ -878,7 +877,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       refine Finset.prod_eq_zero (mem_univ p) ?_
       by_contra h0
       have := hr2 q (fun s => ρ s p) n p _ h0
-      rw [← hσ, ← hload] at this
+      rw [hσ, ← hload] at this
       exact absurd this (not_le.2 hp)
 
 end Paper

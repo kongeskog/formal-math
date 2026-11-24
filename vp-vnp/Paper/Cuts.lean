@@ -108,8 +108,8 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   obtain ⟨S, Γ, Q, i1, i2, i3, i4, i5, i6, mu, i, e', b0, b1, CU, hCU⟩ := prop_universal θ hθ.1
   obtain ⟨a, e, he, hpieces⟩ := prop_pieces VL h3 hgain
   obtain ⟨Cp, v₁, hP⟩ := hpieces Γ S Q mu
-  obtain ⟨kinds, hkinds⟩ : ∃ l, l = Nc.Tow.kindList A ((univ : Finset VL.Di).toList.map VL.L) := ⟨_, rfl⟩
-  rw [← hkinds] at hP
+  generalize hkinds : Nc.Tow.kindList A ((univ : Finset VL.Di).toList.map VL.L) = kinds
+  rw [hkinds] at hP
   -- one evaluator for each code of symbols
   choose GR κ hGR hGT using fun (c : Fin (Cp + 1)) (cb : Option Γ → Fin c.1 → Bool) =>
     thm_onecut_evaluator hθ mu cb kinds
@@ -119,32 +119,32 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       Fintype.card L.1.Ro + Fintype.card L.1.Sl + Fintype.card L.1.Cn).sum := ⟨_, rfl⟩
   obtain ⟨cq, hcq⟩ : ∃ cq, ∀ q, (Nc.Grp.qn Q q : ℕ) ≤ cq :=
     ⟨univ.sup fun q => (Nc.Grp.qn Q q : ℕ), fun q => Finset.le_sup (f := fun q => (Nc.Grp.qn Q q : ℕ)) (Finset.mem_univ q)⟩
-  obtain ⟨b₁, hb₁⟩ : ∃ b, b = 3 * Cp + 3 * e + a + 8 := ⟨_, rfl⟩
-  obtain ⟨C1, hC1⟩ : ∃ C, C = Cp + 10 := ⟨_, rfl⟩
+  generalize hb₁ : 3 * Cp + 3 * e + a + 8 = b₁
+  generalize hC1 : Cp + 10 = C1
   obtain ⟨Z, hZ⟩ : ∃ Z, Z = 20000 + Cp + Zg + ml + cq + Fintype.card S + Fintype.card Q + kinds.length + Nc.Dl.dealC +
       16 * (CU + 1) + 3 * b₁ + 4 * Cp + 8 := ⟨_, rfl⟩
   obtain ⟨n1, hn1⟩ := poly_lg 1 C1
   refine ⟨a + e + 6 * b₁ + 400, 10 * C1, 2 ^ (Z + 1) + v₁ + n1, fun v hv τ s k hτ hlτ hsτ hk hkv => ?_⟩
   -- logarithms
-  obtain ⟨l, hl⟩ : ∃ l, l = lg v := ⟨_, rfl⟩
+  generalize hl : lg v = l
   have hlbig : Z + 1 < l := by
-    rw [hl]; exact le_lg_of_two_pow_le (le_trans (by omega) hv)
+    rw [← hl]; exact le_lg_of_two_pow_le (le_trans (by omega) hv)
   have hl1 : 1 ≤ l := by omega
   have hpow1 := Nat.one_le_two_pow (n := Z + 1)
   have hv0 : v ≠ 0 := by omega
   have hv1 : 1 ≤ v := by omega
   have hlv : l ≤ v := by
-    rw [hl]
+    rw [← hl]
     unfold lg
     exact Nat.log_lt_self 2 hv0
-  obtain ⟨m, hm⟩ : ∃ m, m = l ^ C1 := ⟨_, rfl⟩
+  generalize hm : l ^ C1 = m
   have hml' : ∀ p, p ≤ C1 → l ^ p ≤ m := fun p hp => hm ▸ Nat.pow_le_pow_right hl1 hp
   have hlm : l ≤ m := by
     have := hml' 1 (by omega)
     rwa [pow_one] at this
   have hmv : m ≤ v := by
     have := hn1 v (by omega)
-    rw [one_mul, ← hl, ← hm] at this
+    rw [one_mul, hl, hm] at this
     exact this
   have hm1 : 1 ≤ m := hl1.trans hlm
   have vpow : ∀ {p q}, p ≤ q → v ^ p ≤ v ^ q := fun h => Nat.pow_le_pow_right hv1 h
@@ -158,7 +158,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     calc K ≤ Cp * v ^ e := hKv'
       _ ≤ v * v ^ e := Nat.mul_le_mul_right _ (by omega)
       _ = v ^ (e + 1) := (pow_succ' v e).symm
-  obtain ⟨X, hX⟩ : ∃ X, X = v ^ b₁ := ⟨_, rfl⟩
+  generalize hX : v ^ b₁ = X
   have vX : ∀ p, p ≤ b₁ → v ^ p ≤ X := fun p hp => hX ▸ vpow hp
   have hX1 : 1 ≤ X := hX ▸ Nat.pow_pos hv1
   have hvX : v ≤ X := vone.trans (vX 1 (by omega))
@@ -166,7 +166,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   have hsmall : X ^ 6 * m ^ 20 * v ^ 300 ≤ τ := by
     calc X ^ 6 * m ^ 20 * v ^ 300 ≤ X ^ 6 * v ^ 20 * v ^ 300 :=
           Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hmv 20))
-      _ = v ^ (b₁ * 6 + 20 + 300) := by rw [hX, ← pow_mul, ← pow_add, ← pow_add]
+      _ = v ^ (b₁ * 6 + 20 + 300) := by rw [← hX, ← pow_mul, ← pow_add, ← pow_add]
       _ ≤ v ^ (a + e + 6 * b₁ + 400) := vpow (by omega)
       _ ≤ τ := hτ
   have hXτ : X ≤ τ := by
@@ -176,10 +176,10 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       _ ≤ τ := hsmall
   have hτ1 : 1 ≤ τ := hX1.trans hXτ
   -- the steps: a plain instance is the value of the universal automaton in KT steps
-  obtain ⟨tU, htU⟩ : ∃ t, t = (CU + 1) * (2 * τ + 2) * lg (2 * τ + 2) ^ 2 := ⟨_, rfl⟩
+  generalize htU : (CU + 1) * (2 * τ + 2) * lg (2 * τ + 2) ^ 2 = tU
   have hl2 : lg τ + 3 ≤ 2 * l ^ 2 := by
     have : l ≤ l ^ 2 := Nat.le_self_pow (by norm_num) l
-    rw [← hl] at hlτ
+    rw [hl] at hlτ
     omega
   have hlgτ : lg (2 * τ + 2) ≤ 2 * l ^ 2 := by
     have h1 : 2 * τ + 2 < 2 ^ (lg τ + 2) := by
@@ -191,19 +191,19 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     omega
   have htUle : tU ≤ τ * l ^ 5 := by
     calc tU ≤ (CU + 1) * (4 * τ) * (2 * l ^ 2) ^ 2 := by
-          rw [htU]
+          rw [← htU]
           exact Nat.mul_le_mul (Nat.mul_le_mul_left _ (by omega)) (Nat.pow_le_pow_left hlgτ 2)
       _ = τ * (16 * (CU + 1) * l ^ 4) := by ring
       _ ≤ τ * (l * l ^ 4) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega))
       _ = τ * l ^ 5 := by ring
-  obtain ⟨T, hT⟩ : ∃ T, T = tU / K + 1 := ⟨_, rfl⟩
+  generalize hT : tU / K + 1 = T
   have hKTge : tU ≤ K * T := by
     have h1 := Nat.div_add_mod tU K
     have h2 := Nat.mod_lt tU hK0
-    rw [hT, Nat.mul_add, Nat.mul_one]
+    rw [← hT, Nat.mul_add, Nat.mul_one]
     omega
   have hKT : K * T ≤ τ * m := by
-    calc K * T = K * (tU / K) + K := by rw [hT]; ring
+    calc K * T = K * (tU / K) + K := by rw [← hT]; ring
       _ ≤ tU + τ := Nat.add_le_add (Nat.mul_div_le _ _) (hKX.trans hXτ)
       _ ≤ τ * l ^ 5 + τ * l ^ 5 := Nat.add_le_add htUle (Nat.le_mul_of_pos_right _ (Nat.pow_pos hl1))
       _ = τ * (2 * l ^ 5) := by ring
@@ -211,7 +211,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       _ = τ * l ^ 6 := by ring
       _ ≤ τ * m := Nat.mul_le_mul_left _ (hml' 6 (by omega))
   have hτtU : τ ≤ tU := by
-    rw [htU]
+    rw [← htU]
     have h1 : 1 ≤ lg (2 * τ + 2) ^ 2 := Nat.pow_pos (by unfold lg; omega)
     calc τ ≤ 1 * (2 * τ + 2) * 1 := by omega
       _ ≤ (CU + 1) * (2 * τ + 2) * lg (2 * τ + 2) ^ 2 := Nat.mul_le_mul (Nat.mul_le_mul_right _ (by omega)) h1
@@ -224,7 +224,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   obtain ⟨pc⟩ := hP T k hTa hk hkv
   obtain ⟨ℓ, hℓ⟩ : ∃ ℓ, ℓ = s / K + 1 := ⟨_, rfl⟩
   have hℓT : ℓ ≤ T := by
-    rw [hℓ, hT]
+    rw [hℓ, ← hT]
     exact Nat.add_le_add_right (Nat.div_le_div_right (hsτ.trans hτtU)) 1
   have hsK : s ≤ K * ℓ := by
     have h1 := Nat.div_add_mod s K
@@ -260,7 +260,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
         _ ≤ _ := vpow (by omega)
     calc _ ≤ v ^ (b₁ - 1) + v ^ (b₁ - 1) := Nat.add_le_add g1 g2
       _ ≤ v * v ^ (b₁ - 1) := by rw [← Nat.two_mul]; exact Nat.mul_le_mul_right _ (by omega)
-      _ = X := by rw [hX, ← pow_succ']; congr 1; omega
+      _ = X := by rw [← hX, ← pow_succ']; congr 1; omega
   have hkind : ∀ r : pc.sys.R, ∃ t : ℕ, kinds[t]? = some ⟨pc.sys.kind r.1, r.2⟩ := fun r =>
     List.mem_iff_getElem?.1 (pc.kinds_mem r)
   choose tg htg using hkind
@@ -296,7 +296,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     rw [Fintype.card_option]
     omega
   -- bits
-  obtain ⟨Lc, hLc⟩ : ∃ L, L = lg (X ^ 3) + lg (τ * v ^ 2) + 1 := ⟨_, rfl⟩
+  generalize hLc : lg (X ^ 3) + lg (τ * v ^ 2) + 1 = Lc
   have hX3Lc : X ^ 3 ≤ 2 ^ Lc := (lt_two_pow_lg _).le.trans (Nat.pow_le_pow_right (by norm_num) (by omega))
   have hTLc : T < 2 ^ Lc := by
     refine lt_of_le_of_lt ?_ (lt_of_lt_of_le (lt_two_pow_lg (τ * v ^ 2)) (Nat.pow_le_pow_right (by norm_num) (by omega)))
@@ -308,10 +308,10 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   obtain ⟨l1, l2, -, -⟩ := Nc.Dl.exists_bits ℓ (L := Lc) (lt_of_le_of_lt hℓT hTLc)
   have hLcm : Lc + 1 ≤ m := by
     have h1 : lg (X ^ 3) ≤ 3 * b₁ * l := by
-      rw [hX, ← pow_mul, hl, Nat.mul_comm b₁ 3]
+      rw [← hX, ← pow_mul, ← hl, Nat.mul_comm b₁ 3]
       exact lg_pow_le (by omega)
     have h2 := lg_mul_sq_le (τ := τ) (v := v)
-    rw [← hl] at h2 hlτ
+    rw [hl] at h2 hlτ
     calc Lc + 1 ≤ 3 * b₁ * l + (l ^ 2 + 2 * l + 3) := by omega
       _ ≤ l * l + (l * l + l * l + l * l) := by
           have : 3 * b₁ * l ≤ l * l := Nat.mul_le_mul_right _ (by omega)
@@ -341,11 +341,11 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       have g2 : (K + K) * pc.U0 ≤ X * X := Nat.mul_le_mul (by omega) (by omega)
       omega))
   -- the bounds of the pieces, in units
-  obtain ⟨L, hL⟩ : ∃ L, L = lg v ^ Cp := ⟨_, rfl⟩
+  generalize hL : lg v ^ Cp = L
   have hLm : L ≤ m := hL ▸ hl ▸ hml' Cp (by omega)
-  obtain ⟨bd, hbd⟩ : ∃ b, b = K * T * L / (pc.ub * v ^ 300) := ⟨_, rfl⟩
-  obtain ⟨ev, hev⟩ : ∃ b, b = K * T * L / (pc.ub * k) := ⟨_, rfl⟩
-  obtain ⟨ιb, hιb⟩ : ∃ b, b = Cp * K / k := ⟨_, rfl⟩
+  generalize hbd : K * T * L / (pc.ub * v ^ 300) = bd
+  generalize hev : K * T * L / (pc.ub * k) = ev
+  generalize hιb : Cp * K / k = ιb
   have hbits : ∀ d, K * T * L / (pc.ub * d) * pc.ub * d ≤ τ * m ^ 2 := fun d => by
     rw [Nat.mul_assoc _ pc.ub d]
     refine (Nat.div_mul_le_self _ _).trans ((Nat.mul_le_mul hKT hLm).trans (le_of_eq ?_))
@@ -356,7 +356,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       vK := hvK, KT := hKT, ℓeq := hℓ, ub_pos := pc.ub_pos, ub_le := pc.unit_le.1.trans (Nat.le_succ T),
       lhub := by
         refine pc.unit_le.2.trans ?_
-        rw [← hL, Nat.mul_comm]
+        rw [hL, Nat.mul_comm]
         exact Nat.mul_le_mul_right _ hLm
       Lc_le := hLcm, c_le := by have := pc.c_le; omega, K_X := hKX, X_ge := hX1,
       ιb_le := hιK.trans (Nat.mul_le_mul_right _ (by omega)),
@@ -368,7 +368,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       bd_le := hbd ▸ hbits _, ev_le := hev ▸ hbits _,
       mm_le := by
         refine pc.num_le.trans ?_
-        rw [← hL]
+        rw [hL]
         exact Nat.mul_le_mul_left _ hLm
       mmX := by have := pc.digits.2.2.1; omega
       small := hsmall }
@@ -376,15 +376,15 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   have hbdle : ∀ n o, pc.tab.valid n → (∀ x, pc.plan.good n o x) → ∀ g,
       ((pc.plan.cur n o pc.E).filter (Nc.Plus.OneIn (Nc.G.hold0 pc.sys.np) (Nc.G.hold1 pc.sys.np) (pc.grp n o) g)).card ≤
         bd := fun n o hn hg g => by
-    rw [hbd, Nat.le_div_iff_mul_le (Nat.mul_pos pc.ub_pos (vpos 300)), ← Nat.mul_assoc, hL]
+    rw [← hbd, Nat.le_div_iff_mul_le (Nat.mul_pos pc.ub_pos (vpos 300)), ← Nat.mul_assoc, ← hL]
     exact pc.cut_le n o ((pc.tab_valid n).1 hn) hg g
   have hevle : ∀ n o, pc.tab.valid n → (∀ x, pc.plan.good n o x) → ∀ g,
       Nc.Dl.evG pc.grp n o g + Nc.Dl.pdG pc.plan pc.grp n o g ≤ ev := fun n o hn hg g => by
-    rw [hev, Nat.le_div_iff_mul_le hubk, ← Nat.mul_assoc, hL]
+    rw [← hev, Nat.le_div_iff_mul_le hubk, ← Nat.mul_assoc, ← hL]
     exact pc.all_le n o ((pc.tab_valid n).1 hn) hg g
   have hbase : ∀ n o, pc.tab.valid n → (∀ x, pc.plan.good n o x) → ∀ g,
       (univ.filter fun p : Fin (K + K) => pc.grp n o (Fin.castAdd pc.A' p) = g).card ≤ ιb := fun n o hn hg g => by
-    rw [hιb, Nat.le_div_iff_mul_le (by omega)]
+    rw [← hιb, Nat.le_div_iff_mul_le (by omega)]
     exact pc.blocks_le n o ((pc.tab_valid n).1 hn) hg g
   have hnum : ∀ n o y, pc.plan.num n o y ≤ X := fun n o y => by
     have h1 := pc.tab.hnum y (n, o)
@@ -416,7 +416,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     hK0 hG (fun z hz hpl => by
       rw [t4]
       refine hCU τ z (K * T) hpl (le_trans ?_ hKTge)
-      rw [htU]
+      rw [← htU]
       exact Nat.mul_le_mul (Nat.mul_le_mul (by omega) (by omega)) (Nat.pow_le_pow_left (lg_mono (by omega)) 2))
     htg pc.tab pc.ok (by rw [u4]; exact pc.ub_pos) (by rw [u2, u4]) l2 pc.U1_pos (by rw [t4]; exact hℓT)
     (fun z hz => by
@@ -442,11 +442,11 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
           (hbase n o hn ho g) hnums.ιbX (fun p _ => (pc.tab_valid n).1 hn p) (hevle n o hn ho g)
         refine this.trans (le_of_eq ?_)
         rw [t4, u4])
-  have hm10 : lg v ^ (10 * C1) = m ^ 10 := by rw [← hl, hm, ← pow_mul, Nat.mul_comm]
+  have hm10 : l ^ (10 * C1) = m ^ 10 := by rw [← hm, ← pow_mul, Nat.mul_comm]
   refine ⟨G, ?_, ?_⟩
   · calc G.size ≤ (Nc.Dl.dealC + 3000) * (X * Lc) ^ 4 := hGs
       _ ≤ v * (X * v) ^ 4 := Nat.mul_le_mul (by omega) (Nat.pow_le_pow_left (Nat.mul_le_mul_left _ (by omega)) 4)
-      _ = v ^ ((b₁ + 1) * 4 + 1) := by rw [hX, ← pow_succ, ← pow_mul, ← pow_succ']
+      _ = v ^ ((b₁ + 1) * 4 + 1) := by rw [← hX, ← pow_succ, ← pow_mul, ← pow_succ']
       _ ≤ v ^ (a + e + 6 * b₁ + 400) := vpow (by omega)
   · rw [hm10]
     rw [u4] at hcut
@@ -464,11 +464,11 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
       s * v ^ 48 ≤ τ → ∃ G : Tree, G.size ≤ v ^ H ∧
         CutD θ τ s (v ^ H) (v ^ (H - 32)) (τ * v ^ 2 / v ^ H) (τ / v ^ 24) G := by
   obtain ⟨a₀, C, v₀, hv₀⟩ := thm_onecut hθ VL h3 hgain
-  obtain ⟨h, hhdef⟩ : ∃ h, h = a₀ + 217 := ⟨_, rfl⟩
+  generalize hhdef : a₀ + 217 = h
   have hh : a₀ + 200 ≤ 16 * h := by omega
   refine ⟨16 * h, (3 * C + 4) * (32 * h + 2), v₀ + 2 ^ 100 + 4000, by omega, dvd_mul_right 16 h,
     fun v hv α τ s hlog hτ hτα hs => ?_⟩
-  obtain ⟨r, hr⟩ : ∃ r, r = 16 * h * α := ⟨_, rfl⟩
+  generalize hr : 16 * h * α = r
   have hv1 : 4000 ≤ v := by omega
   have hv0 : 1 ≤ v := by omega
   have hl100 : 100 ≤ lg v := (Nat.le_succ _).trans (le_lg_of_two_pow_le (by omega))
@@ -480,14 +480,14 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
     omega
   have hαl : 2 * r ≤ lg v := by
     refine le_trans ?_ (le_lg_of_lg_pow_le (by omega) hlog)
-    rw [hr, Nat.mul_assoc (3 * C + 4), ← Nat.mul_assoc 2]
+    rw [← hr, Nat.mul_assoc (3 * C + 4), ← Nat.mul_assoc 2]
     refine le_trans (Nat.mul_le_mul_right _ (?_ : 2 * (16 * h) ≤ 32 * h + 2)) (Nat.le_mul_of_pos_left _ (by omega))
     omega
-  obtain ⟨q4, hq4⟩ : ∃ n, n = 4 ^ (r + 1) := ⟨_, rfl⟩
-  obtain ⟨Λ, hΛ⟩ : ∃ n, n = lg v ^ (C + 1) := ⟨_, rfl⟩
+  generalize hq4 : 4 ^ (r + 1) = q4
+  generalize hΛ : lg v ^ (C + 1) = Λ
   have hl2 := lg_ge_two (show 4 ≤ v by omega)
   have hΛ2 : 2 ≤ Λ := by
-    rw [hΛ]
+    rw [← hΛ]
     exact hl2.trans (Nat.le_self_pow (by omega) _)
   have hΛ1 : 1 ≤ Λ := by omega
   have hX : (100 * Λ ^ 3) ^ (r + 1) ≤ v := hΛ ▸ hr ▸ polylog_loss_le hl100 hα hlog
@@ -514,7 +514,7 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
       _ ≤ lg v * lg v := Nat.mul_le_mul_right _ h7
       _ = lg v ^ 2 := by ring
   have hat : OneCutAt θ v a₀ (16 * h * α) Λ := OneCutAt.mono (Λ := lg v ^ C) hat0 (by
-    rw [hΛ]
+    rw [← hΛ]
     exact Nat.pow_le_pow_right (by omega) (Nat.le_succ C))
   have pmono : ∀ {a b}, a ≤ b → v ^ a ≤ v ^ b := fun h => Nat.pow_le_pow_right hv0 h
   have ppos : ∀ a, 0 < v ^ a := fun a => Nat.pow_pos (by omega)
@@ -522,13 +522,13 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
     r τ s 1 hτ hτα (by
       calc τ * Λ < τ * v := Nat.mul_lt_mul_of_pos_left (by omega) (lt_of_lt_of_le (ppos _) hτ)
         _ ≤ v ^ (16 * h * α) * v := Nat.mul_le_mul_right _ hτα
-        _ = v ^ (r + 1) := by rw [hr, pow_succ]
+        _ = v ^ (r + 1) := by rw [← hr, pow_succ]
         _ ≤ v ^ (16 * h + (64 + 62 * r)) := pmono (by omega)
-        _ = _ := pow_add _ _ _) (by simpa using hs) le_rfl (by rw [one_mul, ← hq4]; omega)
+        _ = _ := pow_add _ _ _) (by simpa using hs) le_rfl (by rw [one_mul, hq4]; omega)
   have e8 : (8 * Λ) ^ (r + 1) ≤ v := (Nat.pow_le_pow_left (by omega) _).trans hX
   have e4 : (4 * Λ ^ 2) ^ (r + 1) ≤ v := (Nat.pow_le_pow_left (by omega) _).trans hX
   refine ⟨G, ?_, hcut.mono le_rfl ?_ ((Nat.le_div_iff_mul_le (ppos _)).2 ?_) ((Nat.le_div_iff_mul_le (ppos _)).2 ?_)⟩
-  · have hq : 4 ^ r ≤ v := (Nat.pow_le_pow_right (by norm_num) (Nat.le_succ r)).trans (by rw [← hq4]; omega)
+  · have hq : 4 ^ r ≤ v := (Nat.pow_le_pow_right (by norm_num) (Nat.le_succ r)).trans (by rw [hq4]; omega)
     calc G.size ≤ 4 ^ r * (v ^ a₀ + 3000) := hG
       _ ≤ v * (v ^ a₀ + v) := Nat.mul_le_mul hq (by omega)
       _ ≤ v * (v ^ (a₀ + 1) + v ^ (a₀ + 1)) := Nat.mul_le_mul_left _ (Nat.add_le_add (pmono (Nat.le_succ _)) (by
