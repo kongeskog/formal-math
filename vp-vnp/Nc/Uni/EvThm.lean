@@ -21,112 +21,46 @@ section Inv
 
 theorem inv_quote {c c0 : Tree} (h : Fm.ofTree c = .quote c0) :
     (c = .nil ∧ c0 = .nil) ∨ ∃ o, c = .cons o c0 ∧ o.len = 0 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; injection h with h; exact Or.inl ⟨rfl, h.symm⟩
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    injection h with h
-    subst h
-    exact Or.inr ⟨o, rfl, by assumption⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_id {c : Tree} (h : Fm.ofTree c = .id) : ∃ o a, c = .cons o a ∧ o.len = 1 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
-    exact ⟨o, a, rfl, by assumption⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_hd {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .hd a0) :
     ∃ o a, c = .cons o a ∧ o.len = 2 ∧ Fm.ofTree a = a0 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    injection h with h
-    exact ⟨o, a, rfl, by assumption, h⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_tl {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .tl a0) :
     ∃ o a, c = .cons o a ∧ o.len = 3 ∧ Fm.ofTree a = a0 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    injection h with h
-    exact ⟨o, a, rfl, by assumption, h⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_cons {c : Tree} {a0 b0 : Fm} (h : Fm.ofTree c = .cons a0 b0) :
     ∃ o a, c = .cons o a ∧ o.len = 4 ∧ Fm.ofTree a.hd = a0 ∧ Fm.ofTree a.tl = b0 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    injection h with h h'
-    exact ⟨o, a, rfl, by assumption, h, h'⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_ite {c : Tree} {a0 b0 c0 : Fm} (h : Fm.ofTree c = .ite a0 b0 c0) :
     ∃ o a, c = .cons o a ∧ o.len = 5 ∧ Fm.ofTree a.hd = a0 ∧ Fm.ofTree a.tl.hd = b0 ∧ Fm.ofTree a.tl.tl = c0 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    injection h with h h' h''
-    exact ⟨o, a, rfl, by assumption, h, h', h''⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_run {c : Tree} {a0 b0 : Fm} (h : Fm.ofTree c = .run a0 b0) :
     ∃ o a, c = .cons o a ∧ o.len = 6 ∧ Fm.ofTree a.hd = a0 ∧ Fm.ofTree a.tl = b0 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    injection h with h h'
-    exact ⟨o, a, rfl, by assumption, h, h'⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_guess {c : Tree} (h : Fm.ofTree c = .guess) : ∃ o a, c = .cons o a ∧ o.len = 7 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
-    exact ⟨o, a, rfl, by assumption⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_fail {c : Tree} (h : Fm.ofTree c = .fail) : ∃ o a, c = .cons o a ∧ (o.len = 8 ∨ 11 ≤ o.len) := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    refine ⟨o, a, rfl, ?_⟩
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
-    · left; assumption
-    · right
-      by_contra hc
-      push Not at hc
-      generalize o.len = k at *
-      interval_cases k <;> simp_all
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
+  by_contra hc
+  generalize o.len = k at *
+  interval_cases k <;> simp_all
 
 theorem inv_theta {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .theta a0) :
     ∃ o a, c = .cons o a ∧ o.len = 9 ∧ Fm.ofTree a = a0 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    injection h with h
-    exact ⟨o, a, rfl, by assumption, h⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 theorem inv_mul {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .mul a0) : ∃ o a, c = .cons o a ∧ o.len = 10 := by
-  cases c with
-  | nil => rw [Fm.ofTree] at h; cases h
-  | cons o a =>
-    rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
-    exact ⟨o, a, rfl, by assumption⟩
+  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
 end Inv
 
