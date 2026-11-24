@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:26:27.378335743Z",
+  "updated_at": "2026-11-24T20:27:41.510758582Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -540,13 +540,27 @@
       "title": "restructure(Nc/Final/CClasses): take VP, VNP and VPBar from the statement",
       "author": "kongeskog",
       "head_sha": "f9522420187850284a0cda683e81693a83887cdd",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "616dab611f4a3514df20318c484b03e8d845b7c3",
+      "status": "stale",
       "created_at": "2026-11-24T20:07:10Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 912590,
+        "loc": 57922,
+        "decls": 4565,
+        "files": 321,
+        "bytes": 3375685,
+        "build_seconds": 461
+      },
+      "base_metrics": {
+        "tokens": 912794,
+        "loc": 57932,
+        "decls": 4568,
+        "files": 321,
+        "bytes": 3375864,
+        "build_seconds": null
+      },
+      "delta": -204,
       "gates": [
         {
           "key": "format",
@@ -554,39 +568,52 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pending",
+          "detail": "Verified only together with changes queued ahead of it"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Verified only together with changes queued ahead of it"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Verified only together with changes queued ahead of it"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Verified only together with changes queued ahead of it"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Verified only together with changes queued ahead of it"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Verified only together with changes queued ahead of it"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Verified only together with changes queued ahead of it"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -597,7 +624,7 @@
       ],
       "idea": 57,
       "url": "https://github.com/kongeskog/formal-math/pull/64",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45478040581",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
@@ -715,8 +742,8 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
-      "tokens": 9214,
-      "loc": 674
+      "tokens": 9067,
+      "loc": 664
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
