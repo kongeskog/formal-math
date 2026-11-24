@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T01:04:37.778102118Z",
+  "updated_at": "2026-11-24T01:05:28.660180758Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 1,
     "rejected": 2,
-    "open": 5,
+    "open": 6,
     "contributors": 1,
     "ideas_open": 8
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 1,
-      "attempts": 8,
+      "attempts": 9,
       "saved": 329
     }
   ],
@@ -618,6 +618,74 @@
       "reason": null,
       "technique": "merge",
       "scope": "Nc/Tow"
+    },
+    {
+      "pr": 22,
+      "title": "merge(Nc): delete two copies of NS1.size_num",
+      "author": "kongeskog",
+      "head_sha": "0207b59ff042eadf767eef35a64c2b42ea6ba23e",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T01:04:48Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 10,
+      "url": "https://github.com/kongeskog/formal-math/pull/22",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "Nc"
     }
   ],
   "top_files": [
