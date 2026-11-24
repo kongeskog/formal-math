@@ -43,14 +43,6 @@ def lT (cb : Option Γ → Fin c → Bool) (a : Γ) : Tree := ofBits (List.ofFn 
 /-- The instances. -/
 noncomputable def instTm (g : Fin mm) : Tm := .cons (.c gp) (scriptTm C tab tg bT bub gt d1 g)
 
-/-- Steps 1 to 8. -/
-noncomputable def steps18 : List DStep :=
-  steps1 C qn i e ++ (steps2 C ++ (steps3 C hU0 ++ (steps4 C hU1 ++ ((steps5 C ++ (steps6 C tab ++ steps7 C tab)) ++
-    steps8 C))))
-
-theorem allSteps_eq : allSteps C tab qn hU0 hU1 i e = steps18 C tab qn i e hU0 hU1 ++ steps9 C := by
-  simp only [allSteps, steps18, List.append_assoc]
-
 /-- The dealing program. -/
 noncomputable def dealProg : Fm :=
   dealF (lT cb b0) (lT cb b1) ((List.finRange K).map fun κ => C.nm (.part κ)) nl nub (steps18 C tab qn i e hU0 hU1)
