@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:07:26.551505131Z",
+  "updated_at": "2026-11-24T20:10:23.970881903Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 7,
     "contributors": 1,
-    "ideas_open": 1
+    "ideas_open": 0
   },
   "leaderboard": [
     {
@@ -118,10 +118,10 @@
     {
       "number": 55,
       "title": "Idea: shorten(*): apply the iff lemma in obtain instead of rewriting the hypothesis first",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:09:54Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:43:03Z",
@@ -931,8 +931,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 57,
