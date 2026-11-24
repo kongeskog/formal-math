@@ -126,6 +126,7 @@ theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {
     refine congrArg List.sum (List.map_congr_left fun q hq => ?_)
     rw [(hze q hq).2.2.1, hP.evl]
 
+-- `KV` unfolds to the statement of `stepA_ev` with `P := (· ∈ S)`.
 theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {lg : List (Run A)} {Q : List (Bt × R)} {ω : Tree → R}
     (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q)
     (hG : ∀ q ∈ Q, Hl θ (Fm.ofTree G) (zq p z q.1) ∧ ∀ r ∈ evl θ (Fm.ofTree G) (zq p z q.1), r.bill = [] ∧

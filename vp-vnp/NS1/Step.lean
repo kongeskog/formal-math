@@ -173,9 +173,12 @@ theorem ZE_ev {fp g : Fm} {p z : Tree} {k cg : ℕ} {P : List Bool → Prop} {lg
 /-- A round: guess budgets with `g`, form the plain instance of `p`, cut it with `G`, apply `F` to (`c`, pieces). -/
 def stepA (F : Fm) (c G p : Tree) (g : Fm) : Fm := app F.code (.cons (.quote c) (app G (ZE (.quote p) g)))
 
-/-- The general round: if every piece `r.out` that `G` cuts from a guessed instance makes `F` stop at `(c, r.out)`
-with cost at most `tF`, names satisfying `P` and value `ω r.out`, then the round `stepA F c G p g` stops with cost at
-most `cg + tG + tF + 20`, names satisfying `P`, and value the weighted sum of `ω` over the pieces. -/
+/-- The general round: if every piece `r.out` that `G` cuts from a guessed instance makes `F`
+stop at `(c, r.out)` with cost at most `tF`, names satisfying `P` and value `ω r.out`, then the
+round `stepA F c G p g` stops with cost at most `cg + tG + tF + 20`, names satisfying `P`, and
+value the weighted sum of `ω` over the pieces. The per-piece hypothesis and the conclusion are the
+predicate `KV` (defined later, in `Nc/Acc/CompK.lean`) for the set `{n | P n}`, written out because
+`KV` is not available yet in this file. -/
 theorem stepA_ev {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {P : List Bool → Prop} {lg : List (Run A)}
     {Q : List (Bt × R)} {ω : Tree → R} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ P cg) lg Q)
     (hG : ∀ q ∈ Q, Hl θ (Fm.ofTree G) (zq p z q.1) ∧ ∀ r ∈ evl θ (Fm.ofTree G) (zq p z q.1), r.bill = [] ∧
@@ -242,6 +245,8 @@ theorem stepA_ev {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {P : List Bool →
 def stepF (D G p : Tree) (g : Fm) : Fm :=
   app (LP D).code (.cons (.quote (LP D).code) (app G (ZE (.quote p) g)))
 
+-- `stepF D G p g` is by definition `stepA (LP D) (LP D).code G p g`,
+-- so this is `stepA_ev` with `F := LP D`.
 theorem stepF_ev {D G p z : Tree} {g : Fm} {cg tG tD Ln : ℕ} {P : List Bool → Prop} {lg : List (Run A)}
     {Q : List (Bt × R)} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ P cg) lg Q)
     (hG : ∀ q ∈ Q, Hl θ (Fm.ofTree G) (zq p z q.1) ∧ ∀ r ∈ evl θ (Fm.ofTree G) (zq p z q.1), r.bill = [] ∧
