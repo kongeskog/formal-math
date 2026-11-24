@@ -181,10 +181,9 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
       ∀ u : List Γ, u.length + 1 ≤ N →
         eval (fun b => if code1 N u b then (1 : F) else 0) (clauseSum lits wt) = runVal mu i e t fun _ => u := by
   classical
-  obtain ⟨B, hBdef⟩ : ∃ B, B = t + N + Fintype.card Q + Fintype.card S + Fintype.card Γ + 2 := ⟨_, rfl⟩
-  rw [← hBdef]
+  generalize hBdef : t + N + Fintype.card Q + Fintype.card S + Fintype.card Γ + 2 = B
   have hB : 1 ≤ B := by omega
-  obtain ⟨M, hMdef⟩ : ∃ M, M = N + t + 1 := ⟨_, rfl⟩
+  generalize hMdef : N + t + 1 = M
   let φ : Fin 1 ≃ Unit := Equiv.ofUnique (Fin 1) Unit
   let mu' : Letter S (Fin 1) Γ → Matrix Q Q F := fun a => mu (letterEquiv S Γ φ a)
   have cE := card_RE_le (Γ := Γ) (S := S) (Q := Q) (n := 1) (t := t) (M := M) (B := B) (by omega) (by omega)
@@ -216,9 +215,9 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
     | .inr (.inr (.inr _)) => ⟨(none : Option Γ)⟩
   have hle : ∀ d, Fintype.card (RE Γ S Q 1 t M d) ≤ Fintype.card (Σ d, RE Γ S Q 1 t M d) := fun d =>
     Fintype.card_le_of_injective (Sigma.mk d) sigma_mk_injective
-  obtain ⟨f, hf⟩ : ∃ f, f = fdSum L W := ⟨_, rfl⟩
+  generalize hf : fdSum L W = f
   have hphi : clauseSum (withInputs (fdLits L)) (inputWeights (fdWt W)) = mlExtC 0 f := by
-    rw [clauseSum_inputs, hf, show fdSum L W = wideSum (fdLits L) (fdWt W) from funext fun x => fdSum_eq L W x]
+    rw [clauseSum_inputs, ← hf, show fdSum L W = wideSum (fdLits L) (fdWt W) from funext fun x => fdSum_eq L W x]
   refine ⟨_, _, inferInstance, inferInstance, inferInstance, inferInstance, withInputs (fdLits L), inputWeights (fdWt W),
     ?_, ?_, ?_, ?_, ?_, ?_⟩
   · rintro ((((r | r) | r) | d | ⟨p, q⟩) | b)
@@ -271,7 +270,7 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
     exact literal_bound hB (by omega) cE cS cH cD cV cI hIE
   · rw [hphi]
     refine totalDegree_mnExt f fun b hb => ?_
-    rw [hf, fdSum_valid] at hb
+    rw [← hf, fdSum_valid] at hb
     by_cases hx : VOk b
     · exact card_ones_le hx
     · rw [if_neg hx] at hb
@@ -280,7 +279,7 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
     have hv : ∀ b, f b = if VOk b then fdSum (rLits (Γ := Γ) (S := S) (n := 1) (t := t) (M := M) (N := N) i e)
         (rWt mu') b else 0 := by
       intro b
-      rw [hf, fdSum_valid]
+      rw [← hf, fdSum_valid]
     rw [hphi]
     have hcode : code N (fun _ : Fin 1 => u) = code1 N u := by
       funext b

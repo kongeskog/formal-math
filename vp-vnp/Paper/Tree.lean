@@ -817,15 +817,14 @@ theorem tree_nums {c M N X J m : ℕ} (hc : 1 ≤ c) (hM : 2 ≤ M) (hN : 1 ≤ 
     c ≤ ((c + 3) * M) ^ 9 ∧ m ≤ ((c + 3) * M) ^ 9 ∧ X ≤ ((c + 3) * M) ^ 9 ∧ M ≤ ((c + 3) * M) ^ 9 ∧
       ((c + 3) * M) ^ 9 ≤ ((c + 3) * (M * N)) ^ 30 ∧ N ≤ ((c + 3) * (M * N)) ^ 30 ∧
       capB c m X N N * (c + c) + 1 ≤ ((c + 3) * (M * N)) ^ 30 := by
-  obtain ⟨G, hG⟩ : ∃ G, G = (c + 3) * (M * N) := ⟨_, rfl⟩
-  obtain ⟨G0, hG0⟩ : ∃ G0, G0 = (c + 3) * M := ⟨_, rfl⟩
-  rw [← hG, ← hG0]
-  have hG0G : G0 ≤ G := by rw [hG0, hG]; exact Nat.mul_le_mul_left _ (Nat.le_mul_of_pos_right _ hN)
-  have hXG : X ≤ G0 := by rw [hG0]; exact hX.trans (Nat.mul_le_mul_right _ (by omega))
-  have hcG : c + 3 ≤ G0 := by rw [hG0]; exact Nat.le_mul_of_pos_right _ (by omega)
-  have hMG : M ≤ G0 := by rw [hG0]; exact Nat.le_mul_of_pos_left _ (by omega)
+  generalize hG : (c + 3) * (M * N) = G
+  generalize hG0 : (c + 3) * M = G0
+  have hG0G : G0 ≤ G := by rw [← hG0, ← hG]; exact Nat.mul_le_mul_left _ (Nat.le_mul_of_pos_right _ hN)
+  have hXG : X ≤ G0 := by rw [← hG0]; exact hX.trans (Nat.mul_le_mul_right _ (by omega))
+  have hcG : c + 3 ≤ G0 := by rw [← hG0]; exact Nat.le_mul_of_pos_right _ (by omega)
+  have hMG : M ≤ G0 := by rw [← hG0]; exact Nat.le_mul_of_pos_left _ (by omega)
   have hNG : N ≤ G := by
-    rw [hG]
+    rw [← hG]
     exact (Nat.le_mul_of_pos_left _ (by omega : 0 < M)).trans (Nat.le_mul_of_pos_left _ (by omega))
   have q : ∀ a a', a ≤ a' → G0 ^ a ≤ G0 ^ a' := fun a a' ha => Nat.pow_le_pow_right (by omega) ha
   have p : ∀ a a', a ≤ a' → G ^ a ≤ G ^ a' := fun a a' ha => Nat.pow_le_pow_right (by omega) ha
@@ -1156,8 +1155,7 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
     hH.b_pos (by omega : 1 ≤ V) hh hr hm (show J ≤ V by omega) hAA hX hdd hbV hS hN hU1
   have n7 := card_Tg_le (T := T) (m := m) (AA := AA) hD hH.b_pos (by omega : 1 ≤ V) hh hr hm (show J ≤ V by omega) hAA hX
     hfl
-  obtain ⟨Y, hY⟩ : ∃ Y, Y = 20 * V ^ 9 := ⟨_, rfl⟩
-  rw [← hY]
+  generalize hY : 20 * V ^ 9 = Y
   have pw : ∀ a, a ≤ 9 → V ^ a ≤ V ^ 9 := fun a ha => Nat.pow_le_pow_right (by omega) ha
   have p2 := pw 2 (by omega)
   have p5 := pw 5 (by omega)
@@ -1415,10 +1413,8 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
   have hkap := kapB_tree (N := N) hX2 hm hdep
   obtain ⟨U1, hU1⟩ : ∃ U1, U1 = capB c m (Fintype.card (T.X 0)) N N * (c + c) + 1 := ⟨_, rfl⟩
   rw [← hU1] at a7
-  obtain ⟨W, hW⟩ : ∃ W, W = ((c + 3) * M) ^ 9 := ⟨_, rfl⟩
-  obtain ⟨V, hV⟩ : ∃ V, V = ((c + 3) * (M * N)) ^ 30 := ⟨_, rfl⟩
-  rw [← hW] at a1 a2 a3 a4 a5
-  rw [← hV] at a5 a6 a7
+  generalize hW : ((c + 3) * M) ^ 9 = W at a1 a2 a3 a4 a5
+  generalize hV : ((c + 3) * (M * N)) ^ 30 = V at a5 a6 a7
   have hcV : c ≤ V := a1.trans a5
   have hMN : 2 ≤ M * N := le_trans hM (Nat.le_mul_of_pos_right _ hN)
   -- loads
@@ -1518,7 +1514,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       (show J ≤ W by omega) (show AA ≤ W by omega) a3 (hC.di_le.trans a1) (hC.b_le.trans a1)
       (fun d => (hC.sl_le d).trans a1) (Nat.zero_le _) (Nat.zero_le _)
     refine (card_image_le.trans (le_of_eq card_univ)).trans (n1'.trans ?_)
-    rw [hW, ← pow_mul]
+    rw [← hW, ← pow_mul]
     calc 17 * ((c + 3) * M) ^ (9 * 6) ≤ ((c + 3) * M) ^ 3 * ((c + 3) * M) ^ (9 * 6) := by
           refine Nat.mul_le_mul_right _ ?_
           have := Nat.pow_le_pow_left (le_trans (Nat.le_add_left 3 c) (Nat.le_mul_of_pos_right (c + 3) (show 0 < M by omega))) 3
@@ -1586,10 +1582,9 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       const_pow_le hMN ((Nat.mul_le_mul_left _ he).trans (by omega))
     have hG3 : 3 ≤ (c + 3) * (M * N) :=
       le_trans (Nat.le_add_left 3 c) (Nat.le_mul_of_pos_right (c + 3) (show 0 < M * N by omega))
-    obtain ⟨G, hG⟩ : ∃ G, G = (c + 3) * (M * N) := ⟨_, rfl⟩
-    rw [← hG] at hV hpow hG3
+    generalize hG : (c + 3) * (M * N) = G at hV hpow hG3
     have hYG : 20 * V ^ 9 ≤ G ^ 273 := by
-      rw [hV, ← pow_mul]
+      rw [← hV, ← pow_mul]
       calc 20 * G ^ (30 * 9) ≤ G ^ 3 * G ^ (30 * 9) := Nat.mul_le_mul_right _ (by
             have := Nat.pow_le_pow_left hG3 3; omega)
         _ = G ^ 273 := by rw [← pow_add]

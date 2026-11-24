@@ -62,7 +62,7 @@ theorem quasi_of_exponents {P : ℕ → ℕ → Prop} (hmono : ∀ M s t, s ≤ 
       calc Real.log L ≤ _ := h1
         _ = _ := by field_simp
     rwa [le_div_iff₀ (by positivity), mul_comm] at this
-  obtain ⟨a, ha⟩ : ∃ a, a = ⌈1 / (4 * ((C : ℝ) + 1)) * L / l⌉₊ := ⟨_, rfl⟩
+  generalize ha : ⌈1 / (4 * ((C : ℝ) + 1)) * L / l⌉₊ = a
   have ha1 : (a : ℝ) ≤ 1 / (4 * ((C : ℝ) + 1)) * L / l + 1 := ha ▸ (Nat.ceil_lt_add_one (by positivity)).le
   have hmR : (0 : ℝ) < m := by exact_mod_cast (by omega : 0 < m)
   have hlgR : (0 : ℝ) < lg m := by exact_mod_cast Nat.succ_pos _

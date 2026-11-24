@@ -73,10 +73,9 @@ theorem thm_laws_poincare {K : Type} [Field K] (hK : Contracting K) :
     rw [sum_NN (fun j k => w k (x (l * u) j * k) ^ 2) (fun j k => by
       rw [← mul_assoc, x_mul_self, one_mul, hw.symm]), two_mul]
   rw [h2, ← Finset.sum_div, h3] at h1
-  obtain ⟨P, hP'⟩ : ∃ P : ℝ, P = ∑ ν : NN (l * u), w (cNear ν) (dNear ν) ^ 2 := ⟨_, rfl⟩
-  obtain ⟨Q, hQ⟩ : ∃ Q : ℝ, Q = ∑ p, ∑ q, w p q ^ 2 := ⟨_, rfl⟩
-  rw [← hP', ← hQ] at h1 ⊢
-  have hP0 : 0 ≤ P := by rw [hP']; exact sum_nonneg fun _ _ => sq_nonneg _
+  generalize hP' : ∑ ν : NN (l * u), w (cNear ν) (dNear ν) ^ 2 = P at h1
+  generalize hQ : ∑ p, ∑ q, w p q ^ 2 = Q at h1
+  have hP0 : 0 ≤ P := by rw [← hP']; exact sum_nonneg fun _ _ => sq_nonneg _
   rw [div_le_iff₀ (by positivity : (0 : ℝ) < b ^ 2)] at h1
   rw [div_le_iff₀ (mul_pos (by linarith) (by linarith))]
   have e1 : C * (2 * P / b) * b ^ 2 = C * b * (2 * P) := by field_simp

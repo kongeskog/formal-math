@@ -339,7 +339,7 @@ theorem rate_of_projection (κ : ℕ) : ∃ m₀ : ℕ, ∀ P : ℕ → ℕ → 
       (2 : ℝ) ^ ((ℓ : ℝ) * (k : ℝ) ^ (3 / 2 : ℝ) / 16) ≤ ((5 * s : ℕ) : ℝ)) →
     ∀ m ≥ m₀, ∀ s, P m s → (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
   refine ⟨2 ^ (200 * (κ + 3) ^ 3), fun P hP m hm s hs => ?_⟩
-  obtain ⟨B, hB⟩ : ∃ B, B = Nat.log 2 m := ⟨_, rfl⟩
+  generalize hB : Nat.log 2 m = B
   have hm0 : m ≠ 0 := by
     have : 1 ≤ 2 ^ (200 * (κ + 3) ^ 3) := Nat.one_le_two_pow
     omega
@@ -504,7 +504,7 @@ theorem cor_classes : VP ℝ ⊂ VNP ℝ := by
   refine ⟨vp_subset_vnp ℝ, fun h => ?_⟩
   obtain ⟨C, hC⟩ := h (perm_mem_VNP ℝ)
   obtain ⟨m₀, hlow⟩ := thm_simple (C + 1)
-  obtain ⟨m, hm⟩ : ∃ m, m = m₀ + C + 2 := ⟨_, rfl⟩
+  generalize hm : m₀ + C + 2 = m
   refine hlow m (by omega) (m ^ C + C) ?_ ?_
   · have h1 : 1 ≤ m ^ C := Nat.one_le_pow _ _ (by omega)
     calc m ^ C + C ≤ m ^ C + m ^ C * C := Nat.add_le_add_left (Nat.le_mul_of_pos_left _ h1) _
