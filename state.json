@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:41:24.615790617Z",
+  "updated_at": "2026-11-24T00:44:58.759651637Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,8 +60,8 @@
     }
   },
   "current": {
-    "sha": "0306226eb17117634aec95ee4fee8fcce8f34da8",
-    "at": "2026-11-24T00:40:51.198720312Z",
+    "sha": "e08456bafe4f897c151094e90932463abf0e9b08",
+    "at": "2026-11-24T00:44:58.759651637Z",
     "metrics": {
       "tokens": 928161,
       "loc": 58797,
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 0,
     "rejected": 2,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
-    "ideas_open": 3
+    "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 0,
-      "attempts": 3,
+      "attempts": 4,
       "saved": 0
     }
   ],
@@ -90,11 +90,11 @@
     {
       "number": 8,
       "title": "Idea: merge(Nc,NS1): remove the remaining exact duplicate declarations",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
+      "claimed_by": "kongeskog",
       "lease_expires": null,
-      "pr": null,
+      "pr": 9,
       "result_delta": null,
       "created_at": "2026-11-24T00:40:26Z",
       "url": "https://github.com/kongeskog/formal-math/issues/8",
@@ -212,6 +212,74 @@
       "reason": null,
       "technique": "merge",
       "scope": "Nc/Dl/Facts"
+    },
+    {
+      "pr": 9,
+      "title": "merge(Nc/Dl/SizeDeal): reuse the size lemmas duplicated from Nc/Acc/Main",
+      "author": "kongeskog",
+      "head_sha": "a0c2a6c05d43c67008acb8f031215a4f3d9906dd",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T00:44:26Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 8,
+      "url": "https://github.com/kongeskog/formal-math/pull/9",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "Nc/Dl/SizeDeal"
     }
   ],
   "top_files": [
