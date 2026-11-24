@@ -64,9 +64,8 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
   obtain ⟨o, a', rfl, hl, rfl, rfl⟩ := inv_run hF
   have hC := Cc_ge (supp := supp)
   rw [tot_seq3]
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 6 := by rw [hm1]; congr 1; exact Fin.ext hl
-  refine dstep ok1 hm1' h11 .d6 rfl (by decide) rfl rfl ?_
+  refine toOp (c := 6) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+  refine dstep ok1 hm1 h11 .d6 rfl (by decide) rfl rfl ?_
   have ok2 := ok1.nx (θ := θ) (.inl .d6) 0 0 0
   obtain ⟨p, q, s, hrec, hp, hq⟩ := (h12.mono (heap_nx (θ := θ) σ1 (.inl .d6) 0 0 0)).load ok2
   generalize decide (a' ≠ .nil) = bt at hrec
@@ -143,15 +142,14 @@ theorem EvOK.guess (x : Tree) : EvOK θ supp .guess x [.det 1 .nil, .det 1 Tree.
     rw [this] at hB1
     linarith
   obtain ⟨o, a, rfl, hl⟩ := inv_guess hF
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 7 := by rw [hm1]; congr 1; exact Fin.ext hl
+  refine toOp (c := 7) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
   have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
-    rw [hm1']
+    rw [hm1]
     change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
     rw [h11]
     exact ok1.nil
   have hz : σ1.mode ≠ (UM θ supp).mh := by
-    rw [hm1']
+    rw [hm1]
     change Md.D 7 ≠ .Z
     simp
   have g0 := hk0 (nx θ σ1 (.inl (.d7 false)) 0 0 0) 0 (ok1.nx _ _ _ _) rfl ok1.r0 h14
@@ -162,7 +160,7 @@ theorem EvOK.guess (x : Tree) : EvOK θ supp .guess x [.det 1 .nil, .det 1 Tree.
   have hfire : ∀ st' : (UM θ supp).Step, Mach.Fire σ1 st' ↔ st' = (.inl (.d7 false), envOf σ1 0 0 0) ∨
       st' = (.inl (.d7 true), envOf σ1 0 0 0) := by
     intro st'
-    rw [fire_iff ok1 hrec, hm1']
+    rw [fire_iff ok1 hrec, hm1]
     constructor
     · rintro ⟨h1, h2, -, h4⟩
       have h5 : ∃ b, st'.1 = .inl (.d7 b) := by
@@ -199,18 +197,17 @@ theorem EvOK.mul {a : Fm} {x : Tree} {l : List (Run A)} :
     simp
   rw [ht]
   obtain ⟨o, a', rfl, hl⟩ := inv_mul hF
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 10 := by rw [hm1]; congr 1; exact Fin.ext hl
+  refine toOp (c := 10) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
   have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
-    rw [hm1']
+    rw [hm1]
     change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
     rw [h11]
     exact ok1.nil
-  exact sumTo_stuck ok1 hrec (by rw [hm1']; rfl) (by rw [hm1']; simp) (by
-      rw [hm1']
+  exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
+      rw [hm1]
       rintro ⟨h, -⟩
       injection h with h
-      exact absurd h (by decide)) (by rw [hm1']; simp) _
+      exact absurd h (by decide)) (by rw [hm1]; simp) _
 
 theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l) :
     EvOK θ supp (.theta a) x (l.map fun r => ⟨r.cost + 1, r.th * θ r.out.path, r.bill, .nil⟩) := by
@@ -230,9 +227,8 @@ theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l
     · rfl
   change Mach.SumTo (UM θ supp) σ (tot m (l.map f)) B
   rw [ht]
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 9 := by rw [hm1]; congr 1; exact Fin.ext hl
-  refine dstep ok1 hm1' h11 .d9 rfl (by decide) rfl rfl ?_
+  refine toOp (c := 9) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+  refine dstep ok1 hm1 h11 .d9 rfl (by decide) rfl rfl ?_
   have hh2 : σ.heap ⊆ (nx θ σ1 (.inl .d9) 0 0 0).heap := fun _ hc => heap_nx σ1 _ _ _ _ (hh1 hc)
   refine ih (nx θ σ1 (.inl .d9) 0 0 0) ⟨ok1.nx _ _ _ _, rfl, ⟨a', h12.mono (heap_nx σ1 _ _ _ _), rfl⟩, ?_⟩ _
     (fun r => Bd (f r) + 2 + 2 * (Lm supp : ℤ)) _ ?_
