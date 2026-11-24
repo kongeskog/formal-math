@@ -29,11 +29,16 @@ namespace Plan
 
 variable {P : Plan M U0 U1} {n : Fin A → Fin A → Fin (U0 + 1)} {o o' : M.N → Fin U1}
 
-theorem mem_seenAt {x : ℕ} {id : Uid A U0 M.N U1} : id ∈ seenAt n o x ↔
+section
+
+-- A step count `x` and a unit `id`.
+variable {x : ℕ} {id : Uid A U0 M.N U1}
+
+theorem mem_seenAt : id ∈ seenAt n o x ↔
     id ∈ seen0 n ∨ ∃ x' : Fin E, x'.1 < x ∧ id ∈ newUnits M x' o := by
   simp [seenAt]
 
-theorem new_mem_seenAt {x : ℕ} {ν : M.N} {k : Fin U1} :
+theorem new_mem_seenAt {ν : M.N} {k : Fin U1} :
     (Uid.new ν k : Uid A U0 M.N U1) ∈ seenAt n o x ↔ ν.1.1 < x ∧ k ≤ o ν := by
   rw [mem_seenAt]
   constructor
@@ -44,7 +49,7 @@ theorem new_mem_seenAt {x : ℕ} {ν : M.N} {k : Fin U1} :
   · rintro ⟨h1, h2⟩
     exact Or.inr ⟨ν.1, h1, new_mem_newUnits.2 ⟨rfl, h2⟩⟩
 
-theorem init_mem_seenAt {x : ℕ} {a b : Fin A} {k : Fin U0} :
+theorem init_mem_seenAt {a b : Fin A} {k : Fin U0} :
     (Uid.init a b k : Uid A U0 M.N U1) ∈ seenAt n o x ↔ k.1 < (n a b).1 := by
   rw [mem_seenAt, init_mem_seen0]
   refine or_iff_left ?_
@@ -52,7 +57,7 @@ theorem init_mem_seenAt {x : ℕ} {a b : Fin A} {k : Fin U0} :
   exact init_not_mem_newUnits h
 
 /-- The units seen in the end. -/
-theorem mem_seenAt_end {id : Uid A U0 M.N U1} : id ∈ seenAt n o E ↔ unum id < ucnt n o id := by
+theorem mem_seenAt_end : id ∈ seenAt n o E ↔ unum id < ucnt n o id := by
   cases id with
   | init a b k => exact init_mem_seenAt
   | new ν k =>
@@ -60,17 +65,19 @@ theorem mem_seenAt_end {id : Uid A U0 M.N U1} : id ∈ seenAt n o E ↔ unum id 
     simp only [unum, ucnt, Nat.lt_succ_iff, ν.1.2, true_and]
     exact Iff.rfl
 
-theorem mem_used {x : ℕ} {id : Uid A U0 M.N U1} : id ∈ P.used n o x ↔ ∃ z : M.Z, z.1.1 < x ∧ id ∈ P.cons n o z := by
+theorem mem_used : id ∈ P.used n o x ↔ ∃ z : M.Z, z.1.1 < x ∧ id ∈ P.cons n o z := by
   simp [used]
 
-theorem mem_cur {x : ℕ} {id : Uid A U0 M.N U1} : id ∈ P.cur n o x ↔ id ∈ seenAt n o x ∧
+theorem mem_cur : id ∈ P.cur n o x ↔ id ∈ seenAt n o x ∧
     ∀ z : M.Z, z.1.1 < x → id ∉ P.cons n o z := by
   rw [cur, Finset.mem_sdiff, mem_used]
   push Not
   exact Iff.rfl
 
-theorem mem_ids {z : M.Z} {id : Uid A U0 M.N U1} : id ∈ P.ids n o z ↔ id ∈ P.cons n o z := by
+theorem mem_ids {z : M.Z} : id ∈ P.ids n o z ↔ id ∈ P.cons n o z := by
   simp [ids, allIds]
+
+end
 
 theorem length_ids {z : M.Z} : (P.ids n o z).length = (P.cons n o z).card := by
   rw [← List.toFinset_card_of_nodup]
