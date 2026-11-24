@@ -349,12 +349,6 @@ theorem cost_base {T Lc X : ℕ} (hx : ∀ κ, (x κ).length ≤ T) (hk : ∀ c,
   · rw [List.length_cons, List.length_map]
     omega
 
-theorem sum_flatMap_map {α β : Type*} (l : List α) (f : α → List β) (c : β → ℕ) :
-    ((l.flatMap f).map c).sum = (l.map fun a => ((f a).map c).sum).sum := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => rw [List.flatMap_cons, List.map_append, List.sum_append, ih, List.map_cons, List.sum_cons]
-
 theorem length_roleList_le : (roleList grp g M).length ≤ Fintype.card M.R := by
   have hnd : (roleList grp g M).Nodup := pairwise_roleList.imp fun h => h.1
   rw [← List.toFinset_card_of_nodup hnd]
