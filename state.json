@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T01:26:40.009893376Z",
+  "updated_at": "2026-11-24T01:37:19.585023338Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "2d99b1b89d8c526506ae504a97e7af82115975e0",
-    "at": "2026-11-24T01:18:39.554022920Z",
+    "sha": "86712eeefebffeb7ba53eb78a402889580d51330",
+    "at": "2026-11-24T01:37:19.585023338Z",
     "metrics": {
-      "tokens": 927543,
-      "loc": 58756,
-      "decls": 4598,
+      "tokens": 927240,
+      "loc": 58723,
+      "decls": 4596,
       "files": 321,
-      "bytes": 3418565,
-      "build_seconds": 165
+      "bytes": 3416563,
+      "build_seconds": 546
     }
   },
   "counts": {
-    "merged": 2,
+    "merged": 4,
     "rejected": 2,
-    "open": 6,
+    "open": 4,
     "contributors": 1,
     "ideas_open": 8
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 2,
+      "merged": 4,
       "attempts": 10,
-      "saved": 618
+      "saved": 921
     }
   ],
   "ideas": [
@@ -206,8 +206,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": null,
-      "pr": 9,
-      "result_delta": -289,
+      "pr": 18,
+      "result_delta": -138,
       "created_at": "2026-11-24T00:40:26Z",
       "url": "https://github.com/kongeskog/formal-math/issues/8",
       "technique": "merge",
@@ -216,12 +216,12 @@
     {
       "number": 6,
       "title": "Idea: shorten(*): remove simp arguments and tactics the linter reports as unused",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T03:40:59Z",
       "pr": 19,
-      "result_delta": null,
+      "result_delta": -165,
       "created_at": "2026-11-24T00:32:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/6",
       "technique": "shorten",
@@ -257,186 +257,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 18,
-      "title": "merge(Nc/LowDegree): reuse line and eval_one_line from Nc/Acc/Line",
-      "author": "kongeskog",
-      "head_sha": "48feea067f50a8c77501a3c9d9256f55cce1bca5",
-      "base_sha": "e08456bafe4f897c151094e90932463abf0e9b08",
-      "status": "stale",
-      "created_at": "2026-11-24T00:51:39Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 928023,
-        "loc": 58786,
-        "decls": 4608,
-        "files": 321,
-        "bytes": 3420524,
-        "build_seconds": 609
-      },
-      "base_metrics": {
-        "tokens": 928161,
-        "loc": 58797,
-        "decls": 4610,
-        "files": 321,
-        "bytes": 3421123,
-        "build_seconds": null
-      },
-      "delta": -138,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "3 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 928161 → 928023 (-138)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 8,
-      "url": "https://github.com/kongeskog/formal-math/pull/18",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45300564207",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "Nc/LowDegree"
-    },
-    {
-      "pr": 19,
-      "title": "shorten(*): remove simp arguments and tactics the linter reports as unused",
-      "author": "kongeskog",
-      "head_sha": "49fcfea60003c8dd6e95be233a63636caf638565",
-      "base_sha": "e08456bafe4f897c151094e90932463abf0e9b08",
-      "status": "stale",
-      "created_at": "2026-11-24T00:51:41Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 927996,
-        "loc": 58775,
-        "decls": 4610,
-        "files": 321,
-        "bytes": 3419720,
-        "build_seconds": 691
-      },
-      "base_metrics": {
-        "tokens": 928161,
-        "loc": 58797,
-        "decls": 4610,
-        "files": 321,
-        "bytes": 3421123,
-        "build_seconds": null
-      },
-      "delta": -165,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "33 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 928161 → 927996 (-165)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 2 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 6,
-      "url": "https://github.com/kongeskog/formal-math/pull/19",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45300569299",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "*"
-    },
     {
       "pr": 20,
       "title": "merge(*): prove the twin ht and nds lemmas for dec, decAll and budg by one induction each",
