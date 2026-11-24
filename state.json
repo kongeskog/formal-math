@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T22:00:53.948264476Z",
+  "updated_at": "2026-11-24T22:01:51.318804125Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,8 +60,8 @@
     }
   },
   "current": {
-    "sha": "6bf12465410186b9bbfc5acace755bfefab0b40b",
-    "at": "2026-11-24T22:00:53.948264476Z",
+    "sha": "55ab962dc38e63837befd7548704fa59d4deda07",
+    "at": "2026-11-24T22:01:51.318804125Z",
     "metrics": {
       "tokens": 901745,
       "loc": 57242,
@@ -664,7 +664,7 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
-      "tokens": 9040,
+      "tokens": 9010,
       "loc": 655
     },
     {
@@ -718,11 +718,6 @@
       "loc": 367
     },
     {
-      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
-      "tokens": 6986,
-      "loc": 399
-    },
-    {
       "path": "vp-vnp/Paper/Toolkit.lean",
       "tokens": 6984,
       "loc": 393
@@ -733,13 +728,18 @@
       "loc": 473
     },
     {
+      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
+      "tokens": 6956,
+      "loc": 399
+    },
+    {
       "path": "vp-vnp/Nc/G/Move.lean",
       "tokens": 6856,
       "loc": 415
     },
     {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
-      "tokens": 6664,
+      "tokens": 6564,
       "loc": 398
     },
     {
