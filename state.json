@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:21:11.356034182Z",
+  "updated_at": "2026-11-24T21:24:59.144593874Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "18228892a6b12bd24ea12dcd6f331ad490e4eeff",
-    "at": "2026-11-24T21:15:21.008332048Z",
+    "sha": "c7843877a2527c6b5b1844490498846a95f74e1f",
+    "at": "2026-11-24T21:24:59.144593874Z",
     "metrics": {
-      "tokens": 908534,
-      "loc": 57614,
-      "decls": 4556,
+      "tokens": 905569,
+      "loc": 57360,
+      "decls": 4561,
       "files": 321,
-      "bytes": 3363845,
-      "build_seconds": 520
+      "bytes": 3353416,
+      "build_seconds": 567
     }
   },
   "counts": {
-    "merged": 40,
+    "merged": 43,
     "rejected": 2,
-    "open": 4,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 40,
-      "attempts": 46,
-      "saved": 19627
+      "merged": 43,
+      "attempts": 48,
+      "saved": 22592
     }
   ],
   "ideas": [
@@ -94,7 +94,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:20:40Z",
-      "pr": null,
+      "pr": 87,
       "result_delta": null,
       "created_at": "2026-11-24T21:15:47Z",
       "url": "https://github.com/kongeskog/formal-math/issues/85",
@@ -108,7 +108,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:20:31Z",
-      "pr": null,
+      "pr": 86,
       "result_delta": null,
       "created_at": "2026-11-24T21:09:56Z",
       "url": "https://github.com/kongeskog/formal-math/issues/84",
@@ -165,7 +165,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:58:19Z",
       "pr": 81,
-      "result_delta": null,
+      "result_delta": -356,
       "created_at": "2026-11-24T20:38:18Z",
       "url": "https://github.com/kongeskog/formal-math/issues/72",
       "technique": "restructure",
@@ -179,7 +179,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:55:57Z",
       "pr": 82,
-      "result_delta": null,
+      "result_delta": -700,
       "created_at": "2026-11-24T20:38:17Z",
       "url": "https://github.com/kongeskog/formal-math/issues/71",
       "technique": "shorten",
@@ -235,7 +235,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:51:34Z",
       "pr": 80,
-      "result_delta": null,
+      "result_delta": -1909,
       "created_at": "2026-11-24T20:38:10Z",
       "url": "https://github.com/kongeskog/formal-math/issues/67",
       "technique": "restructure",
@@ -622,276 +622,6 @@
   ],
   "open": [
     {
-      "pr": 80,
-      "title": "restructure(*): state the runs of a Gives once; one lemma for twin combinators of Does and KV",
-      "author": "kongeskog",
-      "head_sha": "cc17c0372ad0b804b4f4f433efbe18f2044f4fd4",
-      "base_sha": "3521edf06127364d9821c86151f35595b0241141",
-      "status": "stale",
-      "created_at": "2026-11-24T20:56:36Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 910507,
-        "loc": 57639,
-        "decls": 4570,
-        "files": 321,
-        "bytes": 3367597,
-        "build_seconds": 699
-      },
-      "base_metrics": {
-        "tokens": 912416,
-        "loc": 57864,
-        "decls": 4565,
-        "files": 321,
-        "bytes": 3374857,
-        "build_seconds": null
-      },
-      "delta": -1909,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "4 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 912416 → 910507 (-1909)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 67,
-      "url": "https://github.com/kongeskog/formal-math/pull/80",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45486000434",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "*"
-    },
-    {
-      "pr": 81,
-      "title": "restructure(Nc/Uni/EvalU): let toOp take the opcode, removing a mode-rewriting line in 11 cases",
-      "author": "kongeskog",
-      "head_sha": "04801c03d49007901dbbdd4c2394767ec1fcb87e",
-      "base_sha": "3521edf06127364d9821c86151f35595b0241141",
-      "status": "stale",
-      "created_at": "2026-11-24T21:00:19Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 912060,
-        "loc": 57853,
-        "decls": 4565,
-        "files": 321,
-        "bytes": 3373746,
-        "build_seconds": 468
-      },
-      "base_metrics": {
-        "tokens": 912416,
-        "loc": 57864,
-        "decls": 4565,
-        "files": 321,
-        "bytes": 3374857,
-        "build_seconds": null
-      },
-      "delta": -356,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "4 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 912416 → 912060 (-356)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 72,
-      "url": "https://github.com/kongeskog/formal-math/pull/81",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45486620930",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/Uni/EvalU"
-    },
-    {
-      "pr": 82,
-      "title": "shorten(Nc): induction using Fin.addCases instead of a restated motive in five proofs",
-      "author": "kongeskog",
-      "head_sha": "8dfcd3da2ac7e51db35a54fff5af04aa1f0140cd",
-      "base_sha": "fe05ddb2d608f0078fd51dfa7dff44b7dca6d0d6",
-      "status": "stale",
-      "created_at": "2026-11-24T21:02:24Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 911313,
-        "loc": 57834,
-        "decls": 4565,
-        "files": 321,
-        "bytes": 3371696,
-        "build_seconds": 330
-      },
-      "base_metrics": {
-        "tokens": 912013,
-        "loc": 57852,
-        "decls": 4565,
-        "files": 321,
-        "bytes": 3373754,
-        "build_seconds": null
-      },
-      "delta": -700,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "5 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 912013 → 911313 (-700)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 71,
-      "url": "https://github.com/kongeskog/formal-math/pull/82",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45486984427",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc"
-    },
-    {
       "pr": 83,
       "title": "restructure(Nc/G,Nc/Sort): state repeated implicit binders once in section variables",
       "author": "kongeskog",
@@ -980,6 +710,142 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Nc/G,Nc/Sort"
+    },
+    {
+      "pr": 86,
+      "title": "shorten(Nc): norm_add_le, linear_combination and Nat.triangle_succ for seven numeric lemmas",
+      "author": "kongeskog",
+      "head_sha": "ca6fb14174607e445cad65bcbf4aa69a993752b9",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T21:24:53Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 84,
+      "url": "https://github.com/kongeskog/formal-math/pull/86",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc"
+    },
+    {
+      "pr": 87,
+      "title": "shorten(Nc): state a repeated step once in four proofs of Nc/Tow and Nc/Grp",
+      "author": "kongeskog",
+      "head_sha": "a6c8351c4e7f169beef9ac6bf43b772e7278bbf7",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T21:24:56Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 85,
+      "url": "https://github.com/kongeskog/formal-math/pull/87",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc"
     }
   ],
   "top_files": [
