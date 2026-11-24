@@ -126,69 +126,13 @@ theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {
     refine congrArg List.sum (List.map_congr_left fun q hq => ?_)
     rw [(hze q hq).2.2.1, hP.evl]
 
-/-- A round: guess budgets with `g`, form the plain instance of `p`, cut it with `G`, apply `F` to (`c`, pieces). -/
-def stepA (F : Fm) (c G p : Tree) (g : Fm) : Fm := app F.code (.cons (.quote c) (app G (ZE (.quote p) g)))
-
 theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {lg : List (Run A)} {Q : List (Bt × R)} {ω : Tree → R}
     (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q)
     (hG : ∀ q ∈ Q, Hl θ (Fm.ofTree G) (zq p z q.1) ∧ ∀ r ∈ evl θ (Fm.ofTree G) (zq p z q.1), r.bill = [] ∧
       r.cost ≤ tG ∧ KV θ κ S F (.cons c r.out) (ω r.out) tF) :
     KV θ κ S (stepA F c G p g) z
-      (Q.map fun q => q.2 * sumF κ (evl θ (Fm.ofTree G) (zq p z q.1)) ω).sum (cg + tG + tF + 20) := by
-  obtain ⟨lZ, eZ, rZ⟩ := ZE_ev (Dt.quote p z) hg rg
-  have hZ : ∀ s ∈ lZ, ∃ q ∈ Q, wt κ s = q.2 ∧ s.out = zq p z q.1 ∧ (∀ n ∈ s.bill, n ∈ S) ∧ s.cost ≤ cg + 1 + 5 :=
-    fun s hs => forall₂_exists rZ hs
-  have eG := Ev.app (p := G) eZ fun s hs => by
-    obtain ⟨q, hq, -, h, -⟩ := hZ s hs
-    rw [h]
-    exact (hG q hq).1
-  set lG := lZ.flatMap fun s => (evl θ (Fm.ofTree G) s.out).map fun t => ((Run.det 1 G).seq s).seq t |>.tick t.out
-    with hlG
-  have hmem : ∀ u ∈ lG, KV θ κ S F (.cons c u.out) (ω u.out) tF ∧ u.cost ≤ cg + tG + 8 ∧ ∀ n ∈ u.bill, n ∈ S := by
-    intro u hu
-    obtain ⟨s, hs, t, ht, h1, h2, h3, -⟩ := mem_app hu
-    obtain ⟨q, hq, -, h4, h5, h6⟩ := hZ s hs
-    rw [h4] at ht
-    obtain ⟨g1, g2, g3⟩ := (hG q hq).2 t ht
-    refine ⟨by rw [h3]; exact g3, by omega, ?_⟩
-    rw [h2, g1, List.append_nil]
-    exact h5
-  have eC := Ev.cons (Dt.quote (θ := θ) c z) eG
-  rw [List.flatMap_cons, List.flatMap_nil, List.append_nil] at eC
-  have eF := Ev.app (p := F.code) eC fun s hs => by
-    rw [List.mem_map] at hs
-    obtain ⟨u, hu, rfl⟩ := hs
-    rw [Fm.ofTree_code]
-    exact (hmem u hu).1.hl
-  refine ⟨_, eF, ?_, ?_⟩
-  · intro r hr
-    obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hr
-    rw [List.mem_map] at hs
-    obtain ⟨u, hu, rfl⟩ := hs
-    rw [Fm.ofTree_code] at ht
-    obtain ⟨m1, m2, m3⟩ := hmem u hu
-    obtain ⟨c1, c2⟩ := m1.evl.1 t ht
-    refine ⟨?_, ?_⟩
-    · simp only [Run.seq, Run.tick, Run.det] at h1
-      omega
-    · intro n hn
-      rw [h2] at hn
-      simp only [Run.seq, Run.tick, Run.det, List.nil_append, List.mem_append] at hn
-      exact hn.elim (m3 n) (c2 n)
-  · rw [val_eq_sumF, sumF_app]
-    have s1 : sumF κ (lG.map fun s => ((Run.det 1 c).seq s).tick (.cons (Run.det 1 c : Run A).out s.out))
-        (fun o => sumF κ (evl θ (Fm.ofTree F.code) o) fun _ => 1) = sumF κ lG ω := by
-      simp only [sumF, List.map_map, Function.comp_def]
-      congr 1
-      refine List.map_congr_left fun u hu => ?_
-      rw [wt_tick, wt_seq, wt_det, one_mul, Fm.ofTree_code]
-      congr 1
-      have e := (hmem u hu).1.evl.2
-      simp only [val_eq_sumF, sumF] at e
-      exact e
-    rw [s1, hlG, sumF_app]
-    exact sum_rel (c := fun q : Bt × R => q.2) (o := fun q : Bt × R => zq p z q.1)
-      (rZ.imp fun r q hr => ⟨hr.1, hr.2.1⟩)
+      (Q.map fun q => q.2 * sumF κ (evl θ (Fm.ofTree G) (zq p z q.1)) ω).sum (cg + tG + tF + 20) :=
+  stepA_ev hg rg hG
 
 end Programs
 
