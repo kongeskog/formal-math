@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:08:32.554791441Z",
+  "updated_at": "2026-11-24T21:09:53.415087443Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 7,
     "contributors": 1,
-    "ideas_open": 2
+    "ideas_open": 3
   },
   "leaderboard": [
     {
@@ -87,6 +87,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 84,
+      "title": "Idea: shorten(Nc): norm_add_le, linear_combination and Nat.triangle_succ for seven numeric lemmas",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T21:09:56Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/84",
+      "technique": "shorten",
+      "scope": "Nc"
+    },
     {
       "number": 76,
       "title": "Idea: shorten(*): delete named arguments that elaborate without being given",
@@ -688,13 +702,27 @@
       "title": "library(Nc): Mathlib lemmas and derived equivalences in place of ten local proofs",
       "author": "kongeskog",
       "head_sha": "9019e6ee3896c1b6038268bb212c1a2be39a3361",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "ac9d236717f7649e9742a66ebaa40450212481d4",
+      "status": "stale",
       "created_at": "2026-11-24T20:50:24Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 911392,
+        "loc": 57762,
+        "decls": 4562,
+        "files": 321,
+        "bytes": 3371228,
+        "build_seconds": 540
+      },
+      "base_metrics": {
+        "tokens": 912452,
+        "loc": 57876,
+        "decls": 4565,
+        "files": 321,
+        "bytes": 3375034,
+        "build_seconds": null
+      },
+      "delta": -1060,
       "gates": [
         {
           "key": "format",
@@ -702,39 +730,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "10 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 912452 → 911392 (-1060)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -745,7 +781,7 @@
       ],
       "idea": 70,
       "url": "https://github.com/kongeskog/formal-math/pull/78",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45485245719",
       "merge_sha": null,
       "reason": null,
       "technique": "library",
