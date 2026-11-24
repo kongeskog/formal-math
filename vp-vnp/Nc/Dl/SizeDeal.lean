@@ -222,6 +222,11 @@ structure SizeHyp (X Lc : ℕ) : Prop where
   hqn : ∀ q, qn q ≤ X
   htg : ∀ r, tg r + 4 ≤ X
 
+theorem length_filter_finRange {n X : ℕ} (hn : n ≤ X) (p : Fin n → Bool) : ((List.finRange n).filter p).length ≤ X := by
+  have := List.length_filter_le p (List.finRange n)
+  rw [List.length_finRange] at this
+  omega
+
 section sizes
 
 variable {C} {qn} {tg} {X Lc : ℕ} (H : SizeHyp C qn tg X Lc)
@@ -324,11 +329,6 @@ theorem size_keysL {α : Type} {l : List α} {f : α → List Bool} (hl : l.leng
   · have : X * (4 * Lc + 1 + 1) = 4 * (X * Lc) + 2 * X := by ring
     omega
 
-theorem length_filter_finRange {n : ℕ} (hn : n ≤ X) (p : Fin n → Bool) : ((List.finRange n).filter p).length ≤ X := by
-  have := List.length_filter_le p (List.finRange n)
-  rw [List.length_finRange] at this
-  omega
-
 /-- Every step is small. -/
 theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤ 120 * (X * Lc) ^ 2 := by
   obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
@@ -380,8 +380,8 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
     · intro b hb
       simp only [o3, List.mem_cons] at hb
       rcases hb with rfl | rfl | rfl | hb
-      · exact size_keysL H (length_filter_finRange H hUX _) fun k => H.key _
-      · refine size_keysL H (length_filter_finRange H hUX _) fun k => ?_
+      · exact size_keysL H (length_filter_finRange hUX _) fun k => H.key _
+      · refine size_keysL H (length_filter_finRange hUX _) fun k => ?_
         split_ifs
         · exact H.dkey _
         · exact H.key _
@@ -393,7 +393,7 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
           subst hb
           simp only [dgT]
           refine (size_listT_le (n := X) (b := 8 * Lc + 9) (by
-            rw [List.length_map]; exact length_filter_finRange H hUX _) ?_).trans ?_
+            rw [List.length_map]; exact length_filter_finRange hUX _) ?_).trans ?_
           · intro t ht
             rw [List.mem_map] at ht
             obtain ⟨k, -, rfl⟩ := ht
@@ -413,8 +413,8 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
     · have := hdt (digO hU1 j)
       simp only
       omega
-    · exact size_keysL H (length_filter_finRange H H.hU1 _) fun k => H.key _
-    · exact size_keysL H (length_filter_finRange H H.hU1 _) fun k => H.key _
+    · exact size_keysL H (length_filter_finRange H.hU1 _) fun k => H.key _
+    · exact size_keysL H (length_filter_finRange H.hU1 _) fun k => H.key _
   · rw [steps5, List.mem_map] at h
     obtain ⟨a, -, rfl⟩ := h
     have hb : ∀ b : Bool, (bit b).size ≤ 4 * Lc + 1 := fun b => (size_bit b).trans (by omega)
