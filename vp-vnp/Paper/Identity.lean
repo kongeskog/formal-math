@@ -127,12 +127,9 @@ theorem eq_orth (y : A) (R i j : ℕ) :
       refine ⟨-(mB y R (j + 1) + y * mB y R j), ?_⟩
       simp only [mB_zero_right, one_mul, (Nat.succ_ne_zero j).symm, if_false, mB_zero] at this ⊢
       rw [Finset.mul_sum]
-      have e : ∑ r ∈ Finset.range R, (1 - y) * (y ^ r * mB y r (j + 1)) =
-          ∑ r ∈ Finset.range R, y ^ r * (mB y r (j + 1) + y * mB y r j
-            - y * (mB y r (j + 1) + mB y r j)) :=
-        Finset.sum_congr rfl fun r _ => by ring
-      rw [e, this]
-      ring
+      -- (1-y) ∑ y^r B(r,j+1) is the telescoping sum `this`, once both are in ring normal form.
+      ring_nf at this ⊢
+      linear_combination this
   | succ i ih =>
     cases j with
     | zero =>
@@ -141,12 +138,9 @@ theorem eq_orth (y : A) (R i j : ℕ) :
       refine ⟨-(mB y R (i + 1) + y * mB y R i), ?_⟩
       simp only [mB_zero_right, mul_one, Nat.succ_ne_zero i, if_false, mB_zero] at this ⊢
       rw [Finset.mul_sum]
-      have e : ∑ r ∈ Finset.range R, (1 - y) * (y ^ r * mB y r (i + 1)) =
-          ∑ r ∈ Finset.range R, y ^ r * (mB y r (i + 1) + y * mB y r i
-            - y * (mB y r (i + 1) + mB y r i)) :=
-        Finset.sum_congr rfl fun r _ => by ring
-      rw [e, this]
-      ring
+      -- (1-y) ∑ y^r B(r,i+1) is the telescoping sum `this`, once both are in ring normal form.
+      ring_nf at this ⊢
+      linear_combination this
     | succ j =>
       have := tele y
         (fun r => (mB y r (i + 1) + mB y r i) * (mB y r (j + 1) + mB y r j))
@@ -164,13 +158,8 @@ theorem eq_orth (y : A) (R i j : ℕ) :
         exact Finset.sum_congr rfl fun r _ => by ring
       rw [e] at this
       have z0 : (mB y 0 (i + 1) + y * mB y 0 i) = 0 := by simp only [mB_zero]; ring
-      have z1 : (if i + 1 = j + 1 then y ^ (i + 1) else 0) = y * (if i = j then y ^ i else 0) := by
-        by_cases hmn : i = j
-        · simp [hmn, pow_succ, mul_comm]
-        · simp [hmn]
-      rw [z0, zero_mul, zero_sub] at this
-      rw [z1]
-      linear_combination this + y * hw
+      -- The telescoping sum `this` with B(0,i+1)+yB(0,i) = 0, plus y times the case (i, j) `hw`.
+      grind
 
 end Orth
 
