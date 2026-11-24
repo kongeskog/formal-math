@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T23:17:57.438714700Z",
+  "updated_at": "2026-11-24T23:21:13.740020115Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "de303e6bfaad8603f71ceba9eab00f3e5421bc29",
-    "at": "2026-11-24T23:06:32.686537363Z",
+    "sha": "fc83498e6e5a9d8e490c0f62e91bd8e9f4d6b88f",
+    "at": "2026-11-24T23:21:13.740020115Z",
     "metrics": {
-      "tokens": 900805,
+      "tokens": 900243,
       "loc": 57258,
       "decls": 4563,
       "files": 321,
-      "bytes": 3343047,
-      "build_seconds": 301
+      "bytes": 3341961,
+      "build_seconds": 275
     }
   },
   "counts": {
-    "merged": 51,
+    "merged": 52,
     "rejected": 2,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 51,
+      "merged": 52,
       "attempts": 54,
-      "saved": 27356
+      "saved": 27918
     }
   ],
   "ideas": [
@@ -136,8 +136,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:26:11Z",
-      "pr": 92,
-      "result_delta": -1479,
+      "pr": 93,
+      "result_delta": -2041,
       "created_at": "2026-11-24T20:45:03Z",
       "url": "https://github.com/kongeskog/formal-math/issues/76",
       "technique": "shorten",
@@ -634,98 +634,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 93,
-      "title": "shorten(Paper): drop named arguments Lean infers inside proofs",
-      "author": "kongeskog",
-      "head_sha": "b1bbe89b93719aa72f90ce181d5f405c868a42a7",
-      "base_sha": "c0c44bfa49bc4a0ba57c2ee58105743526b49263",
-      "status": "stale",
-      "created_at": "2026-11-24T23:00:20Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 900733,
-        "loc": 57258,
-        "decls": 4563,
-        "files": 321,
-        "bytes": 3342849,
-        "build_seconds": 196
-      },
-      "base_metrics": {
-        "tokens": 901295,
-        "loc": 57258,
-        "decls": 4563,
-        "files": 321,
-        "bytes": 3343935,
-        "build_seconds": null
-      },
-      "delta": -562,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "7 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 901295 → 900733 (-562)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 76,
-      "url": "https://github.com/kongeskog/formal-math/pull/93",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45506974278",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Paper"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
