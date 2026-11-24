@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:45:39.326550094Z",
+  "updated_at": "2026-11-24T20:47:29.611152877Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 35,
     "rejected": 2,
-    "open": 2,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 6
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 35,
-      "attempts": 39,
+      "attempts": 40,
       "saved": 15709
     }
   ],
@@ -122,7 +122,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:42:40Z",
-      "pr": null,
+      "pr": 77,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:32Z",
       "url": "https://github.com/kongeskog/formal-math/issues/73",
@@ -598,13 +598,27 @@
       "title": "shorten(*): obtain from iff.1 instead of rw at h, rest of #55",
       "author": "kongeskog",
       "head_sha": "c5935b0cba25433bb2c4f30a82679247e2d19819",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "f70eafddb2ecf2178de0943ef86e0f7e243d5175",
+      "status": "stale",
       "created_at": "2026-11-24T20:36:18Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 912991,
+        "loc": 57941,
+        "decls": 4568,
+        "files": 321,
+        "bytes": 3376434,
+        "build_seconds": 230
+      },
+      "base_metrics": {
+        "tokens": 913027,
+        "loc": 57953,
+        "decls": 4568,
+        "files": 321,
+        "bytes": 3376611,
+        "build_seconds": null
+      },
+      "delta": -36,
       "gates": [
         {
           "key": "format",
@@ -612,39 +626,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "4 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 913027 → 912991 (-36)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -655,7 +677,7 @@
       ],
       "idea": 55,
       "url": "https://github.com/kongeskog/formal-math/pull/66",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45482553089",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
@@ -728,6 +750,74 @@
       "reason": null,
       "technique": "shorten",
       "scope": "Nc/Grp/GroupProg"
+    },
+    {
+      "pr": 77,
+      "title": "merge(Nc/Tow): one GoodMv hypothesis in Ever2-7, one pair of consM lemmas, toFlag by field copy",
+      "author": "kongeskog",
+      "head_sha": "5487620d9ba44888e286345c08dc9af88129e383",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:46:40Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 73,
+      "url": "https://github.com/kongeskog/formal-math/pull/77",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "Nc/Tow"
     }
   ],
   "top_files": [
