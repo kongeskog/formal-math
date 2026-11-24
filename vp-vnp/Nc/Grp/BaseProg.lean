@@ -182,6 +182,13 @@ noncomputable def itemsR (flags : List (List ℕ)) (o : Outs S) : List Item :=
 noncomputable def itemsC (m : ℕ) (o : Outs S) : List Item :=
   List.ofFn fun i : Fin (nT S) => (List.replicate m 2, o (Fin.natAdd (nT S) i.rev))
 
+/-- The entries of an encoded tuple of outputs. -/
+theorem nthF_encO {b : Fm} {x : Tree} {o : Outs S} {c : ℕ} (j : Fin (nT S + nT S))
+    (h : Gives θ b x (encO o) c) : Gives θ (nthF j b) x (listT ((o j).map ofBits)) (c + j + 1) := by
+  have h3 := nthF_gives (j : ℕ) h
+  rwa [List.getD_eq_getElem _ _ (by rw [List.length_ofFn]; exact j.2),
+    List.getElem_ofFn] at h3
+
 theorem itemsR_gives : ∃ G : Fm → Fm → Fm, ∃ κ, ∀ (a b : Fm) (x : Tree) (flags : List (List ℕ)) (o : Outs S) (ca cb : ℕ),
     Gives θ a x (listT (flags.map fun l => listT (l.map num))) ca → Gives θ b x (encO o) cb →
     Gives θ (G a b) x (listT ((itemsR flags o).map encI)) (κ * (ca + cb + 1)) := by
@@ -194,16 +201,8 @@ theorem itemsR_gives : ∃ G : Fm → Fm → Fm, ∃ κ, ∀ (a b : Fm) (x : Tre
       have e2 : (flags.map fun l => listT (l.map num)).getD (i.rev : ℕ) .nil = listT ((flags.getD i.rev []).map num) := by
         rw [show (.nil : Tree) = (fun l : List ℕ => listT (l.map num)) [] from rfl, List.getD_map]
       rw [e2] at h2
-      have h3 := nthF_gives (i.rev : ℕ) hb
-      have e3 : (List.ofFn fun j => listT ((o j).map ofBits)).getD (i.rev : ℕ) .nil =
-          listT ((o (Fin.castAdd (nT S) i.rev)).map ofBits) := by
-        have hlt : (i.rev : ℕ) < (List.ofFn fun j => listT ((o j).map ofBits)).length := by
-          rw [List.length_ofFn]
-          have := i.rev.2
-          omega
-        rw [List.getD_eq_getElem _ _ hlt, List.getElem_ofFn]
-        rfl
-      rw [e3] at h3
+      have h3 : Gives θ (nthF i.rev b) x _ (cb + i.rev + 1) :=
+        nthF_encO (Fin.castAdd (nT S) i.rev) hb
       have := i.rev.2
       exact (Gives.cons h2 h3).mono (by omega))
   rw [itemsR, List.map_ofFn]
@@ -218,16 +217,8 @@ theorem itemsC_gives : ∃ G : Fm → Fm → Fm, ∃ κ, ∀ (a b : Fm) (x : Tre
   have h1 := mkList_gives (θ := θ) (x := x) (m := nT S) (c := ca + cb + 2 * nT S + 5)
     (f := fun i : Fin (nT S) => .cons a (nthF (nT S + i.rev) b))
     (o := fun i => encI (List.replicate m 2, o (Fin.natAdd (nT S) i.rev))) (fun i => by
-      have h3 := nthF_gives (nT S + i.rev : ℕ) hb
-      have e3 : (List.ofFn fun j => listT ((o j).map ofBits)).getD (nT S + i.rev : ℕ) .nil =
-          listT ((o (Fin.natAdd (nT S) i.rev)).map ofBits) := by
-        have hlt : (nT S + i.rev : ℕ) < (List.ofFn fun j => listT ((o j).map ofBits)).length := by
-          rw [List.length_ofFn]
-          have := i.rev.2
-          omega
-        rw [List.getD_eq_getElem _ _ hlt, List.getElem_ofFn]
-        rfl
-      rw [e3] at h3
+      have h3 : Gives θ (nthF (nT S + i.rev) b) x _ (cb + (nT S + i.rev) + 1) :=
+        nthF_encO (Fin.natAdd (nT S) i.rev) hb
       have := i.rev.2
       exact (Gives.cons ha h3).mono (by omega))
   rw [itemsC, List.map_ofFn]
