@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T23:07:39.417339826Z",
+  "updated_at": "2026-11-24T23:14:21.118044086Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 0
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -87,6 +87,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 94,
+      "title": "Idea: restructure(Paper): prove the theorems over the reals from the all-fields ones; Paper/Ryser goes",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T23:13:47Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/94",
+      "technique": "restructure",
+      "scope": "Paper"
+    },
     {
       "number": 85,
       "title": "Idea: shorten(Nc): state a repeated step once in four proofs of Nc/Tow and Nc/Grp",
