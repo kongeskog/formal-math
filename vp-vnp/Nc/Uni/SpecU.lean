@@ -192,6 +192,9 @@ theorem emPs_bk_false (p : Ps M K) (b : Bl K) : emPs p (.tp (.bk b) false) = enc
     | cons d l ih =>
       rw [List.flatMap_cons, ih, List.filter_cons]
       by_cases h : d.2.1 = b <;> simp [h]
+  -- emDr d (.tp (.bk b) false) is `rw' d.1 (d.2.2 ++ [some d.2.1])` if d.2.1 = b, else [].
+  -- simp reaches this as the membership test `b = d.2.1`; eq_comm (a := b) turns it into
+  -- `d.2.1 = b`, the form in which h3 is stated.
   simp [emPs, emCo_other, emDr, on, encW, dOut, List.flatMap_map, h3, eq_comm (a := b), mem_barSet_bk]
 
 theorem emPs_bk_true (p : Ps M K) (b : Bl K) : emPs p (.tp (.bk b) true) = (p.2 b).map Subtype.val ++ [Sy.bar] := by
