@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T23:55:19.360138184Z",
+  "updated_at": "2026-11-24T23:56:21.299521399Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -104,10 +104,10 @@
     {
       "number": 95,
       "title": "Idea: shorten(Paper/Identity): end 17 tactic blocks with one closing tactic where the rest is routine",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T02:25:42Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 96,
       "result_delta": -249,
       "created_at": "2026-11-24T23:21:20Z",
@@ -691,8 +691,8 @@
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
-      "tokens": 10827,
-      "loc": 625
+      "tokens": 10578,
+      "loc": 611
     },
     {
       "path": "vp-vnp/Paper/Flat.lean",
