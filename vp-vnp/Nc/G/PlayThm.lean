@@ -302,7 +302,7 @@ theorem _root_.Paper.thm_tree_move {P : Plan M U0 U1} {cap : ℕ} (hP : P.Ok cap
     · simp only [hg, if_true]
     · simp only [hg, if_false, Finset.sum_const_zero]
       symm
-      refine move_zero hub x (hm x) hB o (Plan.seenAt n o x.1) hSeen hy (fun e => P.ids n o ⟨x, e⟩) hseen hlen hne' oo ?_
+      refine move_zero x o (Plan.seenAt n o x.1) hSeen hy (fun e => P.ids n o ⟨x, e⟩) hseen hlen hne' hub (hm x) hB oo ?_
       rintro ⟨i, hi⟩
       refine hg (hgood n _ x ?_)
       have e1 := hnumo oo
@@ -310,8 +310,8 @@ theorem _root_.Paper.thm_tree_move {P : Plan M U0 U1} {cap : ℕ} (hP : P.Ok cap
       rw [e1]
       exact ⟨i, fun ν => by rw [upd_self]; exact hi ν⟩
   rw [Finset.sum_congr rfl fun oo _ => hz oo]
-  rw [move_identity hub x (hm x) (t := P.num n o x) hB o (Plan.seenAt n o x.1) hSeen hy
-    (fun e => P.ids n o ⟨x, e⟩) hseen hlen hne']
+  rw [move_identity x (t := P.num n o x) o (Plan.seenAt n o x.1) hSeen hy
+    (fun e => P.ids n o ⟨x, e⟩) hseen hlen hne' hub (hm x) hB]
   · refine if_congr ⟨fun h e id hid => ?_, fun h id hid => ?_⟩ rfl rfl
     · have hid' := Plan.mem_ids.1 hid
       have ha := h id (mem_outSet.2 ⟨e, hid'⟩)

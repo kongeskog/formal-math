@@ -335,13 +335,18 @@ theorem upd_ne (o : M.N → Fin U1) {x : Fin E} (oo : (M.kind x).Cn → Fin U1) 
     upd M o x oo ν = o ν := by
   rw [upd, dif_neg (Ne.symm h)]
 
-/-- One outcome of a move, as a sum over code words. -/
-theorem move_outcome (x : Fin E) {t : ℕ} (o : M.N → Fin U1) (Seen : Finset (Uid A U0 M.N U1))
+/-! The shared setting of a move at `x`: contents `y` over the seen units `Seen`, which hold
+every slot id in `ids` (filled on both sides) and none of the new units of `x`. -/
+
+variable (x : Fin E) {t : ℕ} (o : M.N → Fin U1) (Seen : Finset (Uid A U0 M.N U1))
     (hSeen : ∀ (ν : (M.kind x).Cn) k, Uid.new ⟨x, ν⟩ k ∉ Seen)
     {y : Fin (A + A') → Uid A U0 M.N U1 → UW ub} (hy : y ∈ Contents (hold0 M.np) (hold1 M.np) none Seen)
     (ids : (M.kind x).Sl → List (Uid A U0 M.N U1)) (hids : ∀ e, ∀ id ∈ ids e, id ∈ Seen) (ht : ∀ e, (ids e).length ≤ t)
     (hne : ∀ e, ∀ id ∈ ids e, y (M.part x ((M.kind x).a e)) id ≠ none ∧ y (M.part x ((M.kind x).b e)) id ≠ none)
-    (oo : (M.kind x).Cn → Fin U1) :
+include hSeen hy hids ht hne
+
+/-- One outcome of a move, as a sum over code words. -/
+theorem move_outcome (oo : (M.kind x).Cn → Fin U1) :
     (∑ z ∈ Common none (newUnits M x (upd M o x oo)), ∏ p,
       role M x p t (fun e => ids e.1) (upd M o x oo)
         (ext (hold0 M.np) (hold1 M.np) (newUnits M x (upd M o x oo)) y z (M.part x p))) =
@@ -451,12 +456,8 @@ theorem move_outcome (x : Fin E) {t : ℕ} (o : M.N → Fin U1) (Seen : Finset (
     rfl
 
 /-- **The identity of one move.** -/
-theorem move_identity (hub : 0 < ub) (x : Fin E) {m t : ℕ} (hm : (M.kind x).Le m)
-    (hB : t * ub * (m + (M.kind x).lam) / ub + 1 ≤ U1) (o : M.N → Fin U1) (Seen : Finset (Uid A U0 M.N U1))
-    (hSeen : ∀ (ν : (M.kind x).Cn) k, Uid.new ⟨x, ν⟩ k ∉ Seen)
-    {y : Fin (A + A') → Uid A U0 M.N U1 → UW ub} (hy : y ∈ Contents (hold0 M.np) (hold1 M.np) none Seen)
-    (ids : (M.kind x).Sl → List (Uid A U0 M.N U1)) (hids : ∀ e, ∀ id ∈ ids e, id ∈ Seen) (ht : ∀ e, (ids e).length ≤ t)
-    (hne : ∀ e, ∀ id ∈ ids e, y (M.part x ((M.kind x).a e)) id ≠ none ∧ y (M.part x ((M.kind x).b e)) id ≠ none) :
+theorem move_identity (hub : 0 < ub) {m : ℕ} (hm : (M.kind x).Le m)
+    (hB : t * ub * (m + (M.kind x).lam) / ub + 1 ≤ U1) :
     (∑ oo : (M.kind x).Cn → Fin U1, ∑ z ∈ Common none (newUnits M x (upd M o x oo)), ∏ p,
       role M x p t (fun e => ids e.1) (upd M o x oo)
         (ext (hold0 M.np) (hold1 M.np) (newUnits M x (upd M o x oo)) y z (M.part x p))) =
@@ -471,13 +472,8 @@ theorem move_identity (hub : 0 < ub) (x : Fin E) {m t : ℕ} (hm : (M.kind x).Le
       (slotBits_eq_iff (fun id hid => (hne e id hid).1) (fun id hid => (hne e id hid).2) (ht e)).1 (h e)
 
 /-- Impossible outcomes of a move contribute nothing. -/
-theorem move_zero (hub : 0 < ub) (x : Fin E) {m t : ℕ} (hm : (M.kind x).Le m)
-    (hB : t * ub * (m + (M.kind x).lam) / ub + 1 ≤ U1) (o : M.N → Fin U1) (Seen : Finset (Uid A U0 M.N U1))
-    (hSeen : ∀ (ν : (M.kind x).Cn) k, Uid.new ⟨x, ν⟩ k ∉ Seen)
-    {y : Fin (A + A') → Uid A U0 M.N U1 → UW ub} (hy : y ∈ Contents (hold0 M.np) (hold1 M.np) none Seen)
-    (ids : (M.kind x).Sl → List (Uid A U0 M.N U1)) (hids : ∀ e, ∀ id ∈ ids e, id ∈ Seen) (ht : ∀ e, (ids e).length ≤ t)
-    (hne : ∀ e, ∀ id ∈ ids e, y (M.part x ((M.kind x).a e)) id ≠ none ∧ y (M.part x ((M.kind x).b e)) id ≠ none)
-    (oo : (M.kind x).Cn → Fin U1)
+theorem move_zero (hub : 0 < ub) {m : ℕ} (hm : (M.kind x).Le m)
+    (hB : t * ub * (m + (M.kind x).lam) / ub + 1 ≤ U1) (oo : (M.kind x).Cn → Fin U1)
     (hoo : ¬ ∃ i : Fin (t * ub) → (M.kind x).I, ∀ ν, (oo ν).1 = (∑ k, ((M.kind x).lam + (M.kind x).len (i k) ν)) / ub) :
     (∑ z ∈ Common none (newUnits M x (upd M o x oo)), ∏ p,
       role M x p t (fun e => ids e.1) (upd M o x oo)
