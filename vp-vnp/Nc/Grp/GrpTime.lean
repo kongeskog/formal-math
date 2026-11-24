@@ -21,11 +21,7 @@ section lists
 
 theorem sum_le_length_mul {ι : Type*} (l : List ι) (f : ι → ℕ) (c : ℕ) (h : ∀ i ∈ l, f i ≤ c) :
     (l.map f).sum ≤ l.length * c := by
-  induction l with
-  | nil => simp
-  | cons i l ih =>
-    rw [List.map_cons, List.sum_cons, List.length_cons, Nat.succ_mul, add_comm]
-    exact Nat.add_le_add (ih fun i hi => h i (by simp [hi])) (h i (by simp))
+  simpa using List.sum_le_card_nsmul _ c (List.forall_mem_map.2 h)
 
 /-- Costs of writing, from the number of keys. -/
 theorem putCost_le {ub Lc : ℕ} (kss : List (List (List Bool))) (h : ∀ ks ∈ kss, ∀ k ∈ ks, k.length ≤ Lc) :

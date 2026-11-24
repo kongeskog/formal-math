@@ -154,13 +154,8 @@ noncomputable def YhN (FL : FlagLaws F T) (Uu AA lhat : ℕ) (ρ : ℝ) : ℕ :=
 theorem le_YhN (ρ : ℝ) : 2 * √h * kbar FL Uu AA lhat / (1 - ρ) ≤ YhN FL Uu AA lhat ρ := Nat.le_ceil _
 
 theorem geom_le {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : ρ < 1) (k : ℕ) : ∑ j ∈ range k, ρ ^ j ≤ 1 / (1 - ρ) := by
-  have h1 : 0 < 1 - ρ := by linarith
-  rw [le_div_iff₀ h1]
-  have h2 := geom_sum_mul ρ k
-  have h3 : (∑ j ∈ range k, ρ ^ j) * (1 - ρ) = 1 - ρ ^ k := by linarith
-  rw [h3]
-  have := pow_nonneg hρ k
-  linarith
+  rw [one_div, ← tsum_geometric_of_lt_one hρ hρ1]
+  exact (summable_geometric_of_lt_one hρ hρ1).sum_le_tsum _ fun i _ => pow_nonneg hρ i
 
 section
 

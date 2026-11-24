@@ -81,16 +81,7 @@ theorem mem_Al {u : Un R FL Pl U0 U1} : u ∈ Al R FL Pl lhat n o ↔ AlU R FL P
   simp
 
 theorem card_fin_lt' (N c : ℕ) (hc : c ≤ N) : ((univ : Finset (Fin N)).filter fun k => k.1 < c).card = c := by
-  have h1 : ((univ : Finset (Fin N)).filter fun k => k.1 < c).card = (range c).card := by
-    refine card_bij (fun k _ => k.1) ?_ ?_ ?_
-    · intro k hk
-      exact mem_range.2 (mem_filter.1 hk).2
-    · intro a _ b _ hab
-      exact Fin.ext hab
-    · intro k hk
-      have hk' := mem_range.1 hk
-      exact ⟨⟨k, by omega⟩, mem_filter.2 ⟨mem_univ _, hk'⟩, rfl⟩
-  rw [h1, card_range]
+  rw [Fin.card_filter_val_lt, min_eq_right hc]
 
 /-- Sums over units. -/
 theorem sum_units {N : Type} [Fintype N] {M : Type*} [AddCommMonoid M]

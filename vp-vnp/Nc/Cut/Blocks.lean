@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import Nc.Tape.Run
 import Nc.Tape.Refine
+import Nc.RunGood
 
 /-!
 # Blocks of a run
@@ -23,65 +24,12 @@ open Finset
 variable {F : Type*} [CommRing F] {Γ S J Q : Type*} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S]
   [Fintype J] [DecidableEq J] [Fintype Q] [DecidableEq Q]
 
-/-- A product of matrices as a sum over paths. -/
+/-- A product of matrices as a sum over paths: `prod_ofFn_apply` (in `Nc/RunGood.lean`)
+with `id`. -/
 theorem prod_path {K : ℕ} (M : Fin K → Matrix Q Q F) (a b : Q) :
     (List.ofFn M).prod a b = ∑ q : Fin (K + 1) → Q,
       if q 0 = a ∧ q (Fin.last K) = b then ∏ k, M k (q k.castSucc) (q k.succ) else 0 := by
-  induction K generalizing a with
-  | zero =>
-    simp only [List.ofFn_zero, List.prod_nil, Finset.univ_eq_empty, Finset.prod_empty]
-    rw [Matrix.one_apply]
-    by_cases h : a = b
-    · subst h
-      rw [if_pos rfl, Finset.sum_eq_single fun _ => a]
-      · simp
-      · intro q _ hne
-        rw [if_neg]
-        rintro ⟨h0, -⟩
-        apply hne
-        funext k
-        have : k = 0 := Fin.ext (by omega)
-        rw [this, h0]
-      · simp
-    · rw [if_neg h, Finset.sum_eq_zero]
-      intro q _
-      rw [if_neg]
-      rintro ⟨h0, h1⟩
-      apply h
-      rw [← h0, ← h1]
-      congr 1
-  | succ K ih =>
-    have hR : (∑ q : Fin (K + 1 + 1) → Q, if q 0 = a ∧ q (Fin.last (K + 1)) = b then
-        ∏ k, M k (q k.castSucc) (q k.succ) else 0) = ∑ q : Fin (K + 1) → Q,
-        if q (Fin.last K) = b then M 0 a (q 0) * ∏ k : Fin K, M k.succ (q k.castSucc) (q k.succ) else 0 := by
-      rw [← (Fin.consEquiv fun _ : Fin (K + 2) => Q).sum_comp, Fintype.sum_prod_type,
-        Finset.sum_eq_single a]
-      · refine Finset.sum_congr rfl fun q _ => ?_
-        have e1 : (Fin.consEquiv fun _ : Fin (K + 2) => Q) (a, q) = (Fin.cons a q : Fin (K + 2) → Q) := rfl
-        simp only [e1]
-        have e2 : (Fin.cons a q : Fin (K + 2) → Q) (Fin.last (K + 1)) = q (Fin.last K) := by
-          rw [← Fin.succ_last, Fin.cons_succ]
-        have e3 : (Fin.cons a q : Fin (K + 2) → Q) 0 = a := rfl
-        rw [e2, e3]
-        simp only [true_and]
-        split_ifs
-        · rw [Fin.prod_univ_succ]
-          rfl
-        · rfl
-      · intro a' _ ha'
-        refine Finset.sum_eq_zero fun q _ => if_neg ?_
-        rintro ⟨h0, -⟩
-        exact ha' h0
-      · simp
-    rw [hR, List.ofFn_succ, List.prod_cons, Matrix.mul_apply]
-    simp only [ih, Finset.mul_sum]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun q _ => ?_
-    rw [Finset.sum_eq_single (q 0)]
-    · by_cases h : q (Fin.last K) = b <;> simp [h]
-    · intro c _ hc
-      rw [if_neg (fun hh => hc hh.1.symm), mul_zero]
-    · simp
+  simpa [List.map_ofFn] using prod_ofFn_apply M K id a b
 
 theorem emit_append (o₁ o₂ : List (Letter S J Γ)) (z : Ch S J) : emit (o₁ ++ o₂) z = emit o₁ z ++ emit o₂ z := by
   simp [emit, List.reduceOption_append, proj_append]

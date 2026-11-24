@@ -28,31 +28,19 @@ inductive Vtx (I G : Type*) where
   | head (i : I)
   | tip (g : G) (s : Bool)
   | mid (g : G)
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 namespace Vtx
 
 variable {I G : Type*}
 
-/-- The vertices as a disjoint union. -/
-def equivSum : Vtx I G ≃ I ⊕ (G × Bool) ⊕ G where
-  toFun
-    | head i => .inl i
-    | tip g s => .inr (.inl (g, s))
-    | mid g => .inr (.inr g)
-  invFun
-    | .inl i => head i
-    | .inr (.inl (g, s)) => tip g s
-    | .inr (.inr g) => mid g
-  left_inv := by rintro (_ | _ | _) <;> rfl
-  right_inv := by rintro (_ | ⟨_, _⟩ | _) <;> rfl
-
-instance [Fintype I] [Fintype G] : Fintype (Vtx I G) := Fintype.ofEquiv _ equivSum.symm
-
 /-- There is one vertex for every segment and three for every gadget. -/
 theorem card_eq [Fintype I] [Fintype G] : Fintype.card (Vtx I G) = Fintype.card I + 3 * Fintype.card G := by
-  rw [Fintype.card_congr equivSum]
-  simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_bool]
+  -- `proxy_equiv%` gives the vertices as a disjoint union
+  -- (this replaces a hand-written `equivSum`).
+  rw [← Fintype.card_congr (proxy_equiv% (Vtx I G))]
+  simp only [Fintype.card_sum, Fintype.card_sigma, Fintype.card_bool,
+    sum_const, card_univ, smul_eq_mul]
   ring
 
 end Vtx
@@ -466,14 +454,14 @@ theorem hcSum_weight {R : Type*} [CommSemiring R] (hnext : T.next.IsCycleOn Set.
     exact ⟨J, mem_filter.2 ⟨mem_univ _, hv⟩, Equiv.ext fun p => (hp p).symm⟩
   · intro J hJ
     have hv := (mem_filter.1 hJ).2
-    rw [← Vtx.equivSum.symm.prod_comp, Fintype.prod_sum_type]
+    rw [← (proxy_equiv% (Vtx I G)).prod_comp, Fintype.prod_sum_type]
     have h1 : ∀ i, T.weight w (.head i) (routePerm hnext hv (.head i)) = w i (J i) := by
       intro i
       simp only [weight]
       refine Finset.sum_eq_single_of_mem (J i) (mem_filter.2 ⟨mem_univ _, rfl⟩) fun o ho hne => ?_
       exact absurd (place_zero_injective hpar (mem_filter.1 ho).2) hne
-    have h2 : ∀ p : (G × Bool) ⊕ G, T.weight w (Vtx.equivSum.symm (.inr p))
-        (routePerm hnext hv (Vtx.equivSum.symm (.inr p))) = 1 := by
+    have h2 : ∀ p : (Σ _ : G, Bool) ⊕ G, T.weight w ((proxy_equiv% (Vtx I G)) (.inr p))
+        (routePerm hnext hv ((proxy_equiv% (Vtx I G)) (.inr p))) = 1 := by
       rintro (⟨g, s⟩ | g)
       · exact if_pos (edge_route J _ (.tip g s))
       · exact if_pos (edge_route J _ (.mid g))
