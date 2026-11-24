@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:29:30.610451160Z",
+  "updated_at": "2026-11-24T20:35:06.908129780Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -652,13 +652,27 @@
       "title": "shorten(*): apply the iff lemma in obtain instead of rewriting the hypothesis first",
       "author": "kongeskog",
       "head_sha": "aa06a5ad0177f951364bac26abac5e6df4a1725d",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "3634ac0888881c7fabc825ef8dc8430af9bbcb70",
+      "status": "stale",
       "created_at": "2026-11-24T20:14:08Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 915101,
+        "loc": 58094,
+        "decls": 4572,
+        "files": 321,
+        "bytes": 3382699,
+        "build_seconds": 665
+      },
+      "base_metrics": {
+        "tokens": 915239,
+        "loc": 58140,
+        "decls": 4572,
+        "files": 321,
+        "bytes": 3383350,
+        "build_seconds": null
+      },
+      "delta": -138,
       "gates": [
         {
           "key": "format",
@@ -666,50 +680,58 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "24 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 915239 → 915101 (-138)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; will be re-verified once approved"
         },
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+          "status": "pending",
+          "detail": "1 of 2 approvals from vetted reviewers"
         }
       ],
       "idea": 55,
       "url": "https://github.com/kongeskog/formal-math/pull/65",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45478659158",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
