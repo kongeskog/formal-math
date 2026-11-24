@@ -153,10 +153,10 @@ open Classical in
 theorem posVal_start (tab : ∀ a, NodeTable R (fun a c => (n a c).1) ℓ a) :
     posVal (hold0 S.np) (hold1 S.np) (none : UW ℓ) (seen0 (N := S.N) (U1 := U1) n) (seen0 n)
       (fun y => ∏ p, startTab S U1 n tab p (y p)) = netValue tab := by
-  have e0 : posVal (hold0 S.np) (hold1 S.np) (none : UW ℓ) (seen0 (N := S.N) (U1 := U1) n) (seen0 n)
-      (fun y => ∏ p, startTab S U1 n tab p (y p)) = ∑ z ∈ Common (none : UW ℓ) (seen0 (N := S.N) (U1 := U1) n),
+  have e0 : posVal (hold0 S.np) (hold1 S.np) (none : UW ℓ) (seen0 n) (seen0 n)
+      (fun y => ∏ p, startTab S U1 n tab p (y p)) = ∑ z ∈ Common (none : UW ℓ) (seen0 n),
         ∏ p, startTab S U1 n tab p (ext (hold0 S.np) (hold1 S.np) (seen0 n) (fun _ _ => none) z p) := by
-    have h1 := sum_contents_union (hold0 S.np) (hold1 S.np) (none : UW ℓ) ∅ (seen0 (N := S.N) (U1 := U1) n)
+    have h1 := sum_contents_union (hold0 S.np) (hold1 S.np) (none : UW ℓ) ∅ (seen0 n)
       (disjoint_empty_left _) (fun y => ∏ p, startTab S U1 n tab p (y p))
     rw [empty_union] at h1
     rw [posVal, h1]
@@ -166,7 +166,7 @@ theorem posVal_start (tab : ∀ a, NodeTable R (fun a c => (n a c).1) ℓ a) :
     rw [h2, Finset.sum_singleton]
   rw [e0]
   have hne : ∀ z, (∏ p, startTab S U1 n tab p (ext (hold0 S.np) (hold1 S.np) (seen0 n) (fun _ _ => none) z p)) ≠ 0 →
-      ∀ id ∈ seen0 (N := S.N) (U1 := U1) n, z id ≠ none := by
+      ∀ id ∈ seen0 n, z id ≠ none := by
     intro z hz id hid
     have h1 : startTab S U1 n tab (hold0 S.np id) (ext (hold0 S.np) (hold1 S.np) (seen0 n) (fun _ _ => none) z
         (hold0 S.np id)) ≠ 0 := fun h => hz (Finset.prod_eq_zero (mem_univ _) h)
@@ -174,7 +174,7 @@ theorem posVal_start (tab : ∀ a, NodeTable R (fun a c => (n a c).1) ℓ a) :
     rwa [ext_self hid (Or.inl rfl)] at h2
   let un : NetUnit (fun a c => (n a c).1) → Uid AA N S.N U1 := fun u =>
     .init u.1 u.2.1 (Fin.castLE (Nat.le_of_lt_succ (n u.1 u.2.1).2) u.2.2)
-  have hun : ∀ u, un u ∈ seen0 (N := S.N) (U1 := U1) n := fun u => by
+  have hun : ∀ u, un u ∈ seen0 n := fun u => by
     simp [un, seen0]
   let W : (NetUnit (fun a c => (n a c).1) → Fin ℓ → Bool) → Uid AA N S.N U1 → UW ℓ := fun w id => match id with
     | .init a c k => if hk : k.1 < (n a c).1 then some (w ⟨a, c, ⟨k.1, hk⟩⟩) else none
@@ -182,7 +182,7 @@ theorem posVal_start (tab : ∀ a, NodeTable R (fun a c => (n a c).1) ℓ a) :
   have hW : ∀ w u, W w (un u) = some (w u) := by
     rintro w ⟨a, c, k⟩
     simp [W, un]
-  rw [← Finset.sum_filter_of_ne (p := fun z => ∀ id ∈ seen0 (N := S.N) (U1 := U1) n, z id ≠ none) fun z _ hz => hne z hz]
+  rw [← Finset.sum_filter_of_ne (p := fun z => ∀ id ∈ seen0 n, z id ≠ none) fun z _ hz => hne z hz]
   symm
   unfold netValue
   refine Finset.sum_bij' (fun w _ => W w) (fun z _ u => (z (un u)).getD fun _ => false) ?_ ?_ ?_ ?_ ?_
@@ -672,13 +672,13 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat TM H' ∧
       HostOk hh (fun x => load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x))) H' ∧
       ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x)))) j c) ∈ H' := by
-  have hR : Rng (nX nI) (oX oI : Inp → NM R FL (ch := ch) → ℕ) U0 U1 := rng
+  have hR : Rng (nX nI) (oX oI : Inp → NM R FL → ℕ) U0 U1 := rng
   have hS0 : SY inp Y p 0 H := by
     unfold SY
     rw [Nat.zero_mul, Nat.add_zero]
     exact hS
-  have hb0 : Base (nX nI) (oX oI : Inp → NM R FL (ch := ch) → ℕ) H := ⟨hn, fun ν => ho _⟩
-  obtain ⟨H1, s1, u1, f1⟩ := after_stage hA hB hR hb hS0 hb0 (lhat := lhat)
+  have hb0 : Base (nX nI) (oX oI : Inp → NM R FL → ℕ) H := ⟨hn, fun ν => ho _⟩
+  obtain ⟨H1, s1, u1, f1⟩ := after_stage hA hB hR hb hS0 hb0
   obtain ⟨H2, s2, u2, f2⟩ := units_stage hA hB hB2 s1 f1
   obtain ⟨H3, s3, u3, f3⟩ := host_stage hh (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
     (fun j i => u2 (f1.isMin j i))
@@ -758,7 +758,7 @@ section Numbers
 
 theorem lg_two {M : ℕ} (hM : 2 ≤ M) : 2 ≤ lg M := by
   unfold lg
-  have := Nat.log_pos (b := 2) (n := M) (by norm_num) hM
+  have := Nat.log_pos (b := 2) (by norm_num) hM
   omega
 
 /-- A constant times a power is a higher power. -/
@@ -920,7 +920,7 @@ theorem tree_node_le (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
     _ ≤ 1 + (univ.filter fun v => v ≠ Pl.pt none ∧ treePar R FL Pl hH.h_pos n o v = p).card :=
         (card_union_le _ _).trans (by simp)
     _ ≤ c + 1 := by
-        have := card_treeChildren (R := R) (FL := FL) (Pl := Pl) hH.h_pos n o p
+        have := card_treeChildren hH.h_pos n o p
         split_ifs at this <;> omega
 
 open Classical in
@@ -987,7 +987,7 @@ theorem tree_up_node (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) 
   refine Nat.add_le_add ((Finset.sum_le_sum fun q _ => h1 q).trans ?_) (h1 p)
   rw [Finset.sum_const, smul_eq_mul]
   refine Nat.mul_le_mul_right _ ?_
-  have := card_treeChildren (R := R) (FL := FL) (Pl := Pl) hH.h_pos n o p
+  have := card_treeChildren hH.h_pos n o p
   split_ifs at this <;> omega
 
 /-- All loads. -/
@@ -1068,7 +1068,7 @@ theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1
     have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨P, rfl⟩ := Pl.pt.surjective p
-  have h0 := held_node_le (R := R) (Pl := Pl) (lhat := N) (n := n) (o := o) hH.h_pos hH.r_pos hH.b_pos
+  have h0 := held_node_le hH.h_pos hH.r_pos hH.b_pos
     hgd hH.near hSm (ℓf := N) P (fun a _ => hv a)
   have h2 : isB ch P * (N + 8 * m * N) ≤ if ((Pl.pt P : Fin (AA + A')) : ℕ) < AA then (1 + 8 * m) * N else 0 := by
     unfold isB
@@ -1090,7 +1090,7 @@ theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1
       split_ifs <;> omega
     · rw [if_neg e, if_neg fun h => e (Or.inr h.symm), if_neg fun h => e (Or.inl h.symm)]
       exact Nat.zero_le _
-  have h4 := onN_le_up (R := R) (FL := FL) (Pl := Pl) hH.h_pos n o P
+  have h4 := onN_le_up hH.h_pos n o P
   rw [Finset.sum_filter]
   refine le_trans h0 ?_
   calc _ ≤ _ + _ + _ := Nat.add_le_add (Nat.add_le_add h2 h3) (Nat.mul_le_mul_left _ h4)
@@ -1317,7 +1317,7 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     rw [Nat.le_div_iff_mul_le (by omega), mul_comm]
     exact Nat.mul_le_mul_right _ heeh
   obtain ⟨hG0, -, -, -, hXJ, -, hword⟩ := hC n
-  obtain ⟨R⟩ := Nc.Tower.exists_routes (h := h) (n := n) h2 hword
+  obtain ⟨R⟩ := Nc.Tower.exists_routes h2 hword
   have hX0 : Fintype.card ((tower h n h2).X 0) = g n := hG0
   have hX0' : Fintype.card (XX h n 0) = g n := hG0
   have hXJ0 : 0 < Fintype.card ((tower h n h2).X (JJ h n)) :=

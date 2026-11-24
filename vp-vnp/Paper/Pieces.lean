@@ -95,12 +95,12 @@ theorem prop_pieces_identity (hn : ∀ p, ∑ b, ((n p b).val + (n b p).val) ≤
   have e0 : posVal (hold0 TT.sys.np) (hold1 TT.sys.np) (none : UW ub) (seen0 (N := TT.sys.N) (U1 := TT.U1) n) (seen0 n)
       (fun y => ∏ p : Fin (K + K), G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p
         (y (Fin.castAdd TT.A' p))) =
-      posVal (hold0 TT.sys.np) (hold1 TT.sys.np) (none : UW ub) (seen0 (N := TT.sys.N) (U1 := TT.U1) n) (seen0 n)
+      posVal (hold0 TT.sys.np) (hold1 TT.sys.np) (none : UW ub) (seen0 n) (seen0 n)
         (fun y => ∏ p, startTab TT.sys TT.U1 n (runTab mu (T := T) cb TT q x ρ n) p (y p)) := by
     unfold posVal
     refine Finset.sum_congr rfl fun y hy => ?_
     rw [Nc.mem_contents_iff] at hy
-    have e1 : ∀ p, startTab TT.sys TT.U1 n (runTab mu (T := T) cb TT q x ρ n) p (y p) =
+    have e1 : ∀ p, startTab TT.sys TT.U1 n (runTab mu cb TT q x ρ n) p (y p) =
         initAll mu T cb TT.A' q x ρ n p (y p) := fun p => startTab_run p (y p) fun a b k hk => hy p _ fun h => hk
       ⟨init_mem_seen0.1 h.1, h.2⟩
     simp only []
@@ -303,8 +303,8 @@ open Classical in
 theorem piece_cut (g : Fin (pieceNum TT k)) :
     ((TT.plan.cur n o TT.E).filter (Nc.Plus.OneIn (hold0 TT.sys.np) (hold1 TT.sys.np) (pieceFin TT k n o) g)).card * w ≤
       yhat N M C + M ^ C * w := by
-  obtain ⟨x, hx⟩ := Staged.piece_boundary (T := treeAt TT (n, o)) (giv := given K TT.A') (u := TT.up n o) (M := M)
-    (Y := yhat N M C) (k := k) g.val
+  obtain ⟨x, hx⟩ := Staged.piece_boundary (T := treeAt TT (n, o)) (giv := given K TT.A') (u := TT.up n o)
+    (Y := yhat N M C) g.val
   refine le_trans (Nat.mul_le_mul_right w (card_le_card (t := (cutUnits (hold0 TT.sys.np) (hold1 TT.sys.np) id
     (TT.plan.cur n o TT.E \ TT.dead o)).filter (Holds (hold0 TT.sys.np) (hold1 TT.sys.np) x) ∪ TT.dead o) ?_)) ?_
   · intro id hid
@@ -469,9 +469,9 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
     obtain ⟨i, -, e⟩ := h2 f hf
     rw [← e x]
     exact (fn i x).2.le.trans hDY
-  obtain ⟨H1, s1, u1, f1⟩ := Staged.piece_prog (T := treeAt TT) (st := TT.stage) (dp := TT.depth) (rt := TT.root)
-    (fun _ => rfl) (fun _ => rfl) (fun _ => rfl) hA hP (giv := given K TT.A') (u := fun x => TT.up x.1 x.2) (M := M)
-    (Yh := yhat N M C) (k := k) hS0 (fun q q' => Or.inl (p1 q q')) (fun q => Or.inl (p5 q)) (given_le _)
+  obtain ⟨H1, s1, u1, f1⟩ := Staged.piece_prog (T := treeAt TT)
+    (fun _ => rfl) (fun _ => rfl) (fun _ => rfl) hA hP (giv := given K TT.A') (u := fun x => TT.up x.1 x.2)
+    (Yh := yhat N M C) hS0 (fun q q' => Or.inl (p1 q q')) (fun q => Or.inl (p5 q)) (given_le _)
     (fun x q => hlt _ (p5 q) x)
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (fun p x => (pieceFin TT k x.1 x.2 p : ℕ)) (a := 1) (e := 1)
     (by rw [Fintype.card_fin, pow_one]; exact hP) (fun p => by
@@ -692,7 +692,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       _ ≤ K * v := Nat.mul_le_mul_left _ (by omega)
   obtain ⟨ub, hub⟩ : ∃ ub, ub = T / v ^ a' := ⟨_, rfl⟩
   obtain ⟨load, hload⟩ : ∃ l, l = 2 * ((T + (K + K) * σ) * c / ub + (K + K)) := ⟨_, rfl⟩
-  obtain ⟨b1, b2, b3, b4, b5, b6, b7⟩ := pieces_numbers (C₀ := C₀) (σ := σ) hc0 (by omega) hv (by omega) hMv ha'.le hT
+  obtain ⟨b1, b2, b3, b4, b5, b6, b7⟩ := pieces_numbers (σ := σ) hc0 (by omega) hv (by omega) hMv ha'.le hT
     hub hload
   have hload1 : 1 ≤ load := (Nat.le_add_left 1 _).trans b7
   obtain ⟨TT⟩ := htree A (K + K) (K + K) load ub (by omega) le_rfl hload1 b1
@@ -858,7 +858,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     · rw [← pow_mul]
       exact vp (by omega)
   · have hU : (T + (Fintype.card S + 1)) * c / ub + 1 ≤ load := by rwa [hσ]
-    obtain ⟨hr1, hr2⟩ := lem_runnet (U0 := load) (U1 := TT.U1) (A' := TT.A') mu cb hcb hc0 b1 hU TT.sys.np i e' u hℓ hu
+    obtain ⟨hr1, hr2⟩ := lem_runnet mu cb hcb hc0 b1 hU TT.sys.np i e' u hℓ hu
     rw [hr1]
     refine Finset.sum_congr rfl fun q _ => if_congr Iff.rfl ?_ rfl
     refine Finset.sum_congr rfl fun ρ _ => if_congr Iff.rfl ?_ rfl
