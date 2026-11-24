@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:07:30.414184804Z",
+  "updated_at": "2026-11-24T19:08:43.723353657Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 13,
     "rejected": 2,
-    "open": 6,
+    "open": 8,
     "contributors": 1,
     "ideas_open": 5
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 13,
-      "attempts": 21,
+      "attempts": 23,
       "saved": 3754
     }
   ],
@@ -164,7 +164,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:06:30Z",
-      "pr": null,
+      "pr": 44,
       "result_delta": null,
       "created_at": "2026-11-24T19:00:23Z",
       "url": "https://github.com/kongeskog/formal-math/issues/36",
@@ -178,7 +178,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:04:15Z",
-      "pr": null,
+      "pr": 43,
       "result_delta": null,
       "created_at": "2026-11-24T19:00:22Z",
       "url": "https://github.com/kongeskog/formal-math/issues/35",
@@ -820,6 +820,142 @@
       "reason": null,
       "technique": "library",
       "scope": "Nc/Dl"
+    },
+    {
+      "pr": 43,
+      "title": "shorten(NS1/EvalThm): run the shared preamble of the 11 cases of interp once",
+      "author": "kongeskog",
+      "head_sha": "c06e533f01004b930e9b2e86c2f7e811e7f8ca44",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T19:08:11Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 35,
+      "url": "https://github.com/kongeskog/formal-math/pull/43",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "NS1/EvalThm"
+    },
+    {
+      "pr": 44,
+      "title": "restructure(Nc/Grp/GroupThm): state exists_group with GroupOK instead of repeating it",
+      "author": "kongeskog",
+      "head_sha": "35c0750e3eb9a6b130f8af17578923504f5f3594",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T19:08:15Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 36,
+      "url": "https://github.com/kongeskog/formal-math/pull/44",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/Grp/GroupThm"
     }
   ],
   "top_files": [
