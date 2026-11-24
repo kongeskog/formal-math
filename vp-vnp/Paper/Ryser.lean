@@ -92,7 +92,7 @@ theorem csize_ryser : CSize (ryserWit F n) (40 * (n + 1) ^ 4) (40 * (n + 1) ^ 4)
     nlinarith [Nat.zero_le (n ^ 4), Nat.zero_le (n ^ 3), Nat.zero_le (n ^ 2)]
 
 /-- **The permanent is in VNP (Ryser's formula).** -/
-theorem perm_mem_VNP : ({ X := fun n => Fin n × Fin n, poly := genPerm F } : Family F) ∈ VNP F := by
+theorem perm_mem_VNP : ({ vars := fun n => Fin n × Fin n, poly := genPerm F } : Family F) ∈ VNP F := by
   refine ⟨id, ryserWit F, ⟨700, fun n => ?_⟩, genPerm_eq_ryser F⟩
   have hb := Hc.quartic_bound (n := n) (C := 700) le_rfl
   obtain ⟨h1, h2⟩ := csize_ryser F n

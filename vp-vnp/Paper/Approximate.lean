@@ -19,7 +19,7 @@ universe u
 
 /-- VP closure: like VP, with approximating circuits. -/
 def VPBar (F : Type u) [Field F] : Set (Family F) :=
-  {f | ∃ C : ℕ, ∀ n, Fintype.card (f.X n) ≤ n ^ C + C ∧ (f.poly n).totalDegree ≤ n ^ C + C ∧
+  {f | ∃ C : ℕ, ∀ n, Fintype.card (f.vars n) ≤ n ^ C + C ∧ (f.poly n).totalDegree ≤ n ^ C + C ∧
     Approximates (f.poly n) (n ^ C + C)}
 
 /-- **Paper: Definition def:approx.** "A circuit over k((ε)) approximates a polynomial f over the field k if its output
