@@ -55,7 +55,7 @@ inductive Nm (K E pS : ℕ) (S N Id : Type) where
   | cut (id : Id)
   /-- content of a cut unit -/
   | cont (id : Id)
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 variable {A : Type} [CommRing A] {S Q : Type} [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q]
   {K A' E U0 U1 ub mm D pS : ℕ} {M : Sys A (K + K + A') E}

@@ -83,13 +83,14 @@ theorem card_nm {K E pS : ℕ} {S N Id : Type} [Fintype S] [Fintype N] [Fintype 
     (h2 : Fintype.card (Option S) ≤ X) (h3 : Fintype.card N ≤ X) (h4 : pS ≤ X) (h5 : E + 1 ≤ X) (h6 : Fintype.card Id ≤ X) :
     Fintype.card (Nm K E pS S N Id) ≤ 30 * (X * X) := by
   have hX : 1 ≤ X := by omega
-  have e := Fintype.card_congr (nmEquiv (K := K) (E := E) (pS := pS) (S := S) (N := N) (Id := Id))
+  have e := Fintype.card_congr (proxy_equiv% (Nm K E pS S N Id))
   rw [← e]
   have a1 : Fintype.card (Option S) * (K + K) ≤ X * X := Nat.mul_le_mul h2 (by omega)
   have a2 : (K + K) * (K + K) ≤ X * X := Nat.mul_le_mul (by omega) (by omega)
   have a3 : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
   have a4 : Fintype.card (Option (Fin E)) = E + 1 := by rw [Fintype.card_option, Fintype.card_fin]
-  simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_fin, Fintype.card_unit, Fintype.card_bool, a4]
+  simp only [Fintype.card_sum, Fintype.card_fin, Fintype.card_unit, Fintype.card_bool, a4, Fintype.card_sigma,
+    Finset.sum_const, Finset.card_univ, smul_eq_mul]
   omega
 
 end Cards
