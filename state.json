@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:53:06.046090317Z",
+  "updated_at": "2026-11-24T20:54:13.974196182Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 36,
     "rejected": 2,
-    "open": 3,
+    "open": 4,
     "contributors": 1,
     "ideas_open": 4
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 36,
-      "attempts": 41,
+      "attempts": 42,
       "saved": 15745
     }
   ],
@@ -192,7 +192,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:51:44Z",
-      "pr": null,
+      "pr": 79,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:11Z",
       "url": "https://github.com/kongeskog/formal-math/issues/68",
@@ -796,6 +796,74 @@
       "reason": null,
       "technique": "library",
       "scope": "Nc"
+    },
+    {
+      "pr": 79,
+      "title": "restructure(Paper): prove the exact end theorems from the approximate ones",
+      "author": "kongeskog",
+      "head_sha": "36b05c94581ecd8efbb520c830becd6ab7476b38",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:53:45Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 68,
+      "url": "https://github.com/kongeskog/formal-math/pull/79",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper"
     }
   ],
   "top_files": [
@@ -841,8 +909,8 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
-      "tokens": 9067,
-      "loc": 664
+      "tokens": 9040,
+      "loc": 655
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
