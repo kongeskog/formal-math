@@ -186,8 +186,8 @@ theorem wi_lr : (wi (hl (a := a) (b := b)))ᵀ * wi (hr (a := a) (b := b)) = 0 :
   ext i j
   simp only [Matrix.mul_apply, wi, Matrix.of_apply, Matrix.transpose_apply, Matrix.zero_apply]
   refine sum_eq_zero fun k _ => ?_
-  by_cases h1 : k = we (hl (a := a) (b := b)) i
-  · have h2 : k ≠ we (hr (a := a) (b := b)) j := by
+  by_cases h1 : k = we (hl) i
+  · have h2 : k ≠ we (hr) j := by
       rw [h1]
       simp only [we, ne_eq, Fin.ext_iff]
       omega
@@ -195,7 +195,7 @@ theorem wi_lr : (wi (hl (a := a) (b := b)))ᵀ * wi (hr (a := a) (b := b)) = 0 :
   · simp [h1]
 
 theorem wi_rl : (wi (hr (a := a) (b := b)))ᵀ * wi (hl (a := a) (b := b)) = 0 := by
-  rw [← Matrix.transpose_transpose (wi (hl (a := a) (b := b))), ← Matrix.transpose_mul, wi_lr,
+  rw [← Matrix.transpose_transpose (wi (hl)), ← Matrix.transpose_mul, wi_lr,
     Matrix.transpose_zero]
 
 theorem wi_add : wi (hl (a := a) (b := b)) * (wi (hl (a := a) (b := b)))ᵀ +

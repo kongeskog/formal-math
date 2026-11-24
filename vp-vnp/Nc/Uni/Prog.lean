@@ -222,10 +222,10 @@ def dimSt : ℕ := ∑ r : P.Rl, (2 * ∑ z, (st0 P r z).length + 1 +
   ((∑ v : Fin 9 → Bool, (2 * ∑ z, (st1 P r v z).length + 1)) + 1 + (2 * ∑ z, ((st2 z : List (Sy M K))).length + 1)))
 
 theorem runs_st : Runs (dimSt P) (emSt P : P.Rl × List (Fin 9 → Bool) → Zc K → List (Sy M K)) (fun x => P.wt x.1) := by
-  have h := Runs.sum (F := A) fun r : P.Rl =>
-    (Runs.pick (F := A) (fun _ : Unit => st0 P r) fun _ => P.wt r).mul
-    (((Runs.pick (F := A) (fun v : Fin 9 → Bool => st1 P r v) fun _ => 1).kstar fun v => st1_ne P r v).mul
-    (Runs.const (F := A) (st2 : Zc K → List (Sy M K))))
+  have h := Runs.sum fun r : P.Rl =>
+    (Runs.pick (fun _ : Unit => st0 P r) fun _ => P.wt r).mul
+    (((Runs.pick (fun v : Fin 9 → Bool => st1 P r v) fun _ => 1).kstar fun v => st1_ne P r v).mul
+    (Runs.const (st2 : Zc K → List (Sy M K))))
   refine (h.congr ⟨fun x => ⟨x.1, ((), x.2, ())⟩, fun y => (y.1, y.2.2.1), fun x => rfl, fun y => rfl⟩ (fun x z => ?_)
     fun x => ?_).mono ?_
   · simp only [Equiv.coe_fn_mk]
@@ -284,7 +284,7 @@ def emAp (w : List (Sy M K)) : Zc K → List (Sy M K) := fun z => on {tp .lk tru
 theorem runs_ap : Runs (Fintype.card (Sy M K) * 5 + 1 + 3)
     (emAp : List (Sy M K) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have hc : ({tp .lk true, lsF} : Finset (Zc K)).card = 2 := Finset.card_pair (by simp)
-  have h := (Runs.wordstar (F := A) (Z := Zc K) {tp .lk true, lsF} ⟨lsF, by simp⟩ (fun γ : Sy M K => γ)).mul
+  have h := (Runs.wordstar (Z := Zc K) {tp .lk true, lsF} ⟨lsF, by simp⟩ (fun γ : Sy M K => γ)).mul
     (Runs.word (F := A) (Z := Zc K) {lsF} [(Sy.bar : Sy M K)])
   refine (h.congr ⟨fun w => (w, ()), Prod.fst, fun w => rfl, fun y => rfl⟩ (fun w z => ?_) fun w => ?_).mono ?_
   · simp [emAp]
@@ -311,10 +311,10 @@ noncomputable def dimX : ℕ := 80 + ((60 + 1) + ((dimSt P + 1) +
 theorem emSt_ne (x : P.Rl × List (Fin 9 → Bool)) : ∃ z, emSt P x z ≠ [] := ⟨tp .md true, by simp [emSt]⟩
 
 theorem runs_X : Runs (dimX P) (emX P : XP P → Zc K → List (Sy M K)) (fun x => (x.2.2.1.map fun s => P.wt s.1).prod) := by
-  have h := (runs_in (A := A) (M := M) (K := K) P.m0 P.kN).mul
-    (((runs_ct (A := A) (M := M) (K := K)).kstar fun r => ⟨tp .cp true, by simp [emCt, on, bw]⟩).mul
-    (((runs_st P).kstar fun s => emSt_ne P s).mul ((runs_ed (A := A) (M := M) (K := K) P.mh).mul
-    ((runs_ap (A := A) (M := M) (K := K)).mul (runs_U (A := A) (M := M) (K := K))))))
+  have h := (runs_in P.m0 P.kN).mul
+    (((runs_ct).kstar fun r => ⟨tp .cp true, by simp [emCt, on, bw]⟩).mul
+    (((runs_st P).kstar fun s => emSt_ne P s).mul ((runs_ed P.mh).mul
+    ((runs_ap).mul (runs_U)))))
   refine h.congr (Equiv.refl _) (fun x z => rfl) fun x => ?_
   simp
 

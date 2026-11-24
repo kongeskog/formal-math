@@ -18,10 +18,10 @@ open Nc.Tower (U SL2 lo hi x)
 variable {a b : ℕ}
 
 /-- The inclusion of the first window. -/
-abbrev wl (a b : ℕ) : Matrix (Fin (a + b)) (Fin a) F2 := wi (hl (a := a) (b := b))
+abbrev wl (a b : ℕ) : Matrix (Fin (a + b)) (Fin a) F2 := wi (hl)
 
 /-- The inclusion of the second window. -/
-abbrev wr (a b : ℕ) : Matrix (Fin (a + b)) (Fin b) F2 := wi (hr (a := a) (b := b))
+abbrev wr (a b : ℕ) : Matrix (Fin (a + b)) (Fin b) F2 := wi (hr)
 
 /-- The elements `1 + M` with `M` in the upper right block. -/
 def up (M : Matrix (Fin a) (Fin b) F2) : U (a + b) :=
@@ -33,8 +33,8 @@ def up (M : Matrix (Fin a) (Fin b) F2) : U (a + b) :=
       rw [Matrix.mul_apply, sum_mul]
       refine sum_eq_zero fun l _ => ?_
       simp only [wi, Matrix.of_apply, Matrix.transpose_apply]
-      by_cases h1 : i = we (hl (a := a) (b := b)) l
-      · by_cases h2 : j = we (hr (a := a) (b := b)) k
+      by_cases h1 : i = we (hl) l
+      · by_cases h2 : j = we (hr) k
         · exfalso
           rw [h1, h2] at hij
           simp only [we, Fin.lt_def] at hij
@@ -49,8 +49,8 @@ def up (M : Matrix (Fin a) (Fin b) F2) : U (a + b) :=
       rw [Matrix.mul_apply, sum_mul]
       refine sum_eq_zero fun l _ => ?_
       simp only [wi, Matrix.of_apply, Matrix.transpose_apply]
-      by_cases h1 : i = we (hl (a := a) (b := b)) l
-      · by_cases h2 : i = we (hr (a := a) (b := b)) k
+      by_cases h1 : i = we (hl) l
+      · by_cases h2 : i = we (hr) k
         · exfalso
           rw [h1] at h2
           simp only [we, Fin.ext_iff] at h2
@@ -70,19 +70,19 @@ theorem up_add (M N : Matrix (Fin a) (Fin b) F2) : up (M + N) = up M * up N := b
   simp only [Matrix.add_mul, Matrix.mul_add, Matrix.one_mul, Matrix.mul_one, this]
   abel
 
-theorem wm_l (A : Matrix (Fin a) (Fin a) F2) : wm (hl (a := a) (b := b)) A =
+theorem wm_l (A : Matrix (Fin a) (Fin a) F2) : wm (hl) A =
     wl a b * A * (wl a b)ᵀ + wr a b * (wr a b)ᵀ := by
-  rw [wm, Matrix.mul_one, ← wi_add (a := a) (b := b)]
+  rw [wm, Matrix.mul_one, ← wi_add]
   abel
 
-theorem wm_r (A : Matrix (Fin b) (Fin b) F2) : wm (hr (a := a) (b := b)) A =
+theorem wm_r (A : Matrix (Fin b) (Fin b) F2) : wm (hr) A =
     wr a b * A * (wr a b)ᵀ + wl a b * (wl a b)ᵀ := by
-  rw [wm, Matrix.mul_one, ← wi_add (a := a) (b := b)]
+  rw [wm, Matrix.mul_one, ← wi_add]
   abel
 
 /-- The element with given blocks. -/
 def blk (t : U a × Matrix (Fin a) (Fin b) F2 × U b) : U (a + b) :=
-  win (hr (a := a) (b := b)) t.2.2 * up t.2.1 * win (hl (a := a) (b := b)) t.1
+  win (hr) t.2.2 * up t.2.1 * win (hl) t.1
 
 theorem mat_blk (t : U a × Matrix (Fin a) (Fin b) F2 × U b) : mat (blk t) =
     wl a b * mat t.1 * (wl a b)ᵀ + wl a b * t.2.1 * (wr a b)ᵀ + wr a b * mat t.2.2 * (wr a b)ᵀ := by
@@ -117,8 +117,8 @@ theorem mat_blk (t : U a × Matrix (Fin a) (Fin b) F2 × U b) : mat (blk t) =
     rw [Matrix.mul_one]
   have s2 : wr a b * (wr a b)ᵀ = wr a b * (1 : Matrix (Fin b) (Fin b) F2) * (wr a b)ᵀ := by
     rw [Matrix.mul_one]
-  show mat (win (hr (a := a) (b := b)) C * up M * win (hl (a := a) (b := b)) A) = _
-  rw [mat_mul, mat_mul, mat_win, mat_win, mat_up, wm_l, wm_r, ← wi_add (a := a) (b := b), s1, s2]
+  show mat (win (hr) C * up M * win (hl) A) = _
+  rw [mat_mul, mat_mul, mat_win, mat_win, mat_up, wm_l, wm_r, ← wi_add, s1, s2]
   simp only [Matrix.add_mul, Matrix.mul_add, z1, z2, e1, e2, add_zero, zero_add]
   simp only [Matrix.mul_one, Matrix.one_mul]
   abel

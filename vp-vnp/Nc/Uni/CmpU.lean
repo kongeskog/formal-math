@@ -169,9 +169,9 @@ theorem runs_rdG : Runs ((9 + (Fintype.card (Bl K) * 3 + 1) + (3 + (Fintype.card
     (6 + 3 + (Fintype.card (Bl K) * 5 + 1) + 5)) (emRd : RdG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have hpq : (cP : Zc K) ≠ cQ := by simp
   have h1 := (runs_rk (A := A) (M := M) (K := K) {cQ} ⟨cQ, by simp⟩).mul
-    (((Runs.word (F := A) (Z := Zc K) {cP} [(Sy.flag false : Sy M K)]).mul
-    (Runs.wordstar (F := A) {cP} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
-    (Runs.word (F := A) {cP} [(Sy.dot : Sy M K)]))
+    (((Runs.word (Z := Zc K) {cP} [(Sy.flag false : Sy M K)]).mul
+    (Runs.wordstar {cP} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
+    (Runs.word {cP} [(Sy.dot : Sy M K)]))
   have h2 := (((Runs.letter (F := A) (Z := Zc K) {cQ} (fun f : Bool => (Sy.flag f : Sy M K)) (fun _ => 1)).mul
     (Runs.word (F := A) {cP} [(Sy.flag true : Sy M K)])).mul
     (Runs.wordstar (F := A) {cP, cQ} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
@@ -208,10 +208,10 @@ def dimCm (k : ℕ) : ℕ := (3 + (k * 3 + 1) + 3) +
 theorem runs_cm : Runs (dimCm (Fintype.card (Bl K)))
     (emCm : XG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have hk := (runs_rdG (A := A) (M := M) (K := K)).kstar fun d => ⟨cP, by simp [emRd, on, rk_eq]⟩
-  have h := (((Runs.word (F := A) (Z := Zc K) {cP} [(Sy.flag false : Sy M K)]).mul
-    (Runs.wordstar (F := A) {cP} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
-    (Runs.word (F := A) {cP} [(Sy.dot : Sy M K)])).mul
-    (hk.mul (runs_rk (A := A) (M := M) (K := K) {cQ} ⟨cQ, by simp⟩))
+  have h := (((Runs.word (Z := Zc K) {cP} [(Sy.flag false : Sy M K)]).mul
+    (Runs.wordstar {cP} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
+    (Runs.word {cP} [(Sy.dot : Sy M K)])).mul
+    (hk.mul (runs_rk {cQ} ⟨cQ, by simp⟩))
   refine (h.congr ⟨fun y => ((((), y.1), ()), y.2), fun y => (y.1.1.2, y.2), fun y => rfl, fun y => rfl⟩
     (fun y z => ?_) fun y => ?_).mono ?_
   · obtain ⟨w, ds, r⟩ := y
