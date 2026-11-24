@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:17:24.978853450Z",
+  "updated_at": "2026-11-24T20:18:33.681230135Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "3634ac0888881c7fabc825ef8dc8430af9bbcb70",
-    "at": "2026-11-24T20:13:44.531431755Z",
+    "sha": "4e29618a7aaedefddb9d3d8d855a94d01625c627",
+    "at": "2026-11-24T20:18:33.681230135Z",
     "metrics": {
-      "tokens": 915239,
-      "loc": 58140,
+      "tokens": 914593,
+      "loc": 58083,
       "decls": 4572,
       "files": 321,
-      "bytes": 3383350,
+      "bytes": 3381696,
       "build_seconds": 582
     }
   },
   "counts": {
-    "merged": 28,
+    "merged": 29,
     "rejected": 2,
-    "open": 7,
+    "open": 6,
     "contributors": 1,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 28,
+      "merged": 29,
       "attempts": 37,
-      "saved": 12922
+      "saved": 13568
     }
   ],
   "ideas": [
@@ -165,7 +165,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:46:54Z",
       "pr": 59,
-      "result_delta": null,
+      "result_delta": -646,
       "created_at": "2026-11-24T19:42:57Z",
       "url": "https://github.com/kongeskog/formal-math/issues/52",
       "technique": "shorten",
@@ -467,96 +467,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 59,
-      "title": "shorten(Nc/Uni/SpecU): prove emPs, emU and emCo_other lemmas by one simp call each",
-      "author": "kongeskog",
-      "head_sha": "f991b3590011a6024be4bceb066e019736e0e377",
-      "base_sha": "612ba2776ff4419baf1609efc9a9779999166e22",
-      "status": "stale",
-      "created_at": "2026-11-24T19:54:33Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 916625,
-        "loc": 58190,
-        "decls": 4572,
-        "files": 321,
-        "bytes": 3386977,
-        "build_seconds": 543
-      },
-      "base_metrics": {
-        "tokens": 917271,
-        "loc": 58247,
-        "decls": 4572,
-        "files": 321,
-        "bytes": 3388631,
-        "build_seconds": null
-      },
-      "delta": -646,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "1 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 917271 → 916625 (-646)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 52,
-      "url": "https://github.com/kongeskog/formal-math/pull/59",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45475983177",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc/Uni/SpecU"
-    },
     {
       "pr": 60,
       "title": "shorten(Nc/Uni/EvThm): one-line proofs for the eleven inversion lemmas of Fm.ofTree",
