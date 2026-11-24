@@ -133,7 +133,7 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R
   | zero =>
     have h1 : num R ch FL lhat n o (.inl ⟨.start a c γ ⟨0, hs⟩, hx⟩) ≤
         load R ch FL lhat n o (.nxt (.start a c γ ⟨0, hs⟩)) := by
-      rw [num_eq hr hb, numF]
+      rw [num_eq, numF]
       split_ifs
       · exact le_rfl
       · exact Nat.zero_le _
@@ -155,7 +155,7 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R
       exact ⟨h1, by simp only at h2 ⊢; omega⟩
     have h1 : num R ch FL lhat n o (.inl ⟨.start a c γ ⟨s + 1, hs⟩, hx⟩) ≤
         load R ch FL lhat n o (.nxt (.start a c γ ⟨s + 1, hs⟩)) := by
-      rw [num_eq hr hb, numF]
+      rw [num_eq, numF]
       split_ifs
       · exact le_rfl
       · exact Nat.zero_le _

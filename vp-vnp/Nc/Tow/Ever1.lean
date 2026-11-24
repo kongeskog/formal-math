@@ -148,33 +148,30 @@ theorem lev_last (e : T.Ed J) : load R ch FL lhat n o (.edge (Fin.last J) e) = l
   rw [dif_pos (Nat.lt_succ_self J)]
   rfl
 
-variable (hr : 0 < r) (hb : 0 < b)
-include hr hb
-
 theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn j i e) ≤
     if i = imin hh (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
-  · refine (num_inl hr hb _).trans (le_of_eq ?_)
+  · refine (num_inl _).trans (le_of_eq ?_)
     exact lev_castSucc j e
-  · rw [num_eq hr hb, numF, if_neg]
+  · rw [num_eq, numF, if_neg]
     intro ha
     exact h1 ((isMin_iff hh _ j.castSucc i).1 ha)
   · exact Nat.zero_le _
   · exact le_rfl
 
-theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
+theorem nR_mid (hr : 0 < r) (hb : 0 < b) (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
     if T.ty e = imin hh (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
   · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
-    refine h2.trans ((num_mid0 hr hb j e hx0).1.trans (le_of_eq ?_))
+    refine h2.trans ((num_mid0 j e hx0).1.trans (le_of_eq ?_))
     exact lev_castSucc j e
   · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
     refine h2.trans (le_of_eq ?_)
-    refine (num_mid0 hr hb j e hx0).2 fun hm => h1 ?_
+    refine (num_mid0 j e hx0).2 fun hm => h1 ?_
     exact (isMin_iff hh _ j.castSucc _).1 hm
   · exact Nat.zero_le _
   · exact le_rfl
@@ -183,7 +180,7 @@ theorem nR_fin (e : T.Ed J) : nR R ch FL lhat n o (.fin e) ≤ ldL R ch FL lhat 
   classical
   unfold nR
   split_ifs with hx
-  · refine (num_inl hr hb _).trans (le_of_eq ?_)
+  · refine (num_inl _).trans (le_of_eq ?_)
     exact lev_last e
   · exact Nat.zero_le _
 

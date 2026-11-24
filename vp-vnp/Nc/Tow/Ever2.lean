@@ -20,7 +20,7 @@ variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r}
   {o : NM R FL (ch := ch) → ℕ}
 
 /-- Alive units of some channels with a target. -/
-theorem sum_alv_le {κ : Type*} [DecidableEq κ] (τ : Tg T m AA) (s : Finset κ) (f : κ → NM R FL (ch := ch))
+theorem sum_alv_le {κ : Type*} (τ : Tg T m AA) (s : Finset κ) (f : κ → NM R FL (ch := ch))
     (hf : Set.InjOn f s) (hτ : ∀ x ∈ s, tgM R ch FL (f x).1 (f x).2 = τ) :
     ∑ x ∈ s, alv R ch FL lhat n o (f x) ≤ load R ch FL lhat n o τ := by
   classical
@@ -59,7 +59,7 @@ theorem nR_mid3 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 3) ≤ 
   unfold nR
   rw [dif_pos (ok_mid2 j e)]
   split_ifs with hx
-  · refine (num_inl hr hb _).trans ?_
+  · refine (num_inl _).trans ?_
     refine (load_le_sum {(⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 3) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       · obtain ⟨h1, h2⟩ := tgR_mid (x := x) (ν := ν) hν
@@ -85,7 +85,7 @@ theorem nR_mid1 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 1) ≤ 
   rw [dif_pos (ok_mid2 j e)]
   split_ifs with hx
   · have h1 : num R ch FL lhat n o (.inl ⟨.mid j e 2, ok_mid2 j e⟩) = load R ch FL lhat n o (.nxt (.mid j e 2)) := by
-      rw [num_eq hr hb, numF, if_pos]
+      rw [num_eq, numF, if_pos]
       · rfl
       · intro hh
         exact absurd hh (by decide)
@@ -196,7 +196,7 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
       · subst hi
         refine Finset.sum_le_sum fun e _ => ?_
         rw [Fin.sum_univ_three]
-        have h2 := nR_inn (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hh hr hb j (imin hh Lf j) e
+        have h2 := nR_inn (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hh j (imin hh Lf j) e
         rw [if_pos rfl] at h2
         refine add_le_add (add_le_add ?_ ?_) ?_
         · change (if nd T j j.2.le (T.e0 e) = P then _ else 0) ≤ _
@@ -213,7 +213,7 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
           · exact h2
           · exact le_rfl
       · refine le_of_eq (Finset.sum_eq_zero fun e _ => Finset.sum_eq_zero fun q _ => ?_)
-        have h2 := nR_inn (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hh hr hb j i e
+        have h2 := nR_inn (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hh j i e
         rw [if_neg hi] at h2
         split_ifs
         · omega
@@ -345,7 +345,7 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
         (if nd T J le_rfl (T.e0 e) = P then Lf J e else 0) + (if none = P then Lf J e else 0) +
           if nd T J le_rfl (T.e1 e) = P then Lf J e else 0 := by
       intro e
-      have h2 := nR_fin (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hr hb e
+      have h2 := nR_fin (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) e
       rw [Fin.sum_univ_three]
       refine add_le_add (add_le_add ?_ ?_) ?_
       · change (if nd T J le_rfl (T.e0 e) = P then _ else 0) ≤ _

@@ -253,7 +253,7 @@ theorem tg_time (ν : NM R FL (ch := ch)) : timeM R ch FL ν.1 < tgTime (tgM R c
     simp only [tgM, tgTime, timeM, Fin.val_succ]
     omega
 
-theorem ld_numS (hr : 0 < r) (hb : 0 < b) {τ : Tg T m AA} {t : ℕ} (h : tgTime τ ≤ t) :
+theorem ld_numS {τ : Tg T m AA} {t : ℕ} (h : tgTime τ ≤ t) :
     ld R ch FL lhat n o (numS R ch FL lhat n o t) τ = load R ch FL lhat n o τ := by
   unfold load ld
   congr 1
@@ -324,10 +324,10 @@ theorem numF_congr {L L' : Tg T m AA → ℕ} {mv : Mv T R ch FL}
     simp only [pick_congr h1, tmin_congr h1]
 
 /-- **The numbers of units.** -/
-theorem num_eq (hr : 0 < r) (hb : 0 < b) (mv : Mv T R ch FL) :
+theorem num_eq (mv : Mv T R ch FL) :
     num R ch FL lhat n o mv = numF R ch FL (load R ch FL lhat n o) mv := by
   rw [num, numS_stable (timeM_lt mv)]
-  exact numF_congr fun τ hτ => ld_numS hr hb hτ
+  exact numF_congr fun τ hτ => ld_numS hτ
 
 section Causal
 
@@ -385,7 +385,7 @@ theorem num_congr (hr : 0 < r) (hb : 0 < b) {mv : Mv T R ch FL}
 theorem load_congr (hr : 0 < r) (hb : 0 < b) {τ : Tg T m AA} {t : ℕ} (hτ : tgTime τ ≤ t)
     (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
     load R ch FL lhat n o τ = load R ch FL lhat n o' τ := by
-  rw [← ld_numS hr hb hτ, ← ld_numS hr hb hτ, numS_congr hr hb ho]
+  rw [← ld_numS hτ, ← ld_numS hτ, numS_congr hr hb ho]
   refine ld_congr hr hb ?_ τ
   intro mv' hmv'
   refine ho mv' ?_

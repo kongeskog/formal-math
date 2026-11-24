@@ -84,7 +84,7 @@ theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB T R ch a c k
       exact absurd he (hE _)
 
 /-- End segments join different chambers. -/
-theorem seg_nondiag (hr : 0 < r) (hb : 0 < b) {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
+theorem seg_nondiag {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
     {ν : NM R FL (ch := ch)} (hν : tgM R ch FL ν.1 ν.2 = .seg j i ω q) : ¬ q.IsDiag := by
   have key : ∀ c : T.X j, T.host i (T.vx i c) ≠ T.π c → ¬ (s(T.co i (T.host i (T.vx i c)), T.co i c) : Sym2 T.Fl).IsDiag := by
     intro c hne hd
@@ -96,7 +96,7 @@ theorem seg_nondiag (hr : 0 < r) (hb : 0 < b) {j : Fin J} {i : Fin h} {ω : T.V 
       rw [T.host_vx j.2, T.π_vx j.2]
     · simp only
       rw [hd, T.π_co j.2]
-  obtain ⟨e, s, hx, h1, -, h3⟩ := seg_chan hr hb hν
+  obtain ⟨e, s, hx, h1, -, h3⟩ := seg_chan hν
   subst h1
   rcases h3 with ⟨h5, -, h7⟩ | ⟨h5, -, h7⟩
   · subst h5
@@ -111,7 +111,7 @@ section Plan
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 /-- Alive units with a target are given. -/
-theorem exists_cons (hr : 0 < r) (hb : 0 < b) (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
+theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
     (hd : tgU R FL Pl u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
   classical
   set L := load R ch FL lhat (nn n) (oo R FL Pl o) with hL
@@ -151,12 +151,12 @@ theorem exists_cons (hr : 0 < r) (hb : 0 < b) (hh : 0 < h) {u : Un R FL Pl U0 U1
         exfalso
         have hτ : tgB T R ch a c k = .seg j i ω q := hτ
         rcases tgB_cases (R := R) (ch := ch) a c k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at hτ <;> cases hτ
-      | new ν k => exact seg_nondiag hr hb (ν := eN R FL Pl ν) hτ
+      | new ν k => exact seg_nondiag (ν := eN R FL Pl ν) hτ
     obtain ⟨t0, d0, -⟩ := exists_fits_seg (FL := FL) L j i ω
     obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv T FL)
     have hd : Pick FL L (⟨j, i, ω, d⟩ : LMv T FL) := hd
     have hnum : num R ch FL lhat (nn n) (oo R FL Pl o) (.inr (⟨j, i, ω, d⟩ : LMv T FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) := by
-      rw [num_eq hr hb, numF, if_pos hd]
+      rw [num_eq, numF, if_pos hd]
     set t := tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) with ht
     have hfit := hd.1 q hq
     have hrk : rkU R FL Pl lhat n o u < L (.seg j i ω q) := by
@@ -210,14 +210,14 @@ theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
     simpa [seen0] using h1
 
 /-- **The current units in the end**: alive units between a node and its parent, and dead units. -/
-theorem cur_end (hr : 0 < r) (hb : 0 < b) (hh : 0 < h) {u : Un R FL Pl U0 U1}
+theorem cur_end (hh : 0 < h) {u : Un R FL Pl U0 U1}
     (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL))) :
     u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ∧
       (AlU R FL Pl lhat n o u → tgU R FL Pl u = .done) := by
   rw [Plan.cur, mem_sdiff] at hu
   refine ⟨hu.1, fun ha => ?_⟩
   by_contra hd
-  obtain ⟨z, hz⟩ := exists_cons hr hb hh ha hd
+  obtain ⟨z, hz⟩ := exists_cons hh ha hd
   apply hu.2
   unfold Plan.used
   rw [mem_biUnion]

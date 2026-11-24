@@ -282,15 +282,29 @@ theorem nEnd_eq {j : ℕ} {i : Fin h} (n : T.Ed j → ℕ) (ω : T.V (j + 1) i) 
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq, if_pos (mem_univ _), if_pos (mem_univ _)]
 
-section Mid
+/-- The channels of end segments. -/
+theorem seg_chan {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} {ν : NM R FL (ch := ch)}
+    (hν : tgM R ch FL ν.1 ν.2 = .seg j i ω q) : ∃ (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)),
+      T.ty e = i ∧ ν = ⟨.inl ⟨.mid j e s, hx⟩, false⟩ ∧
+      ((s = 1 ∧ T.πV (T.vx i (T.e0 e)) = ω ∧ s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q) ∨
+      (s = 3 ∧ T.πV (T.vx i (T.e1 e)) = ω ∧ s(T.co i (T.host i (T.vx i (T.e1 e))), T.co i (T.e1 e)) = q)) := by
+  rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
+  · obtain ⟨e, h1, h2, h3⟩ := tgR_seg (x := x) (ν := ν) hν
+    have h1 : ν = false := h1
+    subst h1
+    rcases h3 with ⟨h3, h4⟩ | ⟨h3, h4⟩
+    · subst h3
+      exact ⟨e, 1, hx, h2, rfl, Or.inl ⟨rfl, h4⟩⟩
+    · subst h3
+      exact ⟨e, 3, hx, h2, rfl, Or.inr ⟨rfl, h4⟩⟩
+  · simp [tgM] at hν
 
-variable (hr : 0 < r) (hb : 0 < b)
-include hr hb
+section Mid
 
 theorem num_inl (x : {x : RM T m AA // okR T R ch x}) : num R ch FL lhat n o (.inl x) ≤
     load R ch FL lhat n o (inpR T x.1) := by
   classical
-  rw [num_eq hr hb, numF]
+  rw [num_eq, numF]
   split_ifs
   · exact le_rfl
   · exact Nat.zero_le _
@@ -299,10 +313,13 @@ theorem num_mid0 (j : Fin J) (e : T.Ed j) (hx : okR T R ch (.mid j e 0)) :
     num R ch FL lhat n o (.inl ⟨.mid j e 0, hx⟩) ≤ load R ch FL lhat n o (.edge j.castSucc e) ∧
     (¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) → num R ch FL lhat n o (.inl ⟨.mid j e 0, hx⟩) = 0) := by
   classical
-  refine ⟨num_inl hr hb _, fun hn => ?_⟩
-  rw [num_eq hr hb, numF, if_neg]
+  refine ⟨num_inl _, fun hn => ?_⟩
+  rw [num_eq, numF, if_neg]
   intro ha
   exact hn (ha rfl)
+
+variable (hr : 0 < r) (hb : 0 < b)
+include hr hb
 
 /-- The relays of an edge are given at most what is on the edge. -/
 theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)) :
@@ -313,7 +330,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
   have one : ∀ hx1 : okR T R ch (.mid j e 1), num R ch FL lhat n o (.inl ⟨.mid j e 1, hx1⟩) ≤
       num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
     intro hx1
-    refine (num_inl hr hb _).trans ?_
+    refine (num_inl _).trans ?_
     refine (load_le_sum {(⟨.inl ⟨.mid j e 0, hx0⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 1) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       · obtain ⟨h1, h2⟩ := tgR_mid (x := x) (ν := ν) hν
@@ -332,7 +349,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
   have two : ∀ hx2 : okR T R ch (.mid j e 2), num R ch FL lhat n o (.inl ⟨.mid j e 2, hx2⟩) ≤
       num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
     intro hx2
-    refine (num_inl hr hb _).trans ?_
+    refine (num_inl _).trans ?_
     by_cases hh : hst T (T.ty e) (T.e0 e) = T.π (T.e0 e)
     · refine (load_le_sum {(⟨.inl ⟨.mid j e 0, hx0⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 2) ?_).trans ?_
       · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
@@ -375,7 +392,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
   · exact one hx
   · exact two hx
   · have hx2 : okR T R ch (.mid j e 2) := ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
-    refine (num_inl hr hb _).trans ?_
+    refine (num_inl _).trans ?_
     refine (load_le_sum {(⟨.inl ⟨.mid j e 2, hx2⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 3) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       · obtain ⟨h1, h2⟩ := tgR_mid (x := x) (ν := ν) hν
@@ -397,28 +414,11 @@ theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
     (¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) →
       alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
   obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
-  have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e hx0
+  have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0
   have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) hr hb (⟨.mid j e s, hx⟩ : {x : RM T m AA // okR T R ch x}) ν
   refine ⟨h3.trans (h1.trans h2.1), fun hn => ?_⟩
   have := h2.2 hn
   omega
-
-/-- The channels of end segments. -/
-theorem seg_chan {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} {ν : NM R FL (ch := ch)}
-    (hν : tgM R ch FL ν.1 ν.2 = .seg j i ω q) : ∃ (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)),
-      T.ty e = i ∧ ν = ⟨.inl ⟨.mid j e s, hx⟩, false⟩ ∧
-      ((s = 1 ∧ T.πV (T.vx i (T.e0 e)) = ω ∧ s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q) ∨
-      (s = 3 ∧ T.πV (T.vx i (T.e1 e)) = ω ∧ s(T.co i (T.host i (T.vx i (T.e1 e))), T.co i (T.e1 e)) = q)) := by
-  rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
-  · obtain ⟨e, h1, h2, h3⟩ := tgR_seg (x := x) (ν := ν) hν
-    have h1 : ν = false := h1
-    subst h1
-    rcases h3 with ⟨h3, h4⟩ | ⟨h3, h4⟩
-    · subst h3
-      exact ⟨e, 1, hx, h2, rfl, Or.inl ⟨rfl, h4⟩⟩
-    · subst h3
-      exact ⟨e, 3, hx, h2, rfl, Or.inr ⟨rfl, h4⟩⟩
-  · simp [tgM] at hν
 
 /-- End segments, inactive types. -/
 theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load R ch FL lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
@@ -426,7 +426,7 @@ theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load R ch FL lhat n o) 
   rw [load_def, bt_seg, Nat.zero_add]
   refine Finset.sum_eq_zero fun ν _ => ?_
   split_ifs with hν
-  · obtain ⟨e, s, hx, h1, h2, -⟩ := seg_chan hr hb hν
+  · obtain ⟨e, s, hx, h1, h2, -⟩ := seg_chan hν
     rw [h2]
     exact (alv_mid_le hr hb j e s hx false).2 (by rw [h1]; exact hn)
   · rfl
@@ -457,7 +457,7 @@ theorem seg_le (j : Fin J) (i : Fin h) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) :
       s(T.co i (T.host i (T.vx i (T.e1 e))), T.co i (T.e1 e)) = q).biUnion (segS (R := R) (ch := ch) (FL := FL) j 3)))
     (bt_seg j i ω q) ?_).trans ?_
   · intro ν hν _
-    obtain ⟨e, s, hx, h1, h2, h3⟩ := seg_chan hr hb hν
+    obtain ⟨e, s, hx, h1, h2, h3⟩ := seg_chan hν
     rcases h3 with ⟨h5, h6⟩ | ⟨h5, h6⟩
     · subst h5
       refine mem_union_left _ (mem_biUnion.2 ⟨e, mem_filter.2 ⟨mem_univ _, h1, h6⟩, ?_⟩)

@@ -45,14 +45,15 @@ structure Rng (U0 U1 : ℕ) : Prop where
   o : ∀ x ν, ox x ν ≤ U1
 
 variable {nx ox lhat} (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hR : Rng nx ox U0 U1)
-include hA hB hR
-
+include hB in
 theorem card_cn (l : LMv T FL) : Fintype.card (FL.L l.2.2.2).Cn ≤ Y := by
   refine (Fintype.card_le_of_injective
     (fun ν : (FL.L l.2.2.2).Cn => (⟨Sum.inr l, ν⟩ : NM R FL (ch := ch))) ?_).trans hB.nm
   intro ν ν' he
   have := eq_of_heq (Sigma.mk.inj he).2
   exact this
+
+include hA hB hR
 
 theorem py_valid (hb : Base nx ox H) : PY Dd H Y 6 fun x => Valid lhat (nx x) := by
   have hY := hA.pos
@@ -117,13 +118,13 @@ theorem cy_q (hb : Base nx ox H) (l : LMv T FL) :
   have hY := hA.pos
   have h1 : ∀ x (ν : (FL.L l.2.2.2).Cn), ox x ⟨Sum.inr l, ν⟩ ^ 2 ≤ Y ^ 2 := fun x ν =>
     Nat.pow_le_pow_left ((hR.o x _).trans (hB.u1 (⟨Sum.inr l, ν⟩ : NM R FL (ch := ch)))) 2
-  refine CY.sum hA univ (card_cn hA hB hR l) (fun ν _ => ?_) fun x => hA.lt_of_le3 ?_
+  refine CY.sum hA univ (card_cn hB l) (fun ν _ => ?_) fun x => hA.lt_of_le3 ?_
   · refine CY.op1 hA (fun s => s ^ 2) (CY.base (hb.o _) hY) fun x => hA.lt_of_le3 ((h1 x ν).trans ?_)
     have : Y ^ 2 ≤ Y ^ 3 := Nat.pow_le_pow_right hY (by omega)
     omega
   · calc _ ≤ ∑ _ν : (FL.L l.2.2.2).Cn, Y ^ 2 := Finset.sum_le_sum fun ν _ => h1 x ν
       _ = Fintype.card (FL.L l.2.2.2).Cn * Y ^ 2 := by simp
-      _ ≤ Y * Y ^ 2 := Nat.mul_le_mul_right _ (card_cn hA hB hR l)
+      _ ≤ Y * Y ^ 2 := Nat.mul_le_mul_right _ (card_cn hB l)
       _ = Y ^ 3 := by ring
       _ ≤ 2 * Y ^ 3 := by omega
 

@@ -220,7 +220,7 @@ theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv T R ch FL) :
         Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inl y) :=
       PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s = t) (CY.base (ha.o _) hY) (CY.base (ha.num _) hY)
     exact h1.mono hY (by omega)
-  · have hc : Fintype.card (kindM R ch FL (.inr l)).Cn ≤ Y := card_cn hA hB (rng (nI := nI) (oI := oI)) l
+  · have hc : Fintype.card (kindM R ch FL (.inr l)).Cn ≤ Y := card_cn hB l
     have h1 : PY Dd H Y 1 fun x => GoodL R ch FL (oX oI x) l (Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inr l)) :=
       PY.rel hA (fun q t => r * b * q ≤ FL.G₁ * t ^ 2) (CY.base (ha.q l) hY) (CY.base (ha.num (.inr l)) hY)
     have h2 : PY Dd H Y 3 fun x => ∀ ν : (kindM R ch FL (.inr l)).Cn,

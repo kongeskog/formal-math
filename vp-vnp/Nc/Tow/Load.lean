@@ -186,7 +186,7 @@ theorem sum_end_sq (hj : j < J) :
 end Stage
 
 /-- Minkowski's inequality, one summand constant. -/
-theorem minkowski {κ : Type*} [Fintype κ] (f : κ → ℝ) (hf : ∀ x, 0 ≤ f x) {a : ℝ} (ha : 0 ≤ a) :
+theorem minkowski {κ : Type*} [Fintype κ] (f : κ → ℝ) {a : ℝ} (ha : 0 ≤ a) :
     √(∑ x, (f x + a) ^ 2) ≤ √(∑ x, f x ^ 2) + √(Fintype.card κ) * a := by
   have h1 : 0 ≤ ∑ x, f x ^ 2 := Finset.sum_nonneg fun x _ => sq_nonneg _
   have hc : (0 : ℝ) ≤ Fintype.card κ := Nat.cast_nonneg _
@@ -317,7 +317,6 @@ theorem other_le {j : ℕ} (hj : j < J) (hr : 0 < r) (hb : 0 < b) (hbD : b ≤ 2
     rw [hx, eq_div_iff hbR.ne']; exact_mod_cast card_V hj' i
   have hxb : 0 ≤ x / b := by positivity
   set f : T.V (j + 1) i → ℝ := fun ω => √(T.NN2 (T.nEnd i n ω)) with hf
-  have hf0 : ∀ ω, 0 ≤ f ω := fun ω => Real.sqrt_nonneg _
   have e1 : ∑ e' ∈ univ.filter (fun e' : T.Ed (j + 1) => ¬ T.ty e' = i), (n' e' : ℝ) ^ 2 =
       ∑ ω, ∑ ν, (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2 := by
     rw [← Fintype.sum_prod_type' (f := fun ω ν => (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2)]
@@ -347,7 +346,7 @@ theorem other_le {j : ℕ} (hj : j < J) (hr : 0 < r) (hb : 0 < b) (hbD : b ≤ 2
   have hs0 : 0 ≤ ∑ ω, (f ω + a₁) ^ 2 := Finset.sum_nonneg fun ω _ => sq_nonneg _
   have h5 : √(x / b * ∑ ω, (f ω + a₁) ^ 2) ≤ √8 * N + a₁ * (x / b) := by
     rw [Real.sqrt_mul hxb]
-    have h6 := minkowski f hf0 ha
+    have h6 := minkowski f ha
     rw [hcV] at h6
     have h7 := mul_le_mul_of_nonneg_left h6 (Real.sqrt_nonneg (x / b))
     refine h7.trans ?_

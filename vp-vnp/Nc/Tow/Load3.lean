@@ -127,24 +127,24 @@ theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv T FL} (hL : ∀ q, L (.seg l.
 
 section Stage
 
-variable (hr : 0 < r) (hb : 0 < b)
-include hr hb
-
 theorem num_inr_le (l : LMv T FL) : num R ch FL lhat n o (.inr l) ≤ tmin FL (load R ch FL lhat n o) l := by
   classical
-  rw [num_eq hr hb, numF]
+  rw [num_eq, numF]
   split_ifs
   · exact le_rfl
   · exact Nat.zero_le _
+
+variable (hr : 0 < r) (hb : 0 < b)
+include hr hb
 
 theorem num_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load R ch FL lhat n o) l.1.castSucc l.2.1 ∨
     ¬ Pick FL (load R ch FL lhat n o) l) : num R ch FL lhat n o (.inr l) = 0 := by
   classical
   rcases hl with hl | hl
   · have h1 : tmin FL (load R ch FL lhat n o) l = 0 := tmin_zero fun q => seg_zero hr hb hl _ q
-    have := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb l
+    have := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     omega
-  · rw [num_eq hr hb, numF, if_neg hl]
+  · rw [num_eq, numF, if_neg hl]
 
 theorem alv_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load R ch FL lhat n o) l.1.castSucc l.2.1 ∨
     ¬ Pick FL (load R ch FL lhat n o) l) (ν : (kindM R ch FL (.inr l)).Cn) :
@@ -299,7 +299,7 @@ theorem _root_.Paper.thm_tree_kappa (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} 
     obtain ⟨d, hd⟩ := exists_pick (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)
     have hd : Pick FL (load R ch FL lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) := hd
     have h1 := alive_sq (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hr hb (⟨j, i, ω, d⟩ : LMv T FL)
-    have h2 := num_inr_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hr hb (⟨j, i, ω, d⟩ : LMv T FL)
+    have h2 := num_inr_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) (⟨j, i, ω, d⟩ : LMv T FL)
     have h3 : num R ch FL lhat n o (.inr (⟨j, i, ω, d⟩ : LMv T FL)) ≤ tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) := h2
     set t := tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) with ht
     have h4 : ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1)) ^ 2 ≤

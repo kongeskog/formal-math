@@ -30,21 +30,21 @@ def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
   | _, _ => none
 
 variable (hr : 0 < r) (hb : 0 < b) (hh : 0 < h)
-include hr hb hh
-
 theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i e)) (hne : num R ch FL lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
     i = imin hh (lev (load R ch FL lhat n o)) j.1 := by
   classical
-  rw [num_eq hr hb, numF] at hne
+  rw [num_eq, numF] at hne
   split_ifs at hne with ha
   · exact (isMin_iff hh _ j.castSucc i).1 ha
   · exact absurd rfl hne
+
+include hr hb hh
 
 theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s))
     (hne : num R ch FL lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
     T.ty e = imin hh (lev (load R ch FL lhat n o)) j.1 := by
   obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
-  have h2 := (num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e hx0).2
+  have h2 := (num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0).2
   by_contra hcon
   have h3 : ¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) := fun hm => hcon ((isMin_iff hh _ j.castSucc _).1 hm)
   have := h2 h3
@@ -70,7 +70,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
     · simp only [tgR] at hd
       split_ifs at hd
       exact (edgeO_hold (R := R) (ch := ch) (AA := AA) (m := m) (c := ch a) (c' := ch c) (γ := γ) (s := s.1 + 1) hs).1 hd
-  · have hi := num_inn hr hb hh j i e hx hne
+  · have hi := num_inn hh j i e hx hne
     have hjJ := j.2
     have hpar : ∀ c : T.X j.1, parN hh (lev (load R ch FL lhat n o)) j.1 c = nd T (j + 1) j.2 (hst T i c) := by
       intro c
@@ -186,13 +186,13 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
       · exact absurd b2 a2
       · rw [a1, b1]
   rcases h1 with ⟨i, rfl⟩ | ⟨s, rfl⟩ <;> rcases h1' with ⟨i', rfl⟩ | ⟨s', rfl⟩
-  · rw [num_inn hr hb hh j i e hx hn, num_inn hr hb hh j i' e hx' hn']
+  · rw [num_inn hh j i e hx hn, num_inn hh j i' e hx' hn']
   · exfalso
-    have a1 := num_inn hr hb hh j i e hx hn
+    have a1 := num_inn hh j i e hx hn
     have a2 := num_mid hr hb hh j e s' hx' hn'
     exact hx (a2.trans a1.symm)
   · exfalso
-    have a1 := num_inn hr hb hh j i' e hx' hn'
+    have a1 := num_inn hh j i' e hx' hn'
     have a2 := num_mid hr hb hh j e s hx hn
     exact hx' (a2.trans a1.symm)
   · rw [mm s s' hx hx' hd hd']
@@ -219,7 +219,7 @@ theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : F
     rcases h3 with ⟨i, h3⟩ | ⟨s, h3⟩
     · simp only at h3
       subst h3
-      exact (alv_le_num hr hb _ _).trans (num_inl hr hb _)
+      exact (alv_le_num hr hb _ _).trans (num_inl _)
     · simp only at h3
       subst h3
       exact (alv_mid_le hr hb j e s hx β).1
@@ -292,7 +292,7 @@ theorem sum_child_last (c : T.X J) : (∑ ν : NM R FL (ch := ch), if IsCh R ch 
     intro e β
     simp only [C]
     rw [Finset.sum_singleton]
-    exact (alv_le_num hr hb _ _).trans (num_inl hr hb _)
+    exact (alv_le_num hr hb _ _).trans (num_inl _)
   have hall : ∀ ν : NM R FL (ch := ch), (if IsCh R ch FL ν ⟨Fin.last J, c⟩ then alv R ch FL lhat n o ν else 0) ≤
       if ν ∈ ((univ.filter fun e : T.Ed J => T.e0 e = c).biUnion fun e => C e false) ∪
         ((univ.filter fun e : T.Ed J => T.e1 e = c).biUnion fun e => C e true) then alv R ch FL lhat n o ν else 0 := by

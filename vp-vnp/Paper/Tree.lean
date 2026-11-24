@@ -494,7 +494,7 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
   have hp : ∀ mv, GoodMv R ch FL N (nn n) (oo R FL Pl o) mv := fun mv => by
     have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
-  obtain ⟨hseen, hal⟩ := cur_end hr hb hh hu
+  obtain ⟨hseen, hal⟩ := cur_end hh hu
   cases u with
   | init a c kk =>
     exfalso
