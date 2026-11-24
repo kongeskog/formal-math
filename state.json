@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:24:59.144593874Z",
+  "updated_at": "2026-11-24T21:26:46.505313098Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 3,
     "contributors": 1,
-    "ideas_open": 2
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -118,10 +118,10 @@
     {
       "number": 76,
       "title": "Idea: shorten(*): delete named arguments that elaborate without being given",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-25T00:26:11Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T20:45:03Z",
@@ -767,8 +767,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 84,
@@ -835,8 +835,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 85,
@@ -970,11 +970,6 @@
       "loc": 398
     },
     {
-      "path": "vp-vnp/Nc/Grp/StepBase.lean",
-      "tokens": 6475,
-      "loc": 379
-    },
-    {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
       "tokens": 6275,
       "loc": 379
@@ -983,6 +978,11 @@
       "path": "vp-vnp/Nc/Tow/Load.lean",
       "tokens": 6165,
       "loc": 361
+    },
+    {
+      "path": "vp-vnp/Nc/Grp/StepBase.lean",
+      "tokens": 6142,
+      "loc": 369
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
@@ -995,9 +995,9 @@
       "loc": 436
     },
     {
-      "path": "vp-vnp/NS1/Comp.lean",
-      "tokens": 5767,
-      "loc": 400
+      "path": "vp-vnp/NS1/OneCut.lean",
+      "tokens": 5716,
+      "loc": 305
     }
   ]
 }
