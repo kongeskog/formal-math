@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:03:37.010589004Z",
+  "updated_at": "2026-11-24T21:06:48.631484710Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 37,
     "rejected": 2,
-    "open": 6,
+    "open": 7,
     "contributors": 1,
     "ideas_open": 2
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 37,
-      "attempts": 45,
+      "attempts": 46,
       "saved": 16148
     }
   ],
@@ -178,7 +178,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:01:19Z",
-      "pr": null,
+      "pr": 83,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/69",
@@ -1022,6 +1022,74 @@
       "reason": null,
       "technique": "shorten",
       "scope": "Nc"
+    },
+    {
+      "pr": 83,
+      "title": "restructure(Nc/G,Nc/Sort): state repeated implicit binders once in section variables",
+      "author": "kongeskog",
+      "head_sha": "9e1ef9ebb69bf4438a3acf24a1385e5a2abaebde",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T21:06:19Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 69,
+      "url": "https://github.com/kongeskog/formal-math/pull/83",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/G,Nc/Sort"
     }
   ],
   "top_files": [
