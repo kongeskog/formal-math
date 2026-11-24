@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:00:11.726993387Z",
+  "updated_at": "2026-11-24T19:00:57.688698187Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 6,
     "contributors": 1,
-    "ideas_open": 1
+    "ideas_open": 8
   },
   "leaderboard": [
     {
@@ -87,6 +87,118 @@
     }
   ],
   "ideas": [
+    {
+      "number": 41,
+      "title": "Idea: merge(Nc/Acc/CompK): one lemma for KV.ite_true and KV.ite_false",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:32Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/41",
+      "technique": "merge",
+      "scope": "Nc/Acc/CompK"
+    },
+    {
+      "number": 40,
+      "title": "Idea: restructure(Nc/G/Move): share the hypotheses of the three move theorems by variable and include",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:30Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/40",
+      "technique": "restructure",
+      "scope": "Nc/G/Move"
+    },
+    {
+      "number": 39,
+      "title": "Idea: library(Nc): proxy_equiv% instead of Seg.equivSum and the local equivalences for Tp and Ch",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:28Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/39",
+      "technique": "library",
+      "scope": "Nc"
+    },
+    {
+      "number": 38,
+      "title": "Idea: library(Nc/Tow): derived Fintype and proxy_equiv% instead of rmEquiv, tgEquiv and two local ones",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:26Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/38",
+      "technique": "library",
+      "scope": "Nc/Tow"
+    },
+    {
+      "number": 37,
+      "title": "Idea: generalize(NS1/Step): prove stepF_ev from the general round lemma behind stepA_kv",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:25Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/37",
+      "technique": "generalize",
+      "scope": "NS1/Step"
+    },
+    {
+      "number": 36,
+      "title": "Idea: restructure(Nc/Grp/GroupThm): state exists_group with GroupOK instead of repeating it",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:23Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/36",
+      "technique": "restructure",
+      "scope": "Nc/Grp/GroupThm"
+    },
+    {
+      "number": 35,
+      "title": "Idea: shorten(NS1/EvalThm): run the shared preamble of the 11 cases of interp once",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:22Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/35",
+      "technique": "shorten",
+      "scope": "NS1/EvalThm"
+    },
+    {
+      "number": 34,
+      "title": "Idea: library(Nc/Dl/Code): derive Fintype for Nm instead of the hand-written nmEquiv",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T19:00:21Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/34",
+      "technique": "library",
+      "scope": "Nc/Dl/Code"
+    },
     {
       "number": 17,
       "title": "Idea: merge(NS1/Budget,NS1/Guess): prove the twin lemmas for ht and nds by one induction each",
@@ -174,10 +286,10 @@
     {
       "number": 11,
       "title": "Idea: shorten(*): drop hypotheses and instance arguments the unusedArguments linter reports",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T22:00:29Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T00:48:00Z",
