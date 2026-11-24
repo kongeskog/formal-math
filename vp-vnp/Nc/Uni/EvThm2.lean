@@ -61,9 +61,8 @@ theorem EvOK.hd {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
   obtain ⟨o, a', rfl, hl, rfl⟩ := inv_hd hF
   have hC := Cc_ge (supp := supp)
   rw [tot_map]
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 2 := by rw [hm1]; congr 1; exact Fin.ext hl
-  refine dstep ok1 hm1' h11 .d2 rfl (by decide) rfl rfl ?_
+  refine toOp (c := 2) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+  refine dstep ok1 hm1 h11 .d2 rfl (by decide) rfl rfl ?_
   have hh2 : σ.heap ⊆ (nx θ σ1 (.inl .d2) 0 0 0).heap := fun _ hc => heap_nx σ1 _ _ _ _ (hh1 hc)
   refine ih (nx θ σ1 (.inl .d2) 0 0 0) ⟨ok1.nx _ _ _ _, rfl, ⟨a', h12.mono (heap_nx σ1 _ _ _ _), rfl⟩, ?_⟩ _
     (fun r => Bd (r.tick r.out.hd) + 2) _ ?_
@@ -95,9 +94,8 @@ theorem EvOK.tl {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
   obtain ⟨o, a', rfl, hl, rfl⟩ := inv_tl hF
   have hC := Cc_ge (supp := supp)
   rw [tot_map]
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 3 := by rw [hm1]; congr 1; exact Fin.ext hl
-  refine dstep ok1 hm1' h11 .d3 rfl (by decide) rfl rfl ?_
+  refine toOp (c := 3) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+  refine dstep ok1 hm1 h11 .d3 rfl (by decide) rfl rfl ?_
   have hh2 : σ.heap ⊆ (nx θ σ1 (.inl .d3) 0 0 0).heap := fun _ hc => heap_nx σ1 _ _ _ _ (hh1 hc)
   refine ih (nx θ σ1 (.inl .d3) 0 0 0) ⟨ok1.nx _ _ _ _, rfl, ⟨a', h12.mono (heap_nx σ1 _ _ _ _), rfl⟩, ?_⟩ _
     (fun r => Bd (r.tick r.out.tl) + 2) _ ?_
@@ -129,9 +127,8 @@ theorem EvOK.cons {a b : Fm} {x : Tree} {la lb : List (Run A)} (iha : EvOK θ su
   obtain ⟨o, a', rfl, hl, rfl, rfl⟩ := inv_cons hF
   have hC := Cc_ge (supp := supp)
   rw [tot_seq m la (fun _ => lb) fun r s => .cons r.out s.out]
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 4 := by rw [hm1]; congr 1; exact Fin.ext hl
-  refine dstep ok1 hm1' h11 .d4 rfl (by decide) rfl rfl ?_
+  refine toOp (c := 4) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+  refine dstep ok1 hm1 h11 .d4 rfl (by decide) rfl rfl ?_
   have ok2 := ok1.nx (θ := θ) (.inl .d4) 0 0 0
   obtain ⟨p, q, s, hrec, hp, hq⟩ := (h12.mono (heap_nx (θ := θ) σ1 (.inl .d4) 0 0 0)).load ok2
   generalize decide (a' ≠ .nil) = bt at hrec
@@ -188,9 +185,8 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
   obtain ⟨o, a', rfl, hl, rfl, rfl, rfl⟩ := inv_ite hF
   have hC := Cc_ge (supp := supp)
   rw [tot_seq m la L fun r s => s.out]
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 5 := by rw [hm1]; congr 1; exact Fin.ext hl
-  refine dstep ok1 hm1' h11 .d5 rfl (by decide) rfl rfl ?_
+  refine toOp (c := 5) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+  refine dstep ok1 hm1 h11 .d5 rfl (by decide) rfl rfl ?_
   have ok2 := ok1.nx (θ := θ) (.inl .d5) 0 0 0
   obtain ⟨p, q, s, hrec, hp, hq⟩ := (h12.mono (heap_nx (θ := θ) σ1 (.inl .d5) 0 0 0)).load ok2
   generalize decide (a' ≠ .nil) = bt at hrec

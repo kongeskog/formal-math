@@ -149,23 +149,23 @@ theorem dstuck {B : ℤ} (o : Tree) : ∀ (j : ℕ) (hj : j < 11) (σ : St supp)
 
 /-- From a formula to its opcode. -/
 theorem toOp {S : A} {B : ℤ} {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .E) {o a : Tree}
-    (hr : Rep σ.heap (σ.regs 1) (.cons o a)) (hl : o.len < 11)
-    (h : ∀ σ' : St supp, OKs σ' → σ'.mode = .D ⟨o.len, hl⟩ → σ'.regs 1 = 0 → Rep σ'.heap (σ'.regs 2) a →
+    {c : Fin 11} (hr : Rep σ.heap (σ.regs 1) (.cons o a)) (hl : o.len = c)
+    (h : ∀ σ' : St supp, OKs σ' → σ'.mode = .D c → σ'.regs 1 = 0 → Rep σ'.heap (σ'.regs 2) a →
       σ'.regs 3 = σ.regs 2 → σ'.regs 4 = σ.regs 3 → σ.heap ⊆ σ'.heap → σ'.inp = σ.inp →
-      Mach.SumTo (UM θ supp) σ' S B) : Mach.SumTo (UM θ supp) σ S (B + 11) := by
+      Mach.SumTo (UM θ supp) σ' S (B - 11)) : Mach.SumTo (UM θ supp) σ S B := by
   obtain ⟨p, q, s, hrec, hp, hq⟩ := hr
   have hrec' : ((.C, ![σ.regs (laM σ.mode), p, q, s]) : Rec Kd) ∈ σ.heap := by
     rw [hm]
     exact hrec
-  have h2 := dchain (θ := θ) (S := S) (B := B) o 0 (by omega) (nx θ σ (.inl .ec) p q s) p (hσ.nx _ _ _ _) rfl rfl
+  have h2 := dchain (θ := θ) (S := S) (B := B - 11) o 0 (by omega) (nx θ σ (.inl .ec) p q s) p (hσ.nx _ _ _ _) rfl rfl
     (hp.mono (heap_nx σ _ _ _ _)) (by omega) (fun σ' a1 a2 a3 a4 a5 a6 a7 a8 => by
-      refine h σ' a1 (by rw [a2]; congr 2; omega) a3 ?_ (a5.trans rfl) (a6.trans rfl)
+      refine h σ' a1 (by rw [a2]; congr 1; exact Fin.ext ((Nat.zero_add _).trans hl)) a3 ?_ (a5.trans rfl) (a6.trans rfl)
         (fun _ hc => a7 (heap_nx σ _ _ _ _ hc)) (a8.trans (inpA σ _ (by simp) (by simp) _ _ _))
       rw [a4]
       exact (hq.mono (heap_nx σ _ _ _ _)).mono a7)
   have h3 := sumTo_ruleA hσ hrec' .ec (by rw [hm]; rfl) (by rw [hm]; simp) (by simp) (by rw [hm]; rfl) rfl h2
   refine h3.mono ?_
-  have : (o.len : ℤ) ≤ 10 := by exact_mod_cast Nat.le_of_lt_succ hl
+  have : (o.len : ℤ) ≤ 10 := by exact_mod_cast hl ▸ Nat.le_of_lt_succ c.2
   linarith
 
 theorem noOp {B : ℤ} {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .E) {o a : Tree}

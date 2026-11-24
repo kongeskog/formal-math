@@ -158,9 +158,8 @@ theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
       (inpA σ _ (by simp) (by simp) _ _ _) rfl
     exact (sumTo_ruleA ok hrec .en (by rw [hm]; rfl) (by rw [hm]; simp) (by rw [hm]; simp) (by rw [hm]; rfl) rfl h2).mono
       (by linarith)
-  · refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-    have hm1' : σ1.mode = .D 0 := by rw [hm1]; congr 1; exact Fin.ext hl
-    refine dstep ok1 hm1' h11 .d0 rfl (by decide) rfl rfl ?_
+  · refine toOp (c := 0) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+    refine dstep ok1 hm1 h11 .d0 rfl (by decide) rfl rfl ?_
     refine (hk (nx θ σ1 (.inl .d0) 0 0 0) (σ1.regs 2) (ok1.nx _ _ _ _) rfl rfl h14
       (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA σ1 _ (by simp) (by simp) _ _ _).trans hi1)
       (h12.mono (heap_nx σ1 _ _ _ _))).mono (by linarith)
@@ -177,9 +176,8 @@ theorem EvOK.id (x : Tree) : EvOK θ supp .id x [.det 1 x] := by
     rw [this] at hB
     linarith
   obtain ⟨o, a, rfl, hl⟩ := inv_id hF
-  refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-  have hm1' : σ1.mode = .D 1 := by rw [hm1]; congr 1; exact Fin.ext hl
-  refine dstep ok1 hm1' h11 .d1 rfl (by decide) rfl rfl ?_
+  refine toOp (c := 1) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+  refine dstep ok1 hm1 h11 .d1 rfl (by decide) rfl rfl ?_
   refine (hk (nx θ σ1 (.inl .d1) 0 0 0) (σ1.regs 3) (ok1.nx _ _ _ _) rfl rfl h14
     (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA σ1 _ (by simp) (by simp) _ _ _).trans hi1) ?_).mono (by linarith)
   rw [h13]
@@ -190,18 +188,17 @@ theorem EvOK.fail (x : Tree) : EvOK θ supp .fail x [] := by
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
   rw [tot_nil]
   obtain ⟨o, a, rfl, hl | hl⟩ := inv_fail hF
-  · refine (toOp (B := B - 11) ok hm hc (by omega) fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_).mono (by omega)
-    have hm1' : σ1.mode = .D 8 := by rw [hm1]; congr 1; exact Fin.ext hl
+  · refine toOp (c := 8) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
     have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
-      rw [hm1']
+      rw [hm1]
       change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
       rw [h11]
       exact ok1.nil
-    exact sumTo_stuck ok1 hrec (by rw [hm1']; rfl) (by rw [hm1']; simp) (by
-      rw [hm1']
+    exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
+      rw [hm1]
       rintro ⟨h, -⟩
       injection h with h
-      exact absurd h (by decide)) (by rw [hm1']; simp) _
+      exact absurd h (by decide)) (by rw [hm1]; simp) _
   · exact noOp ok hm hc hl
 
 end Nc.Uni
