@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:58:55.352228932Z",
+  "updated_at": "2026-11-24T21:01:05.683335560Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 36,
     "rejected": 2,
-    "open": 5,
+    "open": 6,
     "contributors": 1,
     "ideas_open": 2
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 36,
-      "attempts": 43,
+      "attempts": 44,
       "saved": 15745
     }
   ],
@@ -136,7 +136,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:58:19Z",
-      "pr": null,
+      "pr": 81,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:18Z",
       "url": "https://github.com/kongeskog/formal-math/issues/72",
@@ -216,10 +216,10 @@
     {
       "number": 57,
       "title": "Idea: restructure(Nc/Final/CClasses): take VP, VNP and VPBar from the statement after #33",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:02:26Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 64,
       "result_delta": -204,
       "created_at": "2026-11-24T19:43:06Z",
@@ -943,8 +943,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "fail",
-          "detail": "Changes requested by kongeskog"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 67,
@@ -954,6 +954,74 @@
       "reason": null,
       "technique": "restructure",
       "scope": "*"
+    },
+    {
+      "pr": 81,
+      "title": "restructure(Nc/Uni/EvalU): let toOp take the opcode, removing a mode-rewriting line in 11 cases",
+      "author": "kongeskog",
+      "head_sha": "04801c03d49007901dbbdd4c2394767ec1fcb87e",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T21:00:19Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 72,
+      "url": "https://github.com/kongeskog/formal-math/pull/81",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/Uni/EvalU"
     }
   ],
   "top_files": [
