@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:33:29.492500615Z",
+  "updated_at": "2026-11-24T00:38:06.000055690Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 0,
     "rejected": 2,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 2
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 0,
-      "attempts": 2,
+      "attempts": 3,
       "saved": 0
     }
   ],
@@ -130,7 +130,76 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 7,
+      "title": "merge(Nc/Dl/Facts): reuse three lemmas duplicated from Nc/Cut/Facts",
+      "author": "kongeskog",
+      "head_sha": "c02a90a5dab8fb5f24d8cae3063dc0db68deda4c",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T00:35:34Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: reviewed by a separate agent of the same account)"
+        }
+      ],
+      "idea": null,
+      "url": "https://github.com/kongeskog/formal-math/pull/7",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "Nc/Dl/Facts"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
