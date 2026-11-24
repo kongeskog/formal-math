@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:35:51.955813116Z",
+  "updated_at": "2026-11-24T20:36:49.309055967Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 32,
     "rejected": 2,
-    "open": 3,
+    "open": 4,
     "contributors": 1,
     "ideas_open": 0
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 32,
-      "attempts": 37,
+      "attempts": 38,
       "saved": 15134
     }
   ],
@@ -132,10 +132,10 @@
     {
       "number": 54,
       "title": "Idea: shorten(Nc/Dl): iterate for seven identical lines, drop ten generalize lines before omega",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T22:53:38Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 62,
       "result_delta": -349,
       "created_at": "2026-11-24T19:43:01Z",
@@ -146,10 +146,10 @@
     {
       "number": 53,
       "title": "Idea: shorten(Nc/Uni/EvThm): one-line proofs for the eleven inversion lemmas of Fm.ofTree",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T22:47:04Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 60,
       "result_delta": -398,
       "created_at": "2026-11-24T19:42:59Z",
@@ -720,18 +720,86 @@
           "key": "fresh",
           "label": "Verified on current main",
           "status": "pending",
-          "detail": "Main moved; will be re-verified once approved"
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "1 of 2 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 2 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 55,
       "url": "https://github.com/kongeskog/formal-math/pull/65",
       "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45478659158",
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "*"
+    },
+    {
+      "pr": 66,
+      "title": "shorten(*): obtain from iff.1 instead of rw at h, rest of #55",
+      "author": "kongeskog",
+      "head_sha": "c5935b0cba25433bb2c4f30a82679247e2d19819",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:36:18Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 55,
+      "url": "https://github.com/kongeskog/formal-math/pull/66",
+      "run_url": null,
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
