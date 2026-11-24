@@ -119,17 +119,20 @@ theorem cons (hF : KV θ κ S F x w c) (hG : KV θ κ S G x w' d) : KV θ κ S (
     rw [List.sum_map_mul_right, ← e3]
     rfl
 
-theorem ite_true {o : Tree} (hF : Gives θ F x o c) (ho : o ≠ .nil) (hG : KV θ κ S G x w d) :
-    KV θ κ S (.ite F G H) x w (c + d + 1) := by
+/-- An `ite` whose test gives `o` costs the test plus the branch `K`, where `K` is the then-branch
+when `o ≠ nil` and the else-branch when `o = nil`. -/
+theorem ite_of {o : Tree} {K : Fm} (hF : Gives θ F x o c) (hK : KV θ κ S K x w d) (hG : o ≠ .nil → K = G)
+    (hH : o = .nil → K = H) : KV θ κ S (.ite F G H) x w (c + d + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := hF
-  obtain ⟨l', f1, f2, f3⟩ := hG
+  obtain ⟨l', f1, f2, f3⟩ := hK
   have hout : ∀ r ∈ l, r.out = o := by
     intro r hr
     obtain ⟨-, -, q, hq, h⟩ := e2 r hr
     rw [List.mem_singleton] at hq
     subst hq
     exact h.symm
-  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r _ _ => f1) (fun r hr h => absurd ((hout r hr).symm.trans h) ho), ?_, ?_⟩
+  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => hG (hout r hr ▸ h) ▸ f1)
+    (fun r hr h => hH ((hout r hr).symm.trans h) ▸ f1), ?_, ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, rfl⟩ := hu
@@ -156,41 +159,11 @@ theorem ite_true {o : Tree} (hF : Gives θ F x o c) (ho : o ≠ .nil) (hG : KV �
     have h3 : (l.map fun r => algebraMap A R r.th).sum = 1 := h4
     rw [h3, one_mul]
 
-theorem ite_false (hF : Gives θ F x .nil c) (hH : KV θ κ S H x w d) : KV θ κ S (.ite F G H) x w (c + d + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
-  obtain ⟨l', f1, f2, f3⟩ := hH
-  have hout : ∀ r ∈ l, r.out = .nil := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => absurd (hout r hr) h) (fun r _ _ => f1), ?_, ?_⟩
-  · intro u hu
-    simp only [List.mem_flatMap, List.mem_map] at hu
-    obtain ⟨r, hr, s, hs, rfl⟩ := hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2⟩ := f2 s hs
-    refine ⟨?_, fun p hp => ?_⟩
-    · simp only [Run.seq, Run.tick]
-      omega
-    · simp only [Run.tick, Run.seq, a1, List.nil_append] at hp
-      exact b2 p hp
-  · rw [val, sum_flatMap_map]
-    have h1 : ∀ r ∈ l, ((l'.map fun s => (r.seq s).tick s.out).map (wt κ)).sum = algebraMap A R r.th * w := by
-      intro r hr
-      rw [← f3, val, List.map_map, ← List.sum_map_mul_left]
-      congr 1
-      refine List.map_congr_left fun s _ => ?_
-      rw [Function.comp_apply, wt_mul κ (r := r) (s := s) rfl rfl, wt, (e2 r hr).1]
-      simp
-    rw [List.map_congr_left h1, List.sum_map_mul_right]
-    have h2 := e3 fun _ => 1
-    simp only [mul_one, wsum, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero] at h2
-    have h4 := congrArg (algebraMap A R) h2
-    rw [map_list_sum, List.map_map, map_one] at h4
-    have h3 : (l.map fun r => algebraMap A R r.th).sum = 1 := h4
-    rw [h3, one_mul]
+theorem ite_true {o : Tree} (hF : Gives θ F x o c) (ho : o ≠ .nil) (hG : KV θ κ S G x w d) :
+    KV θ κ S (.ite F G H) x w (c + d + 1) := ite_of hF hG (fun _ => rfl) (absurd · ho)
+
+theorem ite_false (hF : Gives θ F x .nil c) (hH : KV θ κ S H x w d) : KV θ κ S (.ite F G H) x w (c + d + 1) :=
+  ite_of hF hH (absurd rfl) fun _ => rfl
 
 theorem either (hG : KV θ κ S G x w c) (hH : KV θ κ S H x w' d) :
     KV θ κ S (.ite .guess G H) x (w + w') (max c d + 2) := by
