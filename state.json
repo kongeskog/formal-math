@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T02:14:05.549773501Z",
+  "updated_at": "2026-11-24T02:26:24.378861033Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "2342ebba364c8722375070b397fad41699433428",
-    "at": "2026-11-24T02:13:07.259186919Z",
+    "sha": "1d0872d773fafaf1f2b669b8609d04b6d2e9297a",
+    "at": "2026-11-24T02:26:24.378861033Z",
     "metrics": {
-      "tokens": 926696,
-      "loc": 58663,
-      "decls": 4592,
+      "tokens": 926522,
+      "loc": 58646,
+      "decls": 4589,
       "files": 321,
-      "bytes": 3414435,
-      "build_seconds": 924
+      "bytes": 3413819,
+      "build_seconds": 654
     }
   },
   "counts": {
-    "merged": 6,
+    "merged": 8,
     "rejected": 2,
-    "open": 2,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 8
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 6,
+      "merged": 8,
       "attempts": 10,
-      "saved": 1465
+      "saved": 1639
     }
   ],
   "ideas": [
@@ -192,8 +192,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T03:54:36Z",
-      "pr": 21,
-      "result_delta": -229,
+      "pr": 23,
+      "result_delta": -86,
       "created_at": "2026-11-24T00:47:59Z",
       "url": "https://github.com/kongeskog/formal-math/issues/10",
       "technique": "merge",
@@ -256,188 +256,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 22,
-      "title": "merge(Nc): delete two copies of NS1.size_num",
-      "author": "kongeskog",
-      "head_sha": "0207b59ff042eadf767eef35a64c2b42ea6ba23e",
-      "base_sha": "996fb1c343f678c57aec2353ec2be2939fb19a7d",
-      "status": "stale",
-      "created_at": "2026-11-24T01:04:48Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 927744,
-        "loc": 58761,
-        "decls": 4605,
-        "files": 321,
-        "bytes": 3419391,
-        "build_seconds": 250
-      },
-      "base_metrics": {
-        "tokens": 927832,
-        "loc": 58773,
-        "decls": 4607,
-        "files": 321,
-        "bytes": 3419711,
-        "build_seconds": null
-      },
-      "delta": -88,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 927832 → 927744 (-88)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 10,
-      "url": "https://github.com/kongeskog/formal-math/pull/22",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45302265583",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "Nc"
-    },
-    {
-      "pr": 23,
-      "title": "merge(NS1/Postpone): state sum_flatMap_map for any monoid and delete its copy",
-      "author": "kongeskog",
-      "head_sha": "c50a085299d161b0b6e3d2555007ec441c7855ca",
-      "base_sha": "996fb1c343f678c57aec2353ec2be2939fb19a7d",
-      "status": "stale",
-      "created_at": "2026-11-24T01:08:11Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 927746,
-        "loc": 58768,
-        "decls": 4606,
-        "files": 321,
-        "bytes": 3419415,
-        "build_seconds": 482
-      },
-      "base_metrics": {
-        "tokens": 927832,
-        "loc": 58773,
-        "decls": 4607,
-        "files": 321,
-        "bytes": 3419711,
-        "build_seconds": null
-      },
-      "delta": -86,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 927832 → 927746 (-86)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 10,
-      "url": "https://github.com/kongeskog/formal-math/pull/23",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45302720313",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "NS1/Postpone"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
