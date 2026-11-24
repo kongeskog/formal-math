@@ -16,12 +16,12 @@ namespace Nc.Flag
 
 open Nc.Tower (U SL2 lo hi x)
 
-theorem three_le {T : Type*} [Fintype T] (c f g k : T → ℝ) (hc : ∀ t, 0 ≤ c t) (hf : ∀ t, 0 ≤ f t)
+theorem three_le {T : Type*} [Fintype T] (c f g k : T → ℝ) (hc : ∀ t, 0 ≤ c t)
     (hg : ∀ t, 0 ≤ g t) (hk : ∀ t, 0 ≤ k t) (h : ∀ t, c t ≤ f t + (g t + k t)) :
     √(∑ t, c t ^ 2) ≤ √(∑ t, f t ^ 2) + (√(∑ t, g t ^ 2) + √(∑ t, k t ^ 2)) := by
-  have h1 := sqrt_sum_le univ f (fun t => g t + k t) c hf (fun t => add_nonneg (hg t) (hk t)) hc h
-  have h2 := sqrt_sum_le univ g k (fun t => g t + k t) hg hk
-    (fun t => add_nonneg (hg t) (hk t)) fun t => le_rfl
+  have h1 := sqrt_sum_le univ f (fun t => g t + k t) c hc h
+  have h2 := sqrt_sum_le univ g k (fun t => g t + k t) (fun t => add_nonneg (hg t) (hk t))
+    fun t => le_rfl
   linarith
 
 /-- Pull-back of a length along a homomorphism. -/

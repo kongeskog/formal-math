@@ -38,24 +38,15 @@ theorem conj (g h : G) : l.val (g * h * g⁻¹) ≤ 2 * l.val g + l.val h := by
 end Len
 
 /-- Minkowski for square sums. -/
-theorem sqrt_sum_le {α : Type*} (s : Finset α) (a b c : α → ℝ) (ha : ∀ i, 0 ≤ a i)
-    (hb : ∀ i, 0 ≤ b i) (hc : ∀ i, 0 ≤ c i) (h : ∀ i, c i ≤ a i + b i) :
+theorem sqrt_sum_le {α : Type*} (s : Finset α) (a b c : α → ℝ) (hc : ∀ i, 0 ≤ c i)
+    (h : ∀ i, c i ≤ a i + b i) :
     √(∑ i ∈ s, c i ^ 2) ≤ √(∑ i ∈ s, a i ^ 2) + √(∑ i ∈ s, b i ^ 2) := by
-  have hA : 0 ≤ ∑ i ∈ s, a i ^ 2 := sum_nonneg fun i _ => sq_nonneg _
-  have hB : 0 ≤ ∑ i ∈ s, b i ^ 2 := sum_nonneg fun i _ => sq_nonneg _
-  apply Real.sqrt_le_iff.2 ⟨by positivity, ?_⟩
-  have hcs : ∑ i ∈ s, a i * b i ≤ √(∑ i ∈ s, a i ^ 2) * √(∑ i ∈ s, b i ^ 2) := by
-    rw [← Real.sqrt_mul hA]
-    apply Real.le_sqrt_of_sq_le
-    exact sum_mul_sq_le_sq_mul_sq s a b
-  calc ∑ i ∈ s, c i ^ 2 ≤ ∑ i ∈ s, (a i + b i) ^ 2 :=
-        sum_le_sum fun i _ => pow_le_pow_left₀ (hc i) (h i) 2
-    _ = ∑ i ∈ s, a i ^ 2 + 2 * ∑ i ∈ s, a i * b i + ∑ i ∈ s, b i ^ 2 := by
-        rw [mul_sum, ← sum_add_distrib, ← sum_add_distrib]
-        exact sum_congr rfl fun i _ => by ring
-    _ ≤ _ := by
-        rw [add_sq, Real.sq_sqrt hA, Real.sq_sqrt hB]
-        linarith
+  have h1 := norm_add_le (WithLp.toLp 2 fun i : s => a i : EuclideanSpace ℝ s)
+    (WithLp.toLp 2 fun i : s => b i)
+  simp only [EuclideanSpace.norm_eq, PiLp.add_apply, Real.norm_eq_abs, sq_abs,
+    Finset.sum_coe_sort s (fun i => (a i + b i) ^ 2), Finset.sum_coe_sort s (fun i => a i ^ 2),
+    Finset.sum_coe_sort s (fun i => b i ^ 2)] at h1
+  exact (Real.sqrt_le_sqrt (sum_le_sum fun i _ => pow_le_pow_left₀ (hc i) (h i) 2)).trans h1
 
 /-- The field with two elements. -/
 abbrev F2 := ZMod 2
@@ -133,7 +124,7 @@ theorem DM_dg_le (f : Matrix ι ι F2 → ℝ) (hf : ∀ M, 0 ≤ f M)
     √(DM f (dg (S ∪ T))) ≤ √(DM f (dg S)) + √(DM f (dg T)) := by
   unfold DM
   simp only [← Fintype.sum_prod_type']
-  refine sqrt_sum_le univ _ _ _ (fun _ => hf _) (fun _ => hf _) (fun _ => hf _) fun x => ?_
+  refine sqrt_sum_le univ _ _ _ (fun _ => hf _) fun x => ?_
   rw [dg_union h, Matrix.mul_add, Matrix.add_mul]
   exact hadd _ _
 

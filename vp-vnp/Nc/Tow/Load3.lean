@@ -19,14 +19,17 @@ variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
-/-- A type is chosen. -/
-theorem exists_isMin (hh : 0 < h) (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : ∃ i, IsMin L j i := by
+/-- The first index with the smallest value. -/
+theorem exists_im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : ∃ i, (∀ i', f i ≤ f i') ∧ ∀ i' < i, ¬ ∀ i'', f i' ≤ f i'' := by
   classical
-  obtain ⟨i0, -, hi0⟩ := exists_min_image (univ : Finset (Fin h)) (sqs L j) ⟨⟨0, hh⟩, mem_univ _⟩
-  have hex : ∃ k : ℕ, ∃ hk : k < h, ∀ i', sqs L j ⟨k, hk⟩ ≤ sqs L j i' := ⟨i0, i0.2, fun i' => hi0 i' (mem_univ _)⟩
+  obtain ⟨i0, -, hi0⟩ := exists_min_image (univ : Finset (Fin h)) f ⟨⟨0, hh⟩, mem_univ _⟩
+  have hex : ∃ k : ℕ, ∃ hk : k < h, ∀ i', f ⟨k, hk⟩ ≤ f i' := ⟨i0, i0.2, fun i' => hi0 i' (mem_univ _)⟩
   obtain ⟨hk, h1⟩ := Nat.find_spec hex
-  refine ⟨⟨Nat.find hex, hk⟩, h1, fun i' hi' hcon => ?_⟩
-  exact Nat.find_min hex hi' ⟨i'.2, hcon⟩
+  exact ⟨⟨Nat.find hex, hk⟩, h1, fun i' hi' hcon => Nat.find_min hex hi' ⟨i'.2, hcon⟩⟩
+
+/-- A type is chosen: `exists_im` for `f = sqs L j`. -/
+theorem exists_isMin (hh : 0 < h) (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : ∃ i, IsMin L j i :=
+  exists_im hh (sqs L j)
 
 /-- The chosen type has a small part of the loads. -/
 theorem isMin_le {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i : Fin h} (hi : IsMin L j i) :

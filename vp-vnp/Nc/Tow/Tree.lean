@@ -15,13 +15,7 @@ namespace Nc.Tow
 
 open Finset
 
-/-- The first index with the smallest value. -/
-theorem exists_im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : ∃ i, (∀ i', f i ≤ f i') ∧ ∀ i' < i, ¬ ∀ i'', f i' ≤ f i'' := by
-  classical
-  obtain ⟨i0, -, hi0⟩ := exists_min_image (univ : Finset (Fin h)) f ⟨⟨0, hh⟩, mem_univ _⟩
-  have hex : ∃ k : ℕ, ∃ hk : k < h, ∀ i', f ⟨k, hk⟩ ≤ f i' := ⟨i0, i0.2, fun i' => hi0 i' (mem_univ _)⟩
-  obtain ⟨hk, h1⟩ := Nat.find_spec hex
-  exact ⟨⟨Nat.find hex, hk⟩, h1, fun i' hi' hcon => Nat.find_min hex hi' ⟨i'.2, hcon⟩⟩
+-- `exists_im` moved to `Nc/Tow/Load3.lean`, where `exists_isMin` is its instance.
 
 /-- The first index with the smallest value. -/
 noncomputable def im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : Fin h := (exists_im hh f).choose

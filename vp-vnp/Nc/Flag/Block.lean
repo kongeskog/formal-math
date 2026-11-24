@@ -159,17 +159,9 @@ theorem two_mul_tri (n : ℕ) : 2 * (n * (n - 1) / 2) = n * (n - 1) :=
   Nat.mul_div_cancel' (Nat.even_mul_pred_self n).two_dvd
 
 theorem tri_add (a b : ℕ) : (a + b) * (a + b - 1) / 2 = a * (a - 1) / 2 + a * b + b * (b - 1) / 2 := by
-  have h1 := two_mul_tri a
-  have h2 := two_mul_tri b
-  have h3 := two_mul_tri (a + b)
-  have h4 : (a + b) * (a + b - 1) = a * (a - 1) + 2 * (a * b) + b * (b - 1) := by
-    rcases a with - | a
-    · simp
-    · rcases b with - | b
-      · simp
-      · simp only [Nat.add_sub_cancel, show a + 1 + (b + 1) - 1 = a + b + 1 by omega]
-        ring
-  omega
+  induction b with
+  | zero => simp
+  | succ b ih => rw [← add_assoc, Nat.triangle_succ, ih, Nat.triangle_succ]; ring
 
 theorem blk_bijective : Function.Bijective (blk : U a × Matrix (Fin a) (Fin b) F2 × U b → U (a + b)) := by
   rw [Fintype.bijective_iff_injective_and_card]
