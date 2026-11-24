@@ -78,8 +78,7 @@ theorem rw'_inj {f f' : Bool} {w w' : List (Option (Bl K))} {u v : List (Sy M K)
   obtain ⟨rfl, h⟩ := h
   have hd : ∀ w : List (Option (Bl K)), (Sy.dot : Sy M K) ∉ w.map ol := by
     intro w hw
-    rw [List.mem_map] at hw
-    obtain ⟨o, -, ho⟩ := hw
+    obtain ⟨o, -, ho⟩ := List.mem_map.1 hw
     exact ol_ne_dot o ho
   obtain ⟨h1, h2⟩ := cut_inj (hd w) (hd w') h
   exact ⟨rfl, List.map_injective_iff.2 ol_inj h1, h2⟩

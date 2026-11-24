@@ -27,8 +27,7 @@ theorem bw_inj {w w' : List Bool} {u v : List (Sy M K)} (h : bw w ++ u = bw w' +
   simp only [bw, List.append_assoc, List.singleton_append] at h
   have hs : ∀ w : List Bool, (Sy.semi : Sy M K) ∉ w.map .bit := by
     intro w hw
-    rw [List.mem_map] at hw
-    obtain ⟨b, -, hb⟩ := hw
+    obtain ⟨b, -, hb⟩ := List.mem_map.1 hw
     exact absurd hb (by simp)
   obtain ⟨h1, h2⟩ := cut_inj (hs w) (hs w') h
   exact ⟨List.map_injective_iff.2 (fun a b e => by simpa using e) h1, h2⟩

@@ -96,8 +96,7 @@ theorem tot_seq (m : Run A → A) (la : List (Run A)) (L : Run A → List (Run A
     · ring
   · rw [if_neg hr]
     refine List.sum_eq_zero fun y hy => ?_
-    rw [List.mem_map] at hy
-    obtain ⟨s, -, rfl⟩ := hy
+    obtain ⟨s, -, rfl⟩ := List.mem_map.1 hy
     exact if_neg fun h => hr (List.append_eq_nil_iff.1 h).1
 
 variable (supp) in
