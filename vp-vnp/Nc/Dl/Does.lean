@@ -52,8 +52,7 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
         fun σ => (((List.finRange mm).map (instTm C tab tg bT bub gt d1 gp)).map fun t => pv θ (t.expand σ)).prod).sum := by
   classical
   have hparts := gets_parts C nl cb b0 b1 hnl z
-  obtain ⟨pt, hpt⟩ : ∃ pt, pt = ptT cb (parts (K := K) ℓ (wordG b0 b1 z)) := ⟨_, rfl⟩
-  rw [← hpt] at hparts
+  generalize hpt : ptT cb (parts (K := K) ℓ (wordG b0 b1 z)) = pt at hparts ⊢
   have hshort : Short C Lc (byPath C.nm (S0 pt)) := by
     intro y hy
     rw [byPath_nm C.nm_inj]
@@ -95,7 +94,6 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
     hI (by rw [hparts]; exact hI0) (by rw [hparts]; exact h9)
   obtain ⟨Qs, d1', m1, s1⟩ := this
   rw [hparts, hnub, ← allSteps_eq] at m1 s1
-  rw [← hpt]
   refine ⟨Qs, d1'.mono ?_, m1, s1⟩
   rw [List.length_map, List.length_finRange, List.length_map, List.length_finRange, List.map_const', List.sum_replicate,
     smul_eq_mul]

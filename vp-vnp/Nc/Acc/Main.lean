@@ -76,14 +76,14 @@ theorem size_pairsF (m : ℕ) (l : Fm) : (pairsF m l).code.size = l.code.size + 
 /-- The size of the program. -/
 theorem size_accF : ∃ c : ℕ, ∀ (M m d : ℕ) (out : List Bool), out.length = M →
     (accF M m d out).code.size ≤ c * (M + m + 1) + 2 * d := by
-  obtain ⟨c1, hc1⟩ : ∃ n, n = stepW.code.size := ⟨_, rfl⟩
-  obtain ⟨c2, hc2⟩ : ∃ n, n = leafB.code.size := ⟨_, rfl⟩
-  obtain ⟨c3, hc3⟩ : ∃ n, n = intB.code.size := ⟨_, rfl⟩
-  obtain ⟨c4, hc4⟩ : ∃ n, n = pairB.code.size := ⟨_, rfl⟩
-  obtain ⟨c5, hc5⟩ : ∃ n, n = (wordB lt0 lt1).code.size := ⟨_, rfl⟩
-  obtain ⟨c6, hc6⟩ : ∃ n, n = lt2.size := ⟨_, rfl⟩
-  obtain ⟨c7, hc7⟩ : ∃ n, n = (ofBits [true, false]).size := ⟨_, rfl⟩
-  obtain ⟨c8, hc8⟩ : ∃ n, n = Fm.fail.code.size := ⟨_, rfl⟩
+  obtain ⟨c1, hc1⟩ := exists_eq (a' := stepW.code.size)
+  obtain ⟨c2, hc2⟩ := exists_eq (a' := leafB.code.size)
+  obtain ⟨c3, hc3⟩ := exists_eq (a' := intB.code.size)
+  obtain ⟨c4, hc4⟩ := exists_eq (a' := pairB.code.size)
+  obtain ⟨c5, hc5⟩ := exists_eq (a' := (wordB lt0 lt1).code.size)
+  obtain ⟨c6, hc6⟩ := exists_eq (a' := lt2.size)
+  obtain ⟨c7, hc7⟩ := exists_eq (a' := (ofBits [true, false]).size)
+  obtain ⟨c8, hc8⟩ := exists_eq (a' := Fm.fail.code.size)
   have hloop : ∀ M m, (loopF M m).code.size ≤ 200 * M + (c1 + 17) * m + (c2 + c3 + c8 + 500) := by
     intro M m
     rw [loopF, size_ite, size_ite, leafF, intF, size_lett, size_ite, size_lett, size_cons, size_cons, size_cons, size_lett,

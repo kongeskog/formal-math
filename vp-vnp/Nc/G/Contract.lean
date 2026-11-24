@@ -93,7 +93,7 @@ theorem contract [Nonempty Ro]
       conn (fun p => (f p).1) (fun ν => by
         have := congrArg Sigma.fst (hpair ν)
         exact this) p p0
-    obtain ⟨i, hi⟩ : ∃ i, i = (f p0).1 := ⟨_, rfl⟩
+    obtain ⟨i, hi⟩ := exists_eq (a' := (f p0).1)
     have hex : ∀ p, ∃ gp : (ν : {ν // c ν = p ∨ d ν = p}) → S i ν, f p = ⟨i, gp⟩ := by
       intro p
       have h := (hall p).trans hi.symm
