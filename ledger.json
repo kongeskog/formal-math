@@ -6,9 +6,15 @@
     }
   },
   "comments_seen_until": "2026-11-24T23:06:39Z",
-  "dispatched": {},
-  "lines": {},
-  "line_bases": {},
+  "dispatched": {
+    "93@b1bbe89b93719aa72f90ce181d5f405c868a42a7@0eaf70d91391982174c5cad38fbb4cd0f784b37b@": "2026-11-24T23:07:39.417339826Z"
+  },
+  "lines": {
+    "93@b1bbe89b93719aa72f90ce181d5f405c868a42a7": []
+  },
+  "line_bases": {
+    "93@b1bbe89b93719aa72f90ce181d5f405c868a42a7": "de303e6bfaad8603f71ceba9eab00f3e5421bc29"
+  },
   "alerts": [],
   "format_notified": []
 }
