@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:02:04.513997628Z",
+  "updated_at": "2026-11-24T19:03:02.446632618Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "02838650702c8698df40dc9269c860e09870258a",
-    "at": "2026-11-24T03:41:58.472597966Z",
+    "sha": "5f9eef456dd9147e413d71f8fdccc70779a0173b",
+    "at": "2026-11-24T19:03:02.446632618Z",
     "metrics": {
-      "tokens": 925025,
-      "loc": 58579,
-      "decls": 4587,
+      "tokens": 924407,
+      "loc": 58542,
+      "decls": 4591,
       "files": 321,
-      "bytes": 3409108,
-      "build_seconds": 405
+      "bytes": 3407674,
+      "build_seconds": 177
     }
   },
   "counts": {
-    "merged": 12,
+    "merged": 13,
     "rejected": 2,
-    "open": 6,
+    "open": 5,
     "contributors": 1,
     "ideas_open": 7
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 12,
+      "merged": 13,
       "attempts": 20,
-      "saved": 3136
+      "saved": 3754
     }
   ],
   "ideas": [
@@ -221,7 +221,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T21:44:08Z",
       "pr": 28,
-      "result_delta": null,
+      "result_delta": -618,
       "created_at": "2026-11-24T00:48:07Z",
       "url": "https://github.com/kongeskog/formal-math/issues/16",
       "technique": "merge",
@@ -369,74 +369,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 28,
-      "title": "merge(Paper/Next,Paper/ApproxRound): shared arithmetic lemmas for the two scale steps",
-      "author": "kongeskog",
-      "head_sha": "5a3007a958d1677dbd4f22752dc6b7a94ce0ddfd",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-24T18:48:35Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 16,
-      "url": "https://github.com/kongeskog/formal-math/pull/28",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "Paper/Next,Paper/ApproxRound"
-    },
     {
       "pr": 29,
       "title": "shorten(Paper): replace the obtain-exists-rfl idiom by generalize",
