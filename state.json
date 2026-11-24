@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:42:04.305659839Z",
+  "updated_at": "2026-11-24T20:43:21.317605982Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 2,
     "contributors": 1,
-    "ideas_open": 7
+    "ideas_open": 5
   },
   "leaderboard": [
     {
@@ -104,10 +104,10 @@
     {
       "number": 73,
       "title": "Idea: merge(Nc/Tow): one GoodMv hypothesis in Ever2-7, one pair of consM lemmas, toFlag by field copy",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:42:40Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:32Z",
@@ -146,10 +146,10 @@
     {
       "number": 70,
       "title": "Idea: library(Nc): Mathlib lemmas and derived equivalences in place of twelve local proofs",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:42:53Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:15Z",
@@ -719,8 +719,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 24765,
-      "loc": 1473
+      "tokens": 24762,
+      "loc": 1472
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -754,8 +754,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 9282,
-      "loc": 522
+      "tokens": 9279,
+      "loc": 521
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
@@ -779,7 +779,7 @@
     },
     {
       "path": "vp-vnp/Paper/Rate.lean",
-      "tokens": 7862,
+      "tokens": 7873,
       "loc": 475
     },
     {
@@ -804,8 +804,8 @@
     },
     {
       "path": "vp-vnp/NS1/DSteps.lean",
-      "tokens": 7200,
-      "loc": 427
+      "tokens": 7194,
+      "loc": 425
     },
     {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
@@ -864,8 +864,8 @@
     },
     {
       "path": "vp-vnp/NS1/Comp.lean",
-      "tokens": 5782,
-      "loc": 405
+      "tokens": 5767,
+      "loc": 400
     }
   ]
 }
