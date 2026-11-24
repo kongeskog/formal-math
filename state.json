@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:57:27.844998099Z",
+  "updated_at": "2026-11-24T21:58:32.564382893Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -762,14 +762,14 @@
       "loc": 427
     },
     {
-      "path": "vp-vnp/NS1/Lists.lean",
-      "tokens": 7561,
-      "loc": 474
-    },
-    {
       "path": "vp-vnp/Paper/Laws.lean",
       "tokens": 7519,
       "loc": 425
+    },
+    {
+      "path": "vp-vnp/NS1/Lists.lean",
+      "tokens": 7489,
+      "loc": 475
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
@@ -813,7 +813,7 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
-      "tokens": 6275,
+      "tokens": 6240,
       "loc": 379
     },
     {
@@ -823,7 +823,7 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
-      "tokens": 5988,
+      "tokens": 5873,
       "loc": 461
     },
     {
