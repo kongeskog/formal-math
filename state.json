@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T01:37:19.585023338Z",
+  "updated_at": "2026-11-24T01:39:55.524076346Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,8 +60,8 @@
     }
   },
   "current": {
-    "sha": "86712eeefebffeb7ba53eb78a402889580d51330",
-    "at": "2026-11-24T01:37:19.585023338Z",
+    "sha": "4f9433901fa11739c93f2fe1640f8f999cc9a4dd",
+    "at": "2026-11-24T01:39:55.524076346Z",
     "metrics": {
       "tokens": 927240,
       "loc": 58723,
@@ -204,7 +204,7 @@
       "title": "Idea: merge(Nc,NS1): remove the remaining exact duplicate declarations",
       "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
+      "claimed_by": null,
       "lease_expires": null,
       "pr": 18,
       "result_delta": -138,
@@ -646,8 +646,8 @@
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
-      "tokens": 10830,
-      "loc": 626
+      "tokens": 10827,
+      "loc": 625
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
@@ -711,7 +711,7 @@
     },
     {
       "path": "vp-vnp/NS1/DSteps.lean",
-      "tokens": 7266,
+      "tokens": 7246,
       "loc": 431
     },
     {
@@ -746,7 +746,7 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
-      "tokens": 6357,
+      "tokens": 6355,
       "loc": 379
     },
     {
@@ -755,19 +755,19 @@
       "loc": 362
     },
     {
-      "path": "vp-vnp/Nc/Tow/Load2.lean",
-      "tokens": 5996,
-      "loc": 436
-    },
-    {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
       "tokens": 5992,
       "loc": 461
     },
     {
+      "path": "vp-vnp/Nc/Tow/Load2.lean",
+      "tokens": 5988,
+      "loc": 436
+    },
+    {
       "path": "vp-vnp/NS1/OneCut.lean",
-      "tokens": 5773,
-      "loc": 307
+      "tokens": 5771,
+      "loc": 306
     }
   ]
 }
