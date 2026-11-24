@@ -174,13 +174,7 @@ theorem TOk.insSem {T ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
       exact h.pack r hr
     · simp at hq
   | input part B => exact h.pack q hq
-  | both k k' =>
-    rw [Grp.insSem] at hq
-    split_ifs at hq
-    · rw [List.mem_singleton] at hq
-      exact hq ▸ h
-    · simp at hq
-  | one k w =>
+  | both | one =>
     rw [Grp.insSem] at hq
     split_ifs at hq
     · rw [List.mem_singleton] at hq
@@ -275,6 +269,15 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     · have : (κs + κp * (κl + 2) + κi * 10 + κk + sw + 2000) * insCost T ub i =
         (κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * insCost T ub i + 100 * insCost T ub i := by ring
       omega
+  -- every case ends with this bound, split by the summands of the constant
+  set K := κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900 with hK
+  have hKN (N : ℕ) : K * N = κs * N + κp * ((κl + 2) * N) + κi * 10 * N + κk * N + sw * N + 1900 * N := by
+    rw [hK]
+    ring
+  have hsz (k : List Bool) : (tget k t).size ≤ 4 * ub + 1 := by
+    obtain ⟨a1, a2⟩ := ht.path k
+    rw [a1]
+    exact (size_ofBits _).trans (by omega)
   cases i with
   | block q q' B =>
     obtain ⟨hq, hq'⟩ := hi
@@ -304,8 +307,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
         rw [this]
         omega
       have h2 : κs * (T + 1) ≤ κs * (T + N) := Nat.mul_le_mul_left _ (by omega)
-      have h3 : (κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * (T + N) = κs * (T + N) + κp * ((κl + 2) * (T + N)) +
-        κi * 10 * (T + N) + κk * (T + N) + sw * (T + N) + 1900 * (T + N) := by ring
+      have h3 := hKN (T + N)
       have h4 : 1 ≤ T + N := by omega
       omega
   | input part B =>
@@ -332,9 +334,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
       have : (κl + 2) * (part.length + N) = κl * (part.length + N) + 2 * part.length + 2 * N := by ring
       rw [this]
       omega
-    have h3 : (κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * (part.length + N) = κs * (part.length + N) +
-      κp * ((κl + 2) * (part.length + N)) + κi * 10 * (part.length + N) + κk * (part.length + N) +
-      sw * (part.length + N) + 1900 * (part.length + N) := by ring
+    have h3 := hKN (part.length + N)
     have h4 : 1 ≤ part.length + N := by omega
     have h5 : κi * (4 + 1) ≤ κi * 10 * (part.length + N) := by nlinarith
     omega
@@ -344,10 +344,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     have e2 := getF_gives (θ := θ) (x := x) (pf := .tl (.tl (.hd .id))) (p := ofBits k') (Gives.id _).hd.tl.tl gt
     have e3 := eqF_gives e1 e2
     rw [path_ofBits, path_ofBits, len_ofBits, len_ofBits] at e3
-    have h1 : (tget k t).size ≤ 4 * ub + 1 := by
-      obtain ⟨a1, a2⟩ := ht.path k
-      rw [a1]
-      exact (size_ofBits _).trans (by omega)
+    have h1 := hsz k
     have h2 : Does θ fBoth x (insSem (S := S) θ mu cb kinds T ub (.both k k') t) (300 * insCost T ub (.both k k')) := by
       simp only [insSem, insCost]
       by_cases h : tget k t = tget k' t
@@ -360,19 +357,14 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
         exact (Does.ite_false e3 (Does.fail _)).mono (by omega)
     have e5 := switchF_does (θ := θ) g0 (fs := fs) (f := fBoth) rfl h2
     refine e5.mono ?_
-    have h3 : (κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * insCost T ub (.both k k') =
-      κs * insCost T ub (.both k k') + κp * (κl + 2) * insCost T ub (.both k k') + κi * 10 * insCost T ub (.both k k') +
-      κk * insCost T ub (.both k k') + sw * insCost T ub (.both k k') + 1900 * insCost T ub (.both k k') := by ring
+    have h3 := hKN (insCost T ub (.both k k'))
     omega
   | one k w =>
     have g0 : Gives θ (.hd (.hd .id)) x (num 3) 3 := (Gives.id _).hd.hd
     have e1 := getF_gives (θ := θ) (x := x) (pf := .hd (.tl (.hd .id))) (p := ofBits k) (Gives.id _).hd.tl.hd gt
     have e3 := eqF_gives e1 (Gives.id (θ := θ) x).hd.tl.tl
     rw [path_ofBits, len_ofBits] at e3
-    have h1 : (tget k t).size ≤ 4 * ub + 1 := by
-      obtain ⟨a1, a2⟩ := ht.path k
-      rw [a1]
-      exact (size_ofBits _).trans (by omega)
+    have h1 := hsz k
     have h2 : Does θ fOne x (insSem (S := S) θ mu cb kinds T ub (.one k w) t) (300 * insCost T ub (.one k w)) := by
       simp only [insSem, insCost]
       by_cases h : tget k t = ofBits w
@@ -389,9 +381,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
         exact (Does.ite_false e3 (Does.fail _)).mono (by omega)
     have e5 := switchF_does (θ := θ) g0 (fs := fs) (f := fOne) rfl h2
     refine e5.mono ?_
-    have h3 : (κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * insCost T ub (.one k w) =
-      κs * insCost T ub (.one k w) + κp * (κl + 2) * insCost T ub (.one k w) + κi * 10 * insCost T ub (.one k w) +
-      κk * insCost T ub (.one k w) + sw * insCost T ub (.one k w) + 1900 * insCost T ub (.one k w) := by ring
+    have h3 := hKN (insCost T ub (.one k w))
     omega
   | role j tt slots keys =>
     obtain ⟨z, hz, hsl⟩ := hi
@@ -415,8 +405,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
         have h2 : (4 + j + 1) * (3 + (4 + j) + 1) ≤ sw := Nat.mul_le_mul (by omega) (by omega)
         have h3 : 1 ≤ N := by omega
         nlinarith
-      have h3 : (κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * N = κs * N + κp * (κl + 2) * N + κi * 10 * N + κk * N +
-        sw * N + 1900 * N := by ring
+      have h3 := hKN N
       have h4 : 1 ≤ N := by omega
       omega
 
