@@ -22,8 +22,8 @@ variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r}
 theorem sum_RM {M : Type*} [AddCommMonoid M] (g : RM T m AA → M) : ∑ x, g x =
     (∑ a, ∑ c, ∑ γ, ∑ s, g (.start a c γ s)) + ((∑ j, ∑ i, ∑ e, g (.inn j i e)) +
       ((∑ j, ∑ e, ∑ s, g (.mid j e s)) + ∑ e, g (.fin e))) := by
-  rw [← (rmEquiv T m AA).symm.sum_comp g]
-  simp only [Fintype.sum_sum_type, Fintype.sum_prod_type, Fintype.sum_sigma]
+  rw [← (proxy_equiv% (RM T m AA)).sum_comp g]
+  simp only [Fintype.sum_sum_type, Fintype.sum_sigma]
   rfl
 
 section Levels

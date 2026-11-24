@@ -153,7 +153,7 @@ end
 theorem card_Tg_le {V : ℕ} (hD : 0 < D) (hb : 0 < b) (hV : 1 ≤ V) (hh : h ≤ V) (hr : r ≤ V) (hm : m ≤ V) (hJ : J ≤ V)
     {AA : ℕ} (hAA : AA ≤ V) (hX : Fintype.card (T.X 0) ≤ V) (hfl : Fintype.card (Sym2 T.Fl) ≤ V) :
     Fintype.card (Tg T m AA) ≤ 12 * V ^ 5 := by
-  rw [Fintype.card_congr (tgEquiv T m AA), Fintype.card_sum, Fintype.card_sum, Fintype.card_sum, Fintype.card_unit,
+  rw [← Fintype.card_congr (proxy_equiv% (Tg T m AA)), Fintype.card_sum, Fintype.card_sum, Fintype.card_sum, Fintype.card_unit,
     Fintype.card_sigma, Fintype.card_sigma]
   have h1 : ∑ j : Fin (J + 1), Fintype.card (T.Ed j) ≤ 2 * V ^ 4 := by
     calc _ ≤ ∑ _j : Fin (J + 1), V * V * V := by
@@ -165,13 +165,13 @@ theorem card_Tg_le {V : ℕ} (hD : 0 < D) (hb : 0 < b) (hV : 1 ≤ V) (hh : h �
       _ = 2 * V ^ 4 := by ring
   have h2 := (card_RM_le (T := T) (m := m) (AA := AA) hD).trans
     (rmN_le (X0 := Fintype.card (T.X 0)) hV hh hr hm hJ hAA hX)
-  have h3 : ∑ j : Fin J, Fintype.card (Σ i : Fin h, T.V (j + 1) i × Sym2 T.Fl) ≤ V ^ 4 := by
+  have h3 : ∑ j : Fin J, Fintype.card (Σ i : Fin h, Σ _ : T.V (j + 1) i, Sym2 T.Fl) ≤ V ^ 4 := by
     calc _ ≤ ∑ _j : Fin J, V * (V * V) := by
           refine Finset.sum_le_sum fun j _ => ?_
           rw [Fintype.card_sigma]
           calc _ ≤ ∑ _i : Fin h, V * V := by
                 refine Finset.sum_le_sum fun i _ => ?_
-                rw [Fintype.card_prod]
+                rw [Fintype.card_sigma, sum_const, card_univ, smul_eq_mul]
                 exact Nat.mul_le_mul ((Tower.card_V_le hD hb j.2 i).trans hX) hfl
             _ = h * (V * V) := by simp
             _ ≤ V * (V * V) := Nat.mul_le_mul_right _ hh

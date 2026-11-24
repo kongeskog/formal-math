@@ -77,8 +77,8 @@ def rmN (h r m J AA X0 : ℕ) : ℕ := AA * (AA * (X0 * (2 * m))) + (J * (h + 4)
 def lmN (h J X0 dd : ℕ) : ℕ := J * (h * (X0 * dd))
 
 theorem card_RM_le (hD : 0 < D) : Fintype.card (RM T m AA) ≤ rmN h r m J AA (Fintype.card (T.X 0)) := by
-  rw [Fintype.card_congr (rmEquiv T m AA)]
-  simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_fin, Fintype.card_sigma]
+  rw [← Fintype.card_congr (proxy_equiv% (RM T m AA))]
+  simp only [Fintype.card_sum, Fintype.card_fin, Fintype.card_sigma, Finset.sum_const, Finset.card_univ, smul_eq_mul]
   have h1 : ∀ j : Fin J, Fintype.card (T.Ed j) ≤ h * r * Fintype.card (T.X 0) := fun j => Tower.card_ed_le hD j.2.le
   have h2 := Tower.card_ed_le (T := T) hD (le_refl J)
   have h3 : ∑ j : Fin J, h * Fintype.card (T.Ed j) ≤ J * (h * (h * r * Fintype.card (T.X 0))) := by
@@ -184,17 +184,8 @@ theorem card_R_le (hD : 0 < D) (hb : 0 < b) : Fintype.card (sys R FL Pl).R ≤
 
 /-- Units. -/
 theorem card_Un : Fintype.card (Un R FL Pl U0 U1) = AA * AA * U0 + Fintype.card (sys R FL Pl).N * U1 := by
-  let e : Un R FL Pl U0 U1 ≃ (Fin AA × Fin AA × Fin U0) ⊕ ((sys R FL Pl).N × Fin U1) :=
-    { toFun := fun u => match u with
-        | .init a c k => .inl (a, c, k)
-        | .new ν k => .inr (ν, k)
-      invFun := fun s => match s with
-        | .inl q => .init q.1 q.2.1 q.2.2
-        | .inr q => .new q.1 q.2
-      left_inv := fun u => by cases u <;> rfl
-      right_inv := fun s => by rcases s with ⟨a, c, k⟩ | ⟨ν, k⟩ <;> rfl }
-  rw [Fintype.card_congr e, Fintype.card_sum, Fintype.card_prod, Fintype.card_prod, Fintype.card_prod]
-  simp only [Fintype.card_fin]
+  rw [← Fintype.card_congr (proxy_equiv% (Un R FL Pl U0 U1))]
+  simp only [Fintype.card_sum, Fintype.card_sigma, Fintype.card_fin, sum_const, card_univ, smul_eq_mul]
   ring
 
 end Moves

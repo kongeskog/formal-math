@@ -53,24 +53,7 @@ inductive RM (T : Tower h b D J r) (m AA : ℕ) where
   | mid (j : Fin J) (e : T.Ed j) (s : Fin 4)
   /-- the last stage -/
   | fin (e : T.Ed J)
-
-/-- Relays as a sum. -/
-def rmEquiv (T : Tower h b D J r) (m AA : ℕ) : RM T m AA ≃ (Fin AA × Fin AA × T.X 0 × Fin (2 * m)) ⊕
-    ((Σ j : Fin J, Fin h × T.Ed j) ⊕ ((Σ j : Fin J, T.Ed j × Fin 4) ⊕ T.Ed J)) where
-  toFun
-    | .start a c γ s => .inl (a, c, γ, s)
-    | .inn j i e => .inr (.inl ⟨j, i, e⟩)
-    | .mid j e s => .inr (.inr (.inl ⟨j, e, s⟩))
-    | .fin e => .inr (.inr (.inr e))
-  invFun
-    | .inl x => .start x.1 x.2.1 x.2.2.1 x.2.2.2
-    | .inr (.inl x) => .inn x.1 x.2.1 x.2.2
-    | .inr (.inr (.inl x)) => .mid x.1 x.2.1 x.2.2
-    | .inr (.inr (.inr e)) => .fin e
-  left_inv x := by cases x <;> rfl
-  right_inv x := by rcases x with _ | _ | _ | _ <;> rfl
-
-instance (T : Tower h b D J r) (m AA : ℕ) : Fintype (RM T m AA) := Fintype.ofEquiv _ (rmEquiv T m AA).symm
+  deriving Fintype
 
 /-- Targets. -/
 inductive Tg (T : Tower h b D J r) (m AA : ℕ) where
@@ -82,6 +65,7 @@ inductive Tg (T : Tower h b D J r) (m AA : ℕ) where
   | nxt (x : RM T m AA)
   /-- an end segment -/
   | seg (j : Fin J) (i : Fin h) (ω : T.V (j + 1) i) (q : Sym2 T.Fl)
+  deriving Fintype
 
 noncomputable instance (T : Tower h b D J r) (m AA : ℕ) : DecidableEq (Tg T m AA) := Classical.decEq _
 
