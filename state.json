@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:58:32.564382893Z",
+  "updated_at": "2026-11-24T22:00:53.948264476Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "9da0b173ba3bab2e93e04eac76162e1e20029b40",
-    "at": "2026-11-24T21:57:27.844998099Z",
+    "sha": "6bf12465410186b9bbfc5acace755bfefab0b40b",
+    "at": "2026-11-24T22:00:53.948264476Z",
     "metrics": {
-      "tokens": 902259,
+      "tokens": 901745,
       "loc": 57242,
       "decls": 4563,
       "files": 321,
-      "bytes": 3345646,
-      "build_seconds": 464
+      "bytes": 3344514,
+      "build_seconds": 548
     }
   },
   "counts": {
-    "merged": 48,
+    "merged": 49,
     "rejected": 2,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 48,
+      "merged": 49,
       "attempts": 51,
-      "saved": 25902
+      "saved": 26416
     }
   ],
   "ideas": [
@@ -122,8 +122,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:26:11Z",
-      "pr": 89,
-      "result_delta": -475,
+      "pr": 90,
+      "result_delta": -989,
       "created_at": "2026-11-24T20:45:03Z",
       "url": "https://github.com/kongeskog/formal-math/issues/76",
       "technique": "shorten",
@@ -620,76 +620,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 90,
-      "title": "shorten(Nc/Grp,Nc/Dl): delete named arguments that Lean infers",
-      "author": "kongeskog",
-      "head_sha": "14eb33c9d519b9888d18d1fc5af481d14a8199b6",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-24T21:41:46Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 76,
-      "url": "https://github.com/kongeskog/formal-math/pull/90",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc/Grp,Nc/Dl"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
