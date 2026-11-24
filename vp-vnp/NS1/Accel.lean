@@ -157,8 +157,7 @@ theorem UF_pre (θ : List Bool → A) (H v : ℕ) (K : KT R) (B : ℕ) : IsPre �
     · congr 1
       simp [pval, pv, Function.comp_def, Run.delay]
     · intro r hr
-      rw [List.mem_map] at hr
-      obtain ⟨s, hs, rfl⟩ := hr
+      obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
       exact (hp.2 s hs).1
 
 /-- The instances that arise from budgets are plain, and their sums are those of the runs that use up the budgets. -/

@@ -37,8 +37,7 @@ theorem det_coinc {R : Type*} [CommRing R] {μ : ℕ} (f g : Fin μ → ℕ) (hf
         have h3 := congrArg (fun s : Finset ℕ => (s : Set ℕ)) h2
         simpa using h3
       exact StrictMono.range_inj hf hg |>.1 hfin
-    rw [Set.not_subset] at hr
-    obtain ⟨_, ⟨i, rfl⟩, hi⟩ := hr
+    obtain ⟨_, ⟨i, rfl⟩, hi⟩ := Set.not_subset.1 hr
     refine det_eq_zero_of_row_eq_zero i fun j => ?_
     simp only [of_apply]
     rw [if_neg]

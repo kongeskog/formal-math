@@ -190,8 +190,7 @@ theorem MX.total {x : XP P} {bits : List Bool} (hx : MX x bits) :
     rw [emX_fr_true, length_bws (n := x.1.length + 1)]
     · simp
     · intro w hw
-      rw [List.mem_map] at hw
-      obtain ⟨s, hs, rfl⟩ := hw
+      obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hw
       exact hcw s hs _
   have e5 : (emX P x (.tp .lk true)).length = x.2.2.1.length * (x.1.length + 5) := by
     rw [emX_lk_true, hx.lk, length_encW (n := x.1.length + 3)]

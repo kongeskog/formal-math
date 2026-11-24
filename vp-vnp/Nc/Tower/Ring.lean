@@ -41,8 +41,7 @@ theorem mkR_eq_zero {m : ℕ} {p : (ZMod 2)[X]} : mkR m p = 0 ↔ X ^ m ∣ p :=
 noncomputable def liftR {m : ℕ} {S : Type*} [CommRing S] (f : (ZMod 2)[X] →+* S) (hf : f (X ^ m) = 0) : R m →+* S :=
   Ideal.Quotient.lift (Ideal.span {(X : (ZMod 2)[X]) ^ m}) f (by
     intro p hp
-    rw [Ideal.mem_span_singleton] at hp
-    obtain ⟨q, rfl⟩ := hp
+    obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton.1 hp
     rw [map_mul, hf, zero_mul])
 
 theorem liftR_mk {m : ℕ} {S : Type*} [CommRing S] (f : (ZMod 2)[X] →+* S) (hf : f (X ^ m) = 0) (p : (ZMod 2)[X]) :

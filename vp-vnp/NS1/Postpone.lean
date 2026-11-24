@@ -264,8 +264,7 @@ theorem sum_budg (J : ℕ) (K : KT R) (b : List (List Bool)) (hb : b.length < 2 
       have : b.map (KT.leaf c).lookup = List.replicate b.length c := by
         rw [List.eq_replicate_iff]
         refine ⟨by simp, fun x hx => ?_⟩
-        rw [List.mem_map] at hx
-        obtain ⟨p, hp, rfl⟩ := hx
+        obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hx
         rw [h p hp]
         rfl
       rw [this, List.prod_replicate]

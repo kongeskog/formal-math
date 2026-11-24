@@ -28,8 +28,7 @@ theorem size_listT_le {l : List Tree} {s : ℕ} (h : ∀ t ∈ l, t.size ≤ s) 
   rw [size_listT]
   have := List.sum_le_card_nsmul (l.map fun t => t.size + 1) (s + 1) (by
     intro n hn
-    rw [List.mem_map] at hn
-    obtain ⟨t, ht, rfl⟩ := hn
+    obtain ⟨t, ht, rfl⟩ := List.mem_map.1 hn
     exact Nat.succ_le_succ (h t ht))
   rw [List.length_map, smul_eq_mul] at this
   omega
@@ -44,8 +43,7 @@ theorem size_keys {ks : List (List Bool)} {X Lc : ℕ} (hl : ks.length ≤ X) (h
     (listT (ks.map ofBits)).size ≤ X * (4 * Lc + 2) + 1 := by
   refine size_listT_le' (s := 4 * Lc + 1) (by rw [List.length_map]; exact hl) ?_
   intro t ht
-  rw [List.mem_map] at ht
-  obtain ⟨k, hk, rfl⟩ := ht
+  obtain ⟨k, hk, rfl⟩ := List.mem_map.1 ht
   have h1 := size_ofBits k
   have h2 := h k hk
   omega
@@ -55,8 +53,7 @@ theorem size_keysT {l : List (List (List Bool))} {X Lc : ℕ} (hl : l.length ≤
     (keysT l).size ≤ X * (X * (4 * Lc + 2) + 2) + 1 := by
   refine size_listT_le' (s := X * (4 * Lc + 2) + 1) (by rw [List.length_map]; exact hl) ?_
   intro t ht
-  rw [List.mem_map] at ht
-  obtain ⟨ks, hks, rfl⟩ := ht
+  obtain ⟨ks, hks, rfl⟩ := List.mem_map.1 ht
   exact size_keys (h ks hks).1 (h ks hks).2
 
 /-- The size of a body. -/
@@ -72,8 +69,7 @@ theorem size_body {B : Body} {X Lc : ℕ} (h1 : B.flags.length ≤ X)
     obtain ⟨l, hl, rfl⟩ := ht
     refine size_listT_le' (s := 5) (by rw [List.length_map]; exact (h2 l hl).1) ?_
     intro t ht
-    rw [List.mem_map] at ht
-    obtain ⟨k, hk, rfl⟩ := ht
+    obtain ⟨k, hk, rfl⟩ := List.mem_map.1 ht
     rw [size_num]
     have := (h2 l hl).2 k hk
     omega
@@ -129,8 +125,7 @@ theorem size_bodyOf (hK : K + K ≤ X) (hU0 : U0 ≤ X) (hS : Fintype.card (Opti
     simp only [bodyOf, List.mem_ofFn] at hks
     obtain ⟨b, rfl⟩ := hks
     refine ⟨by rw [List.length_map]; exact hf _, fun k hk => ?_⟩
-    rw [List.mem_map] at hk
-    obtain ⟨i, -, rfl⟩ := hk
+    obtain ⟨i, -, rfl⟩ := List.mem_map.1 hk
     split_ifs
     · exact hdkey _
     · exact hkey _
@@ -148,8 +143,7 @@ theorem size_baseIns (hK : K + K ≤ X) (hU0 : U0 ≤ X) (hS : Fintype.card (Opt
       (Ins.both (key (Fin.castAdd A' p, .init p p k)) (dkey (p, k))).tree.size + 1)).sum ≤ X * (8 * Lc + 10) := by
     refine (List.sum_le_card_nsmul _ (8 * Lc + 10) ?_).trans ?_
     · intro m hm
-      rw [List.mem_map] at hm
-      obtain ⟨k, -, rfl⟩ := hm
+      obtain ⟨k, -, rfl⟩ := List.mem_map.1 hm
       have h1 := size_ofBits (key (Fin.castAdd A' p, .init p p k))
       have h2 := size_ofBits (dkey (p, k))
       have h3 := hkey (Fin.castAdd A' p, .init p p k)
@@ -183,8 +177,7 @@ theorem size_baseIns (hK : K + K ≤ X) (hU0 : U0 ≤ X) (hS : Fintype.card (Opt
           (x κ).length * (4 * c + 1 + 1) + 1 := by
         refine size_listT_le' (by simp) ?_
         intro t ht
-        rw [List.mem_map] at ht
-        obtain ⟨w, hw, rfl⟩ := ht
+        obtain ⟨w, hw, rfl⟩ := List.mem_map.1 ht
         rw [List.mem_reverse, List.mem_map] at hw
         obtain ⟨a, -, rfl⟩ := hw
         have := size_ofBits (List.ofFn (cb (some a)))
@@ -225,15 +218,13 @@ theorem size_roleIns (hU : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X) (hU1 : 
     · rw [List.length_map, Finset.length_toList, card_univ]
       exact (Fintype.card_subtype_le _).trans (hCn _)
     · intro ks hks
-      rw [List.mem_map] at hks
-      obtain ⟨ν, -, rfl⟩ := hks
+      obtain ⟨ν, -, rfl⟩ := List.mem_map.1 hks
       refine ⟨?_, fun k hk => ?_⟩
       · rw [List.length_map]
         refine (List.length_filter_le _ _).trans ?_
         rw [List.length_finRange]
         exact hU1
-      · rw [List.mem_map] at hk
-        obtain ⟨i, -, rfl⟩ := hk
+      · obtain ⟨i, -, rfl⟩ := List.mem_map.1 hk
         exact hkey _
   have h3 := htg r
   have h4 := hnum r.1
@@ -367,12 +358,9 @@ theorem size_scriptT (hX : 1 ≤ X) (hLc : 1 ≤ Lc) (hK : K + K ≤ X) (hU0 : U
       X * (X * X * (8 * Lc + 4) + 8 * X + 16) := by
     refine (List.sum_le_card_nsmul _ (X * X * (8 * Lc + 4) + 8 * X + 16) ?_).trans ?_
     · intro m hm
-      rw [List.mem_map] at hm
-      obtain ⟨t, ht, rfl⟩ := hm
-      rw [List.mem_map] at ht
-      obtain ⟨i, hi, rfl⟩ := ht
-      rw [List.mem_map] at hi
-      obtain ⟨r, -, rfl⟩ := hi
+      obtain ⟨t, ht, rfl⟩ := List.mem_map.1 hm
+      obtain ⟨i, hi, rfl⟩ := List.mem_map.1 ht
+      obtain ⟨r, -, rfl⟩ := List.mem_map.1 hi
       have := size_roleIns (key := key) (tg := tg) (P := P) (n := n) (o := o) hU hU1 hSl hCn hkey htg hnum r
       omega
     · rw [List.length_map, List.length_map, List.length_map, smul_eq_mul]

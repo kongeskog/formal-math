@@ -70,8 +70,7 @@ theorem eval_letS {K : Type} [Field K] {Γ : Type} [DecidableEq Γ] {bt : Bool �
       · simp only [letS, if_neg h1, if_neg h2, map_zero]
         rw [if_neg]
         rintro ⟨x, -, h3⟩
-        rw [Option.map_eq_some_iff] at h3
-        obtain ⟨y, -, h4⟩ := h3
+        obtain ⟨y, -, h4⟩ := Option.map_eq_some_iff.1 h3
         cases y
         · exact h2 h4.symm
         · exact h1 h4.symm

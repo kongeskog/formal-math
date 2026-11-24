@@ -57,8 +57,7 @@ theorem mem_bindW {Q : List (A × α)} {R : α → List (A × β)} {p : A × β}
   unfold bindW at h
   rw [List.mem_flatMap] at h
   obtain ⟨q, hq, h⟩ := h
-  rw [List.mem_map] at h
-  obtain ⟨r, hr, rfl⟩ := h
+  obtain ⟨r, hr, rfl⟩ := List.mem_map.1 h
   exact ⟨q, hq, r, hr, rfl, rfl⟩
 
 theorem mem_bindW_of {Q : List (A × α)} {R : α → List (A × β)} {q : A × α} {r : A × β} (hq : q ∈ Q)
@@ -197,8 +196,7 @@ theorem letk {R : Tree → List (A × Tree)} (hF : Does θ F x Q c) (hG : ∀ q 
   refine (h2.congr ?_ fun φ => ?_).mono (by omega)
   · intro p hp
     obtain ⟨q, hq, r, hr, h3, h4⟩ := mem_bindW hp
-    rw [List.mem_map] at hq
-    obtain ⟨q', hq', rfl⟩ := hq
+    obtain ⟨q', hq', rfl⟩ := List.mem_map.1 hq
     exact ⟨_, mem_bindW_of hq' hr, h3.symm⟩
   · rw [wsum_bindW, wsum_bindW]
     simp [wsum, Function.comp_def]
@@ -359,8 +357,7 @@ theorem theta {o : Tree} (h : Gives θ F x o c) : Does θ (.theta F) x [(θ o.pa
     exact h.symm
   refine ⟨_, Ev.theta e1, ?_, fun φ => ?_⟩
   · intro u hu
-    rw [List.mem_map] at hu
-    obtain ⟨r, hr, rfl⟩ := hu
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
     obtain ⟨a1, a2, -⟩ := e2 r hr
     exact ⟨a1, by simpa using a2, _, List.mem_singleton_self _, rfl⟩
   · rw [List.map_map]
@@ -383,8 +380,7 @@ theorem hd {o : Tree} (h : Gives θ F x o c) : Gives θ (.hd F) x o.hd (c + 1) :
     exact h.symm
   refine ⟨_, Ev.hd e1, ?_, fun φ => ?_⟩
   · intro u hu
-    rw [List.mem_map] at hu
-    obtain ⟨r, hr, rfl⟩ := hu
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
     obtain ⟨a1, a2, -⟩ := e2 r hr
     refine ⟨a1, by simpa [Run.tick] using a2, _, List.mem_singleton_self _, ?_⟩
     simp [Run.tick, hout r hr]
@@ -407,8 +403,7 @@ theorem tl {o : Tree} (h : Gives θ F x o c) : Gives θ (.tl F) x o.tl (c + 1) :
     exact h.symm
   refine ⟨_, Ev.tl e1, ?_, fun φ => ?_⟩
   · intro u hu
-    rw [List.mem_map] at hu
-    obtain ⟨r, hr, rfl⟩ := hu
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
     obtain ⟨a1, a2, -⟩ := e2 r hr
     refine ⟨a1, by simpa [Run.tick] using a2, _, List.mem_singleton_self _, ?_⟩
     simp [Run.tick, hout r hr]

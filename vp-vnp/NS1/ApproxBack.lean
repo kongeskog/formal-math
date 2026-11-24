@@ -92,8 +92,7 @@ theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {t : B
     · rw [← pe, pv, val_plain]
       · simp [pval, Function.comp_def, Run.delay]
       · intro r hr
-        rw [List.mem_map] at hr
-        obtain ⟨s, hs, rfl⟩ := hr
+        obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
         exact (pl.2 s hs).1
   have g : Gives θ (.cons (.quote WF.code) (.cons (.quote P) (.cons (.hd .id) (.hd (.tl .id))))) x (zq P z t) 12 := by
     subst hx

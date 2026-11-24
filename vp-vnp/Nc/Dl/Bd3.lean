@@ -35,8 +35,7 @@ theorem sum_map_le {α : Type*} (l : List α) (f : α → ℕ) {n b : ℕ} (h : 
     (l.map f).sum ≤ n * b := by
   refine (List.sum_le_card_nsmul _ b ?_).trans ?_
   · intro x hx
-    rw [List.mem_map] at hx
-    obtain ⟨a, ha, rfl⟩ := hx
+    obtain ⟨a, ha, rfl⟩ := List.mem_map.1 hx
     exact h a ha
   · rw [List.length_map, smul_eq_mul]
     exact Nat.mul_le_mul_right _ hn
@@ -151,8 +150,7 @@ theorem cost_bodyTm (p : Fin (K + K)) :
     intro f
     rw [cost_listTm]
     refine Nat.add_le_add_right (sum_map_le _ _ (fun t ht => ?_) ?_) _
-    · rw [List.mem_ofFn] at ht
-      obtain ⟨b', rfl⟩ := ht
+    · obtain ⟨b', rfl⟩ := List.mem_ofFn.1 ht
       have := cost_gN hnm (f b') (byPath C.nm st)
       omega
     · rw [List.length_ofFn]; exact hK2
