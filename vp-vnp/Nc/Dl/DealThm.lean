@@ -43,12 +43,11 @@ theorem dealF_does (t0 t1 : Tree) (names : List (List Bool)) (nl nub : List Bool
       q.2 = listT (ts.map fun t => t.expand σ)) ∧
     wsum Q (pvs θ) = ((execAll (KT.val nub) (sts ++ sts') (gets (partsT (KT.val nl) names .nil (wordT t0 t1 z)))).map
       fun σ => (ts.map fun t => pv θ (t.expand σ)).prod).sum := by
-  obtain ⟨σ0, hσ0⟩ : ∃ σ, σ = gets (partsT (KT.val nl) names .nil (wordT t0 t1 z)) := ⟨_, rfl⟩
-  rw [← hσ0] at hI0 h9 ⊢
+  generalize hσ0 : gets (partsT (KT.val nl) names .nil (wordT t0 t1 z)) = σ0 at hI0 h9 ⊢
   have hw := partsF_gives (wordF_gives (t0 := t0) (t1 := t1) (Gives.id (θ := θ) z)) names nl Ln hn
   rw [length_wordT] at hw
-  obtain ⟨Q1, d1, m1, s1⟩ := dstepsF_does (θ := θ) nub sts hw hI (by rw [← hσ0]; exact hI0)
-  rw [← hσ0] at m1 s1
+  obtain ⟨Q1, d1, m1, s1⟩ := dstepsF_does (θ := θ) nub sts hw hI (by rw [hσ0]; exact hI0)
+  rw [hσ0] at m1 s1
   -- the second part
   have h2 : ∀ W : Tree, ∃ Q : List (A × Tree), gets W ∈ execAll (KT.val nub) sts σ0 →
       Does θ (lett (dstepsF nub sts' .id) (tmsF ts .id)) W Q (c9 + ts.length * (ct + 60) + 150) ∧

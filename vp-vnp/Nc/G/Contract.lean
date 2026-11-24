@@ -93,10 +93,10 @@ theorem contract [Nonempty Ro]
       conn (fun p => (f p).1) (fun ν => by
         have := congrArg Sigma.fst (hpair ν)
         exact this) p p0
-    obtain ⟨i, hi⟩ : ∃ i, i = (f p0).1 := ⟨_, rfl⟩
+    generalize hi : (f p0).1 = i
     have hex : ∀ p, ∃ gp : (ν : {ν // c ν = p ∨ d ν = p}) → S i ν, f p = ⟨i, gp⟩ := by
       intro p
-      have h := (hall p).trans hi.symm
+      have h := (hall p).trans hi
       generalize f p = q at h ⊢
       obtain ⟨i', g'⟩ := q
       have h : i' = i := h

@@ -53,18 +53,17 @@ theorem exists_mid (q : Fin (K + 1) → Q) (ρ : Option S → Fin (K + K) → Ro
   have z4 : s4 .zero = .nil := by rw [hs4]; rfl
   have r4 : ∀ s p, s4 (.rd s p) = ofBits (C.rc (ρ s p)) := fun s p => by rw [hs4]; rfl
   have h5 := phase5 C (m := m) z4 r4
-  obtain ⟨s5, hs5⟩ : ∃ s : NmT S M U0 U1 pS → Tree, s = fun x =>
+  generalize hs5 : (fun x : NmT S M U0 U1 pS =>
       if h : ∃ a : Option S × Fin (K + K), Nm.row a.1 a.2 = x then bit (decide (ValidRow (ρ h.choose.1) h.choose.2))
-      else s4 x := ⟨_, rfl⟩
-  rw [← hs5] at h5
+      else s4 x) = s5 at h5
   have k5 : ∀ y, (∀ s p, y ≠ .row s p) → s5 y = s4 y := by
     intro y hy
-    rw [hs5]
+    rw [← hs5]
     exact dif_neg fun ⟨a, ha⟩ => hy a.1 a.2 ha.symm
   have w5 : ∀ s p, s5 (.row s p) = bit (decide (ValidRow (ρ s) p)) := by
     intro s p
     have h : ∃ a : Option S × Fin (K + K), (Nm.row a.1 a.2 : NmT S M U0 U1 pS) = .row s p := ⟨(s, p), rfl⟩
-    rw [hs5]
+    rw [← hs5]
     simp only [dif_pos h]
     have hinj : ∀ (s s' : Option S) (p p' : Fin (K + K)), (Nm.row s p : NmT S M U0 U1 pS) = .row s' p' → s = s' ∧ p = p' :=
       fun s s' p p' h => by simpa using h
@@ -89,17 +88,16 @@ theorem exists_mid (q : Fin (K + 1) → Q) (ρ : Option S → Fin (K + K) → Ro
   obtain ⟨s6, h6, w6, k6⟩ := phase6 C tab (m := m) (n, o) (by rw [k5 _ fun s p => by simp]; exact z4) hc
   have z6 : s6 .zero = .nil := by rw [k6 _ fun k => by simp, k5 _ fun s p => by simp]; exact z4
   have h7 := phase7 C tab (m := m) (n, o) z6 w6
-  obtain ⟨s7, hs7⟩ : ∃ s : NmT S M U0 U1 pS → Tree, s = fun y =>
-      if h : ∃ a : Ix7 M U0 U1, nm7 a = y then v7 tab (n, o) h.choose else s6 y := ⟨_, rfl⟩
-  rw [← hs7] at h7
+  generalize hs7 : (fun y : NmT S M U0 U1 pS =>
+      if h : ∃ a : Ix7 M U0 U1, nm7 a = y then v7 tab (n, o) h.choose else s6 y) = s7 at h7
   have k7 : ∀ y, (∀ a, y ≠ nm7 a) → s7 y = s6 y := by
     intro y hy
-    rw [hs7]
+    rw [← hs7]
     exact dif_neg fun ⟨a, ha⟩ => hy a ha.symm
   have w7 : ∀ a, s7 (nm7 a) = v7 tab (n, o) a := by
     intro a
     have h : ∃ a' : Ix7 M U0 U1, (nm7 a' : NmT S M U0 U1 pS) = nm7 a := ⟨a, rfl⟩
-    rw [hs7]
+    rw [← hs7]
     simp only [dif_pos h]
     rw [nm7_inj h.choose_spec]
   have old : ∀ y, (∀ s p, y ≠ .row s p) → (∀ k, y ≠ .slp k) → (∀ a, y ≠ nm7 a) → s7 y = s4 y := fun y h1 h2 h3 => by

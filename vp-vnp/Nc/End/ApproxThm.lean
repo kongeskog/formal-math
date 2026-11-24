@@ -53,8 +53,7 @@ theorem Approximates.substitute_affine {f : MvPolynomial X F} {s : ℕ} (h : App
   have hmap : aeval Mat' (MvPolynomial.map φ f) = MvPolynomial.map φ (aeval Mat f) := by
     rw [hMat']
     exact (map_bind₁ φ Mat f).symm
-  obtain ⟨r, hrdef⟩ : ∃ r, r = p - MvPolynomial.map φ f := ⟨_, rfl⟩
-  rw [← hrdef] at hr
+  generalize hrdef : p - MvPolynomial.map φ f = r at hr
   have hs : OrdGe 1 (aeval Mat' r) := by
     rw [r.as_sum, map_sum]
     refine Finset.sum_induction _ (OrdGe 1) (fun u v hu hv => hu.add hv) (OrdGe.zero 1) fun d _ => ?_
@@ -66,7 +65,7 @@ theorem Approximates.substitute_affine {f : MvPolynomial X F} {s : ℕ} (h : App
     simpa using (OrdGe.C_of_coeff fun i hi => hr d i hi).mul (OrdGe.map_C (d.prod fun q k => Mat q ^ k))
   intro d i hi
   have e : aeval Mat' p = aeval Mat' r + MvPolynomial.map φ (aeval Mat f) := by
-    rw [← hmap, ← map_add, hrdef, sub_add_cancel]
+    rw [← hmap, ← map_add, ← hrdef, sub_add_cancel]
   rw [e, coeff_add, HahnSeries.coeff_add, hs d i (by omega), zero_add, coeff_map, hφ, HahnSeries.C_apply,
     HahnSeries.coeff_single]
   congr

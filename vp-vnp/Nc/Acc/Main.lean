@@ -76,19 +76,19 @@ theorem size_pairsF (m : ℕ) (l : Fm) : (pairsF m l).code.size = l.code.size + 
 /-- The size of the program. -/
 theorem size_accF : ∃ c : ℕ, ∀ (M m d : ℕ) (out : List Bool), out.length = M →
     (accF M m d out).code.size ≤ c * (M + m + 1) + 2 * d := by
-  obtain ⟨c1, hc1⟩ : ∃ n, n = stepW.code.size := ⟨_, rfl⟩
-  obtain ⟨c2, hc2⟩ : ∃ n, n = leafB.code.size := ⟨_, rfl⟩
-  obtain ⟨c3, hc3⟩ : ∃ n, n = intB.code.size := ⟨_, rfl⟩
-  obtain ⟨c4, hc4⟩ : ∃ n, n = pairB.code.size := ⟨_, rfl⟩
-  obtain ⟨c5, hc5⟩ : ∃ n, n = (wordB lt0 lt1).code.size := ⟨_, rfl⟩
-  obtain ⟨c6, hc6⟩ : ∃ n, n = lt2.size := ⟨_, rfl⟩
-  obtain ⟨c7, hc7⟩ : ∃ n, n = (ofBits [true, false]).size := ⟨_, rfl⟩
-  obtain ⟨c8, hc8⟩ : ∃ n, n = Fm.fail.code.size := ⟨_, rfl⟩
+  generalize hc1 : stepW.code.size = c1
+  generalize hc2 : leafB.code.size = c2
+  generalize hc3 : intB.code.size = c3
+  generalize hc4 : pairB.code.size = c4
+  generalize hc5 : (wordB lt0 lt1).code.size = c5
+  generalize hc6 : lt2.size = c6
+  generalize hc7 : (ofBits [true, false]).size = c7
+  generalize hc8 : Fm.fail.code.size = c8
   have hloop : ∀ M m, (loopF M m).code.size ≤ 200 * M + (c1 + 17) * m + (c2 + c3 + c8 + 500) := by
     intro M m
     rw [loopF, size_ite, size_ite, leafF, intF, size_lett, size_ite, size_lett, size_cons, size_cons, size_cons, size_lett,
       size_cons, size_gwd, size_walkF]
-    simp only [size_hd, size_tl, size_id, size_guess, size_quote, Tree.size, ← hc1, ← hc2, ← hc3, ← hc8]
+    simp only [size_hd, size_tl, size_id, size_guess, size_quote, Tree.size, hc1, hc2, hc3, hc8]
     omega
   refine ⟨2 * (200 + c1 + 17 + c2 + c3 + c8 + 500) + (2 * c4 + 30) + 2 * c5 + c6 + c7 + 500, fun M m d out ho => ?_⟩
   have h1 := hloop M m
@@ -96,7 +96,7 @@ theorem size_accF : ∃ c : ℕ, ∀ (M m d : ℕ) (out : List Bool), out.length
   rw [ho] at h2
   rw [accF, size_ite, size_mul, size_app, size_cons, size_cons, size_cons, treeF, size_hd, size_pairsF, size_app, size_cons,
     size_cons]
-  simp only [size_guess, size_quote, size_id, size_num, ← hc4, ← hc5, ← hc6, ← hc7, List.map_cons, List.map_nil, listT,
+  simp only [size_guess, size_quote, size_id, size_num, hc4, hc5, hc6, hc7, List.map_cons, List.map_nil, listT,
     Tree.size]
   have h3 : (c1 + 17) * m ≤ (c1 + 17) * (M + m + 1) := Nat.mul_le_mul_left _ (by omega)
   have h4 : (2 * c4 + 30) * m ≤ (2 * c4 + 30) * (M + m + 1) := Nat.mul_le_mul_left _ (by omega)
