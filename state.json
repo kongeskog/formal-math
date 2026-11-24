@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:47:56.657686109Z",
+  "updated_at": "2026-11-24T19:49:22.690423699Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "45a5a1306dfc597f02893c84f998bdeebaec35b7",
-    "at": "2026-11-24T19:47:56.657686109Z",
+    "sha": "58ab1fb597b3cffe132386b4b8957c81f5830954",
+    "at": "2026-11-24T19:49:22.690423699Z",
     "metrics": {
-      "tokens": 919772,
-      "loc": 58408,
-      "decls": 4573,
+      "tokens": 919112,
+      "loc": 58392,
+      "decls": 4572,
       "files": 321,
-      "bytes": 3395604,
-      "build_seconds": 609
+      "bytes": 3394029,
+      "build_seconds": 697
     }
   },
   "counts": {
-    "merged": 20,
+    "merged": 21,
     "rejected": 2,
-    "open": 7,
+    "open": 6,
     "contributors": 1,
     "ideas_open": 5
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 20,
+      "merged": 21,
       "attempts": 29,
-      "saved": 8389
+      "saved": 9049
     }
   ],
   "ideas": [
@@ -263,7 +263,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:06:30Z",
       "pr": 44,
-      "result_delta": null,
+      "result_delta": -660,
       "created_at": "2026-11-24T19:00:23Z",
       "url": "https://github.com/kongeskog/formal-math/issues/36",
       "technique": "restructure",
@@ -467,96 +467,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 44,
-      "title": "restructure(Nc/Grp/GroupThm): state exists_group with GroupOK instead of repeating it",
-      "author": "kongeskog",
-      "head_sha": "ef7c9514e312b8d374ad9ab74c28468fcda372ba",
-      "base_sha": "8e8f8be0f099d369158ab299c552dbca81e61c08",
-      "status": "stale",
-      "created_at": "2026-11-24T19:08:15Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 922045,
-        "loc": 58483,
-        "decls": 4588,
-        "files": 321,
-        "bytes": 3402376,
-        "build_seconds": 324
-      },
-      "base_metrics": {
-        "tokens": 922705,
-        "loc": 58499,
-        "decls": 4589,
-        "files": 321,
-        "bytes": 3403951,
-        "build_seconds": null
-      },
-      "delta": -660,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 922705 → 922045 (-660)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 36,
-      "url": "https://github.com/kongeskog/formal-math/pull/44",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45467330319",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/Grp/GroupThm"
-    },
     {
       "pr": 45,
       "title": "shorten(Nc/Tow): drop hypotheses the unusedArguments linter reports unused",
