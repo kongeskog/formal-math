@@ -26,7 +26,7 @@ theorem sum_Bt (a c : Fin AA) : ∑ γ, Bt T ch lhat n a c γ = if Valid lhat n 
   classical
   unfold Bt
   split_ifs
-  · rw [← card_eq_sum_card_fiberwise (f := fun k => gam T ch a k) (t := univ) (fun _ _ => mem_coe.2 (mem_univ _)),
+  · rw [← card_eq_sum_card_fiberwise (f := fun k => gam T ch a k) (fun _ _ => mem_coe.2 (mem_univ _)),
       card_range]
   · simp
 
@@ -102,14 +102,14 @@ theorem paths_at (x : T.X 0) :
     set S := univ.filter fun q : Q4 T m AA => okR T R ch (stR q) ∧
       (R.path (ch q.1) (ch q.2.1) q.2.2.1)[q.2.2.2.1]? = some e with hS
     have h3 : ∀ q : {q // q ∈ S}, nR R ch FL lhat n o (stR q.1) = alv R ch FL lhat n o
-        (⟨.inl ⟨stR q.1, (mem_filter.1 q.2).2.1⟩, false⟩ : NM R FL (ch := ch)) := by
+        (⟨.inl ⟨stR q.1, (mem_filter.1 q.2).2.1⟩, false⟩ : NM R FL) := by
       intro q
       unfold nR
       rw [dif_pos (mem_filter.1 q.2).2.1]
       exact (alv_relay hg ⟨stR q.1, (mem_filter.1 q.2).2.1⟩ false).symm
     rw [Finset.sum_congr rfl fun q _ => h3 q]
     refine sum_alv_le (.edge 0 e) S.attach
-      (fun q => (⟨.inl ⟨stR q.1, (mem_filter.1 q.2).2.1⟩, false⟩ : NM R FL (ch := ch))) ?_ ?_
+      (fun q => (⟨.inl ⟨stR q.1, (mem_filter.1 q.2).2.1⟩, false⟩ : NM R FL)) ?_ ?_
     · rintro ⟨⟨a, c, γ, s⟩, hq⟩ _ ⟨⟨a', c', γ', s'⟩, hq'⟩ _ hee
       have h4 : (Sum.inl ⟨stR (a, c, γ, s), (mem_filter.1 hq).2.1⟩ : Mv T R ch FL) =
           .inl ⟨stR (a', c', γ', s'), (mem_filter.1 hq').2.1⟩ := congrArg Sigma.fst hee
@@ -260,11 +260,11 @@ theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
     rcases h3 with h3 | h3
     · exact Or.inl ((T.vx_co j.2 i).1 (Prod.ext v0 h3.symm))
     · exact Or.inr ((T.vx_co j.2 i).1 (Prod.ext v1 h3.symm))
-  have htg : tgM R ch FL (⟨.inr l, ν'⟩ : NM R FL (ch := ch)).1 ν' = .edge j.succ p.1 := by
+  have htg : tgM R ch FL (⟨.inr l, ν'⟩ : NM R FL).1 ν' = .edge j.succ p.1 := by
     change Tg.edge j.succ ((T.nr j.2 i).symm (T.vx i x, FL.cn d ν')).1 = _
     rw [hν', Equiv.apply_symm_apply]
   have h4 := sum_alv_le (lhat := lhat) (n := n) (o := o) (.edge j.succ p.1) ({()} : Finset Unit)
-    (fun _ => (⟨.inr l, ν'⟩ : NM R FL (ch := ch))) (fun _ _ _ _ _ => rfl) (fun _ _ => htg)
+    (fun _ => (⟨.inr l, ν'⟩ : NM R FL)) (fun _ _ _ _ _ => rfl) (fun _ _ => htg)
   rw [Finset.sum_singleton, h1] at h4
   refine ((hg (.inr l)).2 ν').trans (h4.trans ?_)
   rw [lev_succ]

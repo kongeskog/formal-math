@@ -40,7 +40,7 @@ def bet (n : T.Ed j → ℕ) (c : T.X j) : ℕ := ∑ e, if T.e0 e = c ∨ T.e1 
 theorem card_at (hj : j ≤ J) (c : T.X j) : (univ.filter fun e : T.Ed j => T.e0 e = c ∨ T.e1 e = c).card ≤ h * r := by
   have h1 : (univ.filter fun e : T.Ed j => T.e0 e = c ∨ T.e1 e = c).card =
       ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i ∧ (T.e0 e = c ∨ T.e1 e = c)).card := by
-    rw [card_eq_sum_card_fiberwise (f := fun e : T.Ed j => T.ty e) (t := univ) (fun _ _ => mem_coe.2 (mem_univ _))]
+    rw [card_eq_sum_card_fiberwise (f := fun e : T.Ed j => T.ty e) (fun _ _ => mem_coe.2 (mem_univ _))]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [filter_filter]
     congr 1
@@ -153,14 +153,14 @@ theorem kap_zero_le : T.kap (lds R ch FL lhat n o 0) ≤ √h * (r * Fintype.car
   have h1 : ∀ e : T.Ed 0, (lds R ch FL lhat n o 0 e : ℝ) ^ 2 ≤ (nhat T Uu AA lhat : ℝ) ^ 2 := by
     intro e
     refine pow_le_pow_left₀ (Nat.cast_nonneg _) ?_ 2
-    exact_mod_cast Paper.thm_tree_start (R := R) (ch := ch) (FL := FL) (n := n) (o := o) hr hb e
+    exact_mod_cast Paper.thm_tree_start hr hb e
   have h0 : 0 ≤ √h * (r * Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by positivity
   refine (abs_le_of_sq_le_sq' ?_ h0).2
   rw [Tower.kap_sq, mul_pow, mul_pow, Real.sq_sqrt (Nat.cast_nonneg h)]
   have h2 : ∑ e : T.Ed 0, (lds R ch FL lhat n o 0 e : ℝ) ^ 2 ≤ Fintype.card (T.Ed 0) * (nhat T Uu AA lhat : ℝ) ^ 2 := by
     refine (Finset.sum_le_sum fun e _ => h1 e).trans (le_of_eq ?_)
     rw [Finset.sum_const, card_univ, nsmul_eq_mul]
-  rw [Tower.card_ed_real (T := T) (Nat.zero_le _)] at h2
+  rw [Tower.card_ed_real (Nat.zero_le _)] at h2
   have hA : (0 : ℝ) ≤ r * Fintype.card (T.X 0) / 2 := by positivity
   refine (mul_le_mul_of_nonneg_left h2 hA).trans (le_of_eq ?_)
   ring

@@ -30,7 +30,7 @@ variable (hr : 0 < r) (hb : 0 < b) (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} (
 include hr hb hh hbD hρ hρ' hρ1 hρD
 
 theorem kap_le_kbar (j : Fin (J + 1)) : T.kap (lds R ch FL lhat n o j) ≤ kbar FL Uu AA lhat := by
-  refine (kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb hh hbD hρ hρ1 hρD j).trans ?_
+  refine (kap_le' hr hb hh hbD hρ hρ1 hρD j).trans ?_
   exact mul_le_of_le_one_left kbar_nonneg (pow_le_one₀ hρ.le hρ')
 
 /-- Loads of edges. -/
@@ -39,7 +39,7 @@ theorem load_edge_le (j : Fin (J + 1)) (e : T.Ed j) :
   have hX : 0 < Fintype.card (T.X j.1) := Fintype.card_pos_iff.2 ⟨T.e0 e⟩
   have hk := kap_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb hh hbD hρ hρ' hρ1 hρD j
   have hk0 : 0 ≤ T.kap (lds R ch FL lhat n o j) := Tower.kap_nonneg _
-  have h1 := Tower.sum_sq_eq (T := T) hr hX (lds R ch FL lhat n o j)
+  have h1 := Tower.sum_sq_eq hr hX (lds R ch FL lhat n o j)
   have h2 : (load R ch FL lhat n o (.edge j e) : ℝ) ^ 2 ≤ ∑ e, (lds R ch FL lhat n o j e : ℝ) ^ 2 :=
     Finset.single_le_sum (f := fun e => (lds R ch FL lhat n o j e : ℝ) ^ 2) (fun _ _ => sq_nonneg _) (mem_univ e)
   have h3 : (1 : ℝ) ≤ r * Fintype.card (T.X j.1) := by exact_mod_cast Nat.mul_pos hr hX
@@ -63,7 +63,7 @@ theorem tmin_real_le (l : LMv T FL) : (tmin FL (load R ch FL lhat n o) l : ℝ) 
   have h1 : (FL.a₁ : ℝ) * tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) ≤
       √(T.NN2 (T.nEnd i nf ω)) + FL.a₁ := tmin_le hb _ _ fun q => seg_le hr hb j i ω q
   have hX : 0 < Fintype.card (T.X (j.1 + 1)) := by
-    rw [← Tower.card_V (T := T) (Nat.succ_le_of_lt j.2) i]
+    rw [← Tower.card_V (Nat.succ_le_of_lt j.2) i]
     exact Nat.mul_pos (Fintype.card_pos_iff.2 ⟨ω⟩) hb
   have hXR : (1 : ℝ) ≤ Fintype.card (T.X (j.1 + 1)) := by exact_mod_cast hX
   have h2 := Tower.end_norm (T := T) j.2 hb hbD (i := i) (n := nf)
