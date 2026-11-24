@@ -54,9 +54,9 @@ theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e 
 theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R ch x β = .done)
     (hne : num R ch FL lhat n o (.inl ⟨x, hx⟩) ≠ 0) :
     ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), chd x β = some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ ∧
-      hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL (ch := ch)) =
+      hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
         s(nd T j hj c, parN hh (lev (load R ch FL lhat n o)) j c) := by
-  have e0 : ∀ β : Bool, hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL (ch := ch)) =
+  have e0 : ∀ β : Bool, hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
       if β then s(tri T R ch x 1, tri T R ch x 2) else s(tri T R ch x 0, tri T R ch x 1) := by
     intro β
     cases β <;> rfl
@@ -193,10 +193,10 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
 
 open Classical in
 /-- The alive units of an edge at one end. -/
-theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : Finset (NM R FL (ch := ch))).filter (fun ν =>
+theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : Finset (NM R FL)).filter (fun ν =>
       alv R ch FL lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR T R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR T R ch x.1 β = .done ∧ OfEd j e x.1),
       alv R ch FL lhat n o ν ≤ load R ch FL lhat n o (.edge j.castSucc e) := by
-  have hnz : ∀ (x : {x : RM T m AA // okR T R ch x}), alv R ch FL lhat n o (⟨.inl x, β⟩ : NM R FL (ch := ch)) ≠ 0 →
+  have hnz : ∀ (x : {x : RM T m AA // okR T R ch x}), alv R ch FL lhat n o (⟨.inl x, β⟩ : NM R FL) ≠ 0 →
       num R ch FL lhat n o (.inl x) ≠ 0 := by
     intro x hx
     have := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) hr hb x β
@@ -220,12 +220,12 @@ theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : F
 
 open Classical in
 /-- The alive units between a chamber of a level before the last and its parent. -/
-theorem sum_child_lt (j : Fin J) (c : T.X j) : (∑ ν : NM R FL (ch := ch), if IsCh R ch FL ν ⟨j.castSucc, c⟩ then
+theorem sum_child_lt (j : Fin J) (c : T.X j) : (∑ ν : NM R FL, if IsCh R ch FL ν ⟨j.castSucc, c⟩ then
       alv R ch FL lhat n o ν else 0) ≤
     ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then load R ch FL lhat n o (.edge j.castSucc e) else 0 := by
-  let C : T.Ed j → Bool → Finset (NM R FL (ch := ch)) := fun e β => (univ : Finset (NM R FL (ch := ch))).filter (fun ν =>
+  let C : T.Ed j → Bool → Finset (NM R FL) := fun e β => (univ : Finset (NM R FL)).filter (fun ν =>
       alv R ch FL lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR T R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR T R ch x.1 β = .done ∧ OfEd j e x.1)
-  have hall : ∀ ν : NM R FL (ch := ch), (if IsCh R ch FL ν ⟨j.castSucc, c⟩ then alv R ch FL lhat n o ν else 0) ≤
+  have hall : ∀ ν : NM R FL, (if IsCh R ch FL ν ⟨j.castSucc, c⟩ then alv R ch FL lhat n o ν else 0) ≤
       if ν ∈ ((univ.filter fun e : T.Ed j => T.e0 e = c).biUnion fun e => C e false) ∪
         ((univ.filter fun e : T.Ed j => T.e1 e = c).biUnion fun e => C e true) then alv R ch FL lhat n o ν else 0 := by
     intro ν
@@ -278,7 +278,7 @@ theorem sum_child_lt (j : Fin J) (c : T.X j) : (∑ ν : NM R FL (ch := ch), if 
 
 open Classical in
 /-- The alive units between a chamber of the last level and the root. -/
-theorem sum_child_last (c : T.X J) : (∑ ν : NM R FL (ch := ch), if IsCh R ch FL ν ⟨Fin.last J, c⟩ then
+theorem sum_child_last (c : T.X J) : (∑ ν : NM R FL, if IsCh R ch FL ν ⟨Fin.last J, c⟩ then
       alv R ch FL lhat n o ν else 0) ≤
     ∑ e : T.Ed J, if T.e0 e = c ∨ T.e1 e = c then load R ch FL lhat n o (.edge (Fin.last J) e) else 0 := by
   let C : T.Ed J → Bool → Finset (NM R FL (ch := ch)) := fun e β => {⟨.inl ⟨.fin e, trivial⟩, β⟩}
@@ -287,7 +287,7 @@ theorem sum_child_last (c : T.X J) : (∑ ν : NM R FL (ch := ch), if IsCh R ch 
     simp only [C]
     rw [Finset.sum_singleton]
     exact (alv_le_num hr hb _ _).trans (num_inl _)
-  have hall : ∀ ν : NM R FL (ch := ch), (if IsCh R ch FL ν ⟨Fin.last J, c⟩ then alv R ch FL lhat n o ν else 0) ≤
+  have hall : ∀ ν : NM R FL, (if IsCh R ch FL ν ⟨Fin.last J, c⟩ then alv R ch FL lhat n o ν else 0) ≤
       if ν ∈ ((univ.filter fun e : T.Ed J => T.e0 e = c).biUnion fun e => C e false) ∪
         ((univ.filter fun e : T.Ed J => T.e1 e = c).biUnion fun e => C e true) then alv R ch FL lhat n o ν else 0 := by
     intro ν
@@ -329,7 +329,7 @@ theorem sum_child_last (c : T.X J) : (∑ ν : NM R FL (ch := ch), if IsCh R ch 
 
 open Classical in
 /-- **The alive units between a chamber and its parent.** -/
-theorem sum_child (j : ℕ) (hj : j ≤ J) (c : T.X j) : (∑ ν : NM R FL (ch := ch),
+theorem sum_child (j : ℕ) (hj : j ≤ J) (c : T.X j) : (∑ ν : NM R FL,
       if IsCh R ch FL ν ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ then alv R ch FL lhat n o ν else 0) ≤
     fb (lev (load R ch FL lhat n o)) j c := by
   have e1 : fb (lev (load R ch FL lhat n o)) j c = ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then

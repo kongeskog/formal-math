@@ -60,7 +60,7 @@ theorem hB_eq {a c : Fin AA} {k : ℕ} (hd : tgB T R ch a c k ≠ .done) : hB ch
       have h1 : R.pl (ch a) (ch c) (gam T ch a k) = 1 := by
         by_contra h1
         exact hs ⟨by omega, by omega⟩
-      rw [(edgeO_hold (ch := ch) (AA := AA) (m := m) hpos).2]
+      rw [(edgeO_hold hpos).2]
       have h2 := R.pn_pl (ch a) (ch c) (gam T ch a k)
       rw [h1] at h2
       rw [h2]
@@ -79,12 +79,12 @@ theorem seg_hold {j : ℕ} (hj : j < J) (i : Fin h) (c : T.X j) :
   simp only [h1, h2]
 
 /-- Units of channels. -/
-theorem hN_eq (ν : NM R FL (ch := ch)) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) : hN ν = hT R ch (tgM R ch FL ν.1 ν.2) := by
+theorem hN_eq (ν : NM R FL) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) : hN ν = hT R ch (tgM R ch FL ν.1 ν.2) := by
   rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
   · revert hd
     revert ν
     intro (ν : Bool) hd
-    have e0 : hN (⟨.inl ⟨x, hx⟩, ν⟩ : NM R FL (ch := ch)) =
+    have e0 : hN (⟨.inl ⟨x, hx⟩, ν⟩ : NM R FL) =
         if ν then s(tri T R ch x 1, tri T R ch x 2) else s(tri T R ch x 0, tri T R ch x 1) := by
       cases ν <;> rfl
     rw [e0]
@@ -95,13 +95,13 @@ theorem hN_eq (ν : NM R FL (ch := ch)) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) :
       have hle := (R.pl_le (ch a) (ch c) γ).trans (R.length_path _ _ _)
       cases ν
       · simp only [tgR, Bool.false_eq_true, if_false]
-        rw [(edgeO_hold (ch := ch) (AA := AA) (m := m) (by omega)).2]
+        rw [(edgeO_hold (by omega)).2]
         rfl
       · simp only [tgR, if_true]
         by_cases hs2 : s.1 + 1 < 2 * m ∧ s.1 + 2 < R.pl (ch a) (ch c) γ
         · rw [dif_pos hs2]
           rfl
-        · rw [dif_neg hs2, (edgeO_hold (ch := ch) (AA := AA) (m := m) hs).2]
+        · rw [dif_neg hs2, (edgeO_hold hs).2]
           have h1 : R.pl (ch a) (ch c) γ = s.1 + 1 + 1 := by
             by_contra h1
             exact hs2 ⟨by omega, by omega⟩

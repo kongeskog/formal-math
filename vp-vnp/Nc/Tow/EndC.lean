@@ -90,7 +90,7 @@ theorem poss_good (hub : 0 < ub) {mv : Mv T R ch FL} (hp : PossM R ch FL lhat n 
       _ ≤ _ := Finset.sum_le_sum fun k _ => (FL.lam_pos l.2.2.2).trans (Nat.le_add_right _ _)
 
 /-- If the outcomes are good, all full units are alive. -/
-theorem alv_good (ν : NM R FL (ch := ch)) (hp : GoodMv R ch FL lhat n o ν.1) : alv R ch FL lhat n o ν = o ν := by
+theorem alv_good (ν : NM R FL) (hp : GoodMv R ch FL lhat n o ν.1) : alv R ch FL lhat n o ν = o ν := by
   rcases ν with ⟨x | l, ν⟩
   · have h1 : o ⟨.inl x, ν⟩ = num R ch FL lhat n o (.inl x) := hp ν
     unfold alv
@@ -142,7 +142,7 @@ theorem card_AsU (hr : 0 < r) (hb : 0 < b) (hh : 0 < h) (s : Σ j : Fin (J + 1),
   have h2 : (∑ a, ∑ c', ∑ kk, if (Uid.init a c' kk : Un R FL Pl U0 U1) ∈ AsU R FL Pl lhat n o ⟨j, c⟩ then 1 else 0) = 0 :=
     Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c' _ => Finset.sum_eq_zero fun kk _ => if_neg mem_AsU_init
   rw [h2, Nat.zero_add]
-  refine le_trans ?_ (sum_child (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := nn n) (o := oo R FL Pl o) hr hb hh j.1
+  refine le_trans ?_ (sum_child (n := nn n) (o := oo R FL Pl o) hr hb hh j.1
     (Nat.le_of_lt_succ j.2) c)
   rw [← Equiv.sum_comp (eN R FL Pl)]
   refine Finset.sum_le_sum fun ν _ => ?_
