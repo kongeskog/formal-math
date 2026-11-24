@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:52:07.955290321Z",
+  "updated_at": "2026-11-24T20:53:06.046090317Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "ac9d236717f7649e9742a66ebaa40450212481d4",
-    "at": "2026-11-24T20:42:04.305659839Z",
+    "sha": "3521edf06127364d9821c86151f35595b0241141",
+    "at": "2026-11-24T20:53:06.046090317Z",
     "metrics": {
-      "tokens": 912452,
-      "loc": 57876,
+      "tokens": 912416,
+      "loc": 57864,
       "decls": 4565,
       "files": 321,
-      "bytes": 3375034,
-      "build_seconds": 857
+      "bytes": 3374857,
+      "build_seconds": 498
     }
   },
   "counts": {
-    "merged": 35,
+    "merged": 36,
     "rejected": 2,
-    "open": 4,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 4
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 35,
+      "merged": 36,
       "attempts": 41,
-      "saved": 15709
+      "saved": 15745
     }
   ],
   "ideas": [
@@ -248,8 +248,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:09:54Z",
-      "pr": 65,
-      "result_delta": -138,
+      "pr": 66,
+      "result_delta": -174,
       "created_at": "2026-11-24T19:43:03Z",
       "url": "https://github.com/kongeskog/formal-math/issues/55",
       "technique": "shorten",
@@ -593,96 +593,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 66,
-      "title": "shorten(*): obtain from iff.1 instead of rw at h, rest of #55",
-      "author": "kongeskog",
-      "head_sha": "c5935b0cba25433bb2c4f30a82679247e2d19819",
-      "base_sha": "f70eafddb2ecf2178de0943ef86e0f7e243d5175",
-      "status": "stale",
-      "created_at": "2026-11-24T20:36:18Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 912991,
-        "loc": 57941,
-        "decls": 4568,
-        "files": 321,
-        "bytes": 3376434,
-        "build_seconds": 230
-      },
-      "base_metrics": {
-        "tokens": 913027,
-        "loc": 57953,
-        "decls": 4568,
-        "files": 321,
-        "bytes": 3376611,
-        "build_seconds": null
-      },
-      "delta": -36,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "4 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 913027 → 912991 (-36)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 55,
-      "url": "https://github.com/kongeskog/formal-math/pull/66",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45482553089",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "*"
-    },
     {
       "pr": 75,
       "title": "shorten(Nc/Grp/GroupProg): state the cost split of ex_ins once instead of per case",
