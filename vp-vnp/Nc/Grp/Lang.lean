@@ -45,6 +45,11 @@ theorem bindW_pure (l : List α) (g : α → β) (f : β → List (A × γ)) :
     bindW (l.map fun t => ((1 : A), g t)) f = l.flatMap fun t => f (g t) := by
   simp only [bindW, List.flatMap_map, one_mul, List.map_id']
 
+theorem bindW_map (l : List (A × α)) (f : α → List (A × β)) (e : β → γ) :
+    bindW l (fun a => (f a).map (Prod.map id e)) = (bindW l f).map (Prod.map id e) := by
+  simp only [bindW, List.map_flatMap, List.map_map]
+  rfl
+
 /-- The weighted sums are determined by the program. -/
 theorem _root_.NS1.Does.wsum_unique {F : Fm} {x : Tree} {Q Q' : List (A × Tree)} {c d : ℕ} (h : Does θ F x Q c)
     (h' : Does θ F x Q' d) (φ : Tree → A) : wsum Q φ = wsum Q' φ := by
@@ -54,9 +59,13 @@ theorem _root_.NS1.Does.wsum_unique {F : Fm} {x : Tree} {Q Q' : List (A × Tree)
 theorem _root_.NS1.Does.replace {F : Fm} {x : Tree} {Q Q' : List (A × Tree)} {c : ℕ} (h : Does θ F x Q c) (hQ : Q = Q') :
     Does θ F x Q' c := hQ ▸ h
 
+section
+
+-- Typed values: the weighted list `l` of values encoded by `enc`, each mapped to `f`.
+variable {F G : Fm} {x p : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)} {c d : ℕ}
+
 /-- A rule for lists of trees with a function `R` on trees gives the rule for typed values. -/
-theorem exists_untyped {p : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)}
-    {d : ℕ} (hG : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) d) :
+theorem exists_untyped (hG : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) d) :
     ∃ R : Tree → List (A × Tree),
       (∀ q ∈ l.map (Prod.map id enc), Does θ (Fm.ofTree p) q.2 (R q.2) d) ∧
       ∀ {F : Fm} {x : Tree} {c : ℕ},
@@ -88,33 +97,20 @@ theorem exists_untyped {p : Tree} {l : List (A × β)} {enc : β → Tree} {f : 
     exact Does.wsum_unique h5 (hG b hb) φ
 
 /-- Apply a fixed program to typed values. -/
-theorem _root_.NS1.Does.appT {F : Fm} {x p : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)} {c d : ℕ}
-    (hF : Does θ F x (l.map (Prod.map id enc)) c) (hG : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) d) :
+theorem _root_.NS1.Does.appT (hF : Does θ F x (l.map (Prod.map id enc)) c)
+    (hG : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) d) :
     Does θ (app p F) x (bindW l f) (c + d + 2) := by
   obtain ⟨R, h1, h2⟩ := exists_untyped hG
   exact h2 (Does.app hF h1)
 
 /-- `let` with typed values. -/
-theorem _root_.NS1.Does.lettT {F G : Fm} {x : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)} {c d : ℕ}
-    (hF : Does θ F x (l.map (Prod.map id enc)) c) (hG : ∀ b ∈ l, Does θ G (enc b.2) (f b.2) d) :
+theorem _root_.NS1.Does.lettT (hF : Does θ F x (l.map (Prod.map id enc)) c)
+    (hG : ∀ b ∈ l, Does θ G (enc b.2) (f b.2) d) :
     Does θ (lett F G) x (bindW l f) (c + d + 2) :=
   Does.appT (p := G.code) hF (by rw [Fm.ofTree_code]; exact hG)
 
-theorem bindW_map (l : List (A × α)) (f : α → List (A × β)) (e : β → γ) :
-    bindW l (fun a => (f a).map (Prod.map id e)) = (bindW l f).map (Prod.map id e) := by
-  simp only [bindW, List.map_flatMap, List.map_map]
-  rfl
-
-/-- `let` with typed values and typed results. -/
-theorem _root_.NS1.Does.lettE {F G : Fm} {x : Tree} {l : List (A × β)} {enc : β → Tree} {enc' : γ → Tree}
-    {f : β → List (A × γ)} {c d : ℕ} (hF : Does θ F x (l.map (Prod.map id enc)) c)
-    (hG : ∀ b ∈ l, Does θ G (enc b.2) ((f b.2).map (Prod.map id enc')) d) :
-    Does θ (lett F G) x ((bindW l f).map (Prod.map id enc')) (c + d + 2) := by
-  rw [← bindW_map]
-  exact Does.lettT hF hG
-
 /-- The first of two formulas has the empty value: go on with the second one. -/
-theorem _root_.NS1.Does.ite_nil {F G H : Fm} {x : Tree} {a : A} {Q : List (A × Tree)} {c d : ℕ} (hF : Does θ F x [(a, .nil)] c)
+theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Does θ F x [(a, .nil)] c)
     (hH : Does θ H x Q d) : Does θ (.ite F G H) x (Q.map fun r => (a * r.1, r.2)) (c + d + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := hF
   obtain ⟨l', f1, f2, f3⟩ := hH
@@ -147,21 +143,30 @@ theorem _root_.NS1.Does.ite_nil {F G H : Fm} {x : Tree} {a : A} {Q : List (A × 
     exact (wsum_map_mul a Q φ).symm
 
 /-- Apply a program that is a value to typed values. -/
-theorem _root_.NS1.Does.runT {F G : Fm} {x p : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)} {c d e : ℕ}
-    (hF : Gives θ F x p c) (hG : Does θ G x (l.map (Prod.map id enc)) d)
+theorem _root_.NS1.Does.runT {e : ℕ} (hF : Gives θ F x p c) (hG : Does θ G x (l.map (Prod.map id enc)) d)
     (h : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) e) : Does θ (.run F G) x (bindW l f) (c + d + e + 1) := by
   obtain ⟨R, h1, h2⟩ := exists_untyped h
   exact h2 (Does.runW hF hG h1)
 
 /-- `let`, with the argument kept, typed values. -/
-theorem _root_.NS1.Does.letkT {F G : Fm} {x : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)}
-    {c d : ℕ} (hF : Does θ F x (l.map (Prod.map id enc)) c) (hG : ∀ b ∈ l, Does θ G (.cons x (enc b.2)) (f b.2) d) :
+theorem _root_.NS1.Does.letkT (hF : Does θ F x (l.map (Prod.map id enc)) c)
+    (hG : ∀ b ∈ l, Does θ G (.cons x (enc b.2)) (f b.2) d) :
     Does θ (lett (.cons .id F) G) x (bindW l f) (c + d + 4) := by
   have h1 : Does θ (.cons .id F) x (l.map (Prod.map id fun b => .cons x (enc b))) (1 + c + 1) := by
     refine (Does.cons (Gives.id (θ := θ) x) hF).replace ?_
     simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_map, one_mul]
     rfl
   exact (Does.lettT h1 hG).mono (by omega)
+
+end
+
+/-- `let` with typed values and typed results. -/
+theorem _root_.NS1.Does.lettE {F G : Fm} {x : Tree} {l : List (A × β)} {enc : β → Tree} {enc' : γ → Tree}
+    {f : β → List (A × γ)} {c d : ℕ} (hF : Does θ F x (l.map (Prod.map id enc)) c)
+    (hG : ∀ b ∈ l, Does θ G (enc b.2) ((f b.2).map (Prod.map id enc')) d) :
+    Does θ (lett F G) x ((bindW l f).map (Prod.map id enc')) (c + d + 2) := by
+  rw [← bindW_map]
+  exact Does.lettT hF hG
 
 section Fold
 
