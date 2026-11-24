@@ -26,8 +26,8 @@ variable {F : Type} [CommRing F] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
 theorem partyW_read_le {q : Fin (K + 1) → Q} {x : Fin K → List Γ} {R C : Option S → Fin (K + K) → List Γ}
     {p : Fin (K + K)} (h : partyW mu T q x p R C ≠ 0) : ∑ s, (cat (C s)).length ≤ T := by
   classical
-  refine Fin.addCases (motive := fun p => partyW mu T q x p R C ≠ 0 → ∑ s, (cat (C s)).length ≤ T) ?_ ?_ p h
-  · intro κ h
+  induction p using Fin.addCases with
+  | left κ =>
     rw [partyW_block] at h
     split_ifs at h with hc
     swap
@@ -44,7 +44,7 @@ theorem partyW_read_le {q : Fin (K + 1) → Q} {x : Fin K → List Γ} {R C : Op
     rw [hf, ← Finset.sum_image (f := fun z : Ch S Unit => (vec R C z).length) (s := univ) (g := f)
       fun s _ s' _ e => inj e]
     exact Finset.sum_le_sum_of_subset (Finset.subset_univ _)
-  · intro κ h
+  | right κ =>
     rw [partyW_input] at h
     split_ifs at h with hc
     swap
