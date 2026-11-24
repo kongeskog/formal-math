@@ -114,7 +114,7 @@ theorem lem_toolkit_c_exists {ι : Type*} [Fintype ι] [Nonempty Y] (w : ι → 
       have := (Finset.sum_eq_zero_iff_of_nonneg fun i (_ : i ∈ Finset.univ) => hw i).1 h0.symm
       exact this i (Finset.mem_univ i)
     exact ⟨Classical.arbitrary Y, fun y => by simp [h]⟩
-  · obtain ⟨b, -, hb⟩ := lem_toolkit_minimization (Y := Y) Set.univ isClosed_univ Set.univ_nonempty
+  · obtain ⟨b, -, hb⟩ := lem_toolkit_minimization Set.univ isClosed_univ Set.univ_nonempty
       (fun _ _ _ _ => Set.mem_univ _) (fun y => ∑ i, w i * dist y (x i) ^ 2) (by fun_prop)
       (fun y => Finset.sum_nonneg fun i _ => mul_nonneg (hw i) (sq_nonneg _)) h0
       (by
@@ -142,7 +142,7 @@ theorem lem_toolkit_a (x v : Y) (t : ℝ) (h0 : 0 ≤ t) (h1 : t ≤ 1) : ∃ γ
     (∀ γ', dist x γ' = t * dist x v → dist γ' v = (1 - t) * dist x v → γ' = γ) ∧
     ∀ z, dist z γ ^ 2 ≤ (1 - t) * dist z x ^ 2 + t * dist z v ^ 2 - t * (1 - t) * dist x v ^ 2 := by
   have : Nonempty Y := ⟨x⟩
-  obtain ⟨b, hb⟩ := lem_toolkit_c_exists (Y := Y) (ι := Bool) (fun i => cond i t (1 - t))
+  obtain ⟨b, hb⟩ := lem_toolkit_c_exists (ι := Bool) (fun i => cond i t (1 - t))
     (by intro i; cases i <;> simp <;> linarith) (fun i => cond i v x)
   have hpt : IsPt x v t b := by
     intro z
@@ -442,7 +442,7 @@ theorem lem_toolkit_f (x y u v a b : Y) (δ h s t : ℝ) (hxy : dist x y = δ) (
     (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (a1 : dist x a = s * dist x u) (a2 : dist a u = (1 - s) * dist x u)
     (b1 : dist y b = t * dist y v) (b2 : dist b v = (1 - t) * dist y v) :
     dist a b ^ 2 = δ ^ 2 + h ^ 2 * (s - t) ^ 2 := by
-  have := lem_toolkit_f_isPt (x := x) (u := u) (y := y) (v := v) (a := a) (b := b) hxu hyv huv hxy
+  have := lem_toolkit_f_isPt hxu hyv huv hxy
     (by linarith) (by rw [dist_comm u y]; linarith) hs0 hs1 ht0 ht1 (lem_toolkit_a_of_dist hs0 hs1 a1 a2)
     (lem_toolkit_a_of_dist ht0 ht1 b1 b2)
   linarith

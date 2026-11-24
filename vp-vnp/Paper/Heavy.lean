@@ -303,7 +303,7 @@ theorem _root_.Paper.prop_pieces_shape (g : ℕ) (hne : ∃ p, T.piece giv u M Y
     fun p hp => piece_hd (hp.trans hp0.symm)
   by_cases hh : T.Heavy giv u M Y k (T.hd giv u M Y k p0)
   · refine Or.inl ⟨hh, fun p => ⟨fun hp => ?_, fun e => e ▸ hx⟩⟩
-    rcases (hd_spec (T := T) (giv := giv) (u := u) (M := M) (Y := Y) (k := k) p).2.2 with h | h
+    rcases (hd_spec p).2.2 with h | h
     · exact h.symm.trans (he p hp)
     · exact absurd (he p hp ▸ hh) h
   · refine Or.inr ⟨hh, hs.1.resolve_left fun e => hh (Or.inl e), fun p => ⟨fun hp => he p hp ▸ (hd_spec p).2.1, fun hp => ?_⟩⟩

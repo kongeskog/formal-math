@@ -79,7 +79,7 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
         sumF K2.lk (evl θ (Fm.ofTree G) (zq p z q.1))
           (fun o => f (o.toList.map fun y => val K'.lk (evl θ (Fm.ofTree D) y)).prod)).sum t := by
     intro z hz
-    obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (J := J) (B := B) (κ := K2.lk)
+    obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (κ := K2.lk)
       (P := fun m => K2.InB (max B B' + J) m) z K [false] fun q hq i hi => hl _ (hq.inB hi)
     exact (stepA_kv eg rg (inner z hz)).mono ht
   constructor
@@ -127,11 +127,11 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
           exact (hab x List.mem_cons_self).add (ih fun r hr' => hab r (List.mem_cons_of_mem _ hr'))
       refine e _ _ _ fun r hr' => ?_
       obtain ⟨a1, a2, a3, a4⟩ := (hG.list _ (hsz z hz q hq)).2 r hr'
-      have h1 := OrdGE.prod_sub (E := E) (r := 1) zero_le_one r.out.toList
+      have h1 := OrdGE.prod_sub (r := 1) zero_le_one r.out.toList
         (fun y => val K'.lk (evl θ (Fm.ofTree D) y)) (pv θ) fun y hy => hD.val y (a4 y hy) (v1 r hr' y hy)
       have h2 := h1.rescale (A := A) (r := n + 1)
       rw [← hf, map_sub, AlgHom.commutes] at h2
-      have h3 := (OrdGE.of_algebraMap (E := E) r.th).mul h2
+      have h3 := (OrdGE.of_algebraMap r.th).mul h2
       simp only [Function.comp_apply, map_mul, wt, a1, List.map_nil, List.prod_nil, mul_one, ← mul_sub]
       exact h3.mono (by omega)
     have e : (L.map S1).sum - algebraMap A E[T;T⁻¹] (pv θ z) =
@@ -410,8 +410,8 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
       have g3 : α * (16 * h - 32) + 40 ≤ 16 * h * α + 1 - 8 * (n + 1) := by omega
       have g4 : 16 * h * α + 1 - 8 * (n + 1) + 9 ≤ 16 * h * (2 * α) := by omega
       have hn2 : n ≤ 2 * α + 1 := hn'
-      have hres := prop_approx_acc_round_num hh hα hC hcst hD hK' hDs (K := K) (p := p) (B := B' + n * J)
-        (J := J) (X := X) (M := Γ ^ n) (e := 16 * h * α + 1 - 8 * (n + 1)) hp8
+      have hres := prop_approx_acc_round_num hh hα hC hcst hD hK' hDs (B := B' + n * J)
+        (M := Γ ^ n) (e := 16 * h * α + 1 - 8 * (n + 1)) hp8
         ((hk1.trans (hnds n hn')).trans hK) hk3 (Nat.one_le_pow _ _ hΓ1) (hps.trans (size_rounds hh hα hu4 (by omega)))
         (lt_of_le_of_lt (pow_le_pow hu1 g1) hJ) g2 hX10 hXu g3 g4
       obtain ⟨r, p', hr, hp', hps'⟩ := hres
@@ -476,7 +476,7 @@ theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D
           algebraMap A E ((evl θ (Fm.ofTree D) z).map fun r => if ok q.1 r.bill = true then r.th else 0).sum)).sum t' := by
       intro z hz
       obtain ⟨hD1, hD2⟩ := hD.run z hz
-      obtain ⟨lx, ex, rx⟩ := xF_ev (θ := θ) (κ := K'.lk) (S := {p | K'.InB 1 p}) (J := J) (m := m) (W := W) z K₂ []
+      obtain ⟨lx, ex, rx⟩ := xF_ev (θ := θ) (κ := K'.lk) (S := {p | K'.InB 1 p}) z K₂ []
         fun p hp => by subst hK'; exact ⟨rfl, hp⟩
       rw [← hg] at ex
       refine (extF_kv ex rx hD1.ev (fun r hr => (hD2 r hr).1) (H := K.ht + B + J + 1) (n := K₂.nds * (J + 1))
@@ -543,7 +543,7 @@ theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D
       | cons q L ih =>
         rw [List.map_cons, List.sum_cons]
         refine Span.add ?_ (ih fun x hx => hq x (List.mem_cons_of_mem _ hx))
-        simpa using (hq q List.mem_cons_self).mul (Span.of_algebraMap (E := E) (s q.1) 0)
+        simpa using (hq q List.mem_cons_self).mul (Span.of_algebraMap (s q.1) 0)
     rw [coeff_wrap_zero hspan hW]
     have := hv 0 zero_lt_one
     simp only [AddMonoidAlgebra.coeff_sub, Finsupp.sub_apply, sub_eq_zero, coeff_algebraMap, if_true] at this

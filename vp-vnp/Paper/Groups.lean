@@ -38,22 +38,22 @@ theorem lem_first_rank_one {a : ℕ} (l : Len (U (a + a))) (u φ : Fin a → F2)
     simp only [Matrix.mul_apply, wi, Matrix.of_apply, Matrix.transpose_apply,
       Matrix.vecMulVec_apply]
     by_cases h1 : i.1 < a
-    · have e1 : ∀ c, i = we (hl (a := a) (b := a)) c ↔ ⟨i.1, h1⟩ = c := by
+    · have e1 : ∀ c, i = we (hl) c ↔ ⟨i.1, h1⟩ = c := by
         intro c
         simp [we, Fin.ext_iff]
       simp only [e1, h1, dif_pos, ite_mul, one_mul, zero_mul, sum_ite_eq, mem_univ, if_true]
       by_cases h2 : a ≤ j.1
-      · have e2 : ∀ c, j = we (hr (a := a) (b := a)) c ↔ ⟨j.1 - a, by omega⟩ = c := by
+      · have e2 : ∀ c, j = we (hr) c ↔ ⟨j.1 - a, by omega⟩ = c := by
           intro c
           simp only [we, Fin.ext_iff]
           omega
         simp [e2, h2]
-      · have e2 : ∀ c, j ≠ we (hr (a := a) (b := a)) c := by
+      · have e2 : ∀ c, j ≠ we (hr) c := by
           intro c
           simp only [we, ne_eq, Fin.ext_iff]
           omega
         simp [e2, h2]
-    · have e1 : ∀ c, i ≠ we (hl (a := a) (b := a)) c := by
+    · have e1 : ∀ c, i ≠ we (hl) c := by
         intro c
         simp only [we, ne_eq, Fin.ext_iff]
         omega
@@ -104,14 +104,14 @@ generators". -/
 theorem lem_first_double {m : ℕ} {s : ℝ} (hm : 2 ≤ m) (hs : 1 ≤ s) {a : ℕ} {κ : ℝ} (h : Bd m s a κ)
     (hκ : 0 ≤ κ) : Bd m s (a + a) (18 * grow m s a + κ) := by
   intro l hC
-  set A := l.comap (win (hl (a := a) (b := a))) with hA
-  set B := l.comap (win (hr (a := a) (b := a))) with hB
+  set A := l.comap (win (hl)) with hA
+  set B := l.comap (win (hr)) with hB
   have hAr : A.rms ≤ κ * A.S := h A (hC.comap _)
   have hBr : B.rms ≤ κ * B.S := h B (hC.comap _)
   have hS := S_add_le l
   rw [← hA, ← hB] at hS
   have hS0 := l.S_nonneg
-  have hM := lem_first_block l hm hs hC (a := a)
+  have hM := lem_first_block l hm hs hC
   set cM : ℝ := (Fintype.card (Matrix (Fin a) (Fin a) F2) : ℝ) with hcM
   set cU : ℝ := (Fintype.card (U a) : ℝ) with hcU
   have hcM0 : 0 < cM := by rw [hcM]; exact_mod_cast Fintype.card_pos
@@ -267,7 +267,7 @@ distances. -/
 theorem segment_fixed (A : IsoAct G Z) {x v q : Z} {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) (hx : A.Fix x) (hv : A.Fix v)
     (e1 : dist x q = t * dist x v) (e2 : dist q v = (1 - t) * dist x v) : A.Fix q := by
   intro g
-  obtain ⟨γ, -, huniq, -⟩ := (lem_toolkit (Y := Z)).1 x v t h0 h1
+  obtain ⟨γ, -, huniq, -⟩ := (lem_toolkit).1 x v t h0 h1
   rw [huniq q e1 e2]
   refine huniq _ ?_ ?_
   · rw [← huniq q e1 e2]
@@ -295,7 +295,7 @@ theorem fixed_closed_convex (A : IsoAct G Z) :
 theorem projection_var (A : IsoAct G Z) {q : Z} (hq : A.Fix q) (z : Z) :
     dist z (A.P z) ^ 2 + dist (A.P z) q ^ 2 ≤ dist z q ^ 2 := by
   obtain ⟨hcl, hconv, hP⟩ := fixed_closed_convex A
-  obtain ⟨P₀, hP₀, -, hvar⟩ := (lem_toolkit (Y := Z)).2.2.2.1 {y | A.Fix y} hcl ⟨_, hP z⟩ hconv z
+  obtain ⟨P₀, hP₀, -, hvar⟩ := (lem_toolkit).2.2.2.1 {y | A.Fix y} hcl ⟨_, hP z⟩ hconv z
   have h1 := hvar _ (hP z)
   have h2 := A.P_spec z P₀
   have e1 : ∀ g, dist (A.P z) (A.act g z) = dist z (A.P z) := fun g => by
@@ -410,7 +410,7 @@ theorem lem_tele_generator {n : ℕ} {y : Fin n → Z} {b : Z}
     (n : ℝ) * A.e j b ≤ ∑ i, A.e j (y i) := by
   unfold IsoAct.e
   split_ifs with hj
-  · refine (lem_toolkit (Y := Z)).2.2.1.2 n y (fun i => A.act (x h ⟨j, hj⟩) (y i)) b (A.act (x h ⟨j, hj⟩) b) hb
+  · refine (lem_toolkit).2.2.1.2 n y (fun i => A.act (x h ⟨j, hj⟩) (y i)) b (A.act (x h ⟨j, hj⟩) b) hb
       fun w => ?_
     obtain ⟨w, rfl⟩ := A.surj (x h ⟨j, hj⟩) w
     simp only [A.iso']
@@ -454,7 +454,7 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
       exact (abs_le_of_sq_le_sq' (show dist a (B (k + 1)) ^ 2 ≤ dist a (B k) ^ 2 by
         linarith [hstep k (by omega), sq_nonneg (dist (B k) (B (k + 1)))]) dist_nonneg).2
   -- the barycenter of the u-1 points
-  obtain ⟨b, hb⟩ := (lem_toolkit (Y := Z)).2.2.1.1 (u - 1) (fun i => B (u + 1 + i.1)) (by omega)
+  obtain ⟨b, hb⟩ := (lem_toolkit).2.2.1.1 (u - 1) (fun i => B (u + 1 + i.1)) (by omega)
   have hw : ((u - 1 : ℕ) : ℝ) = (u : ℝ) - 1 := by
     rw [Nat.cast_sub (by omega : 1 ≤ u), Nat.cast_one]
   have hab : dist a b ≤ dist a (B u) := by
@@ -613,8 +613,8 @@ theorem lem_angle_projections {G₁ G₂ Z : Type} [Group G₁] [Fintype G₁] [
     have hτ1 : τ ≤ 1 := by
       rw [hτ, div_le_one hN0, hN]
       linarith
-    obtain ⟨q, ⟨q1, q2⟩, -, q3⟩ := (lem_toolkit (Y := Z)).1 v a σ hσ0.le hσ1
-    obtain ⟨q', ⟨p1, p2⟩, -, p3⟩ := (lem_toolkit (Y := Z)).1 v a' τ hτ0.le hτ1
+    obtain ⟨q, ⟨q1, q2⟩, -, q3⟩ := (lem_toolkit).1 v a σ hσ0.le hσ1
+    obtain ⟨q', ⟨p1, p2⟩, -, p3⟩ := (lem_toolkit).1 v a' τ hτ0.le hτ1
     have h2 := hq q σ hσ0 hσ1 q1 q2
     have f2 : A₂.Fix q' := segment_fixed A₂ hτ0.le hτ1 hv2 (A₂.P_fix z) p1 p2
     have h4 : dist q (A₂.P q) ^ 2 ≤ dist q q' ^ 2 :=
@@ -635,8 +635,8 @@ theorem lem_angle_projections {G₁ G₂ Z : Type} [Group G₁] [Fintype G₁] [
   refine angle_num (α := α) (β := β) (A := dist z v ^ 2) hr hr' hα hβ (by linarith) (by linarith) hQ ?_
   -- Lemma lem:toolkit (a) twice, for the points at η on [a,a′] and at t on [z,v]
   intro η t hη0 hη1 ht0 ht1
-  obtain ⟨m, -, -, hm⟩ := (lem_toolkit (Y := Z)).1 a a' η hη0 hη1
-  obtain ⟨g, -, -, hg⟩ := (lem_toolkit (Y := Z)).1 z v t ht0 ht1
+  obtain ⟨m, -, -, hm⟩ := (lem_toolkit).1 a a' η hη0 hη1
+  obtain ⟨g, -, -, hg⟩ := (lem_toolkit).1 z v t ht0 ht1
   have h1 := mul_le_mul_of_nonneg_left (hm z) (show 0 ≤ 1 - t by linarith)
   have h2 := mul_le_mul_of_nonneg_left (hm v) ht0
   have h3 := hg m
@@ -715,7 +715,7 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
       2 * ((L : ℝ) - (1 - 2 * c)) * windowSum A u L z := by
   set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z with hQ
   show ∑ a, ∑ b, dist (Q a z) (Q b z) ^ 2 ≤ _
-  have hwin := window_le hh (L := L)
+  have hwin := window_le hh
   have hpair : ∀ (z : Z) (a b : Fin L), a.1 < b.1 → dist (Q a z) (Q b z) ^ 2 ≤
       dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2 +
         if b.1 = a.1 + 1 then c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) else 0 := by
@@ -844,7 +844,7 @@ theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA
       (L : ℝ) * dist z b ^ 2 ≤ windowSum A u L z - windowSum A u L b := by
   set Q : Fin L → Z := fun a => (A.W (a.1 * u) (2 * u)).P z with hQ
   have hLr : (0 : ℝ) < L := by exact_mod_cast hL
-  obtain ⟨b, hb⟩ := (lem_toolkit (Y := Z)).2.2.1.1 L Q hL
+  obtain ⟨b, hb⟩ := (lem_toolkit).2.2.1.1 L Q hL
   have h1 : 2 * ((L : ℝ) * ∑ i, dist b (Q i) ^ 2) ≤ ∑ i, ∑ j, dist (Q i) (Q j) ^ 2 := by
     refine le_trans (le_of_eq ?_) (sum_le_sum fun i _ => hb (Q i))
     rw [sum_add_distrib, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, ← mul_sum,
@@ -972,7 +972,7 @@ theorem thm_poincare_limit (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
     unfold IsoAct.e at he
     rw [dif_pos hj] at he
     exact (dist_eq_zero.1 he).symm
-  · have h1 : dist z y₀ ≤ X 0 := le_of_tendsto' ((tendsto_const_nhds (x := z)).dist hy₀) fun n => by
+  · have h1 : dist z y₀ ≤ X 0 := le_of_tendsto' ((tendsto_const_nhds).dist hy₀) fun n => by
       have := htot 0 n (Nat.zero_le n)
       simp only [hy, Function.iterate_zero, id_eq] at this
       linarith [hX0 n]
@@ -990,7 +990,7 @@ theorem thm_poincare_windows (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) 
   set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z with hQ
   set F : Z → ℝ := windowSum A u L with hF
   set C₂ := windowConst μ s (2 * u) with hC₂d
-  have hwin := window_le hh (L := L)
+  have hwin := window_le hh
   have h1 : ∀ a : Fin L, dist z (Q a z) ^ 2 ≤ C₂ * ∑ j ∈ range (h - 1),
       if a.1 * u ≤ j ∧ j + 1 < a.1 * u + 2 * u then A.e j z ^ 2 else 0 := by
     intro a
@@ -1092,13 +1092,13 @@ theorem thm_poincare {K : Type} [Field K] (hK : Contracting K) :
     div_nonneg (by have := windowConst_nonneg μ s (2 * u); linarith) (by norm_num), fun l hl w hw => ?_⟩
   have hb : (0 : ℝ) < Fintype.card (U (l * u)) := by exact_mod_cast Fintype.card_pos
   obtain ⟨Y, hYm, hYc, f, hY, hf⟩ := prop_space hw
-  have hCN : Cat.CN (PiLp 2 fun _ : U (l * u) => Y) := (lem_toolkit (Y := Y)).2.2.2.2.1 _
+  have hCN : Cat.CN (PiLp 2 fun _ : U (l * u) => Y) := (lem_toolkit).2.2.2.2.1 _
   have hA : ∀ z : PiLp 2 fun _ : U (l * u) => Y, Contr ((transAct (U (l * u)) Y).len z) μ s := by
     intro z
     obtain ⟨len, hlen, hcon⟩ := lengths_of_maps (by omega) (by linarith) hcase hY (fun k => z k)
     refine contracts_smul len _ (by omega) (c := √(Fintype.card (U (l * u)) : ℝ)) (fun g => ?_) hcon
     rw [hlen, Real.sqrt_div' _ hb.le, mul_div_cancel₀ _ (Real.sqrt_pos.2 hb).ne', IsoAct.len_val,
-      ← Real.sqrt_sq (dist_nonneg (x := z) (y := (transAct (U (l * u)) Y).act g z)), transAct_dist]
+      ← Real.sqrt_sq (dist_nonneg (y := (transAct (U (l * u)) Y).act g z)), transAct_dist]
     exact congrArg _ (sum_congr rfl fun k _ => by rw [dist_comm])
   have h1 := thm_poincare_action (transAct (U (l * u)) Y) hμ hs hsm hA hu hl rfl hC (WithLp.toLp 2 f)
   have h2 : ∀ g : U (l * u), dist (WithLp.toLp 2 f : PiLp 2 fun _ : U (l * u) => Y)
