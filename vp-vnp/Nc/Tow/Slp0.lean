@@ -94,36 +94,41 @@ theorem const (c : ℕ) (hc : c < D) : CY D H Y 0 fun _ => c := by
   rw [pow_zero]
   exact Cost.const c hc
 
-theorem mono {a b : ℕ} {f : Inp → ℕ} (hY : 0 < Y) (hf : CY D H Y a f) (hab : a ≤ b) : CY D H Y b f :=
+section
+
+-- Costs at a level `a`.
+variable {a : ℕ}
+
+theorem mono {b : ℕ} {f : Inp → ℕ} (hY : 0 < Y) (hf : CY D H Y a f) (hab : a ≤ b) : CY D H Y b f :=
   Cost.mono hf (Nat.pow_le_pow_right hY hab)
 
-theorem congr {a : ℕ} {f g : Inp → ℕ} (hf : CY D H Y a f) (e : ∀ x, f x = g x) : CY D H Y a g := Cost.congr hf e
+theorem congr {f g : Inp → ℕ} (hf : CY D H Y a f) (e : ∀ x, f x = g x) : CY D H Y a g := Cost.congr hf e
 
-theorem weaken {a : ℕ} {f : Inp → ℕ} (hf : CY D H Y a f) (hH : H ⊆ H') : CY D H' Y a f := Cost.weaken hH hf
+theorem weaken {f : Inp → ℕ} (hf : CY D H Y a f) (hH : H ⊆ H') : CY D H' Y a f := Cost.weaken hH hf
 
 variable (hA : Alph D Y)
 include hA
 
-theorem op {a : ℕ} {f g : Inp → ℕ} (φ : ℕ → ℕ → ℕ) (hf : CY D H Y a f) (hg : CY D H Y a g)
+theorem op {f g : Inp → ℕ} (φ : ℕ → ℕ → ℕ) (hf : CY D H Y a f) (hg : CY D H Y a g)
     (hb : ∀ x, φ (f x) (g x) < D) : CY D H Y (a + 1) fun x => φ (f x) (g x) :=
   Cost.mono (Cost.op φ hf hg hb) (by
     have := hA.step a
     have := hA.pow_pos a
     omega)
 
-theorem op1 {a : ℕ} {f : Inp → ℕ} (φ : ℕ → ℕ) (hf : CY D H Y a f) (hb : ∀ x, φ (f x) < D) :
+theorem op1 {f : Inp → ℕ} (φ : ℕ → ℕ) (hf : CY D H Y a f) (hb : ∀ x, φ (f x) < D) :
     CY D H Y (a + 1) fun x => φ (f x) :=
   Cost.mono (Cost.op1 hA.zero_lt φ hf hb) (by
     have := hA.step a
     have := hA.pow_pos a
     omega)
 
-theorem sum {κ : Type*} (s : Finset κ) {a : ℕ} {f : κ → Inp → ℕ} (hs : s.card ≤ Y)
+theorem sum {κ : Type*} (s : Finset κ) {f : κ → Inp → ℕ} (hs : s.card ≤ Y)
     (hf : ∀ i ∈ s, CY D H Y a (f i)) (hb : ∀ x, ∑ i ∈ s, f i x < D) :
     CY D H Y (a + 2) fun x => ∑ i ∈ s, f i x :=
   Cost.mono (Cost.sum hA.zero_lt s hf hb) (hA.sum_step hs)
 
-theorem ite {a : ℕ} {P : Inp → Prop} [DecidablePred P] {f g : Inp → ℕ} (hP : PY D H Y a P)
+theorem ite {P : Inp → Prop} [DecidablePred P] {f g : Inp → ℕ} (hP : PY D H Y a P)
     (hf : CY D H Y a f) (hg : CY D H Y a g) (b1 : ∀ x, f x < D) (b2 : ∀ x, g x < D) :
     CY D H Y (a + 2) fun x => if P x then f x else g x :=
   Cost.mono (Cost.ite hP hf hg b1 b2) (by
@@ -131,16 +136,23 @@ theorem ite {a : ℕ} {P : Inp → Prop} [DecidablePred P] {f g : Inp → ℕ} (
     have := hA.pow_pos a
     omega)
 
+end
+
 end CY
 
 namespace PY
 
 theorem base {P : Inp → Prop} (hP : ind P ∈ H) (hY : 0 < Y) : PY D H Y 0 P := CY.base hP hY
 
-theorem mono {a b : ℕ} {P : Inp → Prop} (hY : 0 < Y) (hP : PY D H Y a P) (hab : a ≤ b) : PY D H Y b P :=
+section
+
+-- Costs at a level `a`.
+variable {a : ℕ}
+
+theorem mono {b : ℕ} {P : Inp → Prop} (hY : 0 < Y) (hP : PY D H Y a P) (hab : a ≤ b) : PY D H Y b P :=
   CY.mono hY hP hab
 
-theorem congr {a : ℕ} {P Q : Inp → Prop} (hP : PY D H Y a P) (e : ∀ x, P x ↔ Q x) : PY D H Y a Q :=
+theorem congr {P Q : Inp → Prop} (hP : PY D H Y a P) (e : ∀ x, P x ↔ Q x) : PY D H Y a Q :=
   CostP.congr hP e
 
 variable (hA : Alph D Y)
@@ -151,58 +163,60 @@ theorem const (P : Prop) : PY D H Y 0 fun _ => P := by
   rw [pow_zero]
   exact CostP.const hA.one_lt P
 
-theorem rel {a : ℕ} {f g : Inp → ℕ} (r : ℕ → ℕ → Prop) (hf : CY D H Y a f) (hg : CY D H Y a g) :
+theorem rel {f g : Inp → ℕ} (r : ℕ → ℕ → Prop) (hf : CY D H Y a f) (hg : CY D H Y a g) :
     PY D H Y (a + 1) fun x => r (f x) (g x) :=
   CostP.mono (CostP.rel hA.one_lt r hf hg) (by
     have := hA.step a
     have := hA.pow_pos a
     omega)
 
-theorem rel1 {a : ℕ} {f : Inp → ℕ} (r : ℕ → Prop) (hf : CY D H Y a f) : PY D H Y (a + 1) fun x => r (f x) :=
+theorem rel1 {f : Inp → ℕ} (r : ℕ → Prop) (hf : CY D H Y a f) : PY D H Y (a + 1) fun x => r (f x) :=
   CostP.mono (CostP.rel1 hA.one_lt r hf) (by
     have := hA.step a
     have := hA.pow_pos a
     omega)
 
-theorem and {a : ℕ} {P Q : Inp → Prop} (hP : PY D H Y a P) (hQ : PY D H Y a Q) :
+theorem and {P Q : Inp → Prop} (hP : PY D H Y a P) (hQ : PY D H Y a Q) :
     PY D H Y (a + 1) fun x => P x ∧ Q x :=
   CostP.mono (CostP.and hA.one_lt hP hQ) (by
     have := hA.step a
     have := hA.pow_pos a
     omega)
 
-theorem or {a : ℕ} {P Q : Inp → Prop} (hP : PY D H Y a P) (hQ : PY D H Y a Q) :
+theorem or {P Q : Inp → Prop} (hP : PY D H Y a P) (hQ : PY D H Y a Q) :
     PY D H Y (a + 1) fun x => P x ∨ Q x :=
   CostP.mono (CostP.or hA.one_lt hP hQ) (by
     have := hA.step a
     have := hA.pow_pos a
     omega)
 
-theorem not {a : ℕ} {P : Inp → Prop} (hP : PY D H Y a P) : PY D H Y (a + 1) fun x => ¬ P x :=
+theorem not {P : Inp → Prop} (hP : PY D H Y a P) : PY D H Y (a + 1) fun x => ¬ P x :=
   CostP.mono (CostP.not hA.one_lt hP) (by
     have := hA.step a
     have := hA.pow_pos a
     omega)
 
-theorem exists_mem {κ : Type*} (s : Finset κ) {a : ℕ} {P : κ → Inp → Prop} (hs : s.card ≤ Y)
+theorem exists_mem {κ : Type*} (s : Finset κ) {P : κ → Inp → Prop} (hs : s.card ≤ Y)
     (hP : ∀ i ∈ s, PY D H Y a (P i)) : PY D H Y (a + 2) fun x => ∃ i ∈ s, P i x :=
   CostP.mono (CostP.exists_mem hA.one_lt s hP) (hA.sum_step hs)
 
-theorem forall_mem {κ : Type*} (s : Finset κ) {a : ℕ} {P : κ → Inp → Prop} (hs : s.card ≤ Y)
+theorem forall_mem {κ : Type*} (s : Finset κ) {P : κ → Inp → Prop} (hs : s.card ≤ Y)
     (hP : ∀ i ∈ s, PY D H Y a (P i)) : PY D H Y (a + 2) fun x => ∀ i ∈ s, P i x :=
   CostP.mono (CostP.forall_mem hA.one_lt s hP) (hA.sum_step hs)
 
-theorem forall_univ {κ : Type*} [Fintype κ] {a : ℕ} {P : κ → Inp → Prop} (hs : Fintype.card κ ≤ Y)
+theorem forall_univ {κ : Type*} [Fintype κ] {P : κ → Inp → Prop} (hs : Fintype.card κ ≤ Y)
     (hP : ∀ i, PY D H Y a (P i)) : PY D H Y (a + 2) fun x => ∀ i, P i x :=
   (forall_mem hA univ hs fun i _ => hP i).congr fun x => by simp
 
-theorem exists_univ {κ : Type*} [Fintype κ] {a : ℕ} {P : κ → Inp → Prop} (hs : Fintype.card κ ≤ Y)
+theorem exists_univ {κ : Type*} [Fintype κ] {P : κ → Inp → Prop} (hs : Fintype.card κ ≤ Y)
     (hP : ∀ i, PY D H Y a (P i)) : PY D H Y (a + 2) fun x => ∃ i, P i x :=
   (exists_mem hA univ hs fun i _ => hP i).congr fun x => by simp
 
 omit hA in
 /-- The indicator as a number. -/
-theorem toCY {a : ℕ} {P : Inp → Prop} (hP : PY D H Y a P) : CY D H Y a (ind P) := hP
+theorem toCY {P : Inp → Prop} (hP : PY D H Y a P) : CY D H Y a (ind P) := hP
+
+end
 
 end PY
 

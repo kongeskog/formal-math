@@ -221,14 +221,19 @@ def CostP (D : ℕ) (A : Set (Inp → ℕ)) (c : ℕ) (P : Inp → Prop) : Prop 
 
 namespace CostP
 
-lemma congr {c : ℕ} {P Q : Inp → Prop} (hc : CostP D A c P) (h : ∀ x, P x ↔ Q x) : CostP D A c Q := by
+section
+
+-- Properties `P`, `Q` decided at costs `p`, `q`.
+variable {p q : ℕ} {P Q : Inp → Prop}
+
+lemma congr {c : ℕ} (hc : CostP D A c P) (h : ∀ x, P x ↔ Q x) : CostP D A c Q := by
   have : P = Q := funext fun x => propext (h x)
   rwa [← this]
 
-lemma mono {p q : ℕ} {P : Inp → Prop} (hc : CostP D A p P) (h : p ≤ q) : CostP D A q P := Cost.mono hc h
+lemma mono (hc : CostP D A p P) (h : p ≤ q) : CostP D A q P := Cost.mono hc h
 
 /-- A relation between two values. -/
-lemma rel (hD : 1 < D) {p q : ℕ} {h1 h2 : Inp → ℕ} (r : ℕ → ℕ → Prop) (c1 : Cost D A p h1) (c2 : Cost D A q h2) :
+lemma rel (hD : 1 < D) {h1 h2 : Inp → ℕ} (r : ℕ → ℕ → Prop) (c1 : Cost D A p h1) (c2 : Cost D A q h2) :
     CostP D A (p + q + 1) fun x => r (h1 x) (h2 x) := by
   classical
   have := Cost.op (fun a b => if r a b then 1 else 0) c1 c2 (fun x => by split_ifs <;> omega)
@@ -238,7 +243,7 @@ lemma rel (hD : 1 < D) {p q : ℕ} {h1 h2 : Inp → ℕ} (r : ℕ → ℕ → Pr
   · rw [ind_false (P := fun x => r (h1 x) (h2 x)) h, if_neg h]
 
 /-- A property of a value. -/
-lemma rel1 (hD : 1 < D) {p : ℕ} {h : Inp → ℕ} (r : ℕ → Prop) (c1 : Cost D A p h) :
+lemma rel1 (hD : 1 < D) {h : Inp → ℕ} (r : ℕ → Prop) (c1 : Cost D A p h) :
     CostP D A (p + 2) fun x => r (h x) :=
   rel hD (fun a _ => r a) c1 (Cost.const 0 (by omega))
 
@@ -256,20 +261,22 @@ lemma const (hD : 1 < D) (P : Prop) : CostP D A 1 fun _ => P := by
   · exact (true' hD).congr fun _ => by simp [h]
   · exact (false' hD).congr fun _ => by simp [h]
 
-lemma and (hD : 1 < D) {p q : ℕ} {P Q : Inp → Prop} (c1 : CostP D A p P) (c2 : CostP D A q Q) :
+lemma and (hD : 1 < D) (c1 : CostP D A p P) (c2 : CostP D A q Q) :
     CostP D A (p + q + 1) fun x => P x ∧ Q x := by
   refine (rel hD (fun a b => a = 1 ∧ b = 1) c1 c2).congr fun x => ?_
   by_cases h1 : P x <;> by_cases h2 : Q x <;> simp [ind, h1, h2]
 
-lemma or (hD : 1 < D) {p q : ℕ} {P Q : Inp → Prop} (c1 : CostP D A p P) (c2 : CostP D A q Q) :
+lemma or (hD : 1 < D) (c1 : CostP D A p P) (c2 : CostP D A q Q) :
     CostP D A (p + q + 1) fun x => P x ∨ Q x := by
   refine (rel hD (fun a b => a = 1 ∨ b = 1) c1 c2).congr fun x => ?_
   by_cases h1 : P x <;> by_cases h2 : Q x <;> simp [ind, h1, h2]
 
-lemma not (hD : 1 < D) {p : ℕ} {P : Inp → Prop} (c1 : CostP D A p P) :
+lemma not (hD : 1 < D) (c1 : CostP D A p P) :
     CostP D A (p + 2) fun x => ¬ P x := by
   refine (rel1 hD (fun a => a = 0) c1).congr fun x => ?_
   by_cases h1 : P x <;> simp [ind, h1]
+
+end
 
 lemma exists_mem (hD : 1 < D) {κ : Type*} (s : Finset κ) {c : ℕ} {P : κ → Inp → Prop}
     (hc : ∀ i ∈ s, CostP D A c (P i)) : CostP D A (s.card * (c + 1) + 1) fun x => ∃ i ∈ s, P i x := by

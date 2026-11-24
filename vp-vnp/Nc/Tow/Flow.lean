@@ -274,23 +274,28 @@ theorem inp_time (x : RM T m AA) : tgTime (inpR T x) ≤ timeR T x := by
     · simp [tgTime]
   · simp [inpR, tgTime, timeR]
 
-theorem sqs_congr {L L' : Tg T m AA → ℕ} {j : Fin (J + 1)} (hL : ∀ e, L (.edge j e) = L' (.edge j e)) (i : Fin h) :
+section
+
+-- Two load functions `L` and `L'` that agree on the relevant tags.
+variable {L L' : Tg T m AA → ℕ}
+
+theorem sqs_congr {j : Fin (J + 1)} (hL : ∀ e, L (.edge j e) = L' (.edge j e)) (i : Fin h) :
     sqs L j i = sqs L' j i := by
   unfold sqs
   simp only [hL]
 
-theorem isMin_congr {L L' : Tg T m AA → ℕ} {j : Fin (J + 1)} (hL : ∀ e, L (.edge j e) = L' (.edge j e)) (i : Fin h) :
+theorem isMin_congr {j : Fin (J + 1)} (hL : ∀ e, L (.edge j e) = L' (.edge j e)) (i : Fin h) :
     IsMin L j i ↔ IsMin L' j i := by
   unfold IsMin
   simp only [sqs_congr hL]
 
-theorem fits_congr {L L' : Tg T m AA → ℕ} {l : LMv T FL}
+theorem fits_congr {l : LMv T FL}
     (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) (s : ℕ) :
     Fits FL L l s ↔ Fits FL L' l s := by
   unfold Fits
   simp only [hL]
 
-theorem tmin_congr {L L' : Tg T m AA → ℕ} {l : LMv T FL}
+theorem tmin_congr {l : LMv T FL}
     (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : tmin FL L l = tmin FL L' l := by
   unfold tmin
   congr 1
@@ -298,14 +303,14 @@ theorem tmin_congr {L L' : Tg T m AA → ℕ} {l : LMv T FL}
   simp only [Set.mem_setOf_eq]
   exact exists_congr fun d => fits_congr (l := withD FL l d) hL s
 
-theorem pick_congr {L L' : Tg T m AA → ℕ} {l : LMv T FL}
+theorem pick_congr {l : LMv T FL}
     (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : Pick FL L l ↔ Pick FL L' l := by
   unfold Pick
   rw [tmin_congr hL, fits_congr hL]
   refine and_congr_right fun _ => forall_congr' fun d => imp_congr_right fun _ => not_congr ?_
   exact fits_congr (l := withD FL l d) hL _
 
-theorem actR_congr {L L' : Tg T m AA → ℕ} {x : RM T m AA}
+theorem actR_congr {x : RM T m AA}
     (hL : ∀ τ, tgTime τ ≤ timeR T x → L τ = L' τ) : ActR L x ↔ ActR L' x := by
   rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e
   · exact Iff.rfl
@@ -313,7 +318,7 @@ theorem actR_congr {L L' : Tg T m AA → ℕ} {x : RM T m AA}
   · exact imp_congr_right fun _ => isMin_congr (fun e => hL _ (by simp [tgTime, timeR])) _
   · exact Iff.rfl
 
-theorem numF_congr {L L' : Tg T m AA → ℕ} {mv : Mv T R ch FL}
+theorem numF_congr {mv : Mv T R ch FL}
     (hL : ∀ τ, tgTime τ ≤ timeM R ch FL mv → L τ = L' τ) : numF R ch FL L mv = numF R ch FL L' mv := by
   classical
   rcases mv with ⟨x, hx⟩ | l
@@ -322,6 +327,8 @@ theorem numF_congr {L L' : Tg T m AA → ℕ} {mv : Mv T R ch FL}
   · unfold numF
     have h1 : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q) := fun q => hL _ le_rfl
     simp only [pick_congr h1, tmin_congr h1]
+
+end
 
 /-- **The numbers of units.** -/
 theorem num_eq (mv : Mv T R ch FL) :

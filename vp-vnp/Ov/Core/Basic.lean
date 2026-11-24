@@ -221,9 +221,14 @@ section Sum
 
 variable {κ κ' : Type} [Fintype κ] [Fintype κ']
 
+section
+
+-- A tensor `s` (and `t`) covered by a family `b` of tensors on the same parties.
+variable {s t : Ten K I} {b : κ → Ten K I}
+
 /-- s is a sum of restrictions of the b k if and only if its array is a sum of arrays, the k-th
 of which is a restriction of b k. -/
-theorem sumRestr_iff {s : Ten K I} {b : κ → Ten K I} :
+theorem sumRestr_iff :
     SumRestr s b ↔ ∃ v : κ → (∀ p, s.ι p) → K,
       (∀ x, s.val x = ∑ k, v k x) ∧ ∀ k, Restr (s.withVal (v k)) (b k) := by
   constructor
@@ -233,25 +238,14 @@ theorem sumRestr_iff {s : Ten K I} {b : κ → Ten K I} :
     choose L hL using h
     exact ⟨L, fun x => (hv x).trans (Finset.sum_congr rfl fun k _ => hL k x)⟩
 
-/-- If the array of s is the sum of the arrays v k, then s is a sum of restrictions of the tensors
-with these arrays. -/
-theorem SumRestr.of_withVal (s : Ten K I) (v : κ → (∀ p, s.ι p) → K)
-    (h : ∀ x, s.val x = ∑ k, v k x) : SumRestr s (fun k => s.withVal (v k)) :=
-  sumRestr_iff.2 ⟨v, h, fun _ => Restr.refl _⟩
-
 /-- A restriction is a sum of restrictions with one term. -/
-theorem Restr.sumRestr {s t : Ten K I} (h : Restr s t) : SumRestr s (fun _ : Unit => t) := by
+theorem Restr.sumRestr (h : Restr s t) : SumRestr s (fun _ : Unit => t) := by
   obtain ⟨L, hL⟩ := h
   exact ⟨fun _ => L, fun x => by simpa using hL x⟩
 
-/-- A tensor whose array is 0 is a sum of restrictions of the empty family. -/
-theorem SumRestr.of_zero [IsEmpty κ] {s : Ten K I} (h : ∀ x, s.val x = 0) (b : κ → Ten K I) :
-    SumRestr s b :=
-  ⟨fun k => isEmptyElim k, fun x => by simp [h]⟩
-
 /-- A sum of restrictions of tensors that are themselves sums of restrictions is a sum of restrictions
 (covers are transitive). -/
-theorem SumRestr.bind {μ : κ → Type} [∀ k, Fintype (μ k)] {s : Ten K I} {b : κ → Ten K I}
+theorem SumRestr.bind {μ : κ → Type} [∀ k, Fintype (μ k)]
     {c : ∀ k, μ k → Ten K I} (h : SumRestr s b) (h' : ∀ k, SumRestr (b k) (c k)) :
     SumRestr s (fun x : Σ k, μ k => c x.1 x.2) := by
   obtain ⟨L, hL⟩ := h
@@ -264,7 +258,7 @@ theorem SumRestr.bind {μ : κ → Type} [∀ k, Fintype (μ k)] {s : Ten K I} {
   exact Finset.sum_congr rfl fun m _ => appG_comp _ _ _ _
 
 /-- A restriction of a sum of restrictions is a sum of restrictions of the same tensors. -/
-theorem Restr.trans_sum {s t : Ten K I} {b : κ → Ten K I} (h : Restr s t) (h' : SumRestr t b) :
+theorem Restr.trans_sum (h : Restr s t) (h' : SumRestr t b) :
     SumRestr s b := by
   obtain ⟨L, hL⟩ := h
   obtain ⟨M, hM⟩ := h'
@@ -274,25 +268,38 @@ theorem Restr.trans_sum {s t : Ten K I} {b : κ → Ten K I} (h : Restr s t) (h'
   exact Finset.sum_congr rfl fun m _ => appG_comp _ _ _ _
 
 /-- In a sum of restrictions every term may be replaced by a tensor of which it is a restriction. -/
-theorem SumRestr.mono {s : Ten K I} {b c : κ → Ten K I} (h : SumRestr s b)
+theorem SumRestr.mono {c : κ → Ten K I} (h : SumRestr s b)
     (h' : ∀ k, Restr (b k) (c k)) : SumRestr s c := by
   obtain ⟨v, hv, h⟩ := sumRestr_iff.1 h
   exact sumRestr_iff.2 ⟨v, hv, fun k => (h k).trans (h' k)⟩
 
 /-- The terms of a sum of restrictions may be renamed. -/
-theorem SumRestr.reindex {s : Ten K I} {b : κ → Ten K I} (h : SumRestr s b) (e : κ' ≃ κ) :
+theorem SumRestr.reindex (h : SumRestr s b) (e : κ' ≃ κ) :
     SumRestr s (fun k => b (e k)) := by
   obtain ⟨L, hL⟩ := h
   exact ⟨fun k => L (e k), fun x => (hL x).trans (Fintype.sum_equiv e _ _ fun _ => rfl).symm⟩
 
 /-- The product of two sums of restrictions is a sum of restrictions of the products of two terms. -/
-theorem SumRestr.mul {s t : Ten K I} {b : κ → Ten K I} {c : κ' → Ten K I} (h : SumRestr s b)
+theorem SumRestr.mul {c : κ' → Ten K I} (h : SumRestr s b)
     (h' : SumRestr t c) : SumRestr (s * t) (fun k : κ × κ' => b k.1 * c k.2) := by
   obtain ⟨L, hL⟩ := h
   obtain ⟨M, hM⟩ := h'
   refine ⟨fun k p x y => L k.1 p x.1 y.1 * M k.2 p x.2 y.2, fun x => ?_⟩
   rw [mul_val, hL, hM, Finset.sum_mul_sum, ← Fintype.sum_prod_type']
   exact Finset.sum_congr rfl fun k _ => (appG_mul (L k.1) (M k.2) (b k.1).val (c k.2).val x).symm
+
+end
+
+/-- If the array of s is the sum of the arrays v k, then s is a sum of restrictions of the tensors
+with these arrays. -/
+theorem SumRestr.of_withVal (s : Ten K I) (v : κ → (∀ p, s.ι p) → K)
+    (h : ∀ x, s.val x = ∑ k, v k x) : SumRestr s (fun k => s.withVal (v k)) :=
+  sumRestr_iff.2 ⟨v, h, fun _ => Restr.refl _⟩
+
+/-- A tensor whose array is 0 is a sum of restrictions of the empty family. -/
+theorem SumRestr.of_zero [IsEmpty κ] {s : Ten K I} (h : ∀ x, s.val x = 0) (b : κ → Ten K I) :
+    SumRestr s b :=
+  ⟨fun k => isEmptyElim k, fun x => by simp [h]⟩
 
 /-- A sum of restrictions stays one if the legs are given to other parties. -/
 theorem SumRestr.push (π : J → I) {s : Ten K J} {b : κ → Ten K J} (h : SumRestr s b) :
