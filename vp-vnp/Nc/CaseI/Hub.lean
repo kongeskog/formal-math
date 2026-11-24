@@ -41,9 +41,6 @@ instance (A : Finset (Fin k)) (e : Pr k) : Decidable (Sep A e) := by unfold Sep;
 noncomputable def hubDir (A : Finset (Fin k)) : EuclideanSpace ℝ (Fin k) :=
   ∑ e : Pr k with Sep A e, (if e.1.1 ∈ A then (1 : ℝ) else -1) • EuclideanSpace.single e.1.1 1
 
-/-- The sign of a node. -/
-noncomputable def sideSign (A : Finset (Fin k)) (a : Fin k) : ℝ := if a ∈ A then 1 else -1
-
 /-- The number of pairs that a set separates. -/
 theorem sum_sep (A : Finset (Fin k)) :
     ∑ e : Pr k, (if Sep A e then (1 : ℝ) else 0) = A.card * ((k : ℝ) - A.card) := by
@@ -73,12 +70,12 @@ theorem sum_sep (A : Finset (Fin k)) :
   ring
 
 theorem inner_hubDir (A : Finset (Fin k)) (w : EuclideanSpace ℝ (Fin k)) :
-    inner ℝ (hubDir A) w = ∑ e : Pr k, if Sep A e then sideSign A e.1.1 * w e.1.1 else 0 := by
+    inner ℝ (hubDir A) w = ∑ e : Pr k, if Sep A e then sg A e.1.1 * w e.1.1 else 0 := by
   rw [hubDir, sum_inner, Finset.sum_filter]
   refine Finset.sum_congr rfl fun e _ => ?_
   by_cases h : Sep A e
   · rw [if_pos h, if_pos h, real_inner_smul_left, EuclideanSpace.inner_single_left]
-    simp [sideSign]
+    simp [sg]
   · rw [if_neg h, if_neg h]
 
 end Nc.CaseI

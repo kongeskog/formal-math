@@ -61,14 +61,6 @@ def sgRest : Fm := .hd (.tl (.tl (.tl (.tl (.tl (.tl .id))))))
 /-- out -/
 def sgOut : Fm := .tl (.tl (.tl (.tl (.tl (.tl (.tl .id))))))
 
-/-- Concatenation of lists of bits. -/
-theorem appB_gives {a b : Fm} {x : Tree} {ca cb : ℕ} {v w : List Bool} (ha : Gives θ a x (ofBits v) ca)
-    (hb : Gives θ b x (ofBits w) cb) : Gives θ (appF a b) x (ofBits (v ++ w)) (ca + cb + v.length * 62 + 41) := by
-  rw [← listT_ofBits] at ha hb ⊢
-  have := appF_gives ha hb
-  rw [← List.map_append, List.length_map] at this
-  exact this
-
 /-- The next partner. -/
 def segNext (sep : List Bool) : Fm := .cons (.hd .id) (.cons (.hd sgFs) (.cons (.quote .nil)
   (.cons (appF (.quote (ofBits sep)) (.hd sgAs)) (.cons (.tl sgFs) (.cons (.tl sgAs) (.cons sgRest
@@ -160,7 +152,7 @@ theorem segClose_does (hsep : sep.length ≤ c) (h1 : ∀ f' fs', fs = f' :: fs'
   | cons f' fs' =>
     have e1 : Gives θ (appF (.quote (ofBits sep)) (.hd sgAs)) (.cons (segB sep).code (segS f tk cur (f' :: fs') as rest out))
         (ofBits (sep ++ as.headD [])) (1 + 8 + sep.length * 62 + 41) := by
-      refine appB_gives (Gives.quote _ _) ?_
+      refine appBits_gives (Gives.quote _ _) ?_
       rw [← listB_hd]
       exact sgAs_gives.hd
     have e2 : Gives θ (segNext sep) (.cons (segB sep).code (segS f tk cur (f' :: fs') as rest out))
@@ -188,7 +180,7 @@ theorem segTake_does (hc : ∀ a ∈ rest, a.length ≤ c) (h2 : ∀ a r, rest =
   | cons a r =>
     have ha := hc a List.mem_cons_self
     have e1 : Gives θ (appF (.hd sgRest) sgCur) (.cons (segB sep).code (segS f tk cur fs as (a :: r) out))
-        (ofBits (a ++ cur)) (9 + 5 + a.length * 62 + 41) := appB_gives sgRest_gives.hd sgCur_gives
+        (ofBits (a ++ cur)) (9 + 5 + a.length * 62 + 41) := appBits_gives sgRest_gives.hd sgCur_gives
     have e2 : Gives θ segTake (.cons (segB sep).code (segS f tk cur fs as (a :: r) out))
         (.cons (segB sep).code (segS f true (a ++ cur) fs as r out)) (62 * c + 150) := by
       refine (Gives.cons (Gives.id _).hd (Gives.cons sgF_gives (Gives.cons (Gives.quote _ _) (Gives.cons e1

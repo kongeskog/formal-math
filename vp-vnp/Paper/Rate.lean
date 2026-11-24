@@ -25,13 +25,13 @@ theorem prop_flat_rate_direction {k : ℕ} (hk : 1 ≤ k) (A : Finset (Fin k)) (
   have hk0 : (0 : ℝ) < k := by exact_mod_cast hk
   have hs1 : (k : ℝ) ≤ 3 * A.card := by exact_mod_cast h1
   have hs2 : 3 * (A.card : ℝ) ≤ 2 * k := by exact_mod_cast h2
-  set w : EuclideanSpace ℝ (Fin k) := WithLp.toLp 2 (sideSign A) with hw
+  set w : EuclideanSpace ℝ (Fin k) := WithLp.toLp 2 (sg A) with hw
   have hwn : ‖w‖ = √k := by
     rw [EuclideanSpace.norm_eq]
     congr 1
     have : ∀ a, ‖w a‖ ^ 2 = 1 := by
       intro a
-      simp only [hw, sideSign]
+      simp only [hw, sg]
       split_ifs <;> simp
     simp only [this, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
   have hin : inner ℝ (hubDir A) w = (A.card : ℝ) * ((k : ℝ) - A.card) := by
@@ -39,7 +39,7 @@ theorem prop_flat_rate_direction {k : ℕ} (hk : 1 ≤ k) (A : Finset (Fin k)) (
     refine Finset.sum_congr rfl fun e _ => ?_
     by_cases h : CaseI.Sep A e
     · rw [if_pos h, if_pos h]
-      simp only [hw, sideSign]
+      simp only [hw, sg]
       split_ifs <;> norm_num
     · rw [if_neg h, if_neg h]
   have hcs := real_inner_le_norm (hubDir A) w
@@ -72,7 +72,7 @@ theorem prop_flat_rate_lengths {k : ℕ} (hk : 1 ≤ k) (A : Finset (Fin k)) (h1
   set x := z • hubDir A with hx
   have hterm : ∀ e : Pr k,
       dist (endPos e 0) (if e.1.1 ∈ A then x else -x) + dist (endPos e 1) (if e.1.2 ∈ A then x else -x) ≤
-        (1 + 2 * γ ^ 2) - 2 * (if CaseI.Sep A e then sideSign A e.1.1 * x e.1.1 else 0) := by
+        (1 + 2 * γ ^ 2) - 2 * (if CaseI.Sep A e then sg A e.1.1 * x e.1.1 else 0) := by
     intro e
     have hu : ‖(EuclideanSpace.single e.1.1 (1 : ℝ) : EuclideanSpace ℝ (Fin k))‖ = 1 := by simp
     have hu' : ‖-(EuclideanSpace.single e.1.1 (1 : ℝ) : EuclideanSpace ℝ (Fin k))‖ = 1 := by simp
@@ -81,7 +81,7 @@ theorem prop_flat_rate_lengths {k : ℕ} (hk : 1 ≤ k) (A : Finset (Fin k)) (h1
     have a2 := dist_half_le hu' (if e.1.2 ∈ A then x else -x)
     refine (add_le_add a1 a2).trans (le_of_eq ?_)
     by_cases ha : e.1.1 ∈ A <;> by_cases hb : e.1.2 ∈ A <;>
-      simp [CaseI.Sep, sideSign, ha, hb, EuclideanSpace.inner_single_left, inner_neg_left, hn] <;> ring
+      simp [CaseI.Sep, sg, ha, hb, EuclideanSpace.inner_single_left, inner_neg_left, hn] <;> ring
   refine (Finset.sum_le_sum fun e _ => hterm e).trans ?_
   rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← inner_hubDir, hx, real_inner_smul_right,
     real_inner_self_eq_norm_sq]

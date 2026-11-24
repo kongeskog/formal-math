@@ -95,6 +95,11 @@ theorem size_tl_le (x : Tree) : x.tl.size ≤ x.size := by
   | nil => exact le_rfl
   | cons a b => simp only [tl, size]; omega
 
+theorem len_ofBits (w : List Bool) : (ofBits w).len = w.length := by
+  induction w with
+  | nil => rfl
+  | cons b w ih => simp [ofBits, len, ih]
+
 @[simp] theorem path_ofBits (w : List Bool) : (ofBits w).path = w := by
   induction w with
   | nil => rfl

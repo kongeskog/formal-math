@@ -57,7 +57,7 @@ theorem streamStep_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (
       exact h1
     refine ((Does.ite_false h0 (Does.fail _)).replace ?_).mono (by omega)
     simp [hk]
-  · have h2 := appB_gives h1 (Gives.id (θ := θ) (.cons (ofBits k) (.cons t (ofBits acc)))).tl.tl
+  · have h2 := appBits_gives h1 (Gives.id (θ := θ) (.cons (ofBits k) (.cons t (ofBits acc)))).tl.tl
     have h3 : ofBits (ct k) ≠ .nil := by
       cases h : ct k with
       | nil => exact absurd h hk

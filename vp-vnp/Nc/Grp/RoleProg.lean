@@ -71,7 +71,7 @@ theorem yardF_gives (ub tt : ℕ) (t y : Tree) :
       have e2 : Gives θ (.tl (.tl .id)) (.cons .nil (.cons (num ub) (num k))) (ofBits (List.replicate k false)) 3 := by
         rw [← num_eq_ofBits]
         exact (Gives.id _).tl.tl
-      have e3 := appB_gives e1 e2
+      have e3 := appBits_gives e1 e2
       rw [← List.replicate_add, ← num_eq_ofBits, List.length_replicate] at e3
       exact (Gives.cons (Gives.id _).tl.hd e3).mono (by omega), trivial⟩) trivial
   have h2 : (List.replicate tt ()).foldl (fun (k : ℕ) _ => ub + k) 0 = tt * ub := by
