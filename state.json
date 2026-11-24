@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T23:14:21.118044086Z",
+  "updated_at": "2026-11-24T23:17:57.438714700Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -640,13 +640,27 @@
       "title": "shorten(Paper): drop named arguments Lean infers inside proofs",
       "author": "kongeskog",
       "head_sha": "b1bbe89b93719aa72f90ce181d5f405c868a42a7",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "c0c44bfa49bc4a0ba57c2ee58105743526b49263",
+      "status": "stale",
       "created_at": "2026-11-24T23:00:20Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 900733,
+        "loc": 57258,
+        "decls": 4563,
+        "files": 321,
+        "bytes": 3342849,
+        "build_seconds": 196
+      },
+      "base_metrics": {
+        "tokens": 901295,
+        "loc": 57258,
+        "decls": 4563,
+        "files": 321,
+        "bytes": 3343935,
+        "build_seconds": null
+      },
+      "delta": -562,
       "gates": [
         {
           "key": "format",
@@ -654,39 +668,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "7 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 901295 → 900733 (-562)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -697,7 +719,7 @@
       ],
       "idea": 76,
       "url": "https://github.com/kongeskog/formal-math/pull/93",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45506974278",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
