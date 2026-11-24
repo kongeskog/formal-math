@@ -127,12 +127,8 @@ theorem eq_orth (y : A) (R i j : ℕ) :
       refine ⟨-(mB y R (j + 1) + y * mB y R j), ?_⟩
       simp only [mB_zero_right, one_mul, (Nat.succ_ne_zero j).symm, if_false, mB_zero] at this ⊢
       rw [Finset.mul_sum]
-      have e : ∑ r ∈ Finset.range R, (1 - y) * (y ^ r * mB y r (j + 1)) =
-          ∑ r ∈ Finset.range R, y ^ r * (mB y r (j + 1) + y * mB y r j
-            - y * (mB y r (j + 1) + mB y r j)) :=
-        Finset.sum_congr rfl fun r _ => by ring
-      rw [e, this]
-      ring
+      -- (1-y) ∑ y^r B(r,j+1) is the telescoping sum `this`, termwise; the rest is ring arithmetic.
+      grind
   | succ i ih =>
     cases j with
     | zero =>
@@ -141,12 +137,8 @@ theorem eq_orth (y : A) (R i j : ℕ) :
       refine ⟨-(mB y R (i + 1) + y * mB y R i), ?_⟩
       simp only [mB_zero_right, mul_one, Nat.succ_ne_zero i, if_false, mB_zero] at this ⊢
       rw [Finset.mul_sum]
-      have e : ∑ r ∈ Finset.range R, (1 - y) * (y ^ r * mB y r (i + 1)) =
-          ∑ r ∈ Finset.range R, y ^ r * (mB y r (i + 1) + y * mB y r i
-            - y * (mB y r (i + 1) + mB y r i)) :=
-        Finset.sum_congr rfl fun r _ => by ring
-      rw [e, this]
-      ring
+      -- (1-y) ∑ y^r B(r,i+1) is the telescoping sum `this`, termwise; the rest is ring arithmetic.
+      grind
     | succ j =>
       have := tele y
         (fun r => (mB y r (i + 1) + mB y r i) * (mB y r (j + 1) + mB y r j))
@@ -164,13 +156,8 @@ theorem eq_orth (y : A) (R i j : ℕ) :
         exact Finset.sum_congr rfl fun r _ => by ring
       rw [e] at this
       have z0 : (mB y 0 (i + 1) + y * mB y 0 i) = 0 := by simp only [mB_zero]; ring
-      have z1 : (if i + 1 = j + 1 then y ^ (i + 1) else 0) = y * (if i = j then y ^ i else 0) := by
-        by_cases hmn : i = j
-        · simp [hmn, pow_succ, mul_comm]
-        · simp [hmn]
-      rw [z0, zero_mul, zero_sub] at this
-      rw [z1]
-      linear_combination this + y * hw
+      -- The telescoping sum `this` with B(0,i+1)+yB(0,i) = 0, plus y times the case (i, j) `hw`.
+      grind
 
 end Orth
 
@@ -270,15 +257,15 @@ theorem prop_identity_exchange {x z : R} (h : x * z = 1) (sa : Wd μ) (sb : Wd �
         linear_combination x ^ (2 * sa.1 i + 1) * hz (sa.1 i)
       · simp [h1]
     · entries
-      linear_combination (x ^ 2 * (z ^ 2 - 1) * ((x ^ 2) ^ sb.2 j * mB (z ^ 2) (sa.1 i) (sb.2 j))) *
-        hz (sa.1 i) + (x ^ 2 * (z ^ 2 - 1)) * hB (sa.1 i) (sb.2 j) + mC (x ^ 2) (sa.1 i) (sb.2 j) * h2
+      -- B and C are exchanged by hB, with x^(2m+1) z^(2m+1) = 1 and x²z² = 1.
+      grind
   · rcases j with (j | j) | (j | j)
     · entries
       linear_combination (-(x ^ (2 * sa.2 j + 1) * (x ^ 2 - 1))) * hC (sa.2 j) (sd.1 i)
     · entries
     · entries
-      linear_combination ((x ^ 2 - 1) * ((x ^ 2) ^ sd.1 i * mB (z ^ 2) (sc.2 j) (sd.1 i))) * hz (sc.2 j) +
-        (x ^ 2 - 1) * hB (sc.2 j) (sd.1 i)
+      -- B and C are exchanged by hB, with x^(2m+1) z^(2m+1) = 1.
+      grind
     · entries
       by_cases h1 : sd.1 i = sb.2 j
       · rw [if_pos h1, if_pos h1.symm, ← h1]
@@ -291,24 +278,24 @@ theorem prop_identity_exchange {x z : R} (h : x * z = 1) (sa : Wd μ) (sb : Wd �
         linear_combination (-x ^ (2 * sa.2 j + 1)) * hz (sa.2 j)
       · simp [h1]
     · entries
-      linear_combination (-(x ^ 2 - 1) * ((x ^ 2) ^ sd.2 j * mB (z ^ 2) (sc.1 i) (sd.2 j))) * hz (sc.1 i) -
-        (x ^ 2 - 1) * hB (sc.1 i) (sd.2 j)
+      -- B and C are exchanged by hB, with x^(2m+1) z^(2m+1) = 1.
+      grind
     · entries
     · entries
-      linear_combination (-(x ^ (2 * sc.1 i + 1) * (1 - x ^ 2))) * hC (sc.1 i) (sb.2 j) -
-        (x ^ (2 * sc.1 i + 1) * (x ^ 2) ^ sb.2 j * mC (z ^ 2) (sc.1 i) (sb.2 j)) * h2
+      -- C and B are exchanged by hC, with x²z² = 1.
+      grind
   · rcases j with (j | j) | (j | j)
     · entries
-      linear_combination (-(x ^ 2 * (z ^ 2 - 1) * ((x ^ 2) ^ sb.1 i * mB (z ^ 2) (sa.2 j) (sb.1 i)))) *
-        hz (sa.2 j) - (x ^ 2 * (z ^ 2 - 1)) * hB (sa.2 j) (sb.1 i) - mC (x ^ 2) (sa.2 j) (sb.1 i) * h2
+      -- B and C are exchanged by hB, with x^(2m+1) z^(2m+1) = 1 and x²z² = 1.
+      grind
     · entries
       by_cases h1 : sd.2 j = sb.1 i
       · rw [if_pos h1, if_pos h1.symm, ← h1]
         linear_combination (x ^ (2 * sd.2 j + 1) * (x ^ 2 - 1)) * hz (sd.2 j)
       · simp [h1, Ne.symm h1]
     · entries
-      linear_combination (x ^ (2 * sc.2 j + 1) * (1 - x ^ 2)) * hC (sc.2 j) (sb.1 i) +
-        (x ^ (2 * sc.2 j + 1) * (x ^ 2) ^ sb.1 i * mC (z ^ 2) (sc.2 j) (sb.1 i)) * h2
+      -- C and B are exchanged by hC, with x²z² = 1.
+      grind
     · entries
 
 /-- Proof of Proposition prop:identity, reflection: "Rows and columns are permuted alike, so there is no sign." So the product of
@@ -359,12 +346,8 @@ theorem prop_identity_reflection [IsDomain R] {x z : R} (h : x * z = 1) (h1 : x 
     have := hν2 sb.1
     have := hν2 sb.2
     omega
-  generalize (∑ i, (2 * sa.1 i + 1)) + (∑ i, (2 * sc.1 i + 1)) + (∑ i, 2 * sd.1 i) +
-    (∑ i, (2 * sb.1 i + 2)) = a at key hexp
-  generalize (∑ i, (2 * sa.2 i + 1)) + (∑ i, (2 * sc.2 i + 1)) + (∑ i, 2 * sd.2 i) +
-    (∑ i, (2 * sb.2 i + 2)) = b at key hexp
-  rw [← hexp, pow_add]
-  linear_combination key - (x ^ a * x ^ b * psi z sa sb sc sd) * hs
+  -- Cancel the factors (y−1)^(2ν) = (1−y)^(2ν) by hs and collect the powers of x by hexp: X^Θ Ψ(1/X) = Ψ(X).
+  grind
 
 end Blocks
 
