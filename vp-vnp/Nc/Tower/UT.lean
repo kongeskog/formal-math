@@ -24,29 +24,10 @@ theorem sl_pow_mem {G : Type*} [Group G] [Finite G] (S : Submonoid G) {a : G} (h
   exact S.pow_mem ha _
 
 /-- Upper unitriangular matrices. -/
-def U (h : ℕ) : Subgroup (SL2 h) where
-  carrier := {A | ∀ i j, (j < i → A.1 i j = 0) ∧ A.1 i i = 1}
-  one_mem' := fun i j => ⟨fun hij => Matrix.one_apply_ne hij.ne', Matrix.one_apply_eq i⟩
-  mul_mem' := by
-    intro A B hA hB i j
-    have h1 : ∀ i j k, j < i → A.1 i k * B.1 k j = 0 := by
-      intro i j k hij
-      rcases lt_or_ge k i with hk | hk
-      · rw [(hA i k).1 hk, zero_mul]
-      · rw [(hB k j).1 (lt_of_lt_of_le hij hk), mul_zero]
-    refine ⟨fun hij => ?_, ?_⟩
-    · rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply]
-      exact Finset.sum_eq_zero fun k _ => h1 i j k hij
-    · rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Finset.sum_eq_single i]
-      · rw [(hA i i).2, (hB i i).2, one_mul]
-      · intro k _ hk
-        rcases lt_or_gt_of_ne hk with h | h
-        · rw [(hA i k).1 h, zero_mul]
-        · rw [(hB k i).1 h, mul_zero]
-      · simp
-  inv_mem' := by
-    intro A hA
-    let S : Submonoid (SL2 h) :=
+def U (h : ℕ) : Subgroup (SL2 h) :=
+  -- The closure under multiplication is proved once, for this submonoid; closure under
+  -- inverses then follows from finiteness (`sl_pow_mem`).
+  let S : Submonoid (SL2 h) :=
       { carrier := {A | ∀ i j, (j < i → A.1 i j = 0) ∧ A.1 i i = 1}
         one_mem' := fun i j => ⟨fun hij => Matrix.one_apply_ne hij.ne', Matrix.one_apply_eq i⟩
         mul_mem' := by
@@ -66,7 +47,7 @@ def U (h : ℕ) : Subgroup (SL2 h) where
               · rw [(hA i k).1 h, zero_mul]
               · rw [(hB k i).1 h, mul_zero]
             · simp }
-    exact sl_pow_mem S hA
+  { S with inv_mem' := sl_pow_mem S }
 
 /-- The index j as a row. -/
 def lo {h : ℕ} (j : Fin (h - 1)) : Fin h := ⟨j.1, by omega⟩
