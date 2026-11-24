@@ -213,8 +213,8 @@ theorem sum_words (J n : ℕ) (c : R) :
     · rcases Nat.mod_two_eq_zero_or_one n with h | h <;> simp [h, hn]
     · simp [hn]
 
-theorem sum_flatMap_map {α β : Type*} (l : List α) (f : α → List β) (g : β → R) :
-    ((l.flatMap f).map g).sum = (l.map fun a => ((f a).map g).sum).sum := by
+theorem sum_flatMap_map {α β M : Type*} [AddCommMonoid M] (l : List α) (f : α → List β)
+    (g : β → M) : ((l.flatMap f).map g).sum = (l.map fun a => ((f a).map g).sum).sum := by
   induction l with
   | nil => simp
   | cons a l ih => simp [List.flatMap_cons, ih]
