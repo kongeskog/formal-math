@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:19:38.692373634Z",
+  "updated_at": "2026-11-24T19:21:11.469588450Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "5f9eef456dd9147e413d71f8fdccc70779a0173b",
-    "at": "2026-11-24T19:03:02.446632618Z",
+    "sha": "8e8f8be0f099d369158ab299c552dbca81e61c08",
+    "at": "2026-11-24T19:21:11.469588450Z",
     "metrics": {
-      "tokens": 924407,
-      "loc": 58542,
-      "decls": 4591,
+      "tokens": 922705,
+      "loc": 58499,
+      "decls": 4589,
       "files": 321,
-      "bytes": 3407674,
-      "build_seconds": 177
+      "bytes": 3403951,
+      "build_seconds": 317
     }
   },
   "counts": {
-    "merged": 13,
+    "merged": 14,
     "rejected": 2,
-    "open": 14,
+    "open": 13,
     "contributors": 1,
     "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 13,
+      "merged": 14,
       "attempts": 29,
-      "saved": 3754
+      "saved": 5456
     }
   ],
   "ideas": [
@@ -193,7 +193,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:01:29Z",
       "pr": 42,
-      "result_delta": null,
+      "result_delta": -1702,
       "created_at": "2026-11-24T19:00:21Z",
       "url": "https://github.com/kongeskog/formal-math/issues/34",
       "technique": "library",
@@ -796,74 +796,6 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Nc"
-    },
-    {
-      "pr": 42,
-      "title": "library(Nc/Dl): derive Fintype for Nm and count it with proxy_equiv%",
-      "author": "kongeskog",
-      "head_sha": "d60e03c61d38d006d968a6012afe187005f6e719",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-24T19:04:50Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 34,
-      "url": "https://github.com/kongeskog/formal-math/pull/42",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "library",
-      "scope": "Nc/Dl"
     },
     {
       "pr": 43,
