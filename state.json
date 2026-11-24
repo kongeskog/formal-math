@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T02:38:54.487520714Z",
+  "updated_at": "2026-11-24T02:42:43.960417190Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 8,
     "rejected": 2,
-    "open": 1,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 6
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 8,
-      "attempts": 11,
+      "attempts": 13,
       "saved": 1639
     }
   ],
@@ -122,7 +122,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T05:32:47Z",
-      "pr": null,
+      "pr": 25,
       "result_delta": null,
       "created_at": "2026-11-24T00:48:06Z",
       "url": "https://github.com/kongeskog/formal-math/issues/15",
@@ -136,7 +136,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T05:32:49Z",
-      "pr": null,
+      "pr": 26,
       "result_delta": null,
       "created_at": "2026-11-24T00:48:05Z",
       "url": "https://github.com/kongeskog/formal-math/issues/14",
@@ -324,6 +324,142 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Nc/Dl"
+    },
+    {
+      "pr": 25,
+      "title": "shorten(NS1): replace the obtain-exists-rfl idiom by generalize or exists_eq",
+      "author": "kongeskog",
+      "head_sha": "b278f7333e3ff1d8d5ce2f8f3d6c4df23a39491d",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T02:42:13Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 15,
+      "url": "https://github.com/kongeskog/formal-math/pull/25",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "NS1"
+    },
+    {
+      "pr": 26,
+      "title": "generalize(Nc/Uni): a mode parameter for KS and rstep replaces PKS and pstep",
+      "author": "kongeskog",
+      "head_sha": "347ef4569337e4ca8acfcc33103c8701c7e46c88",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T02:42:27Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 14,
+      "url": "https://github.com/kongeskog/formal-math/pull/26",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "generalize",
+      "scope": "Nc/Uni"
     }
   ],
   "top_files": [
