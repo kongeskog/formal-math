@@ -19,35 +19,9 @@ variable {A : Type} [CommRing A] {M K : Type} [Fintype M] [DecidableEq M] [Finty
 
 theorem sum_Tp (f : Tp K → ℕ) : ∑ s, f s = (∑ i, f (.rg i)) + f .md + f .cp + f .fr + f .lk + f .ls + (∑ b, f (.bk b)) +
     ∑ k, f (.cm k) := by
-  let e : Tp K ≃ (Fin 5 ⊕ (Bl K ⊕ Bool)) ⊕ Fin 5 :=
-    { toFun := fun s => match s with
-        | .rg i => .inl (.inl i)
-        | .bk b => .inl (.inr (.inl b))
-        | .cm k => .inl (.inr (.inr k))
-        | .md => .inr 0
-        | .cp => .inr 1
-        | .fr => .inr 2
-        | .lk => .inr 3
-        | .ls => .inr 4
-      invFun := fun y => match y with
-        | .inl (.inl i) => .rg i
-        | .inl (.inr (.inl b)) => .bk b
-        | .inl (.inr (.inr k)) => .cm k
-        | .inr 0 => .md
-        | .inr 1 => .cp
-        | .inr 2 => .fr
-        | .inr 3 => .lk
-        | .inr 4 => .ls
-      left_inv := fun s => by cases s <;> rfl
-      right_inv := fun y => by
-        rcases y with (i | b | k) | j
-        · rfl
-        · rfl
-        · rfl
-        · fin_cases j <;> rfl }
-  rw [← e.symm.sum_comp, Fintype.sum_sum_type, Fintype.sum_sum_type, Fintype.sum_sum_type, Fin.sum_univ_five (fun j => f (e.symm (.inr j)))]
-  change (∑ i, f (.rg i)) + ((∑ b, f (.bk b)) + ∑ k, f (.cm k)) + (f .md + f .cp + f .fr + f .lk + f .ls) = _
-  ring
+  rw [← (proxy_equiv% (Tp K)).sum_comp]
+  simp only [Fintype.sum_sum_type, univ_unique, sum_singleton, ← add_assoc]
+  rfl
 
 theorem length_rw' (f : Bool) (w : List (Option (Bl K))) : (rw' f w : List (Sy M K)).length = w.length + 2 := by
   simp [rw']

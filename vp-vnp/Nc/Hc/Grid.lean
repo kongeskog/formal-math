@@ -29,33 +29,9 @@ inductive Seg (N V K P : Type) where
   | right (n : N)
   | tab (n : N) (t : Bool × Bool)
   | pad (p : P)
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 variable {N V K P : Type}
-
-/-- The segments as a disjoint union. -/
-def Seg.equivSum : Seg N V K P ≃ V ⊕ K ⊕ N ⊕ N ⊕ N ⊕ (N × Bool × Bool) ⊕ P where
-  toFun
-    | .var a => .inl a
-    | .row b => .inr (.inl b)
-    | .edge n => .inr (.inr (.inl n))
-    | .left n => .inr (.inr (.inr (.inl n)))
-    | .right n => .inr (.inr (.inr (.inr (.inl n))))
-    | .tab n t => .inr (.inr (.inr (.inr (.inr (.inl (n, t))))))
-    | .pad p => .inr (.inr (.inr (.inr (.inr (.inr p)))))
-  invFun
-    | .inl a => .var a
-    | .inr (.inl b) => .row b
-    | .inr (.inr (.inl n)) => .edge n
-    | .inr (.inr (.inr (.inl n))) => .left n
-    | .inr (.inr (.inr (.inr (.inl n)))) => .right n
-    | .inr (.inr (.inr (.inr (.inr (.inl (n, t)))))) => .tab n t
-    | .inr (.inr (.inr (.inr (.inr (.inr p))))) => .pad p
-  left_inv := by rintro (_ | _ | _ | _ | _ | _ | _) <;> rfl
-  right_inv := by rintro (_ | _ | _ | _ | _ | _ | _) <;> rfl
-
-instance [Fintype N] [Fintype V] [Fintype K] [Fintype P] : Fintype (Seg N V K P) :=
-  Fintype.ofEquiv _ Seg.equivSum.symm
 
 /-- The options of a segment. -/
 abbrev Opt : Seg N V K P → Type
@@ -197,8 +173,9 @@ omit [DecidableEq N] [DecidableEq V] [DecidableEq K] [DecidableEq P] in
 theorem card_gridVtx :
     Fintype.card (Vtx (Seg N V K P) (Gad N)) =
       Fintype.card V + Fintype.card K + 37 * Fintype.card N + Fintype.card P := by
-  rw [Vtx.card_eq, Fintype.card_congr (Seg.equivSum (N := N) (V := V) (K := K) (P := P))]
-  simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_bool, Fintype.card_option]
+  rw [Vtx.card_eq, ← Fintype.card_congr (proxy_equiv% (Seg N V K P))]
+  simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_bool, Fintype.card_option, Fintype.card_sigma,
+    sum_const, card_univ, smul_eq_mul]
   ring
 
 /-- Renaming the points does not change the sum over the cycles. -/

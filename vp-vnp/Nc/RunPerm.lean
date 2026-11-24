@@ -24,17 +24,8 @@ end Degree
 section Count
 
 theorem card_ChN (S : Type) [Fintype S] (n : ℕ) : Fintype.card (Ch S (Fin n)) = 2 * Fintype.card S + n := by
-  have e : Ch S (Fin n) ≃ (S × Bool) ⊕ Fin n :=
-    { toFun := fun z => match z with
-        | .tp s b => .inl (s, b)
-        | .inp j => .inr j
-      invFun := fun y => match y with
-        | .inl (s, b) => .tp s b
-        | .inr j => .inp j
-      left_inv := fun z => by cases z <;> rfl
-      right_inv := fun y => by rcases y with ⟨s, b⟩ | j <;> rfl }
-  rw [Fintype.card_congr e, Fintype.card_sum, Fintype.card_prod, Fintype.card_bool, Fintype.card_fin]
-  omega
+  rw [← Fintype.card_congr (proxy_equiv% (Ch S (Fin n)))]
+  simp [mul_comm]
 
 variable {Γ S Q : Type} [Fintype Γ] [Fintype S] [Fintype Q] {n t M N B : ℕ}
 
