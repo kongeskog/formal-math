@@ -58,153 +58,54 @@ def lks (x : XP P) : List (List (Bl K)) := x.2.2.1.map fun s => cont (P.lk s.1) 
 
 theorem emX_rg_true (x : XP P) (i : Fin 5) :
     emX P x (tp (.rg i) true) = bws (x.2.2.1.map (fun s => cw s.2 (rv i)) ++ [x.2.2.2.1.1.map fun v => v i]) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp (.rg i) true) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp (.rg i) true) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp (.rg i) true) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, rgw, emEd, emAp, on, bws, List.flatMap_map]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, rgw, emEd, emAp, bws, List.flatMap_map]
 
 theorem emX_rg_false (x : XP P) (i : Fin 5) :
     emX P x (tp (.rg i) false) = bws (i0 x.1 :: x.2.2.1.map fun s => cw s.2 (P.dr s.1 i)) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp (.rg i) false) : List (Sy M K)) = bw (i0 l) := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp (.rg i) false) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp (.rg i) false) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, rgw, emEd, emAp, on, bws, List.flatMap_map]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, rgw, emEd, emAp, bws, List.flatMap_map]
 
 theorem emX_md_true (x : XP P) : emX P x (tp .md true) = (x.2.2.1.map (fun s => P.src s.1) ++ [P.mh]).map .md := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .md true) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .md true) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .md true) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, flatMap_single', List.map_map, Function.comp_def]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, flatMap_single', List.map_map,
+    Function.comp_def]
 
 theorem emX_md_false (x : XP P) : emX P x (tp .md false) = (P.m0 :: x.2.2.1.map fun s => P.dst s.1).map .md := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .md false) : List (Sy M K)) = [.md P.m0] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .md false) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .md false) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, flatMap_single', List.map_map, Function.comp_def]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, flatMap_single', List.map_map,
+    Function.comp_def]
 
 theorem emX_cp_true (x : XP P) : emX P x (tp .cp true) = bws (x.2.1.map cn ++ [true :: x.2.2.2.1.2]) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .cp true) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .cp true) : List (Sy M K)) = bw (cn r) := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .cp true) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, bws, List.flatMap_map]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, bws, List.flatMap_map]
 
 theorem emX_cp_false (x : XP P) : emX P x (tp .cp false) = bws (i1 x.1 :: x.2.1.map cn1) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .cp false) : List (Sy M K)) = bw (i1 l) := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .cp false) : List (Sy M K)) = bw (cn1 r) := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .cp false) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, bws, List.flatMap_map]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, bws, List.flatMap_map]
 
 theorem emX_fr_true (x : XP P) : emX P x (tp .fr true) = bws (x.2.2.1.map fun s => cw s.2 8) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .fr true) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .fr true) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .fr true) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, bws, List.flatMap_map]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, bws, List.flatMap_map]
 
 theorem emX_fr_false (x : XP P) : emX P x (tp .fr false) = bws (x.2.1.map cn) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .fr false) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .fr false) : List (Sy M K)) = bw (cn r) := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .fr false) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, bws, List.flatMap_map]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, bws, List.flatMap_map]
 
 theorem emX_lk_true (x : XP P) : emX P x (tp .lk true) = x.2.2.2.2.1 := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .lk true) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .lk true) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .lk true) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, flatMap_nil']
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, flatMap_nil']
 
 theorem emX_lk_false (x : XP P) : emX P x (tp .lk false) = encW ((lks x).map fun c => (true, oc c)) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp .lk false) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp .lk false) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (tp .lk false) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, encW, lks, List.flatMap_map, oc, rec']
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, encW, lks, List.flatMap_map,
+    oc, rec']
 
 theorem emX_ls_true (x : XP P) : emX P x lsT = emU x.2.2.2.2.2 lsT := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l lsT : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r lsT : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  unfold emX
-  rw [h1]
-  simp [h2, emSt, emEd, emAp, on, flatMap_nil']
+  simp [emX, emIn, emCt, on, mem_rgs, emSt, emEd, emAp, flatMap_nil']
 
 theorem emX_ls_false (x : XP P) :
     emX P x lsF = encW ((dfs x).map fun c => (false, oc c)) ++ (x.2.2.2.2.1 ++ .bar :: emU x.2.2.2.2.2 lsF) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l lsF : List (Sy M K)) =
-      rec' false P.kN (List.replicate (l.length + 1) fun _ => false) := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r lsF : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  unfold emX
-  rw [h1]
-  simp [h2, emSt, emEd, emAp, on, encW, dfs, List.flatMap_map, oc, rec']
+  simp [emX, emIn, emCt, on, mem_rgs, emSt, emEd, emAp, encW, dfs, List.flatMap_map, oc, rec']
 
 theorem emX_bk (x : XP P) (b : Bl K) (s : Bool) : emX P x (tp (.bk b) s) = emU x.2.2.2.2.2 (tp (.bk b) s) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp (.bk b) s) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp (.bk b) s) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  unfold emX
-  rw [h1]
-  simp [h2, emSt, emEd, emAp, on, flatMap_nil']
+  simp [emX, emIn, emCt, on, mem_rgs, emSt, emEd, emAp, flatMap_nil']
 
 theorem emX_cm (x : XP P) (k s : Bool) : emX P x (tp (.cm k) s) = emU x.2.2.2.2.2 (tp (.cm k) s) := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (tp (.cm k) s) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (tp (.cm k) s) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  unfold emX
-  rw [h1]
-  simp [h2, emSt, emEd, emAp, on, flatMap_nil']
+  simp [emX, emIn, emCt, on, mem_rgs, emSt, emEd, emAp, flatMap_nil']
 
 theorem emX_inp (x : XP P) : emX P x (.inp ()) = (x.2.2.1.flatMap fun s => (P.rd s.1).toList).map .bit := by
-  have h1 : ∀ l, (emIn P.m0 P.kN l (.inp ()) : List (Sy M K)) = [] := by
-    intro l; simp [emIn, on, mem_rgs]
-  have h2 : ∀ r, (emCt r (.inp ()) : List (Sy M K)) = [] := by
-    intro r; simp [emCt, on]
-  have h3 : emU x.2.2.2.2.2 (.inp ()) = [] := emU_other _ (by simp) (by simp) (by simp) (by simp)
-  unfold emX
-  rw [h1, h3]
-  simp [h2, emSt, emEd, emAp, on, List.map_flatMap]
+  simp [emX, emIn, emCt, on, mem_rgs, emU_other, emSt, emEd, emAp, List.map_flatMap]
 
 /-- The conditions for a matched run. -/
 structure MX (x : XP P) (bits : List Bool) : Prop where
