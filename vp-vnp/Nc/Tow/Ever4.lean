@@ -22,24 +22,6 @@ section Held
 
 variable {F : Type} [CommRing F] {A A' E U0 U1 : ℕ}
 
-/-- Sums over units. -/
-theorem sum_uid {N : Type} [Fintype N] [DecidableEq N] (f : Uid A U0 N U1 → ℕ) :
-    ∑ u, f u = (∑ a, ∑ c, ∑ k, f (.init a c k)) + ∑ ν, ∑ k, f (.new ν k) := by
-  let e : Uid A U0 N U1 ≃ (Fin A × Fin A × Fin U0) ⊕ (N × Fin U1) :=
-    { toFun := fun u => match u with
-        | .init a c k => .inl (a, c, k)
-        | .new ν k => .inr (ν, k)
-      invFun := fun s => match s with
-        | .inl p => .init p.1 p.2.1 p.2.2
-        | .inr p => .new p.1 p.2
-      left_inv := fun u => by cases u <;> rfl
-      right_inv := fun s => by rcases s with ⟨a, c, k⟩ | ⟨ν, k⟩ <;> rfl }
-  rw [← Equiv.sum_comp e.symm, Fintype.sum_sum_type, Fintype.sum_prod_type, Fintype.sum_prod_type]
-  congr 1
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [Fintype.sum_prod_type]
-  rfl
-
 /-- The number of initial units of a party. -/
 def initN (n : Fin A → Fin A → Fin (U0 + 1)) (p : Fin (A + A')) : ℕ :=
   ∑ a, ∑ c, ((if Fin.castAdd A' a = p then (n a c).1 else 0) + if Fin.castAdd A' c = p then (n a c).1 else 0)
@@ -82,7 +64,7 @@ theorem held_le_chan (M : Sys F (A + A') E) (n : Fin A → Fin A → Fin (U0 + 1
         exact Nat.le_add_right _ _
     · exact Nat.zero_le _
   refine h1.trans ?_
-  rw [sum_uid]
+  rw [Tow.sum_units]
   refine add_le_add ?_ ?_
   · unfold initN
     refine Finset.sum_le_sum fun a _ => Finset.sum_le_sum fun c _ => ?_
