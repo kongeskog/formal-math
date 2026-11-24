@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:38:06.000055690Z",
+  "updated_at": "2026-11-24T00:40:51.198720312Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,8 +60,8 @@
     }
   },
   "current": {
-    "sha": "7c1f581344aef8eb8831ae323d3f3dbfe45925a7",
-    "at": "2026-11-24T00:28:54.938587099Z",
+    "sha": "0306226eb17117634aec95ee4fee8fcce8f34da8",
+    "at": "2026-11-24T00:40:51.198720312Z",
     "metrics": {
       "tokens": 928161,
       "loc": 58797,
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 2
+    "ideas_open": 4
   },
   "leaderboard": [
     {
@@ -88,12 +88,26 @@
   ],
   "ideas": [
     {
+      "number": 8,
+      "title": "Idea: merge(Nc,NS1): remove the remaining exact duplicate declarations",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:40:26Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/8",
+      "technique": "merge",
+      "scope": "Nc,NS1"
+    },
+    {
       "number": 6,
       "title": "Idea: shorten(*): remove simp arguments and tactics the linter reports as unused",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T03:33:08Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T00:32:13Z",
