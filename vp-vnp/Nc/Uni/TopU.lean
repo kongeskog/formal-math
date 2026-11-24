@@ -22,23 +22,6 @@ def word : Tree → List Bool
   | .nil => [false]
   | .cons a b => true :: (word a ++ word b)
 
-/-- What happens when a tree that has been read is returned to the frame k. -/
-def PKS (θ : List Bool → A) (supp : Finset (List Bool)) (H : List (Rec Kd)) (k : ℕ) (inp : List Bool) (o : Tree) (S : A)
-    (B : ℤ) : Prop :=
-  ∀ (σ : St supp) (v : ℕ), OKs σ → σ.mode = .PR → σ.regs 1 = v → σ.regs 2 = k → H ⊆ σ.heap → σ.inp = inp →
-    Rep σ.heap v o → Mach.SumTo (UM θ supp) σ S B
-
-/-- A step after a tree has been read. -/
-theorem pstep {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .PR) {κ : Kd} {p q s : ℕ}
-    (hrec : ((κ, ![σ.regs 2, p, q, s]) : Rec Kd) ∈ σ.heap) (r : Ra) (hr : nextR supp .PR κ = some (.inl r))
-    (hs : (ruleA r : RD A (Nm supp)).src = .PR) (hk : (ruleA r : RD A (Nm supp)).lk = κ) {S : A} {B : ℤ}
-    (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) p q s) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
-  have hrec' : ((κ, ![σ.regs (laM σ.mode), p, q, s]) : Rec Kd) ∈ σ.heap := by
-    rw [hm]
-    exact hrec
-  exact (sumTo_ruleA hσ hrec' r (by rw [hm]; exact hr) (by rw [hm]; simp) (by rw [hm]; simp) (by rw [hm]; exact hs) hk
-    h).mono (by omega)
-
 /-- A step that reads a bracket. -/
 theorem bstep {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .P) (b : Bool) {rest : List Bool} (hi : σ.inp = b :: rest) {S : A}
     {B : ℤ} (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl (if b then .pr1 else .pr0)) 0 0 0) S (B - 1)) :
@@ -92,7 +75,7 @@ theorem bstep {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .P) (b : Bool) {rest
 
 /-- **Reading a tree.** -/
 theorem parse {S : A} (a : Tree) : ∀ (B : ℤ) (σ : St supp) (k : ℕ) (rest : List Bool), OKs σ → σ.mode = .P → σ.regs 1 = k →
-    σ.inp = word a ++ rest → PKS θ supp σ.heap k rest a S B → Mach.SumTo (UM θ supp) σ S (B + 3 * a.size) := by
+    σ.inp = word a ++ rest → KS θ supp .PR σ.heap k rest a S B → Mach.SumTo (UM θ supp) σ S (B + 3 * a.size) := by
   induction a with
   | nil =>
     intro B σ k rest hσ hm h1 hi hk
@@ -117,7 +100,7 @@ theorem parse {S : A} (a : Tree) : ∀ (B : ℤ) (σ : St supp) (k : ℕ) (rest 
       have hfr : ((.PA, ![σ2.regs 2, σ.regs 1, σ.regs 0, σ.regs 0]) : Rec Kd) ∈ σ2.heap := by
         rw [h22]
         exact hh2 (new_nx (θ := θ) σ (.inl .pr1) 0 0 0)
-      refine pstep ok2 hm2 hfr .pa rfl rfl rfl ?_
+      refine rstep ok2 hm2 rfl hfr .pa rfl rfl rfl ?_
       subst h21
       have ok3 := ok2.nx (θ := θ) (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0)
       refine (ihb (B + 1) (nx θ σ2 (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0)) (σ2.n + 1) rest ok3 rfl rfl ?_ ?_).mono
@@ -127,7 +110,7 @@ theorem parse {S : A} (a : Tree) : ∀ (B : ℤ) (σ : St supp) (k : ℕ) (rest 
         have hfr' : ((.PB, ![σ4.regs 2, σ2.regs 1, σ.regs 1, σ2.regs 0]) : Rec Kd) ∈ σ4.heap := by
           rw [h42]
           exact hh4 (new_nx (θ := θ) σ2 (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0))
-        refine pstep ok4 hm4 hfr' .pb rfl rfl rfl ?_
+        refine rstep ok4 hm4 rfl hfr' .pb rfl rfl rfl ?_
         subst h41
         refine (hk (nx θ σ4 (.inl .pb) (σ2.regs 1) (σ.regs 1) (σ2.regs 0)) (σ4.n + 1) (ok4.nx _ _ _ _) rfl rfl h1
           (fun _ hc => heap_nx _ _ _ _ _ (hh4 (heap_nx _ _ _ _ _ (hh2 (heap_nx _ _ _ _ _ hc))))) ?_ ?_).mono (by linarith)
@@ -177,12 +160,12 @@ theorem zstep {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = 
 
 /-- The end of a run. -/
 theorem KS_halt {H : List (Rec Kd)} {k : ℕ} (hk : ((.HT, ![k, 0, 0, 0]) : Rec Kd) ∈ H) (o : Tree) :
-    KS θ supp H k [] o 1 1 := by
+    KS θ supp .R H k [] o 1 1 := by
   intro σ v ok hm h1 h2 hh hi hv
   have hht : ((.HT, ![σ.regs 2, 0, 0, 0]) : Rec Kd) ∈ σ.heap := by
     rw [h2]
     exact hh hk
-  refine rstep ok hm hht .rht rfl rfl rfl ?_
+  refine rstep ok hm rfl hht .rht rfl rfl rfl ?_
   refine (Mach.SumTo.halt (P := UM θ supp) rfl ?_ (fun r => src_ne r)).mono (by norm_num)
   rw [inpA _ _ (by simp) (by simp), hi]
 
@@ -195,13 +178,13 @@ theorem pv_eq {τ : ℕ} {z : Tree} (h : Plain θ τ z) : pv θ z = tot (fun _ =
 /-- After the tree has been read. -/
 theorem PKS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : Plain θ τ z) {H : List (Rec Kd)} {k j s0 s1 : ℕ}
     (hj : ((.PE, ![j, k, s0, s1]) : Rec Kd) ∈ H) (hk : ((.HT, ![k, 0, 0, 0]) : Rec Kd) ∈ H) :
-    PKS θ supp H j [] z (pv θ z) (Cc supp * τ + 3) := by
+    KS θ supp .PR H j [] z (pv θ z) (Cc supp * τ + 3) := by
   intro σ3 v ok3 hm3 h31 h32 hh3 hi3 hv
   have hev := evOK (supp := supp) hθ h.1.ev
   have hfr : ((.PE, ![σ3.regs 2, k, s0, s1]) : Rec Kd) ∈ σ3.heap := by
     rw [h32]
     exact hh3 hj
-  refine pstep ok3 hm3 hfr .pe rfl rfl rfl ?_
+  refine rstep ok3 hm3 rfl hfr .pe rfl rfl rfl ?_
   subst h31
   have ok4 := ok3.nx (θ := θ) (.inl .pe) k s0 s1
   obtain ⟨p, q, s, hrec, hp', hq'⟩ := (hv.mono (heap_nx (θ := θ) σ3 (.inl .pe) k s0 s1)).load ok4

@@ -186,7 +186,7 @@ variable (θ supp) in
 /-- The machine evaluates the formula correctly. -/
 def EvOK (F : Fm) (x : Tree) (l : List (Run A)) : Prop :=
   ∀ σ : St supp, ES σ F x → ∀ (m : Run A → A) (Bd : Run A → ℤ) (B : ℤ),
-    (∀ r ∈ l, r.bill = [] → KS θ supp σ.heap (σ.regs 3) σ.inp r.out (m r) (Bd r) ∧ Cc supp * r.cost + Bd r ≤ B) →
+    (∀ r ∈ l, r.bill = [] → KS θ supp .R σ.heap (σ.regs 3) σ.inp r.out (m r) (Bd r) ∧ Cc supp * r.cost + Bd r ≤ B) →
     Mach.SumTo (UM θ supp) σ (tot m l) B
 
 /-- A step from an opcode. -/

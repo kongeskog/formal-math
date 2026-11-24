@@ -41,14 +41,14 @@ theorem Rep.load {σ : St supp} (hσ : OKs σ) {a : ℕ} {t : Tree} (h : Rep σ.
     obtain ⟨p, q, s, h1, h2, h3⟩ := h
     exact ⟨p, q, s, h1, h2, h3⟩
 
-/-- What happens when the value o is returned to the frame k. -/
-def KS (θ : List Bool → A) (supp : Finset (List Bool)) (H : List (Rec Kd)) (k : ℕ) (inp : List Bool) (o : Tree) (S : A)
-    (B : ℤ) : Prop :=
-  ∀ (σ : St supp) (v : ℕ), OKs σ → σ.mode = .R → σ.regs 1 = v → σ.regs 2 = k → H ⊆ σ.heap → σ.inp = inp →
+/-- What happens when the value o is returned to the frame k in the mode md. -/
+def KS (θ : List Bool → A) (supp : Finset (List Bool)) (md : Md (Nm supp)) (H : List (Rec Kd)) (k : ℕ) (inp : List Bool)
+    (o : Tree) (S : A) (B : ℤ) : Prop :=
+  ∀ (σ : St supp) (v : ℕ), OKs σ → σ.mode = md → σ.regs 1 = v → σ.regs 2 = k → H ⊆ σ.heap → σ.inp = inp →
     Rep σ.heap v o → Mach.SumTo (UM θ supp) σ S B
 
-theorem KS.heap {H H' : List (Rec Kd)} (hH : H ⊆ H') {k : ℕ} {inp : List Bool} {o : Tree} {S : A} {B : ℤ}
-    (h : KS θ supp H k inp o S B) : KS θ supp H' k inp o S B :=
+theorem KS.heap {md : Md (Nm supp)} {H H' : List (Rec Kd)} (hH : H ⊆ H') {k : ℕ} {inp : List Bool} {o : Tree} {S : A}
+    {B : ℤ} (h : KS θ supp md H k inp o S B) : KS θ supp md H' k inp o S B :=
   fun σ v h1 h2 h3 h4 h5 h6 h7 => h σ v h1 h2 h3 h4 (fun _ hc => h5 (hH hc)) h6 h7
 
 theorem wtA (r : Ra) : (ruleA r : RD A (Nm supp)).wt = 1 := by
@@ -189,7 +189,7 @@ theorem not_pre {p : List Bool} (hp : p ∉ pre supp) (hθ : ∀ q, q ∉ supp �
 
 /-- Reading a name. -/
 theorem readName (hθ : ∀ q, q ∉ supp → θ q = 0) {S : A} {B : ℤ} (w : Tree) : ∀ (p : Nm supp) (σ : St supp), OKs σ →
-    σ.mode = .TH p → Rep σ.heap (σ.regs 1) w → KS θ supp σ.heap (σ.regs 2) σ.inp .nil S B →
+    σ.mode = .TH p → Rep σ.heap (σ.regs 1) w → KS θ supp .R σ.heap (σ.regs 2) σ.inp .nil S B →
     Mach.SumTo (UM θ supp) σ (θ (p.1 ++ w.path) * S) (B + 1 + 2 * (Lm supp - p.1.length : ℕ)) := by
   induction w with
   | nil =>
