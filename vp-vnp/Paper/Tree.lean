@@ -341,6 +341,7 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
 noncomputable def goodBound (C₁ : ℝ) (a₁ : ℕ) : ℕ := ⌊2 * C₁ * (a₁ : ℝ) ^ 2⌋₊
 
 /-- Without units from a node to itself every current unit joins two nodes: thin trees give the printed formula. -/
+-- pipeline test: a comment changes nothing
 theorem cutUnits_id_cur {R : Type} [CommRing R] {AA A' E N U1 : ℕ} {S : Sys R (AA + A') E} (P : Plan S N U1)
     {n : Fin AA → Fin AA → Fin (N + 1)} (hn : ∀ a, n a a = 0) (o : S.N → Fin U1) :
     cutUnits (hold0 S.np) (hold1 S.np) id (P.cur n o E) = P.cur n o E := by
