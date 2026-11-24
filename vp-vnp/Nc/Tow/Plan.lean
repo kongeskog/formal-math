@@ -96,19 +96,8 @@ theorem card_fin_lt' (N c : ℕ) (hc : c ≤ N) : ((univ : Finset (Fin N)).filte
 theorem sum_units {N : Type} [Fintype N] {M : Type*} [AddCommMonoid M]
     (f : Uid AA U0 N U1 → M) :
     ∑ u, f u = (∑ a, ∑ c, ∑ k, f (.init a c k)) + ∑ ν, ∑ k, f (.new ν k) := by
-  let e : Uid AA U0 N U1 ≃ (Fin AA × Fin AA × Fin U0) ⊕ (N × Fin U1) :=
-    { toFun := fun u => match u with
-        | .init a c k => .inl (a, c, k)
-        | .new ν k => .inr (ν, k)
-      invFun := fun s => match s with
-        | .inl p => .init p.1 p.2.1 p.2.2
-        | .inr p => .new p.1 p.2
-      left_inv := fun u => by cases u <;> rfl
-      right_inv := fun s => by rcases s with ⟨a, c, k⟩ | ⟨ν, k⟩ <;> rfl }
-  rw [← Equiv.sum_comp e.symm, Fintype.sum_sum_type, Fintype.sum_prod_type, Fintype.sum_prod_type]
-  congr 1
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [Fintype.sum_prod_type]
+  rw [← (proxy_equiv% (Uid AA U0 N U1)).sum_comp]
+  simp only [Fintype.sum_sum_type, Fintype.sum_sigma]
   rfl
 
 /-- The number of alive units with a target. -/

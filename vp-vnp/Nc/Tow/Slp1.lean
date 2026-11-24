@@ -19,24 +19,6 @@ open Finset Nc.G Unc
 
 variable {F : Type} [CommRing F] {h b D J r m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J r}
 
-/-- Targets as a sum. -/
-def tgEquiv (T : Tower h b D J r) (m AA : ℕ) : Tg T m AA ≃ Unit ⊕ ((Σ j : Fin (J + 1), T.Ed j) ⊕
-    (RM T m AA ⊕ (Σ j : Fin J, Σ i : Fin h, T.V (j + 1) i × Sym2 T.Fl))) where
-  toFun
-    | .done => .inl ()
-    | .edge j e => .inr (.inl ⟨j, e⟩)
-    | .nxt x => .inr (.inr (.inl x))
-    | .seg j i ω q => .inr (.inr (.inr ⟨j, i, ω, q⟩))
-  invFun
-    | .inl _ => .done
-    | .inr (.inl x) => .edge x.1 x.2
-    | .inr (.inr (.inl x)) => .nxt x
-    | .inr (.inr (.inr x)) => .seg x.1 x.2.1 x.2.2.1 x.2.2.2
-  left_inv x := by cases x <;> rfl
-  right_inv x := by rcases x with _ | _ | _ | _ <;> rfl
-
-instance (T : Tower h b D J r) (m AA : ℕ) : Fintype (Tg T m AA) := Fintype.ofEquiv _ (tgEquiv T m AA).symm
-
 variable (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T)
 
 /-- A bound for all loads. -/
