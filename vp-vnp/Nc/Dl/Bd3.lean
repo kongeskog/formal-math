@@ -55,6 +55,7 @@ variable (hst : Final C tab qn pt q ρ n o b st) (hnm : ∀ y, (C.nm y).length �
 
 include hst hnm hdc
 
+omit hst hdc in
 theorem cost_gN (y : NmT S M U0 U1 pS) (σ : List Bool → Tree) : (gN C y).cost σ ≤ 30 * Lc + 50 := by
   have := hnm y
   simp only [gN, Tm.cost]
@@ -83,106 +84,12 @@ theorem cost_ifTm (k : Fin pS) (t : Tree) (a : Tm) : (ifTm (C.nm (.slp k)) t a).
   rw [ifTm]
   omega
 
-variable (hS : Fintype.card (Option S) ≤ X) (hK2 : K + K ≤ X) (hId : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X)
-  (hU0X : U0 + 1 ≤ X) (hSl : ∀ r : M.R, Fintype.card ((M.kind r.1).SlAt r.2) ≤ X)
-  (hCn : ∀ r : M.R, Fintype.card ((M.kind r.1).CnAt r.2) ≤ X) (hR : Fintype.card M.R ≤ X)
-
-include hS hK2
-
-theorem cost_bodyTm (p : Fin (K + K)) :
-    (bodyTm C p).cost (byPath C.nm st) ≤ 3 * (X * (30 * Lc + 150)) + 300 := by
-  have h1 : ((listTm ((univ : Finset (Option S)).toList.map fun s => gN C (.flag s p)))).cost (byPath C.nm st) ≤
-      X * (30 * Lc + 150) + 20 := by
-    rw [cost_listTm, List.map_map]
-    refine Nat.add_le_add_right (sum_map_le _ _ (fun s _ => ?_) ?_) _
-    · have := cost_gN hst hnm hdc (.flag s p) (byPath C.nm st)
-      simp only [Function.comp_apply]
-      omega
-    · rw [Finset.length_toList, Finset.card_univ]; exact hS
-  have h2 : ∀ f : Fin (K + K) → NmT S M U0 U1 pS, (listTm (List.ofFn fun b => gN C (f b))).cost (byPath C.nm st) ≤
-      X * (30 * Lc + 150) + 20 := by
-    intro f
-    rw [cost_listTm]
-    refine Nat.add_le_add_right (sum_map_le _ _ (fun t ht => ?_) ?_) _
-    · rw [List.mem_ofFn] at ht
-      obtain ⟨b', rfl⟩ := ht
-      have := cost_gN hst hnm hdc (f b') (byPath C.nm st)
-      omega
-    · rw [List.length_ofFn]; exact hK2
-  have h3 := h2 fun b => .kR p b
-  have h4 := h2 fun b => .kC b p
-  simp only [bodyTm, Tm.cost]
-  omega
-
-theorem cost_basesTm (p : Fin (K + K)) :
-    (basesTm C p).cost (byPath C.nm st) ≤ 3 * (X * (30 * Lc + 150)) + 90 * Lc + 1000 := by
-  have h1 := cost_bodyTm hst hnm hdc hS hK2 p
-  have h2 : (baseTm C p).cost (byPath C.nm st) ≤ 3 * (X * (30 * Lc + 150)) + 60 * Lc + 800 := by
-    revert h1
-    refine Fin.addCases (fun κ h1 => ?_) (fun κ h1 => ?_) p
-    · rw [baseTm, Fin.addCases_left]
-      have a1 := cost_gN hst hnm hdc (.q κ.castSucc) (byPath C.nm st)
-      have a2 := cost_gN hst hnm hdc (.q κ.succ) (byPath C.nm st)
-      simp only [Tm.cost]
-      omega
-    · rw [baseTm, Fin.addCases_right]
-      have a1 := cost_gN hst hnm hdc (.part κ) (byPath C.nm st)
-      simp only [Tm.cost]
-      omega
-  have h3 := cost_gN hst hnm hdc (.dg p) (byPath C.nm st)
-  simp only [basesTm, Tm.cost]
-  omega
-
-include hId
-
-theorem cost_slotTm (z : M.Z) (a : Fin (K + K + A')) :
-    (slotTm C tab d1 z a).cost (byPath C.nm st) ≤ X * (270 * Lc + 700) + 20 := by
-  rw [slotTm, cost_catTm, List.map_map]
-  refine Nat.add_le_add_right (sum_map_le _ _ (fun id _ => ?_) ?_) _
-  · have h1 := cost_ifTm hst hnm hdc (tab.kcons z id) d1 (.c (listT [ofBits (C.key (a, id))]))
-    have e : (Tm.c (listT [ofBits (C.key (a, id))])).cost (byPath C.nm st) = 20 := rfl
-    have h2 : ((ifTm (C.nm (.slp (tab.kcons z id))) d1 (.c (listT [ofBits (C.key (a, id))]))).expand
-        (byPath C.nm st)).toList.length ≤ 1 := by
-      rw [expand_ifTm]
-      split_ifs
-      · simp [Tm.expand]
-      · simp
-    simp only [Function.comp_apply]
-    omega
-  · rw [List.length_reverse, G.allIds, Finset.length_toList, Finset.card_univ]
-    exact hId
-
-include hSl hCn
-
-theorem cost_roleTm (r : M.R) : (roleTm C tab tg d1 r).cost (byPath C.nm st) ≤
-    X * (X * (270 * Lc + 700) + 120) + X * (30 * Lc + 150) + 30 * Lc + 500 := by
-  have h1 : (listTm ((univ : Finset ((M.kind r.1).SlAt r.2)).toList.map fun e => slotTm C tab d1 ⟨r.1, e.1⟩ (M.rp r))).cost
-      (byPath C.nm st) ≤ X * (X * (270 * Lc + 700) + 120) + 20 := by
-    rw [cost_listTm, List.map_map]
-    refine Nat.add_le_add_right (sum_map_le _ _ (fun e _ => ?_) ?_) _
-    · have := cost_slotTm (d1 := d1) hst hnm hdc hS hK2 hId ⟨r.1, e.1⟩ (M.rp r)
-      simp only [Function.comp_apply]
-      omega
-    · rw [Finset.length_toList, Finset.card_univ]; exact hSl r
-  have h2 : (listTm ((univ : Finset ((M.kind r.1).CnAt r.2)).toList.map fun ν =>
-      gN C (.ch ⟨r.1, ν.1⟩ (decide ((M.kind r.1).c ν.1 ≠ r.2))))).cost (byPath C.nm st) ≤ X * (30 * Lc + 150) + 20 := by
-    rw [cost_listTm, List.map_map]
-    refine Nat.add_le_add_right (sum_map_le _ _ (fun ν _ => ?_) ?_) _
-    · have := cost_gN hst hnm hdc (.ch ⟨r.1, ν.1⟩ (decide ((M.kind r.1).c ν.1 ≠ r.2))) (byPath C.nm st)
-      simp only [Function.comp_apply]
-      omega
-    · rw [Finset.length_toList, Finset.card_univ]; exact hCn r
-  have h3 := cost_gN hst hnm hdc (.num r.1) (byPath C.nm st)
-  simp only [roleTm, Tm.cost]
-  omega
-
-omit hSl hCn in
 theorem cost_endTm (g : Fin mm) (id : G.Uid (K + K) U0 M.N U1) :
     (endTm C tab gt d1 g id).cost (byPath C.nm st) ≤ 2000 * Lc + 4000 ∧
     ((endTm C tab gt d1 g id).expand (byPath C.nm st)).toList.length ≤ 1 := by
   have hone : ∀ k, (oneTm C k id).cost (byPath C.nm st) ≤ 30 * Lc + 500 := by
     intro k
-    have := cost_gN hst hnm hdc (.cont id) (byPath C.nm st)
+    have := cost_gN hnm (.cont id) (byPath C.nm st)
     rw [oneTm, cost_listTm]
     simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, Tm.cost]
     omega
@@ -222,6 +129,99 @@ theorem cost_endTm (g : Fin mm) (id : G.Uid (K + K) U0 M.N U1) :
         · exact (lone _).le
         · simp
     · simp
+
+variable (hS : Fintype.card (Option S) ≤ X) (hK2 : K + K ≤ X) (hId : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X)
+  (hU0X : U0 + 1 ≤ X) (hSl : ∀ r : M.R, Fintype.card ((M.kind r.1).SlAt r.2) ≤ X)
+  (hCn : ∀ r : M.R, Fintype.card ((M.kind r.1).CnAt r.2) ≤ X) (hR : Fintype.card M.R ≤ X)
+
+include hS hK2
+
+theorem cost_bodyTm (p : Fin (K + K)) :
+    (bodyTm C p).cost (byPath C.nm st) ≤ 3 * (X * (30 * Lc + 150)) + 300 := by
+  have h1 : ((listTm ((univ : Finset (Option S)).toList.map fun s => gN C (.flag s p)))).cost (byPath C.nm st) ≤
+      X * (30 * Lc + 150) + 20 := by
+    rw [cost_listTm, List.map_map]
+    refine Nat.add_le_add_right (sum_map_le _ _ (fun s _ => ?_) ?_) _
+    · have := cost_gN hnm (.flag s p) (byPath C.nm st)
+      simp only [Function.comp_apply]
+      omega
+    · rw [Finset.length_toList, Finset.card_univ]; exact hS
+  have h2 : ∀ f : Fin (K + K) → NmT S M U0 U1 pS, (listTm (List.ofFn fun b => gN C (f b))).cost (byPath C.nm st) ≤
+      X * (30 * Lc + 150) + 20 := by
+    intro f
+    rw [cost_listTm]
+    refine Nat.add_le_add_right (sum_map_le _ _ (fun t ht => ?_) ?_) _
+    · rw [List.mem_ofFn] at ht
+      obtain ⟨b', rfl⟩ := ht
+      have := cost_gN hnm (f b') (byPath C.nm st)
+      omega
+    · rw [List.length_ofFn]; exact hK2
+  have h3 := h2 fun b => .kR p b
+  have h4 := h2 fun b => .kC b p
+  simp only [bodyTm, Tm.cost]
+  omega
+
+theorem cost_basesTm (p : Fin (K + K)) :
+    (basesTm C p).cost (byPath C.nm st) ≤ 3 * (X * (30 * Lc + 150)) + 90 * Lc + 1000 := by
+  have h1 := cost_bodyTm hst hnm hdc hS hK2 p
+  have h2 : (baseTm C p).cost (byPath C.nm st) ≤ 3 * (X * (30 * Lc + 150)) + 60 * Lc + 800 := by
+    revert h1
+    refine Fin.addCases (fun κ h1 => ?_) (fun κ h1 => ?_) p
+    · rw [baseTm, Fin.addCases_left]
+      have a1 := cost_gN hnm (.q κ.castSucc) (byPath C.nm st)
+      have a2 := cost_gN hnm (.q κ.succ) (byPath C.nm st)
+      simp only [Tm.cost]
+      omega
+    · rw [baseTm, Fin.addCases_right]
+      have a1 := cost_gN hnm (.part κ) (byPath C.nm st)
+      simp only [Tm.cost]
+      omega
+  have h3 := cost_gN hnm (.dg p) (byPath C.nm st)
+  simp only [basesTm, Tm.cost]
+  omega
+
+include hId
+
+theorem cost_slotTm (z : M.Z) (a : Fin (K + K + A')) :
+    (slotTm C tab d1 z a).cost (byPath C.nm st) ≤ X * (270 * Lc + 700) + 20 := by
+  rw [slotTm, cost_catTm, List.map_map]
+  refine Nat.add_le_add_right (sum_map_le _ _ (fun id _ => ?_) ?_) _
+  · have h1 := cost_ifTm hst hnm hdc (tab.kcons z id) d1 (.c (listT [ofBits (C.key (a, id))]))
+    have e : (Tm.c (listT [ofBits (C.key (a, id))])).cost (byPath C.nm st) = 20 := rfl
+    have h2 : ((ifTm (C.nm (.slp (tab.kcons z id))) d1 (.c (listT [ofBits (C.key (a, id))]))).expand
+        (byPath C.nm st)).toList.length ≤ 1 := by
+      rw [expand_ifTm]
+      split_ifs
+      · simp [Tm.expand]
+      · simp
+    simp only [Function.comp_apply]
+    omega
+  · rw [List.length_reverse, G.allIds, Finset.length_toList, Finset.card_univ]
+    exact hId
+
+include hSl hCn
+
+theorem cost_roleTm (r : M.R) : (roleTm C tab tg d1 r).cost (byPath C.nm st) ≤
+    X * (X * (270 * Lc + 700) + 120) + X * (30 * Lc + 150) + 30 * Lc + 500 := by
+  have h1 : (listTm ((univ : Finset ((M.kind r.1).SlAt r.2)).toList.map fun e => slotTm C tab d1 ⟨r.1, e.1⟩ (M.rp r))).cost
+      (byPath C.nm st) ≤ X * (X * (270 * Lc + 700) + 120) + 20 := by
+    rw [cost_listTm, List.map_map]
+    refine Nat.add_le_add_right (sum_map_le _ _ (fun e _ => ?_) ?_) _
+    · have := cost_slotTm (d1 := d1) hst hnm hdc hS hK2 hId ⟨r.1, e.1⟩ (M.rp r)
+      simp only [Function.comp_apply]
+      omega
+    · rw [Finset.length_toList, Finset.card_univ]; exact hSl r
+  have h2 : (listTm ((univ : Finset ((M.kind r.1).CnAt r.2)).toList.map fun ν =>
+      gN C (.ch ⟨r.1, ν.1⟩ (decide ((M.kind r.1).c ν.1 ≠ r.2))))).cost (byPath C.nm st) ≤ X * (30 * Lc + 150) + 20 := by
+    rw [cost_listTm, List.map_map]
+    refine Nat.add_le_add_right (sum_map_le _ _ (fun ν _ => ?_) ?_) _
+    · have := cost_gN hnm (.ch ⟨r.1, ν.1⟩ (decide ((M.kind r.1).c ν.1 ≠ r.2))) (byPath C.nm st)
+      simp only [Function.comp_apply]
+      omega
+    · rw [Finset.length_toList, Finset.card_univ]; exact hCn r
+  have h3 := cost_gN hnm (.num r.1) (byPath C.nm st)
+  simp only [roleTm, Tm.cost]
+  omega
 
 include hSl hCn hU0X hR
 
@@ -293,7 +293,7 @@ theorem cost_instTm (g : Fin mm) :
       62 * (t.expand (byPath C.nm st)).toList.length + 250).sum ≤ X * (2000 * Lc + 5000) := by
     rw [List.map_map]
     refine sum_map_le _ _ (fun id _ => ?_) ?_
-    · obtain ⟨a1, a2⟩ := cost_endTm (gt := gt) (d1 := d1) hst hnm hdc hS hK2 hId g id
+    · obtain ⟨a1, a2⟩ := cost_endTm (gt := gt) (d1 := d1) hst hnm hdc g id
       simp only [Function.comp_apply]
       omega
     · rw [G.allIds, Finset.length_toList, Finset.card_univ]; exact hId
