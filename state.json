@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:02:22.414885066Z",
+  "updated_at": "2026-11-24T20:03:28.103003828Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 25,
     "rejected": 2,
-    "open": 6,
+    "open": 7,
     "contributors": 1,
-    "ideas_open": 2
+    "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 25,
-      "attempts": 33,
+      "attempts": 34,
       "saved": 10890
     }
   ],
@@ -104,10 +104,10 @@
     {
       "number": 56,
       "title": "Idea: restructure(Nc/Tower/UT): build the submonoid of U once and extend it to the subgroup",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:02:33Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:43:05Z",
@@ -136,7 +136,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:53:38Z",
-      "pr": null,
+      "pr": 62,
       "result_delta": null,
       "created_at": "2026-11-24T19:43:01Z",
       "url": "https://github.com/kongeskog/formal-math/issues/54",
@@ -907,8 +907,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 38,
@@ -918,6 +918,74 @@
       "reason": null,
       "technique": "library",
       "scope": "Nc/Tow"
+    },
+    {
+      "pr": 62,
+      "title": "shorten(Nc/Dl): iterate for seven identical lines, drop ten generalize lines before omega",
+      "author": "kongeskog",
+      "head_sha": "3db17881aa56916ac082670acd0ec3291d145bdc",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:02:44Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 54,
+      "url": "https://github.com/kongeskog/formal-math/pull/62",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Dl"
     }
   ],
   "top_files": [
