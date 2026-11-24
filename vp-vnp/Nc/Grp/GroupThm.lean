@@ -14,6 +14,8 @@ is the value of the group; accepting runs exist only if the numbers of units are
 
 set_option linter.unusedSectionVars false
 
+-- `grpT` and `GroupOK` are stated here so that `exists_group` can conclude `GroupOK` directly.
+-- They keep their `Nc.Dl` names because the rest of `Nc/Dl` and the paper statements use them.
 namespace Nc.Dl
 
 open NS1 NS1.Tree Finset Nc.G Nc.Cut

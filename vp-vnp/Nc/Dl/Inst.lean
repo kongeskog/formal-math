@@ -19,6 +19,8 @@ namespace Nc.Dl
 
 open NS1 NS1.Tree Finset Nc.G Nc.Cut Codes
 
+-- `grpT` and `GroupOK` are in `Nc/Grp/GroupThm.lean`.
+
 /-- The number of all names, digits, keys. -/
 structure CodesLe {A : Type} [CommRing A] {S : Type} [Fintype S] {K A' E U0 U1 D pS : ℕ} {M : Sys A (K + K + A') E}
     (C : Codes S M U0 U1 D pS) (Lc : ℕ) : Prop where
