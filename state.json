@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:46:48.618690113Z",
+  "updated_at": "2026-11-24T00:48:31.634553970Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 2,
     "contributors": 1,
-    "ideas_open": 2
+    "ideas_open": 9
   },
   "leaderboard": [
     {
@@ -87,6 +87,104 @@
     }
   ],
   "ideas": [
+    {
+      "number": 16,
+      "title": "Idea: merge(Paper/Next,Paper/ApproxRound): shared arithmetic lemmas for the two scale steps",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:48:07Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/16",
+      "technique": "merge",
+      "scope": "Paper/Next,Paper/ApproxRound"
+    },
+    {
+      "number": 15,
+      "title": "Idea: shorten(*): replace the obtain-exists-rfl idiom by generalize or exists_eq",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:48:06Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/15",
+      "technique": "shorten",
+      "scope": "*"
+    },
+    {
+      "number": 14,
+      "title": "Idea: generalize(Nc/Uni): one lemma for EvOK.hd and EvOK.tl, a mode parameter for KS and rstep",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:48:05Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/14",
+      "technique": "generalize",
+      "scope": "Nc/Uni"
+    },
+    {
+      "number": 13,
+      "title": "Idea: generalize(NS1/Comp,Nc/Grp/Lang): one weighted sum and bind for lists of any value type",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:48:03Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/13",
+      "technique": "generalize",
+      "scope": "NS1/Comp,Nc/Grp/Lang"
+    },
+    {
+      "number": 12,
+      "title": "Idea: restructure(Nc/Dl): prove sum_allSteps from sum_steps18 instead of repeating its phases",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:48:02Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/12",
+      "technique": "restructure",
+      "scope": "Nc/Dl"
+    },
+    {
+      "number": 11,
+      "title": "Idea: shorten(*): drop hypotheses and instance arguments the unusedArguments linter reports",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:48:00Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/11",
+      "technique": "shorten",
+      "scope": "*"
+    },
+    {
+      "number": 10,
+      "title": "Idea: merge(Nc): keep one copy of lemmas that are repeated verbatim in two files",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T00:47:59Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/10",
+      "technique": "merge",
+      "scope": "Nc"
+    },
     {
       "number": 8,
       "title": "Idea: merge(Nc,NS1): remove the remaining exact duplicate declarations",
@@ -150,13 +248,27 @@
       "title": "merge(Nc/Dl/Facts): reuse three lemmas duplicated from Nc/Cut/Facts",
       "author": "kongeskog",
       "head_sha": "c02a90a5dab8fb5f24d8cae3063dc0db68deda4c",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "7c1f581344aef8eb8831ae323d3f3dbfe45925a7",
+      "status": "stale",
       "created_at": "2026-11-24T00:35:34Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 927832,
+        "loc": 58773,
+        "decls": 4607,
+        "files": 321,
+        "bytes": 3419711,
+        "build_seconds": 152
+      },
+      "base_metrics": {
+        "tokens": 928161,
+        "loc": 58797,
+        "decls": 4610,
+        "files": 321,
+        "bytes": 3421123,
+        "build_seconds": null
+      },
+      "delta": -329,
       "gates": [
         {
           "key": "format",
@@ -164,39 +276,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "1 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 928161 → 927832 (-329)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -207,7 +327,7 @@
       ],
       "idea": null,
       "url": "https://github.com/kongeskog/formal-math/pull/7",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45298418129",
       "merge_sha": null,
       "reason": null,
       "technique": "merge",
