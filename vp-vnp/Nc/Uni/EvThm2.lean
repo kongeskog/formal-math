@@ -23,15 +23,17 @@ theorem tot_map (m : Run A → A) (l : List (Run A)) (f : Run A → Tree) :
   rw [List.map_map]
   rfl
 
-/-- A step from a returned value; the frame is in the heap. -/
-theorem rstep {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .R) {κ : Kd} {p q s : ℕ}
-    (hrec : ((κ, ![σ.regs 2, p, q, s]) : Rec Kd) ∈ σ.heap) (r : Ra) (hr : nextR supp .R κ = some (.inl r))
-    (hs : (ruleA r : RD A (Nm supp)).src = .R) (hk : (ruleA r : RD A (Nm supp)).lk = κ) {S : A} {B : ℤ}
+/-- A step from a returned value, in a mode that loads the record of register 2 (R or PR); the frame is
+in the heap. -/
+theorem rstep {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = md) (hla : laM md = 2) {κ : Kd}
+    {p q s : ℕ} (hrec : ((κ, ![σ.regs 2, p, q, s]) : Rec Kd) ∈ σ.heap) (r : Ra) (hr : nextR supp md κ = some (.inl r))
+    (hs : (ruleA r : RD A (Nm supp)).src = md) (hk : (ruleA r : RD A (Nm supp)).lk = κ) {S : A} {B : ℤ}
     (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) p q s) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
+  subst hm
   have hrec' : ((κ, ![σ.regs (laM σ.mode), p, q, s]) : Rec Kd) ∈ σ.heap := by
-    rw [hm]
+    rw [hla]
     exact hrec
-  exact (sumTo_ruleA hσ hrec' r (by rw [hm]; exact hr) (by rw [hm]; simp) (by rw [hm]; simp) (by rw [hm]; exact hs) hk
+  exact (sumTo_ruleA hσ hrec' r hr (fun e => by rw [e] at hla; cases hla) (fun e => by rw [e.1] at hla; cases hla) hs hk
     h).mono (by omega)
 
 /-- A step that loads the record of register 1. -/
@@ -75,7 +77,7 @@ theorem EvOK.hd {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
     have hfr : ((.HD, ![σ3.regs 2, σ1.regs 4, σ1.regs 0, σ1.regs 0]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
       exact hh3 (new_nx (θ := θ) σ1 (.inl .d2) 0 0 0)
-    refine rstep ok3 hm3 hfr .rhd rfl rfl rfl ?_
+    refine rstep ok3 hm3 rfl hfr .rhd rfl rfl rfl ?_
     have ok4 := ok3.nx (θ := θ) (.inl .rhd) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)
     subst h31
     obtain ⟨p, q, s, hrec, hp, hq⟩ := (hv.mono (heap_nx (θ := θ) σ3 (.inl .rhd) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0))).load ok4
@@ -109,7 +111,7 @@ theorem EvOK.tl {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
     have hfr : ((.TL, ![σ3.regs 2, σ1.regs 4, σ1.regs 0, σ1.regs 0]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
       exact hh3 (new_nx (θ := θ) σ1 (.inl .d3) 0 0 0)
-    refine rstep ok3 hm3 hfr .rtl rfl rfl rfl ?_
+    refine rstep ok3 hm3 rfl hfr .rtl rfl rfl rfl ?_
     have ok4 := ok3.nx (θ := θ) (.inl .rtl) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)
     subst h31
     obtain ⟨p, q, s, hrec, hp, hq⟩ := (hv.mono (heap_nx (θ := θ) σ3 (.inl .rtl) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0))).load ok4
@@ -148,7 +150,7 @@ theorem EvOK.cons {a b : Fm} {x : Tree} {la lb : List (Run A)} (iha : EvOK θ su
     have hfr : ((.CO1, ![σ3.regs 2, q, σ2.regs 2, σ2.regs 3]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
       exact hh3 (new_nx (θ := θ) σ2 (.inl (.k4 bt)) p q s)
-    refine rstep ok3 hm3 hfr .rco1 rfl rfl rfl ?_
+    refine rstep ok3 hm3 rfl hfr .rco1 rfl rfl rfl ?_
     subst h31
     have ok4 := ok3.nx (θ := θ) (.inl .rco1) q (σ2.regs 2) (σ2.regs 3)
     set σ4 := nx θ σ3 (.inl .rco1) q (σ2.regs 2) (σ2.regs 3) with hσ4
@@ -168,7 +170,7 @@ theorem EvOK.cons {a b : Fm} {x : Tree} {la lb : List (Run A)} (iha : EvOK θ su
       have hfr' : ((.CO2, ![σ5.regs 2, σ3.regs 1, σ2.regs 3, σ3.regs 0]) : Rec Kd) ∈ σ5.heap := by
         rw [h52]
         exact hh5 (new_nx (θ := θ) σ3 (.inl .rco1) q (σ2.regs 2) (σ2.regs 3))
-      refine rstep ok5 hm5 hfr' .rco2 rfl rfl rfl ?_
+      refine rstep ok5 hm5 rfl hfr' .rco2 rfl rfl rfl ?_
       subst h51
       refine (k1 _ (σ5.n + 1) (ok5.nx _ _ _ _) rfl rfl hr3 (fun _ hc => heap_nx _ _ _ _ _ (hh5 (hh4 hc))) ?_ ?_).mono
         (by linarith)
@@ -207,7 +209,7 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
     have hfr : ((.IT, ![σ3.regs 2, q, σ2.regs 2, σ2.regs 3]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
       exact hh3 (new_nx (θ := θ) σ2 (.inl (.k5 bt)) p q s)
-    refine rstep ok3 hm3 hfr .rit rfl rfl rfl ?_
+    refine rstep ok3 hm3 rfl hfr .rit rfl rfl rfl ?_
     subst h31
     have ok4 := ok3.nx (θ := θ) (.inl .rit) q (σ2.regs 2) (σ2.regs 3)
     have hv4 := hv.mono (heap_nx (θ := θ) σ3 (.inl .rit) q (σ2.regs 2) (σ2.regs 3))
@@ -218,7 +220,7 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
       rw [inpA _ _ (by simp) (by simp), hi3, inpA _ _ (by simp) (by simp), inpA _ _ (by simp) (by simp), hi1]
     obtain ⟨y1, y2, y3, hrec4, -, -⟩ := hv4.load ok4
     have hrec4' : ((kb (decide (r.out ≠ .nil)), ![σ4.regs 1, y1, y2, y3]) : Rec Kd) ∈ σ4.heap := hrec4
-    have hks : ∀ s' ∈ L r, s'.bill = [] → KS θ supp σ.heap (σ.regs 3) σ.inp s'.out (m ((r.seq s').tick s'.out))
+    have hks : ∀ s' ∈ L r, s'.bill = [] → KS θ supp .R σ.heap (σ.regs 3) σ.inp s'.out (m ((r.seq s').tick s'.out))
         (Bd ((r.seq s').tick s'.out)) ∧ Cc supp * s'.cost + Bd ((r.seq s').tick s'.out) ≤
           B - Cc supp * r.cost - Cc supp := by
       intro s' hs' hb'

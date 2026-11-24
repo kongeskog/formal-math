@@ -85,7 +85,7 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
     have hfr : ((.RU1, ![σ3.regs 2, q, σ2.regs 2, σ2.regs 3]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
       exact hh3 (new_nx (θ := θ) σ2 (.inl (.k6 bt)) p q s)
-    refine rstep ok3 hm3 hfr .rru1 rfl rfl rfl ?_
+    refine rstep ok3 hm3 rfl hfr .rru1 rfl rfl rfl ?_
     subst h31
     have ok4 := ok3.nx (θ := θ) (.inl .rru1) q (σ2.regs 2) (σ2.regs 3)
     set σ4 := nx θ σ3 (.inl .rru1) q (σ2.regs 2) (σ2.regs 3) with hσ4
@@ -103,7 +103,7 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
       have hfr' : ((.RU2, ![σ5.regs 2, σ3.regs 1, σ2.regs 3, σ3.regs 0]) : Rec Kd) ∈ σ5.heap := by
         rw [h52]
         exact hh5 (new_nx (θ := θ) σ3 (.inl .rru1) q (σ2.regs 2) (σ2.regs 3))
-      refine rstep ok5 hm5 hfr' .rru2 rfl rfl rfl ?_
+      refine rstep ok5 hm5 rfl hfr' .rru2 rfl rfl rfl ?_
       subst h51
       have hh6 : σ.heap ⊆ (nx θ σ5 (.inl .rru2) (σ3.regs 1) (σ2.regs 3) (σ3.regs 0)).heap :=
         fun _ hc => heap_nx _ _ _ _ _ (hh5 (hh4 hc))
