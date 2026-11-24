@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:06:50.940283116Z",
+  "updated_at": "2026-11-24T00:28:54.938587099Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,8 +60,8 @@
     }
   },
   "current": {
-    "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
-    "at": "2026-11-24T00:00:46.348761212Z",
+    "sha": "7c1f581344aef8eb8831ae323d3f3dbfe45925a7",
+    "at": "2026-11-24T00:28:54.938587099Z",
     "metrics": {
       "tokens": 928161,
       "loc": 58797,
@@ -89,7 +89,7 @@
   "ideas": [
     {
       "number": 5,
-      "title": "Use the statement's own Computes / Family / VP / VNP instead of the duplicates in Nc",
+      "title": "Idea: restructure(Nc): use the statement's Computes, Family, VP and VNP instead of duplicates",
       "status": "open",
       "author": "kongeskog",
       "claimed_by": null,
@@ -97,11 +97,13 @@
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T00:06:57Z",
-      "url": "https://github.com/kongeskog/formal-math/issues/5"
+      "url": "https://github.com/kongeskog/formal-math/issues/5",
+      "technique": "restructure",
+      "scope": "Nc"
     },
     {
       "number": 4,
-      "title": "Remove helper lemmas and one definition that nothing refers to",
+      "title": "Idea: dead-code(*): remove helper lemmas and one definition that nothing refers to",
       "status": "open",
       "author": "kongeskog",
       "claimed_by": null,
@@ -109,13 +111,15 @@
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T00:06:56Z",
-      "url": "https://github.com/kongeskog/formal-math/issues/4"
+      "url": "https://github.com/kongeskog/formal-math/issues/4",
+      "technique": "dead-code",
+      "scope": "*"
     }
   ],
   "open": [
     {
       "pr": 3,
-      "title": "Remove unreferenced lemma cutUnits_id_cur",
+      "title": "dead-code(Paper/Tree): remove unreferenced lemma cutUnits_id_cur",
       "author": "kongeskog",
       "head_sha": "4f5ffc1029a30df800d817ff31cab10578d27741",
       "base_sha": null,
@@ -126,6 +130,11 @@
       "base_metrics": null,
       "delta": null,
       "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
         {
           "key": "frozen",
           "label": "Frozen files untouched",
@@ -165,14 +174,16 @@
           "key": "review",
           "label": "Independent review",
           "status": "pending",
-          "detail": "0 of 1 approvals"
+          "detail": "0 of 1 approvals from vetted reviewers"
         }
       ],
       "idea": null,
       "url": "https://github.com/kongeskog/formal-math/pull/3",
       "run_url": null,
       "merge_sha": null,
-      "reason": null
+      "reason": null,
+      "technique": "dead-code",
+      "scope": "Paper/Tree"
     }
   ],
   "top_files": [
