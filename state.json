@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:06:31.297438372Z",
+  "updated_at": "2026-11-24T20:07:26.551505131Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 27,
     "rejected": 2,
-    "open": 6,
+    "open": 7,
     "contributors": 1,
     "ideas_open": 1
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 27,
-      "attempts": 35,
+      "attempts": 36,
       "saved": 11282
     }
   ],
@@ -94,7 +94,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:02:26Z",
-      "pr": null,
+      "pr": 64,
       "result_delta": null,
       "created_at": "2026-11-24T19:43:06Z",
       "url": "https://github.com/kongeskog/formal-math/issues/57",
@@ -874,6 +874,74 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Nc/Tower/UT"
+    },
+    {
+      "pr": 64,
+      "title": "restructure(Nc/Final/CClasses): take VP, VNP and VPBar from the statement",
+      "author": "kongeskog",
+      "head_sha": "f9522420187850284a0cda683e81693a83887cdd",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:07:10Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 57,
+      "url": "https://github.com/kongeskog/formal-math/pull/64",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/Final/CClasses"
     }
   ],
   "top_files": [
