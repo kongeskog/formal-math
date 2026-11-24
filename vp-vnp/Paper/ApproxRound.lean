@@ -177,31 +177,18 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
   have hu4 : 2000 ≤ u := by omega
   have hu1 : 1 ≤ u := by omega
   have hh1 : 5 * h ≤ h * α := by rw [Nat.mul_comm h α]; exact Nat.mul_le_mul_right _ hα
-  have hα32 : α * (16 * h - 32) = 16 * (h * α) - 32 * α := by
-    rw [Nat.mul_sub]
-    congr 1
-    · ring
-    · ring
+  have hα32 := mul_sub_scale α h 32
   have hαh : 17 * α ≤ h * α := Nat.mul_le_mul_right _ hh
   have he3 : h * α + 3 ≤ e := by omega
   have he4 : 16 * h ≤ e := by omega
   have hH : 16 * h ≤ e + 9 := by omega
-  have pu : ∀ a, u ^ (a + 1) = u * u ^ a := fun a => by rw [pow_succ]; ring
-  have pbig : ∀ a, 2000 * u ^ a ≤ u ^ (a + 1) := fun a => by rw [pu]; exact Nat.mul_le_mul_right _ hu4
+  have pbig := pow_big hu4
   have ppos : ∀ a, 1 ≤ u ^ a := fun a => Nat.one_le_pow _ _ (by omega)
   -- the tries of powers
-  have hnBX : ∀ (K₀ : KT E[T;T⁻¹]) (B₀ : ℕ), K₀.nds ≤ u ^ (h * α) → B₀ + 1 ≤ X → ∀ c, c * X ^ 2 ≤ 1000 * X ^ 3 →
-      (K₀.expand B₀).nds * (c * X) ≤ 2 * u ^ (h * α + 1) := by
-    intro K₀ B₀ h0 h1 c hc
-    calc (K₀.expand B₀).nds * (c * X) ≤ K₀.nds * (2 * X) * (c * X) :=
-          Nat.mul_le_mul_right _ ((KT.nds_expand B₀ K₀).trans (Nat.mul_le_mul_left _ (by omega)))
-      _ = K₀.nds * (2 * (c * X ^ 2)) := by ring
-      _ ≤ u ^ (h * α) * (2 * u) := Nat.mul_le_mul h0 (by omega)
-      _ = 2 * u ^ (h * α + 1) := by rw [pow_succ]; ring
   obtain ⟨nB, hnB⟩ : ∃ n, n = (K.expand B).nds := ⟨_, rfl⟩
   obtain ⟨nB', hnB'⟩ : ∃ n, n = (K'.expand B').nds := ⟨_, rfl⟩
   have hb : ∀ c, c * X ^ 2 ≤ 1000 * X ^ 3 → nB * (c * X) ≤ 2 * u ^ (h * α + 1) ∧ nB' * (c * X) ≤ 2 * u ^ (h * α + 1) :=
-    fun c hc => ⟨hnB ▸ hnBX K B hK (by omega) c hc, hnB' ▸ hnBX K' B' hK' (by omega) c hc⟩
+    fun c hc => ⟨hnB ▸ nds_expand_le hK (by omega) hXu hc, hnB' ▸ nds_expand_le hK' (by omega) hXu hc⟩
   -- the cut
   obtain ⟨G, hG⟩ := hC (u ^ (e + 9)) (u ^ (α * (16 * h - 32) + 1)) (pow_le_pow hu1 hH)
     (pow_le_pow hu1 he2) (by
@@ -255,7 +242,7 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     calc MM (K.ht + B + J + 1) * u ^ (e + 8) + 40 * (nB * (J + 1)) + 40
         ≤ (MM (K.ht + B + J + 1) + 2) * u ^ (e + 8) := by rw [add_mul]; omega
       _ ≤ u * u ^ (e + 8) := Nat.mul_le_mul_right _ m1
-      _ = u ^ (e + 9) := (pu (e + 8)).symm
+      _ = u ^ (e + 9) := (pow_succ' u (e + 8)).symm
   · -- size of the plain instances
     rw [← hnB, ← hsW]
     have m1 : sW + 3 ≤ u ^ (α * (16 * h - 32)) := by
@@ -307,7 +294,7 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
             refine Nat.mul_le_mul ?_ hLP
             unfold MM
             omega
-        _ = u ^ (e - 4 + 1) := (pu _).symm
+        _ = u ^ (e - 4 + 1) := (pow_succ' u _).symm
         _ ≤ u ^ e' := pow_le_pow hu1 (by omega)
     have m4 : 80 ≤ u ^ e' := by
       obtain ⟨e'', he''⟩ : ∃ e'', e' = e'' + 1 := ⟨e' - 1, by omega⟩
@@ -325,7 +312,7 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     have s3 : ∀ (K₀ : KT E[T;T⁻¹]) (B₀ : ℕ) (pre : List Bool), K₀.nds ≤ u ^ (h * α) → pre.length ≤ 1 →
         K₀.ht + B₀ + J + 1 ≤ X → (gt id J B₀ K₀ pre).code.size ≤ 2 * u ^ (h * α + 1) := by
       intro K₀ B₀ pre h0 h1 h2
-      have s4 := hnBX K₀ B₀ h0 (by omega) (18 * X) (by
+      have s4 := nds_expand_le (B := B₀) (c := 18 * X) h0 (by omega) hXu (by
         rw [show 18 * X * X ^ 2 = 18 * X ^ 3 by ring]
         omega)
       refine (size_gt id J B₀ K₀ pre (B₀ + J) (fun i hi => (show id i ≤ B₀ + J from hi.le))).trans ?_
@@ -368,35 +355,15 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
     rw [cst_def] at hcst
     exact ((Nat.le_add_left _ _).trans (Nat.le_add_right _ 2000)).trans hcst
   have hu1 : 1 ≤ u := by omega
-  have pu : ∀ a, u ^ (a + 1) = u * u ^ a := fun a => by rw [pow_succ]; ring
-  have pbig : ∀ a, 2000 * u ^ a ≤ u ^ (a + 1) := fun a => by rw [pu]; exact Nat.mul_le_mul_right _ hu4
+  have pbig := pow_big hu4
   have hαX : 2 * α + 2 ≤ X := by
     have : (2 * α + 2) * 1 ≤ (2 * α + 2) * (J + 1) := Nat.mul_le_mul_left _ (by omega)
     omega
   have hh1 : 5 * h ≤ h * α := by rw [Nat.mul_comm h α]; exact Nat.mul_le_mul_right _ hα
   have hαh : 17 * α ≤ h * α := Nat.mul_le_mul_right _ hh
-  have hα32 : α * (16 * h - 32) = 16 * (h * α) - 32 * α := by
-    rw [Nat.mul_sub]
-    congr 1
-    · ring
-    · ring
+  have hα32 := mul_sub_scale α h 32
   have e16 : 16 * h * α = 16 * (h * α) := by ring
-  have e4 : 4 * h * α = 4 * (h * α) := by ring
   have e17 : 16 * h * (2 * α) = 32 * (h * α) := by ring
-  have hsize : ∀ n ≤ 2 * α + 1, u + n * (u ^ (h * α + 2) + u ^ (16 * h + 1)) ≤ u ^ (4 * h * α) := by
-    intro n hn
-    obtain ⟨a, ha⟩ : ∃ a, 4 * h * α = a + 1 := ⟨4 * h * α - 1, by omega⟩
-    have t1 : n * (u ^ (h * α + 2) + u ^ (16 * h + 1)) ≤ u * (u ^ (h * α + 2) + u ^ (16 * h + 1)) :=
-      Nat.mul_le_mul_right _ (by omega)
-    have t2 : u * (u ^ (h * α + 2) + u ^ (16 * h + 1)) = u ^ (h * α + 3) + u ^ (16 * h + 2) := by
-      rw [mul_add, ← pu, ← pu]
-    have t3 : u ^ (h * α + 3) ≤ u ^ a := pow_le_pow hu1 (by omega)
-    have t4 : u ^ (16 * h + 2) ≤ u ^ a := pow_le_pow hu1 (by omega)
-    have t5 : u ^ 1 ≤ u ^ a := pow_le_pow hu1 (by omega)
-    have t6 := pbig a
-    rw [pow_one] at t5
-    rw [ha]
-    omega
   have hnds : ∀ n ≤ 2 * α + 1, n * (K'.nds + 1) + 1 ≤ K'.nds * (4 * α + 5) := by
     intro n hn
     have h1 := KT.nds_pos K'
@@ -446,7 +413,7 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
       have hn2 : n ≤ 2 * α + 1 := hn'
       have hres := prop_approx_acc_round_num hh hα hC hcst hD hK' hDs (K := K) (p := p) (B := B' + n * J)
         (J := J) (X := X) (M := Γ ^ n) (e := 16 * h * α + 1 - 8 * (n + 1)) hp8
-        ((hk1.trans (hnds n hn')).trans hK) hk3 (Nat.one_le_pow _ _ hΓ1) (hps.trans (hsize n hn'))
+        ((hk1.trans (hnds n hn')).trans hK) hk3 (Nat.one_le_pow _ _ hΓ1) (hps.trans (size_rounds hh hα hu4 (by omega)))
         (lt_of_le_of_lt (pow_le_pow hu1 g1) hJ) g2 hX10 hXu g3 g4
       obtain ⟨r, p', hr, hp', hps'⟩ := hres
       rw [hmax, show B' + n * J + J = B' + (n + 1) * J by omega] at hp'
@@ -466,7 +433,7 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
   obtain ⟨K, p, -, hps, hk1, hk2, hk3, hk4, hp⟩ := rounds (2 * α + 1) le_rfl
   refine ⟨K, p, hp (by omega), ?_, hk1.trans (hnds _ le_rfl), hk2, hk3, hk4⟩
   rw [← pow_mul, show α * (4 * h) = 4 * h * α by ring]
-  exact hps.trans (hsize _ le_rfl)
+  exact hps.trans (size_rounds hh hα hu4 (by omega))
 
 /-- **Paper: proof of Proposition prop:approx-acc, back to exact values.** "Its value is the coefficient of ε⁰ in the
 value of D, that is, pv(z) on plain instances": the coefficients of the powers are new constants with B = 1. -/

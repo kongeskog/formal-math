@@ -44,6 +44,44 @@ theorem size_stepF (D G p : Tree) (g : Fm) :
 
 theorem pow_le_pow {u a b : ℕ} (hu : 1 ≤ u) (h : a ≤ b) : u ^ a ≤ u ^ b := Nat.pow_le_pow_right hu h
 
+/-! Arithmetic shared by the two steps from one scale to the next (`Paper/Next`, `Paper/ApproxRound`). -/
+
+theorem pow_big {u : ℕ} (hu : 2000 ≤ u) (a : ℕ) : 2000 * u ^ a ≤ u ^ (a + 1) := by
+  rw [pow_succ']
+  exact Nat.mul_le_mul_right _ hu
+
+theorem mul_sub_scale (α h c : ℕ) : α * (16 * h - c) = 16 * (h * α) - c * α := by
+  rw [Nat.mul_sub]
+  congr 1 <;> ring
+
+/-- A trie of powers with `B + 1 ≤ X` has few nodes compared to `u`. -/
+theorem nds_expand_le {R' : Type} [CommRing R'] {K : KT R'} {u m B X c : ℕ} (hK : K.nds ≤ u ^ m)
+    (hB : B + 1 ≤ X) (hXu : 1000 * X ^ 3 ≤ u) (hc : c * X ^ 2 ≤ 1000 * X ^ 3) :
+    (K.expand B).nds * (c * X) ≤ 2 * u ^ (m + 1) :=
+  calc (K.expand B).nds * (c * X) ≤ K.nds * (2 * X) * (c * X) :=
+        Nat.mul_le_mul_right _ ((KT.nds_expand B K).trans (Nat.mul_le_mul_left _ (by omega)))
+    _ = K.nds * (2 * (c * X ^ 2)) := by ring
+    _ ≤ u ^ m * (2 * u) := Nat.mul_le_mul hK (by omega)
+    _ = 2 * u ^ (m + 1) := by rw [pow_succ]; ring
+
+/-- The programs of the rounds stay below `u ^ (4 * h * α)`. -/
+theorem size_rounds {h α u n : ℕ} (hh : 17 ≤ h) (hα : 5 ≤ α) (hu : 2000 ≤ u) (hn : n ≤ u) :
+    u + n * (u ^ (h * α + 2) + u ^ (16 * h + 1)) ≤ u ^ (4 * h * α) := by
+  have hh1 : 5 * h ≤ h * α := by rw [Nat.mul_comm h α]; exact Nat.mul_le_mul_right _ hα
+  have e4 : 4 * h * α = 4 * (h * α) := by ring
+  obtain ⟨a, ha⟩ : ∃ a, 4 * h * α = a + 1 := ⟨4 * h * α - 1, by omega⟩
+  have t1 : n * (u ^ (h * α + 2) + u ^ (16 * h + 1)) ≤ u * (u ^ (h * α + 2) + u ^ (16 * h + 1)) :=
+    Nat.mul_le_mul_right _ hn
+  have t2 : u * (u ^ (h * α + 2) + u ^ (16 * h + 1)) = u ^ (h * α + 3) + u ^ (16 * h + 2) := by
+    rw [mul_add, ← pow_succ', ← pow_succ']
+  have t3 : u ^ (h * α + 3) ≤ u ^ a := pow_le_pow (by omega) (by omega)
+  have t4 : u ^ (16 * h + 2) ≤ u ^ a := pow_le_pow (by omega) (by omega)
+  have t5 : u ^ 1 ≤ u ^ a := pow_le_pow (by omega) (by omega)
+  have t6 := pow_big hu a
+  rw [pow_one] at t5
+  rw [ha]
+  omega
+
 /-- **One round.** `τ'` bounds the time of the plain instances; `s` their size. -/
 theorem round {H u v : ℕ} {K : KT R} {B' : ℕ} {D : Tree} (hD : IsAccT θ H u (u ^ (H - 16)) K B' D)
     {p : Tree} {B τ : ℕ} (hp : IsPre θ H v τ K B p) {J : ℕ} (hJ : τ < 2 ^ J) {τ' s t tG Ln : ℕ} {G : Tree}
