@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T09:41:53.814250767Z",
+  "updated_at": "2026-11-24T18:43:44.936132529Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 0,
     "contributors": 1,
-    "ideas_open": 9
+    "ideas_open": 8
   },
   "leaderboard": [
     {
@@ -160,7 +160,7 @@
     {
       "number": 12,
       "title": "Idea: restructure(Nc/Dl): prove sum_allSteps from sum_steps18 instead of repeating its phases",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
