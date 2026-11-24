@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:49:22.690423699Z",
+  "updated_at": "2026-11-24T19:50:42.846456334Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "58ab1fb597b3cffe132386b4b8957c81f5830954",
-    "at": "2026-11-24T19:49:22.690423699Z",
+    "sha": "294e66b73be484e7fe05ac8b9e1b38b167c728aa",
+    "at": "2026-11-24T19:50:42.846456334Z",
     "metrics": {
-      "tokens": 919112,
-      "loc": 58392,
+      "tokens": 918877,
+      "loc": 58390,
       "decls": 4572,
       "files": 321,
-      "bytes": 3394029,
-      "build_seconds": 697
+      "bytes": 3393407,
+      "build_seconds": 779
     }
   },
   "counts": {
-    "merged": 21,
+    "merged": 22,
     "rejected": 2,
-    "open": 6,
+    "open": 5,
     "contributors": 1,
     "ideas_open": 5
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 21,
+      "merged": 22,
       "attempts": 29,
-      "saved": 9049
+      "saved": 9284
     }
   ],
   "ideas": [
@@ -389,7 +389,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:00:29Z",
       "pr": 45,
-      "result_delta": null,
+      "result_delta": -235,
       "created_at": "2026-11-24T00:48:00Z",
       "url": "https://github.com/kongeskog/formal-math/issues/11",
       "technique": "shorten",
@@ -467,96 +467,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 45,
-      "title": "shorten(Nc/Tow): drop hypotheses the unusedArguments linter reports unused",
-      "author": "kongeskog",
-      "head_sha": "d1024dc4a2dda0959dddd4b32ffa05730022d7f8",
-      "base_sha": "5f9eef456dd9147e413d71f8fdccc70779a0173b",
-      "status": "stale",
-      "created_at": "2026-11-24T19:10:42Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 924172,
-        "loc": 58540,
-        "decls": 4591,
-        "files": 321,
-        "bytes": 3407052,
-        "build_seconds": 463
-      },
-      "base_metrics": {
-        "tokens": 924407,
-        "loc": 58542,
-        "decls": 4591,
-        "files": 321,
-        "bytes": 3407674,
-        "build_seconds": null
-      },
-      "delta": -235,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "15 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 924407 → 924172 (-235)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 11,
-      "url": "https://github.com/kongeskog/formal-math/pull/45",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45467450461",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc/Tow"
-    },
     {
       "pr": 46,
       "title": "library(Nc): proxy_equiv% instead of Seg.equivSum and the local equivalences for Tp and Ch",
