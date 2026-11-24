@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:13:44.531431755Z",
+  "updated_at": "2026-11-24T20:14:55.977916010Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 28,
     "rejected": 2,
-    "open": 6,
+    "open": 7,
     "contributors": 1,
     "ideas_open": 0
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 28,
-      "attempts": 36,
+      "attempts": 37,
       "saved": 12922
     }
   ],
@@ -122,7 +122,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T23:09:54Z",
-      "pr": null,
+      "pr": 65,
       "result_delta": null,
       "created_at": "2026-11-24T19:43:03Z",
       "url": "https://github.com/kongeskog/formal-math/issues/55",
@@ -874,6 +874,74 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Nc/Final/CClasses"
+    },
+    {
+      "pr": 65,
+      "title": "shorten(*): apply the iff lemma in obtain instead of rewriting the hypothesis first",
+      "author": "kongeskog",
+      "head_sha": "aa06a5ad0177f951364bac26abac5e6df4a1725d",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:14:08Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 55,
+      "url": "https://github.com/kongeskog/formal-math/pull/65",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "*"
     }
   ],
   "top_files": [
