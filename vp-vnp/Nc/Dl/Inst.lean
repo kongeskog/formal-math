@@ -7,7 +7,7 @@ import Nc.Dl.Does
 import Nc.Dl.SizeDeal
 import Nc.Dl.SizeScript
 import Nc.Dl.Cost
-import Nc.Grp.GroupProg
+import Nc.Grp.GroupThm
 
 /-!
 # One cut, with numbers
@@ -19,33 +19,7 @@ namespace Nc.Dl
 
 open NS1 NS1.Tree Finset Nc.G Nc.Cut Codes
 
-/-- The time of GROUP at a script. -/
-def grpT (bT bub : List Bool) (l : List Grp.Ins) : ℕ :=
-  (bT.length + 1) * (Grp.bval bT + 1) + (bub.length + 1) * (Grp.bval bub + 1) +
-    (l.map (Grp.insCost (Grp.bval bT) (Grp.bval bub))).sum + l.length
-
-/-- **What GROUP does** (the conclusion of `Nc.Grp.exists_group`). -/
-def GroupOK {A : Type} [CommRing A] (θ : List Bool → A) {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S]
-    [DecidableEq S] [Fintype Q] [DecidableEq Q] {c : ℕ} (mu : Letter S Unit Γ → Matrix Q Q A)
-    (cb : Option Γ → Fin c → Bool) (kinds : List (Σ L : G.Law A, L.Ro)) (qn : Q → ℕ) (GROUP : Fm) (κ : ℕ) : Prop :=
-  ∀ {A' K E U0 U1 cap : ℕ} {Gr : Type} [DecidableEq Gr] [Fintype Gr]
-    {M : Sys A (K + K + A') E} (P : G.Plan M U0 U1) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
-    (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1))
-    (o : M.N → Fin U1) (grp : Fin (K + K + A') → Gr) (g : Gr) (key : Grp.Cell M U0 U1 → List Bool)
-    (dkey : Fin (K + K) × Fin U0 → List Bool) (tg : M.R → ℕ) (bT bub : List Bool)
-    (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub)),
-    Function.Injective (Sum.elim key dkey) → 0 < Grp.bval bub → P.Ok cap → (∀ κ, (x κ).length ≤ Grp.bval bT) →
-    (∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) → (∀ r, kinds[tg r]? = some ⟨M.kind r.1, r.2⟩) →
-    Plain θ (κ * grpT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))
-      (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) ∧
-    pv θ (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) =
-      G.grpVal mu (Grp.bval bT) cb P q x ρ n o grp g b ∧
-    (evl θ GROUP (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b)) ≠ [] →
-      (∀ p, grp (Fin.castAdd A' p) = g → ∑ b, ((n p b : ℕ) + n b p) ≤
-        2 * ((Grp.bval bT + (K + K) * (Fintype.card S + 1)) * c / Grp.bval bub + (K + K))) ∧
-      ∀ r : M.R, grp (M.rp r) = g → ∃ ι : Fin (P.num n o r.1 * Grp.bval bub) → (M.kind r.1).I,
-        ∀ ν : (M.kind r.1).CnAt r.2,
-          (o ⟨r.1, ν.1⟩ : ℕ) = (∑ k, ((M.kind r.1).lam + (M.kind r.1).len (ι k) ν.1)) / Grp.bval bub)
+-- `grpT` and `GroupOK` are in `Nc/Grp/GroupThm.lean`.
 
 /-- The number of all names, digits, keys. -/
 structure CodesLe {A : Type} [CommRing A] {S : Type} [Fintype S] {K A' E U0 U1 D pS : ℕ} {M : Sys A (K + K + A') E}

@@ -14,6 +14,42 @@ is the value of the group; accepting runs exist only if the numbers of units are
 
 set_option linter.unusedSectionVars false
 
+-- `grpT` and `GroupOK` are stated here so that `exists_group` can conclude `GroupOK` directly.
+-- They keep their `Nc.Dl` names because the rest of `Nc/Dl` and the paper statements use them.
+namespace Nc.Dl
+
+open NS1 NS1.Tree Finset Nc.G Nc.Cut
+
+/-- The time of GROUP at a script. -/
+def grpT (bT bub : List Bool) (l : List Grp.Ins) : ℕ :=
+  (bT.length + 1) * (Grp.bval bT + 1) + (bub.length + 1) * (Grp.bval bub + 1) +
+    (l.map (Grp.insCost (Grp.bval bT) (Grp.bval bub))).sum + l.length
+
+/-- **What GROUP does** (the conclusion of `Nc.Grp.exists_group`). -/
+def GroupOK {A : Type} [CommRing A] (θ : List Bool → A) {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S]
+    [DecidableEq S] [Fintype Q] [DecidableEq Q] {c : ℕ} (mu : Letter S Unit Γ → Matrix Q Q A)
+    (cb : Option Γ → Fin c → Bool) (kinds : List (Σ L : G.Law A, L.Ro)) (qn : Q → ℕ) (GROUP : Fm) (κ : ℕ) : Prop :=
+  ∀ {A' K E U0 U1 cap : ℕ} {Gr : Type} [DecidableEq Gr] [Fintype Gr]
+    {M : Sys A (K + K + A') E} (P : G.Plan M U0 U1) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
+    (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1))
+    (o : M.N → Fin U1) (grp : Fin (K + K + A') → Gr) (g : Gr) (key : Grp.Cell M U0 U1 → List Bool)
+    (dkey : Fin (K + K) × Fin U0 → List Bool) (tg : M.R → ℕ) (bT bub : List Bool)
+    (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub)),
+    Function.Injective (Sum.elim key dkey) → 0 < Grp.bval bub → P.Ok cap → (∀ κ, (x κ).length ≤ Grp.bval bT) →
+    (∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) → (∀ r, kinds[tg r]? = some ⟨M.kind r.1, r.2⟩) →
+    Plain θ (κ * grpT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))
+      (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) ∧
+    pv θ (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) =
+      G.grpVal mu (Grp.bval bT) cb P q x ρ n o grp g b ∧
+    (evl θ GROUP (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b)) ≠ [] →
+      (∀ p, grp (Fin.castAdd A' p) = g → ∑ b, ((n p b : ℕ) + n b p) ≤
+        2 * ((Grp.bval bT + (K + K) * (Fintype.card S + 1)) * c / Grp.bval bub + (K + K))) ∧
+      ∀ r : M.R, grp (M.rp r) = g → ∃ ι : Fin (P.num n o r.1 * Grp.bval bub) → (M.kind r.1).I,
+        ∀ ν : (M.kind r.1).CnAt r.2,
+          (o ⟨r.1, ν.1⟩ : ℕ) = (∑ k, ((M.kind r.1).lam + (M.kind r.1).len (ι k) ν.1)) / Grp.bval bub)
+
+end Nc.Dl
+
 namespace Nc.Grp
 
 open NS1 NS1.Tree Finset Nc.G Nc.Cut
@@ -21,32 +57,11 @@ open NS1 NS1.Tree Finset Nc.G Nc.Cut
 variable {A : Type} [CommRing A] {θ : List Bool → A}
 variable {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q] {c : ℕ}
 
-/-- The time of GROUP at a script. -/
-def grpTime (bT bub : List Bool) (l : List Ins) : ℕ :=
-  (bT.length + 1) * (bval bT + 1) + (bub.length + 1) * (bval bub + 1) + (l.map (insCost (bval bT) (bval bub))).sum + l.length
-
 /-- **GROUP.** -/
 theorem exists_group (mu : Letter S Unit Γ → Matrix Q Q A) (cb : Option Γ → Fin c → Bool)
     (kinds : List (Σ L : G.Law A, L.Ro)) (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q')
     (htab : ∀ z ∈ kinds, ∀ i y h, ∃ e : WE, e.val θ = z.1.tab z.2 i y h) :
-    ∃ (GROUP : Fm) (κ : ℕ), ∀ {A' K E U0 U1 cap : ℕ} {Gr : Type} [DecidableEq Gr] [Fintype Gr]
-      {M : Sys A (K + K + A') E} (P : G.Plan M U0 U1) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
-      (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1))
-      (o : M.N → Fin U1) (grp : Fin (K + K + A') → Gr) (g : Gr) (key : Cell M U0 U1 → List Bool)
-      (dkey : Fin (K + K) × Fin U0 → List Bool) (tg : M.R → ℕ) (bT bub : List Bool)
-      (b : G.Uid (K + K) U0 M.N U1 → UW (bval bub)),
-      Function.Injective (Sum.elim key dkey) → 0 < bval bub → P.Ok cap → (∀ κ, (x κ).length ≤ bval bT) →
-      (∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) → (∀ r, kinds[tg r]? = some ⟨M.kind r.1, r.2⟩) →
-      Plain θ (κ * grpTime bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b))
-        (.cons GROUP.code (scriptT bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b))) ∧
-      pv θ (.cons GROUP.code (scriptT bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b))) =
-        G.grpVal mu (bval bT) cb P q x ρ n o grp g b ∧
-      (evl θ GROUP (scriptT bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b)) ≠ [] →
-        (∀ p, grp (Fin.castAdd A' p) = g → ∑ b, ((n p b : ℕ) + n b p) ≤
-          2 * ((bval bT + (K + K) * (Fintype.card S + 1)) * c / bval bub + (K + K))) ∧
-        ∀ r : M.R, grp (M.rp r) = g → ∃ ι : Fin (P.num n o r.1 * bval bub) → (M.kind r.1).I,
-          ∀ ν : (M.kind r.1).CnAt r.2,
-            (o ⟨r.1, ν.1⟩ : ℕ) = (∑ k, ((M.kind r.1).lam + (M.kind r.1).len (ι k) ν.1)) / bval bub) := by
+    ∃ (GROUP : Fm) (κ : ℕ), Nc.Dl.GroupOK θ mu cb kinds (fun z => (qn Q z : ℕ)) GROUP κ := by
   obtain ⟨F, κ, hF⟩ := ex_group (S := S) (θ := θ) mu cb kinds (by simp [sepOf])
   refine ⟨F, κ, fun {A' K E U0 U1 cap Gr} _ _ {M} P q x ρ n o grp g key dkey tg bT bub b hkey hub hP hx hρ hkind => ?_⟩
   have h1 := hF bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b) (insOk_script hkind b)
