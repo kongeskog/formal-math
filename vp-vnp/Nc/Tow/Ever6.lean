@@ -35,10 +35,8 @@ variable {F : Type} [CommRing F] {h b D J r m Uu AA A' U0 U1 : ℕ} {T : Tower h
   {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 variable (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
-  (hgR : ∀ (x : {x : RM T m AA // okR T R ch x}) (ν : Bool),
-    oo R FL Pl o ⟨.inl x, ν⟩ = num R ch FL lhat (nn n) (oo R FL Pl o) (.inl x))
-  (hgL : ∀ l : LMv T FL, GoodL R ch FL (oo R FL Pl o) l (num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l)) ∧
-    ∀ ν, num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) ≤ oo R FL Pl o ⟨.inr l, ν⟩)
+  -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+  (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
   (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f)
 
 variable (R ch FL Pl lhat n o) in
@@ -50,17 +48,17 @@ open Classical in
 /-- Is the node a base party? -/
 noncomputable def isB (P : Nd T) : ℕ := if ∃ a, P = nd T 0 (Nat.zero_le _) (ch a) then 1 else 0
 
-include hh hr hb hgR in
+include hh hr hb hg in
 open Classical in
 theorem NR_onN (P : Nd T) : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) +
     onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF hh (LfO R ch FL Pl lhat n o) j x)
       (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
   rcases nd_cases P with rfl | ⟨j, hj, c, rfl⟩
-  · exact (NR_none hh hr hb hgR).trans (Nat.le_add_left _ _)
+  · exact (NR_none hh hr hb hg).trans (Nat.le_add_left _ _)
   · rw [onN_nd]
     cases j with
     | zero =>
-      refine (NR_zero hh hr hb hgR c).trans (add_le_add ?_ ?_)
+      refine (NR_zero hh hr hb hg c).trans (add_le_add ?_ ?_)
       · unfold isB
         by_cases hc : ∃ a, ch a = c
         · obtain ⟨a, rfl⟩ := hc
@@ -71,10 +69,10 @@ theorem NR_onN (P : Nd T) : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P
           3 * chF hh (LfO R ch FL Pl lhat n o) 0 c
         omega
     | succ j =>
-      refine (NR_succ hh hr hb hgR hj c).trans (le_trans (le_of_eq ?_) (Nat.le_add_left _ _))
+      refine (NR_succ hh hr hb hg hj c).trans (le_trans (le_of_eq ?_) (Nat.le_add_left _ _))
       rfl
 
-include hh hr hb hgL hnr in
+include hh hr hb hg hnr in
 open Classical in
 theorem NL_onN (P : Nd T) : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di *
     onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF hh (LfO R ch FL Pl lhat n o) j x)
@@ -88,7 +86,7 @@ theorem NL_onN (P : Nd T) : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.
       rw [NL_zero]
       exact Nat.zero_le _
     | succ j =>
-      refine (NL_succ hh hr hb hgL hnr hj c).trans (Nat.mul_le_mul_left _ ?_)
+      refine (NL_succ hh hr hb hg hnr hj c).trans (Nat.mul_le_mul_left _ ?_)
       change fb (LfO R ch FL Pl lhat n o) (j + 1) c ≤ 8 * fb (LfO R ch FL Pl lhat n o) (j + 1) c +
         3 * chF hh (LfO R ch FL Pl lhat n o) (j + 1) c
       omega

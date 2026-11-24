@@ -30,6 +30,6 @@ abbrev dNear {h : ℕ} [NeZero h] (ν : NN h) : U h := x h ν.1.1 * ν.1.2
 noncomputable def towFlag {F : Type} [CommRing F] {h : ℕ} [NeZero h]
     (VL : VLaws F (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h2 : 2 ≤ h) (n : ℕ) :
     FlagLaws F (tower h n h2) :=
-  VL.toFlag (tower h n h2) (Equiv.refl (U h)) (Equiv.refl (NN h)) fun _ => rfl
+  { VL with }
 
 end Nc.Vp

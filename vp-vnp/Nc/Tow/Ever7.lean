@@ -82,10 +82,8 @@ open Classical in
 /-- **The copies at a node**, units of zeros and counts included: the start at a base party, one end for every channel,
 and a constant times the loads at the chamber and below its children. -/
 theorem held_node_le (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
-    (hgR : ∀ (x : {x : RM T m AA // okR T R ch x}) (ν : Bool),
-      oo R FL Pl o ⟨.inl x, ν⟩ = num R ch FL lhat (nn n) (oo R FL Pl o) (.inl x))
-    (hgL : ∀ l : LMv T FL, GoodL R ch FL (oo R FL Pl o) l (num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l)) ∧
-      ∀ ν, num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) ≤ oo R FL Pl o ⟨.inr l, ν⟩)
+    -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+    (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
     (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f) {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) {ℓf : ℕ}
     (P : Nd T) (hini : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
     heldN R FL Pl n o (Pl.pt P) +
@@ -100,12 +98,12 @@ theorem held_node_le (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
   set c1 := 2 * Fintype.card T.Nr * FL.G₁ with hc1
   have a1 : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n (Pl.pt P) + chanN R FL Pl (Pl.pt P) +
       2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P + c1 * NL R ch FL lhat (nn n) (oo R FL Pl o) P :=
-    held_le hr hb hgR hgL P
+    held_le hr hb hg P
   have a2 := pads_node (R := R) (Pl := Pl) (lhat := lhat) (n := n) (o := o) hSm P
   have a3 : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
-    NR_onN hh hr hb hgR P
+    NR_onN hh hr hb hg P
   have a4 : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di * onN f f0 P :=
-    NL_onN hh hr hb hgL hnr P
+    NL_onN hh hr hb hg hnr P
   have a5 := initN_le (Pl := Pl) (n := n) (ℓf := ℓf) P hini
   generalize NR R ch FL lhat (nn n) (oo R FL Pl o) P = NRv at a1 a2 a3
   generalize NL R ch FL lhat (nn n) (oo R FL Pl o) P = NLv at a1 a2 a4

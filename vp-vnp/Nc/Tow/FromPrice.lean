@@ -56,55 +56,6 @@ structure VLaws (F : Type) [CommRing F] {Fl Nr : Type} [Fintype Fl] [DecidableEq
 
 attribute [instance] VLaws.fD VLaws.dD
 
-/-- The laws at the vertices of a tower with the given local structure. -/
-def VLaws.toFlag {F : Type} [CommRing F] {Fl Nr : Type} [Fintype Fl] [DecidableEq Fl] [Fintype Nr]
-    [DecidableEq Nr] {cN dN : Nr → Fl} {r b : ℕ} (VL : VLaws F cN dN r b) {h D J : ℕ}
-    (T : Tower h b D J r) (φ : T.Fl ≃ Fl) (ψ : T.Nr ≃ Nr)
-    (hφ : ∀ ν, s(φ (T.cN ν), φ (T.dN ν)) = s(cN (ψ ν), dN (ψ ν))) : FlagLaws F T where
-  Di := VL.Di
-  L := VL.L
-  ro d := (VL.ro d).trans φ.symm
-  cn d := (VL.cn d).trans ψ.symm
-  ends d ν := by
-    have h1 := hφ (ψ.symm (VL.cn d ν))
-    rw [ψ.apply_symm_apply, ← VL.ends d ν] at h1
-    have h2 := congrArg (Sym2.map φ.symm) h1
-    simpa [Sym2.map_mk] using h2.symm
-  lam_pos := VL.lam_pos
-  nonempty := VL.nonempty
-  a₁ := VL.a₁
-  a₁_pos := VL.a₁_pos
-  C₁ := VL.C₁
-  C₁_nonneg := VL.C₁_nonneg
-  G₁ := VL.G₁
-  G₁_le := VL.G₁_le
-  L1 n t ht := by
-    have hN : vN2 b (fun q : Sym2 Fl => n (Sym2.map φ.symm q)) = T.NN2 n := by
-      rw [vN2, Tower.NN2]
-      congr 1
-      let e : Sym2 Fl ≃ Sym2 T.Fl := ⟨Sym2.map φ.symm, Sym2.map φ,
-        fun q => by rw [Sym2.map_map]; simp, fun q => by rw [Sym2.map_map]; simp⟩
-      refine Fintype.sum_equiv e _ _ fun q => ?_
-      have hd : (Sym2.map φ.symm q).IsDiag ↔ q.IsDiag :=
-        Sym2.isDiag_map φ.symm.injective
-      show (if q.IsDiag then 0 else _) = if (Sym2.map φ.symm q).IsDiag then 0 else _
-      simp only [hd]
-      rfl
-    obtain ⟨d, hd⟩ := VL.L1 (fun q => n (Sym2.map φ.symm q)) t (by rw [hN]; exact ht)
-    refine ⟨d, fun q hq => ?_⟩
-    have h1 := hd (Sym2.map φ q) (fun h => hq ((Sym2.isDiag_map φ.injective).1 h))
-    have h2 : Sym2.map φ.symm (Sym2.map φ q) = q := by
-      rw [Sym2.map_map]
-      simp
-    rw [h2] at h1
-    refine h1.trans (Nat.mul_le_mul_right _ (Finset.card_le_card fun e he => ?_))
-    rw [Finset.mem_filter] at he ⊢
-    refine ⟨Finset.mem_univ _, ?_⟩
-    have h3 := congrArg (Sym2.map φ.symm) he.2
-    rw [h2] at h3
-    simpa [Sym2.map_mk] using h3
-  L2 := VL.L2
-
 theorem out_mk {Fl : Type} (q : Sym2 Fl) : s(q.out.1, q.out.2) = q := Quot.out_eq q
 
 /-- Sums over ordered and over unordered pairs. -/
