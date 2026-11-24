@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T03:11:51.441188756Z",
+  "updated_at": "2026-11-24T03:19:34.661392334Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "4708256172cfa14df8fdbe6d2990bdddf13e1370",
-    "at": "2026-11-24T02:57:50.337571180Z",
+    "sha": "7389acb69b2ef551f19b5b73c460daaf4e43de56",
+    "at": "2026-11-24T03:19:34.661392334Z",
     "metrics": {
-      "tokens": 925673,
-      "loc": 58601,
+      "tokens": 925557,
+      "loc": 58597,
       "decls": 4589,
       "files": 321,
-      "bytes": 3410664,
-      "build_seconds": 551
+      "bytes": 3410414,
+      "build_seconds": 305
     }
   },
   "counts": {
-    "merged": 9,
+    "merged": 10,
     "rejected": 2,
-    "open": 3,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 9,
+      "merged": 10,
       "attempts": 14,
-      "saved": 2488
+      "saved": 2604
     }
   ],
   "ideas": [
@@ -123,7 +123,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T05:32:47Z",
       "pr": 25,
-      "result_delta": null,
+      "result_delta": -116,
       "created_at": "2026-11-24T00:48:06Z",
       "url": "https://github.com/kongeskog/formal-math/issues/15",
       "technique": "shorten",
@@ -257,96 +257,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 25,
-      "title": "shorten(NS1): replace the obtain-exists-rfl idiom by generalize or exists_eq",
-      "author": "kongeskog",
-      "head_sha": "b278f7333e3ff1d8d5ce2f8f3d6c4df23a39491d",
-      "base_sha": "e576139eab3c319ec27d832cb12b741f95fe5efe",
-      "status": "stale",
-      "created_at": "2026-11-24T02:42:13Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 926406,
-        "loc": 58642,
-        "decls": 4589,
-        "files": 321,
-        "bytes": 3413569,
-        "build_seconds": 375
-      },
-      "base_metrics": {
-        "tokens": 926522,
-        "loc": 58646,
-        "decls": 4589,
-        "files": 321,
-        "bytes": 3413819,
-        "build_seconds": null
-      },
-      "delta": -116,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "4 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 926522 → 926406 (-116)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 15,
-      "url": "https://github.com/kongeskog/formal-math/pull/25",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45314320211",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "NS1"
-    },
     {
       "pr": 26,
       "title": "generalize(Nc/Uni): a mode parameter for KS and rstep replaces PKS and pstep",
