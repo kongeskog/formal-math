@@ -11,6 +11,8 @@ import NS1.ApproxMain
 
 /-!
 # The paper, appendix "Approximate computation": no approximate accelerators
+
+The contracting case, Theorem thm:contracting, is derived here from its approximate form.
 -/
 
 set_option linter.unusedSectionVars false
@@ -518,5 +520,24 @@ theorem contracting_approx_complete {K : Type} [Field K] (hK : Contracting K)
   · rw [← mul_assoc]
     exact Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ (Nat.le_succ _))
   · exact Nat.mul_le_mul (Nat.le_mul_of_pos_left _ (Nat.succ_pos _)) (Nat.le_succ _)
+
+/-- A circuit approximates what it computes: it is an approximating circuit with no error term. -/
+theorem _root_.Nc.Computes.approximates {F X : Type*} [Field F] {f : MvPolynomial X F} {s : ℕ}
+    (h : Nc.Computes f s) : Nc.Approximates f s :=
+  ⟨MvPolynomial.map HahnSeries.C f, h.map _, fun d i hi => by
+    rw [MvPolynomial.coeff_map, HahnSeries.C_apply, HahnSeries.coeff_single]
+    congr⟩
+
+/- Theorem thm:contracting, moved here from `Paper/Scales.lean`: the exact case is a special case of
+the approximate one. -/
+/-- **Paper: Theorem thm:contracting.** "In the contracting case there are c > 0 and m₀ such that for m ≥ m₀ every
+circuit over k for PERM_m has more than 2^(c(log m)²/log log m) gates." -/
+theorem thm_contracting {K : Type} [Field K] (hK : Contracting K) (h2 : (2 : K) ≠ 0) :
+    ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, Nc.Computes (Nc.genPerm K m) s →
+      (2 : ℝ) ^ (c * Real.logb 2 m ^ 2 / Real.logb 2 (Real.logb 2 m)) < s := by
+  -- an exact circuit is an approximating one with no error, so the approximate bound applies
+  obtain ⟨C, M₁, h⟩ := contracting_approx_complete hK (gridComplete_perm h2)
+  exact quasi_of_exponents (P := fun M s => Nc.Computes (Nc.genPerm K M) s)
+    (fun _ _ _ hst hs => Nc.Computes.mono hs hst) fun M hM a ha hs => h M hM a ha hs.approximates
 
 end Paper
