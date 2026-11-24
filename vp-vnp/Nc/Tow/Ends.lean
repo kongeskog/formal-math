@@ -40,7 +40,7 @@ theorem edgeO_hold {c c' γ : T.X 0} {s : ℕ} (hs : s < R.pl c c' γ) :
   rw [h1]
   refine ⟨by simp [edgeO], ?_⟩
   have := congrArg (Sym2.map (nd T 0 (Nat.zero_le _))) h2
-  simp only [Sym2.map_mk, Prod.map] at this
+  simp only [Sym2.map_mk] at this
   exact this
 
 /-- Initial units. -/
@@ -76,7 +76,7 @@ theorem seg_hold {j : ℕ} (hj : j < J) (i : Fin h) (c : T.X j) :
   have h2 : atv hj i (T.πV (T.vx i c)) (T.co i c) = T.π c := by
     rw [← T.π_vx hj i c, ← T.π_co hj i c]
     exact atv_eq hj i _
-  simp only [Prod.map, h1, h2]
+  simp only [h1, h2]
 
 /-- Units of channels. -/
 theorem hN_eq (ν : NM R FL (ch := ch)) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) : hN ν = hT R ch (tgM R ch FL ν.1 ν.2) := by
@@ -117,7 +117,7 @@ theorem hN_eq (ν : NM R FL (ch := ch)) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) :
         · exact (seg_hold j.2 (T.ty e) (T.e0 e)).symm
         · have h1 := T.π_ends j.2 e
           have h2 := congrArg (Sym2.map (nd T (j + 1) j.2)) h1
-          simp only [Sym2.map_mk, Prod.map] at h2
+          simp only [Sym2.map_mk] at h2
           exact h2.symm
         · refine Eq.trans ?_ (seg_hold j.2 (T.ty e) (T.e1 e)).symm
           exact Sym2.eq_swap
@@ -151,7 +151,7 @@ theorem hN_eq (ν : NM R FL (ch := ch)) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) :
     rw [hp2] at h0 h1 h2
     have h3 := (FL.ends l.2.2.2 ν).trans h2.symm
     have h4 := congrArg (Sym2.map fun f => nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f)) h3
-    simp only [Sym2.map_mk, Prod.map] at h4
+    simp only [Sym2.map_mk] at h4
     rw [h4]
     have e1 : atv l.1.2 l.2.1 l.2.2.1 (T.co l.2.1 (T.e0 p.1)) = T.e0 p.1 := by
       have := atv_eq l.1.2 l.2.1 (T.e0 p.1)

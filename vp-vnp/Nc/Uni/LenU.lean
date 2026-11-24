@@ -10,7 +10,6 @@ import Nc.Uni.Trace
 -/
 
 set_option linter.unusedSectionVars false
-set_option linter.unusedSimpArgs false
 
 namespace Nc.Uni
 

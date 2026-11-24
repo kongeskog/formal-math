@@ -28,7 +28,7 @@ theorem inc_mul_diag (e : μ × κ ↪ ι) (T : Finset (μ × κ)) :
   ext i j
   simp only [Matrix.mul_apply, inc, dg, Matrix.transpose_apply, Matrix.diagonal_apply,
     Finset.mem_map]
-  simp only [ite_mul, one_mul, zero_mul, mul_ite, mul_one, mul_zero]
+  simp only [mul_ite, mul_one, mul_zero]
   by_cases hi : ∃ x, e x = i
   · obtain ⟨x, rfl⟩ := hi
     by_cases hj : ∃ y, e y = j

@@ -183,7 +183,7 @@ theorem bd_mono {m : ℕ} {s : ℝ} {n n' : ℕ} (h : n ≤ n') {κ : ℝ} (hκ 
         have : ¬ (j.1 = a.1 ∧ j.1 + 1 = b.1) := by
           have := b.2
           omega
-        simp [Matrix.one_apply, Matrix.single_apply, lo, hi, Fin.ext_iff, this]
+        simp [Matrix.one_apply, lo, hi, Fin.ext_iff, this]
       rw [this, l.one']
   rw [sum_congr rfl fun j _ => e j]
   rw [← Finset.sum_filter_add_sum_filter_not univ (fun j : Fin (n' - 1) => j.1 < n - 1)]

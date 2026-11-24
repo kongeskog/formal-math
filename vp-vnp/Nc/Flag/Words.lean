@@ -33,7 +33,7 @@ theorem x_mul_apply (j : Fin (n - 1)) (A : U n) (i k : Fin n) :
   · subst h
     simp
   · rw [if_neg h]
-    simp [Matrix.mul_apply, Matrix.single_apply, Ne.symm h]
+    simp [Matrix.mul_apply, Ne.symm h]
 
 theorem mul_x_apply (j : Fin (n - 1)) (A : U n) (i k : Fin n) :
     mat (A * x n j) i k = mat A i k + if k = hi j then mat A i (lo j) else 0 := by
@@ -43,7 +43,7 @@ theorem mul_x_apply (j : Fin (n - 1)) (A : U n) (i k : Fin n) :
   · subst h
     simp
   · rw [if_neg h]
-    simp [Matrix.mul_apply, Matrix.single_apply, Ne.symm h]
+    simp [Matrix.mul_apply, Ne.symm h]
 
 theorem f2_add_self (a : F2) : a + a = 0 := CharTwo.add_self_eq_zero a
 
@@ -58,9 +58,9 @@ theorem x_mul_x (j : Fin (n - 1)) : x n j * x n j = 1 := by
     simp only [Matrix.add_apply, if_true, Matrix.single_apply]
     by_cases h2 : hi j = k
     · subst h2
-      simp [lo_ne_hi', f2_add_self, (lo_ne_hi' j).symm]
+      simp [f2_add_self, (lo_ne_hi' j).symm]
     · simp [h2, (lo_ne_hi' j).symm, Matrix.one_apply]
-  · simp [h, Matrix.single_apply, Ne.symm h]
+  · simp [h, Ne.symm h]
 
 /-- The sum of the lengths of the generators of types ≥ p. -/
 noncomputable def Len.T (l : Len (U n)) (p : ℕ) : ℝ :=

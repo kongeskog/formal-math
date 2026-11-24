@@ -108,7 +108,7 @@ theorem grpTimeOK (cb : Option Γ → Fin c → Bool) (qn : Q → ℕ) : GrpTime
     unfold Grp.evG evG
     refine Finset.sum_congr ?_ fun p _ => ?_
     · ext p; simp
-    · first | rfl | congr 1
+    · rfl
   have e2 : Grp.pdG P n o grp g = pdG P (fun _ _ => grp) n o g := by
     unfold Grp.pdG pdG
     refine Finset.sum_congr ?_ fun p _ => rfl

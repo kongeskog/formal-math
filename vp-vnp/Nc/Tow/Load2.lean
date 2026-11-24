@@ -326,7 +326,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
         have h1 : ν = true := h1
         subst h1
         exact mem_singleton_self _
-      · simp [tgM, inpR_mid] at hν
+      · simp [tgM] at hν
     · rw [Finset.sum_singleton]
       exact alv_le_num hr hb _ _
   have two : ∀ hx2 : okR T R ch (.mid j e 2), num R ch FL lhat n o (.inl ⟨.mid j e 2, hx2⟩) ≤
@@ -349,7 +349,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
           have h1 : ν = true := h1
           subst h1
           exact mem_singleton_self _
-        · simp [tgM, inpR_mid] at hν
+        · simp [tgM] at hν
       · rw [Finset.sum_singleton]
         exact alv_le_num hr hb _ _
     · have hx1 : okR T R ch (.mid j e 1) := ⟨fun _ => hh, fun h3 => absurd h3 (by decide)⟩
@@ -367,7 +367,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
           have h1 : ν = true := h1
           subst h1
           exact mem_singleton_self _
-        · simp [tgM, inpR_mid] at hν
+        · simp [tgM] at hν
       · rw [Finset.sum_singleton]
         exact (alv_le_num hr hb _ _).trans (one hx1)
   fin_cases s
@@ -388,7 +388,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
         have h1 : ν = true := h1
         subst h1
         exact mem_singleton_self _
-      · simp [tgM, inpR_mid] at hν
+      · simp [tgM] at hν
     · rw [Finset.sum_singleton]
       exact (alv_le_num hr hb _ _).trans (two hx2)
 

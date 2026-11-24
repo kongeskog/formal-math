@@ -11,7 +11,6 @@ import Nc.Cross.Psi
 Definitions for the step "Reflection" of the proof of Proposition prop:identity (Paper/Identity.lean).
 -/
 
-set_option linter.unusedSimpArgs false
 
 namespace Nc.Cross
 

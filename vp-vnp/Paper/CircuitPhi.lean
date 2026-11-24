@@ -227,7 +227,7 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
         simp [withInputs, fdLits, L, rLits, hLits, hM0]
     · rcases r with ⟨p, y, y'⟩ | p <;> simp [withInputs, fdLits, L, cLits, Finset.univ_eq_empty_iff]
     · have := hE0 d
-      simp [withInputs, fdLits, Finset.univ_eq_empty_iff, not_isEmpty_iff, this]
+      simp [withInputs, fdLits, Finset.univ_eq_empty_iff]
     · simp [withInputs, fdLits]
     · simp [withInputs]
   · rintro (b | ⟨d, x⟩)
