@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
 import Nc.LowDegree
+import Statement
 
 /-!
 # The classes VP and VNP
@@ -19,22 +20,13 @@ open Finset
 
 section Definitions
 
-/-- A family of polynomials, with finitely many variables for every n. -/
-structure Family (F : Type*) [CommSemiring F] where
-  /-- the variables -/
-  X : ℕ → Type
-  /-- finitely many -/
-  [fin : ∀ n, Fintype (X n)]
-  /-- the polynomials -/
-  poly : ∀ n, MvPolynomial (X n) F
-
-attribute [instance] Family.fin
+export Statement (Family)
 
 variable (F : Type*) [CommSemiring F]
 
 /-- VP: the families with polynomially many variables, polynomial degree and circuits of polynomial size. -/
 def VP : Set (Family F) :=
-  {p | ∃ C : ℕ, ∀ n, Fintype.card (p.X n) ≤ n ^ C + C ∧ (p.poly n).totalDegree ≤ n ^ C + C ∧
+  {p | ∃ C : ℕ, ∀ n, Fintype.card (p.vars n) ≤ n ^ C + C ∧ (p.poly n).totalDegree ≤ n ^ C + C ∧
     Computes (p.poly n) (n ^ C + C)}
 
 variable {F} in
@@ -46,8 +38,8 @@ noncomputable def bits {X : Type*} {m : ℕ} (q : MvPolynomial (X ⊕ Fin m) F) 
 /-- VNP: the families p n (x) = ∑ q n (x, e), the sum over all e in {0, 1} ^ m n, for a family q in VP (so m is
 polynomially bounded). -/
 def VNP : Set (Family F) :=
-  {p | ∃ (m : ℕ → ℕ) (q : ∀ n, MvPolynomial (p.X n ⊕ Fin (m n)) F),
-    ({ X := fun n => p.X n ⊕ Fin (m n), poly := q } : Family F) ∈ VP F ∧
+  {p | ∃ (m : ℕ → ℕ) (q : ∀ n, MvPolynomial (p.vars n ⊕ Fin (m n)) F),
+    ({ vars := fun n => p.vars n ⊕ Fin (m n), poly := q } : Family F) ∈ VP F ∧
       ∀ n, p.poly n = ∑ e : Fin (m n) → Bool, bits (q n) e}
 
 end Definitions

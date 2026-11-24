@@ -129,7 +129,7 @@ theorem exists_beyond_poly {c : ℝ} (hc : 0 < c) (m₀ C : ℕ) :
 
 /-- "(HC_m) is in VNP." -/
 theorem hc_mem_VNP (F : Type u) [Field F] :
-    ({ X := fun n => Fin n × Fin n, poly := genHC F } : Family F) ∈ VNP F := by
+    ({ vars := fun n => Fin n × Fin n, poly := genHC F } : Family F) ∈ VNP F := by
   refine ⟨fun n => n * n, Hc.hcWit F, ⟨700, fun n => ?_⟩, Hc.genHC_eq_sum_wit F⟩
   have hb := Hc.quartic_bound n (C := 700) le_rfl
   obtain ⟨h1, h2⟩ := Hc.csize_hcWit F n

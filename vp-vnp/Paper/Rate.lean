@@ -494,7 +494,7 @@ theorem vp_subset_vnp.{u} (F : Type u) [CommSemiring F] : VP F ⊆ VNP F := by
   · obtain ⟨h1, h2, h3⟩ := hC n
     refine ⟨?_, (MvPolynomial.totalDegree_rename_le _ _).trans h2, h3.rename _⟩
     refine le_trans (le_of_eq ?_) h1
-    change Fintype.card (p.X n ⊕ Fin 0) = _
+    change Fintype.card (p.vars n ⊕ Fin 0) = _
     simp
   · rw [Fintype.sum_unique, bits_rename]
 
