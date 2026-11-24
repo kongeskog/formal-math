@@ -114,8 +114,8 @@ variable {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq 
   {mu : Letter S Unit Γ → Matrix Q Q A} {cb : Option Γ → Fin c → Bool} {kinds : List (Σ L : G.Law A, L.Ro)}
 
 theorem wsum_script_cons (T ub : ℕ) (i : Ins) (l : List Ins) (t : Tree) (Ψ : Tree → A) :
-    wsum (scriptSem (S := S) θ mu cb kinds T ub (i :: l) t) Ψ = wsum (insSem (S := S) θ mu cb kinds T ub i t) fun t' =>
-      wsum (scriptSem (S := S) θ mu cb kinds T ub l t') Ψ := by
+    wsum (scriptSem θ mu cb kinds T ub (i :: l) t) Ψ = wsum (insSem θ mu cb kinds T ub i t) fun t' =>
+      wsum (scriptSem θ mu cb kinds T ub l t') Ψ := by
   rw [scriptSem, foldL, wsum_bindW]
   rfl
 
@@ -124,9 +124,9 @@ theorem wsum_script_nil (T ub : ℕ) (t : Tree) (Ψ : Tree → A) :
   rw [scriptSem, foldL, wsum_single]
 
 theorem wsum_script_append (T ub : ℕ) (l l' : List Ins) (t : Tree) (Ψ : Tree → A) :
-    wsum (scriptSem (S := S) θ mu cb kinds T ub (l ++ l') t) Ψ =
-      wsum (scriptSem (S := S) θ mu cb kinds T ub l t) fun t' =>
-        wsum (scriptSem (S := S) θ mu cb kinds T ub l' t') Ψ :=
+    wsum (scriptSem θ mu cb kinds T ub (l ++ l') t) Ψ =
+      wsum (scriptSem θ mu cb kinds T ub l t) fun t' =>
+        wsum (scriptSem θ mu cb kinds T ub l' t') Ψ :=
   foldL_append _ _ _ _ _
 
 /-- Several comparisons. -/

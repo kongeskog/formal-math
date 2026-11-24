@@ -143,7 +143,7 @@ theorem switchF_does {t : Fm} {fs : List Fm} {x : Tree} {j c d : ℕ} {Q : List 
       exact (Does.ite_false ht h).mono (by omega)
     | succ j =>
       simp only [List.getElem?_cons_succ] at hf
-      have h1 := ih (t := .tl t) (j := j) (c := c + 1) ht.tl hf
+      have h1 := ih (t := .tl t) (c := c + 1) ht.tl hf
       refine (Does.ite_true ht (by simp [num]) h1).mono ?_
       have : (j + 1 + 1) * (c + (j + 1) + 1) = (j + 1) * (c + 1 + j + 1) + (c + (j + 1) + 1) := by ring
       omega
@@ -235,13 +235,13 @@ theorem ex_opts (os : List (Opt nC nO Λ)) : ∃ F κ, ∀ s : TSt nC nI nO Λ,
   | nil => exact ⟨.fail, 0, fun s => Does.fail _⟩
   | cons o os ih =>
     obtain ⟨F, κ, h⟩ := ih
-    obtain ⟨G, κ', h'⟩ := ex_opt (θ := θ) (nI := nI) eL o
+    obtain ⟨G, κ', h'⟩ := ex_opt (θ := θ) eL o
     exact ⟨.ite .guess G F, max κ' κ + 2, fun s => Does.either (h' s) (h s)⟩
 
 /-- One formula for the steps of a transducer. -/
 theorem ex_step (tab : Fin nC → (Fin nI → Bool) → List (Opt nC nO Λ)) : ∃ F κ, ∀ s : TSt nC nI nO Λ,
     Does θ F (encS eL s) ((stepL θ tab s).map (Prod.map id (encS eL))) κ := by
-  choose F κ h using fun z : Fin nC × (Fin nI → Bool) => ex_opts (θ := θ) (nI := nI) eL (tab z.1 z.2)
+  choose F κ h using fun z : Fin nC × (Fin nI → Bool) => ex_opts (θ := θ) eL (tab z.1 z.2)
   obtain ⟨κ', hκ'⟩ : ∃ κ', ∀ z, κ z ≤ κ' := exists_uniform (fun i k k' h h' => h'.trans h) fun z => ⟨_, le_rfl⟩
   refine ⟨switchF (.hd .id) (List.ofFn fun c : Fin nC => dispF nI (fun i => .hd (nthF i (.hd (.tl .id)))) fun v => F (c, v)),
     (nC + 1) * (nC + 4) + (nI * (nI + 5 + 1) + κ'), fun s => ?_⟩
@@ -278,7 +278,7 @@ theorem ex_run (tab : Fin nC → (Fin nI → Bool) → List (Opt nC nO Λ)) : �
     exact (Gives.id _).hd
   have h2 := foldT (θ := θ) (f := fun (_ : Unit) s => stepL θ tab s) (Inv := fun _ _ => True) (d := fun _ => κ + 4)
     (encE := fun _ => .nil) (step := lett (.tl .id) F) (s := .tl .id) (l := .hd .id) (x := .cons (num k) (encS eL s))
-    (enc := encS eL) (s₀ := s)
+    (enc := encS eL)
     (Gives.id _).tl h1 (fun x ys s _ _ => ⟨(Does.of_gives (Gives.id _).tl (h s)).mono (by omega), fun _ _ => trivial⟩)
     trivial
   refine h2.mono ?_
@@ -320,7 +320,7 @@ theorem exists_runL_length (tab : Fin nC → (Fin nI → Bool) → List (Opt nC 
       · exact (hk o' ho' j).trans (le_max_left _ _)
   refine ⟨κ, fun k s hs q hq j => ?_⟩
   have := mem_foldL_induct (f := fun (_ : Unit) s => stepL θ tab s) (xs := List.replicate k ())
-    (Inv := fun m s => ∀ j, (s.2.2 j).length ≤ κ * m) (m := 0) (s := s) (fun x _ s m hm q hq j => by
+    (Inv := fun m s => ∀ j, (s.2.2 j).length ≤ κ * m) (m := 0) (fun x _ s m hm q hq j => by
       obtain ⟨o, ho, rfl⟩ := List.mem_map.1 hq
       have h1 := hκ (s.1, fun i => (s.2.1 i).headD false) o ho j
       have h2 := hm j

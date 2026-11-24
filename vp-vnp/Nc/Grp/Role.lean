@@ -67,7 +67,7 @@ theorem streamStep_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (
     simp [hk]
 
 theorem foldL_stream (es : List (List Bool)) (acc : List Bool) :
-    foldL (A := A) (fun k acc => if ct k ≠ [] then [((1 : A), ct k ++ acc)] else []) es acc =
+    foldL (fun k acc => if ct k ≠ [] then [((1 : A), ct k ++ acc)] else []) es acc =
       if ∀ k ∈ es, ct k ≠ [] then [((1 : A), es.reverse.flatMap ct ++ acc)] else [] := by
   induction es generalizing acc with
   | nil => simp [foldL]
@@ -93,12 +93,12 @@ theorem streamF_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (ct 
       ((es.map fun k => ub * 62 + k.length * 60 + 330).sum + 60) := by
   have h0 : Gives θ (.cons (.hd .id) (.quote .nil)) (.cons t (listT (es.map ofBits))) (.cons t (ofBits [])) 8 :=
     (Gives.cons (Gives.id _).hd (Gives.quote _ _)).mono (by omega)
-  have h1 := foldT (θ := θ) (A := A) (encE := ofBits) (xs := es)
+  have h1 := foldT (θ := θ)
     (enc := fun acc : List Bool => .cons t (ofBits acc)) (s₀ := [])
     (f := fun k acc => if ct k ≠ [] then [((1 : A), ct k ++ acc)] else []) (Inv := fun _ _ => True)
-    (d := fun k => ub * 62 + k.length * 60 + 300) (step := streamStep) (l := .tl .id) h0 (Gives.id _).tl
+    (d := fun k => ub * 62 + k.length * 60 + 300) (l := .tl .id) h0 (Gives.id _).tl
     (fun k _ acc _ _ => ⟨streamStep_does hct hlen k acc, fun _ _ => trivial⟩) trivial
-  have h2 := Does.lettE (G := .tl .id) (f := fun acc => [((1 : A), acc)]) (enc' := ofBits) (d := 2) h1
+  have h2 := Does.lettE (G := .tl .id) (f := fun acc => [((1 : A), acc)]) (d := 2) h1
     (fun b _ => by exact (Gives.id _).tl)
   rw [foldL_stream] at h2
   have e : (es.map fun k => ub * 62 + k.length * 60 + 300 + 30) = es.map fun k => ub * 62 + k.length * 60 + 330 :=
@@ -122,7 +122,7 @@ theorem streamsStep_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, 
   split_ifs <;> simp [listT]
 
 theorem foldL_streams (slots : List (List (List Bool))) (acc : List (List Bool)) :
-    foldL (A := A) (fun es acc => if ∀ k ∈ es, ct k ≠ [] then [((1 : A), es.reverse.flatMap ct :: acc)]
+    foldL (fun es acc => if ∀ k ∈ es, ct k ≠ [] then [((1 : A), es.reverse.flatMap ct :: acc)]
       else []) slots acc = if ∀ es ∈ slots, ∀ k ∈ es, ct k ≠ [] then
         [((1 : A), (slots.map fun es => es.reverse.flatMap ct).reverse ++ acc)] else [] := by
   induction slots generalizing acc with
@@ -151,11 +151,11 @@ theorem streamsF_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (ct
   have h0 : Gives θ (.cons (.hd .id) (.quote .nil)) (.cons t (keysT slots))
       (.cons t (listT (([] : List (List Bool)).map ofBits))) 8 :=
     (Gives.cons (Gives.id _).hd (Gives.quote _ _)).mono (by omega)
-  have h1 := foldT (θ := θ) (A := A) (encE := fun es : List (List Bool) => listT (es.map ofBits)) (xs := slots)
+  have h1 := foldT (θ := θ) (encE := fun es : List (List Bool) => listT (es.map ofBits))
     (enc := fun acc : List (List Bool) => .cons t (listT (acc.map ofBits))) (s₀ := [])
     (f := fun es acc => if ∀ k ∈ es, ct k ≠ [] then [((1 : A), es.reverse.flatMap ct :: acc)] else [])
     (Inv := fun ys acc => ys.length + acc.length = slots.length)
-    (d := fun es => (es.map fun k => ub * 62 + k.length * 60 + 330).sum + 150) (step := streamsStep)
+    (d := fun es => (es.map fun k => ub * 62 + k.length * 60 + 330).sum + 150)
     (l := .tl .id) h0 (Gives.id _).tl
     (fun es ys acc _ hinv => ⟨streamsStep_does hct hlen es acc, fun q hq => by
       split_ifs at hq

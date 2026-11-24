@@ -82,7 +82,7 @@ def inN (p : Fin (K + K)) : ℕ := ∑ b, ((n p b).1 + (n b p).1)
 
 theorem card_dom : (dom n o grp g : Finset (Cell M U0 U1)).card = evG n o grp g := by
   unfold evG
-  rw [Finset.card_eq_sum_card_fiberwise (f := Prod.fst) (t := univ.filter fun p => grp p = g)]
+  rw [Finset.card_eq_sum_card_fiberwise (t := univ.filter fun p => grp p = g)]
   · refine Finset.sum_congr rfl fun p hp => ?_
     refine Finset.card_bij' (fun c _ => c.2) (fun id _ => (p, id)) ?_ ?_ ?_ ?_
     · intro c hc
@@ -355,7 +355,7 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
     (hlT : bT.length ≤ Lc) (hlub : bub.length ≤ Lc) (hP : P.Ok cap) (hx : ∀ κ, (x κ).length ≤ T)
     (hk : ∀ c, (key c).length ≤ Lc) (hd : ∀ c, (dkey c).length ≤ Lc) (hS : Fintype.card (Option S) ≤ X)
     (hA : K + K ≤ X) (hR : Fintype.card M.R ≤ X) (hsl : ∀ r : M.R, Fintype.card ((M.kind r.1).SlAt r.2) ≤ X)
-    (hcn : ∀ r : M.R, Fintype.card ((M.kind r.1).CnAt r.2) ≤ X) (hι : (baseList (A' := A') grp g).length ≤ ιb) (hιX : ιb ≤ X)
+    (hcn : ∀ r : M.R, Fintype.card ((M.kind r.1).CnAt r.2) ≤ X) (hι : (baseList grp g).length ≤ ιb) (hιX : ιb ≤ X)
     (hlh : ∀ p : Fin (K + K), grp (Fin.castAdd A' p) = g → ∑ b, ((n p b).1 + (n b p).1) ≤ lh)
     (hev : evG n o grp g ≤ ev) (hpd : pdG P n o grp g ≤ pd) (b : G.Uid (K + K) U0 M.N U1 → UW ub) :
     (bT.length + 1) * (bval bT + 1) + (bub.length + 1) * (bval bub + 1) +
@@ -365,7 +365,7 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
   rw [hT, hub]
   have hX : 1 ≤ X := le_trans Fintype.card_pos hS
   -- base parties
-  have c1 : (((baseList (A' := A') grp g).flatMap (baseIns qn cb q x ρ n key dkey)).map (insCost T ub)).sum ≤
+  have c1 : (((baseList grp g).flatMap (baseIns qn cb q x ρ n key dkey)).map (insCost T ub)).sum ≤
       ιb * (T + lh * (660 * (ub + Lc + 1)) + X * X + 401 * X + 1) := by
     rw [sum_flatMap_map]
     refine (sum_le_length_mul _ _ (T + lh * (660 * (ub + Lc + 1)) + X * X + 401 * X + 1) fun p hp => ?_).trans
@@ -374,7 +374,7 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
     have h2 : inN n p ≤ lh := hlh p (mem_baseList.1 hp)
     refine h1.trans ?_
     gcongr
-  have l1 : ((baseList (A' := A') grp g).flatMap (baseIns qn cb q x ρ n key dkey)).length ≤ ιb * (1 + lh) := by
+  have l1 : ((baseList grp g).flatMap (baseIns qn cb q x ρ n key dkey)).length ≤ ιb * (1 + lh) := by
     rw [List.length_flatMap]
     refine (sum_le_length_mul _ _ (1 + lh) fun p hp => ?_).trans (Nat.mul_le_mul_right _ hι)
     have h1 := (cost_base (qn := qn) (cb := cb) (q := q) (ρ := ρ) (n := n) (ub := ub) (X := X) (T := T) hx hk hd hS hA p).2
@@ -388,8 +388,8 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
   have l3 := length_endIns (P := P) (n := n) (o := o) (grp := grp) (g := g) (key := key) b
   unfold script
   rw [List.map_append, List.sum_append, List.map_append, List.sum_append, List.length_append, List.length_append]
-  generalize (((baseList (A' := A') grp g).flatMap (baseIns qn cb q x ρ n key dkey)).map (insCost T ub)).sum = C1 at *
-  generalize ((baseList (A' := A') grp g).flatMap (baseIns qn cb q x ρ n key dkey)).length = L1 at *
+  generalize (((baseList grp g).flatMap (baseIns qn cb q x ρ n key dkey)).map (insCost T ub)).sum = C1 at *
+  generalize ((baseList grp g).flatMap (baseIns qn cb q x ρ n key dkey)).length = L1 at *
   generalize (((roleList grp g M).map (roleIns P n o key tg)).map (insCost T ub)).sum = C2 at *
   generalize ((roleList grp g M).map (roleIns P n o key tg)).length = L2 at *
   generalize ((endIns P n o grp g key b).map (insCost T ub)).sum = C3 at *

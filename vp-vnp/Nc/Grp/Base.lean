@@ -163,7 +163,7 @@ theorem segsF_does (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) (items 
     (hc : ∀ it ∈ items, ∀ a ∈ it.2, a.length ≤ c) : Does θ (segsF sep) (.cons (listT (items.map encI)) (encA accs))
       ((segsL A sep items accs).map (Prod.map id encA))
       ((items.map fun it => (62 * c + 700) * (it.1.length + it.2.length + 1) + 30).sum + 30) := by
-  have := foldT (θ := θ) (A := A) (encE := encI) (xs := items) (enc := encA) (s₀ := accs) (f := segOne A sep)
+  have := foldT (θ := θ) (f := segOne A sep)
     (Inv := fun _ _ => True) (d := fun it => (62 * c + 700) * (it.1.length + it.2.length + 1)) (step := segStepF sep)
     (s := .tl .id) (l := .hd .id) (x := .cons (listT (items.map encI)) (encA accs)) (Gives.id _).tl (Gives.id _).hd
     (fun it _ accs hit _ => ⟨segStepF_does sep c hsep it accs (hc it hit), fun _ _ => trivial⟩) trivial

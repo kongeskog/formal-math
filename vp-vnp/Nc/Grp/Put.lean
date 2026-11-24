@@ -60,7 +60,7 @@ theorem unit_gives {s y : Fm} {x : Tree} {cs cy ub : ℕ} {r : List Bool} (hs : 
   have := foldTG (θ := θ) (encE := fun _ : Unit => (.nil : Tree))
     (enc := fun s : List Bool × List Bool => .cons (ofBits s.1) (ofBits s.2)) (s₀ := (r, []))
     (g := fun _ s => (s.1.tail, s.1.headD false :: s.2)) (Inv := fun _ _ => True) (d := fun _ => 20)
-    (step := unitStep) h0 hy' (fun _ _ s _ _ => ⟨by
+    h0 hy' (fun _ _ s _ _ => ⟨by
       have h1 : Gives θ (.tl (.hd (.tl .id))) (.cons .nil (.cons (ofBits s.1) (ofBits s.2))) (ofBits s.1.tail) 4 := by
         rw [← ofBits_tl]
         exact (Gives.id _).tl.hd.tl
@@ -107,7 +107,7 @@ theorem putStep_does (ub : ℕ) (k : List Bool) (s : List Bool × Tree) :
     rw [List.reverse_reverse, List.append_nil] at h2
     have h3 := setF_gives (θ := θ) (x := .cons (.cons (ofBits k) (.cons (num ub) (.cons (ofBits (b :: r)) t)))
       (.cons (ofBits ((b :: r).drop ub)) (ofBits (padTake ub (b :: r)).reverse))) (pf := .hd (.hd .id))
-      (tf := .tl (.tl (.tl (.hd .id)))) (p := ofBits k) (t := t) (Gives.id _).hd.hd h2 (Gives.id _).hd.tl.tl.tl
+      (tf := .tl (.tl (.tl (.hd .id)))) (p := ofBits k) (Gives.id _).hd.hd h2 (Gives.id _).hd.tl.tl.tl
     rw [path_ofBits] at h3
     have h4 := Gives.letk h1 (Gives.cons (Gives.id _).hd.tl.hd (Gives.cons (Gives.id _).tl.hd h3))
     refine (Does.ite_true (Gives.id _).tl.tl.hd (by simp [ofBits]) h4).mono ?_
@@ -136,9 +136,9 @@ theorem bind_putOne (ub : ℕ) (keys : List (List Bool)) (r : List Bool) (t : Tr
 theorem putF_does (ub : ℕ) (keys : List (List Bool)) (r : List Bool) (t : Tree) :
     Does θ putF (.cons (num ub) (.cons (listT (keys.map ofBits)) (.cons (ofBits r) t)))
       (encT (putL ub keys r t)) ((keys.map fun k => ub * 90 + k.length * 60 + 330).sum + 100) := by
-  have h1 := foldT (θ := θ) (A := A) (encE := ofBits) (xs := keys)
+  have h1 := foldT (θ := θ)
     (enc := fun s : List Bool × Tree => .cons (num ub) (.cons (ofBits s.1) s.2)) (s₀ := (r, t)) (f := putOne A ub)
-    (Inv := fun _ _ => True) (d := fun k => ub * 90 + k.length * 60 + 300) (step := putStep)
+    (Inv := fun _ _ => True) (d := fun k => ub * 90 + k.length * 60 + 300)
     (s := .cons (.hd .id) (.tl (.tl .id))) (l := .hd (.tl .id))
     (x := .cons (num ub) (.cons (listT (keys.map ofBits)) (.cons (ofBits r) t)))
     (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl) (Gives.id _).tl.hd
@@ -178,11 +178,11 @@ theorem putsF_does (ub : ℕ) (kss : List (List (List Bool))) (strs : List (List
     Does θ putsF (.cons (num ub) (.cons (listT (kss.map fun ks => listT (ks.map ofBits)))
         (.cons (listT (strs.map ofBits)) t))) (encT (putsL ub kss strs t))
       ((kss.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum + 100) := by
-  have h1 := foldT (θ := θ) (A := A) (encE := fun ks : List (List Bool) => listT (ks.map ofBits)) (xs := kss)
+  have h1 := foldT (θ := θ) (encE := fun ks : List (List Bool) => listT (ks.map ofBits))
     (enc := fun s : List (List Bool) × Tree => .cons (num ub) (.cons (listT (s.1.map ofBits)) s.2)) (s₀ := (strs, t))
     (f := fun ks (s : List (List Bool) × Tree) => (putL ub ks (s.1.headD []) s.2).map fun t =>
       ((1 : A), (s.1.tail, t))) (Inv := fun _ _ => True)
-    (d := fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 160) (step := putsStep)
+    (d := fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 160)
     (s := .cons (.hd .id) (.tl (.tl .id))) (l := .hd (.tl .id))
     (x := .cons (num ub) (.cons (listT (kss.map fun ks => listT (ks.map ofBits))) (.cons (listT (strs.map ofBits)) t)))
     (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl) (Gives.id _).tl.hd

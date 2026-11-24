@@ -319,7 +319,7 @@ theorem size_scriptT (hX : 1 ≤ X) (hLc : 1 ≤ Lc) (hK : K + K ≤ X) (hU0 : U
       (cutAt P n o grp g).card * (4 * ub) := by
   classical
   -- base parties
-  have h1 : ((((baseList (A' := A') grp g).flatMap (baseIns qn cb q x ρ n key dkey)).map Ins.tree).map
+  have h1 : ((((baseList grp g).flatMap (baseIns qn cb q x ρ n key dkey)).map Ins.tree).map
       fun t => t.size + 1).sum ≤ X * (X * X * (8 * Lc + 10) + 10 * X + 12 + X * (8 * Lc + 10)) +
       (∑ κ ∈ univ.filter (fun κ : Fin K => grp (Fin.castAdd A' (Fin.natAdd K κ)) = g), (x κ).length) * (4 * c + 2) := by
     have e1 : ∀ l : List (Fin (K + K)), (((l.flatMap (baseIns qn cb q x ρ n key dkey)).map Ins.tree).map
@@ -343,7 +343,7 @@ theorem size_scriptT (hX : 1 ≤ X) (hLc : 1 ≤ Lc) (hK : K + K ≤ X) (hU0 : U
       refine (List.length_filter_le _ _).trans ?_
       rw [List.length_finRange]
       exact hK
-    · have e2 : ((baseList (A' := A') grp g).map (plen x)).sum =
+    · have e2 : ((baseList grp g).map (plen x)).sum =
           ∑ p ∈ univ.filter (fun p : Fin (K + K) => grp (Fin.castAdd A' p) = g), plen x p := by
         rw [← List.sum_toFinset _ nodup_baseList]
         refine Finset.sum_congr ?_ fun _ _ => rfl
@@ -361,7 +361,7 @@ theorem size_scriptT (hX : 1 ≤ X) (hLc : 1 ≤ Lc) (hK : K + K ≤ X) (hU0 : U
       obtain ⟨t, ht, rfl⟩ := List.mem_map.1 hm
       obtain ⟨i, hi, rfl⟩ := List.mem_map.1 ht
       obtain ⟨r, -, rfl⟩ := List.mem_map.1 hi
-      have := size_roleIns (key := key) (tg := tg) (P := P) (n := n) (o := o) hU hU1 hSl hCn hkey htg hnum r
+      have := size_roleIns hU hU1 hSl hCn hkey htg hnum r
       omega
     · rw [List.length_map, List.length_map, List.length_map, smul_eq_mul]
       refine Nat.mul_le_mul_right _ ?_
