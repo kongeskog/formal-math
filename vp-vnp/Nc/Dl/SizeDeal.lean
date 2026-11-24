@@ -176,16 +176,6 @@ theorem size_dealF (t0 t1 : Tree) (names : List (List Bool)) (nl nub : List Bool
   have h8 : dealC = 4 * (dstepF []).code.size + 2 * partStep.code.size + 2 * (wordB .nil .nil).code.size +
     2 * (tmF (.tl .id) (.hd .id)).code.size + 5000 := rfl
   rw [dealF, size_lett, size_lett, h8]
-  generalize (dstepsF nub sts (partsF names nl (wordF t0 t1 .id))).code.size = a1 at *
-  generalize (dstepsF nub sts' .id).code.size = a2 at *
-  generalize (tmsF ts .id).code.size = a3 at *
-  generalize (partsF names nl (wordF t0 t1 .id)).code.size = a4 at *
-  generalize (dstepF nub).code.size = a5 at *
-  generalize (dstepF []).code.size = a6 at *
-  generalize (wordB t0 t1).code.size = a7 at *
-  generalize (wordB .nil .nil).code.size = a8 at *
-  generalize (tmF (.tl .id) (.hd .id)).code.size = a9 at *
-  generalize partStep.code.size = a10 at *
   omega
 
 end formulas
