@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T02:54:00.930750627Z",
+  "updated_at": "2026-11-24T02:57:50.337571180Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "e576139eab3c319ec27d832cb12b741f95fe5efe",
-    "at": "2026-11-24T02:29:53.660880542Z",
+    "sha": "4708256172cfa14df8fdbe6d2990bdddf13e1370",
+    "at": "2026-11-24T02:57:50.337571180Z",
     "metrics": {
-      "tokens": 926522,
-      "loc": 58646,
+      "tokens": 925673,
+      "loc": 58601,
       "decls": 4589,
       "files": 321,
-      "bytes": 3413819,
-      "build_seconds": 654
+      "bytes": 3410664,
+      "build_seconds": 551
     }
   },
   "counts": {
-    "merged": 8,
+    "merged": 9,
     "rejected": 2,
-    "open": 4,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 8,
+      "merged": 9,
       "attempts": 14,
-      "saved": 1639
+      "saved": 2488
     }
   ],
   "ideas": [
@@ -165,7 +165,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T05:32:53Z",
       "pr": 24,
-      "result_delta": null,
+      "result_delta": -849,
       "created_at": "2026-11-24T00:48:02Z",
       "url": "https://github.com/kongeskog/formal-math/issues/12",
       "technique": "restructure",
@@ -257,74 +257,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 24,
-      "title": "restructure(Nc/Dl): prove sum_allSteps from sum_steps18 instead of repeating its phases",
-      "author": "kongeskog",
-      "head_sha": "39c3d37e140e247ffa62d357eea01b18a7f8a8ff",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-24T02:38:22Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 12,
-      "url": "https://github.com/kongeskog/formal-math/pull/24",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/Dl"
-    },
     {
       "pr": 25,
       "title": "shorten(NS1): replace the obtain-exists-rfl idiom by generalize or exists_eq",
