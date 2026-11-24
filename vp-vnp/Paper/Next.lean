@@ -40,26 +40,16 @@ theorem prop_next_round {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤ α) 
   have hu4 : 2000 ≤ u := by omega
   have hu1 : 1 ≤ u := by omega
   have hh1 : 5 * h ≤ h * α := by rw [Nat.mul_comm h α]; exact Nat.mul_le_mul_right _ hα
-  have hα32 : α * (16 * h - 32) = 16 * (h * α) - 32 * α := by
-    rw [Nat.mul_sub]
-    congr 1
-    · ring
-    · ring
+  have hα32 := mul_sub_scale α h 32
   have hαh : 17 * α ≤ h * α := Nat.mul_le_mul_right _ hh
   have he3 : h * α + 3 ≤ e := by omega
   have he4 : 16 * h ≤ e := by omega
   have hH : 16 * h ≤ e + 9 := by omega
   -- the trie of powers
   obtain ⟨nB, hnB⟩ : ∃ n, n = (K.expand B).nds := ⟨_, rfl⟩
-  have hnB1 : nB ≤ K.nds * (2 * X) := hnB ▸ (KT.nds_expand B K).trans (Nat.mul_le_mul_left _ (by omega))
-  have hnBX : ∀ c, c * X ^ 2 ≤ 1000 * X ^ 3 → nB * (c * X) ≤ 2 * u ^ (h * α + 1) := by
-    intro c hc
-    calc nB * (c * X) ≤ K.nds * (2 * X) * (c * X) := Nat.mul_le_mul_right _ hnB1
-      _ = K.nds * (2 * (c * X ^ 2)) := by ring
-      _ ≤ u ^ (h * α) * (2 * u) := Nat.mul_le_mul hK (by omega)
-      _ = 2 * u ^ (h * α + 1) := by rw [pow_succ]; ring
-  have pu : ∀ a, u ^ (a + 1) = u * u ^ a := fun a => by rw [pow_succ]; ring
-  have pbig : ∀ a, 2000 * u ^ a ≤ u ^ (a + 1) := fun a => by rw [pu]; exact Nat.mul_le_mul_right _ hu4
+  have hnBX : ∀ c, c * X ^ 2 ≤ 1000 * X ^ 3 → nB * (c * X) ≤ 2 * u ^ (h * α + 1) :=
+    fun c hc => hnB ▸ nds_expand_le hK (by omega) hXu hc
+  have pbig := pow_big hu4
   have ppos : ∀ a, 1 ≤ u ^ a := fun a => Nat.one_le_pow _ _ (by omega)
   -- the cut
   obtain ⟨G, hG⟩ := hC (u ^ (e + 9)) (u ^ (α * (16 * h - 32) + 1)) (pow_le_pow hu1 hH)
@@ -90,7 +80,7 @@ theorem prop_next_round {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤ α) 
     calc MM (K.ht + B + J + 1) * u ^ (e + 8) + 40 * (nB * (J + 1)) + 40
         ≤ (MM (K.ht + B + J + 1) + 2) * u ^ (e + 8) := by rw [add_mul]; omega
       _ ≤ u * u ^ (e + 8) := Nat.mul_le_mul_right _ m1
-      _ = u ^ (e + 9) := (pu (e + 8)).symm
+      _ = u ^ (e + 9) := (pow_succ' u (e + 8)).symm
   · -- size of the plain instances
     rw [← hnB, ← hsW]
     have m1 : sW + 3 ≤ u ^ (α * (16 * h - 32)) := by
@@ -248,41 +238,16 @@ theorem prop_next {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut : CutHyp θ 
     rw [cst_def] at hcst
     exact ((Nat.le_add_left _ _).trans (Nat.le_add_right _ 2000)).trans hcst
   have hu1 : 1 ≤ v := by omega
-  have pu : ∀ a, v ^ (a + 1) = v * v ^ a := fun a => by rw [pow_succ]; ring
-  have pbig : ∀ a, 2000 * v ^ a ≤ v ^ (a + 1) := fun a => by rw [pu]; exact Nat.mul_le_mul_right _ hu4
+  have pbig := pow_big hu4
   have hαX : 3 * α + 1 ≤ X := by
     have : (3 * α + 1) * 1 ≤ (3 * α + 1) * (J + 1) := Nat.mul_le_mul_left _ (by omega)
     omega
   have hh1 : 5 * h ≤ h * α := by rw [Nat.mul_comm h α]; exact Nat.mul_le_mul_right _ hα
   have hαh : 17 * α ≤ h * α := Nat.mul_le_mul_right _ hh
-  have hα32 : α * (16 * h - 32) = 16 * (h * α) - 32 * α := by
-    rw [Nat.mul_sub]
-    congr 1
-    · ring
-    · ring
-  have hα16 : α * (16 * h - 17) = 16 * (h * α) - 17 * α := by
-    rw [Nat.mul_sub]
-    congr 1
-    · ring
-    · ring
+  have hα32 := mul_sub_scale α h 32
+  have hα16 := mul_sub_scale α h 17
   have e16 : 16 * h * α = 16 * (h * α) := by ring
-  have e4 : 4 * h * α = 4 * (h * α) := by ring
   have e17 : 16 * h * (2 * α) = 32 * (h * α) := by ring
-  -- sizes stay small
-  have hsize : ∀ n ≤ 3 * α, v + n * (v ^ (h * α + 2) + v ^ (16 * h + 1)) ≤ v ^ (4 * h * α) := by
-    intro n hn
-    obtain ⟨a, ha⟩ : ∃ a, 4 * h * α = a + 1 := ⟨4 * h * α - 1, by omega⟩
-    have t1 : n * (v ^ (h * α + 2) + v ^ (16 * h + 1)) ≤ v * (v ^ (h * α + 2) + v ^ (16 * h + 1)) :=
-      Nat.mul_le_mul_right _ (by omega)
-    have t2 : v * (v ^ (h * α + 2) + v ^ (16 * h + 1)) = v ^ (h * α + 3) + v ^ (16 * h + 2) := by
-      rw [mul_add, ← pu, ← pu]
-    have t3 : v ^ (h * α + 3) ≤ v ^ a := pow_le_pow hu1 (by omega)
-    have t4 : v ^ (16 * h + 2) ≤ v ^ a := pow_le_pow hu1 (by omega)
-    have t5 : v ^ 1 ≤ v ^ a := pow_le_pow hu1 (by omega)
-    have t6 := pbig a
-    rw [pow_one] at t5
-    rw [ha]
-    omega
   -- the rounds
   have rounds : ∀ n ≤ 3 * α, ∃ p, IsPre θ (16 * h) (v ^ α) (v ^ (16 * h * α + 1 - 8 * n)) K (B + n * J) p ∧
       p.size ≤ v + n * (v ^ (h * α + 2) + v ^ (16 * h + 1)) ∧
@@ -307,7 +272,7 @@ theorem prop_next {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut : CutHyp θ 
       obtain ⟨p', hp', hps'⟩ := prop_next_round hh hα hC hcst hD hK hDs (p := p) (B := B + n * J) (J := J) (X := X)
         (e := 16 * h * α + 1 - 8 * (n + 1)) (by
           rw [show 16 * h * α + 1 - 8 * (n + 1) + 8 = 16 * h * α + 1 - 8 * n by omega]
-          exact hp) (hps.trans (hsize n (by omega))) (lt_of_le_of_lt (pow_le_pow hu1 (by omega)) hJ2) (by omega) hX10
+          exact hp) (hps.trans (size_rounds hh hα hu4 (by omega))) (lt_of_le_of_lt (pow_le_pow hu1 (by omega)) hJ2) (by omega) hX10
         hX (by omega) (by omega)
       have hB : max (B + n * J + J) B ≤ B + (n + 1) * J := by
         rw [e2]
@@ -321,6 +286,6 @@ theorem prop_next {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut : CutHyp θ 
   · rw [← pow_mul]
     exact pow_le_pow hu1 (by omega)
   · rw [← pow_mul, show α * (4 * h) = 4 * h * α by ring]
-    exact hps.trans (hsize _ le_rfl)
+    exact hps.trans (size_rounds hh hα hu4 (by omega))
 
 end Paper
