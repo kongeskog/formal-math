@@ -31,9 +31,6 @@ noncomputable def meanSq (w : Mt μ → Mt μ → ℝ) (r : ℕ) : ℝ :=
 /-- The paper's D(r). -/
 noncomputable def distAtRank (w : Mt μ → Mt μ → ℝ) (r : ℕ) : ℝ := √(meanSq w r)
 
-theorem distAtRank_sq (w : Mt μ → Mt μ → ℝ) (r : ℕ) : distAtRank w r ^ 2 = meanSq w r :=
-  Real.sq_sqrt (div_nonneg (sum_nonneg fun _ _ => sum_nonneg fun _ _ => sq_nonneg _) (by positivity))
-
 theorem meanSq_nonneg (w : Mt μ → Mt μ → ℝ) (r : ℕ) : 0 ≤ meanSq w r :=
   div_nonneg (sum_nonneg fun _ _ => sum_nonneg fun _ _ => sq_nonneg _) (by positivity)
 
