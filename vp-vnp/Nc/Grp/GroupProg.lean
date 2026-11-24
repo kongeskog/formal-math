@@ -73,7 +73,7 @@ variable (θ) in
 /-- What an instruction does with a trie. -/
 noncomputable def insSem (T ub : ℕ) : Ins → Tree → List (A × Tree)
   | .block q q' B, t => if h : q < Fintype.card Q ∧ q' < Fintype.card Q then
-      bindL (simSem θ mu cb T ⟨q, h.1⟩ ⟨q', h.2⟩) fun o => packSem A (sepOf cb) ub B o t else []
+      bindW (simSem θ mu cb T ⟨q, h.1⟩ ⟨q', h.2⟩) fun o => packSem A (sepOf cb) ub B o t else []
   | .input part B, t => packSem A (sepOf cb) ub B (inOuts (S := S) part) t
   | .both k k', t => if tget k t = tget k' t then [(1, t)] else []
   | .one k w, t => if tget k t = ofBits w then [(1, t)] else []
@@ -156,9 +156,9 @@ theorem mem_encT {l : List Tree} {q : A × Tree} (h : q ∈ encT (A := A) l) : q
 theorem TOk.pack {sep : List Bool} {ub : ℕ} {B : Body} {o : Outs S} {t : Tree} (h : TOk ub t) :
     ∀ q ∈ packSem A sep ub B o t, TOk ub q.2 := by
   intro q hq
-  obtain ⟨a, -, r, hr, e1⟩ := mem_bindL hq
-  obtain ⟨b, hb, r', hr', e2⟩ := mem_bindL hr
-  obtain ⟨d, -, r'', hr'', e3⟩ := mem_bindL hr'
+  obtain ⟨a, -, r, hr, e1, -⟩ := mem_bindW hq
+  obtain ⟨b, hb, r', hr', e2, -⟩ := mem_bindW hr
+  obtain ⟨d, -, r'', hr'', e3, -⟩ := mem_bindW hr'
   rw [e1, e2, e3]
   exact (h.putsL _ (mem_encT hb)).putsL _ (mem_encT hr'')
 
@@ -169,7 +169,7 @@ theorem TOk.insSem {T ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
   | block q₁ q₂ B =>
     rw [Grp.insSem] at hq
     split_ifs at hq
-    · obtain ⟨a, -, r, hr, e1⟩ := mem_bindL hq
+    · obtain ⟨a, -, r, hr, e1, -⟩ := mem_bindW hq
       rw [e1]
       exact h.pack r hr
     · simp at hq
@@ -191,7 +191,7 @@ theorem TOk.insSem {T ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
     split at hq
     · unfold roleSem at hq
       split_ifs at hq
-      · obtain ⟨a, -, r, hr, e1⟩ := mem_bindL hq
+      · obtain ⟨a, -, r, hr, e1, -⟩ := mem_bindW hq
         rw [e1]
         exact h.putsL _ (mem_encT hr)
       · simp at hq

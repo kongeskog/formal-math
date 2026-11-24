@@ -21,9 +21,9 @@ variable {S : Type} [Fintype S] [DecidableEq S]
 variable (A) in
 /-- What a base party does with its letters. -/
 noncomputable def packSem (sep : List Bool) (ub : ℕ) (B : Body) (o : Outs S) (t : Tree) : List (A × Tree) :=
-  bindL (segsL A sep (itemsR B.flags o) (List.replicate B.kR.length [true])) fun sR =>
-    bindL (encT (A := A) (putsL ub B.kR sR.reverse t)) fun t1 =>
-      bindL (segsL A sep (itemsC B.kR.length o) (List.replicate B.kR.length [true])) fun sC =>
+  bindW (segsL A sep (itemsR B.flags o) (List.replicate B.kR.length [true])) fun sR =>
+    bindW (encT (A := A) (putsL ub B.kR sR.reverse t)) fun t1 =>
+      bindW (segsL A sep (itemsC B.kR.length o) (List.replicate B.kR.length [true])) fun sC =>
         encT (putsL ub B.kC sC.reverse t1)
 
 /-- Costs of writing. -/
@@ -137,7 +137,7 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
       · simp
       · simp only [putCost]
         omega)
-  rw [bindL_map] at a4
+  rw [bindW_map] at a4
   -- what is read
   have gO' : ∀ t1, Gives θ (.hd .id) (.cons x t1) x 2 := fun t1 => (Gives.id _).hd
   have b1 : Gives θ (mapF (.quote (num 2)) (.quote .nil) (.hd (.tl (.tl (.tl (.tl .id)))))) x
@@ -159,7 +159,7 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
       omega
     · simp
   have b3 := Does.of_gives b2 (segsF_does (θ := θ) sep c hsep _ _ hcC)
-  have b4 := Does.letkT (G := _) (f := fun t1 => bindL (segsL A sep (itemsC m o) (List.replicate m [true])) fun sC =>
+  have b4 := Does.letkT (G := _) (f := fun t1 => bindW (segsL A sep (itemsC m o) (List.replicate m [true])) fun sC =>
       encT (A := A) (putsL ub B.kC sC.reverse t1))
     (d := 2 + (κC * (6 + m * 41 + 21 + 2 + 1) + (6 + m * 41 + 21) + 1 +
         (((itemsC m o).map fun it => (62 * c + 700) * (it.1.length + it.2.length + 1) + 30).sum + 30) + 2) + 2 +
@@ -181,7 +181,7 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
       exact c2)
   refine (b4.replace ?_).mono ?_
   · unfold packSem
-    rw [bindL_assoc]
+    rw [bindW_assoc]
   · have h1 := sum_items_le (c := c) (N := N) (n := nT S) (by simp [itemsR]) (fun it hit => (hlR it hit).1)
     have h2 := sum_items_le (c := c) (N := N) (n := nT S) (by simp [itemsC]) (fun it hit => (hlC it hit).1)
     have h3 : m ≤ N := by omega

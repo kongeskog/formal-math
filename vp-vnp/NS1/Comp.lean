@@ -19,29 +19,29 @@ namespace NS1
 
 open _root_.NS1.Tree
 
-variable {A : Type} [CommRing A] {θ : List Bool → A}
+variable {A : Type} [CommRing A] {θ : List Bool → A} {α β : Type}
 
 /-- Weighted sums over a list of pairs (weight, value). -/
-def wsum (Q : List (A × Tree)) (φ : Tree → A) : A := (Q.map fun q => q.1 * φ q.2).sum
+def wsum (Q : List (A × α)) (φ : α → A) : A := (Q.map fun q => q.1 * φ q.2).sum
 
-@[simp] theorem wsum_nil (φ : Tree → A) : wsum ([] : List (A × Tree)) φ = 0 := rfl
+@[simp] theorem wsum_nil (φ : α → A) : wsum ([] : List (A × α)) φ = 0 := rfl
 
-@[simp] theorem wsum_cons (q : A × Tree) (Q : List (A × Tree)) (φ : Tree → A) :
+@[simp] theorem wsum_cons (q : A × α) (Q : List (A × α)) (φ : α → A) :
     wsum (q :: Q) φ = q.1 * φ q.2 + wsum Q φ := by simp [wsum]
 
-theorem wsum_append (Q Q' : List (A × Tree)) (φ : Tree → A) : wsum (Q ++ Q') φ = wsum Q φ + wsum Q' φ := by
+theorem wsum_append (Q Q' : List (A × α)) (φ : α → A) : wsum (Q ++ Q') φ = wsum Q φ + wsum Q' φ := by
   simp [wsum]
 
-theorem wsum_congr {Q : List (A × Tree)} {φ φ' : Tree → A} (h : ∀ q ∈ Q, φ q.2 = φ' q.2) : wsum Q φ = wsum Q φ' := by
+theorem wsum_congr {Q : List (A × α)} {φ φ' : α → A} (h : ∀ q ∈ Q, φ q.2 = φ' q.2) : wsum Q φ = wsum Q φ' := by
   unfold wsum
   congr 1
   exact List.map_congr_left fun q hq => by rw [h q hq]
 
 /-- First `Q`, then `R` at the value. -/
-def bindW (Q : List (A × Tree)) (R : Tree → List (A × Tree)) : List (A × Tree) :=
+def bindW (Q : List (A × α)) (R : α → List (A × β)) : List (A × β) :=
   Q.flatMap fun q => (R q.2).map fun p => (q.1 * p.1, p.2)
 
-theorem wsum_bindW (Q : List (A × Tree)) (R : Tree → List (A × Tree)) (φ : Tree → A) :
+theorem wsum_bindW (Q : List (A × α)) (R : α → List (A × β)) (φ : β → A) :
     wsum (bindW Q R) φ = wsum Q fun o => wsum (R o) φ := by
   unfold wsum bindW
   rw [sum_flatMap_map]
@@ -52,7 +52,7 @@ theorem wsum_bindW (Q : List (A × Tree)) (R : Tree → List (A × Tree)) (φ : 
   refine List.map_congr_left fun p _ => ?_
   simp only [Function.comp_apply, mul_assoc]
 
-theorem mem_bindW {Q : List (A × Tree)} {R : Tree → List (A × Tree)} {p : A × Tree} (h : p ∈ bindW Q R) :
+theorem mem_bindW {Q : List (A × α)} {R : α → List (A × β)} {p : A × β} (h : p ∈ bindW Q R) :
     ∃ q ∈ Q, ∃ r ∈ R q.2, p.2 = r.2 ∧ p.1 = q.1 * r.1 := by
   unfold bindW at h
   rw [List.mem_flatMap] at h
@@ -61,7 +61,7 @@ theorem mem_bindW {Q : List (A × Tree)} {R : Tree → List (A × Tree)} {p : A 
   obtain ⟨r, hr, rfl⟩ := h
   exact ⟨q, hq, r, hr, rfl, rfl⟩
 
-theorem mem_bindW_of {Q : List (A × Tree)} {R : Tree → List (A × Tree)} {q r : A × Tree} (hq : q ∈ Q)
+theorem mem_bindW_of {Q : List (A × α)} {R : α → List (A × β)} {q : A × α} {r : A × β} (hq : q ∈ Q)
     (hr : r ∈ R q.2) : (q.1 * r.1, r.2) ∈ bindW Q R :=
   List.mem_flatMap.2 ⟨q, hq, List.mem_map.2 ⟨r, hr, rfl⟩⟩
 

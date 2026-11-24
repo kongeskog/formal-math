@@ -74,7 +74,7 @@ theorem foldL_stream (es : List (List Bool)) (acc : List Bool) :
   | cons e es ih =>
     rw [foldL]
     by_cases he : ct e ≠ []
-    · rw [if_pos he, bindL_single, ih]
+    · rw [if_pos he, bindW_single, ih]
       by_cases hes : ∀ k ∈ es, ct k ≠ []
       · rw [if_pos hes, if_pos (by
           intro k hk
@@ -105,7 +105,7 @@ theorem streamF_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (ct 
     List.map_congr_left fun k _ => by omega
   rw [e] at h2
   refine (h2.replace ?_).mono (by omega)
-  split_ifs <;> simp [bindL]
+  split_ifs <;> simp [bindW]
 
 theorem streamsStep_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (ct k).length ≤ ub)
     (es : List (List Bool)) (acc : List (List Bool)) :
@@ -130,7 +130,7 @@ theorem foldL_streams (slots : List (List (List Bool))) (acc : List (List Bool))
   | cons es slots ih =>
     rw [foldL]
     by_cases he : ∀ k ∈ es, ct k ≠ []
-    · rw [if_pos he, bindL_single, ih]
+    · rw [if_pos he, bindW_single, ih]
       by_cases hes : ∀ es ∈ slots, ∀ k ∈ es, ct k ≠ []
       · rw [if_pos hes, if_pos (by
           intro es' h'
@@ -178,7 +178,7 @@ theorem streamsF_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (ct
       rw [List.append_nil, ← List.map_reverse, List.length_map, hl] at this
       exact this.mono (by omega))
   refine (h2.replace ?_).mono ?_
-  · split_ifs <;> simp [bindL]
+  · split_ifs <;> simp [bindW]
   · have : (slots.map fun es => (es.map fun k => ub * 62 + k.length * 60 + 330).sum + 150 + 30).sum + slots.length * 60 =
         (slots.map fun es => (es.map fun k => ub * 62 + k.length * 60 + 330).sum + 240).sum := by
       clear h1 h2 h0

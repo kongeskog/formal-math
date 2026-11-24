@@ -64,7 +64,7 @@ noncomputable def encO (o : Outs S) : Tree := listT (List.ofFn fun j => listT ((
 variable (θ) in
 /-- The simulation of `T` steps. -/
 noncomputable def simSem (T : ℕ) (q q' : Fin (Fintype.card Q)) : List (A × Outs S) :=
-  bindL (runL θ (simTab θ mu cb) T (q, Fin.elim0, fun _ => [])) fun s => if s.1 = q' then [((1 : A), s.2.2)] else []
+  bindW (runL θ (simTab θ mu cb) T (q, Fin.elim0, fun _ => [])) fun s => if s.1 = q' then [((1 : A), s.2.2)] else []
 
 theorem num_injective : Function.Injective num := by
   intro a b h
@@ -114,7 +114,7 @@ theorem ex_sim : ∃ F κ, ∀ (T : ℕ) (q q' : Fin (Fintype.card Q)),
         refine ((Does.ite_false e1 (Does.fail _)).replace ?_).mono (by omega)
         rw [if_neg h]
         rfl)
-  rw [bindL_map] at h3
+  rw [bindW_map] at h3
   refine h3.mono ?_
   nlinarith
 
@@ -136,7 +136,7 @@ theorem exists_simSem_length : ∃ κ, ∀ (T : ℕ) (q q' : Fin (Fintype.card Q
     (∀ j, (r.2 j).length ≤ κ * T) ∧ ∀ j, ∀ a ∈ r.2 j, a.length ≤ c := by
   obtain ⟨κ, hκ⟩ := exists_runL_length (θ := θ) (simTab θ mu cb)
   refine ⟨κ, fun T q q' r hr => ?_⟩
-  obtain ⟨s, hs, z, hz, hrz⟩ := mem_bindL hr
+  obtain ⟨s, hs, z, hz, hrz, -⟩ := mem_bindW hr
   have h1 := hκ T (q, Fin.elim0, fun _ => []) (fun _ => rfl) s hs
   have h2 := mem_foldL_induct (f := fun (_ : Unit) s => stepL θ (simTab θ mu cb) s) (xs := List.replicate T ())
     (Inv := fun _ s => ∀ j, ∀ a ∈ s.2.2 j, a.length ≤ c) (m := 0) (s := (q, Fin.elim0, fun _ => []))

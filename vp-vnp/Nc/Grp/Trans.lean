@@ -297,7 +297,7 @@ theorem mem_foldL_induct {β ε : Type} {f : ε → β → List (A × β)} {Inv 
     exact hs
   | cons x xs ih =>
     intro q hq
-    obtain ⟨a, ha, r, hr, hqr⟩ := mem_bindL hq
+    obtain ⟨a, ha, r, hr, hqr, -⟩ := mem_bindW hq
     have := ih (fun y hy => h y (List.mem_cons_of_mem _ hy)) (h x List.mem_cons_self s m hs a ha) r hr
     rw [hqr, List.length_cons]
     convert this using 1

@@ -20,9 +20,9 @@ open NS1 NS1.Tree Finset Nc.G Nc.Cut
 
 variable {A B' : Type} [CommRing A] [CommRing B'] {θ : List Bool → A} {α β ε : Type}
 
-theorem snd_bindL (l : List (A × α)) (f : α → List (A × β)) :
-    (bindL l f).map Prod.snd = (l.map Prod.snd).flatMap fun a => (f a).map Prod.snd := by
-  simp only [bindL, List.map_flatMap, List.flatMap_map, List.map_map, Function.comp_def]
+theorem snd_bindW (l : List (A × α)) (f : α → List (A × β)) :
+    (bindW l f).map Prod.snd = (l.map Prod.snd).flatMap fun a => (f a).map Prod.snd := by
+  simp only [bindW, List.map_flatMap, List.flatMap_map, List.map_map, Function.comp_def]
 
 theorem snd_foldL {f : ε → β → List (A × β)} {f' : ε → β → List (B' × β)}
     (h : ∀ x s, (f x s).map Prod.snd = (f' x s).map Prod.snd) (xs : List ε) (s : β) :
@@ -30,7 +30,7 @@ theorem snd_foldL {f : ε → β → List (A × β)} {f' : ε → β → List (B
   induction xs generalizing s with
   | nil => rfl
   | cons x xs ih =>
-    rw [foldL, foldL, snd_bindL, snd_bindL, h]
+    rw [foldL, foldL, snd_bindW, snd_bindW, h]
     exact List.flatMap_congr fun a _ => ih a
 
 theorem snd_segsL (sep : List Bool) (items : List Item) (accs : List (List Bool)) :
@@ -42,14 +42,14 @@ variable {S : Type} [Fintype S] [DecidableEq S]
 
 theorem snd_packSem (sep : List Bool) (ub : ℕ) (B : Body) (o : Outs S) (t : Tree) :
     (packSem A sep ub B o t).map Prod.snd = (packSem B' sep ub B o t).map Prod.snd := by
-  simp only [packSem, snd_bindL, snd_segsL (A := A) (B' := B'), encT, List.map_map, Function.comp_def]
+  simp only [packSem, snd_bindW, snd_segsL (A := A) (B' := B'), encT, List.map_map, Function.comp_def]
 
 /-- All weights are 1. -/
 def Ones (l : List (A × α)) : Prop := ∀ p ∈ l, p.1 = 1
 
-theorem Ones.bindL {l : List (A × α)} {f : α → List (A × β)} (hl : Ones l) (hf : ∀ a, Ones (f a)) : Ones (bindL l f) := by
+theorem Ones.bindW {l : List (A × α)} {f : α → List (A × β)} (hl : Ones l) (hf : ∀ a, Ones (f a)) : Ones (bindW l f) := by
   intro p hp
-  unfold Grp.bindL at hp
+  unfold NS1.bindW at hp
   obtain ⟨a, ha, hp⟩ := List.mem_flatMap.1 hp
   obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hp
   simp only [hl a ha, hf _ r hr, mul_one]
@@ -65,18 +65,18 @@ theorem Ones.foldL {f : ε → β → List (A × β)} (hf : ∀ x s, Ones (f x s
     intro p hp
     rw [Grp.foldL, List.mem_singleton] at hp
     rw [hp]
-  | cons x xs ih => exact Ones.bindL (hf x s) ih
+  | cons x xs ih => exact Ones.bindW (hf x s) ih
 
 theorem ones_packSem (sep : List Bool) (ub : ℕ) (B : Body) (o : Outs S) (t : Tree) : Ones (packSem A sep ub B o t) := by
   have hs : ∀ items accs, Ones (segsL A sep items accs) := fun items accs =>
     Ones.foldL (fun it s => ones_map _ _) items accs
-  refine (hs _ _).bindL fun sR => (ones_map _ _).bindL fun t1 => (hs _ _).bindL fun sC => ones_map _ _
+  refine (hs _ _).bindW fun sR => (ones_map _ _).bindW fun t1 => (hs _ _).bindW fun sC => ones_map _ _
 
-theorem sumL_ones {l : List (ℤ × α)} (h : Ones l) : sumL l (fun _ => 1) = l.length := by
+theorem wsum_ones {l : List (ℤ × α)} (h : Ones l) : wsum l (fun _ => 1) = l.length := by
   induction l with
   | nil => simp
   | cons p l ih =>
-    rw [sumL_cons, ih fun q hq => h q (List.mem_cons_of_mem _ hq), h p List.mem_cons_self, List.length_cons]
+    rw [wsum_cons, ih fun q hq => h q (List.mem_cons_of_mem _ hq), h p List.mem_cons_self, List.length_cons]
     push_cast
     ring
 
@@ -88,7 +88,7 @@ theorem foldL_ne_nil {f : ε → β → List (A × β)} {xs : List ε} {s : β} 
     intro y hy
     rw [foldL] at h
     obtain ⟨p, hp⟩ := List.exists_mem_of_ne_nil _ h
-    obtain ⟨a, ha, r, hr, -⟩ := mem_bindL hp
+    obtain ⟨a, ha, r, hr, -⟩ := mem_bindW hp
     rcases List.mem_cons.1 hy with rfl | hy
     · exact ⟨s, List.ne_nil_of_mem ha⟩
     · exact ih (List.ne_nil_of_mem hr) y hy
@@ -114,7 +114,7 @@ theorem mem_runL_sim (k : ℕ) (s : TSt (Fintype.card Q) 0 (nT S + nT S) (List B
   | succ k ih =>
     intro r hr
     rw [runL, List.replicate_succ, foldL] at hr
-    obtain ⟨a, ha, r', hr', e⟩ := mem_bindL hr
+    obtain ⟨a, ha, r', hr', e, -⟩ := mem_bindW hr
     obtain ⟨op, hop, rfl⟩ := List.mem_map.1 ha
     obtain ⟨z, -, rfl⟩ := List.mem_map.1 hop
     obtain ⟨w, hw, e'⟩ := ih _ r' hr'
@@ -125,7 +125,7 @@ theorem mem_runL_sim (k : ℕ) (s : TSt (Fintype.card Q) 0 (nT S + nT S) (List B
 
 theorem mem_simSem {T : ℕ} {a b : Fin (Fintype.card Q)} {r : A × Outs S} (h : r ∈ simSem θ mu cb T a b) :
     ∃ w : List (Letter S Unit Γ), w.length = T ∧ r.2 = outsOf cb w := by
-  obtain ⟨s, hs, z, hz, e⟩ := mem_bindL h
+  obtain ⟨s, hs, z, hz, e, -⟩ := mem_bindW h
   obtain ⟨w, hw, e'⟩ := mem_runL_sim T _ s hs
   refine ⟨w, hw, ?_⟩
   split_ifs at hz
@@ -152,8 +152,8 @@ theorem exists_of_pack (hub : 0 < ub) {p : Fin (K + K)}
     have := snd_packSem (A := A) (B' := ℤ) (sepOf cb) ub (bodyOf ρ n key dkey p) out t
     rw [h0, List.map_nil, List.map_eq_nil_iff] at this
     exact h this
-  have h4 := sumL_ones (ones_packSem (A := ℤ) (sepOf cb) ub (bodyOf ρ n key dkey p) out t)
-  rw [sumL_pack hub hK hρ hwl hrl h1 h2] at h4
+  have h4 := wsum_ones (ones_packSem (A := ℤ) (sepOf cb) ub (bodyOf ρ n key dkey p) out t)
+  rw [wsum_pack hub hK hρ hwl hrl h1 h2] at h4
   have h5 : ((packSem ℤ (sepOf cb) ub (bodyOf ρ n key dkey p) out t).length : ℤ) ≠ 0 := by
     have := List.length_pos_iff.2 h3
     omega
@@ -219,7 +219,7 @@ theorem count_of_accept (hub : 0 < ub) (hx : ∀ κ, (x κ).length ≤ T)
     · intro κ ht'
       rw [Fin.addCases_left, insSem, dif_pos ⟨(qn Q _).2, (qn Q _).2⟩] at ht'
       obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ ht'
-      obtain ⟨a, ha, r', hr', -⟩ := mem_bindL hr
+      obtain ⟨a, ha, r', hr', -⟩ := mem_bindW hr
       obtain ⟨w, hw, ew⟩ := mem_simSem ha
       rw [ew] at hr'
       obtain ⟨R, C, h1, h2, h3, h4⟩ := exists_of_pack (A := A) (T := T) hub (fun s => hρ s _) (wl := wr w) (rl := rdr w)
@@ -265,7 +265,7 @@ theorem mem_runL_roleTab (L : G.Law A) (p : L.Ro) (B : ℕ) (s : TSt 1 (slList L
   | succ B ih =>
     intro r hr
     rw [runL, List.replicate_succ, foldL] at hr
-    obtain ⟨a, ha, r', hr', e⟩ := mem_bindL hr
+    obtain ⟨a, ha, r', hr', e, -⟩ := mem_bindW hr
     obtain ⟨op, hop, rfl⟩ := List.mem_map.1 ha
     obtain ⟨z, -, rfl⟩ := List.mem_map.1 hop
     obtain ⟨f, hf⟩ := ih _ r' hr'
@@ -297,7 +297,7 @@ theorem outcome_of_accept (hub : 0 < ub) (hkind : ∀ r, kinds[tg r]? = some ⟨
   swap
   · exact absurd rfl ht'
   obtain ⟨z, hz⟩ := List.exists_mem_of_ne_nil _ ht'
-  obtain ⟨a, ha, z', hz', -⟩ := mem_bindL hz
+  obtain ⟨a, ha, z', hz', -⟩ := mem_bindW hz
   obtain ⟨f, hf⟩ := mem_runL_roleTab (M.kind r.1) r.2 _ _ a ha
   have hne : putsL ub ((univ : Finset ((M.kind r.1).CnAt r.2)).toList.map fun ν =>
       ((List.finRange U1).filter fun k => k ≤ o ⟨r.1, ν.1⟩).map fun k => key (M.rp r, .new ⟨r.1, ν.1⟩ k))

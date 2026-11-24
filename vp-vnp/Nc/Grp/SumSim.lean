@@ -17,38 +17,38 @@ open NS1 NS1.Tree Finset
 
 variable {A : Type} [CommRing A] {θ : List Bool → A}
 
-theorem sumL_toList {X β : Type} [Fintype X] (f : X → A × β) (G : β → A) :
-    sumL ((univ : Finset X).toList.map f) G = ∑ x, (f x).1 * G (f x).2 := by
-  rw [sumL, List.map_map, Finset.sum_map_toList]
+theorem wsum_toList {X β : Type} [Fintype X] (f : X → A × β) (G : β → A) :
+    wsum ((univ : Finset X).toList.map f) G = ∑ x, (f x).1 * G (f x).2 := by
+  rw [wsum, List.map_map, Finset.sum_map_toList]
   rfl
 
-theorem sumL_runL_succ {Λ : Type} {nC nI nO : ℕ} (tab : Fin nC → (Fin nI → Bool) → List (Opt nC nO Λ)) (k : ℕ)
+theorem wsum_runL_succ {Λ : Type} {nC nI nO : ℕ} (tab : Fin nC → (Fin nI → Bool) → List (Opt nC nO Λ)) (k : ℕ)
     (s : TSt nC nI nO Λ) (G : TSt nC nI nO Λ → A) :
-    sumL (runL θ tab (k + 1) s) G = sumL (stepL θ tab s) fun s' => sumL (runL θ tab k s') G := by
-  rw [runL, List.replicate_succ, foldL, sumL_bindL]
+    wsum (runL θ tab (k + 1) s) G = wsum (stepL θ tab s) fun s' => wsum (runL θ tab k s') G := by
+  rw [runL, List.replicate_succ, foldL, wsum_bindW]
   rfl
 
 theorem foldL_append {β ε : Type} (f : ε → β → List (A × β)) (xs ys : List ε) (s : β) (G : β → A) :
-    sumL (foldL f (xs ++ ys) s) G = sumL (foldL f xs s) fun s' => sumL (foldL f ys s') G := by
+    wsum (foldL f (xs ++ ys) s) G = wsum (foldL f xs s) fun s' => wsum (foldL f ys s') G := by
   induction xs generalizing s with
-  | nil => rw [List.nil_append, foldL, sumL_single]
+  | nil => rw [List.nil_append, foldL, wsum_single]
   | cons x xs ih =>
-    rw [List.cons_append, foldL, foldL, sumL_bindL, sumL_bindL]
-    exact sumL_congr fun p _ => ih _
+    rw [List.cons_append, foldL, foldL, wsum_bindW, wsum_bindW]
+    exact wsum_congr fun p _ => ih _
 
 section sim
 
 variable {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q] {c : ℕ}
   (mu : Letter S Unit Γ → Matrix Q Q A) (cb : Option Γ → Fin c → Bool)
 
-theorem sumL_sim (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (k : ℕ) (q : Q) (f : Outs S)
+theorem wsum_sim (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (k : ℕ) (q : Q) (f : Outs S)
     (G : TSt (Fintype.card Q) 0 (nT S + nT S) (List Bool) → A) :
-    sumL (runL θ (simTab θ mu cb) k (qn Q q, Fin.elim0, f)) G = ∑ o : Fin k → Letter S Unit Γ, ∑ q' : Q,
+    wsum (runL θ (simTab θ mu cb) k (qn Q q, Fin.elim0, f)) G = ∑ o : Fin k → Letter S Unit Γ, ∑ q' : Q,
       ((List.ofFn o).map mu).prod q q' * G (qn Q q', Fin.elim0, fun j =>
         (List.ofFn o).reverse.flatMap (fun z => pushOf cb z j) ++ f j) := by
   induction k generalizing q f with
   | zero =>
-    rw [runL, List.replicate_zero, foldL, sumL_single, Fintype.sum_unique]
+    rw [runL, List.replicate_zero, foldL, wsum_single, Fintype.sum_unique]
     simp only [List.ofFn_zero, List.map_nil, List.prod_nil, List.reverse_nil, List.flatMap_nil, List.nil_append]
     rw [Finset.sum_eq_single q]
     · rw [Matrix.one_apply_eq, one_mul]
@@ -56,11 +56,11 @@ theorem sumL_sim (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (k : ℕ) 
       rw [Matrix.one_apply_ne hq'.symm, zero_mul]
     · simp
   | succ k ih =>
-    rw [sumL_runL_succ]
-    have h1 : sumL (stepL θ (simTab θ mu cb) (qn Q q, Fin.elim0, f)) (fun s' => sumL (runL θ (simTab θ mu cb) k s') G) =
-        ∑ z : Letter S Unit Γ × Q, mu z.1 q z.2 * sumL (runL θ (simTab θ mu cb) k (qn Q z.2, Fin.elim0, fun j =>
+    rw [wsum_runL_succ]
+    have h1 : wsum (stepL θ (simTab θ mu cb) (qn Q q, Fin.elim0, f)) (fun s' => wsum (runL θ (simTab θ mu cb) k s') G) =
+        ∑ z : Letter S Unit Γ × Q, mu z.1 q z.2 * wsum (runL θ (simTab θ mu cb) k (qn Q z.2, Fin.elim0, fun j =>
           pushOf cb z.1 j ++ f j)) G := by
-      rw [stepL, simTab, List.map_map, sumL_toList]
+      rw [stepL, simTab, List.map_map, wsum_toList]
       refine Finset.sum_congr rfl fun z _ => ?_
       have e0 : (fun i : Fin 0 => ((Fin.elim0 : Fin 0 → List Bool) i).tail) = Fin.elim0 := funext fun i => i.elim0
       simp only [Function.comp_apply, Opt.app, e0, Equiv.symm_apply_apply, we_val (hmu _ _ _)]
@@ -82,13 +82,13 @@ theorem sumL_sim (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (k : ℕ) 
 /-- The output lists of a run. -/
 noncomputable def outsOf (w : List (Letter S Unit Γ)) : Outs S := fun j => w.reverse.flatMap fun z => pushOf cb z j
 
-theorem sumL_simSem (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (T : ℕ) (q q' : Q) (G : Outs S → A) :
-    sumL (simSem θ mu cb T (qn Q q) (qn Q q')) G = ∑ o : Fin T → Letter S Unit Γ,
+theorem wsum_simSem (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (T : ℕ) (q q' : Q) (G : Outs S → A) :
+    wsum (simSem θ mu cb T (qn Q q) (qn Q q')) G = ∑ o : Fin T → Letter S Unit Γ,
       ((List.ofFn o).map mu).prod q q' * G (outsOf cb (List.ofFn o)) := by
-  rw [simSem, sumL_bindL, sumL_sim mu cb hmu]
+  rw [simSem, wsum_bindW, wsum_sim mu cb hmu]
   refine Finset.sum_congr rfl fun o _ => ?_
   rw [Finset.sum_eq_single q']
-  · simp only [if_true, sumL_single, List.append_nil]
+  · simp only [if_true, wsum_single, List.append_nil]
     rfl
   · intro q'' _ h
     have : qn Q q'' ≠ qn Q q' := fun h' => h ((qn Q).injective h')

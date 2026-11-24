@@ -128,7 +128,7 @@ theorem segStepF_does (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) (it 
       (f := fun _ => encL (segL sep f false (sep ++ accs.headD []) fs accs.tail l [])) e3 (fun b _ => by
         rw [Fm.ofTree_code]
         exact e4)
-    rw [bindL_single] at e5
+    rw [bindW_single] at e5
     have e6 : Does θ (app (segB sep).code (.cons (.quote (segB sep).code) (.cons (.hd (.hd (.hd .id))) (.cons (.quote .nil)
         (.cons (appF (.quote (ofBits sep)) (.hd (.tl .id))) (.cons (.tl (.hd (.hd .id))) (.cons (.tl (.tl .id))
         (.cons (.tl (.hd .id)) (.quote .nil))))))))) x
@@ -146,7 +146,7 @@ theorem segStepF_does (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) (it 
     have hne : x.hd.hd ≠ .nil := by simp [hx, encI, listT]
     refine ((Does.ite_true (Gives.id x).hd.hd hne e7).replace ?_).mono ?_
     · congr 1
-      rw [bindL_pure _ (fun out => out)]
+      rw [bindW_pure _ (fun out => out)]
       simp [segOne, flatMap_single]
     · simp only [List.length_cons]
       nlinarith

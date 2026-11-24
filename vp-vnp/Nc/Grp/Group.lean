@@ -26,15 +26,15 @@ variable {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq 
   {key : Cell M U0 U1 → List Bool} {dkey : Fin (K + K) × Fin U0 → List Bool} {tg : M.R → ℕ}
 
 /-- A list of steps. -/
-theorem sumL_steps {ι : Type} (l : List ι) (I : ι → List Ins) (s : ι → WStep A (Cell M U0 U1) (UW ub))
+theorem wsum_steps {ι : Type} (l : List ι) (I : ι → List Ins) (s : ι → WStep A (Cell M U0 U1) (UW ub))
     (h : ∀ i ∈ l, StepOK (S := S) θ T mu cb kinds key (I i) (s i)) (J : List Ins) (G : (Cell M U0 U1 → UW ub) → A)
-    (hJ : ∀ t σ, Rep ub key t σ → sumL (scriptSem (S := S) θ mu cb kinds T ub J t) (fun _ => 1) = G σ) (t : Tree)
+    (hJ : ∀ t σ, Rep ub key t σ → wsum (scriptSem (S := S) θ mu cb kinds T ub J t) (fun _ => 1) = G σ) (t : Tree)
     (σ : Cell M U0 U1 → UW ub) (hr : Rep ub key t σ) :
-    sumL (scriptSem (S := S) θ mu cb kinds T ub (l.flatMap I ++ J) t) (fun _ => 1) = WStep.exec (l.map s) G σ := by
+    wsum (scriptSem (S := S) θ mu cb kinds T ub (l.flatMap I ++ J) t) (fun _ => 1) = WStep.exec (l.map s) G σ := by
   induction l generalizing t σ with
   | nil => exact hJ t σ hr
   | cons i l ih =>
-    rw [List.flatMap_cons, List.append_assoc, sumL_script_append, List.map_cons, WStep.exec]
+    rw [List.flatMap_cons, List.append_assoc, wsum_script_append, List.map_cons, WStep.exec]
     exact h i List.mem_cons_self t σ _ _ hr fun t' σ' hr' => ih (fun i hi => h i (List.mem_cons_of_mem _ hi)) t' σ' hr'
 
 /-- What is compared at a unit. -/
@@ -47,9 +47,9 @@ def EndOk (grp : Fin (K + K + A') → Gr) (g : Gr) (σ : Cell M U0 U1 → UW ub)
 
 open Classical in
 /-- The last instructions compare. -/
-theorem sumL_end (b : G.Uid (K + K) U0 M.N U1 → UW ub) (l : List (G.Uid (K + K) U0 M.N U1)) (t : Tree)
+theorem wsum_end (b : G.Uid (K + K) U0 M.N U1 → UW ub) (l : List (G.Uid (K + K) U0 M.N U1)) (t : Tree)
     (σ : Cell M U0 U1 → UW ub) (hr : Rep ub key t σ) :
-    sumL (scriptSem (S := S) θ mu cb kinds T ub (l.filterMap fun id =>
+    wsum (scriptSem (S := S) θ mu cb kinds T ub (l.filterMap fun id =>
       if grp (G.hold0 M.np id) = g then
         if grp (G.hold1 M.np id) = g then some (.both (key (G.hold0 M.np id, id)) (key (G.hold1 M.np id, id)))
         else some (.one (key (G.hold0 M.np id, id)) (uwBits (b id)))
@@ -58,37 +58,37 @@ theorem sumL_end (b : G.Uid (K + K) U0 M.N U1 → UW ub) (l : List (G.Uid (K + K
     if ∀ id ∈ l, EndOk grp g σ b id then 1 else 0 := by
   have hof : ∀ v w : List Bool, ofBits v = ofBits w ↔ v = w := fun v w => ofBits_injective.eq_iff
   induction l with
-  | nil => simp [sumL_script_nil]
+  | nil => simp [wsum_script_nil]
   | cons id l ih =>
     have hcons : (∀ i ∈ id :: l, EndOk grp g σ b i) ↔ EndOk grp g σ b id ∧ ∀ i ∈ l, EndOk grp g σ b i :=
       List.forall_mem_cons
     by_cases h0 : grp (G.hold0 M.np id) = g
     · by_cases h1 : grp (G.hold1 M.np id) = g
-      · rw [List.filterMap_cons_some (by rw [if_pos h0, if_pos h1]), sumL_script_cons, insSem]
+      · rw [List.filterMap_cons_some (by rw [if_pos h0, if_pos h1]), wsum_script_cons, insSem]
         simp only [hr.2, hof]
         by_cases he : uwBits (σ (G.hold0 M.np id, id)) = uwBits (σ (G.hold1 M.np id, id))
-        · rw [if_pos he, sumL_single, ih]
+        · rw [if_pos he, wsum_single, ih]
           refine if_congr ?_ rfl rfl
           rw [hcons]
           simp [EndOk, h0, h1, he]
-        · rw [if_neg he, sumL_nil, if_neg fun h => he ((hcons.1 h).1.1 h0 h1)]
-      · rw [List.filterMap_cons_some (by rw [if_pos h0, if_neg h1]), sumL_script_cons, insSem]
+        · rw [if_neg he, wsum_nil, if_neg fun h => he ((hcons.1 h).1.1 h0 h1)]
+      · rw [List.filterMap_cons_some (by rw [if_pos h0, if_neg h1]), wsum_script_cons, insSem]
         simp only [hr.2, hof]
         by_cases he : uwBits (σ (G.hold0 M.np id, id)) = uwBits (b id)
-        · rw [if_pos he, sumL_single, ih]
+        · rw [if_pos he, wsum_single, ih]
           refine if_congr ?_ rfl rfl
           rw [hcons]
           simp [EndOk, h0, h1, he]
-        · rw [if_neg he, sumL_nil, if_neg fun h => he ((hcons.1 h).1.2.1 h0 h1)]
+        · rw [if_neg he, wsum_nil, if_neg fun h => he ((hcons.1 h).1.2.1 h0 h1)]
     · by_cases h1 : grp (G.hold1 M.np id) = g
-      · rw [List.filterMap_cons_some (by rw [if_neg h0, if_pos h1]), sumL_script_cons, insSem]
+      · rw [List.filterMap_cons_some (by rw [if_neg h0, if_pos h1]), wsum_script_cons, insSem]
         simp only [hr.2, hof]
         by_cases he : uwBits (σ (G.hold1 M.np id, id)) = uwBits (b id)
-        · rw [if_pos he, sumL_single, ih]
+        · rw [if_pos he, wsum_single, ih]
           refine if_congr ?_ rfl rfl
           rw [hcons]
           simp [EndOk, h0, h1, he]
-        · rw [if_neg he, sumL_nil, if_neg fun h => he ((hcons.1 h).1.2.2 h0 h1)]
+        · rw [if_neg he, wsum_nil, if_neg fun h => he ((hcons.1 h).1.2.2 h0 h1)]
       · rw [List.filterMap_cons_none (by rw [if_neg h0, if_neg h1]), ih]
         refine if_congr ?_ rfl rfl
         rw [hcons]
@@ -112,13 +112,13 @@ theorem rep_nil : Rep ub key .nil (fun _ : Cell M U0 U1 => none) :=
   ⟨tOk_nil ub, fun c => by rw [tget_nil]; rfl⟩
 
 /-- **GROUP computes the value of a group.** -/
-theorem sumL_script [Fintype Gr] (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < ub) (hP : P.Ok cap)
+theorem wsum_script [Fintype Gr] (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < ub) (hP : P.Ok cap)
     (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (hx : ∀ κ, (x κ).length ≤ T)
     (hρ : ∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2)
     (hkind : ∀ r, kinds[tg r]? = some ⟨M.kind r.1, r.2⟩)
     (htab : ∀ (r : M.R) i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h)
     (b : G.Uid (K + K) U0 M.N U1 → UW ub) :
-    sumL (scriptSem (S := S) θ mu cb kinds T ub
+    wsum (scriptSem (S := S) θ mu cb kinds T ub
       (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b) .nil) (fun _ => 1) =
       G.grpVal mu T cb P q x ρ n o grp g b := by
   classical
@@ -137,7 +137,7 @@ theorem sumL_script [Fintype Gr] (hkey : Function.Injective (Sum.elim key dkey))
     simp only [l, I, List.flatMap_append, List.flatMap_map, script, Sum.elim_inl, Sum.elim_inr]
     rw [flatMap_single]
   rw [hI, ← hl]
-  refine sumL_steps (key := key) l I s ?_ _ _ ?_ _ _ rep_nil
+  refine wsum_steps (key := key) l I s ?_ _ _ ?_ _ _ rep_nil
   · intro i hi
     rcases List.mem_append.1 hi with hi | hi
     · obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hi
@@ -145,7 +145,7 @@ theorem sumL_script [Fintype Gr] (hkey : Function.Injective (Sum.elim key dkey))
     · obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hi
       exact stepOK_role hk hub (mem_roleList.1 hr) (hkind r) (htab r)
   · intro t σ hr
-    rw [endIns, sumL_end b _ t σ hr]
+    rw [endIns, wsum_end b _ t σ hr]
     refine if_congr ?_ rfl rfl
     have huw : ∀ v w : UW ub, uwBits v = uwBits w ↔ v = w := fun v w => (uwBits_injective hub).eq_iff
     simp only [List.mem_filter, G.allIds, Finset.mem_toList, mem_univ, true_and, decide_eq_true_eq, EndOk, huw]

@@ -14,7 +14,7 @@ set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 
-open Finset
+open Finset NS1
 
 variable {A : Type} [CommRing A]
 
@@ -56,14 +56,14 @@ instance {m : ℕ} (fl : Fin m → ℕ) (l : List Γ) (X : Fin m → List Γ) : 
   infer_instance
 
 /-- One tape. -/
-theorem sumL_segOne (sep : List Bool) {m : ℕ} (hm : 0 < m) (fl : Fin m → ℕ) (acc : Fin m → List Bool)
+theorem wsum_segOne (sep : List Bool) {m : ℕ} (hm : 0 < m) (fl : Fin m → ℕ) (acc : Fin m → List Bool)
     (bits : Γ → List Bool) (T : ℕ) (l : List Γ) (hT : l.length ≤ T) (G : List (List Bool) → A) :
-    sumL (segOne A sep ((List.ofFn fl).reverse, (l.map bits).reverse) (List.ofFn acc).reverse) G =
+    wsum (segOne A sep ((List.ofFn fl).reverse, (l.map bits).reverse) (List.ofFn acc).reverse) G =
       ∑ X : Fin m → Wt Γ T, if CutOk fl l (fun b => (X b : List Γ)) then
         G (List.ofFn fun b => (X b : List Γ).flatMap bits ++ (sep ++ acc b)).reverse else 0 := by
   have h := sum_segRow' sep hm fl acc bits T l hT fun out => G out.reverse
   rw [Finset.sum_filter, sum_pi_coe] at h
-  rw [sumL, segOne, List.map_map]
+  rw [wsum, segOne, List.map_map]
   simp only [Function.comp_def, one_mul]
   rw [h]
   refine Finset.sum_congr rfl fun X _ => ?_
@@ -72,25 +72,25 @@ theorem sumL_segOne (sep : List Bool) {m : ℕ} (hm : 0 < m) (fl : Fin m → ℕ
   · exact (if_neg hX).trans (if_neg hX).symm
 
 /-- **All tapes.** -/
-theorem sumL_segs (sep : List Bool) {m : ℕ} (hm : 0 < m) (bits : Γ → List Bool) (T : ℕ) {N : ℕ} (fl : Fin N → Fin m → ℕ)
+theorem wsum_segs (sep : List Bool) {m : ℕ} (hm : 0 < m) (bits : Γ → List Bool) (T : ℕ) {N : ℕ} (fl : Fin N → Fin m → ℕ)
     (l : Fin N → List Γ) (hT : ∀ i, (l i).length ≤ T) (acc : Fin m → List Bool) (G : List (List Bool) → A) :
-    sumL (segsL A sep (List.ofFn fun i : Fin N => ((List.ofFn (fl i.rev)).reverse, ((l i.rev).map bits).reverse))
+    wsum (segsL A sep (List.ofFn fun i : Fin N => ((List.ofFn (fl i.rev)).reverse, ((l i.rev).map bits).reverse))
         (List.ofFn acc).reverse) G =
       ∑ X : Fin N → Fin m → Wt Γ T, if ∀ i, CutOk (fl i) (l i) (fun b => (X i b : List Γ)) then
         G (List.ofFn fun b => joined bits sep (fun i => (X i b : List Γ)) ++ acc b).reverse else 0 := by
   induction N generalizing acc with
   | zero =>
-    rw [List.ofFn_zero, segsL, foldL, sumL_single, Fintype.sum_unique, if_pos fun i => i.elim0]
+    rw [List.ofFn_zero, segsL, foldL, wsum_single, Fintype.sum_unique, if_pos fun i => i.elim0]
     rfl
   | succ N ih =>
-    rw [List.ofFn_succ, segsL, foldL, sumL_bindL]
+    rw [List.ofFn_succ, segsL, foldL, wsum_bindW]
     have e0 : (0 : Fin (N + 1)).rev = Fin.last N := Fin.rev_zero N
     have e1 : (List.ofFn fun i : Fin N => ((List.ofFn (fl i.succ.rev)).reverse, ((l i.succ.rev).map bits).reverse)) =
         List.ofFn fun i : Fin N => ((List.ofFn (fl i.rev.castSucc)).reverse, ((l i.rev.castSucc).map bits).reverse) := by
       congr 1
       funext i
       rw [Fin.rev_succ]
-    rw [e0, e1, sumL_segOne sep hm (fl (Fin.last N)) acc bits T (l (Fin.last N)) (hT _)]
+    rw [e0, e1, wsum_segOne sep hm (fl (Fin.last N)) acc bits T (l (Fin.last N)) (hT _)]
     rw [← (Fin.snocEquiv fun _ : Fin (N + 1) => Fin m → Wt Γ T).sum_comp, Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun Y _ => ?_
     by_cases hY : CutOk (fl (Fin.last N)) (l (Fin.last N)) (fun b => (Y b : List Γ))

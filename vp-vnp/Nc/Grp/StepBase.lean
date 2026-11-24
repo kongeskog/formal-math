@@ -33,7 +33,7 @@ variable (θ mu cb kinds T key) in
 def StepOK (I : List Ins) (s : WStep A (Cell M U0 U1) (UW ub)) : Prop :=
   ∀ (t : Tree) (σ : Cell M U0 U1 → UW ub) (Ψ : Tree → A) (Ψ' : (Cell M U0 U1 → UW ub) → A), Rep ub key t σ →
     (∀ t' σ', Rep ub key t' σ' → Ψ t' = Ψ' σ') →
-    sumL (scriptSem (S := S) θ mu cb kinds T ub I t) Ψ = ∑ ω ∈ s.Om, s.w ω σ * Ψ' (ovr s.wr (s.v ω σ) σ)
+    wsum (scriptSem (S := S) θ mu cb kinds T ub I t) Ψ = ∑ ω ∈ s.Om, s.w ω σ * Ψ' (ovr s.wr (s.v ω σ) σ)
 
 theorem mem_kRl {p b : Fin (K + K)} {k : List Bool} :
     k ∈ kRl n key p b ↔ ∃ i : Fin U0, i.1 < (n p b).1 ∧ k = key (Fin.castAdd A' p, .init p b i) := by
@@ -262,7 +262,7 @@ theorem base_core (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < ub)
     (h2 : ∀ i, out (Fin.natAdd (nT S) i) = ((rl ((tapes S).get i)).map (code cb)).reverse) {t : Tree}
     {σ : Cell M U0 U1 → UW ub} (h : Rep ub key t σ) {Ψ : Tree → A} {Ψ' : (Cell M U0 U1 → UW ub) → A}
     (hΨ : ∀ t' σ', Rep ub key t' σ' → Ψ t' = Ψ' σ') :
-    sumL (packSem A (sepOf cb) ub (bodyOf ρ n key dkey p) out t) (fun t' =>
+    wsum (packSem A (sepOf cb) ub (bodyOf ρ n key dkey p) out t) (fun t' =>
         if ∀ k ∈ (List.finRange U0).filter fun k => k.1 < (n p p).1,
           tget (key (Fin.castAdd A' p, .init p p k)) t' = tget (dkey (p, k)) t' then Ψ t' else 0) =
       ∑ R : Segs S Γ (K + K) T, ∑ C : Segs S Γ (K + K) T,
@@ -271,7 +271,7 @@ theorem base_core (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < ub)
           Ψ' (ovr ((dom n o grp g).filter fun c => c.1 = Fin.castAdd A' p ∧ isInit c.2 = true)
             (fun c => initV cb ub M.N U0 U1 R.words C.words p c.2) σ) else 0 := by
   have hK : 0 < K + K := Nat.lt_of_le_of_lt (Nat.zero_le _) p.2
-  rw [sumL_pack hub hK hρ hwl hrl h1 h2]
+  rw [wsum_pack hub hK hρ hwl hrl h1 h2]
   refine Finset.sum_congr rfl fun R _ => Finset.sum_congr rfl fun C _ => ?_
   by_cases hc : (∀ s, cat (R.words s) = wl s) ∧ (∀ s, cat (C.words s) = rl s) ∧ (∀ s, RowOk (ρ s p) (R.words s)) ∧
           (∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b) ∧
@@ -340,20 +340,20 @@ theorem stepOK_base (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < u
     rw [sum_pi_pi_coe]
     rfl
   rw [hR]
-  have hB : (fun t' => sumL (scriptSem (S := S) θ mu cb kinds T ub (((List.finRange U0).filter fun k => k.1 < (n p p).1).map
+  have hB : (fun t' => wsum (scriptSem (S := S) θ mu cb kinds T ub (((List.finRange U0).filter fun k => k.1 < (n p p).1).map
       fun k => Ins.both (key (Fin.castAdd A' p, .init p p k)) (dkey (p, k))) t') Ψ) =
       fun t' => if ∀ k ∈ (List.finRange U0).filter fun k => k.1 < (n p p).1,
         tget (key (Fin.castAdd A' p, .init p p k)) t' = tget (dkey (p, k)) t' then Ψ t' else 0 := by
     funext t'
-    rw [sumL_boths]
+    rw [wsum_boths]
     by_cases hh : ∀ k ∈ (List.finRange U0).filter fun k => k.1 < (n p p).1,
         tget (key (Fin.castAdd A' p, .init p p k)) t' = tget (dkey (p, k)) t'
     · rw [if_pos hh, if_pos hh]
     · rw [if_neg hh, if_neg hh]
   unfold baseIns
-  rw [sumL_script_cons, hB]
+  rw [wsum_script_cons, hB]
   refine Fin.addCases (motive := fun p => grp (Fin.castAdd A' p) = g → (∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) →
-    sumL (insSem θ mu cb kinds T ub (Fin.addCases (motive := fun _ => Ins)
+    wsum (insSem θ mu cb kinds T ub (Fin.addCases (motive := fun _ => Ins)
       (fun κ => .block (qn Q (q κ.castSucc)) (qn Q (q κ.succ)) (bodyOf ρ n key dkey (Fin.castAdd K κ)))
       (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse (bodyOf ρ n key dkey (Fin.natAdd K κ))) p) t)
       (fun t' => if ∀ k ∈ (List.finRange U0).filter fun k => k.1 < (n p p).1,
@@ -364,8 +364,8 @@ theorem stepOK_base (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < u
           Ψ' (ovr ((dom n o grp g).filter fun c => c.1 = Fin.castAdd A' p ∧ isInit c.2 = true)
             (fun c => initV cb ub M.N U0 U1 R.words C.words p c.2) σ)) ?_ ?_ p hp hρ
   · intro κ hp hρ
-    rw [Fin.addCases_left, insSem, dif_pos ⟨(qn Q _).2, (qn Q _).2⟩, sumL_bindL, sumL_simSem mu cb hmu]
-    have h1 : ∀ w : Fin T → Letter S Unit Γ, sumL (packSem A (sepOf cb) ub (bodyOf ρ n key dkey (Fin.castAdd K κ))
+    rw [Fin.addCases_left, insSem, dif_pos ⟨(qn Q _).2, (qn Q _).2⟩, wsum_bindW, wsum_simSem mu cb hmu]
+    have h1 : ∀ w : Fin T → Letter S Unit Γ, wsum (packSem A (sepOf cb) ub (bodyOf ρ n key dkey (Fin.castAdd K κ))
         (outsOf cb (List.ofFn w)) t) (fun t' => if ∀ k ∈ (List.finRange U0).filter fun k =>
           k.1 < (n (Fin.castAdd K κ) (Fin.castAdd K κ)).1, tget (key (Fin.castAdd A' (Fin.castAdd K κ),
           .init (Fin.castAdd K κ) (Fin.castAdd K κ) k)) t' = tget (dkey (Fin.castAdd K κ, k)) t' then Ψ t' else 0) = _ :=
