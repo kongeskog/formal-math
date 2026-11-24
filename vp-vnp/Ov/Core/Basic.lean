@@ -49,8 +49,6 @@ def withVal (t : Ten K I) (v : (∀ p, t.ι p) → K) : Ten K I where
   ι := t.ι
   val := v
 
-@[simp] theorem withVal_val (t : Ten K I) (v : (∀ p, t.ι p) → K) : (t.withVal v).val = v := rfl
-
 /-! ### Local maps applied to arrays -/
 
 /-- Local maps L applied to an array f; this is `app` for plain index sets in the place of the legs of
