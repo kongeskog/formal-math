@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T02:46:06.928651519Z",
+  "updated_at": "2026-11-24T02:48:32.809155071Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 8,
     "rejected": 2,
-    "open": 3,
+    "open": 4,
     "contributors": 1,
     "ideas_open": 6
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 8,
-      "attempts": 13,
+      "attempts": 14,
       "saved": 1639
     }
   ],
@@ -397,7 +397,7 @@
       "pr": 26,
       "title": "generalize(Nc/Uni): a mode parameter for KS and rstep replaces PKS and pstep",
       "author": "kongeskog",
-      "head_sha": "347ef4569337e4ca8acfcc33103c8701c7e46c88",
+      "head_sha": "9b0b2877b62e02f1aad24c5408744978d5e042cc",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-24T02:42:27Z",
@@ -460,6 +460,74 @@
       "reason": null,
       "technique": "generalize",
       "scope": "Nc/Uni"
+    },
+    {
+      "pr": 27,
+      "title": "shorten(Nc): replace the obtain-exists-rfl idiom by generalize or exists_eq",
+      "author": "kongeskog",
+      "head_sha": "70b630c0cbc33334afecae225d1205fd0352d2a4",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T02:47:45Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 15,
+      "url": "https://github.com/kongeskog/formal-math/pull/27",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc"
     }
   ],
   "top_files": [
