@@ -87,7 +87,7 @@ variable (θ) in
 noncomputable def roleSem (L : G.Law A) (p : L.Ro) (ub : ℕ) (ct : List Bool → List Bool) (tt : ℕ)
     (slots keys : List (List (List Bool))) (t : Tree) : List (A × Tree) :=
   if ∀ es ∈ slots, ∀ k ∈ es, ct k ≠ [] then
-    bindL (runL θ (roleTab θ L p) (tt * ub)
+    bindW (runL θ (roleTab θ L p) (tt * ub)
       (0, fun i => ((slots.map fun es => es.reverse.flatMap ct).getD i []), fun _ => [])) fun s =>
       encT (putsL ub keys (List.ofFn fun j => (s.2.2 j).reverse ++ [true]) t)
   else []
@@ -179,7 +179,7 @@ theorem ex_role (L : G.Law A) (p : L.Ro) : ∃ F κ, ∀ (ub : ℕ) (ct : List B
     (d := nO * (κ' * (tt * ub) * 31 + 100) + ((keys.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum
       + 200)) h6 (by
       intro b hb
-      obtain ⟨a, ha, r, hr, hbr⟩ := mem_bindL hb
+      obtain ⟨a, ha, r, hr, hbr, -⟩ := mem_bindW hb
       have h8 := hκ' (tt * ub) s₀ (fun j => rfl) r hr
       rw [hbr]
       have e1 : (List.ofFn fun j => listT ((r.2.2.2 j).map bit)) = (List.ofFn r.2.2.2).map ofBits := by
@@ -204,7 +204,7 @@ theorem ex_role (L : G.Law A) (p : L.Ro) : ∃ F κ, ∀ (ub : ℕ) (ct : List B
   refine (h7.replace ?_).mono ?_
   · unfold roleSem
     split_ifs
-    · rw [bindL_single]
+    · rw [bindW_single]
     · rfl
   · set Z := (slots.map fun es => (es.map fun k => ub * 62 + k.length * 60 + 330).sum + 240).sum
     set Y := (keys.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum

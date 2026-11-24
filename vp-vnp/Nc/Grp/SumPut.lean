@@ -113,32 +113,32 @@ variable {A : Type} [CommRing A] {θ : List Bool → A}
 variable {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q] {c : ℕ}
   {mu : Letter S Unit Γ → Matrix Q Q A} {cb : Option Γ → Fin c → Bool} {kinds : List (Σ L : G.Law A, L.Ro)}
 
-theorem sumL_script_cons (T ub : ℕ) (i : Ins) (l : List Ins) (t : Tree) (Ψ : Tree → A) :
-    sumL (scriptSem (S := S) θ mu cb kinds T ub (i :: l) t) Ψ = sumL (insSem (S := S) θ mu cb kinds T ub i t) fun t' =>
-      sumL (scriptSem (S := S) θ mu cb kinds T ub l t') Ψ := by
-  rw [scriptSem, foldL, sumL_bindL]
+theorem wsum_script_cons (T ub : ℕ) (i : Ins) (l : List Ins) (t : Tree) (Ψ : Tree → A) :
+    wsum (scriptSem (S := S) θ mu cb kinds T ub (i :: l) t) Ψ = wsum (insSem (S := S) θ mu cb kinds T ub i t) fun t' =>
+      wsum (scriptSem (S := S) θ mu cb kinds T ub l t') Ψ := by
+  rw [scriptSem, foldL, wsum_bindW]
   rfl
 
-theorem sumL_script_nil (T ub : ℕ) (t : Tree) (Ψ : Tree → A) :
-    sumL (scriptSem (S := S) θ mu cb kinds T ub [] t) Ψ = Ψ t := by
-  rw [scriptSem, foldL, sumL_single]
+theorem wsum_script_nil (T ub : ℕ) (t : Tree) (Ψ : Tree → A) :
+    wsum (scriptSem (S := S) θ mu cb kinds T ub [] t) Ψ = Ψ t := by
+  rw [scriptSem, foldL, wsum_single]
 
-theorem sumL_script_append (T ub : ℕ) (l l' : List Ins) (t : Tree) (Ψ : Tree → A) :
-    sumL (scriptSem (S := S) θ mu cb kinds T ub (l ++ l') t) Ψ =
-      sumL (scriptSem (S := S) θ mu cb kinds T ub l t) fun t' =>
-        sumL (scriptSem (S := S) θ mu cb kinds T ub l' t') Ψ :=
+theorem wsum_script_append (T ub : ℕ) (l l' : List Ins) (t : Tree) (Ψ : Tree → A) :
+    wsum (scriptSem (S := S) θ mu cb kinds T ub (l ++ l') t) Ψ =
+      wsum (scriptSem (S := S) θ mu cb kinds T ub l t) fun t' =>
+        wsum (scriptSem (S := S) θ mu cb kinds T ub l' t') Ψ :=
   foldL_append _ _ _ _ _
 
 /-- Several comparisons. -/
-theorem sumL_boths {ι : Type} (T ub : ℕ) (ks : List ι) (f g : ι → List Bool) (t : Tree) (Ψ : Tree → A) :
-    sumL (scriptSem (S := S) θ mu cb kinds T ub (ks.map fun k => Ins.both (f k) (g k)) t) Ψ =
+theorem wsum_boths {ι : Type} (T ub : ℕ) (ks : List ι) (f g : ι → List Bool) (t : Tree) (Ψ : Tree → A) :
+    wsum (scriptSem (S := S) θ mu cb kinds T ub (ks.map fun k => Ins.both (f k) (g k)) t) Ψ =
       if ∀ k ∈ ks, tget (f k) t = tget (g k) t then Ψ t else 0 := by
   induction ks with
-  | nil => simp [sumL_script_nil]
+  | nil => simp [wsum_script_nil]
   | cons k ks ih =>
-    rw [List.map_cons, sumL_script_cons, insSem]
+    rw [List.map_cons, wsum_script_cons, insSem]
     by_cases h : tget (f k) t = tget (g k) t
-    · rw [if_pos h, sumL_single, ih]
+    · rw [if_pos h, wsum_single, ih]
       by_cases h' : ∀ k ∈ ks, tget (f k) t = tget (g k) t
       · rw [if_pos h', if_pos (by
           intro k' hk'
@@ -146,6 +146,6 @@ theorem sumL_boths {ι : Type} (T ub : ℕ) (ks : List ι) (f g : ι → List Bo
           · exact h
           · exact h' k' hk')]
       · rw [if_neg h', if_neg fun h1 => h' fun k' hk' => h1 k' (List.mem_cons_of_mem _ hk')]
-    · rw [if_neg h, sumL_nil, if_neg fun h1 => h (h1 k List.mem_cons_self)]
+    · rw [if_neg h, wsum_nil, if_neg fun h1 => h (h1 k List.mem_cons_self)]
 
 end Nc.Grp

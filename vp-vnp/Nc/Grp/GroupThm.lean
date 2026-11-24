@@ -52,11 +52,11 @@ theorem exists_group (mu : Letter S Unit Γ → Matrix Q Q A) (cb : Option Γ �
   have h1 := hF bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b) (insOk_script hkind b)
   have htab' : ∀ (r : M.R) i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h := fun r =>
     htab ⟨M.kind r.1, r.2⟩ (List.mem_of_getElem? (hkind r))
-  have h2 := sumL_script (cb := cb) (kinds := kinds) (tg := tg) hkey hub hP hmu hx hρ hkind htab' (q := q) (o := o) (n := n)
+  have h2 := wsum_script (cb := cb) (kinds := kinds) (tg := tg) hkey hub hP hmu hx hρ hkind htab' (q := q) (o := o) (n := n)
     (grp := grp) (g := g) b
   obtain ⟨p1, p2⟩ := h1.plain
   refine ⟨p1, ?_, fun hacc => ?_⟩
-  · rw [p2, ← h2, sumL, List.map_map]
+  · rw [p2, ← h2, wsum, List.map_map]
     congr 1
     exact List.map_congr_left fun z _ => by simp
   · have hne : scriptSem (S := S) θ mu cb kinds (bval bT) (bval bub)

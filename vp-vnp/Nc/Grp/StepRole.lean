@@ -140,8 +140,8 @@ theorem stepOK_role (hkey : Function.Injective key) (hub : 0 < ub) {r : M.R} (hr
     (htab : ∀ i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h) :
     StepOK (S := S) θ T mu cb kinds key [roleIns P n o key tg r] (roleStep P n o grp g ub r) := by
   intro t σ Ψ Ψ' hrep hΨ
-  rw [sumL_script_cons]
-  simp only [sumL_script_nil]
+  rw [wsum_script_cons]
+  simp only [wsum_script_nil]
   rw [roleIns, insSem, hkind]
   simp only
   have hct : ∀ id, (tget (key (M.rp r, id)) t).path = uwBits (σ (M.rp r, id)) := by
@@ -155,12 +155,12 @@ theorem stepOK_role (hkey : Function.Injective key) (hub : 0 < ub) {r : M.R} (hr
     rw [hct, uwBits_ne_nil hub]
   by_cases hp : ∀ e : (M.kind r.1).SlAt r.2, ∀ id ∈ P.ids n o ⟨r.1, e.1⟩, σ (M.rp r, id) ≠ none
   swap
-  · rw [roleSem, if_neg fun h => hp (hpres.1 h), sumL_nil]
+  · rw [roleSem, if_neg fun h => hp (hpres.1 h), wsum_nil]
     symm
     refine Finset.sum_eq_zero fun f _ => ?_
     have : (roleStep P n o grp g ub r).w f σ = 0 := if_neg fun h => hp h.1
     rw [this, zero_mul]
-  rw [roleSem, if_pos (hpres.2 hp), sumL_bindL, sumL_role _ _ htab]
+  rw [roleSem, if_pos (hpres.2 hp), wsum_bindW, wsum_role _ _ htab]
   show _ = ∑ f : Fin (P.num n o r.1 * ub) → Bk (M.kind r.1) r.2, _
   refine Finset.sum_congr rfl fun f _ => ?_
   -- the streams
@@ -210,7 +210,7 @@ theorem stepOK_role (hkey : Function.Injective key) (hub : 0 < ub) {r : M.R} (hr
     have hw : (roleStep P n o grp g ub r).w f σ = ∏ k, (M.kind r.1).tab r.2 (f k).1 (fun e =>
         (slotBits (P.num n o r.1) (P.ids n o ⟨r.1, e.1⟩) fun id => σ (M.rp r, id)).getD k false) (f k).2 := if_pos ⟨hp, hc⟩
     rw [hw]
-    simp only [encT, List.map_cons, List.map_nil, sumL_single]
+    simp only [encT, List.map_cons, List.map_nil, wsum_single]
     congr 1
     exact hΨ _ _ (rep_role hkey hr f hrep)
   · rw [if_neg fun h => hc (hcnt.1 h)]

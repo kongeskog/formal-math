@@ -124,18 +124,18 @@ def putF : Fm := lett (foldF putStep (.cons (.hd .id) (.tl (.tl .id))) (.hd (.tl
   (.ite (.hd (.tl .id)) .fail (.tl (.tl .id)))
 
 theorem bind_putOne (ub : ℕ) (keys : List (List Bool)) (r : List Bool) (t : Tree) :
-    bindL (foldL (putOne A ub) keys (r, t)) (fun s => if s.1 = [] then [((1 : A), s.2)] else []) =
+    bindW (foldL (putOne A ub) keys (r, t)) (fun s => if s.1 = [] then [((1 : A), s.2)] else []) =
       encT (putL ub keys r t) := by
   induction keys generalizing r t with
   | nil =>
-    rw [foldL, bindL_single, putL]
+    rw [foldL, bindW_single, putL]
     by_cases h : r = [] <;> simp [h]
   | cons k ks ih =>
     rw [foldL, putOne, putL]
     by_cases h : r = []
-    · simp [h, bindL]
+    · simp [h, bindW]
     · simp only [h, if_false]
-      rw [bindL_single]
+      rw [bindW_single]
       exact ih _ _
 
 theorem putF_does (ub : ℕ) (keys : List (List Bool)) (r : List Bool) (t : Tree) :
@@ -169,12 +169,12 @@ def putsStep : Fm := .cons (.hd (.tl .id)) (.cons (.tl (.hd (.tl (.tl .id))))
 def putsF : Fm := lett (foldF putsStep (.cons (.hd .id) (.tl (.tl .id))) (.hd (.tl .id))) (.tl (.tl .id))
 
 theorem bind_puts (ub : ℕ) (kss : List (List (List Bool))) (strs : List (List Bool)) (t : Tree) :
-    bindL (foldL (fun ks (s : List (List Bool) × Tree) => (putL ub ks (s.1.headD []) s.2).map fun t =>
+    bindW (foldL (fun ks (s : List (List Bool) × Tree) => (putL ub ks (s.1.headD []) s.2).map fun t =>
       ((1 : A), (s.1.tail, t))) kss (strs, t)) (fun s => [((1 : A), s.2)]) = encT (putsL ub kss strs t) := by
   induction kss generalizing strs t with
-  | nil => rw [foldL, bindL_single, putsL]; rfl
+  | nil => rw [foldL, bindW_single, putsL]; rfl
   | cons ks kss ih =>
-    rw [foldL, putsL, bindL_assoc, bindL_pure]
+    rw [foldL, putsL, bindW_assoc, bindW_pure]
     show _ = List.map _ (List.flatMap _ _)
     rw [List.map_flatMap]
     exact List.flatMap_congr fun t _ => ih _ _

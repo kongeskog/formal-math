@@ -151,12 +151,12 @@ theorem forall_tapes {p : Option S → Prop} : (∀ i : Fin (nT S), p ((tapes S)
 
 open Classical in
 /-- **Cutting and writing, as a sum.** -/
-theorem sumL_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
+theorem wsum_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
     (hρ : ∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) {wl rl : Option S → List Γ}
     (hwl : ∀ s, (wl s).length ≤ T) (hrl : ∀ s, (rl s).length ≤ T) {out : Outs S}
     (h1 : ∀ i, out (Fin.castAdd (nT S) i) = ((wl ((tapes S).get i)).map (code cb)).reverse)
     (h2 : ∀ i, out (Fin.natAdd (nT S) i) = ((rl ((tapes S).get i)).map (code cb)).reverse) (t : Tree) (Ψ : Tree → A) :
-    sumL (packSem A (sepOf cb) ub (bodyOf ρ n key dkey p) out t) Ψ =
+    wsum (packSem A (sepOf cb) ub (bodyOf ρ n key dkey p) out t) Ψ =
       ∑ R : Segs S Γ (K + K) T, ∑ C : Segs S Γ (K + K) T,
         if (∀ s, cat (R.words s) = wl s) ∧ (∀ s, cat (C.words s) = rl s) ∧ (∀ s, RowOk (ρ s p) (R.words s)) ∧
           (∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b) ∧
@@ -193,8 +193,8 @@ theorem sumL_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
   have hlenC : ∀ b, (kCl n key dkey p b).length = n b p := by
     intro b
     rw [kCl, List.length_map, filter_finRange (by have := (n b p).2; omega), List.length_ofFn]
-  rw [packSem, hm, hrep, sumL_bindL, eR,
-    sumL_segs (sepOf cb) hK (code cb) T (fun i b => rowFlag (ρ ((tapes S).get i) p) b) (fun i => wl ((tapes S).get i))
+  rw [packSem, hm, hrep, wsum_bindW, eR,
+    wsum_segs (sepOf cb) hK (code cb) T (fun i b => rowFlag (ρ ((tapes S).get i) p) b) (fun i => wl ((tapes S).get i))
       (fun i => hwl _), sum_segs_equiv]
   refine Finset.sum_congr rfl fun R _ => ?_
   have cR : (∀ i : Fin (nT S), CutOk (fun b => rowFlag (ρ ((tapes S).get i) p) b) (wl ((tapes S).get i))
@@ -209,7 +209,7 @@ theorem sumL_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
   · rw [if_neg fun h => hR (cR.1 h)]
     symm
     refine Finset.sum_eq_zero fun C _ => if_neg fun h => hR ⟨h.1, h.2.2.1⟩
-  rw [if_pos (cR.2 hR), List.reverse_reverse, sumL_bindL]
+  rw [if_pos (cR.2 hR), List.reverse_reverse, wsum_bindW]
   have sR : (List.ofFn fun b => joined (code cb) (sepOf cb) (fun i : Fin (nT S) => (R ((tapes S).get i) b : List Γ)) ++ [true]) =
       (PR n key cb p R.words).map fun z => z.2 ++ [true] := by
     rw [PR, List.map_ofFn]
@@ -233,8 +233,8 @@ theorem sumL_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
     symm
     refine Finset.sum_eq_zero fun C _ => if_neg fun h => hR2 h.2.2.2.1
   rw [if_pos (cR2.2 hR2)]
-  simp only [encT, List.map_cons, List.map_nil, sumL_single]
-  rw [sumL_bindL, eC, sumL_segs (sepOf cb) hK (code cb) T (fun _ _ => 2) (fun i => rl ((tapes S).get i))
+  simp only [encT, List.map_cons, List.map_nil, wsum_single]
+  rw [wsum_bindW, eC, wsum_segs (sepOf cb) hK (code cb) T (fun _ _ => 2) (fun i => rl ((tapes S).get i))
     (fun i => hrl _), sum_segs_equiv]
   refine Finset.sum_congr rfl fun C _ => ?_
   have cC : (∀ i : Fin (nT S), CutOk (fun _ => 2) (rl ((tapes S).get i)) fun b => (C ((tapes S).get i) b : List Γ)) ↔
@@ -267,7 +267,7 @@ theorem sumL_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
     rw [hlenC]
   by_cases hC2 : ∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p
   · rw [if_pos (cC2.2 hC2), if_pos ⟨hR.1, hC, hR.2, hR2, hC2⟩]
-    simp only [List.map_cons, List.map_nil, sumL_single]
+    simp only [List.map_cons, List.map_nil, wsum_single]
   · rw [if_neg fun h => hC2 (cC2.1 h), if_neg fun h => hC2 h.2.2.2.2]
     rfl
 
