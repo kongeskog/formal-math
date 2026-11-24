@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T22:31:55.414504833Z",
+  "updated_at": "2026-11-24T22:37:04.361769779Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "55ab962dc38e63837befd7548704fa59d4deda07",
-    "at": "2026-11-24T22:01:51.318804125Z",
+    "sha": "19f6795515882d876fa4e3c047da8c8248461f55",
+    "at": "2026-11-24T22:37:04.361769779Z",
     "metrics": {
-      "tokens": 901745,
-      "loc": 57242,
+      "tokens": 901295,
+      "loc": 57258,
       "decls": 4563,
       "files": 321,
-      "bytes": 3344514,
-      "build_seconds": 548
+      "bytes": 3343935,
+      "build_seconds": 627
     }
   },
   "counts": {
-    "merged": 49,
+    "merged": 50,
     "rejected": 2,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 49,
+      "merged": 50,
       "attempts": 52,
-      "saved": 26416
+      "saved": 26866
     }
   ],
   "ideas": [
@@ -206,8 +206,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:01:19Z",
-      "pr": 88,
-      "result_delta": -1159,
+      "pr": 91,
+      "result_delta": -1609,
       "created_at": "2026-11-24T20:38:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/69",
       "technique": "restructure",
@@ -620,76 +620,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 91,
-      "title": "restructure(*): state implicit binders shared by adjacent lemmas once in five more files",
-      "author": "kongeskog",
-      "head_sha": "88e379d9c76df2ba0aa100d0ee1427c9a53c0a29",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-24T22:16:44Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 69,
-      "url": "https://github.com/kongeskog/formal-math/pull/91",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "*"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
