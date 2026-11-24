@@ -134,7 +134,7 @@ theorem runs_U : Runs (dimU (Fintype.card (Sy M K)) (Fintype.card (Bl K)))
   have h := ((runs_ps (A := A) (M := M) (K := K)).kstar fun p => ⟨lsT, by
     intro h
     have := congrArg List.length h
-    simp [emPs, on, barSet] at this⟩).mul ((runs_fi (A := A) (M := M) (K := K)).mul (runs_cm (A := A) (M := M) (K := K)))
+    simp [emPs, on, barSet] at this⟩).mul ((runs_fi).mul (runs_cm))
   refine h.congr (Equiv.refl _) (fun y z => rfl) fun y => ?_
   simp
 

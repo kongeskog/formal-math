@@ -89,7 +89,7 @@ theorem runs_co : Runs (Fintype.card (Bl K) * (Fintype.card (Sy M K) * 5 + 1 + 3
         (w.map Subtype.val) z ++ on {.tp (.bk ((Fintype.equivFin (Bl K)).symm i)) true} [Sy.bar] z)
       (fun _ => (1 : A)) := by
     intro i
-    have h1 := (Runs.wordstar (F := A) (Z := Zc K) {.tp (.bk ((Fintype.equivFin (Bl K)).symm i)) true, lsF}
+    have h1 := (Runs.wordstar (Z := Zc K) {.tp (.bk ((Fintype.equivFin (Bl K)).symm i)) true, lsF}
       ⟨lsF, by simp⟩ (Subtype.val : NB M K → Sy M K)).mul
       (Runs.word (F := A) (Z := Zc K) {.tp (.bk ((Fintype.equivFin (Bl K)).symm i)) true} [(Sy.bar : Sy M K)])
     refine (h1.congr ⟨fun w => (w, ()), Prod.fst, fun w => rfl, fun y => rfl⟩ (fun w z => rfl) fun w => by simp).mono ?_
@@ -98,7 +98,7 @@ theorem runs_co : Runs (Fintype.card (Bl K) * (Fintype.card (Sy M K) * 5 + 1 + 3
     have hs : Fintype.card (NB M K) ≤ Fintype.card (Sy M K) := Fintype.card_subtype_le _
     rw [hc, Finset.card_singleton, List.length_singleton]
     exact Nat.add_le_add (Nat.add_le_add_right (Nat.mul_le_mul_right 5 hs) 1) (by norm_num)
-  have h := (Runs.pi h0).mul (Runs.word (F := A) (Z := Zc K) {lsF} [(Sy.bar : Sy M K)])
+  have h := (Runs.pi h0).mul (Runs.word (Z := Zc K) {lsF} [(Sy.bar : Sy M K)])
   refine (h.congr ⟨fun m => ((fun i => m ((Fintype.equivFin (Bl K)).symm i)), ()),
     fun y b => y.1 (Fintype.equivFin (Bl K) b), fun m => by simp, fun y => by simp⟩ (fun m z => rfl) fun m => ?_).mono ?_
   · simp
@@ -121,7 +121,7 @@ theorem card_barSet : (barSet : Finset (Zc K)).card ≤ Fintype.card (Bl K) + 1 
 theorem runs_ps : Runs (dimPs (Fintype.card (Sy M K)) (Fintype.card (Bl K)))
     (emPs : Ps M K → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h := ((runs_dr (A := A) (M := M) (K := K)).kstar fun d => emDr_ne d).mul
-    ((Runs.word (F := A) (Z := Zc K) barSet [(Sy.bar : Sy M K)]).mul (runs_co (A := A) (M := M) (K := K)))
+    ((Runs.word (Z := Zc K) barSet [(Sy.bar : Sy M K)]).mul (runs_co))
   refine (h.congr ⟨fun p => (p.1, (), p.2), fun y => (y.1, y.2.2), fun p => rfl, fun y => rfl⟩ (fun p z => rfl)
     fun p => ?_).mono ?_
   · simp
@@ -162,7 +162,7 @@ theorem runs_fi : Runs (14 + 3 + (Fintype.card (Bl K) * 7 + 1) + 7 + 1 + 3)
           · subst h3
             simp [on]
           · simp [on, h1, h2, h3]) (fun d => by simp)
-  have h3 := (h2.kstar fun d => ⟨lsT, by simp [on, rw']⟩).mul (Runs.word (F := A) (Z := Zc K) {lsT} [(Sy.bar : Sy M K)])
+  have h3 := (h2.kstar fun d => ⟨lsT, by simp [on, rw']⟩).mul (Runs.word (Z := Zc K) {lsT} [(Sy.bar : Sy M K)])
   refine (h3.congr ⟨fun l => (l, ()), Prod.fst, fun l => rfl, fun y => rfl⟩ (fun l z => rfl) fun l => by simp).mono ?_
   rw [hc]
   simp

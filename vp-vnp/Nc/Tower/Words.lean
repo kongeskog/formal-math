@@ -179,7 +179,7 @@ theorem WL.el_t (h3 : 3 ≤ h) (i j : Fin h) (hij : i ≠ j) :
   have e1 : 4 ^ (h + 1) = 4 * 4 ^ h := by ring
   have e2 : 4 ^ (h + 2) = 16 * 4 ^ h := by ring
   have e3 : 4 ^ (h + 3) = 64 * 4 ^ h := by ring
-  have hL0 := zero_ne_last (h := h) h2
+  have hL0 := zero_ne_last h2
   have c1 : WL h2 (El (last h) 0 hL0 (t (n + 1)) : G h n) 1 := by
     have h6 := WL.gen (n := n) (h2 := h2) 0
     rw [gen_eq_El, tt, if_pos rfl] at h6
@@ -192,12 +192,12 @@ theorem WL.el_t (h3 : 3 ≤ h) (i j : Fin h) (hij : i ≠ j) :
     by_cases h0 : j = 0
     · subst h0
       exact c1.mono (by omega)
-    · have h4 := c1.comm hj (WL.upper' (n := n) (h2 := h2) 0 j (Fin.pos_iff_ne_zero.2 h0))
+    · have h4 := c1.comm hj (WL.upper' 0 j (Fin.pos_iff_ne_zero.2 h0))
       rw [mul_one] at h4
       exact h4.mono (by omega)
   have c3 : ∀ i j (hij : i ≠ j), i ≠ last h → j ≠ last h → WL h2 (El i j hij (t (n + 1)) : G h n) (4 ^ (h + 2)) := by
     intro i j hij hi hj
-    have h4 := (WL.upper' (n := n) (h2 := h2) i (last h) (lt_last hi)).comm hij (c2 j hj.symm)
+    have h4 := (WL.upper' i (last h) (lt_last hi)).comm hij (c2 j hj.symm)
     rw [one_mul] at h4
     exact h4.mono (by omega)
   by_cases hi : i = last h
@@ -206,7 +206,7 @@ theorem WL.el_t (h3 : 3 ≤ h) (i j : Fin h) (hij : i ≠ j) :
   · by_cases hj : j = last h
     · subst hj
       obtain ⟨k, hk1, hk2⟩ := exists_third h3 i (last h)
-      have h4 := (c3 i k hk1 hi hk2).comm hij (WL.upper' (n := n) (h2 := h2) k (last h) (lt_last hk2))
+      have h4 := (c3 i k hk1 hi hk2).comm hij (WL.upper' k (last h) (lt_last hk2))
       rw [mul_one] at h4
       exact h4.mono (by omega)
     · exact (c3 i j hij hi hj).mono (by omega)

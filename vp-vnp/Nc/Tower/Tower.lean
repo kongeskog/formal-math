@@ -72,9 +72,9 @@ noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (J
   fibre := fun hj d => fibre_edges h2 hj d
   π_vx := fun _ i c => vert_pr i c
   π_co := fun _ i c => cor_pr i c
-  host := fun {j} i => (exists_host (n := n) j i).choose
-  host_inj := fun {j} hj i => ((exists_host (n := n) j i).choose_spec hj).1
-  host_vx := fun {j} hj i v => ((exists_host (n := n) j i).choose_spec hj).2 v
+  host := fun {j} i => (exists_host j i).choose
+  host_inj := fun {j} hj i => ((exists_host j i).choose_spec hj).1
+  host_vx := fun {j} hj i v => ((exists_host j i).choose_spec hj).2 v
 
 variable {h n}
 
@@ -242,7 +242,7 @@ variable (h n)
 
 theorem card_XJ (h2 : 2 ≤ h) :
     Fintype.card ((tower h n h2).X (JJ h n)) < Nat.card (SL2 h) * 2 ^ ee h := by
-  have h1 := card_XX (h := h) (n := n) (j := JJ h n) le_rfl
+  have h1 := card_XX (j := JJ h n) le_rfl
   rw [card_G] at h1
   have he : 0 < ee h := by
     unfold ee

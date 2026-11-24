@@ -91,11 +91,11 @@ theorem bd_one (m : ℕ) (s : ℝ) : Bd m s 1 0 := by
 theorem S_add_le {a b : ℕ} (l : Len (U (a + b))) :
     (l.comap (win (hl (a := a) (b := b)))).S + (l.comap (win (hr (a := a) (b := b)))).S ≤ l.S := by
   unfold Len.S
-  have e1 : ∀ j, (l.comap (win (hl (a := a) (b := b)))).val (x a j) = l.val (x _ (wt hl j)) := by
+  have e1 : ∀ j, (l.comap (win (hl))).val (x a j) = l.val (x _ (wt hl j)) := by
     intro j
     show l.val (win hl (x a j)) = _
     rw [win_x]
-  have e2 : ∀ j, (l.comap (win (hr (a := a) (b := b)))).val (x b j) = l.val (x _ (wt hr j)) := by
+  have e2 : ∀ j, (l.comap (win (hr))).val (x b j) = l.val (x _ (wt hr j)) := by
     intro j
     show l.val (win hr (x b j)) = _
     rw [win_x]
@@ -106,9 +106,9 @@ theorem S_add_le {a b : ℕ} (l : Len (U (a + b))) :
   have i2 : Function.Injective (wt (hr (a := a) (b := b))) := by
     intro j j' h
     simpa [wt, Fin.ext_iff] using h
-  rw [← sum_image (s := univ) (g := wt (hl (a := a) (b := b))) (f := fun k => l.val (x _ k))
+  rw [← sum_image (s := univ) (g := wt (hl)) (f := fun k => l.val (x _ k))
       (fun j _ j' _ h => i1 h),
-    ← sum_image (s := univ) (g := wt (hr (a := a) (b := b))) (f := fun k => l.val (x _ k))
+    ← sum_image (s := univ) (g := wt (hr)) (f := fun k => l.val (x _ k))
       (fun j _ j' _ h => i2 h), ← sum_union]
   · exact sum_le_sum_of_subset_of_nonneg (subset_univ _) fun _ _ _ => l.nonneg _
   · rw [disjoint_left]
