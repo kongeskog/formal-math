@@ -152,17 +152,24 @@ def IF : Fm := selF caseL (fO .id)
 /-- The environment of the interpreter. -/
 def env (f x : Tree) (t : Bt) : Tree := .cons IF.code (.cons f (.cons x t.enc))
 
-theorem Dt.fX {b : Fm} {y f x : Tree} {t : Bt} {k : ℕ} (h : Dt θ b y (env f x t) k) : Dt θ (fX b) y x (k + 3) :=
+section
+
+-- A formula `b` that gives the environment of `f`, `x` and `t` at `y` in `k` steps.
+variable {b : Fm} {y f x : Tree} {t : Bt} {k : ℕ}
+
+theorem Dt.fX (h : Dt θ b y (env f x t) k) : Dt θ (fX b) y x (k + 3) :=
   .hd (.tl (.tl h))
 
-theorem Dt.fS {b : Fm} {y f x : Tree} {t : Bt} {k : ℕ} (h : Dt θ b y (env f x t) k) : Dt θ (fS b) y t.enc (k + 3) :=
+theorem Dt.fS (h : Dt θ b y (env f x t) k) : Dt θ (fS b) y t.enc (k + 3) :=
   .tl (.tl (.tl h))
 
-theorem Dt.fO {b : Fm} {y f x : Tree} {t : Bt} {k : ℕ} (h : Dt θ b y (env f x t) k) : Dt θ (fO b) y f.hd (k + 3) :=
+theorem Dt.fO (h : Dt θ b y (env f x t) k) : Dt θ (fO b) y f.hd (k + 3) :=
   .hd (.hd (.tl h))
 
-theorem Dt.fA {b : Fm} {y f x : Tree} {t : Bt} {k : ℕ} (h : Dt θ b y (env f x t) k) : Dt θ (fA b) y f.tl (k + 3) :=
+theorem Dt.fA (h : Dt θ b y (env f x t) k) : Dt θ (fA b) y f.tl (k + 3) :=
   .tl (.hd (.tl h))
+
+end
 
 /-- A recursive call. -/
 theorem rec_ev {b a x s : Fm} {y g z : Tree} {f' x' : Tree} {t t' : Bt} {kb ka kx ks : ℕ}
@@ -183,14 +190,19 @@ theorem rec_ev {b a x s : Fm} {y g z : Tree} {f' x' : Tree} {t t' : Bt} {kb ka k
 def simS (t : Bt) (l : List (Run A)) : List (Run A × Bt) :=
   l.filterMap fun r => (Bt.decAll r.bill t).map fun t' => (r, t')
 
-theorem mem_simS {t : Bt} {l : List (Run A)} {q : Run A × Bt} (h : q ∈ simS t l) :
+section
+
+-- The runs `l` and `l'` decoded against the budgets `t`.
+variable {t : Bt} {l l' : List (Run A)}
+
+theorem mem_simS {q : Run A × Bt} (h : q ∈ simS t l) :
     q.1 ∈ l ∧ Bt.decAll q.1.bill t = some q.2 := by
   rw [simS, List.mem_filterMap] at h
   obtain ⟨r, hr, h⟩ := h
   obtain ⟨t', ht, rfl⟩ := Option.map_eq_some_iff.1 h
   exact ⟨hr, ht⟩
 
-theorem simS_map {t : Bt} {l : List (Run A)} {G : Run A → Run A} (h : ∀ r, (G r).bill = r.bill) :
+theorem simS_map {G : Run A → Run A} (h : ∀ r, (G r).bill = r.bill) :
     simS t (l.map G) = (simS t l).map fun q => (G q.1, q.2) := by
   induction l with
   | nil => rfl
@@ -202,10 +214,10 @@ theorem simS_map {t : Bt} {l : List (Run A)} {G : Run A → Run A} (h : ∀ r, (
       simp only [Option.map_some, List.map_cons]
       rw [ih]
 
-theorem simS_append {t : Bt} {l l' : List (Run A)} : simS t (l ++ l') = simS t l ++ simS t l' := by
+theorem simS_append : simS t (l ++ l') = simS t l ++ simS t l' := by
   simp [simS]
 
-theorem simS_flatMap {t : Bt} {la : List (Run A)} {L : Run A → List (Run A)} {G : Run A → Run A → Run A}
+theorem simS_flatMap {la : List (Run A)} {L : Run A → List (Run A)} {G : Run A → Run A → Run A}
     (h : ∀ r s, (G r s).bill = r.bill ++ s.bill) : simS t (la.flatMap fun r => (L r).map (G r)) =
       (simS t la).flatMap fun q => (simS q.2 (L q.1)).map fun p => (G q.1 p.1, p.2) := by
   have one : ∀ (r : Run A) (l : List (Run A)), simS t (l.map (G r)) =
@@ -238,6 +250,8 @@ theorem simS_flatMap {t : Bt} {la : List (Run A)} {L : Run A → List (Run A)} {
     cases Bt.decAll r.bill t with
     | none => simp
     | some t' => simp
+
+end
 
 end Code
 

@@ -30,7 +30,12 @@ theorem coeff_algebraMap (a : A) (i : ℤ) :
   rw [AddMonoidAlgebra.coe_algebraMap, Function.comp_apply, AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
   exact if_congr eq_comm rfl rfl
 
-theorem exists_coeff_mul_ne_zero {P Q : E[T;T⁻¹]} {i : ℤ} (h : (P * Q).coeff i ≠ 0) :
+section
+
+-- Orders of Laurent polynomials `P` and `Q`.
+variable {P Q : E[T;T⁻¹]}
+
+theorem exists_coeff_mul_ne_zero {i : ℤ} (h : (P * Q).coeff i ≠ 0) :
     ∃ a b, P.coeff a ≠ 0 ∧ Q.coeff b ≠ 0 ∧ a + b = i := by
   classical
   rw [AddMonoidAlgebra.coeff_mul] at h
@@ -42,13 +47,13 @@ theorem exists_coeff_mul_ne_zero {P Q : E[T;T⁻¹]} {i : ℤ} (h : (P * Q).coef
 
 theorem OrdGE.zero (r : ℤ) : OrdGE r (0 : E[T;T⁻¹]) := fun i _ => by simp
 
-theorem OrdGE.mono {r s : ℤ} {P : E[T;T⁻¹]} (h : OrdGE r P) (hs : s ≤ r) : OrdGE s P :=
+theorem OrdGE.mono {r s : ℤ} (h : OrdGE r P) (hs : s ≤ r) : OrdGE s P :=
   fun i hi => h i (lt_of_lt_of_le hi hs)
 
-theorem OrdGE.add {r : ℤ} {P Q : E[T;T⁻¹]} (h : OrdGE r P) (h' : OrdGE r Q) : OrdGE r (P + Q) :=
+theorem OrdGE.add {r : ℤ} (h : OrdGE r P) (h' : OrdGE r Q) : OrdGE r (P + Q) :=
   fun i hi => by simp [h i hi, h' i hi]
 
-theorem OrdGE.mul {r s : ℤ} {P Q : E[T;T⁻¹]} (h : OrdGE r P) (h' : OrdGE s Q) : OrdGE (r + s) (P * Q) := by
+theorem OrdGE.mul {r s : ℤ} (h : OrdGE r P) (h' : OrdGE s Q) : OrdGE (r + s) (P * Q) := by
   intro i hi
   by_contra hne
   obtain ⟨a, b, ha, hb, hab⟩ := exists_coeff_mul_ne_zero hne
@@ -59,6 +64,8 @@ theorem OrdGE.mul {r s : ℤ} {P Q : E[T;T⁻¹]} (h : OrdGE r P) (h' : OrdGE s 
     by_contra h2
     exact hb (h' b (by omega))
   omega
+
+end
 
 theorem OrdGE.list_sum {r : ℤ} {l : List E[T;T⁻¹]} (h : ∀ P ∈ l, OrdGE r P) : OrdGE r l.sum := by
   induction l with
@@ -90,9 +97,14 @@ theorem OrdGE.prod_sub {β : Type*} {r : ℤ} (hr : 0 ≤ r) (l : List β) (f : 
     · exact (h1.mul (hb ▸ OrdGE.of_algebraMap (E := E) ((l.map g).prod))).mono (by omega)
     · exact ((ha ▸ OrdGE.of_algebraMap (E := E) (g y) : OrdGE 0 a).mul h2).mono (by omega)
 
-theorem Span.mono {n m : ℕ} {P : E[T;T⁻¹]} (h : Span n P) (hm : n ≤ m) : Span m P := fun i hi => (h i hi).trans hm
+section
 
-theorem Span.ordGE {n : ℕ} {P : E[T;T⁻¹]} (h : Span n P) : OrdGE (-(n : ℤ)) P := by
+-- Spans of Laurent polynomials `P` and `Q`.
+variable {P Q : E[T;T⁻¹]}
+
+theorem Span.mono {n m : ℕ} (h : Span n P) (hm : n ≤ m) : Span m P := fun i hi => (h i hi).trans hm
+
+theorem Span.ordGE {n : ℕ} (h : Span n P) : OrdGE (-(n : ℤ)) P := by
   intro i hi
   by_contra hne
   have := h i hne
@@ -110,33 +122,35 @@ theorem Span.one (n : ℕ) : Span n (1 : E[T;T⁻¹]) := by
   have := Span.of_algebraMap (E := E) (1 : E) n
   rwa [map_one] at this
 
-theorem Span.add {n : ℕ} {P Q : E[T;T⁻¹]} (h : Span n P) (h' : Span n Q) : Span n (P + Q) := by
+theorem Span.add {n : ℕ} (h : Span n P) (h' : Span n Q) : Span n (P + Q) := by
   intro i hi
   by_cases h1 : P.coeff i = 0
   · exact h' i (by simpa [h1] using hi)
   · exact h i h1
 
-theorem Span.mul {n m : ℕ} {P Q : E[T;T⁻¹]} (h : Span n P) (h' : Span m Q) : Span (n + m) (P * Q) := by
+theorem Span.mul {n m : ℕ} (h : Span n P) (h' : Span m Q) : Span (n + m) (P * Q) := by
   intro i hi
   obtain ⟨a, b, ha, hb, hab⟩ := exists_coeff_mul_ne_zero hi
   have := h a ha
   have := h' b hb
   omega
 
-theorem Span.pow {n : ℕ} {P : E[T;T⁻¹]} (h : Span n P) (k : ℕ) : Span (k * n) (P ^ k) := by
+theorem Span.pow {n : ℕ} (h : Span n P) (k : ℕ) : Span (k * n) (P ^ k) := by
   induction k with
   | zero => simpa using Span.one (E := E) 0
   | succ k ih =>
     rw [pow_succ, add_mul, one_mul]
     exact ih.mul h
 
-theorem Span.card_support {n : ℕ} {P : E[T;T⁻¹]} (h : Span n P) : P.coeff.support.card ≤ 2 * n + 1 := by
+theorem Span.card_support {n : ℕ} (h : Span n P) : P.coeff.support.card ≤ 2 * n + 1 := by
   refine (Finset.card_le_card (t := Finset.Icc (-(n : ℤ)) n) fun i hi => ?_).trans ?_
   · have := h i (Finsupp.mem_support_iff.1 hi)
     rw [Finset.mem_Icc]
     omega
   · rw [Int.card_Icc]
     omega
+
+end
 
 /-- ε ↦ ε^r. -/
 noncomputable def rescale (A : Type) [CommRing A] {E : Type} [CommRing E] [Algebra A E] (r : ℕ) :

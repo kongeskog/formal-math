@@ -202,7 +202,12 @@ noncomputable def xF (J m W : ℕ) : KT E[T;T⁻¹] → List Bool → Fm
       (.quote (.cons (Bt.leaf (w.take J)).enc (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))))
   | .node l r, pre => lett (.cons (xF J m W l (pre ++ [false])) (xF J m W r (pre ++ [true]))) combF
 
-theorem length_xL {J m W : ℕ} {K : KT E[T;T⁻¹]} : ∀ q ∈ xL J m W K, q.2.2.length = W := by
+section
+
+-- The gadget for the tree of constants `K`, with `J` digits of budget, `m` of term, `W` of counter.
+variable {J m W : ℕ} {K : KT E[T;T⁻¹]}
+
+theorem length_xL : ∀ q ∈ xL J m W K, q.2.2.length = W := by
   induction K with
   | none =>
     intro q hq
@@ -222,7 +227,7 @@ theorem length_xL {J m W : ℕ} {K : KT E[T;T⁻¹]} : ∀ q ∈ xL J m W K, q.2
     exact ihl a ha
 
 /-- The budgets of the gadget have few digits. -/
-theorem bt_xL {J m W : ℕ} {K : KT E[T;T⁻¹]} :
+theorem bt_xL :
     ∀ q ∈ xL J m W K, q.1.ht ≤ K.ht + J + 1 ∧ q.1.nds ≤ K.nds * (J + 1) := by
   induction K with
   | none =>
@@ -247,7 +252,7 @@ theorem bt_xL {J m W : ℕ} {K : KT E[T;T⁻¹]} :
     omega
 
 /-- **Paper: proof of Proposition prop:approx-acc, the guessed terms together give all budgets.** Counted modulo 2 ^ W. -/
-theorem sum_xL {J m W : ℕ} {K : KT E[T;T⁻¹]} (hK : K.All fun c => ∀ n < 2 ^ J, (c ^ n).coeff.support.card ≤ 2 ^ m)
+theorem sum_xL (hK : K.All fun c => ∀ n < 2 ^ J, (c ^ n).coeff.support.card ≤ 2 ^ m)
     (φ : Bt → AddMonoidAlgebra E (ZMod (2 ^ W))) :
     ((xL J m W K).map fun q => φ q.1 * mark W q.2.2 q.2.1).sum = ((K.budg J).map fun q => φ q.1 * wrap A W q.2).sum := by
   induction K generalizing φ with
@@ -285,6 +290,8 @@ theorem sum_xL {J m W : ℕ} {K : KT E[T;T⁻¹]} (hK : K.All fun c => ∀ n < 2
           refine List.map_congr_left fun q _ => ?_
           rw [map_mul]
           ring
+
+end
 
 theorem combF_dt {W : ℕ} {t t' : Bt} {o o' : List Bool} (h : o.length = W) (h' : o'.length = W) :
     ∃ k ≤ 60 * W + 90, Dt θ combF (.cons (.cons t.enc (ofBits o)) (.cons t'.enc (ofBits o')))
