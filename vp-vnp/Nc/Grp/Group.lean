@@ -163,14 +163,11 @@ theorem insOk_script (hkind : ∀ r, kinds[tg r]? = some ⟨M.kind r.1, r.2⟩) 
   · rcases List.mem_append.1 hi with hi | hi
     · obtain ⟨p, -, hi⟩ := List.mem_flatMap.1 hi
       rcases List.mem_cons.1 hi with rfl | hi
-      · refine Fin.addCases (motive := fun p => InsOk S Q c kinds (Fin.addCases (motive := fun _ => Ins)
-          (fun κ => .block (qn Q (q κ.castSucc)) (qn Q (q κ.succ)) (bodyOf ρ n key dkey (Fin.castAdd K κ)))
-          (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse (bodyOf ρ n key dkey (Fin.natAdd K κ))) p))
-          ?_ ?_ p
-        · intro κ
+      · induction p using Fin.addCases with
+        | left κ =>
           rw [Fin.addCases_left]
           exact ⟨(qn Q _).2, (qn Q _).2⟩
-        · intro κ
+        | right κ =>
           rw [Fin.addCases_right]
           intro a ha
           rw [List.mem_reverse] at ha

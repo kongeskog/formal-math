@@ -352,18 +352,8 @@ theorem stepOK_base (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < u
     · rw [if_neg hh, if_neg hh]
   unfold baseIns
   rw [wsum_script_cons, hB]
-  refine Fin.addCases (motive := fun p => grp (Fin.castAdd A' p) = g → (∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) →
-    wsum (insSem θ mu cb kinds T ub (Fin.addCases (motive := fun _ => Ins)
-      (fun κ => .block (qn Q (q κ.castSucc)) (qn Q (q κ.succ)) (bodyOf ρ n key dkey (Fin.castAdd K κ)))
-      (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse (bodyOf ρ n key dkey (Fin.natAdd K κ))) p) t)
-      (fun t' => if ∀ k ∈ (List.finRange U0).filter fun k => k.1 < (n p p).1,
-        tget (key (Fin.castAdd A' p, .init p p k)) t' = tget (dkey (p, k)) t' then Ψ t' else 0) =
-    ∑ R : Segs S Γ (K + K) T, ∑ C : Segs S Γ (K + K) T,
-        (if InitC cb ub U0 (fun a b => (n a b).1) (fun s => ρ s p) p R.words C.words then
-          partyW mu T q x p R.words C.words else 0) *
-          Ψ' (ovr ((dom n o grp g).filter fun c => c.1 = Fin.castAdd A' p ∧ isInit c.2 = true)
-            (fun c => initV cb ub M.N U0 U1 R.words C.words p c.2) σ)) ?_ ?_ p hp hρ
-  · intro κ hp hρ
+  induction p using Fin.addCases with
+  | left κ =>
     rw [Fin.addCases_left, insSem, dif_pos ⟨(qn Q _).2, (qn Q _).2⟩, wsum_bindW, wsum_simSem mu cb hmu]
     have h1 : ∀ w : Fin T → Letter S Unit Γ, wsum (packSem A (sepOf cb) ub (bodyOf ρ n key dkey (Fin.castAdd K κ))
         (outsOf cb (List.ofFn w)) t) (fun t' => if ∀ k ∈ (List.finRange U0).filter fun k =>
@@ -394,7 +384,7 @@ theorem stepOK_base (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < u
     · rw [if_neg hi, zero_mul]
       refine Finset.sum_eq_zero fun w _ => ?_
       rw [if_neg fun hh => hi hh.2.2, mul_zero]
-  · intro κ hp hρ
+  | right κ =>
     rw [Fin.addCases_right, insSem]
     have h1 := base_core (n := n) (o := o) hkey hub hp hρ (T := T) (wl := fun s => if s = none then x κ else []) (rl := fun _ => [])
       (out := inOuts (S := S) ((x κ).map (code cb)).reverse)

@@ -210,13 +210,8 @@ theorem count_of_accept (hub : 0 < ub) (hx : ∀ κ, (x κ).length ≤ T)
   obtain ⟨t', ht'⟩ := foldL_ne_nil h _ hmem
   have key1 : ∃ R C : Option S → Fin (K + K) → List Γ, ∑ s, (cat (R s)).length ≤ T ∧ ∑ s, (cat (C s)).length ≤ T ∧
       (∀ b, ucount ub (strOf cb fun s => R s b) = n p b) ∧ ∀ b, ucount ub (strOf cb fun s => C s b) = n b p := by
-    revert ht'
-    refine Fin.addCases (motive := fun p => insSem θ mu cb kinds T ub (Fin.addCases (motive := fun _ => Ins)
-      (fun κ => .block (qn Q (q κ.castSucc)) (qn Q (q κ.succ)) (bodyOf ρ n key dkey (Fin.castAdd K κ)))
-      (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse (bodyOf ρ n key dkey (Fin.natAdd K κ))) p) t' ≠ [] →
-      ∃ R C : Option S → Fin (K + K) → List Γ, ∑ s, (cat (R s)).length ≤ T ∧ ∑ s, (cat (C s)).length ≤ T ∧
-      (∀ b, ucount ub (strOf cb fun s => R s b) = n p b) ∧ ∀ b, ucount ub (strOf cb fun s => C s b) = n b p) ?_ ?_ p
-    · intro κ ht'
+    induction p using Fin.addCases with
+    | left κ =>
       rw [Fin.addCases_left, insSem, dif_pos ⟨(qn Q _).2, (qn Q _).2⟩] at ht'
       obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ ht'
       obtain ⟨a, ha, r', hr', -⟩ := mem_bindW hr
@@ -230,7 +225,7 @@ theorem count_of_accept (hub : 0 < ub) (hx : ∀ κ, (x κ).length ≤ T)
         exact hw ▸ sum_wr_le w
       · simp only [h2]
         exact hw ▸ sum_rdr_le w
-    · intro κ ht'
+    | right κ =>
       rw [Fin.addCases_right, insSem] at ht'
       obtain ⟨R, C, h1, h2, h3, h4⟩ := exists_of_pack (A := A) (T := T) hub (fun s => hρ s _)
         (wl := fun s => if s = none then x κ else []) (rl := fun _ => [])

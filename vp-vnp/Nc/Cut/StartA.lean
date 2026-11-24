@@ -92,8 +92,8 @@ variable {mu}
 theorem partyW_sum_le (hx : ∀ κ, (x κ).length ≤ T) {p : Fin (K + K)} (h : partyW mu T q x p R C ≠ 0) :
     ∑ s, (cat (R s)).length ≤ T := by
   classical
-  refine Fin.addCases (motive := fun p => partyW mu T q x p R C ≠ 0 → ∑ s, (cat (R s)).length ≤ T) ?_ ?_ p h
-  · intro κ h
+  induction p using Fin.addCases with
+  | left κ =>
     rw [partyW_block] at h
     split_ifs at h with hc
     swap
@@ -107,7 +107,7 @@ theorem partyW_sum_le (hx : ∀ κ, (x κ).length ≤ T) {p : Fin (K + K)} (h : 
     · exact Finset.sum_le_sum_of_subset (Finset.subset_univ _)
     · intro s _ s' _ e
       simpa using e
-  · intro κ h
+  | right κ =>
     rw [partyW_input] at h
     split_ifs at h with hc
     swap
