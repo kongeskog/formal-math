@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:27:41.510758582Z",
+  "updated_at": "2026-11-24T20:28:34.480825320Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -545,19 +545,19 @@
       "created_at": "2026-11-24T20:07:10Z",
       "decided_at": null,
       "metrics": {
-        "tokens": 912590,
-        "loc": 57922,
-        "decls": 4565,
+        "tokens": 916675,
+        "loc": 58229,
+        "decls": 4569,
         "files": 321,
-        "bytes": 3375685,
-        "build_seconds": 461
+        "bytes": 3387545,
+        "build_seconds": 681
       },
       "base_metrics": {
-        "tokens": 912794,
-        "loc": 57932,
-        "decls": 4568,
+        "tokens": 916879,
+        "loc": 58239,
+        "decls": 4572,
         "files": 321,
-        "bytes": 3375864,
+        "bytes": 3387724,
         "build_seconds": null
       },
       "delta": -204,
@@ -570,44 +570,39 @@
         {
           "key": "quota",
           "label": "Within the open-change limit",
-          "status": "pending",
-          "detail": "Verified only together with changes queued ahead of it"
+          "status": "pass"
         },
         {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending",
-          "detail": "Verified only together with changes queued ahead of it"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending",
-          "detail": "Verified only together with changes queued ahead of it"
+          "status": "pass",
+          "detail": "3 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending",
-          "detail": "Verified only together with changes queued ahead of it"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending",
-          "detail": "Verified only together with changes queued ahead of it"
+          "status": "pass",
+          "detail": "tokens 916879 → 916675 (-204)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending",
-          "detail": "Verified only together with changes queued ahead of it"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending",
-          "detail": "Verified only together with changes queued ahead of it"
+          "status": "pass"
         },
         {
           "key": "fresh",
@@ -624,7 +619,7 @@
       ],
       "idea": 57,
       "url": "https://github.com/kongeskog/formal-math/pull/64",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45478040581",
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45477401361",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
