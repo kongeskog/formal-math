@@ -84,11 +84,6 @@ def dstepF (n : List Bool) : Fm := .ite (.hd (.hd .id))
   (lett (.cons .id (pickF (getF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.hd .id))))))
     (assignF (.tl .id) (.tl (.hd .id))))
 
-theorem len_ofBits (w : List Bool) : (ofBits w).len = w.length := by
-  induction w with
-  | nil => rfl
-  | cons b w ih => simp [ofBits, len, ih]
-
 theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
     Does θ (dstepF n) (.cons st.tree W) Q (st.cost (KT.val n) n.length (gets W)) ∧
     (∀ q ∈ Q, gets q.2 ∈ st.exec (KT.val n) (gets W)) ∧

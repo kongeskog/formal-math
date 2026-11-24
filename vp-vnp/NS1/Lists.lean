@@ -203,6 +203,14 @@ theorem appF_gives {a b : Fm} {x : Tree} {ca cb : ℕ} {xs ys : List Tree} (ha :
   rw [List.reverse_reverse, List.length_reverse] at h2
   exact h2.mono (by omega)
 
+/-- Concatenation of lists of bits. -/
+theorem appBits_gives {a b : Fm} {x : Tree} {ca cb : ℕ} {v w : List Bool} (ha : Gives θ a x (ofBits v) ca)
+    (hb : Gives θ b x (ofBits w) cb) : Gives θ (appF a b) x (ofBits (v ++ w)) (ca + cb + v.length * 62 + 41) := by
+  rw [← listT_ofBits] at ha hb ⊢
+  have := appF_gives ha hb
+  rw [← List.map_append, List.length_map] at this
+  exact this
+
 end Fold
 
 section Map

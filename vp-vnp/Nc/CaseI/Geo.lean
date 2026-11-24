@@ -97,20 +97,20 @@ theorem inner_uvec (a b : Fin k) (v : EuclideanSpace ℝ (Fin k)) :
     EuclideanSpace.inner_single_left]
   simp
 
-/-- The sign of a. -/
-noncomputable def sg (A : Finset (Fin k)) (a : Fin k) : ℝ := if a ∈ A then 1 else -1
+/-- The sign of a node. -/
+noncomputable def sideSign (A : Finset (Fin k)) (a : Fin k) : ℝ := if a ∈ A then 1 else -1
 
-theorem sum_sg (A : Finset (Fin k)) : ∑ a, ∑ b, sg A a * (vvec A a - vvec A b) = 2 * qnum A := by
-  have h1 : ∀ a, ∑ b, sg A a * (vvec A a - vvec A b) = k * (sg A a * vvec A a) := by
+theorem sum_sideSign (A : Finset (Fin k)) : ∑ a, ∑ b, sideSign A a * (vvec A a - vvec A b) = 2 * qnum A := by
+  have h1 : ∀ a, ∑ b, sideSign A a * (vvec A a - vvec A b) = k * (sideSign A a * vvec A a) := by
     intro a
     rw [← Finset.mul_sum, Finset.sum_sub_distrib, sum_vvec, Finset.sum_const, Finset.card_univ,
       Fintype.card_fin, nsmul_eq_mul]
     ring
   simp only [h1]
   rw [← Finset.mul_sum]
-  have h2 : ∀ a, sg A a * vvec A a = if a ∈ A then (k : ℝ) - A.card else (A.card : ℝ) := by
+  have h2 : ∀ a, sideSign A a * vvec A a = if a ∈ A then (k : ℝ) - A.card else (A.card : ℝ) := by
     intro a
-    rw [sg, vvec_apply]
+    rw [sideSign, vvec_apply]
     split_ifs <;> ring
   simp only [h2]
   rw [sum_ite_card, qnum]

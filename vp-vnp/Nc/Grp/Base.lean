@@ -109,7 +109,7 @@ theorem segStepF_does (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) (it 
   | cons f fs =>
     have e1 : Gives θ (appF (.quote (ofBits sep)) (.hd (.tl .id))) x (ofBits (sep ++ accs.headD []))
         (1 + 3 + sep.length * 62 + 41) := by
-      refine appB_gives (Gives.quote _ _) ?_
+      refine appBits_gives (Gives.quote _ _) ?_
       rw [← listB_hd]
       exact (Gives.id _).tl.hd
     have e2 : Gives θ (.tl (.tl .id)) x (listT (accs.tail.map ofBits)) 3 := by

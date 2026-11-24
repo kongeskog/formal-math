@@ -89,11 +89,6 @@ theorem length_padTake (ub : ℕ) (r : List Bool) : (padTake ub r).length = ub :
   simp only [padTake, List.length_append, List.length_take, List.length_replicate]
   omega
 
-theorem len_ofBits (w : List Bool) : (ofBits w).len = w.length := by
-  induction w with
-  | nil => rfl
-  | cons b w ih => simp [ofBits, len, ih]
-
 theorem putStep_does (ub : ℕ) (k : List Bool) (s : List Bool × Tree) :
     Does θ putStep (.cons (ofBits k) (.cons (num ub) (.cons (ofBits s.1) s.2)))
       ((putOne A ub k s).map (Prod.map id fun s => .cons (num ub) (.cons (ofBits s.1) s.2)))

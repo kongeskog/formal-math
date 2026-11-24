@@ -36,10 +36,6 @@ theorem unit_two_eq_rpow_hexp [Nonempty I] (F : Spec K I) (π : A → I) :
   have h := unit_eq_rpow_hexp F π (n := 2) (by norm_num)
   exact_mod_cast h
 
-/-- The exponent of a unit tensor is not negative. -/
-theorem hexp_nonneg [Nonempty I] (F : Spec K I) (π : A → I) : 0 ≤ hexp F π :=
-  Real.logb_nonneg (by norm_num) (F.one_le_unit π (by norm_num))
-
 /-- The exponent of a unit tensor depends only on the set of the parties that hold
 a leg. -/
 theorem hexp_congr_range (F : Spec K I) (π : A → I) (π' : B → I) (h : Set.range π = Set.range π') :

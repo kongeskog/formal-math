@@ -18,10 +18,6 @@ open Ov Ov.Ten Finset Polynomial
 
 variable {K : Type} [Field K] {I A κ : Type} [Fintype I] [DecidableEq I] [Fintype A] [DecidableEq A] [Fintype κ]
 
-/-- The exponent of a unit tensor is not negative. -/
-theorem few_hexp_nonneg [Nonempty I] (F : Spec K I) (π : A → I) : 0 ≤ hexp F π :=
-  Real.logb_nonneg (by norm_num) (F.one_le_unit π (by norm_num))
-
 /-- The number of times a word uses each letter. -/
 noncomputable def wordType {N : ℕ} (w : Fin N → κ) : κ → Fin (N + 1) :=
   open Classical in fun k => ⟨#{i | w i = k}, Nat.lt_succ_of_le ((card_le_univ _).trans_eq (Fintype.card_fin N))⟩
@@ -181,7 +177,7 @@ theorem pow_le_few (F : Spec K I) [Nonempty A] [Nonempty κ] (π : A → I) (t :
     refine mul_le_mul_of_nonneg_left ?_ (by positivity)
     rw [hB, mul_pow, ← Real.rpow_natCast ((Fintype.card κ : ℝ) ^ hexp F π), ← Real.rpow_mul (by positivity),
       mul_comm (hexp F π), Real.rpow_mul (by positivity), Real.rpow_natCast]
-    refine mul_le_mul (Real.rpow_le_rpow (by positivity) ?_ (few_hexp_nonneg F π)) ?_
+    refine mul_le_mul (Real.rpow_le_rpow (by positivity) ?_ (hexp_nonneg F π)) ?_
       (Finset.prod_nonneg fun _ _ => F.nonneg _) (by positivity)
     · exact_mod_cast (Fintype.card_subtype_le _).trans_eq (by simp)
     · exact (Finset.prod_le_prod (fun _ _ => F.nonneg _) fun j _ => hM _).trans (by simp)
@@ -214,7 +210,7 @@ theorem few (F : Spec K I) [Nonempty I] [Nonempty κ] (π : A → I) (t : Ten K 
       exact hx (by have := (hL x D le_rfl).trans (if_pos rfl); simpa [hne] using this.symm)
     obtain ⟨k, y, hy⟩ := hk
     refine h1.trans (one_le_mul_of_one_le_of_one_le ?_ ((F.one_le hy).trans (hM k)))
-    exact Real.one_le_rpow (by exact_mod_cast Fintype.card_pos) (few_hexp_nonneg F π)
+    exact Real.one_le_rpow (by exact_mod_cast Fintype.card_pos) (hexp_nonneg F π)
   · refine le_of_pow_le_poly (C := ((D : ℝ) + 1) ^ Fintype.card I)
       (Fintype.card κ + Fintype.card I) hB fun N => ?_
     refine (pow_le_few F π t ht h hM N).trans (mul_le_mul_of_nonneg_right ?_ (by positivity))

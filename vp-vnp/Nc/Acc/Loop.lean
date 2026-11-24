@@ -21,14 +21,6 @@ open _root_.NS1.Tree
 
 variable {A : Type} [CommRing A] {θ : List Bool → A} {R : Type} [CommRing R] [Algebra A R]
 
-/-- Concatenation of lists of bits. -/
-theorem appBits_gives {a b : Fm} {x : Tree} {ca cb : ℕ} {v w : List Bool} (ha : Gives θ a x (ofBits v) ca)
-    (hb : Gives θ b x (ofBits w) cb) : Gives θ (appF a b) x (ofBits (v ++ w)) (ca + cb + v.length * 62 + 41) := by
-  rw [← listT_ofBits] at ha hb ⊢
-  have := appF_gives ha hb
-  rw [← List.map_append, List.length_map] at this
-  exact this
-
 /-- Guess a word. -/
 def gwd : ℕ → Fm
   | 0 => .quote .nil

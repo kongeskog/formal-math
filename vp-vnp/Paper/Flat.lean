@@ -418,7 +418,7 @@ theorem prop_flat_lower_lengths {k : ℕ} (hk : 1 ≤ k) (A : Finset (Fin k)) (h
   refine ⟨z • vvec A, hnorm, ?_⟩
   have hterm : ∀ a b, (if a = b then 0 else dist (pvec a b) (if a ∈ A then z • vvec A else -(z • vvec A))) ≤
       (if a = b then (0 : ℝ) else 1 / 2 + η ^ 2) -
-        z * (√2)⁻¹ * (sg A a * (vvec A a - vvec A b)) := by
+        z * (√2)⁻¹ * (sideSign A a * (vvec A a - vvec A b)) := by
     intro a b
     by_cases hab : a = b
     · rw [if_pos hab, if_pos hab, hab]
@@ -426,7 +426,7 @@ theorem prop_flat_lower_lengths {k : ℕ} (hk : 1 ≤ k) (A : Finset (Fin k)) (h
     · rw [if_neg hab, if_neg hab, pvec]
       have h4 := dist_half_le (norm_uvec hab) (if a ∈ A then z • vvec A else -(z • vvec A))
       refine h4.trans (le_of_eq ?_)
-      rw [sg]
+      rw [sideSign]
       split_ifs with ha
       · rw [real_inner_smul_right, inner_uvec, hnorm]
         ring
@@ -451,8 +451,8 @@ theorem prop_flat_lower_lengths {k : ℕ} (hk : 1 ≤ k) (A : Finset (Fin k)) (h
   refine (Finset.sum_le_sum fun a _ => Finset.sum_le_sum fun b _ => hterm a b).trans ?_
   simp only [Finset.sum_sub_distrib]
   rw [h5]
-  have h8 : ∑ a, ∑ b, z * (√2)⁻¹ * (sg A a * (vvec A a - vvec A b)) = z * (√2)⁻¹ * (2 * qnum A) := by
-    rw [← sum_sg, Finset.mul_sum]
+  have h8 : ∑ a, ∑ b, z * (√2)⁻¹ * (sideSign A a * (vvec A a - vvec A b)) = z * (√2)⁻¹ * (2 * qnum A) := by
+    rw [← sum_sideSign, Finset.mul_sum]
     exact Finset.sum_congr rfl fun a _ => by rw [Finset.mul_sum]
   rw [h8]
   -- the saving

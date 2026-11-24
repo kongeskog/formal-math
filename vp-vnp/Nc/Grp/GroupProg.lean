@@ -34,7 +34,7 @@ theorem unStep_gives (b : Bool) (a v : ℕ) (ha : a ≤ v) :
   have e1 : Gives θ (.tl .id) (.cons (bit b) (num a)) (ofBits (List.replicate a false)) 2 := by
     rw [← num_eq_ofBits]
     exact (Gives.id _).tl
-  have e2 := appB_gives e1 e1
+  have e2 := appBits_gives e1 e1
   rw [← List.replicate_add, ← num_eq_ofBits, List.length_replicate, ← two_mul] at e2
   cases b with
   | false => exact (Gives.ite_false (Gives.id _).hd e2).mono (by omega)

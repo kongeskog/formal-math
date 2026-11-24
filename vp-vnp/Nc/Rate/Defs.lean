@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import Nc.PermValiant
 import Ov.Core.Tensor
+import Ov.Core.Unit
 
 /-!
 # Definitions for the quantitative theorem
@@ -56,6 +57,10 @@ variable {K : Type} [Field K] {I A : Type} [Fintype I] [DecidableEq I] [Fintype 
 one of size n. -/
 noncomputable def hexp (F : Spec K I) (π : A → I) : ℝ :=
   Real.logb 2 (F.F (Ten.push π (Ten.unit K A 2)))
+
+/-- The exponent of a unit tensor is not negative. -/
+theorem hexp_nonneg [Nonempty I] (F : Spec K I) (π : A → I) : 0 ≤ hexp F π :=
+  Real.logb_nonneg (by norm_num) (F.one_le_unit π (by norm_num))
 
 /-- `t` is a sum of restrictions of the `b k` up to ε, with denominators at most ε ^ D: with local maps that are
 polynomials in ε, the sum is ε ^ D * t + ε ^ (D + 1) * (anything). For D = 0 constant maps give the exact relation. -/
