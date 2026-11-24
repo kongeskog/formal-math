@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:55:42.514046400Z",
+  "updated_at": "2026-11-24T00:59:59.268644845Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -540,7 +540,7 @@
           "key": "review",
           "label": "Independent review",
           "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+          "detail": "Approved by kongeskog (bootstrap phase: 2 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 6,
