@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T02:49:21.183066001Z",
+  "updated_at": "2026-11-24T02:53:06.589592960Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -463,9 +463,9 @@
     },
     {
       "pr": 27,
-      "title": "shorten(Nc): replace the obtain-exists-rfl idiom by generalize or exists_eq",
+      "title": "shorten(Nc): replace the obtain-exists-rfl idiom by generalize",
       "author": "kongeskog",
-      "head_sha": "70b630c0cbc33334afecae225d1205fd0352d2a4",
+      "head_sha": "7a4353e29480e13562d35344653d75c48014007d",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-24T02:47:45Z",
