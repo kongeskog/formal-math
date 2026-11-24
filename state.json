@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:49:26.098593152Z",
+  "updated_at": "2026-11-24T21:54:37.416573209Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -626,13 +626,27 @@
       "title": "restructure(NS1): state implicit binders shared by adjacent lemmas once in a variable block",
       "author": "kongeskog",
       "head_sha": "0247462de6cba35ed94c93f0816a668b55b383d2",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "e2aafb9f35db40895d501bc634e5361b9ad5d307",
+      "status": "stale",
       "created_at": "2026-11-24T21:33:06Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 904410,
+        "loc": 57379,
+        "decls": 4561,
+        "files": 321,
+        "bytes": 3352087,
+        "build_seconds": 688
+      },
+      "base_metrics": {
+        "tokens": 904826,
+        "loc": 57357,
+        "decls": 4561,
+        "files": 321,
+        "bytes": 3352115,
+        "build_seconds": null
+      },
+      "delta": -416,
       "gates": [
         {
           "key": "format",
@@ -640,39 +654,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "5 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 904826 → 904410 (-416)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -683,7 +705,7 @@
       ],
       "idea": 69,
       "url": "https://github.com/kongeskog/formal-math/pull/88",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45492248045",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
@@ -694,13 +716,27 @@
       "title": "shorten(Nc/Tow): drop named arguments that Lean infers in eleven files",
       "author": "kongeskog",
       "head_sha": "cf343f517c232a7bb47b63b77c43202ee931d563",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "e2aafb9f35db40895d501bc634e5361b9ad5d307",
+      "status": "stale",
       "created_at": "2026-11-24T21:39:36Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 904351,
+        "loc": 57357,
+        "decls": 4561,
+        "files": 321,
+        "bytes": 3351097,
+        "build_seconds": 402
+      },
+      "base_metrics": {
+        "tokens": 904826,
+        "loc": 57357,
+        "decls": 4561,
+        "files": 321,
+        "bytes": 3352115,
+        "build_seconds": null
+      },
+      "delta": -475,
       "gates": [
         {
           "key": "format",
@@ -708,39 +744,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "11 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 904826 → 904351 (-475)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -751,7 +795,7 @@
       ],
       "idea": 76,
       "url": "https://github.com/kongeskog/formal-math/pull/89",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45493329762",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
@@ -834,7 +878,7 @@
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 16666,
+      "tokens": 16659,
       "loc": 1006
     },
     {
@@ -953,11 +997,6 @@
       "loc": 379
     },
     {
-      "path": "vp-vnp/Nc/Tow/Load.lean",
-      "tokens": 6165,
-      "loc": 361
-    },
-    {
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
       "tokens": 6142,
       "loc": 369
@@ -969,13 +1008,18 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Load2.lean",
-      "tokens": 5970,
-      "loc": 436
+      "tokens": 5744,
+      "loc": 406
     },
     {
       "path": "vp-vnp/NS1/OneCut.lean",
       "tokens": 5716,
       "loc": 305
+    },
+    {
+      "path": "vp-vnp/Nc/Dl/Num0.lean",
+      "tokens": 5707,
+      "loc": 327
     }
   ]
 }
