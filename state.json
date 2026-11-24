@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:21:11.469588450Z",
+  "updated_at": "2026-11-24T19:22:56.696927113Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -374,24 +374,24 @@
       "title": "shorten(Paper): replace the obtain-exists-rfl idiom by generalize",
       "author": "kongeskog",
       "head_sha": "2e45854f4d5c3f12168b45a8cb86157123b84bfc",
-      "base_sha": "02838650702c8698df40dc9269c860e09870258a",
+      "base_sha": "5f9eef456dd9147e413d71f8fdccc70779a0173b",
       "status": "stale",
       "created_at": "2026-11-24T18:53:25Z",
       "decided_at": null,
       "metrics": {
-        "tokens": 923977,
-        "loc": 58570,
-        "decls": 4587,
+        "tokens": 923359,
+        "loc": 58533,
+        "decls": 4591,
         "files": 321,
-        "bytes": 3406779,
-        "build_seconds": 211
+        "bytes": 3405345,
+        "build_seconds": 227
       },
       "base_metrics": {
-        "tokens": 925025,
-        "loc": 58579,
-        "decls": 4587,
+        "tokens": 924407,
+        "loc": 58542,
+        "decls": 4591,
         "files": 321,
-        "bytes": 3409108,
+        "bytes": 3407674,
         "build_seconds": null
       },
       "delta": -1048,
@@ -426,7 +426,7 @@
           "key": "improves",
           "label": "Score improves",
           "status": "pass",
-          "detail": "tokens 925025 → 923977 (-1048)"
+          "detail": "tokens 924407 → 923359 (-1048)"
         },
         {
           "key": "compiles",
@@ -453,7 +453,7 @@
       ],
       "idea": 15,
       "url": "https://github.com/kongeskog/formal-math/pull/29",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45464365355",
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45466900702",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
