@@ -49,7 +49,7 @@ theorem exists_mid (q : Fin (K + 1) → Q) (ρ : Option S → Fin (K + K) → Ro
     execAll m (steps5 C ++ (steps6 C tab ++ steps7 C tab)) (byPath C.nm (S4 C pt qn hU0 hU1 q ρ n o)) =
       [byPath C.nm st] ∧ Mid C tab pt qn q ρ n o st := by
   classical
-  obtain ⟨s4, hs4⟩ := exists_eq (a' := S4 C pt qn hU0 hU1 q ρ n o)
+  obtain ⟨s4, hs4⟩ : ∃ s, s = S4 C pt qn hU0 hU1 q ρ n o := ⟨_, rfl⟩
   have z4 : s4 .zero = .nil := by rw [hs4]; rfl
   have r4 : ∀ s p, s4 (.rd s p) = ofBits (C.rc (ρ s p)) := fun s p => by rw [hs4]; rfl
   have h5 := phase5 C (m := m) z4 r4

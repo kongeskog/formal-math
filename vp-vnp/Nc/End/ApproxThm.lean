@@ -43,7 +43,7 @@ theorem Approximates.substitute_affine {f : MvPolynomial X F} {s : ℕ} (h : App
     (Mat : X → MvPolynomial Y F) (hMat : ∀ q, IsAffine (Mat q)) : Approximates (aeval Mat f) (5 * s) := by
   obtain ⟨p, hp, hpf⟩ := h
   obtain ⟨φ, hφ⟩ : ∃ φ : F →+* LaurentSeries F, φ = HahnSeries.C := ⟨_, rfl⟩
-  obtain ⟨Mat', hMat'⟩ := exists_eq (a' := fun q => MvPolynomial.map φ (Mat q))
+  obtain ⟨Mat', hMat'⟩ : ∃ Mat', Mat' = fun q => MvPolynomial.map φ (Mat q) := ⟨_, rfl⟩
   refine ⟨aeval Mat' p, hp.aeval Mat' fun q => by rw [hMat', hφ]; exact (hMat q).map_series, ?_⟩
   have hr : OrdGe 1 (p - MvPolynomial.map φ f) := by
     intro d i hi

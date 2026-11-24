@@ -83,7 +83,7 @@ theorem ordGE_sum_coeff_sub {N d n : ℕ} {f : MvPolynomial (Fin N × Option Boo
     (hval : MvPolynomial.eval (codeB E N w) f = algebraMap A E a) :
     OrdGE 1 (∑ i ∈ Finset.range n, (Nc.Acc.line (codeB E[T;T⁻¹] N w) p).coeff i - algebraMap A E[T;T⁻¹] a) := by
   classical
-  obtain ⟨φ, hφ⟩ := exists_eq (a' := algebraMap E E[T;T⁻¹])
+  obtain ⟨φ, hφ⟩ : ∃ φ, φ = algebraMap E E[T;T⁻¹] := ⟨_, rfl⟩
   have hdiff : ∀ e, OrdGE 1 (MvPolynomial.coeff e (p - MvPolynomial.map φ f)) := by
     intro e i hi
     rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_map, AddMonoidAlgebra.coeff_sub, Finsupp.sub_apply, hp e i (by omega),
