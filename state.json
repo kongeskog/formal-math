@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:00:03.362556673Z",
+  "updated_at": "2026-11-24T20:02:22.414885066Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 25,
     "rejected": 2,
-    "open": 4,
+    "open": 6,
     "contributors": 1,
-    "ideas_open": 3
+    "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 25,
-      "attempts": 31,
+      "attempts": 33,
       "saved": 10890
     }
   ],
@@ -90,10 +90,10 @@
     {
       "number": 57,
       "title": "Idea: restructure(Nc/Final/CClasses): take VP, VNP and VPBar from the statement after #33",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:02:26Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:43:06Z",
@@ -150,7 +150,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:47:04Z",
-      "pr": null,
+      "pr": 60,
       "result_delta": null,
       "created_at": "2026-11-24T19:42:59Z",
       "url": "https://github.com/kongeskog/formal-math/issues/53",
@@ -234,7 +234,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:58:37Z",
-      "pr": null,
+      "pr": 61,
       "result_delta": null,
       "created_at": "2026-11-24T19:00:26Z",
       "url": "https://github.com/kongeskog/formal-math/issues/38",
@@ -782,6 +782,142 @@
       "reason": null,
       "technique": "shorten",
       "scope": "Nc/Uni/SpecU"
+    },
+    {
+      "pr": 60,
+      "title": "shorten(Nc/Uni/EvThm): one-line proofs for the eleven inversion lemmas of Fm.ofTree",
+      "author": "kongeskog",
+      "head_sha": "160d5542fa2e30b05f02eca3b35c46d59d4f6299",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:01:27Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 53,
+      "url": "https://github.com/kongeskog/formal-math/pull/60",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Uni/EvThm"
+    },
+    {
+      "pr": 61,
+      "title": "library(Nc/Tow): derived Fintype and proxy_equiv% instead of rmEquiv, tgEquiv and two local ones",
+      "author": "kongeskog",
+      "head_sha": "fe5681eb3a0e0412d8bd3c4178a71be580b419a8",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T20:02:01Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 38,
+      "url": "https://github.com/kongeskog/formal-math/pull/61",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "library",
+      "scope": "Nc/Tow"
     }
   ],
   "top_files": [
