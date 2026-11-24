@@ -3,7 +3,7 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import Paper.Scales
+import Paper.ApproxScales
 import Paper.Flat
 import Paper.Convex
 import Paper.Ryser
@@ -413,15 +413,6 @@ theorem thm_flat_rate {K : Type} [Field K] (hK : Flat K) (h2 : (2 : K) ≠ 0) :
       (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
   obtain ⟨m₀, h⟩ := rate_of_projection 3
   exact ⟨m₀, h _ fun k ℓ m s hk hℓ hℓk hm hs => prop_flat_rate hK hk hℓk (lem_fkl_perm h2 hk hℓ hm hs)⟩
-
-/-- Theorem thm:flat-rate for every family that is complete for grid sums ("the factor 3 becomes 40"). -/
-theorem flat_rate_complete (κ : ℕ) : ∃ m₀ : ℕ, ∀ (K : Type) [Field K], Flat K →
-    ∀ G : ∀ S : ℕ, MvPolynomial (Fin S × Fin S) K, GridComplete K G κ →
-    ∀ m ≥ m₀, ∀ s : ℕ, Computes (G m) s → (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
-  obtain ⟨m₀, h⟩ := rate_of_projection κ
-  refine ⟨m₀, fun K _ hK G hG => h _ fun k ℓ m s hk hℓ hℓk hm hs => prop_flat_rate hK hk hℓk ?_⟩
-  obtain ⟨E, hE, he⟩ := fkl_complete hG hk hℓ hm
-  exact he ▸ hs.aeval E hE
 
 /-- "(log m)²/log log m ≥ (log m)^(4/3) for large m", and indeed more than any multiple: the bound of the contracting
 case exceeds that of the flat case. -/

@@ -121,45 +121,6 @@ theorem exists_scale (B₀ E n : ℕ) (hB : 0 < B₀) : ∃ C M₁ : ℕ, ∀ M,
   calc 2 * B₀ * a + 1 ≤ (2 * B₀ + 1) * a + (2 * B₀ + 1) := by rw [add_mul]; omega
     _ = (2 * B₀ + 1) * (a + 1) := by ring
 
-/-- **Paper: "We keep A and H of Theorem thm:cut".** In the contracting case there are the ring A, its generators and
-H = 16 h₀ with the conclusion of Theorem thm:cut, and for them Proposition prop:next and Theorem thm:noacc hold. -/
-theorem scales_setting {K : Type} [Field K] (hK : Contracting K) :
-    ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A) (θ : List Bool → A) (h C₀ v₀ : ℕ),
-      Generates θ ∧ 17 ≤ h ∧ CutHyp θ (16 * h) C₀ v₀ ∧
-      (∀ k, ∃ C v₁ : ℕ, ∀ (R : Type) [CommRing R] [Algebra A R], ∀ v, v₁ ≤ v → ∀ α, 5 ≤ α → lg v ^ (C * α) ≤ v →
-        ∀ (K : KT R) (B : ℕ) (D : Tree),
-        IsAccT θ (16 * h) v (v ^ (16 * h - 16)) K B D → K.nds ≤ v ^ (h * α) → D.size ≤ v ^ (h * α) →
-        B ≤ (α * lg v) ^ k → K.ht ≤ (α * lg v) ^ k →
-        ∃ D', IsAccT θ (16 * h) (v ^ α) ((v ^ α) ^ (16 * h - 17)) K (B + 51 * h * α ^ 2 * lg v) D' ∧
-          D'.size ≤ (v ^ α) ^ (4 * h)) ∧
-      ∃ C v₁ : ℕ, ∀ v, v₁ ≤ v → ∀ a, lg v ^ (C * a) ≤ v → ∀ (R : Type) [CommRing R] [Nontrivial R] [Algebra A R],
-        ¬ HasAcc θ R (16 * h) v (v ^ a) := by
-  obtain ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut⟩ := exists_setting hK
-  exact ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut, fun k => prop_next hh hcut k, thm_noacc hh hcut⟩
-
-/-- The contracting case for a family that is complete for grid sums. -/
-theorem contracting_complete {K : Type} [Field K] (hK : Contracting K)
-    {G : ∀ S, MvPolynomial (Fin S × Fin S) K} {κ : ℕ} (hG : Nc.GridComplete K G κ) :
-    ∃ C M₁ : ℕ, ∀ M ≥ M₁, ∀ a : ℕ, lg M ^ (C * a) ≤ M → ¬ Nc.Computes (G M) (M ^ a) := by
-  obtain ⟨A, hA, θ, h, C₀, v₀, hθ, hh, -, -, C₂, v₂, hno⟩ := scales_setting hK
-  obtain ⟨B₀, C₁, v₁, hB₀, hacc⟩ := lem_circuit hθ.1 (H := 16 * h) (by omega) κ
-  obtain ⟨C, M₁, hscale⟩ := exists_scale B₀ ((C₂ + 1) * C₁) (v₁ + v₂ + 4) hB₀
-  refine ⟨C, M₁, fun M hM a ha hcomp => ?_⟩
-  obtain ⟨v, hv, hvM, hsize, hlog⟩ := hscale M hM a ha
-  have hl1 : 1 ≤ lg v := Nat.succ_pos _
-  refine hno v (by omega) (C₁ * (2 * B₀ * a + 1)) (le_trans (Nat.pow_le_pow_right hl1 ?_) hlog) K
-    (hacc K G hG v (by omega) (2 * B₀ * a) (le_trans (Nat.pow_le_pow_right hl1 ?_) hlog) M hvM (hcomp.mono hsize))
-  · rw [← mul_assoc]
-    exact Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ (Nat.le_succ _))
-  · exact Nat.mul_le_mul (Nat.le_mul_of_pos_left _ (Nat.succ_pos _)) (Nat.le_succ _)
-
-/-- **Paper: Theorem thm:contracting.** "In the contracting case there are c > 0 and m₀ such that for m ≥ m₀ every
-circuit over k for PERM_m has more than 2^(c(log m)²/log log m) gates." -/
-theorem thm_contracting {K : Type} [Field K] (hK : Contracting K) (h2 : (2 : K) ≠ 0) :
-    ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, Nc.Computes (Nc.genPerm K m) s →
-      (2 : ℝ) ^ (c * Real.logb 2 m ^ 2 / Real.logb 2 (Real.logb 2 m)) < s := by
-  obtain ⟨C, M₁, h⟩ := contracting_complete hK (gridComplete_perm h2)
-  exact quasi_of_exponents (P := fun M s => Nc.Computes (Nc.genPerm K M) s)
-    (fun _ _ _ hst hs => Nc.Computes.mono hs hst) h
+-- Theorem thm:contracting is proved from its approximate form in `Paper/ApproxScales.lean`.
 
 end Paper

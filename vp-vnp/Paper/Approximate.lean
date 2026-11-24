@@ -9,6 +9,8 @@ import Nc.Rate.Circuit
 
 /-!
 # The paper, appendix "Approximate computation"
+
+The exact end theorems, thm:allfields and cor:allclasses, are derived here from Theorem thm:approx.
 -/
 
 namespace Paper
@@ -296,6 +298,33 @@ theorem thm_approx :
   obtain ⟨p, _⟩ := CharP.exists F
   obtain ⟨m₀, hlow⟩ := main p (CharP.char_is_prime_or_zero F p).symm
   obtain ⟨m, hm1, hm2⟩ := exists_beyond_poly (show (0 : ℝ) < 1 / 1600 ^ 2 by norm_num) m₀ C
+  exact hm2 ((hlow F m hm1 _).1 (hC m).2.2)
+
+/- Theorem thm:allfields and Corollary cor:allclasses, moved here from `Paper/Fields.lean`: exact
+computation is the special case of approximation without error. -/
+
+/-- **Paper: Theorem thm:allfields.** "There is an absolute constant c > 0 such that for every p, zero or prime,
+there is m₀: over every field of characteristic p and for every m ≥ m₀ every circuit for HC_m, and for PERM_m if p ≠ 2,
+has more than m^(c(log m)^(1/3)) gates." -/
+theorem thm_allfields : ∃ c : ℝ, 0 < c ∧ ∀ p : ℕ, p = 0 ∨ p.Prime → ∃ m₀ : ℕ,
+    ∀ (F : Type u) [Field F] [CharP F p], ∀ m ≥ m₀, ∀ s : ℕ,
+      (Computes (genHC F m) s → (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) < s) ∧
+      (p ≠ 2 → Computes (genPerm F m) s → (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) < s) := by
+  -- a circuit that computes HC_m or PERM_m approximates it with no error, so thm:approx gives the bound
+  obtain ⟨c, hc, h⟩ := thm_approx.{u}.1
+  refine ⟨c, hc, fun p hp => ?_⟩
+  obtain ⟨m₀, hm⟩ := h p hp
+  exact ⟨m₀, fun F _ _ m hm' s => ⟨fun hs => (hm F m hm' s).1 hs.approximates,
+    fun h2 hs => (hm F m hm' s).2 h2 hs.approximates⟩⟩
+
+/-- **Paper: Corollary cor:allclasses.** "Over every field, VP is a proper subset of VNP." -/
+theorem cor_allclasses (F : Type u) [Field F] : VP F ⊂ VNP F := by
+  refine ⟨vp_subset_vnp F, fun h => ?_⟩
+  obtain ⟨C, hC⟩ := h (hc_mem_VNP F)
+  obtain ⟨p, _⟩ := CharP.exists F
+  obtain ⟨c, hc, hall⟩ := thm_allfields.{u}
+  obtain ⟨m₀, hlow⟩ := hall p (CharP.char_is_prime_or_zero F p).symm
+  obtain ⟨m, hm1, hm2⟩ := exists_beyond_poly hc m₀ C
   exact hm2 ((hlow F m hm1 _).1 (hC m).2.2)
 
 end Paper
