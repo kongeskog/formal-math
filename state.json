@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:16:33.201761669Z",
+  "updated_at": "2026-11-24T19:18:24.177143984Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 13,
     "rejected": 2,
-    "open": 12,
+    "open": 14,
     "contributors": 1,
     "ideas_open": 1
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 13,
-      "attempts": 27,
+      "attempts": 29,
       "saved": 3754
     }
   ],
@@ -108,7 +108,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:11:49Z",
-      "pr": null,
+      "pr": 50,
       "result_delta": null,
       "created_at": "2026-11-24T19:00:30Z",
       "url": "https://github.com/kongeskog/formal-math/issues/40",
@@ -1272,6 +1272,142 @@
       "reason": null,
       "technique": "merge",
       "scope": "Nc/Acc/CompK"
+    },
+    {
+      "pr": 49,
+      "title": "shorten(Nc/Dl): drop unused hypotheses of cost_gN, cost_endTm and length_filter_finRange",
+      "author": "kongeskog",
+      "head_sha": "b9f252f039f7b39cbfef184262d89037b541e67a",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T19:17:49Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 11,
+      "url": "https://github.com/kongeskog/formal-math/pull/49",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Dl"
+    },
+    {
+      "pr": 50,
+      "title": "restructure(Nc/G/Move): share the hypotheses of the three move theorems by variable and include",
+      "author": "kongeskog",
+      "head_sha": "c6e02dc1bba1c37a51d18f8fa36fd404e811fe41",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T19:18:15Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 40,
+      "url": "https://github.com/kongeskog/formal-math/pull/50",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/G/Move"
     }
   ],
   "top_files": [
