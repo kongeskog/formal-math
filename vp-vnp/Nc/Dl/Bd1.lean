@@ -46,8 +46,7 @@ theorem tget_trieOf_cases {α : Type} [Fintype α] (code : α → List Bool) (f 
     tget p (trieOf code f) = .nil ∨ ∃ a, tget p (trieOf code f) = f a := by
   rcases tget_mkTrie_mem ((Finset.univ : Finset α).toList.map fun a => (code a, f a)) p with h | ⟨a, ha, -, h⟩
   · exact Or.inl h
-  · rw [List.mem_map] at ha
-    obtain ⟨b, -, rfl⟩ := ha
+  · obtain ⟨b, -, rfl⟩ := List.mem_map.1 ha
     exact Or.inr ⟨b, h⟩
 
 theorem tget_single (t : Tree) (p : List Bool) : tget p (.cons t .nil) = .nil ∨ tget p (.cons t .nil) = t := by
@@ -138,8 +137,7 @@ theorem okStep_pick {α : Type} (opts : List α) (o : α → List (NmT S M U0 U1
         simp only [Function.comp_apply, optT, toList_listT, List.map_map]
         refine (List.sum_le_card_nsmul _ (60 * Lc + 80) ?_).trans ?_
         · intro n hn
-          rw [List.mem_map] at hn
-          obtain ⟨b, hb, rfl⟩ := hn
+          obtain ⟨b, hb, rfl⟩ := List.mem_map.1 hn
           simp only [Function.comp_apply, hd_cons, len_ofBits]
           have := hnm b.1
           omega

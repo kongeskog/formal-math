@@ -30,8 +30,7 @@ theorem PolyOrdGE.mul {r s : ℤ} {P Q : Polynomial E[T;T⁻¹]} (hP : PolyOrdGE
   intro i
   rw [Polynomial.coeff_mul, ← Finset.sum_map_toList]
   refine OrdGE.list_sum fun x hx => ?_
-  rw [List.mem_map] at hx
-  obtain ⟨ab, -, rfl⟩ := hx
+  obtain ⟨ab, -, rfl⟩ := List.mem_map.1 hx
   exact (hP _).mul (hQ _)
 
 theorem polyOrdGE_C {r : ℤ} {a : E[T;T⁻¹]} (h : OrdGE r a) : PolyOrdGE r (Polynomial.C a) := by
@@ -64,8 +63,7 @@ theorem ordGE_line_coeff {σ : Type} {u : σ → E[T;T⁻¹]} (hu : ∀ i, OrdGE
     Finset.prod_induction _ (PolyOrdGE 0) (fun P Q hP hQ => hP.mul hQ) (polyOrdGE_C ordGE_one) fun l _ => hpow l _
   rw [r.as_sum, map_sum, Polynomial.finsetSum_coeff, ← Finset.sum_map_toList]
   refine OrdGE.list_sum fun x hx => ?_
-  rw [List.mem_map] at hx
-  obtain ⟨d, -, rfl⟩ := hx
+  obtain ⟨d, -, rfl⟩ := List.mem_map.1 hx
   rw [Nc.Acc.line, MvPolynomial.aeval_monomial, Polynomial.algebraMap_eq]
   exact ((polyOrdGE_C (hr d)).mul (hprod d)) i
 
@@ -101,8 +99,7 @@ theorem ordGE_sum_coeff_sub {N d n : ℕ} {f : MvPolynomial (Fin N × Option Boo
     rw [h1, hval, hφ, ← IsScalarTower.algebraMap_apply]
   rw [← hf, ← Finset.sum_sub_distrib, ← Finset.sum_map_toList]
   refine OrdGE.list_sum fun x hx => ?_
-  rw [List.mem_map] at hx
-  obtain ⟨i, -, rfl⟩ := hx
+  obtain ⟨i, -, rfl⟩ := List.mem_map.1 hx
   rw [← Polynomial.coeff_sub, ← map_sub]
   exact ordGE_line_coeff (ordGE_codeB N w) hdiff i
 

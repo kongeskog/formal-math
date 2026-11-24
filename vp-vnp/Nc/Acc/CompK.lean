@@ -74,8 +74,7 @@ theorem mul {o : Tree} (h : Gives θ F x o c) (ho : o.path ∈ S) : KV θ κ S (
     exact h.symm
   refine ⟨_, Ev.mul e1, ?_, ?_⟩
   · intro u hu
-    rw [List.mem_map] at hu
-    obtain ⟨r, hr, rfl⟩ := hu
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
     obtain ⟨a1, a2, -⟩ := e2 r hr
     refine ⟨by simpa using a2, fun p hp => ?_⟩
     rw [a1, List.nil_append, List.mem_singleton] at hp

@@ -146,8 +146,7 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
     rw [e]
     refine (OrdGE.list_sum ?_).add hval
     intro P hP
-    rw [List.mem_map] at hP
-    obtain ⟨q, hq, rfl⟩ := hP
+    obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hP
     exact diff q hq
 
 set_option maxHeartbeats 1000000 in

@@ -77,8 +77,7 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
           bd * ((ub + 1) * (60 * Lc + 100)) := Nat.mul_le_mul (hbd n o hn ho) (Nat.mul_le_mul_left _ (by omega))
       omega
     · intro σ' hσ' t ht
-      rw [List.mem_map] at ht
-      obtain ⟨g, -, rfl⟩ := ht
+      obtain ⟨g, -, rfl⟩ := List.mem_map.1 ht
       have hmem : σ' ∈ execAll ub (allSteps C tab qn hU0 hU1 i e) (byPath C.nm (S0 pt)) := by
         rw [allSteps_eq, execAll_append, List.mem_flatMap]
         rw [hnub] at hσ hσ'
@@ -88,8 +87,7 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
   have := dealF_does (θ := θ) (lT cb b0) (lT cb b1) ((List.finRange K).map fun κ => C.nm (.part κ)) nl nub
     (steps18 C tab qn i e hU0 hU1) (steps9 C) ((List.finRange mm).map (instTm C tab tg bT bub gt d1 gp)) z (Ln := Lc)
     (fun p hp => by
-      rw [List.mem_map] at hp
-      obtain ⟨κ, -, rfl⟩ := hp
+      obtain ⟨κ, -, rfl⟩ := List.mem_map.1 hp
       exact hnm _) (c := fun _ => stepB Lc X) (ct := tmB' Lc X) (c9 := X * (90 * Lc + 230) + bd * ((ub + 1) * (60 * Lc + 100)))
     hI (by rw [hparts]; exact hI0) (by rw [hparts]; exact h9)
   obtain ⟨Qs, d1', m1, s1⟩ := this

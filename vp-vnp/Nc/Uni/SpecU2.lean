@@ -239,8 +239,7 @@ theorem imu_iff {l : List (Rc n (Bl K))} (hl : l ≠ []) (x : XU M K) :
           obtain ⟨p, -, rfl⟩ := hw
           exact bar_encW _) (by
           intro w hw
-          rw [List.mem_map] at hw
-          obtain ⟨p, -, rfl⟩ := hw
+          obtain ⟨p, -, rfl⟩ := List.mem_map.1 hw
           rw [List.mem_map]
           rintro ⟨γ, -, h⟩
           exact γ.2 h) h

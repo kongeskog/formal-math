@@ -133,8 +133,7 @@ theorem mem_execAll (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] {pt : Fin K �
       fun σ' => if σ' = σ then (1 : ℤ) else 0).sum := by
     refine lt_of_lt_of_le (b := (if σ = σ then (1 : ℤ) else 0)) (by simp) ?_
     refine List.single_le_sum (fun x hx => ?_) _ (List.mem_map.2 ⟨σ, hσ, rfl⟩)
-    rw [List.mem_map] at hx
-    obtain ⟨σ', -, rfl⟩ := hx
+    obtain ⟨σ', -, rfl⟩ := List.mem_map.1 hx
     split_ifs <;> norm_num
   omega
 

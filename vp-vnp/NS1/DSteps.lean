@@ -198,8 +198,7 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
         (.cons (.cons (DStep.pick p tab).tree W) q.2) [(1, assignT W q.2)]
         (2 + 3 + (opts.map fun o => (o.toList.map fun y => 60 * y.hd.len + 80).sum).sum + 20) := by
       intro q hq
-      rw [List.mem_map] at hq
-      obtain ⟨o, ho', rfl⟩ := hq
+      obtain ⟨o, ho', rfl⟩ := List.mem_map.1 hq
       refine (assignF_gives (Gives.id _).tl (Gives.id _).hd.tl).mono ?_
       have := List.single_le_sum (l := opts.map fun o => (o.toList.map fun y => 60 * y.hd.len + 80).sum)
         (fun _ _ => Nat.zero_le _) _ (List.mem_map.2 ⟨o, ho', rfl⟩)
@@ -213,8 +212,7 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       obtain ⟨q1, hq1, r', hr', e, -⟩ := mem_bindW hr
       rw [List.mem_singleton] at hr'
       subst hr'
-      rw [List.mem_map] at hq1
-      obtain ⟨o, ho', rfl⟩ := hq1
+      obtain ⟨o, ho', rfl⟩ := List.mem_map.1 hq1
       rw [e, gets_assign]
       simp only [DStep.exec, gets, ← ho]
       exact List.mem_map.2 ⟨o, ho', rfl⟩

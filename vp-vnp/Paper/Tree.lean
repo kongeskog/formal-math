@@ -1362,8 +1362,7 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
         norm_num
       exact h4.le
     · intro L hL
-      rw [List.mem_map] at hL
-      obtain ⟨d, -, rfl⟩ := hL
+      obtain ⟨d, -, rfl⟩ := List.mem_map.1 hL
       refine ⟨⟨fun i ν => ?_⟩, ?_⟩
       · have h4 : (VL.L d).len i ν ≤ ∑ ν, (VL.L d).len i ν :=
           Finset.single_le_sum (f := fun ν => (VL.L d).len i ν) (fun _ _ => Nat.zero_le _) (mem_univ ν)

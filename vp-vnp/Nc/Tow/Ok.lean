@@ -390,8 +390,7 @@ theorem consM_cur {z : (sys R FL Pl).Z} {u : Un R FL Pl U0 U1} (hu : u ∈ consM
         omega
   · intro hmem
     unfold Plan.used at hmem
-    rw [mem_biUnion] at hmem
-    obtain ⟨z', hz', hu'⟩ := hmem
+    obtain ⟨z', hz', hu'⟩ := mem_biUnion.1 hmem
     have hlt := (mem_filter.1 hz').2
     have hu' : u ∈ consM R FL Pl lhat n o (eZ R FL Pl z') := hu'
     have hzz := (eZ R FL Pl).injective (consM_unique hu hu')

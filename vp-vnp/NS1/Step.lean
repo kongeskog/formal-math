@@ -87,8 +87,7 @@ theorem mem_app {p : Tree} {le : List (Run A)} {u : Run A}
       u.out = t.out ∧ u.th = s.th * t.th := by
   rw [List.mem_flatMap] at h
   obtain ⟨s, hs, h⟩ := h
-  rw [List.mem_map] at h
-  obtain ⟨t, ht, rfl⟩ := h
+  obtain ⟨t, ht, rfl⟩ := List.mem_map.1 h
   refine ⟨s, hs, t, ht, ?_, ?_, rfl, ?_⟩
   · simp only [Run.seq, Run.tick, Run.det]
     omega
@@ -214,8 +213,7 @@ theorem stepA_ev {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {P : List Bool →
   refine ⟨_, eF, ?_, ?_⟩
   · intro r hr
     obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hr
-    rw [List.mem_map] at hs
-    obtain ⟨u, hu, rfl⟩ := hs
+    obtain ⟨u, hu, rfl⟩ := List.mem_map.1 hs
     rw [Fm.ofTree_code] at ht
     obtain ⟨m1, m2, m3⟩ := hmem u hu
     obtain ⟨c1, c2⟩ := m1.2.1 t ht

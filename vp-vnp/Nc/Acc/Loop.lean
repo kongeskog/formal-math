@@ -257,8 +257,7 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
               intro q hq
               rw [List.mem_flatMap] at hq
               obtain ⟨l, hl, hq⟩ := hq
-              rw [List.mem_map] at hq
-              obtain ⟨r, hr, rfl⟩ := hq
+              obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hq
               have hlm := length_of_mem_wd hl
               have hrm := length_of_mem_wd hr
               simp only [tl_cons, hd_cons, path_ofBits]
