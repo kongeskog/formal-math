@@ -70,12 +70,12 @@ theorem sum_sep (A : Finset (Fin k)) :
   ring
 
 theorem inner_hubDir (A : Finset (Fin k)) (w : EuclideanSpace ℝ (Fin k)) :
-    inner ℝ (hubDir A) w = ∑ e : Pr k, if Sep A e then sg A e.1.1 * w e.1.1 else 0 := by
+    inner ℝ (hubDir A) w = ∑ e : Pr k, if Sep A e then sideSign A e.1.1 * w e.1.1 else 0 := by
   rw [hubDir, sum_inner, Finset.sum_filter]
   refine Finset.sum_congr rfl fun e _ => ?_
   by_cases h : Sep A e
   · rw [if_pos h, if_pos h, real_inner_smul_left, EuclideanSpace.inner_single_left]
-    simp [sg]
+    simp [sideSign]
   · rw [if_neg h, if_neg h]
 
 end Nc.CaseI
