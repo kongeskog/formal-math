@@ -3,6 +3,7 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
+import Nc.Acc.Line
 import Nc.RunOne
 
 /-!
@@ -210,6 +211,7 @@ section Monomial
 
 variable {F : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
+open Nc.Acc (line) in
 /-- The monomial extension along the line through a 0/1 point. -/
 theorem line_mnExt (f : (ι → Bool) → F) (u : ι → Bool) :
     line (fun j => if u j then (1 : F) else 0) (mlExtC 0 f) = ∑ b : ι → Bool,

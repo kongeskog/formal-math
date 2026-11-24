@@ -32,23 +32,4 @@ def Computes (p : MvPolynomial σ F) (s : ℕ) : Prop :=
 
 end Circuits
 
-variable {F : Type*} [Field F] {σ : Type*} {s : ℕ}
-
-section Proof
-
-/-- `p` along the line through 0 and `u`. -/
-noncomputable def line (u : σ → F) : MvPolynomial σ F →ₐ[F] Polynomial F :=
-  MvPolynomial.aeval fun l => Polynomial.C (u l) * Polynomial.X
-
-theorem eval_one_line (u : σ → F) (p : MvPolynomial σ F) :
-    (line u p).eval 1 = MvPolynomial.eval u p := by
-  have : ((Polynomial.evalRingHom (1 : F)).comp (line u).toRingHom) =
-      (MvPolynomial.eval u : MvPolynomial σ F →+* F) := by
-    apply MvPolynomial.ringHom_ext
-    · intro r; simp [line]
-    · intro i; simp [line]
-  exact DFunLike.congr_fun this p
-
-end Proof
-
 end Nc
