@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:36:49.309055967Z",
+  "updated_at": "2026-11-24T20:38:46.505889565Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 4,
     "contributors": 1,
-    "ideas_open": 0
+    "ideas_open": 7
   },
   "leaderboard": [
     {
@@ -87,6 +87,104 @@
     }
   ],
   "ideas": [
+    {
+      "number": 73,
+      "title": "Idea: merge(Nc/Tow): one GoodMv hypothesis in Ever2-7, one pair of consM lemmas, toFlag by field copy",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T20:38:32Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/73",
+      "technique": "merge",
+      "scope": "Nc/Tow"
+    },
+    {
+      "number": 72,
+      "title": "Idea: restructure(Nc/Uni/EvalU): let toOp take the opcode, removing a mode-rewriting line in 11 cases",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T20:38:18Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/72",
+      "technique": "restructure",
+      "scope": "Nc/Uni/EvalU"
+    },
+    {
+      "number": 71,
+      "title": "Idea: shorten(Nc/Grp): induction using Fin.addCases instead of a restated motive in three proofs",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T20:38:17Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/71",
+      "technique": "shorten",
+      "scope": "Nc/Grp"
+    },
+    {
+      "number": 70,
+      "title": "Idea: library(Nc): Mathlib lemmas and derived equivalences in place of twelve local proofs",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T20:38:15Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/70",
+      "technique": "library",
+      "scope": "Nc"
+    },
+    {
+      "number": 69,
+      "title": "Idea: restructure(*): state implicit binders repeated within a file once in a variable block",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T20:38:13Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/69",
+      "technique": "restructure",
+      "scope": "*"
+    },
+    {
+      "number": 68,
+      "title": "Idea: restructure(Paper): prove the exact end theorems from the approximate ones",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T20:38:11Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/68",
+      "technique": "restructure",
+      "scope": "Paper"
+    },
+    {
+      "number": 67,
+      "title": "Idea: restructure(*): state the runs of a Gives once; one lemma for twin combinators of Does and KV",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-24T20:38:10Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/67",
+      "technique": "restructure",
+      "scope": "*"
+    },
     {
       "number": 57,
       "title": "Idea: restructure(Nc/Final/CClasses): take VP, VNP and VPBar from the statement after #33",
