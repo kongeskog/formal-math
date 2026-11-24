@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:22:56.696927113Z",
+  "updated_at": "2026-11-24T19:25:27.529279692Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1006,13 +1006,27 @@
       "title": "library(Nc): proxy_equiv% instead of Seg.equivSum and the local equivalences for Tp and Ch",
       "author": "kongeskog",
       "head_sha": "9bbf524b38dffef7a8ed622a3741448958398494",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "5f9eef456dd9147e413d71f8fdccc70779a0173b",
+      "status": "stale",
       "created_at": "2026-11-24T19:11:13Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 923624,
+        "loc": 58487,
+        "decls": 4589,
+        "files": 321,
+        "bytes": 3405370,
+        "build_seconds": 176
+      },
+      "base_metrics": {
+        "tokens": 924407,
+        "loc": 58542,
+        "decls": 4591,
+        "files": 321,
+        "bytes": 3407674,
+        "build_seconds": null
+      },
+      "delta": -783,
       "gates": [
         {
           "key": "format",
@@ -1020,39 +1034,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "3 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 924407 → 923624 (-783)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -1063,7 +1085,7 @@
       ],
       "idea": 39,
       "url": "https://github.com/kongeskog/formal-math/pull/46",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45467532071",
       "merge_sha": null,
       "reason": null,
       "technique": "library",
