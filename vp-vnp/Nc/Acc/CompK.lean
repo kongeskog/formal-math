@@ -64,35 +64,27 @@ theorem of_gives {o : Tree} (h : Gives θ F x o c) : KV θ κ S F x 1 c := (of_d
 
 theorem fail (x : Tree) : KV θ κ S .fail x 0 0 := ⟨[], .fail x, by simp, by simp [val]⟩
 
+/-- Weights of `A` that add up to 1 still add up to 1 in `R`. -/
+theorem sum_th {l : List (Run A)} (h : (l.map Run.th).sum = 1) : (l.map fun r => algebraMap A R r.th).sum = 1 := by
+  have := congrArg (algebraMap A R) h
+  rwa [map_list_sum, List.map_map, map_one] at this
+
 theorem mul {o : Tree} (h : Gives θ F x o c) (ho : o.path ∈ S) : KV θ κ S (.mul F) x (κ o.path) (c + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := h
-  have hout : ∀ r ∈ l, r.out = o := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
+  obtain ⟨l, e1, e2, e3⟩ := h.runs
   refine ⟨_, Ev.mul e1, ?_, ?_⟩
   · intro u hu
     obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
+    obtain ⟨a1, a2, a3⟩ := e2 r hr
     refine ⟨by simpa using a2, fun p hp => ?_⟩
     rw [a1, List.nil_append, List.mem_singleton] at hp
-    rw [hp, hout r hr]
+    rw [hp, a3]
     exact ho
   · have h1 : (l.map fun r : Run A => (⟨r.cost + 1, r.th, r.bill ++ [r.out.path], .nil⟩ : Run A)).map (wt κ) =
         l.map fun r => algebraMap A R r.th * κ o.path := by
       rw [List.map_map]
       refine List.map_congr_left fun r hr => ?_
-      simp [wt, (e2 r hr).1, hout r hr]
-    rw [val, h1, List.sum_map_mul_right]
-    have h2 := e3 fun _ => 1
-    simp only [mul_one, wsum, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero] at h2
-    have h3 : (l.map fun r => algebraMap A R r.th).sum = 1 := by
-      have h4 := congrArg (algebraMap A R) h2
-      rw [map_list_sum, List.map_map, map_one] at h4
-      exact h4
-    rw [h3, one_mul]
+      simp [wt, (e2 r hr).1, (e2 r hr).2.2]
+    rw [val, h1, List.sum_map_mul_right, sum_th e3, one_mul]
 
 theorem cons (hF : KV θ κ S F x w c) (hG : KV θ κ S G x w' d) : KV θ κ S (.cons F G) x (w * w') (c + d + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := hF
@@ -122,16 +114,10 @@ theorem cons (hF : KV θ κ S F x w c) (hG : KV θ κ S G x w' d) : KV θ κ S (
 when `o ≠ nil` and the else-branch when `o = nil`. -/
 theorem ite_of {o : Tree} {K : Fm} (hF : Gives θ F x o c) (hK : KV θ κ S K x w d) (hG : o ≠ .nil → K = G)
     (hH : o = .nil → K = H) : KV θ κ S (.ite F G H) x w (c + d + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
+  obtain ⟨l, e1, e2, e3⟩ := hF.runs
   obtain ⟨l', f1, f2, f3⟩ := hK
-  have hout : ∀ r ∈ l, r.out = o := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => hG (hout r hr ▸ h) ▸ f1)
-    (fun r hr h => hH ((hout r hr).symm.trans h) ▸ f1), ?_, ?_⟩
+  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => hG ((e2 r hr).2.2 ▸ h) ▸ f1)
+    (fun r hr h => hH ((e2 r hr).2.2.symm.trans h) ▸ f1), ?_, ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, rfl⟩ := hu
@@ -150,13 +136,7 @@ theorem ite_of {o : Tree} {K : Fm} (hF : Gives θ F x o c) (hK : KV θ κ S K x 
       refine List.map_congr_left fun s _ => ?_
       rw [Function.comp_apply, wt_mul κ (r := r) (s := s) rfl rfl, wt, (e2 r hr).1]
       simp
-    rw [List.map_congr_left h1, List.sum_map_mul_right]
-    have h2 := e3 fun _ => 1
-    simp only [mul_one, wsum, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero] at h2
-    have h4 := congrArg (algebraMap A R) h2
-    rw [map_list_sum, List.map_map, map_one] at h4
-    have h3 : (l.map fun r => algebraMap A R r.th).sum = 1 := h4
-    rw [h3, one_mul]
+    rw [List.map_congr_left h1, List.sum_map_mul_right, sum_th e3, one_mul]
 
 theorem ite_true {o : Tree} (hF : Gives θ F x o c) (ho : o ≠ .nil) (hG : KV θ κ S G x w d) :
     KV θ κ S (.ite F G H) x w (c + d + 1) := ite_of hF hG (fun _ => rfl) (absurd · ho)
@@ -189,13 +169,7 @@ theorem either (hG : KV θ κ S G x w c) (hH : KV θ κ S H x w' d) :
   · rw [← e3, ← f3, val, val, val, add_comm]
     simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_append, List.sum_append, List.map_map,
       Run.det, Tree.one, if_true, reduceCtorEq, if_false]
-    congr 1
-    · congr 1
-      refine List.map_congr_left fun t _ => ?_
-      simp [wt, Run.seq, Run.tick]
-    · congr 1
-      refine List.map_congr_left fun t _ => ?_
-      simp [wt, Run.seq, Run.tick]
+    congr 2 <;> exact List.map_congr_left fun t _ => by simp [wt, Run.seq, Run.tick]
 
 /-- A plain computation, then a value. -/
 theorem app {p : Tree} {Q : List (A × Tree)} {ω : Tree → R} (hF : Does θ F x Q c)
@@ -224,65 +198,17 @@ theorem app {p : Tree} {Q : List (A × Tree)} {ω : Tree → R} (hF : Does θ F 
       refine List.map_congr_left fun t _ => ?_
       simp [wt, Run.seq, Run.tick, Run.det, (e2 s hs).1, mul_assoc]
     rw [List.map_congr_left h1]
-    -- functions with values in `R`
-    have h2 : ∀ (L : List (Run A)) (P : List (A × Tree)),
-        (∀ φ : Tree → A, (L.map fun r => r.th * φ r.out).sum = wsum P φ) →
-        (L.map fun s => algebraMap A R s.th * ω s.out).sum = (P.map fun q => algebraMap A R q.1 * ω q.2).sum := by
-      intro L P hLP
+    -- functions with values in `R`: compare the sums of the weights value by value
+    have h2 : (l.map fun s => Finsupp.single s.out s.th).sum = (Q.map fun q => Finsupp.single q.2 q.1).sum := by
       classical
-      let D : Finset Tree := (L.map Run.out).toFinset ∪ (P.map Prod.snd).toFinset
-      have k1 : (L.map fun s => algebraMap A R s.th * ω s.out).sum =
-          ∑ o ∈ D, algebraMap A R (L.map fun r => r.th * if r.out = o then 1 else 0).sum * ω o := by
-        have : ∀ s ∈ L, algebraMap A R s.th * ω s.out =
-            ∑ o ∈ D, algebraMap A R (s.th * if s.out = o then 1 else 0) * ω o := by
-          intro s hs
-          rw [Finset.sum_eq_single s.out]
-          · simp
-          · intro o _ ho
-            rw [if_neg (Ne.symm ho), mul_zero, map_zero, zero_mul]
-          · intro h
-            exact absurd (Finset.mem_union_left _ (List.mem_toFinset.2 (List.mem_map_of_mem hs))) h
-        rw [List.map_congr_left this]
-        clear this
-        have : ∀ L : List (Run A), (L.map fun s => ∑ o ∈ D, algebraMap A R (s.th * if s.out = o then 1 else 0) * ω o).sum =
-            ∑ o ∈ D, algebraMap A R (L.map fun r => r.th * if r.out = o then 1 else 0).sum * ω o := by
-          intro L
-          induction L with
-          | nil => simp
-          | cons s L ih =>
-            rw [List.map_cons, List.sum_cons, ih, ← Finset.sum_add_distrib]
-            refine Finset.sum_congr rfl fun o _ => ?_
-            rw [List.map_cons, List.sum_cons, map_add, add_mul]
-        exact this L
-      have k2 : (P.map fun q => algebraMap A R q.1 * ω q.2).sum =
-          ∑ o ∈ D, algebraMap A R (P.map fun q => q.1 * if q.2 = o then 1 else 0).sum * ω o := by
-        have : ∀ q ∈ P, algebraMap A R q.1 * ω q.2 =
-            ∑ o ∈ D, algebraMap A R (q.1 * if q.2 = o then 1 else 0) * ω o := by
-          intro q hq
-          rw [Finset.sum_eq_single q.2]
-          · simp
-          · intro o _ ho
-            rw [if_neg (Ne.symm ho), mul_zero, map_zero, zero_mul]
-          · intro h
-            exact absurd (Finset.mem_union_right _ (List.mem_toFinset.2 (List.mem_map_of_mem hq))) h
-        rw [List.map_congr_left this]
-        clear this
-        have : ∀ P : List (A × Tree), (P.map fun q => ∑ o ∈ D, algebraMap A R (q.1 * if q.2 = o then 1 else 0) * ω o).sum =
-            ∑ o ∈ D, algebraMap A R (P.map fun q => q.1 * if q.2 = o then 1 else 0).sum * ω o := by
-          intro P
-          induction P with
-          | nil => simp
-          | cons s P ih =>
-            rw [List.map_cons, List.sum_cons, ih, ← Finset.sum_add_distrib]
-            refine Finset.sum_congr rfl fun o _ => ?_
-            rw [List.map_cons, List.sum_cons, map_add, add_mul]
-        exact this P
-      rw [k1, k2]
-      refine Finset.sum_congr rfl fun o _ => ?_
-      have := hLP fun t => if t = o then 1 else 0
-      rw [this]
-      rfl
-    exact h2 l Q e3
+      refine Finsupp.ext fun o => ?_
+      have := e3 fun t => if t = o then 1 else 0
+      show Finsupp.applyAddHom o _ = Finsupp.applyAddHom o _
+      rw [map_list_sum, map_list_sum]
+      simpa [wsum, Function.comp_def, Finsupp.single_apply] using this
+    have h3 := congrArg (Finsupp.liftAddHom fun o =>
+      (AddMonoidHom.mulRight (ω o)).comp (algebraMap A R).toAddMonoidHom) h2
+    simpa [map_list_sum, Function.comp_def] using h3
 
 theorem lett {Q : List (A × Tree)} {ω : Tree → R} (hF : Does θ F x Q c)
     (hG : ∀ q ∈ Q, KV θ κ S G q.2 (ω q.2) d) :
@@ -300,35 +226,15 @@ theorem app_gives {p o : Tree} (hF : Gives θ F x o c) (hG : KV θ κ S (Fm.ofTr
 /-- Apply a program that is the value of a formula. -/
 theorem run {p y : Tree} {e : ℕ} (hF : Gives θ F x p c) (hG : Gives θ G x y d)
     (h : KV θ κ S (Fm.ofTree p) y w e) : KV θ κ S (.run F G) x w (c + d + e + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
-  obtain ⟨l', f1, f2, f3⟩ := hG
-  have ho : ∀ r ∈ l, r.out = p := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  have ho' : ∀ r ∈ l', r.out = y := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := f2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  have one : ∀ {L : List (Run A)} {o : Tree}, (∀ φ : Tree → A, (L.map fun r => r.th * φ r.out).sum = wsum [(1, o)] φ) →
-      (L.map fun r => algebraMap A R r.th).sum = 1 := by
-    intro L o hL
-    have h2 := hL fun _ => 1
-    simp only [mul_one, wsum, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero] at h2
-    have h4 := congrArg (algebraMap A R) h2
-    rw [map_list_sum, List.map_map, map_one] at h4
-    exact h4
-  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [ho r hr, ho' s hs]; exact h.hl, ?_, ?_⟩
+  obtain ⟨l, e1, e2, e3⟩ := hF.runs
+  obtain ⟨l', f1, f2, f3⟩ := hG.runs
+  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [(e2 r hr).2.2, (f2 s hs).2.2]; exact h.hl, ?_, ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu
-    rw [ho r hr, ho' s hs] at ht
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2, -⟩ := f2 s hs
+    obtain ⟨a1, a2, a3⟩ := e2 r hr
+    obtain ⟨b1, b2, b3⟩ := f2 s hs
+    rw [a3, b3] at ht
     obtain ⟨c1, c2⟩ := h.evl.1 t ht
     refine ⟨?_, fun p hp => ?_⟩
     · simp only [Run.seq, Run.tick]
@@ -343,13 +249,14 @@ theorem run {p y : Tree} {e : ℕ} (hF : Gives θ F x p c) (hG : Gives θ G x y 
       have h2 : ∀ s ∈ l', (((NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
           ((r.seq s).seq t).tick t.out).map (wt κ)).sum = algebraMap A R s.th * (algebraMap A R r.th * w) := by
         intro s hs
-        rw [ho r hr, ho' s hs, List.map_map, ← h.evl.2, val, ← List.sum_map_mul_left, ← List.sum_map_mul_left]
+        rw [(e2 r hr).2.2, (f2 s hs).2.2, List.map_map, ← h.evl.2, val, ← List.sum_map_mul_left,
+          ← List.sum_map_mul_left]
         congr 1
         refine List.map_congr_left fun t _ => ?_
         simp only [Function.comp_apply, wt, Run.seq, Run.tick, (e2 r hr).1, (f2 s hs).1, List.nil_append, map_mul]
         ring
-      rw [List.map_congr_left h2, List.sum_map_mul_right, one f3, one_mul]
-    rw [List.map_congr_left h1, List.sum_map_mul_right, one e3, one_mul]
+      rw [List.map_congr_left h2, List.sum_map_mul_right, sum_th f3, one_mul]
+    rw [List.map_congr_left h1, List.sum_map_mul_right, sum_th e3, one_mul]
 
 end KV
 

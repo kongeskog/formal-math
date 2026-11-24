@@ -20,31 +20,6 @@ open _root_.NS1.Tree LaurentPolynomial
 
 variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] [Algebra A E]
 
-/-- Runs that give values with weights, then a formula at the values. -/
-theorem KV.app_rel {R : Type} [CommRing R] [Algebra A R] {κ : List Bool → R} {S : Set (List Bool)} {β : Type*}
-    {F e : Fm} {x : Tree} {le : List (Run A)} {Q : List β} {c : β → R} {o : β → Tree} {w : β → R} {ce d : ℕ}
-    (he : Ev θ e x le)
-    (rel : List.Forall₂ (fun r q => wt κ r = c q ∧ r.out = o q ∧ (∀ p ∈ r.bill, p ∈ S) ∧ r.cost ≤ ce) le Q)
-    (hF : ∀ q ∈ Q, KV θ κ S F (o q) (w q) d) :
-    KV θ κ S (NS1.app F.code e) x (Q.map fun q => c q * w q).sum (ce + d + 2) := by
-  have eU := Ev.app (p := F.code) he fun s hs => by
-    obtain ⟨q, hq, -, h, -⟩ := forall₂_exists rel hs
-    rw [Fm.ofTree_code, h]
-    exact (hF q hq).hl
-  refine ⟨_, eU, ?_, ?_⟩
-  · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hu
-    obtain ⟨q, hq, -, h4, h5, h6⟩ := forall₂_exists rel hs
-    rw [Fm.ofTree_code, h4] at ht
-    obtain ⟨c1, c2⟩ := (hF q hq).evl.1 t ht
-    refine ⟨by omega, fun p hp => ?_⟩
-    rw [h2, List.mem_append] at hp
-    exact hp.elim (h5 p) (c2 p)
-  · rw [val_eq_sumF, sumF_app, sum_rel (c := c) (o := o) (rel.imp fun r q hr => ⟨hr.1, hr.2.1⟩)]
-    congr 1
-    refine List.map_congr_left fun q hq => ?_
-    rw [Fm.ofTree_code, ← val_eq_sumF, (hF q hq).evl.2]
-
 /-- Accept only with the counter at 0; then run the plain instance. The argument is (argument, (budgets, counter)). -/
 def finF (P : Tree) : Fm := .cons (.run (.quote AZ.code) (.cons (.quote AZ.code) (.cons (.quote .nil) (.tl (.tl .id)))))
   (app UF.code (.cons (.quote WF.code) (.cons (.quote P) (.cons (.hd .id) (.hd (.tl .id))))))
@@ -54,7 +29,6 @@ theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {t : B
     KV θ κ S (finF P) (.cons z (.cons t.enc (ofBits o)))
       ((if KT.val o = 0 then 1 else 0) * algebraMap A E (l.map fun r => if ok t r.bill = true then r.th else 0).sum)
       (40 * (o.length + 1) + MM H * T + 40 * t.nds + 90) := by
-  obtain ⟨pl, pe, -⟩ := zq_plain hP hT ht (τ := MM H * T + 40 * t.nds + 40) le_rfl
   obtain ⟨k, hk, u, hu⟩ := AZ_ev (θ := θ) (.leaf o)
   generalize hx : Tree.cons z (.cons t.enc (ofBits o)) = x
   have hu' : Ev θ (Fm.ofTree AZ.code) (.cons AZ.code (.cons .nil (ofBits o)))
@@ -79,26 +53,11 @@ theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {t : B
       by_cases hz : KT.val o = 0
       · simp [e.2 hz, hz, val, wt, Run.delay, Run.det]
       · simp [Bool.eq_false_iff.2 (fun h => hz (e.1 h)), hz, val]
-  have k2 : KV θ κ S UF (zq P z t) (algebraMap A E (l.map fun r => if ok t r.bill = true then r.th else 0).sum)
-      (MM H * T + 40 * t.nds + 45) := by
-    refine ⟨_, UF_ev pl.1.ev, ?_, ?_⟩
-    · intro r hr
-      rw [List.mem_map] at hr
-      obtain ⟨s, hs, rfl⟩ := hr
-      obtain ⟨b1, b2⟩ := pl.2 s hs
-      refine ⟨?_, by simp [Run.delay, b1]⟩
-      simp only [Run.delay]
-      omega
-    · rw [← pe, pv, val_plain]
-      · simp [pval, Function.comp_def, Run.delay]
-      · intro r hr
-        obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
-        exact (pl.2 s hs).1
   have g : Gives θ (.cons (.quote WF.code) (.cons (.quote P) (.cons (.hd .id) (.hd (.tl .id))))) x (zq P z t) 12 := by
     subst hx
     exact (Gives.cons (Gives.quote _ _) (Gives.cons (Gives.quote _ _)
       (Gives.cons (Gives.id _).hd (Gives.id _).tl.hd))).mono (by norm_num)
-  exact (KV.cons k1 (KV.app_gives (p := UF.code) g (by rw [Fm.ofTree_code]; exact k2))).mono (by omega)
+  exact (KV.cons k1 (KV.app_gives (p := UF.code) g (by rw [Fm.ofTree_code]; exact UF_kv hP hT ht))).mono (by omega)
 
 theorem nds_coefK (J m : ℕ) (K : KT E[T;T⁻¹]) : (coefK J m K).nds ≤ K.nds * 2 ^ (J + m + 1) := by
   induction K with

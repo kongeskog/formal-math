@@ -44,6 +44,52 @@ theorem nds_expand_map {R' : Type} [CommRing R'] (f : R → R') (B : ℕ) (K : K
 /-- Guess budgets with `g`; run the interpreted program `P` on the argument with these budgets. -/
 def rebF (g : Fm) (P : Tree) : Fm := app UF.code (ZE (.quote P) g)
 
+-- `KV.app_rel` was in `NS1/ApproxBack.lean`; it moved here so that `rebF_kv` can use it.
+/-- Runs that give values with weights, then a formula at the values. -/
+theorem KV.app_rel {β : Type*}
+    {F e : Fm} {x : Tree} {le : List (Run A)} {Q : List β} {c : β → R} {o : β → Tree} {w : β → R} {ce d : ℕ}
+    (he : Ev θ e x le)
+    (rel : List.Forall₂ (fun r q => wt κ r = c q ∧ r.out = o q ∧ (∀ p ∈ r.bill, p ∈ S) ∧ r.cost ≤ ce) le Q)
+    (hF : ∀ q ∈ Q, KV θ κ S F (o q) (w q) d) :
+    KV θ κ S (NS1.app F.code e) x (Q.map fun q => c q * w q).sum (ce + d + 2) := by
+  have eU := Ev.app (p := F.code) he fun s hs => by
+    obtain ⟨q, hq, -, h, -⟩ := forall₂_exists rel hs
+    rw [Fm.ofTree_code, h]
+    exact (hF q hq).hl
+  refine ⟨_, eU, ?_, ?_⟩
+  · intro u hu
+    obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hu
+    obtain ⟨q, hq, -, h4, h5, h6⟩ := forall₂_exists rel hs
+    rw [Fm.ofTree_code, h4] at ht
+    obtain ⟨c1, c2⟩ := (hF q hq).evl.1 t ht
+    refine ⟨by omega, fun p hp => ?_⟩
+    rw [h2, List.mem_append] at hp
+    exact hp.elim (h5 p) (c2 p)
+  · rw [val_eq_sumF, sumF_app, sum_rel (c := c) (o := o) (rel.imp fun r q hr => ⟨hr.1, hr.2.1⟩)]
+    congr 1
+    refine List.map_congr_left fun q hq => ?_
+    rw [Fm.ofTree_code, ← val_eq_sumF, (hF q hq).evl.2]
+
+-- Shared by `rebF_kv` and `finF_kv` (each proved it inline before).
+/-- The universal program on the plain instance of a program and a budget. -/
+theorem UF_kv {P z : Tree} {t : Bt} {l : List (Run A)} {T H : ℕ} (hP : Ev θ (Fm.ofTree P) z l)
+    (hT : ∀ r ∈ l, r.cost ≤ T) (ht : t.ht ≤ H) :
+    KV θ κ S UF (zq P z t) (algebraMap A R (l.map fun r => if ok t r.bill = true then r.th else 0).sum)
+      (MM H * T + 40 * t.nds + 45) := by
+  obtain ⟨pl, pe, -⟩ := zq_plain hP hT ht (τ := MM H * T + 40 * t.nds + 40) le_rfl
+  refine ⟨_, UF_ev pl.1.ev, ?_, ?_⟩
+  · intro r hr
+    obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
+    obtain ⟨b1, b2⟩ := pl.2 s hs
+    refine ⟨?_, by simp [Run.delay, b1]⟩
+    simp only [Run.delay]
+    omega
+  · rw [← pe, pv, val_plain]
+    · simp [pval, Function.comp_def, Run.delay]
+    · intro r hr
+      obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
+      exact (pl.2 s hs).1
+
 /-- **The weight of a budget times the runs that use it up**, summed over the budgets. -/
 theorem rebF_kv {g : Fm} {P z : Tree} {cg T H n : ℕ} {lg l : List (Run A)} {Q : List (Bt × R)} (hg : Ev θ g z lg)
     (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q) (hP : Ev θ (Fm.ofTree P) z l) (hT : ∀ r ∈ l, r.cost ≤ T)
@@ -52,49 +98,11 @@ theorem rebF_kv {g : Fm} {P z : Tree} {cg T H n : ℕ} {lg l : List (Run A)} {Q 
       (Q.map fun q => q.2 * algebraMap A R (l.map fun r => if ok q.1 r.bill = true then r.th else 0).sum).sum
       (cg + MM H * T + 40 * n + 60) := by
   obtain ⟨lZ, eZ, rZ⟩ := ZE_ev (Dt.quote P z) hg rg
-  have hZ : ∀ s ∈ lZ, ∃ q ∈ Q, wt κ s = q.2 ∧ s.out = zq P z q.1 ∧ (∀ m ∈ s.bill, m ∈ S) ∧ s.cost ≤ cg + 1 + 5 :=
-    fun s hs => forall₂_exists rZ hs
-  have key : ∀ q ∈ Q, ∃ l', Ev θ UF (zq P z q.1) l' ∧ (∀ r ∈ l', r.bill = [] ∧ r.cost ≤ MM H * T + 40 * n + 45) ∧
-      val κ l' = algebraMap A R (l.map fun r => if ok q.1 r.bill = true then r.th else 0).sum := by
-    intro q hq
-    obtain ⟨h1, h2⟩ := hQ q hq
-    obtain ⟨pl, pe, -⟩ := zq_plain hP hT h1 (τ := MM H * T + 40 * n + 40) (by omega)
-    refine ⟨_, UF_ev pl.1.ev, ?_, ?_⟩
-    · intro r hr
-      rw [List.mem_map] at hr
-      obtain ⟨s, hs, rfl⟩ := hr
-      obtain ⟨b1, b2⟩ := pl.2 s hs
-      refine ⟨b1, ?_⟩
-      simp only [Run.delay]
-      omega
-    · rw [← pe, pv, val_plain]
-      · simp [pval, Function.comp_def, Run.delay]
-      · intro r hr
-        rw [List.mem_map] at hr
-        obtain ⟨s, hs, rfl⟩ := hr
-        exact (pl.2 s hs).1
-  have eU := Ev.app (p := UF.code) eZ fun s hs => by
-    obtain ⟨q, hq, -, h, -⟩ := hZ s hs
-    obtain ⟨l', e, -⟩ := key q hq
-    rw [Fm.ofTree_code, h]
-    exact e.hl
-  refine ⟨_, eU, ?_, ?_⟩
-  · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hu
-    obtain ⟨q, hq, -, h4, h5, h6⟩ := hZ s hs
-    obtain ⟨l', e, hl', -⟩ := key q hq
-    rw [Fm.ofTree_code, h4, e.evl] at ht
-    obtain ⟨c1, c2⟩ := hl' t ht
-    refine ⟨by omega, ?_⟩
-    rw [h2, c1, List.append_nil]
-    exact h5
-  · rw [val_eq_sumF, sumF_app]
-    rw [sum_rel (c := fun q : Bt × R => q.2) (o := fun q : Bt × R => zq P z q.1)
-      (rZ.imp fun r q hr => ⟨hr.1, hr.2.1⟩)]
-    congr 1
-    refine List.map_congr_left fun q hq => ?_
-    obtain ⟨l', e, -, hv⟩ := key q hq
-    rw [Fm.ofTree_code, e.evl, ← val_eq_sumF, hv]
+  refine (KV.app_rel (F := UF) (c := fun q => q.2) (o := fun q => zq P z q.1) eZ rZ (ce := cg + 1 + 5)
+    (d := MM H * T + 40 * n + 45) fun q hq => (UF_kv hP hT (hQ q hq).1).mono ?_).mono ?_
+  · have := (hQ q hq).2
+    omega
+  · omega
 
 /-- **A program with renamed constants**: with the names `pre ++ p` for the images under `f` of its constants. -/
 theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {P z : Tree} {T : ℕ} {l : List (Run A)}

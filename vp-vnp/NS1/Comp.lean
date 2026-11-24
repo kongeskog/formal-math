@@ -72,6 +72,16 @@ def Does (θ : List Bool → A) (F : Fm) (x : Tree) (Q : List (A × Tree)) (c : 
 /-- The formula has the value `o` at `x`, with weight 1. -/
 def Gives (θ : List Bool → A) (F : Fm) (x o : Tree) (c : ℕ) : Prop := Does θ F x [(1, o)] c
 
+/-- The runs of a formula that has the value `o`: they give `o`, and their weights add up to 1. -/
+theorem Gives.runs {F : Fm} {x o : Tree} {c : ℕ} (h : Gives θ F x o c) :
+    ∃ l, Ev θ F x l ∧ (∀ r ∈ l, r.bill = [] ∧ r.cost ≤ c ∧ r.out = o) ∧ (l.map Run.th).sum = 1 := by
+  obtain ⟨l, e1, e2, e3⟩ := h
+  refine ⟨l, e1, fun r hr => ?_, by simpa [wsum] using e3 fun _ => 1⟩
+  obtain ⟨a1, a2, q, hq, a3⟩ := e2 r hr
+  rw [List.mem_singleton] at hq
+  subst hq
+  exact ⟨a1, a2, a3.symm⟩
+
 namespace Does
 
 variable {F G H : Fm} {x : Tree} {Q : List (A × Tree)} {c d : ℕ}
@@ -204,27 +214,15 @@ theorem letk {R : Tree → List (A × Tree)} (hF : Does θ F x Q c) (hG : ∀ q 
 /-- Apply a program that is the value of a formula. -/
 theorem run {p y : Tree} {R : List (A × Tree)} {e : ℕ} (hF : Gives θ F x p c) (hG : Gives θ G x y d)
     (h : Does θ (Fm.ofTree p) y R e) : Does θ (.run F G) x R (c + d + e + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
-  obtain ⟨l', f1, f2, f3⟩ := hG
-  have ho : ∀ r ∈ l, r.out = p := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  have ho' : ∀ r ∈ l', r.out = y := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := f2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [ho r hr, ho' s hs]; exact h.hl, ?_, fun φ => ?_⟩
+  obtain ⟨l, e1, e2, e3⟩ := hF.runs
+  obtain ⟨l', f1, f2, f3⟩ := hG.runs
+  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [(e2 r hr).2.2, (f2 s hs).2.2]; exact h.hl, ?_, fun φ => ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu
-    rw [ho r hr, ho' s hs] at ht
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2, -⟩ := f2 s hs
+    obtain ⟨a1, a2, a3⟩ := e2 r hr
+    obtain ⟨b1, b2, b3⟩ := f2 s hs
+    rw [a3, b3] at ht
     obtain ⟨c1, c2, c3⟩ := h.evl.1 t ht
     refine ⟨by simp [Run.seq, Run.tick, a1, b1, c1], ?_, c3⟩
     simp only [Run.seq, Run.tick]
@@ -237,81 +235,45 @@ theorem run {p y : Tree} {R : List (A × Tree)} {e : ℕ} (hF : Gives θ F x p c
       have h2 : ∀ s ∈ l', (((NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
           ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum = s.th * (r.th * wsum R φ) := by
         intro s hs
-        rw [ho r hr, ho' s hs, List.map_map, ← h.evl.2 φ, ← List.sum_map_mul_left, ← List.sum_map_mul_left]
+        rw [(e2 r hr).2.2, (f2 s hs).2.2, List.map_map, ← h.evl.2 φ, ← List.sum_map_mul_left,
+          ← List.sum_map_mul_left]
         congr 1
         refine List.map_congr_left fun t _ => ?_
         simp only [Function.comp_apply, Run.seq, Run.tick]
         ring
-      rw [List.map_congr_left h2]
-      have := f3 fun _ => r.th * wsum R φ
-      rw [this]
-      simp [wsum]
-    rw [List.map_congr_left h1]
-    have := e3 fun _ => wsum R φ
-    rw [this]
-    simp [wsum]
+      rw [List.map_congr_left h2, List.sum_map_mul_right, f3, one_mul]
+    rw [List.map_congr_left h1, List.sum_map_mul_right, e3, one_mul]
+
+/-- An `ite` whose test gives `o` costs the test plus the branch `K`: the then-branch when `o ≠ nil`, the
+else-branch when `o = nil`. -/
+theorem ite_of {o : Tree} {K : Fm} (hF : Gives θ F x o c) (hK : Does θ K x Q d) (hG : o ≠ .nil → K = G)
+    (hH : o = .nil → K = H) : Does θ (.ite F G H) x Q (c + d + 1) := by
+  obtain ⟨l, e1, e2, e3⟩ := hF.runs
+  obtain ⟨l', f1, f2, f3⟩ := hK
+  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => hG ((e2 r hr).2.2 ▸ h) ▸ f1)
+    (fun r hr h => hH ((e2 r hr).2.2.symm.trans h) ▸ f1), ?_, fun φ => ?_⟩
+  · intro u hu
+    simp only [List.mem_flatMap, List.mem_map] at hu
+    obtain ⟨r, hr, s, hs, rfl⟩ := hu
+    obtain ⟨a1, a2, -⟩ := e2 r hr
+    obtain ⟨b1, b2, b3⟩ := f2 s hs
+    refine ⟨by simp [Run.seq, Run.tick, a1, b1], ?_, b3⟩
+    simp only [Run.seq, Run.tick]
+    omega
+  · rw [sum_flatMap_map]
+    have h1 : ∀ r ∈ l, ((l'.map fun s => (r.seq s).tick s.out).map fun u => u.th * φ u.out).sum = r.th * wsum Q φ := by
+      intro r _
+      rw [List.map_map, ← f3 φ, ← List.sum_map_mul_left]
+      congr 1
+      refine List.map_congr_left fun t _ => ?_
+      simp only [Function.comp_apply, Run.seq, Run.tick, mul_assoc]
+    rw [List.map_congr_left h1, List.sum_map_mul_right, e3, one_mul]
 
 theorem ite_true {o : Tree} (hF : Gives θ F x o c) (ho : o ≠ .nil) (hG : Does θ G x Q d) :
-    Does θ (.ite F G H) x Q (c + d + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
-  obtain ⟨l', f1, f2, f3⟩ := hG
-  have hout : ∀ r ∈ l, r.out = o := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r _ _ => f1) (fun r hr h => absurd ((hout r hr).symm.trans h) ho), ?_,
-    fun φ => ?_⟩
-  · intro u hu
-    simp only [List.mem_flatMap, List.mem_map] at hu
-    obtain ⟨r, hr, s, hs, rfl⟩ := hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2, b3⟩ := f2 s hs
-    refine ⟨by simp [Run.seq, Run.tick, a1, b1], ?_, b3⟩
-    simp only [Run.seq, Run.tick]
-    omega
-  · rw [sum_flatMap_map]
-    have h1 : ∀ r ∈ l, ((l'.map fun s => (r.seq s).tick s.out).map fun u => u.th * φ u.out).sum = r.th * wsum Q φ := by
-      intro r _
-      rw [List.map_map, ← f3 φ, ← List.sum_map_mul_left]
-      congr 1
-      refine List.map_congr_left fun t _ => ?_
-      simp only [Function.comp_apply, Run.seq, Run.tick, mul_assoc]
-    rw [List.map_congr_left h1]
-    have := e3 fun _ => wsum Q φ
-    rw [this]
-    simp [wsum]
+    Does θ (.ite F G H) x Q (c + d + 1) := ite_of hF hG (fun _ => rfl) (absurd · ho)
 
-theorem ite_false (hF : Gives θ F x .nil c) (hH : Does θ H x Q d) : Does θ (.ite F G H) x Q (c + d + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
-  obtain ⟨l', f1, f2, f3⟩ := hH
-  have hout : ∀ r ∈ l, r.out = .nil := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => absurd (hout r hr) h) (fun r _ _ => f1), ?_, fun φ => ?_⟩
-  · intro u hu
-    simp only [List.mem_flatMap, List.mem_map] at hu
-    obtain ⟨r, hr, s, hs, rfl⟩ := hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2, b3⟩ := f2 s hs
-    refine ⟨by simp [Run.seq, Run.tick, a1, b1], ?_, b3⟩
-    simp only [Run.seq, Run.tick]
-    omega
-  · rw [sum_flatMap_map]
-    have h1 : ∀ r ∈ l, ((l'.map fun s => (r.seq s).tick s.out).map fun u => u.th * φ u.out).sum = r.th * wsum Q φ := by
-      intro r _
-      rw [List.map_map, ← f3 φ, ← List.sum_map_mul_left]
-      congr 1
-      refine List.map_congr_left fun t _ => ?_
-      simp only [Function.comp_apply, Run.seq, Run.tick, mul_assoc]
-    rw [List.map_congr_left h1]
-    have := e3 fun _ => wsum Q φ
-    rw [this]
-    simp [wsum]
+theorem ite_false (hF : Gives θ F x .nil c) (hH : Does θ H x Q d) : Does θ (.ite F G H) x Q (c + d + 1) :=
+  ite_of hF hH (absurd rfl) fun _ => rfl
 
 /-- Guess between two formulas. -/
 theorem either {R : List (A × Tree)} (hG : Does θ G x Q c) (hH : Does θ H x R d) :
@@ -336,85 +298,38 @@ theorem either {R : List (A × Tree)} (hG : Does θ G x Q c) (hH : Does θ H x R
     simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_append, List.sum_append, List.map_map,
       Run.det, Tree.one, if_true, reduceCtorEq, if_false]
     rw [add_comm]
-    congr 1
-    · congr 1
-      refine List.map_congr_left fun t _ => ?_
-      simp only [Function.comp_apply, Run.seq, Run.tick, one_mul]
-    · congr 1
-      refine List.map_congr_left fun t _ => ?_
+    congr 2 <;> exact List.map_congr_left fun t _ => by
       simp only [Function.comp_apply, Run.seq, Run.tick, one_mul]
 
 theorem fail (x : Tree) : Does θ .fail x [] 0 := ⟨[], .fail x, by simp, by simp⟩
 
+-- `theta`, `hd` and `tl` below are instances of this lemma.
+/-- A step that changes every run of a formula with one value in the same way. -/
+theorem step {F' : Fm} {o o' : Tree} {a : A} {g : Run A → Run A} (h : Gives θ F x o c)
+    (hE : ∀ l, Ev θ F x l → Ev θ F' x (l.map g))
+    (hg : ∀ r, r.out = o → (g r).bill = r.bill ∧ (g r).cost = r.cost + 1 ∧ (g r).th = r.th * a ∧ (g r).out = o') :
+    Does θ F' x [(a, o')] (c + 1) := by
+  obtain ⟨l, e1, e2, e3⟩ := h.runs
+  refine ⟨_, hE l e1, ?_, fun φ => ?_⟩
+  · intro u hu
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
+    obtain ⟨a1, a2, a3⟩ := e2 r hr
+    obtain ⟨g1, g2, -, g4⟩ := hg r a3
+    exact ⟨g1.trans a1, by omega, _, List.mem_singleton_self _, g4.symm⟩
+  · rw [List.map_map, List.map_congr_left fun r hr => show _ = r.th * (a * φ o') by
+      obtain ⟨-, -, g3, g4⟩ := hg r (e2 r hr).2.2
+      rw [Function.comp_apply, g3, g4, mul_assoc]]
+    simp [List.sum_map_mul_right, e3, wsum]
+
 /-- Multiply by a constant of `A`. -/
-theorem theta {o : Tree} (h : Gives θ F x o c) : Does θ (.theta F) x [(θ o.path, .nil)] (c + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := h
-  have hout : ∀ r ∈ l, r.out = o := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.theta e1, ?_, fun φ => ?_⟩
-  · intro u hu
-    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    exact ⟨a1, by simpa using a2, _, List.mem_singleton_self _, rfl⟩
-  · rw [List.map_map]
-    have h1 : ∀ r ∈ l, ((fun r : Run A => r.th * φ r.out) ∘ fun r : Run A =>
-        (⟨r.cost + 1, r.th * θ r.out.path, r.bill, .nil⟩ : Run A)) r = r.th * (θ o.path * φ .nil) := by
-      intro r hr
-      simp only [Function.comp_apply, hout r hr, mul_assoc]
-    rw [List.map_congr_left h1]
-    have := e3 fun _ => θ o.path * φ .nil
-    rw [this]
-    simp [wsum]
+theorem theta {o : Tree} (h : Gives θ F x o c) : Does θ (.theta F) x [(θ o.path, .nil)] (c + 1) :=
+  step h (fun _ => Ev.theta) fun r hr => by simp [hr]
 
-theorem hd {o : Tree} (h : Gives θ F x o c) : Gives θ (.hd F) x o.hd (c + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := h
-  have hout : ∀ r ∈ l, r.out = o := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.hd e1, ?_, fun φ => ?_⟩
-  · intro u hu
-    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    refine ⟨a1, by simpa [Run.tick] using a2, _, List.mem_singleton_self _, ?_⟩
-    simp [Run.tick, hout r hr]
-  · rw [List.map_map]
-    have h1 : ∀ r ∈ l, ((fun r : Run A => r.th * φ r.out) ∘ fun r : Run A => r.tick r.out.hd) r = r.th * φ o.hd := by
-      intro r hr
-      simp only [Function.comp_apply, Run.tick, hout r hr]
-    rw [List.map_congr_left h1]
-    have := e3 fun _ => φ o.hd
-    rw [this]
-    simp [wsum]
+theorem hd {o : Tree} (h : Gives θ F x o c) : Gives θ (.hd F) x o.hd (c + 1) :=
+  step h (fun _ => Ev.hd) fun r hr => by simp [Run.tick, hr]
 
-theorem tl {o : Tree} (h : Gives θ F x o c) : Gives θ (.tl F) x o.tl (c + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := h
-  have hout : ∀ r ∈ l, r.out = o := by
-    intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  refine ⟨_, Ev.tl e1, ?_, fun φ => ?_⟩
-  · intro u hu
-    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    refine ⟨a1, by simpa [Run.tick] using a2, _, List.mem_singleton_self _, ?_⟩
-    simp [Run.tick, hout r hr]
-  · rw [List.map_map]
-    have h1 : ∀ r ∈ l, ((fun r : Run A => r.th * φ r.out) ∘ fun r : Run A => r.tick r.out.tl) r = r.th * φ o.tl := by
-      intro r hr
-      simp only [Function.comp_apply, Run.tick, hout r hr]
-    rw [List.map_congr_left h1]
-    have := e3 fun _ => φ o.tl
-    rw [this]
-    simp [wsum]
+theorem tl {o : Tree} (h : Gives θ F x o c) : Gives θ (.tl F) x o.tl (c + 1) :=
+  step h (fun _ => Ev.tl) fun r hr => by simp [Run.tick, hr]
 
 end Does
 
