@@ -96,3 +96,5 @@ def Separation : Prop := ∀ (F : Type u) [Field F], VP F ⊂ VNP F
 def SeparationClosure : Prop := ∀ (F : Type u) [Field F], ¬ VNP F ⊆ VPBar F
 
 end Statement
+
+-- pipeline test

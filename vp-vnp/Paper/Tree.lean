@@ -340,23 +340,6 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
 /-- The integer of the test for good outcomes: "the test for good outcomes compare[s] integers, as C₀ is an integer". -/
 noncomputable def goodBound (C₁ : ℝ) (a₁ : ℕ) : ℕ := ⌊2 * C₁ * (a₁ : ℝ) ^ 2⌋₊
 
-/-- Without units from a node to itself every current unit joins two nodes: thin trees give the printed formula. -/
-theorem cutUnits_id_cur {R : Type} [CommRing R] {AA A' E N U1 : ℕ} {S : Sys R (AA + A') E} (P : Plan S N U1)
-    {n : Fin AA → Fin AA → Fin (N + 1)} (hn : ∀ a, n a a = 0) (o : S.N → Fin U1) :
-    cutUnits (hold0 S.np) (hold1 S.np) id (P.cur n o E) = P.cur n o E := by
-  unfold cutUnits
-  rw [filter_true_of_mem]
-  intro u hu he
-  have hseen := (Plan.mem_cur.1 hu).1
-  cases u with
-  | init a b k =>
-    have hk := Plan.init_mem_seenAt.1 hseen
-    have hab : a = b := Fin.castAdd_injective _ _ he
-    subst hab
-    rw [hn a] at hk
-    exact Nat.not_lt_zero _ hk
-  | new ν k => exact (S.kind ν.1).cd ν.2 (S.inj ν.1 he)
-
 /-- **Paper: the paragraph before Theorem thm:tree.** "An outcome is good if ‖o‖_* ≤ √C₁a₁t and o_e ≥ t for all e":
 at a law move the integer test of the trees of thm_tree implies this, and is equivalent to it when 2C₁a₁² is an
 integer, as it is for C₁ = 4C₀ with the integer C₀ of the laws. -/
