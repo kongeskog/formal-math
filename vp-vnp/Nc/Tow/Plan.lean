@@ -93,7 +93,7 @@ theorem card_fin_lt' (N c : ℕ) (hc : c ≤ N) : ((univ : Finset (Fin N)).filte
   rw [h1, card_range]
 
 /-- Sums over units. -/
-theorem sum_units {N : Type} [Fintype N] [DecidableEq N] {M : Type*} [AddCommMonoid M]
+theorem sum_units {N : Type} [Fintype N] {M : Type*} [AddCommMonoid M]
     (f : Uid AA U0 N U1 → M) :
     ∑ u, f u = (∑ a, ∑ c, ∑ k, f (.init a c k)) + ∑ ν, ∑ k, f (.new ν k) := by
   let e : Uid AA U0 N U1 ≃ (Fin AA × Fin AA × Fin U0) ⊕ (N × Fin U1) :=

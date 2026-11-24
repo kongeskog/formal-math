@@ -208,11 +208,11 @@ theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u 
     rfl
 
 /-- The number of units of a slot. -/
-theorem card_consM (hr : 0 < r) (hb : 0 < b) (z : ZM R FL (ch := ch)) :
+theorem card_consM (z : ZM R FL (ch := ch)) :
     (consM R FL Pl lhat n o z : Finset (Un R FL Pl U0 U1)).card ≤ num R ch FL lhat (nn n) (oo R FL Pl o) z.1 := by
   classical
   rcases z with ⟨x | l, e⟩
-  · rw [num_eq hr hb, consM, numF]
+  · rw [num_eq, consM, numF]
     split_ifs with ha
     · rw [load_eq]
     · simp
@@ -433,7 +433,7 @@ theorem plan_ok (hr : 0 < r) (hb : 0 < b) {cap : ℕ}
     have h1 := (eZ R FL Pl).injective (consM_unique hu hu')
     rw [Sigma.mk.injEq] at h1
     exact hee (eq_of_heq h1.2)
-  card n o z := card_consM hr hb (eZ R FL Pl z)
+  card n o z := card_consM (eZ R FL Pl z)
   cap n o x := hcap n o _
 
 end Plan

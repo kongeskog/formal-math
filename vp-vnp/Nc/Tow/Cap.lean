@@ -130,11 +130,11 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv T R ch FL) :
       have h3 : n a c / Fintype.card (T.X 0) ≤ U0 := (Nat.div_le_self _ _).trans (hn a c)
       unfold capN
       omega
-    · exact (num_inl hr hb _).trans (hedge j.castSucc e)
+    · exact (num_inl _).trans (hedge j.castSucc e)
     · obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
-      exact h1.trans ((num_mid0 hr hb j e hx0).1.trans (hedge j.castSucc e))
-    · exact (num_inl hr hb _).trans (hedge (Fin.last J) e)
-  · have h1 := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb l
+      exact h1.trans ((num_mid0 j e hx0).1.trans (hedge j.castSucc e))
+    · exact (num_inl _).trans (hedge (Fin.last J) e)
+  · have h1 := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     have h2 := tmin_real_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb hh hbD hρ hρ' hρ1
       hρD l
     have h3 : (tmin FL (load R ch FL lhat n o) l : ℝ) ≤ ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
