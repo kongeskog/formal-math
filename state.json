@@ -1,0 +1,236 @@
+{
+  "project": {
+    "slug": "vp-vnp",
+    "title": "VP ≠ VNP",
+    "description": "Shorten the Lean 4 formalization of VP ≠ VNP while it proves exactly the same theorems.",
+    "repo": "kongeskog/formal-math",
+    "dir": "vp-vnp",
+    "upstream": "https://github.com/anthropics/formal-math/tree/main/vp-vnp",
+    "primary": "tokens",
+    "metrics": [
+      {
+        "key": "tokens",
+        "label": "Tokens",
+        "unit": "tokens",
+        "description": "Source tokens after removing comments and whitespace. Reformatting cannot change it."
+      },
+      {
+        "key": "loc",
+        "label": "Lines of code",
+        "unit": "lines",
+        "description": "Lines that contain at least one token."
+      },
+      {
+        "key": "decls",
+        "label": "Declarations",
+        "unit": "decls",
+        "description": "Theorems, lemmas, definitions, structures, instances and similar."
+      },
+      {
+        "key": "files",
+        "label": "Files",
+        "unit": "files",
+        "description": "Measured source files."
+      },
+      {
+        "key": "bytes",
+        "label": "Bytes",
+        "unit": "bytes",
+        "description": "Size of the measured source files."
+      },
+      {
+        "key": "build_seconds",
+        "label": "Build time",
+        "unit": "s",
+        "description": "Wall-clock time of the verification build. Informational."
+      }
+    ]
+  },
+  "updated_at": "2026-11-24T00:00:46.348761212Z",
+  "baseline": {
+    "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
+    "at": "2026-11-24T00:00:46.348761212Z",
+    "metrics": {
+      "tokens": 928161,
+      "loc": 58797,
+      "decls": 4610,
+      "files": 321,
+      "bytes": 3421123,
+      "build_seconds": null
+    }
+  },
+  "current": {
+    "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
+    "at": "2026-11-24T00:00:46.348761212Z",
+    "metrics": {
+      "tokens": 928161,
+      "loc": 58797,
+      "decls": 4610,
+      "files": 321,
+      "bytes": 3421123,
+      "build_seconds": null
+    }
+  },
+  "counts": {
+    "merged": 0,
+    "rejected": 0,
+    "open": 0,
+    "contributors": 0,
+    "ideas_open": 0
+  },
+  "leaderboard": [],
+  "ideas": [],
+  "open": [],
+  "top_files": [
+    {
+      "path": "vp-vnp/Paper/Tree.lean",
+      "tokens": 24865,
+      "loc": 1478
+    },
+    {
+      "path": "vp-vnp/Paper/Groups.lean",
+      "tokens": 16666,
+      "loc": 1006
+    },
+    {
+      "path": "vp-vnp/Paper/Fan.lean",
+      "tokens": 15683,
+      "loc": 859
+    },
+    {
+      "path": "vp-vnp/Paper/Alternative.lean",
+      "tokens": 12625,
+      "loc": 746
+    },
+    {
+      "path": "vp-vnp/Paper/Pieces.lean",
+      "tokens": 12501,
+      "loc": 762
+    },
+    {
+      "path": "vp-vnp/Paper/Identity.lean",
+      "tokens": 10830,
+      "loc": 626
+    },
+    {
+      "path": "vp-vnp/Paper/ApproxRound.lean",
+      "tokens": 9931,
+      "loc": 555
+    },
+    {
+      "path": "vp-vnp/Paper/Flat.lean",
+      "tokens": 9761,
+      "loc": 538
+    },
+    {
+      "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
+      "tokens": 9507,
+      "loc": 691
+    },
+    {
+      "path": "vp-vnp/Paper/Cuts.lean",
+      "tokens": 8777,
+      "loc": 523
+    },
+    {
+      "path": "vp-vnp/Paper/ApproxScales.lean",
+      "tokens": 8510,
+      "loc": 479
+    },
+    {
+      "path": "vp-vnp/Paper/Gauges.lean",
+      "tokens": 8362,
+      "loc": 519
+    },
+    {
+      "path": "vp-vnp/Paper/Rate.lean",
+      "tokens": 7888,
+      "loc": 475
+    },
+    {
+      "path": "vp-vnp/Paper/Prices.lean",
+      "tokens": 7586,
+      "loc": 427
+    },
+    {
+      "path": "vp-vnp/Paper/Laws.lean",
+      "tokens": 7555,
+      "loc": 426
+    },
+    {
+      "path": "vp-vnp/NS1/Lists.lean",
+      "tokens": 7454,
+      "loc": 468
+    },
+    {
+      "path": "vp-vnp/Nc/G/Move.lean",
+      "tokens": 7326,
+      "loc": 424
+    },
+    {
+      "path": "vp-vnp/Paper/Crossing.lean",
+      "tokens": 7310,
+      "loc": 404
+    },
+    {
+      "path": "vp-vnp/NS1/DSteps.lean",
+      "tokens": 7266,
+      "loc": 431
+    },
+    {
+      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
+      "tokens": 7117,
+      "loc": 408
+    },
+    {
+      "path": "vp-vnp/Nc/Grp/GroupProg.lean",
+      "tokens": 7057,
+      "loc": 410
+    },
+    {
+      "path": "vp-vnp/Paper/Means.lean",
+      "tokens": 7042,
+      "loc": 367
+    },
+    {
+      "path": "vp-vnp/Nc/G/PlayThm.lean",
+      "tokens": 7013,
+      "loc": 470
+    },
+    {
+      "path": "vp-vnp/Paper/Toolkit.lean",
+      "tokens": 6984,
+      "loc": 393
+    },
+    {
+      "path": "vp-vnp/Nc/Grp/StepBase.lean",
+      "tokens": 6475,
+      "loc": 379
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Ever2.lean",
+      "tokens": 6357,
+      "loc": 379
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Load.lean",
+      "tokens": 6193,
+      "loc": 362
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Load2.lean",
+      "tokens": 5996,
+      "loc": 436
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Load0.lean",
+      "tokens": 5992,
+      "loc": 461
+    },
+    {
+      "path": "vp-vnp/NS1/OneCut.lean",
+      "tokens": 5773,
+      "loc": 307
+    }
+  ]
+}
