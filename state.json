@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T18:59:16.691200991Z",
+  "updated_at": "2026-11-24T19:00:11.726993387Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 6,
     "contributors": 1,
-    "ideas_open": 2
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -132,7 +132,7 @@
     {
       "number": 14,
       "title": "Idea: generalize(Nc/Uni): one lemma for EvOK.hd and EvOK.tl, a mode parameter for KS and rstep",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -585,8 +585,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 4,
@@ -653,8 +653,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 5,
