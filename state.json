@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:26:46.505313098Z",
+  "updated_at": "2026-11-24T21:27:50.288758118Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "c7843877a2527c6b5b1844490498846a95f74e1f",
-    "at": "2026-11-24T21:24:59.144593874Z",
+    "sha": "e2aafb9f35db40895d501bc634e5361b9ad5d307",
+    "at": "2026-11-24T21:27:50.288758118Z",
     "metrics": {
-      "tokens": 905569,
-      "loc": 57360,
+      "tokens": 904826,
+      "loc": 57357,
       "decls": 4561,
       "files": 321,
-      "bytes": 3353416,
-      "build_seconds": 567
+      "bytes": 3352115,
+      "build_seconds": 527
     }
   },
   "counts": {
-    "merged": 43,
+    "merged": 44,
     "rejected": 2,
-    "open": 3,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 43,
+      "merged": 44,
       "attempts": 48,
-      "saved": 22592
+      "saved": 23335
     }
   ],
   "ideas": [
@@ -207,7 +207,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:01:19Z",
       "pr": 83,
-      "result_delta": null,
+      "result_delta": -743,
       "created_at": "2026-11-24T20:38:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/69",
       "technique": "restructure",
@@ -621,96 +621,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 83,
-      "title": "restructure(Nc/G,Nc/Sort): state repeated implicit binders once in section variables",
-      "author": "kongeskog",
-      "head_sha": "9e1ef9ebb69bf4438a3acf24a1385e5a2abaebde",
-      "base_sha": "fe05ddb2d608f0078fd51dfa7dff44b7dca6d0d6",
-      "status": "stale",
-      "created_at": "2026-11-24T21:06:19Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 911270,
-        "loc": 57849,
-        "decls": 4565,
-        "files": 321,
-        "bytes": 3372453,
-        "build_seconds": 253
-      },
-      "base_metrics": {
-        "tokens": 912013,
-        "loc": 57852,
-        "decls": 4565,
-        "files": 321,
-        "bytes": 3373754,
-        "build_seconds": null
-      },
-      "delta": -743,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "5 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 912013 → 911270 (-743)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 69,
-      "url": "https://github.com/kongeskog/formal-math/pull/83",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45487671184",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/G,Nc/Sort"
-    },
     {
       "pr": 86,
       "title": "shorten(Nc): norm_add_le, linear_combination and Nat.triangle_succ for seven numeric lemmas",
