@@ -377,7 +377,7 @@ theorem WF_ev {H T : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree 
       obtain ⟨k, hk, o, h5⟩ := AZ_ev (θ := θ) q.2
       rw [← h3] at h5
       refine ⟨_, h5, ?_⟩
-      have hn : q.2.nds = t.nds := Bt.nds_decAll (mem_simS hq).2
+      have hn : q.2.nds = t.nds := (Bt.ht_nds_decAll (mem_simS hq).2).2
       by_cases hz : q.2.zero
       · simp only [hz, if_true]
         refine .cons ⟨?_, ?_, ?_⟩ .nil

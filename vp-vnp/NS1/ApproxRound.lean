@@ -111,10 +111,10 @@ theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {
   have hn : ((K.map f).expand B).nds = (K.expand B).nds := nds_expand_map f B K
   rw [hn] at rg
   refine (rebF_kv eg rg hP (fun r hr => (hT r hr).1) fun q hq => ?_).congr ?_
-  · have h1 := KT.ht_budg hq
+  · obtain ⟨h1, h3⟩ := KT.ht_nds_budg hq
     have h2 := KT.ht_expand B (K.map f)
     rw [KT.ht_map] at h2
-    exact ⟨by omega, hn ▸ KT.nds_budg hq⟩
+    exact ⟨by omega, hn ▸ h3⟩
   · -- Lemma lem:postpone
     rw [← val_map f K l]
     obtain ⟨hsum, hze⟩ := Paper.lem_postpone P z hJ hP.hl (by rw [hP.evl]; exact fun r hr => (hT r hr).1)

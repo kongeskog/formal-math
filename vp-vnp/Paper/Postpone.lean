@@ -41,8 +41,8 @@ theorem lem_postpone (p z : Tree) {T J : ℕ} (hJ : T < 2 ^ J) (hh : Hl θ (Fm.o
       pv θ (zq p z e.1) = ((evl θ (Fm.ofTree p) z).map fun r => if ok e.1 r.bill = true then r.th else 0).sum ∧
       (evl θ (Fm.ofTree (zq p z e.1).hd) (zq p z e.1).tl).map Run.th =
         ((evl θ (Fm.ofTree p) z).filter fun r => ok e.1 r.bill).map Run.th :=
-    fun e he => zq_plain hh.ev hc (KT.ht_budg he) (by
-      have := Nat.mul_le_mul_left 40 (KT.nds_budg he)
+    fun e he => zq_plain hh.ev hc (KT.ht_nds_budg he).1 (by
+      have := Nat.mul_le_mul_left 40 (KT.ht_nds_budg he).2
       unfold MM
       omega)
   refine ⟨?_, fun e he => ⟨(hp e he).1, ?_, (hp e he).2⟩⟩
@@ -51,7 +51,7 @@ theorem lem_postpone (p z : Tree) {T J : ℕ} (hJ : T < 2 ^ J) (hh : Hl θ (Fm.o
     rw [← (hp e he).2.1]
     rfl
   · have h1 := Bt.size_enc e.1
-    have h2 := KT.nds_budg he
+    have h2 := (KT.ht_nds_budg he).2
     simp only [postponed, zq, Tree.size]
     omega
 

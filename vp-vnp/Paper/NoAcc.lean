@@ -136,9 +136,9 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     · exact hq.inB (lt_of_lt_of_le (hM i) (le_max_right _ _))
   have hqs : ∀ q ∈ (K.expand B').budg J, q.1.ht ≤ K.ht + B' + J + 1 ∧ q.1.nds ≤ nB * (J + 1) := by
     intro q hq
-    have h1 := KT.ht_budg hq
+    obtain ⟨h1, h3⟩ := KT.ht_nds_budg hq
     have h2 := KT.ht_expand B' K
-    exact ⟨by omega, KT.nds_budg hq⟩
+    exact ⟨by omega, h3⟩
   have hn4 : 4 * (nB * (J + 1)) ≤ 2 * v ^ 2 := by
     have := hnBX 4 (by omega)
     calc 4 * (nB * (J + 1)) ≤ 4 * (nB * X) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)

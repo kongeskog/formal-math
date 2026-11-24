@@ -93,7 +93,8 @@ theorem size_enc (t : Bt) : t.enc.size ≤ 4 * t.nds := by
     simp only [enc, Tree.size, nds]
     omega
 
-theorem ht_dec {p : List Bool} {t t' : Bt} (h : dec p t = some t') : t'.ht = t.ht := by
+theorem ht_nds_dec {p : List Bool} {t t' : Bt} (h : dec p t = some t') :
+    t'.ht = t.ht ∧ t'.nds = t.nds := by
   induction t generalizing p t' with
   | none => simp [dec] at h
   | leaf w =>
@@ -101,7 +102,7 @@ theorem ht_dec {p : List Bool} {t t' : Bt} (h : dec p t = some t') : t'.ht = t.h
     | nil =>
       simp only [dec, Option.map_eq_some_iff] at h
       obtain ⟨v, hv, rfl⟩ := h
-      simp [ht, length_decw hv]
+      simp [ht, nds, length_decw hv]
     | cons b p => simp [dec] at h
   | node l r ihl ihr =>
     cases p with
@@ -111,35 +112,11 @@ theorem ht_dec {p : List Bool} {t t' : Bt} (h : dec p t = some t') : t'.ht = t.h
       | true =>
         simp only [dec, Option.map_eq_some_iff] at h
         obtain ⟨v, hv, rfl⟩ := h
-        simp [ht, ihr hv]
+        simp [ht, nds, ihr hv]
       | false =>
         simp only [dec, Option.map_eq_some_iff] at h
         obtain ⟨v, hv, rfl⟩ := h
-        simp [ht, ihl hv]
-
-theorem nds_dec {p : List Bool} {t t' : Bt} (h : dec p t = some t') : t'.nds = t.nds := by
-  induction t generalizing p t' with
-  | none => simp [dec] at h
-  | leaf w =>
-    cases p with
-    | nil =>
-      simp only [dec, Option.map_eq_some_iff] at h
-      obtain ⟨v, hv, rfl⟩ := h
-      simp [nds, length_decw hv]
-    | cons b p => simp [dec] at h
-  | node l r ihl ihr =>
-    cases p with
-    | nil => simp [dec] at h
-    | cons b p =>
-      cases b with
-      | true =>
-        simp only [dec, Option.map_eq_some_iff] at h
-        obtain ⟨v, hv, rfl⟩ := h
-        simp [nds, ihr hv]
-      | false =>
-        simp only [dec, Option.map_eq_some_iff] at h
-        obtain ⟨v, hv, rfl⟩ := h
-        simp [nds, ihl hv]
+        simp [ht, nds, ihl hv]
 
 theorem decAll_append (b b' : List (List Bool)) (t : Bt) : decAll (b ++ b') t = (decAll b t).bind (decAll b') := by
   induction b generalizing t with
@@ -150,25 +127,17 @@ theorem decAll_append (b b' : List (List Bool)) (t : Bt) : decAll (b ++ b') t = 
     funext t
     exact ih t
 
-theorem ht_decAll {b : List (List Bool)} {t t' : Bt} (h : decAll b t = some t') : t'.ht = t.ht := by
+theorem ht_nds_decAll {b : List (List Bool)} {t t' : Bt} (h : decAll b t = some t') :
+    t'.ht = t.ht ∧ t'.nds = t.nds := by
   induction b generalizing t with
   | nil =>
     simp only [decAll, Option.some.injEq] at h
-    rw [h]
+    simp [h]
   | cons p b ih =>
     simp only [decAll, Option.bind_eq_some_iff] at h
     obtain ⟨s, hs, h⟩ := h
-    rw [ih h, ht_dec hs]
-
-theorem nds_decAll {b : List (List Bool)} {t t' : Bt} (h : decAll b t = some t') : t'.nds = t.nds := by
-  induction b generalizing t with
-  | nil =>
-    simp only [decAll, Option.some.injEq] at h
-    rw [h]
-  | cons p b ih =>
-    simp only [decAll, Option.bind_eq_some_iff] at h
-    obtain ⟨s, hs, h⟩ := h
-    rw [ih h, nds_dec hs]
+    rw [(ih h).1, (ih h).2]
+    exact ht_nds_dec hs
 
 end Bt
 

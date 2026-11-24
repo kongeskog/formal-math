@@ -184,41 +184,24 @@ theorem length_words {J : ℕ} {w : List Bool} (h : w ∈ words J) : w.length = 
     obtain ⟨b, -, v, hv, rfl⟩ := h
     simp [ih hv]
 
-theorem ht_budg {J : ℕ} {K : KT R} {q : Bt × R} (h : q ∈ K.budg J) : q.1.ht ≤ K.ht + J + 1 := by
+theorem ht_nds_budg {J : ℕ} {K : KT R} {q : Bt × R} (h : q ∈ K.budg J) :
+    q.1.ht ≤ K.ht + J + 1 ∧ q.1.nds ≤ K.nds * (J + 1) := by
   induction K generalizing q with
   | none =>
     simp only [budg, List.mem_singleton] at h
     subst h
-    simp [Bt.ht]
+    simp [Bt.ht, Bt.nds, nds]
   | leaf c =>
     simp only [budg, List.mem_map] at h
     obtain ⟨w, hw, rfl⟩ := h
-    simp [Bt.ht, length_words hw, ht]
+    simp [Bt.ht, Bt.nds, length_words hw, ht, nds]
   | node l r ihl ihr =>
     simp only [budg, List.mem_flatMap, List.mem_map] at h
     obtain ⟨p, hp, q', hq, rfl⟩ := h
-    have h1 := ihl hp
-    have h2 := ihr hq
-    simp only [Bt.ht, ht]
-    omega
-
-theorem nds_budg {J : ℕ} {K : KT R} {q : Bt × R} (h : q ∈ K.budg J) : q.1.nds ≤ K.nds * (J + 1) := by
-  induction K generalizing q with
-  | none =>
-    simp only [budg, List.mem_singleton] at h
-    subst h
-    simp [Bt.nds, nds]
-  | leaf c =>
-    simp only [budg, List.mem_map] at h
-    obtain ⟨w, hw, rfl⟩ := h
-    simp [Bt.nds, length_words hw, nds]
-  | node l r ihl ihr =>
-    simp only [budg, List.mem_flatMap, List.mem_map] at h
-    obtain ⟨p, hp, q', hq, rfl⟩ := h
-    have h1 := ihl hp
-    have h2 := ihr hq
-    simp only [Bt.nds, nds]
-    nlinarith
+    obtain ⟨h1, h1'⟩ := ihl hp
+    obtain ⟨h2, h2'⟩ := ihr hq
+    simp only [Bt.ht, Bt.nds, ht, nds]
+    exact ⟨by omega, by nlinarith⟩
 
 end KT
 
