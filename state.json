@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:51:08.489723637Z",
+  "updated_at": "2026-11-24T20:52:07.955290321Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 4,
     "contributors": 1,
-    "ideas_open": 6
+    "ideas_open": 4
   },
   "leaderboard": [
     {
@@ -188,10 +188,10 @@
     {
       "number": 68,
       "title": "Idea: restructure(Paper): prove the exact end theorems from the approximate ones",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:51:44Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:11Z",
@@ -202,10 +202,10 @@
     {
       "number": 67,
       "title": "Idea: restructure(*): state the runs of a Gives once; one lemma for twin combinators of Does and KV",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:51:34Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:10Z",
@@ -807,8 +807,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 73,
@@ -823,7 +823,7 @@
       "pr": 78,
       "title": "library(Nc): Mathlib lemmas and derived equivalences in place of ten local proofs",
       "author": "kongeskog",
-      "head_sha": "acb1196f23cf3eec2d4e878f14fffc6c62a8163a",
+      "head_sha": "9019e6ee3896c1b6038268bb212c1a2be39a3361",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-24T20:50:24Z",
@@ -875,8 +875,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 70,
