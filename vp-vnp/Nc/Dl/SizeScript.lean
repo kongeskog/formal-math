@@ -16,13 +16,6 @@ namespace Nc.Dl
 
 open NS1 NS1.Tree Finset Nc.G Nc.Cut Nc.Grp
 
-theorem size_numT (k : ℕ) : (num k).size = 2 * k + 1 := by
-  induction k with
-  | zero => rfl
-  | succ k ih =>
-    simp only [num, Tree.size, ih]
-    omega
-
 theorem size_listT (l : List Tree) : (listT l).size = (l.map fun t => t.size + 1).sum + 1 := by
   induction l with
   | nil => rfl
@@ -81,7 +74,7 @@ theorem size_body {B : Body} {X Lc : ℕ} (h1 : B.flags.length ≤ X)
     intro t ht
     rw [List.mem_map] at ht
     obtain ⟨k, hk, rfl⟩ := ht
-    rw [size_numT]
+    rw [size_num]
     have := (h2 l hl).2 k hk
     omega
   have e2 := size_keysT h3 h4
@@ -161,7 +154,7 @@ theorem size_baseIns (hK : K + K ≤ X) (hU0 : U0 ≤ X) (hS : Fintype.card (Opt
       have h2 := size_ofBits (dkey (p, k))
       have h3 := hkey (Fin.castAdd A' p, .init p p k)
       have h4 := hdkey (p, k)
-      simp only [Ins.tree, Tree.size, size_numT]
+      simp only [Ins.tree, Tree.size, size_num]
       omega
     · rw [List.length_map, smul_eq_mul]
       refine Nat.mul_le_mul_right _ ((List.length_filter_le _ _).trans ?_)
@@ -182,7 +175,7 @@ theorem size_baseIns (hK : K + K ≤ X) (hU0 : U0 ≤ X) (hS : Fintype.card (Opt
       have h1 := size_bodyOf (ρ := ρ) (n := n) hK hU0 hS hkey hdkey (Fin.castAdd K κ)
       have h2 := hqn (q κ.castSucc)
       have h3 := hqn (q κ.succ)
-      simp only [Ins.tree, Tree.size, size_numT]
+      simp only [Ins.tree, Tree.size, size_num]
       omega
     · rw [Fin.addCases_right, Fin.addCases_right]
       have h1 := size_bodyOf (ρ := ρ) (n := n) hK hU0 hS hkey hdkey (Fin.natAdd K κ)
@@ -198,7 +191,7 @@ theorem size_baseIns (hK : K + K ≤ X) (hU0 : U0 ≤ X) (hS : Fintype.card (Opt
         rw [List.length_ofFn] at this
         exact this
       have e : (x κ).length * (4 * c + 1 + 1) = (x κ).length * (4 * c + 2) := by ring
-      simp only [Ins.tree, Tree.size, size_numT]
+      simp only [Ins.tree, Tree.size, size_num]
       omega
   refine le_trans (Nat.add_le_add hhead hsum) ?_
   omega
@@ -246,7 +239,7 @@ theorem size_roleIns (hU : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X) (hU1 : 
   have h4 := hnum r.1
   have e : X * (X * (4 * Lc + 2) + 2) = X * X * (4 * Lc + 2) + 2 * X := by ring
   have e' : X * X * (8 * Lc + 4) = 2 * (X * X * (4 * Lc + 2)) := by ring
-  simp only [roleIns, Ins.tree, Tree.size, size_numT]
+  simp only [roleIns, Ins.tree, Tree.size, size_num]
   omega
 
 /-- The units that are cut and have a holder in the group. -/
@@ -290,13 +283,13 @@ theorem size_endIns (hU : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X) (hkey : 
         have lw := length_uwBits_le (b id)
         by_cases h0 : grp (G.hold0 M.np id) = g
         · by_cases h1 : grp (G.hold1 M.np id) = g
-          · simp only [h0, h1, if_true, List.map_cons, List.sum_cons, Ins.tree, Tree.size, size_numT]
+          · simp only [h0, h1, if_true, List.map_cons, List.sum_cons, Ins.tree, Tree.size, size_num]
             omega
           · have hcut : id ∈ cutAt P n o grp g := by
               refine mem_filter.2 ⟨mem_univ _, hc, ?_, Or.inl h0⟩
               rw [h0]
               exact fun h => h1 h.symm
-            simp only [h0, h1, if_true, if_false, List.map_cons, List.sum_cons, Ins.tree, Tree.size, size_numT,
+            simp only [h0, h1, if_true, if_false, List.map_cons, List.sum_cons, Ins.tree, Tree.size, size_num,
               if_pos hcut]
             omega
         · by_cases h1 : grp (G.hold1 M.np id) = g
@@ -304,7 +297,7 @@ theorem size_endIns (hU : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X) (hkey : 
               refine mem_filter.2 ⟨mem_univ _, hc, ?_, Or.inr h1⟩
               rw [h1]
               exact h0
-            simp only [h0, h1, if_true, if_false, List.map_cons, List.sum_cons, Ins.tree, Tree.size, size_numT,
+            simp only [h0, h1, if_true, if_false, List.map_cons, List.sum_cons, Ins.tree, Tree.size, size_num,
               if_pos hcut]
             omega
           · simp only [h0, h1, if_false]
