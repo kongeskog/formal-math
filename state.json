@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:32:43.275915675Z",
+  "updated_at": "2026-11-24T00:33:29.492500615Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 0,
     "contributors": 1,
-    "ideas_open": 3
+    "ideas_open": 2
   },
   "leaderboard": [
     {
@@ -90,10 +90,10 @@
     {
       "number": 6,
       "title": "Idea: shorten(*): remove simp arguments and tactics the linter reports as unused",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T03:33:08Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T00:32:13Z",
