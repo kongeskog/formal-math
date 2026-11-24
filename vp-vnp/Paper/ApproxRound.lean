@@ -48,9 +48,9 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
       (KT.inB_map f _ K' q).2 (hq.mono (Nat.add_le_add_right (le_max_right _ _) _))⟩
   have hqs : ∀ q ∈ (K.expand B).budg J, q.1.ht ≤ K.ht + B + J + 1 ∧ q.1.nds ≤ (K.expand B).nds * (J + 1) := by
     intro q hq
-    have h1 := KT.ht_budg hq
+    obtain ⟨h1, h3⟩ := KT.ht_nds_budg hq
     have h2 := KT.ht_expand B K
-    exact ⟨by omega, KT.nds_budg hq⟩
+    exact ⟨by omega, h3⟩
   have hsz : ∀ z : Tree, z.size ≤ v ^ (H - 32) → ∀ q ∈ (K.expand B).budg J, (zq p z q.1).size ≤ s := by
     intro z hz q hq
     have h1 := Bt.size_enc q.1

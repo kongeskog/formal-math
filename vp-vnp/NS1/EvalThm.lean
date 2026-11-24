@@ -187,7 +187,7 @@ theorem interp {H : ℕ} {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l
     rw [simS_flatMap (G := fun r s => (r.seq s).tick (.cons r.out s.out)) (fun _ _ => rfl)]
     refine lett_rel e1 r1 fun s _ q hq hs => ?_
     obtain ⟨s1, s2, s3, s4⟩ := hs
-    have hqt : q.2.ht ≤ H := (Bt.ht_decAll (mem_simS hq).2).trans_le ht
+    have hqt : q.2.ht ≤ H := (Bt.ht_nds_decAll (mem_simS hq).2).1.trans_le ht
     obtain ⟨l2, e2, r2⟩ := call2_rel (f := f) (o := q.1.out) (t := t) (ihb f.tl.tl rfl q.2 hqt)
     rw [← s3] at e2
     rw [← flatMap_single]
@@ -208,7 +208,7 @@ theorem interp {H : ℕ} {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l
     rw [simS_flatMap (G := fun r s => (r.seq s).tick s.out) (fun _ _ => rfl)]
     refine lett_rel e1 r1 fun s _ q hq hs => ?_
     obtain ⟨s1, s2, s3, s4⟩ := hs
-    have hqt : q.2.ht ≤ H := (Bt.ht_decAll (mem_simS hq).2).trans_le ht
+    have hqt : q.2.ht ≤ H := (Bt.ht_nds_decAll (mem_simS hq).2).1.trans_le ht
     have hy : Dt θ (.hd .id) s.out (env f x t) 2 := by rw [s3]; exact .hd (.id _)
     have hv : Dt θ (.hd (.tl .id)) s.out q.1.out 3 := by rw [s3]; exact .hd (.tl (.id _))
     have ht' : Dt θ (.tl (.tl .id)) s.out q.2.enc 3 := by rw [s3]; exact .tl (.tl (.id _))
@@ -251,13 +251,13 @@ theorem interp {H : ℕ} {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l
     rw [hlist, simS_flatMap (G := fun r s => (r.seq s).tick s.out) (fun _ _ => rfl)]
     refine lett_rel e1 r1 fun s _ q hq hs => ?_
     obtain ⟨s1, s2, s3, s4⟩ := hs
-    have hqt : q.2.ht ≤ H := (Bt.ht_decAll (mem_simS hq).2).trans_le ht
+    have hqt : q.2.ht ≤ H := (Bt.ht_nds_decAll (mem_simS hq).2).1.trans_le ht
     obtain ⟨l2, e2, r2⟩ := call2_rel (f := f) (o := q.1.out) (t := t) (ihb f.tl.tl rfl q.2 hqt)
     rw [← s3] at e2
     rw [simS_flatMap (G := fun r s => r.seq s) (fun _ _ => rfl), List.map_flatMap]
     refine lett_rel e2 r2 fun u _ p hp hu => ?_
     obtain ⟨u1, u2, u3, u4⟩ := hu
-    have hpt : p.2.ht ≤ H := (Bt.ht_decAll (mem_simS hp).2).trans_le hqt
+    have hpt : p.2.ht ≤ H := (Bt.ht_nds_decAll (mem_simS hp).2).1.trans_le hqt
     obtain ⟨l3, e3, r3⟩ := ih q.1 (mem_simS hq).1 p.1 (mem_simS hp).1 q.1.out rfl p.2 hpt
     have hy : Dt θ (.hd (.hd .id)) u.out (env f x t) 3 := by rw [u3]; exact .hd (.hd (.id _))
     have hf' : Dt θ (.hd (.tl (.hd .id))) u.out q.1.out 4 := by rw [u3]; exact .hd (.tl (.hd (.id _)))
@@ -336,7 +336,7 @@ theorem interp {H : ℕ} {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l
             rw [ih]
     rw [hlist]
     refine call0 (ih f.tl rfl t ht) fun q hq => ?_
-    have hqt : q.2.ht ≤ H := (Bt.ht_decAll (mem_simS hq).2).trans_le ht
+    have hqt : q.2.ht ≤ H := (Bt.ht_nds_decAll (mem_simS hq).2).1.trans_le ht
     cases hd : Bt.dec q.1.out.path q.2 with
     | none =>
       refine ⟨_, Ev.cons_nil_right (Dt.quote _ _) (Ev.run_nil (.quote _ _) (.cons (.quote _ _) (.id _)) ?_), .nil⟩
