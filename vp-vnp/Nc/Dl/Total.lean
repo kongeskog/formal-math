@@ -112,13 +112,7 @@ theorem exists_mid (q : Fin (K + 1) → Q) (ρ : Option S → Fin (K + K) → Ro
       · exact h3 id
     refine ⟨fun κ => ?_, fun a => ?_, fun s p => ?_, fun a b => ?_, fun a b => ?_, fun a => ?_, fun ν d => ?_, fun k => ?_,
       fun x => ?_, fun s p => ?_, fun x => ?_, ?_, fun id => ?_⟩
-    · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
-    · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
-    · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
-    · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
-    · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
-    · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
-    · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
+    iterate 7 · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
     · rw [k7 _ (n7 _ (by simp) (by simp) (by simp)), w6]
     · have := w7 (.inl x)
       simp only [nm7, v7] at this
