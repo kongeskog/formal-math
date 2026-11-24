@@ -35,9 +35,13 @@
     "35": {
       "login": "kongeskog",
       "at": "2026-11-24T19:04:15Z"
+    },
+    "36": {
+      "login": "kongeskog",
+      "at": "2026-11-24T19:06:30Z"
     }
   },
-  "comments_seen_until": "2026-11-24T19:04:15Z",
+  "comments_seen_until": "2026-11-24T19:06:30Z",
   "dispatched": {},
   "alerts": [],
   "format_notified": []
