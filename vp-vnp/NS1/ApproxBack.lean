@@ -56,14 +56,13 @@ theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {t : B
       (40 * (o.length + 1) + MM H * T + 40 * t.nds + 90) := by
   obtain ⟨pl, pe, -⟩ := zq_plain hP hT ht (τ := MM H * T + 40 * t.nds + 40) le_rfl
   obtain ⟨k, hk, u, hu⟩ := AZ_ev (θ := θ) (.leaf o)
-  obtain ⟨x, hx⟩ : ∃ x, x = Tree.cons z (.cons t.enc (ofBits o)) := ⟨_, rfl⟩
-  rw [← hx]
+  generalize hx : Tree.cons z (.cons t.enc (ofBits o)) = x
   have hu' : Ev θ (Fm.ofTree AZ.code) (.cons AZ.code (.cons .nil (ofBits o)))
       (if (Bt.leaf o).zero then [.det k u] else []) := by
     rw [Fm.ofTree_code]
     exact hu
   have eA := Ev.run_det (Dt.quote (θ := θ) AZ.code x) (Dt.cons (Dt.quote AZ.code x) (Dt.cons (Dt.quote .nil x)
-    (Dt.tl (Dt.tl (Dt.id x))))) (by rw [hx]; simpa using hu')
+    (Dt.tl (Dt.tl (Dt.id x))))) (by rw [← hx]; simpa using hu')
   have k1 : KV θ κ S (.run (.quote AZ.code) (.cons (.quote AZ.code) (.cons (.quote .nil) (.tl (.tl .id))))) x
       (if KT.val o = 0 then 1 else 0) (40 * (o.length + 1) + 20) := by
     refine ⟨_, eA, ?_, ?_⟩

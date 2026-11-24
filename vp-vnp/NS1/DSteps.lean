@@ -193,7 +193,7 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       simp only [DStep.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at this ⊢
       exact this
     have hl := getF_gives hp (Gives.id (θ := θ) (.cons (DStep.pick p tab).tree W)).hd.tl.tl
-    obtain ⟨opts, ho⟩ : ∃ l, l = (tget (tget p W).path tab).toList := ⟨_, rfl⟩
+    obtain ⟨opts, ho⟩ := exists_eq (a' := (tget (tget p W).path tab).toList)
     have hl' : Gives θ (getF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.hd .id)))) (.cons (DStep.pick p tab).tree W)
         (listT opts) (4 + 2 + 30 * p.length + 20 + 4 + 30 * (tget p W).len + 20) := by
       rw [ho, listT_toList]
