@@ -41,7 +41,9 @@ theorem Rep.load {σ : St supp} (hσ : OKs σ) {a : ℕ} {t : Tree} (h : Rep σ.
     obtain ⟨p, q, s, h1, h2, h3⟩ := h
     exact ⟨p, q, s, h1, h2, h3⟩
 
-/-- What happens when the value o is returned to the frame k in the mode md. -/
+/-- What happens when the tree o is returned to the frame k in the mode md. Two modes are used:
+`.R`, where o is a value returned by the evaluation, and `.PR`, where o is a tree that has been
+read. -/
 def KS (θ : List Bool → A) (supp : Finset (List Bool)) (md : Md (Nm supp)) (H : List (Rec Kd)) (k : ℕ) (inp : List Bool)
     (o : Tree) (S : A) (B : ℤ) : Prop :=
   ∀ (σ : St supp) (v : ℕ), OKs σ → σ.mode = md → σ.regs 1 = v → σ.regs 2 = k → H ⊆ σ.heap → σ.inp = inp →

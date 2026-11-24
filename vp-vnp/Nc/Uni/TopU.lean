@@ -176,7 +176,7 @@ theorem pv_eq {τ : ℕ} {z : Tree} (h : Plain θ τ z) : pv θ z = tot (fun _ =
   rw [if_pos (h.2 r hr).1, mul_one]
 
 /-- After the tree has been read. -/
-theorem PKS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : Plain θ τ z) {H : List (Rec Kd)} {k j s0 s1 : ℕ}
+theorem KS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : Plain θ τ z) {H : List (Rec Kd)} {k j s0 s1 : ℕ}
     (hj : ((.PE, ![j, k, s0, s1]) : Rec Kd) ∈ H) (hk : ((.HT, ![k, 0, 0, 0]) : Rec Kd) ∈ H) :
     KS θ supp .PR H j [] z (pv θ z) (Cc supp * τ + 3) := by
   intro σ3 v ok3 hm3 h31 h32 hh3 hi3 hv
@@ -239,7 +239,7 @@ theorem start (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : 
   refine start1 ok1 hm1 fun σ2 k s0 s1 ok2 hm2 hr2 hpe hh2 hi2 => ?_
   rw [hr1] at hpe
   refine (parse z (Cc supp * τ + 3) σ2 k [] ok2 hm2 hr2 (by rw [hi2, hi1, hi, List.append_nil])
-    (PKS_eval hθ h hpe (hh2 hht))).mono (by linarith)
+    (KS_eval hθ h hpe (hh2 hht))).mono (by linarith)
 
 /-- **The universal machine.** -/
 theorem sum_machine (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : Plain θ τ z) :
