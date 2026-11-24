@@ -1069,7 +1069,7 @@ theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨P, rfl⟩ := Pl.pt.surjective p
   have h0 := held_node_le (R := R) (Pl := Pl) (lhat := N) (n := n) (o := o) hH.h_pos hH.r_pos hH.b_pos
-    (fun x ν => hgd (.inl x) ν) (fun l => hgd (.inr l)) hH.near hSm (ℓf := N) P (fun a _ => hv a)
+    hgd hH.near hSm (ℓf := N) P (fun a _ => hv a)
   have h2 : isB ch P * (N + 8 * m * N) ≤ if ((Pl.pt P : Fin (AA + A')) : ℕ) < AA then (1 + 8 * m) * N else 0 := by
     unfold isB
     split_ifs with e1 e2 e2

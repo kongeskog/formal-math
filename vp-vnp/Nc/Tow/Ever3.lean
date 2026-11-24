@@ -49,8 +49,9 @@ abbrev Q4 (T : Tower h b D J r) (m AA : ℕ) := Fin AA × Fin AA × T.X 0 × Fin
 /-- The relay of a quadruple. -/
 def stR (q : Q4 T m AA) : RM T m AA := .start q.1 q.2.1 q.2.2.1 q.2.2.2
 
-variable (hgR : ∀ (x : {x : RM T m AA // okR T R ch x}) (ν : Bool), o ⟨.inl x, ν⟩ = num R ch FL lhat n o (.inl x))
-include hgR
+-- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+variable (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
+include hg
 
 open Classical in
 /-- The paths at a chamber. -/
@@ -105,7 +106,7 @@ theorem paths_at (x : T.X 0) :
       intro q
       unfold nR
       rw [dif_pos (mem_filter.1 q.2).2.1]
-      exact (alv_relay hgR ⟨stR q.1, (mem_filter.1 q.2).2.1⟩ false).symm
+      exact (alv_relay hg ⟨stR q.1, (mem_filter.1 q.2).2.1⟩ false).symm
     rw [Finset.sum_congr rfl fun q _ => h3 q]
     refine sum_alv_le (.edge 0 e) S.attach
       (fun q => (⟨.inl ⟨stR q.1, (mem_filter.1 q.2).2.1⟩, false⟩ : NM R FL (ch := ch))) ?_ ?_
@@ -194,11 +195,11 @@ theorem NR0_le (x : T.X 0) : NR0 R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
       · intro hn; exact absurd (mem_univ _) hn
     · refine le_of_eq (Finset.sum_eq_zero fun c _ => if_neg fun he => hx ⟨c, he⟩)
   · -- on the paths
-    refine le_trans (le_of_eq ?_) (paths_at hr hb hgR x)
+    refine le_trans (le_of_eq ?_) (paths_at hr hb hg x)
     simp only [Fintype.sum_prod_type]
     rfl
 
-omit hr hb hgR in
+omit hr hb hg in
 open Classical in
 theorem NR0_succ {j : ℕ} (hj : j + 1 ≤ J) (x : T.X (j + 1)) : NR0 R ch FL lhat n o (nd T (j + 1) hj x) = 0 := by
   unfold NR0
@@ -206,7 +207,7 @@ theorem NR0_succ {j : ℕ} (hj : j + 1 ≤ J) (x : T.X (j + 1)) : NR0 R ch FL lh
     Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun q _ => if_neg ?_
   fin_cases q <;> exact nd_ne (hj := Nat.zero_le J) (Nat.succ_ne_zero j).symm
 
-omit hr hb hgR in
+omit hr hb hg in
 open Classical in
 theorem NR0_none : NR0 R ch FL lhat n o none = 0 := by
   unfold NR0
@@ -225,10 +226,10 @@ noncomputable def NL (P : Nd T) : ℕ := ∑ l : LMv T FL, ∑ f : T.Fl,
   if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then num R ch FL lhat n o (.inr l) else 0
 
 variable (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
-  (hgL : ∀ l : LMv T FL, GoodL R ch FL o l (num R ch FL lhat n o (.inr l)) ∧
-    ∀ ν, num R ch FL lhat n o (.inr l) ≤ o ⟨.inr l, ν⟩)
+  -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+  (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
   (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f)
-include hr hb hgL hnr
+include hr hb hg hnr
 
 /-- The units of a law move lie on edges at its chambers. -/
 theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
@@ -242,7 +243,7 @@ theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
     have h2 : alvN R ch FL o ⟨.inr l, ν'⟩ (num R ch FL lhat n o (.inr l)) =
         if GoodL R ch FL o l (num R ch FL lhat n o (.inr l)) then o ⟨.inr l, ν'⟩ else
           min (o ⟨.inr l, ν'⟩) (num R ch FL lhat n o (.inr l)) := rfl
-    rw [h2, if_pos (hgL l).1]
+    rw [h2, if_pos (hg (.inr l)).1]
   set p := (T.nr j.2 i).symm (T.vx i x, ν) with hp
   have hp2 : T.nr j.2 i p = (T.vx i x, ν) := by rw [hp, Equiv.apply_symm_apply]
   have v0 := T.nr_vx0 j.2 i p
@@ -265,7 +266,7 @@ theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
   have h4 := sum_alv_le (lhat := lhat) (n := n) (o := o) (.edge j.succ p.1) ({()} : Finset Unit)
     (fun _ => (⟨.inr l, ν'⟩ : NM R FL (ch := ch))) (fun _ _ _ _ _ => rfl) (fun _ _ => htg)
   rw [Finset.sum_singleton, h1] at h4
-  refine ((hgL l).2 ν').trans (h4.trans ?_)
+  refine ((hg (.inr l)).2 ν').trans (h4.trans ?_)
   rw [lev_succ]
   unfold fb Tower.bet
   refine le_trans ?_ (Finset.single_le_sum (f := fun e : T.Ed (j + 1) => if T.e0 e = x ∨ T.e1 e = x then
@@ -309,7 +310,7 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL R ch FL lhat
   set j : Fin J := ⟨k, hk⟩ with hj
   rw [Finset.sum_eq_single (imin hh (ldL R ch FL lhat n o) k)]
   · calc _ ≤ ∑ _d : FL.Di, fb (ldL R ch FL lhat n o) (k + 1) x :=
-          Finset.sum_le_sum fun d _ => num_law_le hr hb hgL hnr j _ x d
+          Finset.sum_le_sum fun d _ => num_law_le hr hb hg hnr j _ x d
       _ = _ := by rw [Finset.sum_const, card_univ, smul_eq_mul]
   · intro i _ hi
     refine Finset.sum_eq_zero fun d _ => ?_
@@ -317,13 +318,13 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL R ch FL lhat
     exact (isMin_iff hh _ j.castSucc i).1 hm
   · intro hn; exact absurd (mem_univ _) hn
 
-omit hr hb hgL hnr hh in
+omit hr hb hg hnr hh in
 open Classical in
 theorem NL_zero (x : T.X 0) : NL R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) = 0 := by
   unfold NL
   exact Finset.sum_eq_zero fun l _ => Finset.sum_eq_zero fun f _ => if_neg (nd_ne (Nat.succ_ne_zero _))
 
-omit hr hb hgL hnr hh in
+omit hr hb hg hnr hh in
 open Classical in
 theorem NL_none : NL R ch FL lhat n o none = 0 := by
   unfold NL
@@ -334,14 +335,15 @@ end Laws
 section Final
 
 variable (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
-  (hgR : ∀ (x : {x : RM T m AA // okR T R ch x}) (ν : Bool), o ⟨.inl x, ν⟩ = num R ch FL lhat n o (.inl x))
-include hh hr hb hgR
+  -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+  (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
+include hh hr hb hg
 
 open Classical in
 theorem NR_zero (x : T.X 0) : NR R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
     (if ∃ c, ch c = x then 2 * m * lhat else 0) + 7 * fb (ldL R ch FL lhat n o) 0 x := by
-  refine (NR_le hh hr hb hgR _).trans ?_
-  have h1 := NR0_le hr hb hgR x
+  refine (NR_le hh hr hb hg _).trans ?_
+  have h1 := NR0_le hr hb hg x
   have h2 := sum_level (fun j y => 5 * fb (ldL R ch FL lhat n o) j y) 0 (Nat.zero_le J) x
   have h3 := sum_level_zero (fun j y => 3 * chs hh (ldL R ch FL lhat n o) j y +
     2 * fb (ldL R ch FL lhat n o) (j + 1) y) x
@@ -367,7 +369,7 @@ theorem NR_zero (x : T.X 0) : NR R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
 open Classical in
 theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR R ch FL lhat n o (nd T (k + 1) hk x) ≤
     8 * fb (ldL R ch FL lhat n o) (k + 1) x + 3 * chs hh (ldL R ch FL lhat n o) k x := by
-  refine (NR_le hh hr hb hgR _).trans ?_
+  refine (NR_le hh hr hb hg _).trans ?_
   have h1 : NR0 R ch FL lhat n o (nd T (k + 1) hk x) = 0 := NR0_succ hk x
   have h2 := sum_level (fun j y => 5 * fb (ldL R ch FL lhat n o) j y) (k + 1) hk x
   have h3 := sum_level_succ (fun j y => 3 * chs hh (ldL R ch FL lhat n o) j y +
@@ -394,7 +396,7 @@ theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR R ch FL lhat
 
 open Classical in
 theorem NR_none : NR R ch FL lhat n o none ≤ ∑ e : T.Ed J, ldL R ch FL lhat n o J e := by
-  refine (NR_le hh hr hb hgR _).trans ?_
+  refine (NR_le hh hr hb hg _).trans ?_
   have h1 : NR0 R ch FL lhat n o none = 0 := NR0_none
   have h2 : (∑ j : Fin J, ∑ y : T.X j, if nd T j j.2.le y = none then 5 * fb (ldL R ch FL lhat n o) j y else 0) = 0 :=
     Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun y _ => if_neg nd_ne_none

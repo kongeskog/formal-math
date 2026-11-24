@@ -108,16 +108,14 @@ variable {R FL Pl lhat n o}
 section
 
 variable (hr : 0 < r) (hb : 0 < b)
-  (hgR : ∀ (x : {x : RM T m AA // okR T R ch x}) (ν : Bool),
-    oo R FL Pl o ⟨.inl x, ν⟩ = num R ch FL lhat (nn n) (oo R FL Pl o) (.inl x))
-  (hgL : ∀ l : LMv T FL, GoodL R ch FL (oo R FL Pl o) l (num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l)) ∧
-    ∀ ν, num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) ≤ oo R FL Pl o ⟨.inr l, ν⟩)
+  -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+  (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
 
-include hr hb hgL in
+include hr hb hg in
 /-- The outcome of a law move is not large. -/
 theorem law_le (l : LMv T FL) (ν : (FL.L l.2.2.2).Cn) :
     oo R FL Pl o ⟨.inr l, ν⟩ ≤ FL.G₁ * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) := by
-  have h1 := (hgL l).1
+  have h1 := (hg (.inr l)).1
   unfold GoodL at h1
   set t := num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) with ht
   have h2 : (oo R FL Pl o ⟨.inr l, ν⟩) ^ 2 ≤ ∑ ν : (FL.L l.2.2.2).Cn, (oo R FL Pl o ⟨Sum.inr l, ν⟩) ^ 2 :=
@@ -134,7 +132,7 @@ theorem law_le (l : LMv T FL) (ν : (FL.L l.2.2.2).Cn) :
     exact Nat.le_mul_self _
   exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h4
 
-include hr hb hgL in
+include hr hb hg in
 open Classical in
 /-- The units of a law move at a node. -/
 theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d : Bool,
@@ -149,7 +147,7 @@ theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d 
         oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ FL.G₁ * S := by
     intro ν d
     split_ifs with hP
-    · refine (law_le hr hb hgL l ν).trans (Nat.mul_le_mul_left _ ?_)
+    · refine (law_le hr hb hg l ν).trans (Nat.mul_le_mul_left _ ?_)
       refine le_trans ?_ (Finset.single_le_sum (f := fun f : T.Fl =>
         if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then t else 0) (fun _ _ => Nat.zero_le _)
         (mem_univ (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))))
@@ -164,7 +162,7 @@ theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d 
         rw [Fintype.card_congr (FL.cn l.2.2.2)]
         ring
 
-include hr hb hgR hgL
+include hr hb hg
 
 open Classical in
 /-- **The units that a party ever holds.** -/
@@ -212,7 +210,7 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
           unfold nR
           rw [dif_pos x.2]
         rw [Fintype.sum_bool, Fintype.sum_bool, Fintype.sum_bool, Fin.sum_univ_three, h6]
-        simp only [hgR, if_true, Bool.false_eq_true, if_false]
+        simp only [show ∀ ν : Bool, _ = _ from hg (.inl x), if_true, Bool.false_eq_true, if_false]
         split_ifs <;> omega
       have h7 : (∑ x : {x : RM T m AA // okR T R ch x}, 2 * ∑ q : Fin 3, if tri T R ch x.1 q = P then
           nR R ch FL lhat (nn n) (oo R FL Pl o) x.1 else 0) ≤ 2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P := by
@@ -227,7 +225,7 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
     · -- laws
       unfold NL
       rw [Finset.mul_sum]
-      exact Finset.sum_le_sum fun l _ => law_node hr hb hgL l P
+      exact Finset.sum_le_sum fun l _ => law_node hr hb hg l P
   omega
 
 end

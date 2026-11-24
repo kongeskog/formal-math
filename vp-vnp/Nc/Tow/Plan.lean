@@ -158,4 +158,26 @@ theorem load_eq (τ : Tg T m AA) : load R ch FL lhat (nn n) (oo R FL Pl o) τ =
       rintro ⟨-, h2⟩
       exact hν h2
 
+/-! Membership in the consumers of a slot; used by `Ok` and `Slp4`. -/
+
+theorem consM_inl (x : {x : RM T m AA // okR T R ch x}) (e : (kindM R ch FL (.inl x)).Sl) (u : Un R FL Pl U0 U1) :
+    u ∈ consM R FL Pl lhat n o ⟨.inl x, e⟩ ↔ ActR (load R ch FL lhat (nn n) (oo R FL Pl o)) x.1 ∧
+      AlU R FL Pl lhat n o u ∧ tgU R FL Pl u = inpR T x.1 := by
+  classical
+  rw [consM]
+  split_ifs with ha
+  · simp [mem_Al, ha]
+  · simp [ha]
+
+theorem consM_inr (l : LMv T FL) (e : (kindM R ch FL (.inr l)).Sl) (u : Un R FL Pl U0 U1) :
+    u ∈ consM R FL Pl lhat n o ⟨.inr l, e⟩ ↔ Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o)) l ∧
+      AlU R FL Pl lhat n o u ∧ tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) ∧
+        su FL l.2.2.2 e * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) ≤ rkU R FL Pl lhat n o u ∧
+        rkU R FL Pl lhat n o u < (su FL l.2.2.2 e + 1) * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) := by
+  classical
+  rw [consM]
+  split_ifs with ha
+  · simp [mem_Al, ha]
+  · simp [ha]
+
 end Nc.Tow

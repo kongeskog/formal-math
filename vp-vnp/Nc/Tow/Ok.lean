@@ -129,25 +129,7 @@ def inpZ : ZM R FL (ch := ch) → Tg T m AA
   | ⟨.inl x, _⟩ => inpR T x.1
   | ⟨.inr l, e⟩ => .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e)
 
-theorem consM_inl (x : {x : RM T m AA // okR T R ch x}) (e : (kindM R ch FL (.inl x)).Sl) (u : Un R FL Pl U0 U1) :
-    u ∈ consM R FL Pl lhat n o ⟨.inl x, e⟩ ↔ ActR (load R ch FL lhat (nn n) (oo R FL Pl o)) x.1 ∧
-      AlU R FL Pl lhat n o u ∧ tgU R FL Pl u = inpR T x.1 := by
-  classical
-  rw [consM]
-  split_ifs with ha
-  · simp [mem_Al, ha]
-  · simp [ha]
-
-theorem consM_inr (l : LMv T FL) (e : (kindM R ch FL (.inr l)).Sl) (u : Un R FL Pl U0 U1) :
-    u ∈ consM R FL Pl lhat n o ⟨.inr l, e⟩ ↔ Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o)) l ∧
-      AlU R FL Pl lhat n o u ∧ tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) ∧
-        su FL l.2.2.2 e * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) ≤ rkU R FL Pl lhat n o u ∧
-        rkU R FL Pl lhat n o u < (su FL l.2.2.2 e + 1) * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) := by
-  classical
-  rw [consM]
-  split_ifs with ha
-  · simp [mem_Al, ha]
-  · simp [ha]
+-- `consM_inl` and `consM_inr` are in `Nc/Tow/Plan.lean`, next to `consM`, so that `Slp4` can use them too.
 
 theorem consM_al {z : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u ∈ consM R FL Pl lhat n o z) :
     AlU R FL Pl lhat n o u ∧ tgU R FL Pl u = inpZ z := by

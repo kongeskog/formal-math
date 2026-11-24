@@ -39,15 +39,16 @@ theorem sum_alv_le {κ : Type*} (τ : Tg T m AA) (s : Finset κ) (f : κ → NM 
 section
 
 variable (hr : 0 < r) (hb : 0 < b)
-  (hgR : ∀ (x : {x : RM T m AA // okR T R ch x}) (ν : Bool), o ⟨.inl x, ν⟩ = num R ch FL lhat n o (.inl x))
+  -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+  (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
 
-include hgR in
+include hg in
 theorem alv_relay (x : {x : RM T m AA // okR T R ch x}) (ν : Bool) :
     alv R ch FL lhat n o ⟨.inl x, ν⟩ = num R ch FL lhat n o (.inl x) := by
   unfold alv
   have h1 : alvN R ch FL o ⟨.inl x, ν⟩ (num R ch FL lhat n o (.inl x)) =
       if o ⟨.inl x, ν⟩ = num R ch FL lhat n o (.inl x) then num R ch FL lhat n o (.inl x) else 0 := rfl
-  rw [h1, if_pos (hgR x ν)]
+  rw [h1, if_pos (hg (.inl x) ν)]
 
 theorem ok_mid2 (j : Fin J) (e : T.Ed j) : okR T R ch (.mid j e 2) :=
   ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
@@ -77,7 +78,7 @@ theorem nR_mid3 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 3) ≤ 
       exact alv_le_num hr hb _ _
   · exact Nat.zero_le _
 
-include hgR
+include hg
 
 theorem nR_mid1 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 1) ≤ nR R ch FL lhat n o (.mid j e 2) := by
   classical
@@ -89,7 +90,7 @@ theorem nR_mid1 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 1) ≤ 
       · rfl
       · intro hh
         exact absurd hh (by decide)
-    rw [h1, ← alv_relay hgR ⟨.mid j e 1, hx⟩ true]
+    rw [h1, ← alv_relay hg ⟨.mid j e 1, hx⟩ true]
     have h2 := sum_alv_le (lhat := lhat) (n := n) (o := o) (.nxt (.mid j e 2)) ({()} : Finset Unit)
       (fun _ => (⟨.inl ⟨.mid j e 1, hx⟩, true⟩ : NM R FL (ch := ch))) (fun _ _ _ _ _ => rfl) (fun _ _ => rfl)
     rw [Finset.sum_singleton] at h2
@@ -111,7 +112,7 @@ theorem sum_mid2 (j : Fin J) (c : T.X (j + 1)) :
         (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R FL (ch := ch)) := by
       unfold nR
       rw [dif_pos (ok_mid2 j e)]
-      exact (alv_relay hgR ⟨.mid j e 2, ok_mid2 j e⟩ false).symm
+      exact (alv_relay hg ⟨.mid j e 2, ok_mid2 j e⟩ false).symm
     rw [h2]
     have hne := π_ne j.2 e
     have h3 := T.π_ends j.2 e
@@ -167,8 +168,9 @@ noncomputable def NR0 (P : Nd T) : ℕ := ∑ a, ∑ c, ∑ γ, ∑ s, ∑ q : F
   if tri T R ch (.start a c γ s) q = P then nR R ch FL lhat n o (.start a c γ s) else 0
 
 variable (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
-  (hgR : ∀ (x : {x : RM T m AA // okR T R ch x}) (ν : Bool), o ⟨.inl x, ν⟩ = num R ch FL lhat n o (.inl x))
-include hh hr hb hgR
+  -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
+  (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
+include hh hr hb hg
 
 open Classical in
 /-- Relays of the stages, by the levels of the nodes. -/
@@ -259,7 +261,7 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
           rw [if_neg hne] at h2
           omega
       have h3 := nR_mid3 (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hr hb j e
-      have h4 := nR_mid1 hr hb hgR j e
+      have h4 := nR_mid1 hr hb hg j e
       -- the chambers on the next level
       have hH : ∀ s (c : T.X j), (if nd T (j + 1) j.2 (hst T (T.ty e) c) = P then nR R ch FL lhat n o (.mid j e s) else 0) ≤
           if nd T (j + 1) j.2 (hostj hh Lf c) = P then Lf j e else 0 := by
@@ -334,7 +336,7 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
       rw [← Finset.sum_add_distrib]
       refine Finset.sum_le_sum fun x _ => ?_
       split_ifs
-      · exact sum_mid2 hr hb hgR j x
+      · exact sum_mid2 hr hb hg j x
       · exact le_rfl
     rw [e0, e1, e2, e3, h3]
     omega

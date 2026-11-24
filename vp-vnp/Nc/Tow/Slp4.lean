@@ -38,31 +38,6 @@ theorem rkU_sum (u : Un R FL Pl U0 U1) : rkU R FL Pl lhat n o u =
   simp only [mem_filter, mem_Al, mem_univ, true_and]
   tauto
 
-theorem mem_cons_inl (y : {x : RM T m AA // okR T R ch x}) (s : (kindM R ch FL (.inl y)).Sl) (u : Un R FL Pl U0 U1) :
-    u ∈ consM R FL Pl lhat n o ⟨.inl y, s⟩ ↔
-      ActR (load R ch FL lhat (nn n) (oo R FL Pl o)) y.1 ∧ AlU R FL Pl lhat n o u ∧ tgU R FL Pl u = inpR T y.1 := by
-  classical
-  simp only [consM]
-  by_cases ha : ActR (load R ch FL lhat (nn n) (oo R FL Pl o)) y.1
-  · rw [if_pos ha, mem_filter, mem_Al]
-    exact ⟨fun hu => ⟨ha, hu⟩, fun hu => hu.2⟩
-  · rw [if_neg ha]
-    exact ⟨fun hu => absurd hu (notMem_empty _), fun hu => absurd hu.1 ha⟩
-
-theorem mem_cons_inr (l : LMv T FL) (e : (FL.L l.2.2.2).Sl) (u : Un R FL Pl U0 U1) :
-    u ∈ consM R FL Pl lhat n o ⟨.inr l, e⟩ ↔
-      Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o)) l ∧ AlU R FL Pl lhat n o u ∧
-        tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) ∧
-        su FL l.2.2.2 e * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) ≤ rkU R FL Pl lhat n o u ∧
-        rkU R FL Pl lhat n o u < (su FL l.2.2.2 e + 1) * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) := by
-  classical
-  simp only [consM]
-  by_cases ha : Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o)) l
-  · rw [if_pos ha, mem_filter, mem_Al]
-    exact ⟨fun hu => ⟨ha, hu⟩, fun hu => hu.2⟩
-  · rw [if_neg ha]
-    exact ⟨fun hu => absurd hu (notMem_empty _), fun hu => absurd hu.1 ha⟩
-
 /-- The unit is made at some time. -/
 def SeenU (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) : Un R FL Pl U0 U1 → Prop
   | .init a c k => k.1 < (n a c).1
@@ -177,7 +152,7 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
   · have h1 : PY Dd H Y 0 fun x => ActR (load R ch FL lhat (nX nI x) (oX oI x)) y.1 := py_actR hA hB ha.isMin y.1
     have h2 := PY.and hA (h1.mono hY (Nat.zero_le 1)) (PY.and hA (PY.base (hal u) hY)
       (PY.const hA (tgU R FL Pl u = inpR T y.1)))
-    exact (h2.congr fun x => (mem_cons_inl y e u).symm).mono hY (by omega)
+    exact (h2.congr fun x => (consM_inl y e u).symm).mono hY (by omega)
   · have h1 : PY Dd H Y 0 fun x => Pick FL (load R ch FL lhat (nX nI x) (oX oI x)) l := PY.base (ha.pick l) hY
     have h3 : PY Dd H Y 1 fun x => su FL l.2.2.2 e * Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inr l) ≤
         rkU R FL Pl lhat (nI x) (oI x) u :=
@@ -188,7 +163,7 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
     have h5 := PY.and hA (h1.mono hY (Nat.zero_le 4)) (PY.and hA ((PY.base (hal u) hY).mono hY (Nat.zero_le 3))
       (PY.and hA ((PY.const hA (tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e))).mono hY (Nat.zero_le 2))
         (PY.and hA h3 h4)))
-    exact h5.congr fun x => (mem_cons_inr l e u).symm
+    exact h5.congr fun x => (consM_inr l e u).symm
 
 theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
     (hco : ∀ z u, ind (fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) ∈ H) (u : Un R FL Pl U0 U1) :
