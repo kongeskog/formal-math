@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:50:33.572018020Z",
+  "updated_at": "2026-11-24T00:52:32.254381419Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 0,
     "rejected": 2,
-    "open": 2,
+    "open": 4,
     "contributors": 1,
     "ideas_open": 10
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 0,
-      "attempts": 4,
+      "attempts": 6,
       "saved": 0
     }
   ],
@@ -220,7 +220,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T03:40:59Z",
-      "pr": null,
+      "pr": 19,
       "result_delta": null,
       "created_at": "2026-11-24T00:32:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/6",
@@ -414,6 +414,142 @@
       "reason": null,
       "technique": "merge",
       "scope": "Nc/Dl/SizeDeal"
+    },
+    {
+      "pr": 18,
+      "title": "merge(Nc/LowDegree): reuse line and eval_one_line from Nc/Acc/Line",
+      "author": "kongeskog",
+      "head_sha": "48feea067f50a8c77501a3c9d9256f55cce1bca5",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T00:51:39Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 8,
+      "url": "https://github.com/kongeskog/formal-math/pull/18",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "Nc/LowDegree"
+    },
+    {
+      "pr": 19,
+      "title": "shorten(*): remove simp arguments and tactics the linter reports as unused",
+      "author": "kongeskog",
+      "head_sha": "49fcfea60003c8dd6e95be233a63636caf638565",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T00:51:41Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 6,
+      "url": "https://github.com/kongeskog/formal-math/pull/19",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "*"
     }
   ],
   "top_files": [
