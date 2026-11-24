@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:57:16.583359863Z",
+  "updated_at": "2026-11-24T20:58:55.352228932Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 5,
     "contributors": 1,
-    "ideas_open": 3
+    "ideas_open": 2
   },
   "leaderboard": [
     {
@@ -132,10 +132,10 @@
     {
       "number": 72,
       "title": "Idea: restructure(Nc/Uni/EvalU): let toOp take the opcode, removing a mode-rewriting line in 11 cases",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:58:19Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:18Z",
@@ -230,10 +230,10 @@
     {
       "number": 56,
       "title": "Idea: restructure(Nc/Tower/UT): build the submonoid of U once and extend it to the subgroup",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:02:33Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 63,
       "result_delta": -233,
       "created_at": "2026-11-24T19:43:05Z",
@@ -244,10 +244,10 @@
     {
       "number": 55,
       "title": "Idea: shorten(*): apply the iff lemma in obtain instead of rewriting the hypothesis first",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:09:54Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 66,
       "result_delta": -174,
       "created_at": "2026-11-24T19:43:03Z",
@@ -943,8 +943,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
       "idea": 67,
