@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T19:08:43.723353657Z",
+  "updated_at": "2026-11-24T19:10:01.433880723Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 8,
     "contributors": 1,
-    "ideas_open": 5
+    "ideas_open": 3
   },
   "leaderboard": [
     {
@@ -118,10 +118,10 @@
     {
       "number": 39,
       "title": "Idea: library(Nc): proxy_equiv% instead of Seg.equivSum and the local equivalences for Tp and Ch",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T22:09:08Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:00:28Z",
@@ -146,10 +146,10 @@
     {
       "number": 37,
       "title": "Idea: generalize(NS1/Step): prove stepF_ev from the general round lemma behind stepA_kv",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T22:08:57Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T19:00:25Z",
@@ -893,7 +893,7 @@
       "pr": 44,
       "title": "restructure(Nc/Grp/GroupThm): state exists_group with GroupOK instead of repeating it",
       "author": "kongeskog",
-      "head_sha": "35c0750e3eb9a6b130f8af17578923504f5f3594",
+      "head_sha": "ef7c9514e312b8d374ad9ab74c28468fcda372ba",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-24T19:08:15Z",
@@ -945,8 +945,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
       "idea": 36,
