@@ -99,9 +99,21 @@ def foldW (f : Tree → Tree → List (A × Tree)) : List Tree → Tree → List
   | [], σ => [(1, σ)]
   | x :: xs, σ => bindW (f x σ) (foldW f xs)
 
-theorem foldB_does {step : Fm} {f : Tree → Tree → List (A × Tree)} {Inv : List Tree → Tree → Prop} {d : Tree → ℕ}
-    {xs : List Tree} (h : ∀ x ys σ, x ∈ xs → Inv (x :: ys) σ → Does θ step (.cons x σ) (f x σ) (d x) ∧
-      ∀ q ∈ f x σ, Inv ys q.2) {σ : Tree} (hσ : Inv xs σ) :
+theorem foldW_det (g : Tree → Tree → Tree) (xs : List Tree) (σ : Tree) :
+    foldW (A := A) (fun x σ => [(1, g x σ)]) xs σ = [(1, xs.foldl (fun σ x => g x σ) σ)] := by
+  induction xs generalizing σ with
+  | nil => rfl
+  | cons x xs ih => simp [foldW, bindW, ih]
+
+section
+
+-- A fold of `step` over the list `xs` given by `l`, from the state `σ` given by `s` at the argument `x`, with an
+-- invariant `Inv` and the cost `d` of a step.
+variable {step s l : Fm} {x σ : Tree} {cs cl : ℕ} {Inv : List Tree → Tree → Prop} {d : Tree → ℕ} {xs : List Tree}
+
+theorem foldB_does {f : Tree → Tree → List (A × Tree)}
+    (h : ∀ x ys σ, x ∈ xs → Inv (x :: ys) σ → Does θ step (.cons x σ) (f x σ) (d x) ∧
+      ∀ q ∈ f x σ, Inv ys q.2) (hσ : Inv xs σ) :
     Does θ (foldB step) (.cons (foldB step).code (.cons σ (listT xs))) (foldW f xs σ)
       ((xs.map fun x => d x + 30).sum + 10) := by
   induction xs generalizing σ with
@@ -135,8 +147,7 @@ theorem foldB_does {step : Fm} {f : Tree → Tree → List (A × Tree)} {Inv : L
     · simp only [List.map_cons, List.sum_cons]
       omega
 
-theorem foldF_does {step s l : Fm} {x σ : Tree} {cs cl : ℕ} {f : Tree → Tree → List (A × Tree)}
-    {Inv : List Tree → Tree → Prop} {d : Tree → ℕ} {xs : List Tree} (hs : Gives θ s x σ cs)
+theorem foldF_does {f : Tree → Tree → List (A × Tree)} (hs : Gives θ s x σ cs)
     (hl : Gives θ l x (listT xs) cl) (h : ∀ x ys σ, x ∈ xs → Inv (x :: ys) σ →
       Does θ step (.cons x σ) (f x σ) (d x) ∧ ∀ q ∈ f x σ, Inv ys q.2) (hσ : Inv xs σ) :
     Does θ (foldF step s l) x (foldW f xs σ) (cs + cl + (xs.map fun x => d x + 30).sum + 20) := by
@@ -154,15 +165,8 @@ theorem foldF_does {step s l : Fm} {x σ : Tree} {cs cl : ℕ} {f : Tree → Tre
   · rw [wsum_bindW]
     simp [wsum]
 
-theorem foldW_det (g : Tree → Tree → Tree) (xs : List Tree) (σ : Tree) :
-    foldW (A := A) (fun x σ => [(1, g x σ)]) xs σ = [(1, xs.foldl (fun σ x => g x σ) σ)] := by
-  induction xs generalizing σ with
-  | nil => rfl
-  | cons x xs ih => simp [foldW, bindW, ih]
-
 /-- A deterministic fold. -/
-theorem foldF_gives {step s l : Fm} {x σ : Tree} {cs cl : ℕ} {g : Tree → Tree → Tree}
-    {Inv : List Tree → Tree → Prop} {d : Tree → ℕ} {xs : List Tree} (hs : Gives θ s x σ cs)
+theorem foldF_gives {g : Tree → Tree → Tree} (hs : Gives θ s x σ cs)
     (hl : Gives θ l x (listT xs) cl) (h : ∀ x ys σ, x ∈ xs → Inv (x :: ys) σ →
       Gives θ step (.cons x σ) (g x σ) (d x) ∧ Inv ys (g x σ)) (hσ : Inv xs σ) :
     Gives θ (foldF step s l) x (xs.foldl (fun σ x => g x σ) σ) (cs + cl + (xs.map fun x => d x + 30).sum + 20) := by
@@ -173,6 +177,8 @@ theorem foldF_gives {step s l : Fm} {x σ : Tree} {cs cl : ℕ} {g : Tree → Tr
     subst hq
     exact h2) hσ
   rwa [foldW_det] at this
+
+end
 
 /-- Reverse a list onto another one. -/
 theorem foldl_rev (xs : List Tree) (ys : List Tree) :

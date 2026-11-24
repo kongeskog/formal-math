@@ -291,13 +291,20 @@ variable (θ) in
 /-- The accepting runs (if all runs stop). -/
 noncomputable def evl (F : Fm) (x : Tree) : List (Run A) := if h : Hl θ F x then h.choose else []
 
-theorem Hl.ev {F : Fm} {x : Tree} (h : Hl θ F x) : Ev θ F x (evl θ F x) := by
+section
+
+-- A formula `F` at an argument `x`, with accepting runs `l`.
+variable {F : Fm} {x : Tree} {l : List (Run A)}
+
+theorem Hl.ev (h : Hl θ F x) : Ev θ F x (evl θ F x) := by
   rw [evl, dif_pos h]
   exact h.choose_spec
 
-theorem Ev.hl {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l) : Hl θ F x := ⟨l, h⟩
+theorem Ev.hl (h : Ev θ F x l) : Hl θ F x := ⟨l, h⟩
 
-theorem Ev.evl {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l) : evl θ F x = l := h.hl.ev.unique h
+theorem Ev.evl (h : Ev θ F x l) : evl θ F x = l := h.hl.ev.unique h
+
+end
 
 theorem Ev.run' {a b : Fm} {x : Tree} {la lb : List (Run A)} (ha : Ev θ a x la) (hb : Ev θ b x lb)
     (h : ∀ r ∈ la, ∀ s ∈ lb, Hl θ (Fm.ofTree r.out) s.out) : Ev θ (.run a b) x
@@ -312,19 +319,24 @@ theorem Dt.quote (c x : Tree) : Dt θ (.quote c) x c 1 := Ev.quote c x
 
 theorem Dt.id (x : Tree) : Dt θ .id x x 1 := Ev.id x
 
-theorem Dt.hd {a : Fm} {x o : Tree} {k : ℕ} (h : Dt θ a x o k) : Dt θ (.hd a) x o.hd (k + 1) := Ev.hd h
+/-- Weights and costs of runs after a step without guesses. -/
+def Run.delay (k : ℕ) (r : Run A) : Run A := ⟨k + r.cost, r.th, r.bill, r.out⟩
 
-theorem Dt.tl {a : Fm} {x o : Tree} {k : ℕ} (h : Dt θ a x o k) : Dt θ (.tl a) x o.tl (k + 1) := Ev.tl h
+section
 
-theorem Dt.cons {a b : Fm} {x o p : Tree} {k j : ℕ} (ha : Dt θ a x o k) (hb : Dt θ b x p j) :
+-- Formulas `a`, `b`, `c` at an argument `x`; `a` and `b` give `o` and `p` in `k` and `j` steps, `l` are runs.
+variable {a b c : Fm} {x o p : Tree} {k j : ℕ} {l : List (Run A)}
+
+theorem Dt.hd (h : Dt θ a x o k) : Dt θ (.hd a) x o.hd (k + 1) := Ev.hd h
+
+theorem Dt.tl (h : Dt θ a x o k) : Dt θ (.tl a) x o.tl (k + 1) := Ev.tl h
+
+theorem Dt.cons (ha : Dt θ a x o k) (hb : Dt θ b x p j) :
     Dt θ (.cons a b) x (.cons o p) (k + j + 1) := by
   have := Ev.cons ha hb
   simpa [Dt, Run.det, Run.seq, Run.tick] using this
 
-/-- Weights and costs of runs after a step without guesses. -/
-def Run.delay (k : ℕ) (r : Run A) : Run A := ⟨k + r.cost, r.th, r.bill, r.out⟩
-
-theorem Ev.ite_true {a b c : Fm} {x o : Tree} {k : ℕ} {l : List (Run A)} (ha : Dt θ a x o k) (ho : o ≠ .nil)
+theorem Ev.ite_true (ha : Dt θ a x o k) (ho : o ≠ .nil)
     (hb : Ev θ b x l) : Ev θ (.ite a b c) x (l.map (Run.delay (k + 1))) := by
   have := Ev.ite (c := c) (L := fun _ => l) ha (fun r _ _ => hb) (fun r hr h => by
     simp only [List.mem_singleton] at hr
@@ -336,7 +348,7 @@ theorem Ev.ite_true {a b c : Fm} {x o : Tree} {k : ℕ} {l : List (Run A)} (ha :
   simp [Run.delay, Run.det, Run.seq, Run.tick]
   omega
 
-theorem Ev.ite_false {a b c : Fm} {x : Tree} {k : ℕ} {l : List (Run A)} (ha : Dt θ a x .nil k)
+theorem Ev.ite_false (ha : Dt θ a x .nil k)
     (hc : Ev θ c x l) : Ev θ (.ite a b c) x (l.map (Run.delay (k + 1))) := by
   have := Ev.ite (b := b) (L := fun _ => l) ha (fun r hr h => by
     simp only [List.mem_singleton] at hr
@@ -348,7 +360,7 @@ theorem Ev.ite_false {a b c : Fm} {x : Tree} {k : ℕ} {l : List (Run A)} (ha : 
   simp [Run.delay, Run.det, Run.seq, Run.tick]
   omega
 
-theorem Ev.run_det {a b : Fm} {x p d : Tree} {k j : ℕ} {l : List (Run A)} (ha : Dt θ a x p k) (hb : Dt θ b x d j)
+theorem Ev.run_det {d : Tree} (ha : Dt θ a x p k) (hb : Dt θ b x d j)
     (h : Ev θ (Fm.ofTree p) d l) : Ev θ (.run a b) x (l.map (Run.delay (k + j + 1))) := by
   have := Ev.run (L := fun _ _ => l) ha hb (fun r hr s hs => by
     simp only [List.mem_singleton] at hr hs
@@ -359,6 +371,8 @@ theorem Ev.run_det {a b : Fm} {x p d : Tree} {k j : ℕ} {l : List (Run A)} (ha 
   refine List.map_congr_left fun r _ => ?_
   simp [Run.delay, Run.det, Run.seq, Run.tick]
   omega
+
+end
 
 /-- `let`: apply `body` to the value of `e`. -/
 def lett (e body : Fm) : Fm := .run (.quote body.code) e
