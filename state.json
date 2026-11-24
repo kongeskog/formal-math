@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:55:20.499957768Z",
+  "updated_at": "2026-11-24T20:56:12.445716567Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 4,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 3
   },
   "leaderboard": [
     {
@@ -146,10 +146,10 @@
     {
       "number": 71,
       "title": "Idea: shorten(Nc/Grp): induction using Fin.addCases instead of a restated motive in three proofs",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T23:55:57Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T20:38:17Z",
@@ -598,13 +598,27 @@
       "title": "shorten(Nc/Grp/GroupProg): state the cost split of ex_ins once instead of per case",
       "author": "kongeskog",
       "head_sha": "43173fe78eac0fc5214b482607a81238e3c66c8b",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "f70eafddb2ecf2178de0943ef86e0f7e243d5175",
+      "status": "stale",
       "created_at": "2026-11-24T20:41:28Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 912624,
+        "loc": 57941,
+        "decls": 4568,
+        "files": 321,
+        "bytes": 3375508,
+        "build_seconds": 319
+      },
+      "base_metrics": {
+        "tokens": 913027,
+        "loc": 57953,
+        "decls": 4568,
+        "files": 321,
+        "bytes": 3376611,
+        "build_seconds": null
+      },
+      "delta": -403,
       "gates": [
         {
           "key": "format",
@@ -612,39 +626,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "1 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 913027 → 912624 (-403)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -655,7 +677,7 @@
       ],
       "idea": 74,
       "url": "https://github.com/kongeskog/formal-math/pull/75",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45483430582",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
@@ -853,8 +875,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 68,
