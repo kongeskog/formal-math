@@ -36,8 +36,7 @@ variable {I G : Type*}
 
 /-- There is one vertex for every segment and three for every gadget. -/
 theorem card_eq [Fintype I] [Fintype G] : Fintype.card (Vtx I G) = Fintype.card I + 3 * Fintype.card G := by
-  -- `proxy_equiv%` gives the vertices as a disjoint union
-  -- (this replaces a hand-written `equivSum`).
+  -- `proxy_equiv%` gives the vertices as a disjoint union.
   rw [← Fintype.card_congr (proxy_equiv% (Vtx I G))]
   simp only [Fintype.card_sum, Fintype.card_sigma, Fintype.card_bool,
     sum_const, card_univ, smul_eq_mul]

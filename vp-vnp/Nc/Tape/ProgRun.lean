@@ -144,7 +144,7 @@ variable {Γ S J : Type*} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq
 
 theorem sum_length_tup (W : S → List Γ) (u : J → List Γ) :
     ∑ z, (tup W u z).length = 2 * ∑ s, (W s).length + ∑ j, (u j).length := by
-  -- `proxy_equiv%` splits the channels as a sum (this replaces a hand-written `chSumEquiv`).
+  -- `proxy_equiv%` splits the channels as a sum.
   rw [← (proxy_equiv% (Ch S J)).sum_comp, Fintype.sum_sum_type, Fintype.sum_sigma, Finset.mul_sum]
   simp only [Fintype.sum_bool, two_mul]
   rfl
