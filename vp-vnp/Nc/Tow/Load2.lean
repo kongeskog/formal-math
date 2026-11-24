@@ -327,87 +327,59 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
       num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
   have hx0 : okR T R ch (.mid j e 0) := ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
   refine ⟨hx0, ?_⟩
-  have one : ∀ hx1 : okR T R ch (.mid j e 1), num R ch FL lhat n o (.inl ⟨.mid j e 1, hx1⟩) ≤
-      num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
-    intro hx1
-    refine (num_inl _).trans ?_
-    refine (load_le_sum {(⟨.inl ⟨.mid j e 0, hx0⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 1) ?_).trans ?_
+  -- The step shared by all relays: the load at relay `s` is at most the number at the one
+  -- relay `y` that feeds it.
+  have key : ∀ (s : Fin 4) (y : RM T m AA) (hy : okR T R ch y),
+      (∀ x ν, okR T R ch x → tgR T R ch x ν = .nxt (.mid j e s) → x = y) →
+      load R ch FL lhat n o (.nxt (.mid j e s)) ≤ num R ch FL lhat n o (.inl ⟨y, hy⟩) := by
+    intro s y hy hxy
+    refine (load_le_sum {(⟨.inl ⟨y, hy⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e s) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
-      · obtain ⟨h1, h2⟩ := tgR_mid (x := x) (ν := ν) hν
-        have h3 : x = .mid j e 0 := by
-          rcases h2 with h2 | h2 | h2
-          · exact h2.2
-          · exact absurd h2.1 (by decide)
-          · exact absurd h2.1 (by decide)
-        subst h3
-        have h1 : ν = true := h1
+      · obtain rfl := hxy x ν hx' hν
+        have h1 : ν = true := (tgR_mid hν).1
         subst h1
         exact mem_singleton_self _
       · simp [tgM] at hν
     · rw [Finset.sum_singleton]
       exact alv_le_num hr hb _ _
+  have one : ∀ hx1 : okR T R ch (.mid j e 1), num R ch FL lhat n o (.inl ⟨.mid j e 1, hx1⟩) ≤
+      num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) :=
+    fun hx1 => (num_inl _).trans <| key 1 _ hx0 fun x ν _ hν => by
+      rcases (tgR_mid hν).2 with h2 | h2 | h2
+      · exact h2.2
+      · exact absurd h2.1 (by decide)
+      · exact absurd h2.1 (by decide)
   have two : ∀ hx2 : okR T R ch (.mid j e 2), num R ch FL lhat n o (.inl ⟨.mid j e 2, hx2⟩) ≤
       num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
     intro hx2
     refine (num_inl _).trans ?_
     by_cases hh : hst T (T.ty e) (T.e0 e) = T.π (T.e0 e)
-    · refine (load_le_sum {(⟨.inl ⟨.mid j e 0, hx0⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 2) ?_).trans ?_
-      · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
-        · obtain ⟨h1, h2⟩ := tgR_mid (x := x) (ν := ν) hν
-          have h3 : x = .mid j e 0 := by
-            rcases h2 with h2 | h2 | h2
-            · exact h2.2
-            · rcases h2.2 with h3 | h3
-              · exact h3.1
-              · subst h3
-                exact absurd hh (hx'.1 rfl)
-            · exact absurd h2.1 (by decide)
-          subst h3
-          have h1 : ν = true := h1
-          subst h1
-          exact mem_singleton_self _
-        · simp [tgM] at hν
-      · rw [Finset.sum_singleton]
-        exact alv_le_num hr hb _ _
+    · refine key 2 _ hx0 fun x ν hx' hν => ?_
+      rcases (tgR_mid hν).2 with h2 | h2 | h2
+      · exact h2.2
+      · rcases h2.2 with h3 | h3
+        · exact h3.1
+        · subst h3
+          exact absurd hh (hx'.1 rfl)
+      · exact absurd h2.1 (by decide)
     · have hx1 : okR T R ch (.mid j e 1) := ⟨fun _ => hh, fun h3 => absurd h3 (by decide)⟩
-      refine (load_le_sum {(⟨.inl ⟨.mid j e 1, hx1⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 2) ?_).trans ?_
-      · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
-        · obtain ⟨h1, h2⟩ := tgR_mid (x := x) (ν := ν) hν
-          have h3 : x = .mid j e 1 := by
-            rcases h2 with h2 | h2 | h2
-            · exact absurd h2.1 (by decide)
-            · rcases h2.2 with h3 | h3
-              · exact absurd h3.2 hh
-              · exact h3
-            · exact absurd h2.1 (by decide)
-          subst h3
-          have h1 : ν = true := h1
-          subst h1
-          exact mem_singleton_self _
-        · simp [tgM] at hν
-      · rw [Finset.sum_singleton]
-        exact (alv_le_num hr hb _ _).trans (one hx1)
+      refine (key 2 _ hx1 fun x ν _ hν => ?_).trans (one hx1)
+      rcases (tgR_mid hν).2 with h2 | h2 | h2
+      · exact absurd h2.1 (by decide)
+      · rcases h2.2 with h3 | h3
+        · exact absurd h3.2 hh
+        · exact h3
+      · exact absurd h2.1 (by decide)
   fin_cases s
   · exact le_rfl
   · exact one hx
   · exact two hx
   · have hx2 : okR T R ch (.mid j e 2) := ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
-    refine (num_inl _).trans ?_
-    refine (load_le_sum {(⟨.inl ⟨.mid j e 2, hx2⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e 3) ?_).trans ?_
-    · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
-      · obtain ⟨h1, h2⟩ := tgR_mid (x := x) (ν := ν) hν
-        have h3 : x = .mid j e 2 := by
-          rcases h2 with h2 | h2 | h2
-          · exact absurd h2.1 (by decide)
-          · exact absurd h2.1 (by decide)
-          · exact h2.2
-        subst h3
-        have h1 : ν = true := h1
-        subst h1
-        exact mem_singleton_self _
-      · simp [tgM] at hν
-    · rw [Finset.sum_singleton]
-      exact (alv_le_num hr hb _ _).trans (two hx2)
+    refine (num_inl _).trans ((key 3 _ hx2 fun x ν _ hν => ?_).trans (two hx2))
+    rcases (tgR_mid hν).2 with h2 | h2 | h2
+    · exact absurd h2.1 (by decide)
+    · exact absurd h2.1 (by decide)
+    · exact h2.2
 
 theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)) (ν : Bool) :
     alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load R ch FL lhat n o (.edge j.castSucc e) ∧

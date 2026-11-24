@@ -138,21 +138,8 @@ theorem tri_inj {x : RM T m AA} (hx : okR T R ch x) : Function.Injective (tri T 
       · change nd T j j.2.le (T.e0 e) ≠ nd T j j.2.le (T.e1 e)
         rw [Ne, nd_inj]
         exact T.e_ne e
-      · change nd T (j + 1) j.2 (hst T (T.ty e) (T.e0 e)) ≠ nd T j j.2.le (T.e1 e)
-        exact nd_ne (by omega)
-      · change nd T (j + 1) j.2 (T.π (T.e0 e)) ≠ nd T j j.2.le (T.e1 e)
-        exact nd_ne (by omega)
-      · change nd T (j + 1) j.2 (T.π (T.e1 e)) ≠ nd T j j.2.le (T.e1 e)
-        exact nd_ne (by omega)
-    · fin_cases s
-      · change nd T (j + 1) j.2 (hst T (T.ty e) (T.e0 e)) ≠ nd T j j.2.le (T.e1 e)
-        exact nd_ne (by omega)
-      · change nd T (j + 1) j.2 (T.π (T.e0 e)) ≠ nd T j j.2.le (T.e1 e)
-        exact nd_ne (by omega)
-      · change nd T (j + 1) j.2 (T.π (T.e1 e)) ≠ nd T j j.2.le (T.e1 e)
-        exact nd_ne (by omega)
-      · change nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e)) ≠ nd T j j.2.le (T.e1 e)
-        exact nd_ne (by omega)
+      all_goals exact nd_ne (hj := j.2) (by omega)
+    · fin_cases s <;> exact nd_ne (hj := j.2) (by omega)
   · exact inj3 nd_ne_none (by rw [Ne, nd_inj]; exact T.e_ne e) nd_ne_none.symm
 
 variable (T R ch)
