@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T22:23:37.796717078Z",
+  "updated_at": "2026-11-24T22:31:55.414504833Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 1
+    "ideas_open": 0
   },
   "leaderboard": [
     {
@@ -90,10 +90,10 @@
     {
       "number": 85,
       "title": "Idea: shorten(Nc): state a repeated step once in four proofs of Nc/Tow and Nc/Grp",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T00:20:40Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 87,
       "result_delta": -698,
       "created_at": "2026-11-24T21:15:47Z",
@@ -104,10 +104,10 @@
     {
       "number": 84,
       "title": "Idea: shorten(Nc): norm_add_le, linear_combination and Nat.triangle_succ for seven numeric lemmas",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T00:20:31Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 86,
       "result_delta": -978,
       "created_at": "2026-11-24T21:09:56Z",
@@ -132,7 +132,7 @@
     {
       "number": 74,
       "title": "Idea: shorten(Nc/Grp/GroupProg): state the cost split of ex_ins once instead of per case",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -146,10 +146,10 @@
     {
       "number": 73,
       "title": "Idea: merge(Nc/Tow): one GoodMv hypothesis in Ever2-7, one pair of consM lemmas, toFlag by field copy",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:42:40Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 77,
       "result_delta": -1540,
       "created_at": "2026-11-24T20:38:32Z",
@@ -160,10 +160,10 @@
     {
       "number": 72,
       "title": "Idea: restructure(Nc/Uni/EvalU): let toOp take the opcode, removing a mode-rewriting line in 11 cases",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:58:19Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 81,
       "result_delta": -356,
       "created_at": "2026-11-24T20:38:18Z",
@@ -174,10 +174,10 @@
     {
       "number": 71,
       "title": "Idea: shorten(Nc/Grp): induction using Fin.addCases instead of a restated motive in three proofs",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:55:57Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 82,
       "result_delta": -700,
       "created_at": "2026-11-24T20:38:17Z",
@@ -188,10 +188,10 @@
     {
       "number": 70,
       "title": "Idea: library(Nc): Mathlib lemmas and derived equivalences in place of twelve local proofs",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:42:53Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 78,
       "result_delta": -1060,
       "created_at": "2026-11-24T20:38:15Z",
@@ -216,10 +216,10 @@
     {
       "number": 68,
       "title": "Idea: restructure(Paper): prove the exact end theorems from the approximate ones",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:51:44Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 79,
       "result_delta": -879,
       "created_at": "2026-11-24T20:38:11Z",
@@ -230,10 +230,10 @@
     {
       "number": 67,
       "title": "Idea: restructure(*): state the runs of a Gives once; one lemma for twin combinators of Does and KV",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-24T23:51:34Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 80,
       "result_delta": -1909,
       "created_at": "2026-11-24T20:38:10Z",
