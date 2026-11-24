@@ -289,7 +289,7 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
       rw [hv, if_pos (vOk_code1 u hu), ← hcode, lem_circuit_value mu' i e (fun _ => u) (by omega)
         (by rw [length_wordOf_ofFn]; simpa using hu)]
       exact runVal_rename φ mu i e t fun _ => u
-    have hline : line (fun b => if code1 N u b then (1 : F) else 0) (mlExtC 0 f) =
+    have hline : Acc.line (fun b => if code1 N u b then (1 : F) else 0) (mlExtC 0 f) =
         Polynomial.C (runVal mu i e t fun _ => u) * Polynomial.X ^ (u.length + 1) := by
       rw [line_mnExt, Finset.sum_eq_single (code1 N u)]
       · rw [if_pos fun _ h => h, hval, card_ones_code1 u hu]
@@ -302,7 +302,7 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
         · rfl
       · intro h
         exact absurd (mem_univ _) h
-    rw [← eval_one_line, hline]
+    rw [← Acc.eval_one_line, hline]
     simp
 
 end Paper
