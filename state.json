@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:27:50.288758118Z",
+  "updated_at": "2026-11-24T21:28:56.112253947Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -855,11 +855,6 @@
       "loc": 367
     },
     {
-      "path": "vp-vnp/Nc/G/PlayThm.lean",
-      "tokens": 7013,
-      "loc": 470
-    },
-    {
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
       "tokens": 6986,
       "loc": 399
@@ -870,9 +865,14 @@
       "loc": 393
     },
     {
+      "path": "vp-vnp/Nc/G/PlayThm.lean",
+      "tokens": 6960,
+      "loc": 473
+    },
+    {
       "path": "vp-vnp/Nc/G/Move.lean",
-      "tokens": 6959,
-      "loc": 416
+      "tokens": 6856,
+      "loc": 415
     },
     {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
