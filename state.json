@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:48:31.634553970Z",
+  "updated_at": "2026-11-24T00:49:26.970043810Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -173,7 +173,7 @@
     },
     {
       "number": 10,
-      "title": "Idea: merge(Nc): keep one copy of lemmas that are repeated verbatim in two files",
+      "title": "Idea: merge(Nc): merge sum_uid, size_num and sum_flatMap_map with their more general copies",
       "status": "open",
       "author": "kongeskog",
       "claimed_by": null,
