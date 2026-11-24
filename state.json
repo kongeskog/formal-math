@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T22:55:27.599311985Z",
+  "updated_at": "2026-11-24T23:01:14.231843620Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 50,
     "rejected": 2,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 0
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 50,
-      "attempts": 53,
+      "attempts": 54,
       "saved": 26866
     }
   ],
@@ -688,6 +688,74 @@
       "reason": null,
       "technique": "shorten",
       "scope": "Nc"
+    },
+    {
+      "pr": 93,
+      "title": "shorten(Paper): drop named arguments Lean infers inside proofs",
+      "author": "kongeskog",
+      "head_sha": "f70b8bac59f26d55935c44d1adc0c2ea49c11be9",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T23:00:20Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 76,
+      "url": "https://github.com/kongeskog/formal-math/pull/93",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Paper"
     }
   ],
   "top_files": [
