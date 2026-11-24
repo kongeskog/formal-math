@@ -79,13 +79,11 @@ theorem OrdGE.prod_sub {β : Type*} {r : ℤ} (hr : 0 ≤ r) (l : List β) (f : 
   | cons y l ih =>
     have h1 := h y List.mem_cons_self
     have h2 := ih fun z hz => h z (List.mem_cons_of_mem _ hz)
-    obtain ⟨a, ha⟩ : ∃ a, a = algebraMap A E[T;T⁻¹] (g y) := ⟨_, rfl⟩
-    obtain ⟨b, hb⟩ : ∃ b, b = algebraMap A E[T;T⁻¹] (l.map g).prod := ⟨_, rfl⟩
-    rw [← ha] at h1
-    rw [← hb] at h2
+    generalize ha : algebraMap A E[T;T⁻¹] (g y) = a at h1
+    generalize hb : algebraMap A E[T;T⁻¹] (l.map g).prod = b at h2
     have e : ((y :: l).map f).prod - algebraMap A E[T;T⁻¹] ((y :: l).map g).prod =
         (f y - a) * ((l.map f).prod - b) + ((f y - a) * b + a * ((l.map f).prod - b)) := by
-      simp only [List.map_cons, List.prod_cons, map_mul, ← ha, ← hb]
+      simp only [List.map_cons, List.prod_cons, map_mul, ha, hb]
       ring
     rw [e]
     refine ((h1.mul h2).mono (by omega)).add ((?_ : OrdGE r _).add ?_)

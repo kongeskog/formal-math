@@ -57,7 +57,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ α Λ) (hv : 1000 
       ∃ (G : Tree) (P t s' : ℕ), CutD θ τ s (v ^ H) s' P t G ∧ P * v ^ H ≤ τ * (4 * Λ ^ 2) ∧
       t * v ^ 48 ≤ c * τ * (100 * Λ ^ 3) ∧ s' * v ^ 48 ≤ c * v ^ H * (8 * Λ) ∧ G.size ≤ v ^ a₀ := by
     intro τ s c hτ hτα hτΛ hs hc1 hcv
-    obtain ⟨k, hk⟩ : ∃ k, k = τ * Λ / v ^ H + 1 := ⟨_, rfl⟩
+    obtain ⟨k, hk⟩ := exists_eq (a' := τ * Λ / v ^ H + 1)
     have hk1 : τ * Λ < k * v ^ H := by
       rw [hk]
       have := Nat.div_add_mod (τ * Λ) (v ^ H)
@@ -168,19 +168,18 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ α Λ) (hv : 1000 
       exact Nat.le_of_mul_le_mul_right h1 (ppos 48)
     have hk63 : 2 ≤ v ^ 63 := (by omega : 2 ≤ v).trans (Nat.le_self_pow (by norm_num) v)
     obtain ⟨G₁, hG₁, hcut₁⟩ := hc τ s (v ^ 63) ((pmono hH).trans hτ) hτα hsτ hk63 (pmono (by norm_num))
-    obtain ⟨τ₁, hτ₁⟩ : ∃ n, n = τ * Λ / v ^ 63 := ⟨_, rfl⟩
-    obtain ⟨s₁, hs₁⟩ : ∃ n, n = (s / v ^ 63 + τ / v ^ 256) * Λ := ⟨_, rfl⟩
-    obtain ⟨t₁, ht₁⟩ : ∃ n, n = (s + τ * v ^ 63 / v ^ 256) * Λ := ⟨_, rfl⟩
-    rw [← hτ₁, ← hs₁, ← ht₁] at hcut₁
-    have hτ₁le : τ₁ * v ^ 63 ≤ τ * Λ := by rw [hτ₁]; exact Nat.div_mul_le_self _ _
+    generalize hτ₁ : τ * Λ / v ^ 63 = τ₁ at hcut₁
+    generalize hs₁ : (s / v ^ 63 + τ / v ^ 256) * Λ = s₁ at hcut₁
+    generalize ht₁ : (s + τ * v ^ 63 / v ^ 256) * Λ = t₁ at hcut₁
+    have hτ₁le : τ₁ * v ^ 63 ≤ τ * Λ := by rw [← hτ₁]; exact Nat.div_mul_le_self _ _
     have hτ₁V : v ^ H ≤ τ₁ := by
-      rw [hτ₁, Nat.le_div_iff_mul_le (ppos 63)]
+      rw [← hτ₁, Nat.le_div_iff_mul_le (ppos 63)]
       exact (Nat.mul_le_mul_left _ (pmono (by norm_num))).trans hbase
     have hτ₁half : τ * Λ ≤ 2 * (τ₁ * v ^ 63) := by
       have h1 := Nat.div_add_mod (τ * Λ) (v ^ 63)
       have h2 := Nat.mod_lt (τ * Λ) (ppos 63)
       have h3 : v ^ 63 ≤ τ₁ * v ^ 63 := Nat.le_mul_of_pos_left _ (lt_of_lt_of_le (ppos H) hτ₁V)
-      rw [← hτ₁, Nat.mul_comm (v ^ 63)] at h1
+      rw [hτ₁, Nat.mul_comm (v ^ 63)] at h1
       omega
     have hτ₁τ : τ₁ ≤ τ := by
       have : τ₁ * v ^ 63 ≤ τ * v ^ 63 := hτ₁le.trans (Nat.mul_le_mul_left _ (hΛv.trans (Nat.le_self_pow (by norm_num) v)))
@@ -208,7 +207,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ α Λ) (hv : 1000 
             _ ≤ τ := Nat.div_mul_le_self _ _
             _ ≤ c * τ := Nat.le_mul_of_pos_left _ hc1
         calc s₁ * v ^ 48 * v ^ 63 = (s / v ^ 63 * v ^ 63 * v ^ 48 + τ / v ^ 256 * v ^ 63 * v ^ 48) * Λ := by
-              rw [hs₁]; ring
+              rw [← hs₁]; ring
           _ ≤ (c * τ + c * τ) * Λ := Nat.mul_le_mul_right _ (Nat.add_le_add a1 a2)
           _ = 2 * c * (τ * Λ) := by ring
           _ ≤ 2 * c * (2 * (τ₁ * v ^ 63)) := Nat.mul_le_mul_left _ hτ₁half
@@ -233,7 +232,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ α Λ) (hv : 1000 
               _ ≤ τ * v ^ 63 := Nat.div_mul_le_self _ _
               _ ≤ τ * v ^ 208 := Nat.mul_le_mul_left _ (pmono (by norm_num))
           exact Nat.le_of_mul_le_mul_right h2 (ppos 208)
-        calc t₁ * v ^ 48 = (s * v ^ 48 + τ * v ^ 63 / v ^ 256 * v ^ 48) * Λ := by rw [ht₁]; ring
+        calc t₁ * v ^ 48 = (s * v ^ 48 + τ * v ^ 63 / v ^ 256 * v ^ 48) * Λ := by rw [← ht₁]; ring
           _ ≤ (c * τ + c * τ) * Λ := Nat.mul_le_mul_right _ (Nat.add_le_add hs (h1.trans (Nat.le_mul_of_pos_left _ hc1)))
           _ = c * τ * (2 * Λ) := by ring
       have b2 : v ^ 63 * Λ * t₂ * v ^ 48 ≤ c * τ * (4 * Λ ^ 2 * (100 * Λ ^ 3) ^ (r + 1)) := by
@@ -268,7 +267,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ α Λ) (hv : 1000 
         omega
       have hL3 : Λ ≤ Λ ^ 3 := Nat.le_self_pow (by norm_num) Λ
       have hL2 : Λ ^ 2 ≤ Λ ^ 3 := Nat.pow_le_pow_right hΛ1 (by norm_num)
-      obtain ⟨X, hX⟩ : ∃ X, X = (100 * Λ ^ 3) ^ (r + 1) := ⟨_, rfl⟩
+      obtain ⟨X, hX⟩ := exists_eq (a' := (100 * Λ ^ 3) ^ (r + 1))
       have c1 : 2 * Λ ≤ 2 * Λ ^ 3 * X := by
         rw [hX]
         calc 2 * Λ ≤ 2 * Λ ^ 3 * 1 := by omega
