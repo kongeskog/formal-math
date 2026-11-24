@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T00:59:59.268644845Z",
+  "updated_at": "2026-11-24T01:02:23.624354145Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 0,
     "rejected": 2,
-    "open": 4,
+    "open": 6,
     "contributors": 1,
     "ideas_open": 8
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 0,
-      "attempts": 6,
+      "attempts": 8,
       "saved": 0
     }
   ],
@@ -94,7 +94,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T03:54:27Z",
-      "pr": null,
+      "pr": 20,
       "result_delta": null,
       "created_at": "2026-11-24T00:49:50Z",
       "url": "https://github.com/kongeskog/formal-math/issues/17",
@@ -192,7 +192,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T03:54:36Z",
-      "pr": null,
+      "pr": 21,
       "result_delta": null,
       "created_at": "2026-11-24T00:47:59Z",
       "url": "https://github.com/kongeskog/formal-math/issues/10",
@@ -550,6 +550,142 @@
       "reason": null,
       "technique": "shorten",
       "scope": "*"
+    },
+    {
+      "pr": 20,
+      "title": "merge(*): prove the twin ht and nds lemmas for dec, decAll and budg by one induction each",
+      "author": "kongeskog",
+      "head_sha": "9f45dc2a2889d8959b428265db97677ca3779184",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T01:01:47Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 17,
+      "url": "https://github.com/kongeskog/formal-math/pull/20",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "*"
+    },
+    {
+      "pr": 21,
+      "title": "merge(Nc/Tow): state sum_units for any Uid and delete its copy sum_uid",
+      "author": "kongeskog",
+      "head_sha": "2102334a37e58f2254129987af097e352d7c849c",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T01:02:11Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 10,
+      "url": "https://github.com/kongeskog/formal-math/pull/21",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "Nc/Tow"
     }
   ],
   "top_files": [
