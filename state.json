@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T18:44:18.306750775Z",
+  "updated_at": "2026-11-24T18:45:29.342292509Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 0,
     "contributors": 1,
-    "ideas_open": 6
+    "ideas_open": 5
   },
   "leaderboard": [
     {
@@ -118,10 +118,10 @@
     {
       "number": 15,
       "title": "Idea: shorten(*): replace the obtain-exists-rfl idiom by generalize or exists_eq",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T21:44:30Z",
       "pr": 27,
       "result_delta": -332,
       "created_at": "2026-11-24T00:48:06Z",
