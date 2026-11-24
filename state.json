@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T21:44:14.408171104Z",
+  "updated_at": "2026-11-24T21:49:26.098593152Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "e2aafb9f35db40895d501bc634e5361b9ad5d307",
-    "at": "2026-11-24T21:27:50.288758118Z",
+    "sha": "b9b7989ea60f39f0ac8dce8948ad4581de69c9f3",
+    "at": "2026-11-24T21:49:26.098593152Z",
     "metrics": {
-      "tokens": 904826,
-      "loc": 57357,
-      "decls": 4561,
+      "tokens": 903150,
+      "loc": 57220,
+      "decls": 4563,
       "files": 321,
-      "bytes": 3352115,
-      "build_seconds": 527
+      "bytes": 3346692,
+      "build_seconds": 473
     }
   },
   "counts": {
-    "merged": 44,
+    "merged": 46,
     "rejected": 2,
-    "open": 5,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 44,
+      "merged": 46,
       "attempts": 51,
-      "saved": 23335
+      "saved": 25011
     }
   ],
   "ideas": [
@@ -95,7 +95,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:20:40Z",
       "pr": 87,
-      "result_delta": null,
+      "result_delta": -698,
       "created_at": "2026-11-24T21:15:47Z",
       "url": "https://github.com/kongeskog/formal-math/issues/85",
       "technique": "shorten",
@@ -109,7 +109,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T00:20:31Z",
       "pr": 86,
-      "result_delta": null,
+      "result_delta": -978,
       "created_at": "2026-11-24T21:09:56Z",
       "url": "https://github.com/kongeskog/formal-math/issues/84",
       "technique": "shorten",
@@ -621,186 +621,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 86,
-      "title": "shorten(Nc): norm_add_le, linear_combination and Nat.triangle_succ for seven numeric lemmas",
-      "author": "kongeskog",
-      "head_sha": "ca6fb14174607e445cad65bcbf4aa69a993752b9",
-      "base_sha": "18228892a6b12bd24ea12dcd6f331ad490e4eeff",
-      "status": "stale",
-      "created_at": "2026-11-24T21:24:53Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 907556,
-        "loc": 57550,
-        "decls": 4556,
-        "files": 321,
-        "bytes": 3360964,
-        "build_seconds": 632
-      },
-      "base_metrics": {
-        "tokens": 908534,
-        "loc": 57614,
-        "decls": 4556,
-        "files": 321,
-        "bytes": 3363845,
-        "build_seconds": null
-      },
-      "delta": -978,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "8 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 908534 → 907556 (-978)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 84,
-      "url": "https://github.com/kongeskog/formal-math/pull/86",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45490862737",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc"
-    },
-    {
-      "pr": 87,
-      "title": "shorten(Nc): state a repeated step once in four proofs of Nc/Tow and Nc/Grp",
-      "author": "kongeskog",
-      "head_sha": "a6c8351c4e7f169beef9ac6bf43b772e7278bbf7",
-      "base_sha": "18228892a6b12bd24ea12dcd6f331ad490e4eeff",
-      "status": "stale",
-      "created_at": "2026-11-24T21:24:56Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 907836,
-        "loc": 57541,
-        "decls": 4558,
-        "files": 321,
-        "bytes": 3361303,
-        "build_seconds": 365
-      },
-      "base_metrics": {
-        "tokens": 908534,
-        "loc": 57614,
-        "decls": 4556,
-        "files": 321,
-        "bytes": 3363845,
-        "build_seconds": null
-      },
-      "delta": -698,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "4 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 908534 → 907836 (-698)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 85,
-      "url": "https://github.com/kongeskog/formal-math/pull/87",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45490868138",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc"
-    },
     {
       "pr": 88,
       "title": "restructure(NS1): state implicit binders shared by adjacent lemmas once in a variable block",
