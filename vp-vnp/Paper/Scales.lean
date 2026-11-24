@@ -121,6 +121,22 @@ theorem exists_scale (B₀ E n : ℕ) (hB : 0 < B₀) : ∃ C M₁ : ℕ, ∀ M,
   calc 2 * B₀ * a + 1 ≤ (2 * B₀ + 1) * a + (2 * B₀ + 1) := by rw [add_mul]; omega
     _ = (2 * B₀ + 1) * (a + 1) := by ring
 
+/-- **Paper: "We keep A and H of Theorem thm:cut".** In the contracting case there are the ring A, its generators and
+H = 16 h₀ with the conclusion of Theorem thm:cut, and for them Proposition prop:next and Theorem thm:noacc hold. -/
+theorem scales_setting {K : Type} [Field K] (hK : Contracting K) :
+    ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A) (θ : List Bool → A) (h C₀ v₀ : ℕ),
+      Generates θ ∧ 17 ≤ h ∧ CutHyp θ (16 * h) C₀ v₀ ∧
+      (∀ k, ∃ C v₁ : ℕ, ∀ (R : Type) [CommRing R] [Algebra A R], ∀ v, v₁ ≤ v → ∀ α, 5 ≤ α → lg v ^ (C * α) ≤ v →
+        ∀ (K : KT R) (B : ℕ) (D : Tree),
+        IsAccT θ (16 * h) v (v ^ (16 * h - 16)) K B D → K.nds ≤ v ^ (h * α) → D.size ≤ v ^ (h * α) →
+        B ≤ (α * lg v) ^ k → K.ht ≤ (α * lg v) ^ k →
+        ∃ D', IsAccT θ (16 * h) (v ^ α) ((v ^ α) ^ (16 * h - 17)) K (B + 51 * h * α ^ 2 * lg v) D' ∧
+          D'.size ≤ (v ^ α) ^ (4 * h)) ∧
+      ∃ C v₁ : ℕ, ∀ v, v₁ ≤ v → ∀ a, lg v ^ (C * a) ≤ v → ∀ (R : Type) [CommRing R] [Nontrivial R] [Algebra A R],
+        ¬ HasAcc θ R (16 * h) v (v ^ a) := by
+  obtain ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut⟩ := exists_setting hK
+  exact ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut, fun k => prop_next hh hcut k, thm_noacc hh hcut⟩
+
 -- Theorem thm:contracting is proved from its approximate form in `Paper/ApproxScales.lean`.
 
 end Paper
