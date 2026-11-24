@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T18:54:17.556831768Z",
+  "updated_at": "2026-11-24T18:55:16.389847416Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 12,
     "rejected": 2,
-    "open": 2,
+    "open": 3,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 3
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 12,
-      "attempts": 16,
+      "attempts": 17,
       "saved": 3136
     }
   ],
@@ -150,7 +150,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T21:44:14Z",
-      "pr": null,
+      "pr": 30,
       "result_delta": null,
       "created_at": "2026-11-24T00:48:03Z",
       "url": "https://github.com/kongeskog/formal-math/issues/13",
@@ -244,10 +244,10 @@
     {
       "number": 4,
       "title": "Idea: dead-code(*): remove helper lemmas and one definition that nothing refers to",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-24T21:54:34Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-24T00:06:56Z",
@@ -381,8 +381,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 15,
@@ -392,6 +392,74 @@
       "reason": null,
       "technique": "shorten",
       "scope": "Paper"
+    },
+    {
+      "pr": 30,
+      "title": "generalize(NS1/Comp,Nc/Grp/Lang): one weighted sum and bind for lists of any value type",
+      "author": "kongeskog",
+      "head_sha": "2f5bd00c648d37f0e40d03a0da751de36e20391e",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T18:54:37Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 13,
+      "url": "https://github.com/kongeskog/formal-math/pull/30",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "generalize",
+      "scope": "NS1/Comp,Nc/Grp/Lang"
     }
   ],
   "top_files": [
