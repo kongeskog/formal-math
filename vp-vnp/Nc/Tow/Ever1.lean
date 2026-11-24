@@ -72,19 +72,12 @@ theorem sum_level_succ (g : ∀ j : Fin J, T.X (j + 1) → ℕ) (k : ℕ) (hk : 
 theorem sum_end {κ X : Type*} [Fintype κ] [Fintype X] [DecidableEq X] (w : κ → X) (p : X → Prop) [DecidablePred p]
     (f : κ → ℕ) :
     (∑ e, if p (w e) then f e else 0) = ∑ x, if p x then ∑ e, (if w e = x then f e else 0) else 0 := by
-  have h1 : ∀ e, (if p (w e) then f e else 0) = ∑ x, if p x then (if w e = x then f e else 0) else 0 := by
-    intro e
-    rw [Finset.sum_eq_single (w e)]
-    · rw [if_pos rfl]
-    · intro x _ hx
-      rw [if_neg (Ne.symm hx)]
-      split_ifs <;> rfl
-    · intro hn; exact absurd (mem_univ _) hn
-  rw [Finset.sum_congr rfl fun e _ => h1 e, Finset.sum_comm]
+  rw [← Finset.sum_fiberwise (g := w)]
   refine Finset.sum_congr rfl fun x _ => ?_
-  split_ifs
-  · rfl
-  · simp
+  rw [Finset.sum_filter]
+  split_ifs with h
+  · exact Finset.sum_congr rfl fun e _ => by split_ifs with he <;> simp_all
+  · exact Finset.sum_eq_zero fun e _ => by split_ifs with he <;> simp_all
 
 end Levels
 

@@ -142,25 +142,12 @@ end Idle
 variable {Γ S J : Type*} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S]
   [Fintype J] [DecidableEq J]
 
-/-- Channels as a sum. -/
-def chSumEquiv (S J : Type*) : Ch S J ≃ (S × Bool) ⊕ J where
-  toFun z := match z with
-    | .tp s b => Sum.inl (s, b)
-    | .inp j => Sum.inr j
-  invFun x := match x with
-    | Sum.inl (s, b) => .tp s b
-    | Sum.inr j => .inp j
-  left_inv z := by cases z <;> rfl
-  right_inv x := by rcases x with ⟨s, b⟩ | j <;> rfl
-
 theorem sum_length_tup (W : S → List Γ) (u : J → List Γ) :
     ∑ z, (tup W u z).length = 2 * ∑ s, (W s).length + ∑ j, (u j).length := by
-  rw [Fintype.sum_equiv (chSumEquiv S J) _ (Sum.elim (fun x : S × Bool => (W x.1).length)
-    fun j => (u j).length)]
-  · rw [Fintype.sum_sum_type, Fintype.sum_prod_type, Finset.mul_sum]
-    simp [two_mul]
-  · intro z
-    cases z <;> rfl
+  -- `proxy_equiv%` splits the channels as a sum.
+  rw [← (proxy_equiv% (Ch S J)).sum_comp, Fintype.sum_sum_type, Fintype.sum_sigma, Finset.mul_sum]
+  simp only [Fintype.sum_bool, two_mul]
+  rfl
 
 theorem ofFn_getElem? {Ω : Type*} (w : List Ω) (t : ℕ) (h : w.length ≤ t) :
     List.ofFn (fun k : Fin t => w[(k : ℕ)]?) = w.map some ++ List.replicate (t - w.length) none := by

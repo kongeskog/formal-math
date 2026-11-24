@@ -185,10 +185,8 @@ def st2 : Zc K → List (Sy M K)
   | .tp .ls s => if s then [] else [.mark, .dot]
   | _ => []
 
-theorem flatMap_single' {α β : Type*} (l : List α) (f : α → β) : (l.flatMap fun a => [f a]) = l.map f := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => rw [List.flatMap_cons, ih]; rfl
+theorem flatMap_single' {α β : Type*} (l : List α) (f : α → β) : (l.flatMap fun a => [f a]) = l.map f :=
+  List.map_eq_flatMap.symm
 
 theorem flatMap_nil' {α β : Type*} (l : List α) : (l.flatMap fun _ => ([] : List β)) = [] := by simp
 

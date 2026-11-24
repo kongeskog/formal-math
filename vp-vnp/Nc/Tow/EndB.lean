@@ -134,15 +134,9 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
 omit hr hb hh in
 /-- A sum over at most one element. -/
 theorem sum_le_one {κ : Type*} (s : Finset κ) (f : κ → ℕ) (B : ℕ) (h1 : ∀ x ∈ s, ∀ y ∈ s, x = y) (h2 : ∀ x ∈ s, f x ≤ B) :
-    ∑ x ∈ s, f x ≤ B := by
-  rcases s.eq_empty_or_nonempty with h0 | ⟨x, hx⟩
-  · rw [h0, Finset.sum_empty]; exact Nat.zero_le _
-  · have : s = {x} := by
-      ext y
-      rw [mem_singleton]
-      exact ⟨fun hy => h1 y hy x hx, fun hy => hy ▸ hx⟩
-    rw [this, Finset.sum_singleton]
-    exact h2 x hx
+    ∑ x ∈ s, f x ≤ B :=
+  (Finset.sum_le_card_nsmul s f B h2).trans
+    (by simpa using Nat.mul_le_mul_right B (Finset.card_le_one.2 h1))
 
 /-- The channel is between the chamber `s` and its parent. -/
 def IsCh (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T) (ν : NM R FL (ch := ch)) (s : Σ j : Fin (J + 1), T.X j) : Prop :=

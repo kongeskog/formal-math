@@ -27,13 +27,8 @@ def initN (n : Fin A → Fin A → Fin (U0 + 1)) (p : Fin (A + A')) : ℕ :=
   ∑ a, ∑ c, ((if Fin.castAdd A' a = p then (n a c).1 else 0) + if Fin.castAdd A' c = p then (n a c).1 else 0)
 
 theorem card_fin_le (N c : ℕ) : ((univ : Finset (Fin N)).filter fun k => k.1 < c).card ≤ c := by
-  calc _ ≤ (range c).card := by
-        refine card_le_card_of_injOn (fun k => k.1) ?_ ?_
-        · intro k hk
-          exact mem_coe.2 (mem_range.2 (mem_filter.1 (mem_coe.1 hk)).2)
-        · intro k _ k' _ hkk
-          exact Fin.ext hkk
-    _ = c := card_range c
+  rw [Fin.card_filter_val_lt]
+  exact min_le_right _ _
 
 theorem sum_fin_le (N c : ℕ) (p : Prop) [Decidable p] :
     (∑ k : Fin N, if p ∧ k.1 < c then 1 else 0) ≤ if p then c else 0 := by
