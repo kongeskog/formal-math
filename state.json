@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:54:13.974196182Z",
+  "updated_at": "2026-11-24T20:55:20.499957768Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -801,7 +801,7 @@
       "pr": 79,
       "title": "restructure(Paper): prove the exact end theorems from the approximate ones",
       "author": "kongeskog",
-      "head_sha": "36b05c94581ecd8efbb520c830becd6ab7476b38",
+      "head_sha": "97dfc189cad2a942f1fa0bb1f13f09d74482d12f",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-24T20:53:45Z",
