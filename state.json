@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T23:26:02.002019259Z",
+  "updated_at": "2026-11-24T23:33:47.402334888Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 52,
     "rejected": 2,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 0
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 52,
-      "attempts": 54,
+      "attempts": 55,
       "saved": 27918
     }
   ],
@@ -94,7 +94,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T02:25:42Z",
-      "pr": null,
+      "pr": 96,
       "result_delta": null,
       "created_at": "2026-11-24T23:21:20Z",
       "url": "https://github.com/kongeskog/formal-math/issues/95",
@@ -648,7 +648,76 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 96,
+      "title": "shorten(Paper/Identity): end ten routine tactic blocks with one closing tactic",
+      "author": "kongeskog",
+      "head_sha": "0a0ec02cf6dc787ebbab6c5502dd53bcbe8f28a0",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-24T23:33:13Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 95,
+      "url": "https://github.com/kongeskog/formal-math/pull/96",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Paper/Identity"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
