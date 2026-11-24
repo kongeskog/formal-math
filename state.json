@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:10:23.970881903Z",
+  "updated_at": "2026-11-24T20:13:44.531431755Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "616dab611f4a3514df20318c484b03e8d845b7c3",
-    "at": "2026-11-24T20:04:59.758295847Z",
+    "sha": "3634ac0888881c7fabc825ef8dc8430af9bbcb70",
+    "at": "2026-11-24T20:13:44.531431755Z",
     "metrics": {
-      "tokens": 916879,
-      "loc": 58239,
+      "tokens": 915239,
+      "loc": 58140,
       "decls": 4572,
       "files": 321,
-      "bytes": 3387724,
-      "build_seconds": 534
+      "bytes": 3383350,
+      "build_seconds": 582
     }
   },
   "counts": {
-    "merged": 27,
+    "merged": 28,
     "rejected": 2,
-    "open": 7,
+    "open": 6,
     "contributors": 1,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 27,
+      "merged": 28,
       "attempts": 36,
-      "saved": 11282
+      "saved": 12922
     }
   ],
   "ideas": [
@@ -179,7 +179,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T22:46:48Z",
       "pr": 58,
-      "result_delta": null,
+      "result_delta": -1640,
       "created_at": "2026-11-24T19:42:55Z",
       "url": "https://github.com/kongeskog/formal-math/issues/51",
       "technique": "shorten",
@@ -467,74 +467,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 58,
-      "title": "shorten(Nc/Uni/Vals): prove each of the 15 emX lemmas by one simp call",
-      "author": "kongeskog",
-      "head_sha": "058b152b387a471f1ce0ddd0cd35e219457072a8",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-24T19:52:49Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 51,
-      "url": "https://github.com/kongeskog/formal-math/pull/58",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc/Uni/Vals"
-    },
     {
       "pr": 59,
       "title": "shorten(Nc/Uni/SpecU): prove emPs, emU and emCo_other lemmas by one simp call each",
