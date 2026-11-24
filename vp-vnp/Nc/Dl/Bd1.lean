@@ -229,7 +229,7 @@ theorem okSteps18 {Lc X : ℕ} (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ 
   have hun : ∀ (x dst : NmT S M U0 U1 pS) (f : Fin D → Tree), Rdb x → (Rdb dst → ∀ d, (f d).len ≤ Lc) →
       OkStep (m := m) (mb := mb) C Lc (stepB Lc X) (C.un x dst f) := by
     intro x dst f hx hf
-    refine (okStep_op hnm (x := x) (y := .zero) (z := dst) hx trivial fun hd p q => ?_).mono hop
+    refine (okStep_op hnm (y := .zero) hx trivial fun hd p q => ?_).mono hop
     rcases tget_trieOf_cases C.dc (fun d => Tree.cons (f d) .nil) p with h | ⟨d, h⟩
     · rw [h, tget_nil]; exact Nat.zero_le _
     · rw [h]
@@ -239,7 +239,7 @@ theorem okSteps18 {Lc X : ℕ} (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ 
   have hcon : ∀ (dst : NmT S M U0 U1 pS) (t : Tree), (Rdb dst → t.len ≤ Lc) →
       OkStep (m := m) (mb := mb) C Lc (stepB Lc X) (C.con dst t) := by
     intro dst t ht
-    refine (okStep_op hnm (x := .zero) (y := .zero) (z := dst) trivial trivial fun hd p q => ?_).mono hop
+    refine (okStep_op hnm (x := .zero) (y := .zero) trivial trivial fun hd p q => ?_).mono hop
     rcases tget_single (.cons t .nil) p with h | h
     · rw [h, tget_nil]; exact Nat.zero_le _
     · rw [h]
@@ -252,7 +252,7 @@ theorem okSteps18 {Lc X : ℕ} (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ 
   · -- states
     rw [steps1, List.mem_map] at h
     obtain ⟨a, -, rfl⟩ := h
-    refine (okStep_pick hnm _ _ (X := X) (w := 1) (fun q _ b hb hr => ?_) ?_ fun q _ => by simp).mono (hpk 1 (by norm_num))
+    refine (okStep_pick hnm _ _ (w := 1) (fun q _ b hb hr => ?_) ?_ fun q _ => by simp).mono (hpk 1 (by norm_num))
     · rw [List.mem_singleton] at hb
       subst hb
       exact absurd hr (by simp [Rdb])
@@ -263,7 +263,7 @@ theorem okSteps18 {Lc X : ℕ} (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ 
       · rw [Finset.length_toList, Finset.card_univ]; omega
   · rw [steps2, List.mem_map] at h
     obtain ⟨a, -, rfl⟩ := h
-    refine (okStep_pick hnm _ _ (X := X) (w := 2) (fun d _ b hb hr => ?_) ?_ fun d _ => by simp).mono (hpk 2 (by norm_num))
+    refine (okStep_pick hnm _ _ (w := 2) (fun d _ b hb hr => ?_) ?_ fun d _ => by simp).mono (hpk 2 (by norm_num))
     · simp only [List.mem_cons, List.not_mem_nil, or_false] at hb
       rcases hb with rfl | rfl
       · exact absurd hr (by simp [Rdb])
@@ -271,7 +271,7 @@ theorem okSteps18 {Lc X : ℕ} (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ 
     · rw [Finset.length_toList, Finset.card_univ]; exact hXr
   · rw [steps3, List.mem_map] at h
     obtain ⟨a, -, rfl⟩ := h
-    refine (okStep_pick hnm _ _ (X := X) (w := 4) (fun d _ b hb hr => ?_) ?_ fun d _ => ?_).mono (hpk 4 le_rfl)
+    refine (okStep_pick hnm _ _ (w := 4) (fun d _ b hb hr => ?_) ?_ fun d _ => ?_).mono (hpk 4 le_rfl)
     · simp only [o3, List.mem_cons] at hb
       rcases hb with rfl | rfl | rfl | hb
       · exact absurd hr (by simp [Rdb])
@@ -287,7 +287,7 @@ theorem okSteps18 {Lc X : ℕ} (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ 
       split_ifs <;> simp
   · rw [steps4, List.mem_map] at h
     obtain ⟨a, -, rfl⟩ := h
-    refine (okStep_pick hnm _ _ (X := X) (w := 3) (fun d _ b hb hr => ?_) ?_ fun d _ => by simp).mono (hpk 3 (by norm_num))
+    refine (okStep_pick hnm _ _ (w := 3) (fun d _ b hb hr => ?_) ?_ fun d _ => by simp).mono (hpk 3 (by norm_num))
     · simp only [List.mem_cons, List.not_mem_nil, or_false] at hb
       rcases hb with rfl | rfl | rfl
       · exact hdt _

@@ -48,7 +48,7 @@ theorem unF_gives {b : Fm} {x : Tree} {w : List Bool} {c : ℕ} (h : Gives θ b 
   have hl : Gives θ b x (listT (w.map bit)) c := by
     rw [listT_ofBits]
     exact h
-  have h1 := foldTG (θ := θ) (encE := bit) (xs := w) (enc := num) (s₀ := 0) (g := fun b a => 2 * a + b.toNat)
+  have h1 := foldTG (θ := θ) (s₀ := 0) (g := fun b a => 2 * a + b.toNat)
     (Inv := fun ys a => ys.foldl (fun a b => 2 * a + b.toNat) a = bval w) (d := fun _ => bval w * 62 + 90)
     (step := .ite (.hd .id) (.cons (.quote .nil) (appF (.tl .id) (.tl .id))) (appF (.tl .id) (.tl .id)))
     (s := .quote .nil) (Gives.quote _ _) hl (fun b ys a _ hinv => ⟨unStep_gives b a _ (by
@@ -149,7 +149,7 @@ theorem TOk.putsL {ub : ℕ} {kss : List (List (List Bool))} {strs : List (List 
     obtain ⟨t1, h1, h2⟩ := ht'
     exact ih (h.putL t1 h1) t' h2
 
-theorem mem_encT {l : List Tree} {q : A × Tree} (h : q ∈ encT (A := A) l) : q.2 ∈ l := by
+theorem mem_encT {l : List Tree} {q : A × Tree} (h : q ∈ encT l) : q.2 ∈ l := by
   obtain ⟨t, ht, rfl⟩ := List.mem_map.1 h
   exact ht
 
@@ -232,7 +232,7 @@ theorem ex_kinds : ∃ (Fs : List Fm) (κ : ℕ), ∀ (j : ℕ) (z : Σ L : G.La
 
 /-- **One instruction.** -/
 theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : Ins) (t : Tree), InsOk S Q c kinds i → TOk ub t →
-    Does θ F (.cons i.tree (encG T ub t)) ((insSem (S := S) θ mu cb kinds T ub i t).map (Prod.map id (encG T ub)))
+    Does θ F (.cons i.tree (encG T ub t)) ((insSem θ mu cb kinds T ub i t).map (Prod.map id (encG T ub)))
       (κ * insCost T ub i) := by
   obtain ⟨Fs, κs, hFs⟩ := ex_sim (θ := θ) mu cb
   obtain ⟨κl, hκl⟩ := exists_simSem_length (θ := θ) mu cb
@@ -261,7 +261,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
   have gpos : 1 ≤ insCost T ub i := by
     cases i <;> simp only [insCost, bodyCost] <;> omega
   -- it is enough to make the trie
-  suffices h : Does θ (switchF (.hd (.hd .id)) fs) x (insSem (S := S) θ mu cb kinds T ub i t)
+  suffices h : Does θ (switchF (.hd (.hd .id)) fs) x (insSem θ mu cb kinds T ub i t)
       ((κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * insCost T ub i) by
     refine ((Does.cons gT (Does.cons gU h)).replace ?_).mono ?_
     · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_map, one_mul]
@@ -314,7 +314,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     have g0 : Gives θ (.hd (.hd .id)) x (num 1) 3 := (Gives.id _).hd.hd
     have e1 := hFi (.hd (.tl (.hd .id))) x part 4 (Gives.id _).hd.tl.hd
     have e2 := Gives.cons e1 (Gives.cons gU (Gives.cons gt (Gives.id (θ := θ) x).hd.tl.tl))
-    have e3 := hFp ub B (inOuts (S := S) part) t part.length (fun j => by
+    have e3 := hFp ub B (inOuts part) t part.length (fun j => by
         unfold inOuts
         split_ifs
         · exact le_rfl
@@ -340,12 +340,12 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     omega
   | both k k' =>
     have g0 : Gives θ (.hd (.hd .id)) x (num 2) 3 := (Gives.id _).hd.hd
-    have e1 := getF_gives (θ := θ) (x := x) (pf := .hd (.tl (.hd .id))) (p := ofBits k) (Gives.id _).hd.tl.hd gt
-    have e2 := getF_gives (θ := θ) (x := x) (pf := .tl (.tl (.hd .id))) (p := ofBits k') (Gives.id _).hd.tl.tl gt
+    have e1 := getF_gives (θ := θ) (pf := .hd (.tl (.hd .id))) (p := ofBits k) (Gives.id _).hd.tl.hd gt
+    have e2 := getF_gives (θ := θ) (pf := .tl (.tl (.hd .id))) (p := ofBits k') (Gives.id _).hd.tl.tl gt
     have e3 := eqF_gives e1 e2
     rw [path_ofBits, path_ofBits, len_ofBits, len_ofBits] at e3
     have h1 := hsz k
-    have h2 : Does θ fBoth x (insSem (S := S) θ mu cb kinds T ub (.both k k') t) (300 * insCost T ub (.both k k')) := by
+    have h2 : Does θ fBoth x (insSem θ mu cb kinds T ub (.both k k') t) (300 * insCost T ub (.both k k')) := by
       simp only [insSem, insCost]
       by_cases h : tget k t = tget k' t
       · rw [if_pos h]
@@ -361,11 +361,11 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     omega
   | one k w =>
     have g0 : Gives θ (.hd (.hd .id)) x (num 3) 3 := (Gives.id _).hd.hd
-    have e1 := getF_gives (θ := θ) (x := x) (pf := .hd (.tl (.hd .id))) (p := ofBits k) (Gives.id _).hd.tl.hd gt
+    have e1 := getF_gives (θ := θ) (pf := .hd (.tl (.hd .id))) (p := ofBits k) (Gives.id _).hd.tl.hd gt
     have e3 := eqF_gives e1 (Gives.id (θ := θ) x).hd.tl.tl
     rw [path_ofBits, len_ofBits] at e3
     have h1 := hsz k
-    have h2 : Does θ fOne x (insSem (S := S) θ mu cb kinds T ub (.one k w) t) (300 * insCost T ub (.one k w)) := by
+    have h2 : Does θ fOne x (insSem θ mu cb kinds T ub (.one k w) t) (300 * insCost T ub (.one k w)) := by
       simp only [insSem, insCost]
       by_cases h : tget k t = ofBits w
       · rw [if_pos h]
@@ -396,7 +396,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     have hf : fs[4 + j]? = some (lett (.cons (.hd (.tl (.tl .id))) (.cons (.tl (.tl (.tl .id))) (.tl (.hd .id)))) G) := by
       rw [hfs, add_comm]
       simp [hG]
-    have e5 := switchF_does (θ := θ) g0 (fs := fs) hf e2
+    have e5 := switchF_does (θ := θ) g0 hf e2
     refine (e5.replace ?_).mono ?_
     · rw [insSem, hz]
     · simp only [insCost]
@@ -412,12 +412,12 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
 variable (θ) in
 /-- What a script does with a trie. -/
 noncomputable def scriptSem (T ub : ℕ) (l : List Ins) (t : Tree) : List (A × Tree) :=
-  foldL (insSem (S := S) θ mu cb kinds T ub) l t
+  foldL (insSem θ mu cb kinds T ub) l t
 
 /-- **The program GROUP.** -/
 theorem ex_group (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (bT bub : List Bool) (l : List Ins),
     (∀ i ∈ l, InsOk S Q c kinds i) →
-    Does θ F (scriptT bT bub l) ((scriptSem (S := S) θ mu cb kinds (bval bT) (bval bub) l .nil).map
+    Does θ F (scriptT bT bub l) ((scriptSem θ mu cb kinds (bval bT) (bval bub) l .nil).map
       (Prod.map id (encG (bval bT) (bval bub))))
       (κ * ((bT.length + 1) * (bval bT + 1) + (bub.length + 1) * (bval bub + 1) +
         (l.map (insCost (bval bT) (bval bub))).sum + l.length)) := by
@@ -427,9 +427,9 @@ theorem ex_group (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (bT bub : List B
   have g1 : Gives θ (.hd (.hd .id)) (scriptT bT bub l) (ofBits bT) 3 := (Gives.id _).hd.hd
   have g2 : Gives θ (.tl (.hd .id)) (scriptT bT bub l) (ofBits bub) 3 := (Gives.id _).hd.tl
   have h0 := Gives.cons (unF_gives g1) (Gives.cons (unF_gives g2) (Gives.quote .nil (scriptT bT bub l)))
-  have h1 := foldT (θ := θ) (A := A) (encE := Ins.tree) (xs := l) (enc := encG (bval bT) (bval bub)) (s₀ := .nil)
-    (f := insSem (S := S) θ mu cb kinds (bval bT) (bval bub)) (Inv := fun _ t => TOk (bval bub) t)
-    (d := fun i => κ * insCost (bval bT) (bval bub) i) (step := F) (l := .tl .id) (x := scriptT bT bub l) h0
+  have h1 := foldT (θ := θ) (enc := encG (bval bT) (bval bub)) (s₀ := .nil)
+    (f := insSem θ mu cb kinds (bval bT) (bval bub)) (Inv := fun _ t => TOk (bval bub) t)
+    (d := fun i => κ * insCost (bval bT) (bval bub) i) (l := .tl .id) (x := scriptT bT bub l) h0
     (Gives.id _).tl (fun i _ t hi ht => ⟨hF _ _ i t (hl i hi) ht, fun q hq => ht.insSem mu cb kinds q hq⟩) (tOk_nil _)
   refine h1.mono ?_
   have h2 : ∀ l : List Ins, (l.map fun i => κ * insCost (bval bT) (bval bub) i + 30).sum =

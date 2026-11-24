@@ -274,7 +274,7 @@ theorem size_un (x z : NmT S M U0 U1 pS) {f : Fin D → Tree} (hf : ∀ d, (f d)
     (C.un x z f).tree.size ≤ 120 * (X * Lc) ^ 2 := by
   obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
   refine size_opS H _ _ _ ?_
-  have h := size_trieOf_le (code := C.dc) (f := fun d => Tree.cons (f d) .nil) (L := Lc) (s := 7 * (X * Lc)) H.dc
+  have h := size_trieOf_le (f := fun d => Tree.cons (f d) .nil) (s := 7 * (X * Lc)) H.dc
     fun d => by
       have := hf d
       simp only [Tree.size]
@@ -297,11 +297,11 @@ theorem size_trie2 {α : Type} [Fintype α] {code : α → List Bool} (hc : ∀ 
   obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
   have h1 : ∀ a, (trieOf code fun b => f a b).size ≤ 13 * (X * Lc) + 1 := by
     intro a
-    have h := size_trieOf_le (code := code) (f := fun b => f a b) (L := Lc) hc (hf a)
+    have h := size_trieOf_le (f := fun b => f a b) hc (hf a)
     have h2 := Nat.mul_le_mul_right (4 * Lc + 1 + 4 * Lc + 4) hα
     have h3 : X * (4 * Lc + 1 + 4 * Lc + 4) = 8 * (X * Lc) + 5 * X := by ring
     omega
-  have h := size_trieOf_le (code := code) (f := fun a => trieOf code fun b => f a b) (L := Lc) hc h1
+  have h := size_trieOf_le (f := fun a => trieOf code fun b => f a b) hc h1
   have h2 := Nat.mul_le_mul_right (13 * (X * Lc) + 1 + 4 * Lc + 4) hα
   have h3 : X * (13 * (X * Lc) + 1 + 4 * Lc + 4) = 13 * (X * (X * Lc)) + 4 * (X * Lc) + 5 * X := by ring
   omega

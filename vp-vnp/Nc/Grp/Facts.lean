@@ -172,7 +172,7 @@ theorem sum_wr_le (w : List (Letter S Unit Γ)) : ∑ s, (wr w s).length ≤ w.l
   refine le_trans ?_ h1
   rw [Fintype.sum_option]
   simp only [wr, List.length_nil, zero_add]
-  rw [← Finset.sum_image (f := fun z : Ch S Unit => (emit w z).length) (s := univ) (g := fun s : S => .tp s false)]
+  rw [← Finset.sum_image (f := fun z : Ch S Unit => (emit w z).length) (g := fun s : S => .tp s false)]
   · exact Finset.sum_le_sum_of_subset (Finset.subset_univ _)
   · intro s _ s' _ e
     simpa using e
@@ -191,14 +191,14 @@ theorem sum_rdr_le (w : List (Letter S Unit Γ)) : ∑ s, (rdr w s).length ≤ w
     intro s s' e
     cases s <;> cases s' <;> simp [f] at e ⊢
     exact e
-  rw [hf, ← Finset.sum_image (f := fun z : Ch S Unit => (emit w z).length) (s := univ) (g := f)
+  rw [hf, ← Finset.sum_image (f := fun z : Ch S Unit => (emit w z).length)
     fun s _ s' _ e => inj e]
   exact Finset.sum_le_sum_of_subset (Finset.subset_univ _)
 
 /-- **(i)** The numbers of units of the base parties of the group. -/
 theorem count_of_accept (hub : 0 < ub) (hx : ∀ κ, (x κ).length ≤ T)
     (hρ : ∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) {b : G.Uid (K + K) U0 M.N U1 → UW ub} {t : Tree}
-    (h : scriptSem (S := S) θ mu cb kinds T ub
+    (h : scriptSem θ mu cb kinds T ub
       (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b) t ≠ []) {p : Fin (K + K)}
     (hp : grp (Fin.castAdd A' p) = g) :
     ∑ b, ((n p b : ℕ) + n b p) ≤ 2 * ((T + (K + K) * (Fintype.card S + 1)) * c / ub + (K + K)) := by
@@ -217,7 +217,7 @@ theorem count_of_accept (hub : 0 < ub) (hx : ∀ κ, (x κ).length ≤ T)
       obtain ⟨a, ha, r', hr', -⟩ := mem_bindW hr
       obtain ⟨w, hw, ew⟩ := mem_simSem ha
       rw [ew] at hr'
-      obtain ⟨R, C, h1, h2, h3, h4⟩ := exists_of_pack (A := A) (T := T) hub (fun s => hρ s _) (wl := wr w) (rl := rdr w)
+      obtain ⟨R, C, h1, h2, h3, h4⟩ := exists_of_pack hub (fun s => hρ s _) (wl := wr w) (rl := rdr w)
         (fun s => hw ▸ length_wr w s) (fun s => hw ▸ length_rdr w s) (outsOf_left cb w) (outsOf_right cb w)
         (List.ne_nil_of_mem hr')
       refine ⟨R, C, ?_, ?_, h3, h4⟩
@@ -227,7 +227,7 @@ theorem count_of_accept (hub : 0 < ub) (hx : ∀ κ, (x κ).length ≤ T)
         exact hw ▸ sum_rdr_le w
     | right κ =>
       rw [Fin.addCases_right, insSem] at ht'
-      obtain ⟨R, C, h1, h2, h3, h4⟩ := exists_of_pack (A := A) (T := T) hub (fun s => hρ s _)
+      obtain ⟨R, C, h1, h2, h3, h4⟩ := exists_of_pack hub (fun s => hρ s _)
         (wl := fun s => if s = none then x κ else []) (rl := fun _ => [])
         (fun s => by split_ifs; exacts [hx κ, Nat.zero_le _]) (fun s => Nat.zero_le _)
         (fun i => inOuts_left cb (x κ) i) (fun i => inOuts_right cb (x κ) i) ht'

@@ -22,7 +22,7 @@ variable (A) in
 /-- What a base party does with its letters. -/
 noncomputable def packSem (sep : List Bool) (ub : ℕ) (B : Body) (o : Outs S) (t : Tree) : List (A × Tree) :=
   bindW (segsL A sep (itemsR B.flags o) (List.replicate B.kR.length [true])) fun sR =>
-    bindW (encT (A := A) (putsL ub B.kR sR.reverse t)) fun t1 =>
+    bindW (encT (putsL ub B.kR sR.reverse t)) fun t1 =>
       bindW (segsL A sep (itemsC B.kR.length o) (List.replicate B.kR.length [true])) fun sC =>
         encT (putsL ub B.kC sC.reverse t1)
 
@@ -42,7 +42,7 @@ theorem length_getD_le (l : List (List ℕ)) (i : ℕ) : (l.getD i []).length �
 
 theorem length_segsL {sep : List Bool} {items : List Item} {accs : List (List Bool)} {N : ℕ}
     (h : ∀ it ∈ items, it.1.length ≤ N) (ha : accs.length ≤ N) : ∀ r ∈ segsL A sep items accs, r.2.length ≤ N := by
-  refine mem_foldL_induct (f := segOne A sep) (xs := items) (Inv := fun _ s => s.length ≤ N) (m := 0)
+  refine mem_foldL_induct (f := segOne A sep) (Inv := fun _ s => s.length ≤ N) (m := 0)
     (fun it hit s m _ q hq => ?_) ha
   obtain ⟨out, hout, rfl⟩ := List.mem_map.1 hq
   have := length_segRow out hout
@@ -54,7 +54,7 @@ theorem row_gives (v : Tree) {k : Fm} {x : Tree} {ck : ℕ} {kss : List (List (L
     (hk : Gives θ k x (keysT kss) ck) :
     Gives θ (mapF (.quote v) (.quote .nil) k) x (listT (List.replicate kss.length v)) (ck + kss.length * 41 + 21) := by
   have hk' : Gives θ k x (listT (kss.map fun ks => listT (ks.map ofBits))) ck := hk
-  have := mapF_gives (θ := θ) (x := x) (step := .quote v) (ef := .quote .nil) (e := .nil) (l := k)
+  have := mapF_gives (θ := θ) (step := .quote v) (ef := .quote .nil) (e := .nil)
     (xs := kss.map fun ks => listT (ks.map ofBits)) (g := fun _ => v) (d := fun _ => 1) (Gives.quote _ _) hk'
     (fun _ _ => Gives.quote _ _)
   rw [List.map_map] at this
@@ -63,7 +63,7 @@ theorem row_gives (v : Tree) {k : Fm} {x : Tree} {ck : ℕ} {kss : List (List (L
 
 theorem rev_encA {k : Fm} {x : Tree} {ck : ℕ} {l : List (List Bool)} (hk : Gives θ k x (encA l) ck) :
     Gives θ (foldF .id (.quote .nil) k) x (listT (l.reverse.map ofBits)) (ck + l.length * 31 + 21) := by
-  have := rev_gives (θ := θ) (x := x) (ys := []) (xs := l.map ofBits) (s := .quote .nil) (l := k) (Gives.quote _ _) hk
+  have := rev_gives (θ := θ) (ys := []) (xs := l.map ofBits) (s := .quote .nil) (Gives.quote _ _) hk
   rw [List.append_nil, ← List.map_reverse, List.length_map] at this
   exact this.mono (by omega)
 
@@ -124,12 +124,12 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
   have a3 := Does.of_gives a2 (segsF_does (θ := θ) sep c hsep _ _ hcR)
   have a4 := Does.letkT (G := lett (.cons (.hd (.tl (.hd .id))) (.cons (.hd (.tl (.tl (.tl (.tl (.hd .id))))))
       (.cons (foldF .id (.quote .nil) (.tl .id)) (.hd (.tl (.tl (.hd .id))))))) putsF)
-    (f := fun sR => (encT (A := A) (putsL ub B.kR sR.reverse t)).map (Prod.map id id))
+    (f := fun sR => (encT (putsL ub B.kR sR.reverse t)).map (Prod.map id id))
     (d := (flen B.flags + m) * 31 + putCost ub B.kR + 300) a3 (by
       intro b hb
       have h1 := length_segsL (N := flen B.flags + m) (fun it hit => (hlR it hit).2.trans (Nat.le_add_right _ _))
         (by rw [List.length_replicate]; exact Nat.le_add_left _ _) b hb
-      have e1 := rev_encA (θ := θ) (x := .cons x (encA b.2)) (k := .tl .id) (l := b.2) (Gives.id _).tl
+      have e1 := rev_encA (θ := θ) (x := .cons x (encA b.2)) (k := .tl .id) (Gives.id _).tl
       have e2 := Gives.cons (Gives.id (θ := θ) (.cons x (encA b.2))).hd.tl.hd (Gives.cons
         (Gives.id _).hd.tl.tl.tl.tl.hd (Gives.cons e1 (Gives.id _).hd.tl.tl.hd))
       have e3 := Does.of_gives e2 (putsF_does (θ := θ) ub B.kR b.2.reverse t)
@@ -159,8 +159,8 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
       omega
     · simp
   have b3 := Does.of_gives b2 (segsF_does (θ := θ) sep c hsep _ _ hcC)
-  have b4 := Does.letkT (G := _) (f := fun t1 => bindW (segsL A sep (itemsC m o) (List.replicate m [true])) fun sC =>
-      encT (A := A) (putsL ub B.kC sC.reverse t1))
+  have b4 := Does.letkT (f := fun t1 => bindW (segsL A sep (itemsC m o) (List.replicate m [true])) fun sC =>
+      encT (putsL ub B.kC sC.reverse t1))
     (d := 2 + (κC * (6 + m * 41 + 21 + 2 + 1) + (6 + m * 41 + 21) + 1 +
         (((itemsC m o).map fun it => (62 * c + 700) * (it.1.length + it.2.length + 1) + 30).sum + 30) + 2) + 2 +
         (m * 31 + putCost ub B.kC + 300) + 4) a4 (by
@@ -168,10 +168,10 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
       have c1 := Does.of_gives (gO' b.2) b3
       have c2 := Does.letkT (G := lett (.cons (.hd (.tl (.hd (.hd .id)))) (.cons (.tl (.tl (.tl (.tl (.tl (.hd (.hd .id)))))))
           (.cons (foldF .id (.quote .nil) (.tl .id)) (.tl (.hd .id))))) putsF)
-        (f := fun sC => encT (A := A) (putsL ub B.kC sC.reverse b.2)) (d := m * 31 + putCost ub B.kC + 300) c1 (by
+        (f := fun sC => encT (putsL ub B.kC sC.reverse b.2)) (d := m * 31 + putCost ub B.kC + 300) c1 (by
           intro r hr
-          have h1 := length_segsL (N := m) (fun it hit => (hlC it hit).2) (by rw [List.length_replicate]) r hr
-          have e1 := rev_encA (θ := θ) (x := .cons (.cons x b.2) (encA r.2)) (k := .tl .id) (l := r.2) (Gives.id _).tl
+          have h1 := length_segsL (fun it hit => (hlC it hit).2) (by rw [List.length_replicate]) r hr
+          have e1 := rev_encA (θ := θ) (x := .cons (.cons x b.2) (encA r.2)) (k := .tl .id) (Gives.id _).tl
           have e2 := Gives.cons (Gives.id (θ := θ) (.cons (.cons x b.2) (encA r.2))).hd.hd.tl.hd (Gives.cons
             (Gives.id _).hd.hd.tl.tl.tl.tl.tl (Gives.cons e1 (Gives.id _).hd.tl))
           have e3 := Does.of_gives e2 (putsF_does (θ := θ) ub B.kC r.2.reverse b.2)
