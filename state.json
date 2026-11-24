@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T20:28:34.480825320Z",
+  "updated_at": "2026-11-24T20:29:30.610451160Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -472,13 +472,27 @@
       "title": "restructure(Nc/Tower/UT): build the submonoid of U once and extend it to the subgroup",
       "author": "kongeskog",
       "head_sha": "865f0c563877b63f02dc7997a651657267805842",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "6d7b8f1d429f51c649400cb08b78d8972b663985",
+      "status": "stale",
       "created_at": "2026-11-24T20:05:16Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 917013,
+        "loc": 58226,
+        "decls": 4572,
+        "files": 321,
+        "bytes": 3387793,
+        "build_seconds": 847
+      },
+      "base_metrics": {
+        "tokens": 917246,
+        "loc": 58247,
+        "decls": 4572,
+        "files": 321,
+        "bytes": 3388540,
+        "build_seconds": null
+      },
+      "delta": -233,
       "gates": [
         {
           "key": "format",
@@ -486,39 +500,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "1 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 917246 → 917013 (-233)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -529,7 +551,7 @@
       ],
       "idea": 56,
       "url": "https://github.com/kongeskog/formal-math/pull/63",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45477061905",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
