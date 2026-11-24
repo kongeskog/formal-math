@@ -17,10 +17,9 @@ open Finset MvPolynomial Nc Nc.Price Nc.CaseI Ov
 
 universe u
 
-/-- VP closure: like VP, with approximating circuits. -/
-def VPBar (F : Type u) [Field F] : Set (Family F) :=
-  {f | ∃ C : ℕ, ∀ n, Fintype.card (f.vars n) ≤ n ^ C + C ∧ (f.poly n).totalDegree ≤ n ^ C + C ∧
-    Approximates (f.poly n) (n ^ C + C)}
+/- VP closure, like VP with approximating circuits: the definition of the frozen statement
+(`Statement.lean`), shared by the development. Its `Approximates` unfolds to `Nc.Approximates`. -/
+export Statement (VPBar)
 
 /-- **Paper: Definition def:approx.** "A circuit over k((ε)) approximates a polynomial f over the field k if its output
 is f + εg with all coefficients of g in k[[ε]]. The closure of VP is defined like VP with approximating circuits."

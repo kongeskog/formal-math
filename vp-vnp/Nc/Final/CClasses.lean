@@ -20,27 +20,19 @@ open Finset
 
 section Definitions
 
-export Statement (Family)
+/- The family structure and the classes `VP` and `VNP` are those of the frozen statement
+(`Statement.lean`), shared by the whole development. `VP F` holds the families with polynomially
+many variables, polynomial degree and circuits of polynomial size; `VNP F` the families
+`p n (x) = ∑ q n (x, e)`, the sum over all `e` in `{0, 1} ^ m n`, for a family `q` in `VP` (so `m`
+is polynomially bounded). The statement writes the substitution of the bits `e` unfolded; it is
+`bits` below. Its `Computes` unfolds to `Nc.Computes`. -/
+export Statement (Family VP VNP)
 
-variable (F : Type*) [CommSemiring F]
-
-/-- VP: the families with polynomially many variables, polynomial degree and circuits of polynomial size. -/
-def VP : Set (Family F) :=
-  {p | ∃ C : ℕ, ∀ n, Fintype.card (p.vars n) ≤ n ^ C + C ∧ (p.poly n).totalDegree ≤ n ^ C + C ∧
-    Computes (p.poly n) (n ^ C + C)}
-
-variable {F} in
+variable {F : Type*} [CommSemiring F] in
 /-- Substitute the bits e for the variables of the second kind. -/
 noncomputable def bits {X : Type*} {m : ℕ} (q : MvPolynomial (X ⊕ Fin m) F) (e : Fin m → Bool) :
     MvPolynomial X F :=
   MvPolynomial.aeval (Sum.elim MvPolynomial.X fun i => if e i then 1 else 0) q
-
-/-- VNP: the families p n (x) = ∑ q n (x, e), the sum over all e in {0, 1} ^ m n, for a family q in VP (so m is
-polynomially bounded). -/
-def VNP : Set (Family F) :=
-  {p | ∃ (m : ℕ → ℕ) (q : ∀ n, MvPolynomial (p.vars n ⊕ Fin (m n)) F),
-    ({ vars := fun n => p.vars n ⊕ Fin (m n), poly := q } : Family F) ∈ VP F ∧
-      ∀ n, p.poly n = ∑ e : Fin (m n) → Bool, bits (q n) e}
 
 end Definitions
 
