@@ -62,9 +62,11 @@ noncomputable def initAll (A' : ℕ) {N : Type} [Fintype N] [DecidableEq N] {U0 
 
 variable {mu T cb}
 
-theorem tabFinal_eq {P : Plan M U0 U1} {q : Fin (K + 1) → Q} {x : Fin K → List Γ}
-    {ρ : Option S → Fin (K + K) → RowData (K + K)} {n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)}
-    {o : M.N → Fin U1} (p : Fin (K + K + A')) :
+-- A plan with its inputs: start states `q`, words `x`, rows `ρ`, unit counts `n` and outcomes `o`.
+variable {P : Plan M U0 U1} {q : Fin (K + 1) → Q} {x : Fin K → List Γ}
+  {ρ : Option S → Fin (K + K) → RowData (K + K)} {n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)} {o : M.N → Fin U1}
+
+theorem tabFinal_eq (p : Fin (K + K + A')) :
     (tabFinal mu T cb P q x ρ n o p : (Uid (K + K) U0 M.N U1 → UW ub) → F) =
       partyTab P n o (initAll mu T cb A' q x ρ n p) p := by
   refine Fin.addCases (fun p => ?_) (fun p => ?_) p
@@ -72,8 +74,7 @@ theorem tabFinal_eq {P : Plan M U0 U1} {q : Fin (K + 1) → Q} {x : Fin K → Li
   · rw [tabFinal, initAll, Fin.addCases_right, Fin.addCases_right]
 
 theorem initAll_ne_none {N : Type} [Fintype N] [DecidableEq N] {f : N → Bool → Fin (K + K + A')}
-    {q : Fin (K + 1) → Q} {x : Fin K → List Γ} {ρ : Option S → Fin (K + K) → RowData (K + K)}
-    {n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)} {p : Fin (K + K + A')} {y : Uid (K + K) U0 N U1 → UW ub}
+    {p : Fin (K + K + A')} {y : Uid (K + K) U0 N U1 → UW ub}
     (h : initAll mu T cb A' q x ρ n p y ≠ 0) :
     ∀ id ∈ seen0 (N := N) (U1 := U1) n, Holds (hold0 f) (hold1 f) p id → y id ≠ none := by
   revert h
@@ -95,18 +96,14 @@ theorem initAll_ne_none {N : Type} [Fintype N] [DecidableEq N] {f : N → Bool �
       · exact hne a hh
       · exact hne b hh
 
-theorem tabFinal_ne_none {P : Plan M U0 U1} {q : Fin (K + 1) → Q} {x : Fin K → List Γ}
-    {ρ : Option S → Fin (K + K) → RowData (K + K)} {n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)}
-    {o : M.N → Fin U1} {p : Fin (K + K + A')} {y : Uid (K + K) U0 M.N U1 → UW ub}
+theorem tabFinal_ne_none {p : Fin (K + K + A')} {y : Uid (K + K) U0 M.N U1 → UW ub}
     (h : tabFinal mu T cb P q x ρ n o p y ≠ 0) {id : Uid (K + K) U0 M.N U1} (hid : id ∈ Plan.seenAt n o E)
     (ha : Holds (hold0 M.np) (hold1 M.np) p id) : y id ≠ none := by
   rw [tabFinal_eq] at h
   exact partyTab_ne_none (fun h0 => initAll_ne_none h0) h hid ha
 
 /-- The contents of shared units are present if the value of the group is not zero. -/
-theorem grpVal_ne_none {G : Type} [Fintype G] [DecidableEq G] {P : Plan M U0 U1} {q : Fin (K + 1) → Q}
-    {x : Fin K → List Γ} {ρ : Option S → Fin (K + K) → RowData (K + K)}
-    {n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)} {o : M.N → Fin U1} {grp : Fin (K + K + A') → G}
+theorem grpVal_ne_none {G : Type} [Fintype G] [DecidableEq G] {grp : Fin (K + K + A') → G}
     {g : G} {b : Uid (K + K) U0 M.N U1 → UW ub} (h : grpVal mu T cb P q x ρ n o grp g b ≠ 0)
     {id : Uid (K + K) U0 M.N U1} (hid : id ∈ P.cur n o E)
     (hg : (grp (hold0 M.np id) = g ∧ grp (hold1 M.np id) ≠ g) ∨

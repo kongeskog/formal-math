@@ -29,22 +29,25 @@ def IsRuns (P : Series F (Z × Γ)) {X : Type*} (em : X → Z → List Γ) (wt :
 def Runs (n : ℕ) {X : Type*} (em : X → Z → List Γ) (wt : X → F) : Prop :=
   ∃ P : Series F (Z × Γ), RatLe n P ∧ IsRuns P em wt
 
-theorem IsRuns.exists_run {P : Series F (Z × Γ)} {X : Type*} {em : X → Z → List Γ} {wt : X → F}
-    (h : IsRuns P em wt) {v : Z → List Γ} (hv : hat P v ≠ 0) : ∃ x, em x = v ∧ wt x ≠ 0 := by
+section
+
+-- Two families of runs, with emissions `em`, `em'` and weights `wt`, `wt'`.
+variable {X Y : Type*} {em : X → Z → List Γ} {wt : X → F} {em' : Y → Z → List Γ} {wt' : Y → F}
+  {P : Series F (Z × Γ)}
+
+theorem IsRuns.exists_run (h : IsRuns P em wt) {v : Z → List Γ} (hv : hat P v ≠ 0) : ∃ x, em x = v ∧ wt x ≠ 0 := by
   obtain ⟨R, h1, h2⟩ := h v
   rw [h2] at hv
   obtain ⟨x, hx, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hv
   exact ⟨x, (h1 x).1 hx, hne⟩
 
-theorem IsRuns.of_fib {P : Series F (Z × Γ)} {X : Type*} {em : X → Z → List Γ} {wt : X → F}
-    (h : IsRuns P em wt) {v : Z → List Γ} (R : Finset X) (hR : ∀ x, x ∈ R ↔ em x = v) :
+theorem IsRuns.of_fib (h : IsRuns P em wt) {v : Z → List Γ} (R : Finset X) (hR : ∀ x, x ∈ R ↔ em x = v) :
     hat P v = ∑ x ∈ R, wt x := by
   obtain ⟨R', h1, h2⟩ := h v
   have : R' = R := by ext x; rw [h1, hR]
   rw [h2, this]
 
-theorem IsRuns.mul {f g : Series F (Z × Γ)} {X Y : Type*} {em : X → Z → List Γ} {wt : X → F}
-    {em' : Y → Z → List Γ} {wt' : Y → F} (hf : IsRuns f em wt) (hg : IsRuns g em' wt') :
+theorem IsRuns.mul {f g : Series F (Z × Γ)} (hf : IsRuns f em wt) (hg : IsRuns g em' wt') :
     IsRuns (Series.mul f g) (fun (x : X × Y) z => em x.1 z ++ em' x.2 z) (fun x => wt x.1 * wt' x.2) := by
   classical
   intro v
@@ -68,19 +71,7 @@ theorem IsRuns.mul {f g : Series F (Z × Γ)} {X Y : Type*} {em : X → Z → Li
       rw [Finset.mem_product, hf1, hg1] at h h'
       exact hpq (Prod.ext (h.1.symm.trans h'.1) (h.2.symm.trans h'.2))
 
-theorem IsRuns.sum {ι : Type*} [Fintype ι] {X : ι → Type*} {P : ι → Series F (Z × Γ)}
-    {em : ∀ i, X i → Z → List Γ} {wt : ∀ i, X i → F} (h : ∀ i, IsRuns (P i) (em i) (wt i)) :
-    IsRuns (∑ i, P i) (fun (x : Σ i, X i) => em x.1 x.2) (fun x => wt x.1 x.2) := by
-  intro v
-  choose R h1 h2 using h
-  refine ⟨univ.sigma fun i => R i v, ?_, ?_⟩
-  · rintro ⟨i, x⟩
-    simp [h1]
-  · rw [hat_sum, Finset.sum_sigma]
-    exact Finset.sum_congr rfl fun i _ => h2 i v
-
-theorem IsRuns.congr {P : Series F (Z × Γ)} {X Y : Type*} {em : X → Z → List Γ} {wt : X → F}
-    {em' : Y → Z → List Γ} {wt' : Y → F} (h : IsRuns P em wt) (e : Y ≃ X)
+theorem IsRuns.congr (h : IsRuns P em wt) (e : Y ≃ X)
     (h1 : ∀ y z, em (e y) z = em' y z) (h2 : ∀ y, wt (e y) = wt' y) : IsRuns P em' wt' := by
   intro v
   obtain ⟨R, g1, g2⟩ := h v
@@ -93,20 +84,8 @@ theorem IsRuns.congr {P : Series F (Z × Γ)} {X Y : Type*} {em : X → Z → Li
     rw [← h2]
     simp
 
-theorem IsRuns.one : IsRuns (Series.one : Series F (Z × Γ)) (fun (_ : Unit) _ => []) (fun _ => 1) := by
-  classical
-  intro v
-  refine ⟨if v = fun _ => [] then {()} else ∅, ?_, ?_⟩
-  · intro x
-    by_cases h : v = fun _ => []
-    · simp [h]
-    · simp [h, Ne.symm h]
-  · rw [hat_one]
-    split_ifs <;> simp
-
 /-- The star: the runs are the lists of runs. -/
-theorem IsRuns.kstar {f : Series F (Z × Γ)} {X : Type*} {em : X → Z → List Γ} {wt : X → F}
-    (hf : IsRuns f em wt) (hne : ∀ x, em x ≠ fun _ => []) :
+theorem IsRuns.kstar {f : Series F (Z × Γ)} (hf : IsRuns f em wt) (hne : ∀ x, em x ≠ fun _ => []) :
     IsRuns (Series.kstar f) (fun (l : List X) z => l.flatMap fun x => em x z)
       (fun l => (l.map wt).prod) := by
   classical
@@ -199,6 +178,30 @@ theorem IsRuns.kstar {f : Series F (Z × Γ)} {X : Type*} {em : X → Z → List
         split_ifs at hl <;> simp at hl
         exact hl'.1 hl
 
+end
+
+theorem IsRuns.one : IsRuns (Series.one : Series F (Z × Γ)) (fun (_ : Unit) _ => []) (fun _ => 1) := by
+  classical
+  intro v
+  refine ⟨if v = fun _ => [] then {()} else ∅, ?_, ?_⟩
+  · intro x
+    by_cases h : v = fun _ => []
+    · simp [h]
+    · simp [h, Ne.symm h]
+  · rw [hat_one]
+    split_ifs <;> simp
+
+theorem IsRuns.sum {ι : Type*} [Fintype ι] {X : ι → Type*} {P : ι → Series F (Z × Γ)}
+    {em : ∀ i, X i → Z → List Γ} {wt : ∀ i, X i → F} (h : ∀ i, IsRuns (P i) (em i) (wt i)) :
+    IsRuns (∑ i, P i) (fun (x : Σ i, X i) => em x.1 x.2) (fun x => wt x.1 x.2) := by
+  intro v
+  choose R h1 h2 using h
+  refine ⟨univ.sigma fun i => R i v, ?_, ?_⟩
+  · rintro ⟨i, x⟩
+    simp [h1]
+  · rw [hat_sum, Finset.sum_sigma]
+    exact Finset.sum_congr rfl fun i _ => h2 i v
+
 /-- The word on the channels, channel by channel. -/
 noncomputable def chanWord (w : Z → List Γ) : List (Z × Γ) :=
   (univ : Finset Z).toList.flatMap fun z => (w z).map fun a => (z, a)
@@ -249,32 +252,29 @@ theorem length_chanWord (w : Z → List Γ) : (chanWord w).length = ∑ z, (w z)
 
 namespace Runs
 
-theorem mono {n m : ℕ} {X : Type*} {em : X → Z → List Γ} {wt : X → F} (h : Runs n em wt) (hm : n ≤ m) :
+section
+
+-- Two families of runs, as above, and two dimensions.
+variable {X Y : Type*} {em : X → Z → List Γ} {wt : X → F} {em' : Y → Z → List Γ} {wt' : Y → F}
+  {n m : ℕ}
+
+theorem mono (h : Runs n em wt) (hm : n ≤ m) :
     Runs m em wt := by
   obtain ⟨P, h1, h2⟩ := h
   exact ⟨P, h1.mono hm, h2⟩
 
-theorem congr {n : ℕ} {X Y : Type*} {em : X → Z → List Γ} {wt : X → F}
-    {em' : Y → Z → List Γ} {wt' : Y → F} (h : Runs n em wt) (e : Y ≃ X)
+theorem congr (h : Runs n em wt) (e : Y ≃ X)
     (h1 : ∀ y z, em (e y) z = em' y z) (h2 : ∀ y, wt (e y) = wt' y) : Runs n em' wt' := by
   obtain ⟨P, g1, g2⟩ := h
   exact ⟨P, g1, g2.congr e h1 h2⟩
 
-theorem mul {n m : ℕ} {X Y : Type*} {em : X → Z → List Γ} {wt : X → F}
-    {em' : Y → Z → List Γ} {wt' : Y → F} (hf : Runs n em wt) (hg : Runs m em' wt') :
+theorem mul (hf : Runs n em wt) (hg : Runs m em' wt') :
     Runs (n + m) (fun (x : X × Y) z => em x.1 z ++ em' x.2 z) (fun x => wt x.1 * wt' x.2) := by
   obtain ⟨P, g1, g2⟩ := hf
   obtain ⟨Q, g3, g4⟩ := hg
   exact ⟨_, g1.mul g3, g2.mul g4⟩
 
-theorem sum {ι : Type*} [Fintype ι] {n : ι → ℕ} {X : ι → Type*} {em : ∀ i, X i → Z → List Γ}
-    {wt : ∀ i, X i → F} (h : ∀ i, Runs (n i) (em i) (wt i)) :
-    Runs (∑ i, n i) (fun (x : Σ i, X i) => em x.1 x.2) (fun x => wt x.1 x.2) := by
-  choose P h1 h2 using h
-  exact ⟨∑ i, P i, RatLe.sum _ _ _ fun i _ => h1 i, IsRuns.sum h2⟩
-
-theorem add {n m : ℕ} {X Y : Type*} {em : X → Z → List Γ} {wt : X → F}
-    {em' : Y → Z → List Γ} {wt' : Y → F} (hf : Runs n em wt) (hg : Runs m em' wt') :
+theorem add (hf : Runs n em wt) (hg : Runs m em' wt') :
     Runs (n + m) (Sum.elim em em') (Sum.elim wt wt') := by
   classical
   obtain ⟨P, g1, g2⟩ := hf
@@ -289,13 +289,21 @@ theorem add {n m : ℕ} {X Y : Type*} {em : X → Z → List Γ} {wt : X → F}
   · rw [hat_add, h2, h4, Finset.sum_disjSum]
     simp
 
-theorem kstar {n : ℕ} {X : Type*} {em : X → Z → List Γ} {wt : X → F} (hf : Runs n em wt)
+theorem kstar (hf : Runs n em wt)
     (hne : ∀ x, ∃ z, em x z ≠ []) :
     Runs (n + 1) (fun (l : List X) z => l.flatMap fun x => em x z) (fun l => (l.map wt).prod) := by
   obtain ⟨P, g1, g2⟩ := hf
   refine ⟨_, g1.kstar, g2.kstar fun x h => ?_⟩
   obtain ⟨z, hz⟩ := hne x
   exact hz (congrFun h z)
+
+end
+
+theorem sum {ι : Type*} [Fintype ι] {n : ι → ℕ} {X : ι → Type*} {em : ∀ i, X i → Z → List Γ}
+    {wt : ∀ i, X i → F} (h : ∀ i, Runs (n i) (em i) (wt i)) :
+    Runs (∑ i, n i) (fun (x : Σ i, X i) => em x.1 x.2) (fun x => wt x.1 x.2) := by
+  choose P h1 h2 using h
+  exact ⟨∑ i, P i, RatLe.sum _ _ _ fun i _ => h1 i, IsRuns.sum h2⟩
 
 theorem one : Runs 1 (fun (_ : Unit) (_ : Z) => ([] : List Γ)) (fun _ => (1 : F)) :=
   ⟨_, RatLe.one, IsRuns.one⟩

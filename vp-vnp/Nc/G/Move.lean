@@ -90,9 +90,17 @@ end Slots
 
 section Role
 
+theorem ChOk.ne_none {N : Type} {ν : N} {J : ℕ} {str : List Bool} {y : Uid A U0 N U1 → UW ub} (h : ChOk ν J str y)
+    {k : Fin U1} (hk : k.1 ≤ J) : y (.new ν k) ≠ none := by
+  rw [h.2 k, Ne, unitsOf_eq_none, h.1]
+  omega
+
+-- The role of `p` at move `x`, with `t` slots per side, slot ids `ids`, outcomes `o` and contents `y`.
+variable {x : Fin E} {p : (M.kind x).Ro} {t : ℕ} {ids : (M.kind x).SlAt p → List (Uid A U0 M.N U1)}
+  {o : M.N → Fin U1} {y : Uid A U0 M.N U1 → UW ub}
+
 /-- The role depends on the units given and on the new units at its channels only. -/
-theorem role_congr {x : Fin E} {p : (M.kind x).Ro} {t : ℕ} {ids : (M.kind x).SlAt p → List (Uid A U0 M.N U1)}
-    {o o' : M.N → Fin U1} {y y' : Uid A U0 M.N U1 → UW ub} (ho : ∀ ν, o ⟨x, ν⟩ = o' ⟨x, ν⟩)
+theorem role_congr {o' : M.N → Fin U1} {y' : Uid A U0 M.N U1 → UW ub} (ho : ∀ ν, o ⟨x, ν⟩ = o' ⟨x, ν⟩)
     (h1 : ∀ e, ∀ id ∈ ids e, y id = y' id)
     (h2 : ∀ ν : (M.kind x).CnAt p, ∀ k, y (.new ⟨x, ν.1⟩ k) = y' (.new ⟨x, ν.1⟩ k)) :
     role M x p t ids o y = role M x p t ids o' y' := by
@@ -109,8 +117,7 @@ theorem role_congr {x : Fin E} {p : (M.kind x).Ro} {t : ℕ} {ids : (M.kind x).S
     funext e
     rw [slotBits_congr (h1 e)]
 
-theorem role_ne_zero {x : Fin E} {p : (M.kind x).Ro} {t : ℕ} {ids : (M.kind x).SlAt p → List (Uid A U0 M.N U1)}
-    {o : M.N → Fin U1} {y : Uid A U0 M.N U1 → UW ub} (h : role M x p t ids o y ≠ 0) :
+theorem role_ne_zero (h : role M x p t ids o y ≠ 0) :
     (∀ e, ∀ id ∈ ids e, y id ≠ none) ∧ ∃ (i : Fin (t * ub) → (M.kind x).I)
       (g : ∀ k, ∀ ν : (M.kind x).CnAt p, Fin ((M.kind x).len (i k) ν) → Bool),
       (∀ ν : (M.kind x).CnAt p, ChOk ⟨x, ν.1⟩ (o ⟨x, ν.1⟩).1
@@ -127,14 +134,8 @@ theorem role_ne_zero {x : Fin E} {p : (M.kind x).Ro} {t : ℕ} {ids : (M.kind x)
   · exact ⟨hy, i, g, hc, h⟩
   · exact absurd rfl h
 
-theorem ChOk.ne_none {N : Type} {ν : N} {J : ℕ} {str : List Bool} {y : Uid A U0 N U1 → UW ub} (h : ChOk ν J str y)
-    {k : Fin U1} (hk : k.1 ≤ J) : y (.new ν k) ≠ none := by
-  rw [h.2 k, Ne, unitsOf_eq_none, h.1]
-  omega
-
 /-- The roles at the ends of a channel force its new units to be present. -/
-theorem role_new_ne_none {x : Fin E} {p : (M.kind x).Ro} {t : ℕ} {ids : (M.kind x).SlAt p → List (Uid A U0 M.N U1)}
-    {o : M.N → Fin U1} {y : Uid A U0 M.N U1 → UW ub} (h : role M x p t ids o y ≠ 0) {ν : (M.kind x).Cn}
+theorem role_new_ne_none (h : role M x p t ids o y ≠ 0) {ν : (M.kind x).Cn}
     (hν : (M.kind x).c ν = p ∨ (M.kind x).d ν = p) {k : Fin U1} (hk : k ≤ o ⟨x, ν⟩) : y (.new ⟨x, ν⟩ k) ≠ none := by
   obtain ⟨-, i, g, hg, -⟩ := role_ne_zero h
   exact (hg ⟨ν, hν⟩).ne_none hk
