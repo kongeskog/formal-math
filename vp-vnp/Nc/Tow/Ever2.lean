@@ -72,7 +72,7 @@ theorem nR_mid3 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 3) ≤ 
         have h1 : ν = true := h1
         subst h1
         exact mem_singleton_self _
-      · simp [tgM, inpR_mid] at hν
+      · simp [tgM] at hν
     · rw [Finset.sum_singleton]
       exact alv_le_num hr hb _ _
   · exact Nat.zero_le _

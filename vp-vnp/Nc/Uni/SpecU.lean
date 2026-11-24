@@ -10,7 +10,6 @@ import Nc.Uni.CmpU
 -/
 
 set_option linter.unusedSectionVars false
-set_option linter.unusedSimpArgs false
 
 namespace Nc.Uni
 
@@ -75,7 +74,7 @@ variable {A : Type*} [CommRing A] {M K : Type} [Fintype M] [DecidableEq M] [Fint
 
 theorem rw'_inj {f f' : Bool} {w w' : List (Option (Bl K))} {u v : List (Sy M K)}
     (h : rw' f w ++ u = rw' f' w' ++ v) : f = f' ∧ w = w' ∧ u = v := by
-  simp only [rw', List.cons_append, List.cons.injEq, Sy.flag.injEq, List.append_assoc, List.singleton_append] at h
+  simp only [rw', List.cons_append, List.cons.injEq, Sy.flag.injEq, List.append_assoc] at h
   obtain ⟨rfl, h⟩ := h
   have hd : ∀ w : List (Option (Bl K)), (Sy.dot : Sy M K) ∉ w.map ol := by
     intro w hw

@@ -191,7 +191,6 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ α Λ) (hv : 1000 
           _ < v ^ H * v ^ (64 + 62 * (r + 1)) := hτΛ
           _ = v ^ H * v ^ (63 + 62 * r) * v ^ 63 := by
             rw [Nat.mul_assoc, ← pow_add]
-            congr 2
             ring
       have h2 : τ₁ < v ^ H * v ^ (63 + 62 * r) := lt_of_mul_lt_mul_right h1 (Nat.zero_le _)
       calc τ₁ * Λ ≤ τ₁ * v := Nat.mul_le_mul_left _ hΛv

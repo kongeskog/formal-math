@@ -156,7 +156,6 @@ theorem runVal_blocks (mu : Letter S J Γ → Matrix Q Q F) (i e : Q) (K T : ℕ
     simp only [Matched, emit_flatten]
     congr 1
     rw [List.map_flatten, List.prod_flatten]
-    congr 2
     simp [List.map_ofFn, Function.comp_def]
   rw [h1]
   simp only [prod_path]

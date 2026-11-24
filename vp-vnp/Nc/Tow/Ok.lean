@@ -242,7 +242,7 @@ theorem holds_eq {u : Un R FL Pl U0 U1} (hd : tgU R FL Pl u ≠ .done) :
     have h1 := hB_eq (ch := ch) (R := R) hd
     change _ = (hT R ch (tgB T R ch a c k)).map Pl.pt
     rw [← h1, hB, Sym2.map_mk]
-    simp only [Prod.map, Pl.pt_base]
+    simp only [Pl.pt_base]
     rfl
   | new ν k =>
     have h1 := hN_eq (eN R FL Pl ν) hd
@@ -269,7 +269,7 @@ theorem zp_hold (z : (sys R FL Pl).Z) :
     rw [h1, Sym2.map_mk]
   · change s(Pl.pt (nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
       Pl.pt (nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
-    simp only [inpZ, hT, pr, Sym2.map_mk, Prod.map]
+    simp only [inpZ, hT, pr, Sym2.map_mk]
 
 section Causal
 

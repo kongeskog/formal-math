@@ -13,7 +13,6 @@ to the channels are the words `v z`. Products of series become convolutions.
 -/
 
 set_option linter.unusedSectionVars false
-set_option linter.unusedSimpArgs false
 
 namespace Nc
 

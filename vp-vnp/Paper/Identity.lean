@@ -13,7 +13,6 @@ The polynomials B(r,n) and C(r,n) are Nc.Cross.mB and mC (with y an element of a
 Ψ = det M is Nc.Cross.psi. A state enters them as the pair of the increasing enumerations of its two sets (Nc.Cross.word).
 -/
 
-set_option linter.unusedSimpArgs false
 
 namespace Paper
 

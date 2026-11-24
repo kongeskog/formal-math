@@ -11,7 +11,6 @@ import Nc.Uni.PM
 -/
 
 set_option linter.unusedSectionVars false
-set_option linter.unusedSimpArgs false
 
 namespace Nc.Uni
 

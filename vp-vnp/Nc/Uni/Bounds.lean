@@ -13,7 +13,6 @@ import Nc.Tape.ProgRun
 -/
 
 set_option linter.unusedSectionVars false
-set_option linter.unusedSimpArgs false
 
 namespace Nc.Uni
 

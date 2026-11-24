@@ -53,7 +53,7 @@ def relay : Law F where
         fun g => if g false 0 = X 0 () ∧ g true 0 = X 0 () ∧ X 0 () = X 2 () then 1 else 0 := by
       funext g
       rw [Fin.prod_univ_three]
-      simp only [relTab, Fin.isValue, dite_true, if_true, one_ne_zero, dite_false, reduceDIte]
+      simp only [relTab, Fin.isValue, dite_true, one_ne_zero, dite_false]
       have h20 : ¬ (2 : Fin 3) = 0 := by decide
       have h21 : ¬ (2 : Fin 3) = 1 := by decide
       simp only [h20, h21, dite_false]

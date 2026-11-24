@@ -14,7 +14,6 @@ these projections.
 -/
 
 set_option linter.unusedSectionVars false
-set_option linter.unusedSimpArgs false
 
 namespace Nc
 
@@ -158,7 +157,7 @@ theorem IsRuns.kstar {f : Series F (Z × Γ)} {X : Type*} {em : X → Z → List
     let C : Finset (List X) := B.map ⟨fun p => p.1 :: p.2, by rintro ⟨a, b⟩ ⟨c, d⟩ h; simpa using h⟩
     have hC : ∀ l, l ∈ C ↔ l ≠ [] ∧ (fun z => l.flatMap fun x => em x z) = v := by
       intro l
-      simp only [C, Finset.mem_map, Function.Embedding.coeFn_mk, Prod.exists]
+      simp only [C, Finset.mem_map, Prod.exists]
       constructor
       · rintro ⟨x, l', h, rfl⟩
         exact ⟨by simp, by rw [hB] at h; exact h⟩
@@ -180,7 +179,7 @@ theorem IsRuns.kstar {f : Series F (Z × Γ)} {X : Type*} {em : X → Z → List
       · rw [hat_kstar]
         congr 1
         · split_ifs <;> simp
-        · simp only [C, Finset.sum_map, Function.Embedding.coeFn_mk, List.map_cons, List.prod_cons]
+        · simp only [C, Finset.sum_map]
           simp only [B]
           rw [Finset.sum_biUnion]
           · refine Finset.sum_congr rfl fun p hp => ?_

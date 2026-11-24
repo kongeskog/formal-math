@@ -10,7 +10,6 @@ import Nc.Uni.EvalU
 -/
 
 set_option linter.unusedSectionVars false
-set_option linter.unusedTactic false
 
 namespace Nc.Uni
 
@@ -26,7 +25,7 @@ theorem inv_quote {c c0 : Tree} (h : Fm.ofTree c = .quote c0) :
   | nil => rw [Fm.ofTree] at h; injection h with h; exact Or.inl ⟨rfl, h.symm⟩
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     injection h with h
     subst h
     exact Or.inr ⟨o, rfl, by assumption⟩
@@ -45,7 +44,7 @@ theorem inv_hd {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .hd a0) :
   | nil => rw [Fm.ofTree] at h; cases h
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     injection h with h
     exact ⟨o, a, rfl, by assumption, h⟩
 
@@ -55,7 +54,7 @@ theorem inv_tl {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .tl a0) :
   | nil => rw [Fm.ofTree] at h; cases h
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     injection h with h
     exact ⟨o, a, rfl, by assumption, h⟩
 
@@ -65,7 +64,7 @@ theorem inv_cons {c : Tree} {a0 b0 : Fm} (h : Fm.ofTree c = .cons a0 b0) :
   | nil => rw [Fm.ofTree] at h; cases h
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     injection h with h h'
     exact ⟨o, a, rfl, by assumption, h, h'⟩
 
@@ -75,7 +74,7 @@ theorem inv_ite {c : Tree} {a0 b0 c0 : Fm} (h : Fm.ofTree c = .ite a0 b0 c0) :
   | nil => rw [Fm.ofTree] at h; cases h
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     injection h with h h' h''
     exact ⟨o, a, rfl, by assumption, h, h', h''⟩
 
@@ -85,7 +84,7 @@ theorem inv_run {c : Tree} {a0 b0 : Fm} (h : Fm.ofTree c = .run a0 b0) :
   | nil => rw [Fm.ofTree] at h; cases h
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     injection h with h h'
     exact ⟨o, a, rfl, by assumption, h, h'⟩
 
@@ -117,7 +116,7 @@ theorem inv_theta {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .theta a0) :
   | nil => rw [Fm.ofTree] at h; cases h
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     injection h with h
     exact ⟨o, a, rfl, by assumption, h⟩
 
@@ -126,7 +125,7 @@ theorem inv_mul {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .mul a0) : ∃ o a, c = 
   | nil => rw [Fm.ofTree] at h; cases h
   | cons o a =>
     rw [Fm.ofTree] at h
-    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h; done) | skip
+    split at h <;> first | (exfalso; simp only [reduceCtorEq] at h) | skip
     exact ⟨o, a, rfl, by assumption⟩
 
 end Inv

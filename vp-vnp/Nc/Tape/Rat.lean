@@ -9,7 +9,6 @@ import Nc.Tape.Rep
 # Rational series of bounded dimension
 -/
 
-set_option linter.unusedSimpArgs false
 
 namespace Nc
 
@@ -120,7 +119,7 @@ theorem RatLe.normal {n : ℕ} {f : Series F Ω} (hf : RatLe n f) :
       rw [List.map_cons, List.prod_cons, Matrix.mul_apply, Fintype.sum_option, Fintype.sum_option]
       by_cases ho : o = []
       · subst ho
-        simp [mu, Rep.tail, Matrix.one_apply]
+        simp [mu, Rep.tail]
       · have h0 : (o.map mu).prod (some none) (some none) = 0 := by
           obtain ⟨b, o', rfl⟩ := List.exists_cons_of_ne_nil ho
           rw [List.map_cons, List.prod_cons, Matrix.mul_apply]
@@ -133,7 +132,7 @@ theorem RatLe.normal {n : ℕ} {f : Series F Ω} (hf : RatLe n f) :
   rw [List.map_cons, List.prod_cons, Matrix.mul_apply, Fintype.sum_option, Fintype.sum_option]
   by_cases ho : o = []
   · subst ho
-    simp [mu, Rep.series, Rep.tail, Matrix.one_apply]
+    simp [mu, Rep.series, Rep.tail]
   · have h0 : (o.map mu).prod (some none) (some none) = 0 := by
       obtain ⟨b, o', rfl⟩ := List.exists_cons_of_ne_nil ho
       rw [List.map_cons, List.prod_cons, Matrix.mul_apply]
