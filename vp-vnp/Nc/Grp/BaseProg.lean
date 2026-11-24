@@ -70,13 +70,6 @@ theorem num_injective : Function.Injective num := by
   intro a b h
   rw [← len_num a, h, len_num]
 
-theorem size_num (k : ℕ) : (num k).size = 2 * k + 1 := by
-  induction k with
-  | zero => rfl
-  | succ k ih =>
-    simp only [num, size, ih]
-    omega
-
 /-- **Simulation.** -/
 theorem ex_sim : ∃ F κ, ∀ (T : ℕ) (q q' : Fin (Fintype.card Q)),
     Does θ F (.cons (num T) (.cons (num q) (num q'))) ((simSem θ mu cb T q q').map (Prod.map id encO)) (κ * (T + 1)) := by
