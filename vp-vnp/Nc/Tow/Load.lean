@@ -188,57 +188,19 @@ end Stage
 /-- Minkowski's inequality, one summand constant. -/
 theorem minkowski {κ : Type*} [Fintype κ] (f : κ → ℝ) {a : ℝ} (ha : 0 ≤ a) :
     √(∑ x, (f x + a) ^ 2) ≤ √(∑ x, f x ^ 2) + √(Fintype.card κ) * a := by
-  have h1 : 0 ≤ ∑ x, f x ^ 2 := Finset.sum_nonneg fun x _ => sq_nonneg _
-  have hc : (0 : ℝ) ≤ Fintype.card κ := Nat.cast_nonneg _
-  have hcs : ∑ x, f x ≤ √(Fintype.card κ) * √(∑ x, f x ^ 2) := by
-    rw [← Real.sqrt_mul hc]
-    apply Real.le_sqrt_of_sq_le
-    have := sq_sum_le_card_mul_sum_sq (s := (univ : Finset κ)) (f := f)
-    rwa [card_univ] at this
-  apply Real.sqrt_le_iff.2
-  refine ⟨by positivity, ?_⟩
-  have e1 : ∑ x, (f x + a) ^ 2 = ∑ x, f x ^ 2 + 2 * a * ∑ x, f x + Fintype.card κ * a ^ 2 := by
-    simp only [add_sq, Finset.sum_add_distrib, Finset.mul_sum]
-    rw [Finset.sum_const, card_univ, nsmul_eq_mul]
-    congr 1
-    congr 1
-    exact Finset.sum_congr rfl fun x _ => by ring
-  have e2 : (√(∑ x, f x ^ 2) + √(Fintype.card κ) * a) ^ 2 =
-      ∑ x, f x ^ 2 + 2 * a * (√(Fintype.card κ) * √(∑ x, f x ^ 2)) + Fintype.card κ * a ^ 2 := by
-    rw [add_sq, mul_pow, Real.sq_sqrt h1, Real.sq_sqrt hc]
-    ring
-  rw [e1, e2]
-  have := mul_le_mul_of_nonneg_left hcs (by linarith : 0 ≤ 2 * a)
-  linarith
+  simpa [EuclideanSpace.norm_eq, Real.sqrt_sq ha] using
+    norm_add_le (WithLp.toLp 2 f : EuclideanSpace ℝ κ) (WithLp.toLp 2 fun _ => a)
 
 theorem alg {C N y k : ℝ} (hC : 0 ≤ C) (hN : 0 ≤ N) (hy : 0 ≤ y) (hk : k ^ 2 ≤ N ^ 2 + C * (√8 * N + y) ^ 2) :
     k ≤ √(1 + 8 * C) * N + √C * y := by
-  have hS0 : 0 ≤ √(1 + 8 * C) := Real.sqrt_nonneg _
-  have hS2 : √(1 + 8 * C) ^ 2 = 1 + 8 * C := Real.sq_sqrt (by linarith)
-  have hc0 : 0 ≤ √C := Real.sqrt_nonneg _
-  have hc2 : √C ^ 2 = C := Real.sq_sqrt hC
-  have h82 : (√8 : ℝ) ^ 2 = 8 := Real.sq_sqrt (by norm_num)
   have hcross : √C * √8 ≤ √(1 + 8 * C) := by
-    apply Real.le_sqrt_of_sq_le
-    rw [mul_pow, hc2, h82]
-    linarith
-  generalize √(1 + 8 * C) = S at *
-  generalize hs : √C = s at *
-  generalize (√8 : ℝ) = e at *
-  have h0 : 0 ≤ S * N + s * y := by positivity
-  refine (abs_le_of_sq_le_sq' ?_ h0).2
-  refine hk.trans ?_
-  have e1 : C * (e * N + y) ^ 2 = 8 * C * N ^ 2 + 2 * (s * (s * e) * (N * y)) + C * y ^ 2 := by
-    have : C * (e * N + y) ^ 2 = e ^ 2 * C * N ^ 2 + 2 * (C * e * (N * y)) + C * y ^ 2 := by ring
-    rw [this, h82, ← hc2]
-    ring
-  have e2 : (S * N + s * y) ^ 2 = (1 + 8 * C) * N ^ 2 + 2 * (s * S * (N * y)) + C * y ^ 2 := by
-    have : (S * N + s * y) ^ 2 = S ^ 2 * N ^ 2 + 2 * (s * S * (N * y)) + s ^ 2 * y ^ 2 := by ring
-    rw [this, hS2, hc2]
-  have h1 : s * (s * e) ≤ s * S := mul_le_mul_of_nonneg_left hcross hc0
-  have h2 := mul_le_mul_of_nonneg_right h1 (mul_nonneg hN hy)
-  rw [e1, e2]
-  linarith
+    rw [← Real.sqrt_mul hC]
+    exact Real.sqrt_le_sqrt (by linarith)
+  have h1 := mul_le_mul_of_nonneg_left hcross (mul_nonneg (mul_nonneg (Real.sqrt_nonneg C) hN) hy)
+  refine (abs_le_of_sq_le_sq' (hk.trans ?_) (by positivity)).2
+  linear_combination 2 * h1 - N ^ 2 * Real.sq_sqrt (show 0 ≤ 1 + 8 * C by linarith) +
+    C * N ^ 2 * Real.sq_sqrt (show (0 : ℝ) ≤ 8 by norm_num) -
+    (y ^ 2 + 2 * √8 * N * y) * Real.sq_sqrt hC
 
 theorem NN2_nonneg (hb : 0 < b) (m : Sym2 T.Fl → ℕ) : 0 ≤ T.NN2 m := by
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast hb

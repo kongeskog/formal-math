@@ -129,7 +129,7 @@ theorem lem_first_double {m : ℕ} {s : ℝ} (hm : 2 ≤ m) (hs : 1 ≤ s) {a : 
       √(∑ t : U a × Matrix (Fin a) (Fin a) F2 × U a, A.val t.1 ^ 2)) := by
     rw [hsum]
     refine three_le (fun t => l.val (blk t)) (fun t => B.val t.2.2) (fun t => l.val (up t.2.1))
-      (fun t => A.val t.1) (fun _ => l.nonneg _) (fun _ => B.nonneg _) (fun _ => l.nonneg _)
+      (fun t => A.val t.1) (fun _ => l.nonneg _) (fun _ => l.nonneg _)
       (fun _ => A.nonneg _) fun t => ?_
     have h1 := l.mul' (win hr t.2.2 * up t.2.1) (win hl t.1)
     have h2 := l.mul' (win hr t.2.2) (up t.2.1)

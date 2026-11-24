@@ -17,14 +17,10 @@ namespace Cat
 
 theorem sum_lt {M j : ℕ} (hj : j ≤ M) (x y : ℝ) :
     ∑ l : Fin M, (if (l : ℕ) < j then x else y) = j * x + ((M : ℝ) - j) * y := by
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hj
-  rw [Fin.sum_univ_eq_sum_range (fun l => if l < j then x else y), Finset.sum_range_add]
-  have h1 : ∑ l ∈ range j, (if l < j then x else y) = ∑ l ∈ range j, x :=
-    Finset.sum_congr rfl fun l hl => if_pos (Finset.mem_range.1 hl)
-  have h2 : ∑ l ∈ range d, (if j + l < j then x else y) = ∑ l ∈ range d, y :=
-    Finset.sum_congr rfl fun l _ => if_neg (by omega)
-  rw [h1, h2]
-  simp
+  rw [Fin.sum_univ_eq_sum_range (fun l => if l < j then x else y), Finset.sum_ite, Finset.sum_const,
+    Finset.sum_const, Finset.filter_not, Finset.card_sdiff_of_subset (Finset.filter_subset _ _)]
+  have : (range M).filter (· < j) = range j := by ext; simp; omega
+  simp [this, Nat.cast_sub hj]
 
 /-- Clamping an integer to `0, …, N`. -/
 def cl (N : ℕ) (i : ℤ) : ℕ := min i.toNat N
