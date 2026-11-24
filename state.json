@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-24T02:00:26.932047875Z",
+  "updated_at": "2026-11-24T02:11:34.914219926Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,42 +60,42 @@
     }
   },
   "current": {
-    "sha": "4f9433901fa11739c93f2fe1640f8f999cc9a4dd",
-    "at": "2026-11-24T01:39:55.524076346Z",
+    "sha": "1f1d25f99a71b03c859384ca645623f33ebeda2d",
+    "at": "2026-11-24T02:11:34.914219926Z",
     "metrics": {
-      "tokens": 927240,
-      "loc": 58723,
-      "decls": 4596,
+      "tokens": 926925,
+      "loc": 58678,
+      "decls": 4593,
       "files": 321,
-      "bytes": 3416563,
-      "build_seconds": 546
+      "bytes": 3415228,
+      "build_seconds": 909
     }
   },
   "counts": {
-    "merged": 4,
+    "merged": 5,
     "rejected": 2,
-    "open": 4,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 8
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 4,
+      "merged": 5,
       "attempts": 10,
-      "saved": 921
+      "saved": 1236
     }
   ],
   "ideas": [
     {
       "number": 17,
       "title": "Idea: merge(NS1/Budget,NS1/Guess): prove the twin lemmas for ht and nds by one induction each",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-24T03:54:27Z",
       "pr": 20,
-      "result_delta": null,
+      "result_delta": -315,
       "created_at": "2026-11-24T00:49:50Z",
       "url": "https://github.com/kongeskog/formal-math/issues/17",
       "technique": "merge",
@@ -257,96 +257,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 20,
-      "title": "merge(*): prove the twin ht and nds lemmas for dec, decAll and budg by one induction each",
-      "author": "kongeskog",
-      "head_sha": "9f45dc2a2889d8959b428265db97677ca3779184",
-      "base_sha": "e08456bafe4f897c151094e90932463abf0e9b08",
-      "status": "stale",
-      "created_at": "2026-11-24T01:01:47Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 927846,
-        "loc": 58752,
-        "decls": 4607,
-        "files": 321,
-        "bytes": 3419788,
-        "build_seconds": 434
-      },
-      "base_metrics": {
-        "tokens": 928161,
-        "loc": 58797,
-        "decls": 4610,
-        "files": 321,
-        "bytes": 3421123,
-        "build_seconds": null
-      },
-      "delta": -315,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "9 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 928161 → 927846 (-315)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 17,
-      "url": "https://github.com/kongeskog/formal-math/pull/20",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45301893448",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "*"
-    },
     {
       "pr": 21,
       "title": "merge(Nc/Tow): state sum_units for any Uid and delete its copy sum_uid",
