@@ -8,24 +8,19 @@
       "login": "kongeskog",
       "at": "2026-11-25T02:00:03Z"
     },
+    "113": {
+      "login": "kongeskog",
+      "at": "2026-11-25T03:40:15Z"
+    },
     "114": {
       "login": "kongeskog",
       "at": "2026-11-25T02:51:49Z"
     }
   },
-  "comments_seen_until": "2026-11-25T03:21:05Z",
-  "dispatched": {
-    "119@f234ad568dddd941eb335cedcc051e6f0574bd96@64f4547bb5edf2a8c9bb79d08a4cce90281d306c@117@027f849718afda006a081f488f06df0a22a4cb09+118@f7ee19ba79169ce64e7c0fc7421e402f490ae685": "2026-11-25T03:20:55.290746136Z"
-  },
-  "lines": {
-    "119@f234ad568dddd941eb335cedcc051e6f0574bd96": [
-      "117@027f849718afda006a081f488f06df0a22a4cb09",
-      "118@f7ee19ba79169ce64e7c0fc7421e402f490ae685"
-    ]
-  },
-  "line_bases": {
-    "119@f234ad568dddd941eb335cedcc051e6f0574bd96": "3b6bddf8e4ac30a5c229609cfdaa8dcf85085b96"
-  },
+  "comments_seen_until": "2026-11-25T03:40:15Z",
+  "dispatched": {},
+  "lines": {},
+  "line_bases": {},
   "alerts": [],
   "format_notified": [
     104,
