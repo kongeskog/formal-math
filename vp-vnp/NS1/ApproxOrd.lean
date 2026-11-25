@@ -28,8 +28,7 @@ def Span (n : ℕ) (P : E[T;T⁻¹]) : Prop := ∀ i, P.coeff i ≠ 0 → i.natA
 
 theorem coeff_algebraMap (a : A) (i : ℤ) :
     (algebraMap A E[T;T⁻¹] a).coeff i = if i = 0 then algebraMap A E a else 0 := by
-  rw [AddMonoidAlgebra.coe_algebraMap, Function.comp_apply, AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
-  exact if_congr eq_comm rfl rfl
+  simp
 
 section
 

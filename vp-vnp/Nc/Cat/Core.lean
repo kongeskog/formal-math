@@ -168,7 +168,6 @@ theorem le_two_mul_of_forall {S a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
     have h2 : a ^ 2 / (2 * (a ^ 2 + 1) / S) ≤ S / 2 := by
       rw [div_div_eq_mul_div, div_le_div_iff₀ (by positivity) (by positivity)]
       nlinarith
-    have h3 : 2 * (a ^ 2 + 1) / S * (0 : ℝ) ^ 2 = 0 := by ring
     linarith
   · have h1 := h (a / b) (by positivity)
     have h2 : a / b * b ^ 2 + a ^ 2 / (a / b) = 2 * a * b := by

@@ -79,9 +79,7 @@ def ofBits : List Bool → Tree
 @[simp] theorem hd_nil : nil.hd = nil := rfl
 @[simp] theorem tl_nil : nil.tl = nil := rfl
 @[simp] theorem len_num (k : ℕ) : (num k).len = k := by
-  induction k with
-  | zero => rfl
-  | succ k ih => simp [num, len, ih]
+  induction k <;> simp [num, len, *]
 
 theorem size_pos (x : Tree) : 0 < x.size := by cases x <;> simp [size]
 
@@ -96,9 +94,7 @@ theorem size_tl_le (x : Tree) : x.tl.size ≤ x.size := by
   | cons a b => simp only [tl, size]; omega
 
 theorem len_ofBits (w : List Bool) : (ofBits w).len = w.length := by
-  induction w with
-  | nil => rfl
-  | cons b w ih => simp [ofBits, len, ih]
+  induction w <;> simp [ofBits, len, *]
 
 @[simp] theorem path_ofBits (w : List Bool) : (ofBits w).path = w := by
   induction w with

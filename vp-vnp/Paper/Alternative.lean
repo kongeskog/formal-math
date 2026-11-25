@@ -130,8 +130,6 @@ theorem rank_X (p q : GLM (Fin μ)) (S : Finset (Fin μ)) : (X p q S).rank = S.c
 noncomputable def frames (μ : ℕ) : ℝ := (Fintype.card (GLM (Fin μ)) : ℝ) ^ 2 * Fintype.card (Mt μ)
 
 theorem frames_pos (μ : ℕ) : 0 < frames μ := by
-  have h1 : (0 : ℝ) < Fintype.card (GLM (Fin μ)) := by exact_mod_cast Fintype.card_pos
-  have h2 : (0 : ℝ) < Fintype.card (Mt μ) := by exact_mod_cast Fintype.card_pos
   unfold frames
   positivity
 

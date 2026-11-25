@@ -38,9 +38,7 @@ over rank μ is at most s² times that over rank 1". It is the project's Contr. 
 theorem contracts_iff {G : Type} [Group G] (l : Len G) {μ : ℕ} (hμ : 1 ≤ μ) (s : ℝ) :
     Contr l μ s ↔ ∀ τ : Mt μ → G, (∀ M N, τ (M + N) = τ M * τ N) →
       rankMean (fun W => l.val (τ W)) μ ≤ s ^ 2 * rankMean (fun W => l.val (τ W)) 1 := by
-  have hg : (0 : ℝ) < (Fintype.card (GLM (Fin μ)) : ℝ) ^ 2 := by
-    have : (0 : ℝ) < Fintype.card (GLM (Fin μ)) := by exact_mod_cast Fintype.card_pos
-    positivity
+  have hg : (0 : ℝ) < (Fintype.card (GLM (Fin μ)) : ℝ) ^ 2 := by positivity
   have key : ∀ (f : Mt μ → ℝ) (i : Fin μ),
       DM f (dg univ) ≤ s ^ 2 * DM f (dg {i}) ↔ rankMean f μ ≤ s ^ 2 * rankMean f 1 := fun f i => by
     rw [DM_eq_rankMean, DM_eq_rankMean, card_singleton, card_univ, Fintype.card_fin, mul_left_comm,
@@ -107,9 +105,7 @@ theorem lem_growth_digit {G : Type} [Group G] (l : Len G) {μ : ℕ} {s : ℝ} (
     (hl : Contr l μ s) {k : ℕ} (τ : Mt k → G) (hτ : ∀ M N, τ (M + N) = τ M * τ N) {i : ℕ} (hi : μ * i ≤ k) :
     √(rankMean (fun W => l.val (τ W)) (μ * i)) ≤ s * √(rankMean (fun W => l.val (τ W)) i) := by
   set f : Mt k → ℝ := fun W => l.val (τ W)
-  have hg : (0 : ℝ) < (Fintype.card (GLM (Fin k)) : ℝ) ^ 2 := by
-    have : (0 : ℝ) < Fintype.card (GLM (Fin k)) := by exact_mod_cast Fintype.card_pos
-    positivity
+  have hg : (0 : ℝ) < (Fintype.card (GLM (Fin k)) : ℝ) ^ 2 := by positivity
   obtain ⟨S, -, hS⟩ := exists_subset_card_eq (s := (univ : Finset (Fin k))) (n := μ * i) (by simpa using hi)
   let e : Fin μ × Fin i ↪ Fin k := (finProdFinEquiv.trans (Fintype.equivOfCardEq (α := Fin (μ * i))
     (β := {j // j ∈ S}) (by simp [hS]))).toEmbedding.trans (Function.Embedding.subtype _)
@@ -210,7 +206,6 @@ theorem lem_words {n : ℕ} (l : Len (U n)) (k : ℕ) (u φ : Fin n → F2) (hu 
       exact absurd (hmax i (by simpa using h)) (not_le.2 hi)
     have haj := hs a j0 ha0 hj0
     rw [Fin.lt_def] at haj
-    have hj0n := j0.2
     set j : Fin (n - 1) := ⟨a.1, by omega⟩ with hj
     have hlo : lo j = a := rfl
     have hφ : ∀ i, i < hi j → φ i = 0 := by

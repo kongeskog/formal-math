@@ -353,7 +353,6 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     exact pc.blocks_le n o ((pc.tab_valid n).1 hn) hg g
   have hnum : ∀ n o y, pc.plan.num n o y ≤ X := fun n o y => by
     have h1 := pc.tab.hnum y (n, o)
-    have h2 := (pc.tab.fn (pc.tab.knum y) (n, o)).2
     simp only at h1
     omega
   -- the evaluator of this code
@@ -430,7 +429,6 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
         CutD θ τ s (v ^ H) (v ^ (H - 32)) (τ * v ^ 2 / v ^ H) (τ / v ^ 24) G := by
   obtain ⟨a₀, C, v₀, hv₀⟩ := thm_onecut hθ VL h3 hgain
   generalize hhdef : a₀ + 217 = h
-  have hh : a₀ + 200 ≤ 16 * h := by omega
   refine ⟨16 * h, (3 * C + 4) * (32 * h + 2), v₀ + 2 ^ 100 + 4000, by omega, dvd_mul_right 16 h,
     fun v hv α τ s hlog hτ hτα hs => ?_⟩
   generalize hr : 16 * h * α = r
@@ -442,11 +440,6 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
     have h0 : α = 0 := by omega
     rw [h0, Nat.mul_zero, pow_zero] at hτα
     have : v ≤ v ^ (16 * h) := Nat.le_self_pow (by omega) v
-    omega
-  have hαl : 2 * r ≤ lg v := by
-    refine le_trans ?_ (le_lg_of_lg_pow_le (by omega) hlog)
-    rw [← hr, Nat.mul_assoc (3 * C + 4), ← Nat.mul_assoc 2]
-    refine le_trans (Nat.mul_le_mul_right _ (?_ : 2 * (16 * h) ≤ 32 * h + 2)) (Nat.le_mul_of_pos_left _ (by omega))
     omega
   generalize hq4 : 4 ^ (r + 1) = q4
   generalize hΛ : lg v ^ (C + 1) = Λ

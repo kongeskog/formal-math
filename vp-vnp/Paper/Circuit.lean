@@ -181,7 +181,6 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
     have e2 : 800 * (M + m) + 4000 ≤ v := by omega
     have e3 : 40 * m + 60 ≤ v := by omega
     have e4 : v ^ (H - 24) * v ^ 8 = v ^ (H - 16) := by rw [← pow_add]; congr 1; omega
-    have e5 : v ^ (H - 32) ≤ v ^ (H - 24) := Nat.pow_le_pow_right hv1 (by omega)
     have e6 : 1 ≤ v ^ (H - 24) := Nat.one_le_pow _ _ hv1
     have e7 : (d + 1) * (800 * (M + m) + 4000) ≤ 2 * v ^ (H - 24) * v := Nat.mul_le_mul (by omega) e2
     have e8 : (z.size + 2) * (40 * m + 60) ≤ 3 * v ^ (H - 24) * v := Nat.mul_le_mul (by omega) e3
@@ -241,7 +240,6 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
       have : (c + 10000) * (a + H + 2) * l = c * ((a + H + 2) * l) + 10000 * ((a + H + 2) * l) := by ring
       rw [this]
       exact Nat.le_add_right _ _
-    have h3 : d ≤ v ^ H := hd.trans (Nat.pow_le_pow_right hv1 (by omega))
     have h4 : v ≤ v ^ H := Nat.le_self_pow (by omega) v
     calc D.size ≤ 100 * v ^ H := by omega
       _ ≤ v * v ^ H := Nat.mul_le_mul_right _ hv100
