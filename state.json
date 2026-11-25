@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:00:26.581826172Z",
+  "updated_at": "2026-11-25T03:01:31.151098376Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 3,
     "open": 2,
     "contributors": 1,
-    "ideas_open": 5
+    "ideas_open": 6
   },
   "leaderboard": [
     {
@@ -216,10 +216,10 @@
     {
       "number": 97,
       "title": "Idea: shorten(*): end a tactic block with the specific closing tactic that already proves it",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T03:01:18Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 107,
       "result_delta": -2752,
       "created_at": "2026-11-24T23:55:13Z",
