@@ -268,8 +268,8 @@ theorem exists_bound {P : ℕ → R → Prop} (hP : ∀ c, ∃ n, P n c) (hm : �
 
 end KT
 
-/-- Every property of constants that rescaling keeps passes from `K` to `K'`: so it is when the constants of `K'` are
-rescaled copies of those of `K`, as after the rounds of an approximate accelerator. -/
+/-- Every property of constants that rescaling keeps passes from `K` to `K'`. This holds when the constants of `K'`
+are rescaled copies of those of `K`, as after the rounds of an approximate accelerator. -/
 def KT.Inherits (A : Type) [CommRing A] [Algebra A E] (K K' : KT E[T;T⁻¹]) : Prop :=
   ∀ P : E[T;T⁻¹] → Prop, (∀ r c, P c → P (rescale A r c)) → K.All P → K'.All P
 

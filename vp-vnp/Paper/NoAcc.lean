@@ -8,7 +8,11 @@ import NS1.Diag
 import NS1.Finite
 
 /-!
-# The paper, section "One scale is all scales": no small accelerators
+# The paper, section "One scale is all scales": the ingredients of Theorem thm:noacc
+
+The reduction to a finite field (`thm_noacc_finite_field`), the period of the squarings in a finite ring
+(`thm_noacc_periodic`) and the diagonal program (`thm_noacc_diagonal`). The theorem itself is proved in
+`Paper/ApproxScales`, where the approximate rounds carry the accelerator to a large scale.
 -/
 
 namespace Paper

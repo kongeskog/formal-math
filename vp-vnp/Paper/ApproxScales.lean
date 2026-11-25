@@ -11,6 +11,9 @@ import NS1.ApproxMain
 
 /-!
 # The paper, appendix "Approximate computation": no approximate accelerators
+
+The rounds of Proposition prop:approx-acc carry an approximate accelerator to large scales. They also prove the exact
+Theorem thm:noacc: an exact accelerator over a finite field is an approximate one whose constants stay in that field.
 -/
 
 set_option linter.unusedSectionVars false
@@ -38,7 +41,7 @@ theorem cube_le {h cB U u X : ℕ} (hL : LargeScale h cB U) (hu : U ≤ u) (hX :
 
 set_option maxHeartbeats 1000000 in
 /-- **Paper: proof of Proposition prop:approx-acc, One round, repeated from a scale to its fifth power.** "The time again
-has a factor u to spare." -/
+has a factor u to spare." The new constants inherit every property of the old ones that rescaling keeps. -/
 theorem prop_approx_acc_step {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (hC : ∀ u, U ≤ u → CutAt θ (16 * h) u 10)
     (hL : LargeScale h (2 * cB) U) (hcB : 2000 * h ≤ cB) (hcΔ : 4 * cB ≤ cΔ) {u : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D : Tree}
     (hI : InvA θ h cB U Δ cΔ b₀ u K B D) :
@@ -263,7 +266,9 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
     exact Nat.one_le_pow _ _ (by omega)
 
 set_option maxHeartbeats 1000000 in
-/-- **Paper: proof of Proposition prop:approx-acc, the first step**, to a scale at which everything is small. -/
+/-- **Paper: proof of Proposition prop:approx-acc, the first step**, to a scale at which everything is small. It takes
+the parts of an approximate accelerator of size v^a (trie, exponent bound, program and their bounds) and returns the
+invariant at the scale v^α; the new constants inherit every property of the given ones that rescaling keeps. -/
 theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut : CutAt θ (16 * h) v (2 * α)) (hα5 : 5 ≤ α)
     (haα : a + 1 ≤ α) (hcs : cst ≤ v) (hU : U ≤ v) (hbig : 1000 * (7000 * (h * α * lg v) ^ 3) ^ 3 ≤ v)
     {K : KT E[T;T⁻¹]} {B : ℕ} {D : Tree} (hacc : IsAccA θ (16 * h) v (v ^ (16 * h - 16)) K B D ∧ K.nds ≤ v ^ a ∧
@@ -443,8 +448,8 @@ theorem prop_approx_acc_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut
     (fun u hu => hcut.at (by omega) (by simpa using hn1 u (by omega))) hL (by omega) hcΔ n
   exact ⟨u, K'', B'', D'', hn, hI', hA, fun P hP h => hK' P hP (hK P hP h)⟩
 
-/-- **Paper: Theorem thm:noacc.** "There are C and v₁ such that for all integers a ≥ 0 and v ≥ v₁ with (lg v)^(Ca) ≤ v no
-nonzero commutative A-algebra has an accelerator of size v^a at scale v." Over the finite field E of
+/-- **Paper: Theorem thm:noacc.** "There are C and v₁ such that for all integers a ≥ 0 and v ≥ v₁ with
+(lg v)^(Ca) ≤ v no nonzero commutative A-algebra has an accelerator of size v^a at scale v." Over the finite field E of
 `thm_noacc_finite_field` the accelerator is an approximate one with constants in E; the rounds of
 `prop_approx_acc_scales` keep the constants in E, so at a large scale it is again exact, and the diagonal program
 `thm_noacc_diagonal` is impossible. -/
@@ -484,7 +489,8 @@ theorem thm_noacc {h : ℕ} (hh : 17 ≤ h) [Algebra.FiniteType ℤ A] {C₀ v�
   · refine le_trans (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (m := 3 * (100000 * h ^ 3) * L ^ 3) ?_ 3))
       (le_trans (le_of_eq ?_) hsmall)
     · have h1 : 17 * (h * L) ≤ 100000 * (h ^ 3 * L ^ 3) :=
-        Nat.mul_le_mul (by norm_num) (Nat.mul_le_mul (Nat.le_self_pow (by norm_num) h) (Nat.le_self_pow (by norm_num) L))
+        Nat.mul_le_mul (by norm_num)
+          (Nat.mul_le_mul (Nat.le_self_pow (by norm_num) h) (Nat.le_self_pow (by norm_num) L))
       have h2 : L ≤ h * L := Nat.le_mul_of_pos_left _ (by omega)
       have e1 : 16 * h * L = 16 * (h * L) := by ring
       have e2 : 3 * (100000 * h ^ 3) * L ^ 3 = 3 * (100000 * (h ^ 3 * L ^ 3)) := by ring

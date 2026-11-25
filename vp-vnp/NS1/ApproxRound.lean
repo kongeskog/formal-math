@@ -209,7 +209,9 @@ theorem IsAccT.toA {H v t : ℕ} {K : KT E} {B : ℕ} {D : Tree} (h : IsAccT θ 
   rw [h'.val z hz hp, sub_self]
   exact OrdGE.zero 1
 
-/-- An approximate accelerator with constants in `E` is an exact one: its error is a constant without a term in ε⁰. -/
+/-- If the constants of an approximate accelerator are constant Laurent polynomials, the images of a trie `K`
+over `E`, then the same program with `K` is an exact accelerator: the value minus pv(z) then lies in `E`, and
+having no term in ε⁰ it is zero. -/
 theorem IsAccA.toT {H v t : ℕ} {K : KT E} {B : ℕ} {D : Tree}
     (h : IsAccA θ H v t (K.map (cstL (A := A))) B D) : IsAccT θ H v t K B D := by
   refine ⟨fun z hz => ⟨(h.run z hz).1, fun r hr => ⟨((h.run z hz).2 r hr).1, fun p hp =>

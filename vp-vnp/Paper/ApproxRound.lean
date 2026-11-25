@@ -417,7 +417,8 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
         (lt_of_le_of_lt (pow_le_pow hu1 g1) hJ) g2 hX10 hXu g3 g4
       obtain ⟨r, p', hr, hp', hps'⟩ := hres
       rw [hmax, show B' + n * J + J = B' + (n + 1) * J by omega] at hp'
-      refine ⟨_, p', hp'.pre, ?_, ?_, ?_, ⟨?_, ?_⟩, fun P hP hK' => ⟨hk4 P hP hK', hK'.map fun c hc => hP r c hc⟩, fun _ => hp'⟩
+      refine ⟨_, p', hp'.pre, ?_, ?_, ?_, ⟨?_, ?_⟩,
+        fun P hP hK' => ⟨hk4 P hP hK', hK'.map fun c hc => hP r c hc⟩, fun _ => hp'⟩
       · have e3 : (n + 1) * (u ^ (h * α + 2) + u ^ (16 * h + 1)) = n * (u ^ (h * α + 2) + u ^ (16 * h + 1)) +
             (u ^ (h * α + 2) + u ^ (16 * h + 1)) := by ring
         omega

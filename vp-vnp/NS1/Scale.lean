@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import Paper.Postpone
 
 /-!
-# One round: guess exponents, postpone, cut, accelerate
+# Scales: the cut at a scale, the constant `cst`, and the arithmetic of the step from one scale to the next
 -/
 
 set_option linter.unusedSectionVars false
