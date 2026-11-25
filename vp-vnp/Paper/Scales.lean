@@ -95,9 +95,8 @@ theorem exists_scale (B₀ E n : ℕ) (hB : 0 < B₀) : ∃ C M₁ : ℕ, ∀ M,
   refine ⟨v, by omega, hvM, (Nat.pow_le_pow_left hM2 a).trans (le_of_eq (pow_mul _ _ _).symm), ?_⟩
   refine le_trans (Nat.pow_le_pow_right (Nat.succ_pos _) ?_) (lg_pow_transport (b := 2 * B₀) (by omega)
     ((Nat.le_self_pow (by omega) v).trans hvM) hM2 ha (by simpa using hn1 v (by omega)))
-  rw [mul_assoc E (2 * B₀ + 1)]
-  refine Nat.mul_le_mul_left E ?_
-  calc 2 * B₀ * a + 1 ≤ (2 * B₀ + 1) * a + (2 * B₀ + 1) := by rw [add_mul]; omega
-    _ = (2 * B₀ + 1) * (a + 1) := by ring
+  -- after `E * (2 * B₀ + 1) * (a + 1) = E * ((2 * B₀ + 1) * (a + 1))`, the factor after `E`:
+  -- `2 * B₀ * a + 1 ≤ (2 * B₀ + 1) * a + (2 * B₀ + 1) = (2 * B₀ + 1) * (a + 1)`
+  grind
 
 end Paper

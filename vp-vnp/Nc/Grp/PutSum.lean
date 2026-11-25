@@ -34,11 +34,8 @@ theorem padTake_eq (ub : ℕ) (r : List Bool) :
   · intro i h1 h2
     rw [List.getElem_ofFn, List.getD_eq_getElem?_getD]
     simp only [padTake]
-    by_cases hi : i < r.length
-    · have h3 : i < ub := by simpa using h2
-      rw [List.getElem_append_left (by simp; omega), List.getElem_take, List.getElem?_eq_getElem hi, Option.getD_some]
-    · rw [List.getElem_append_right (by simp; omega), List.getElem_replicate, List.getElem?_eq_none (by omega),
-        Option.getD_none]
+    -- by cases on `i < r.length`: inside the taken part, or inside the padding of `false`s
+    grind
 
 theorem putL_gen {ub : ℕ} (hub : 0 < ub) (keys : List (List Bool)) (r : List Bool) (t : Tree) :
     putL ub keys r t = if (r.length + ub - 1) / ub = keys.length then
@@ -70,13 +67,9 @@ theorem putL_gen {ub : ℕ} (hub : 0 < ub) (keys : List (List Bool)) (r : List B
       · rw [hc, List.length_cons]
         omega
       · simp only [putAll, zero_mul, zero_add, padTake_eq]
-        congr 1
-        refine putAll_congr _ _ fun i _ => ?_
-        congr 1
-        funext b
-        simp only [List.getD_eq_getElem?_getD, List.getElem?_drop]
-        congr 2
-        ring
+        -- through `putAll_congr`: entry `i * ub + b` of `r.drop ub` is entry `(i + 1) * ub + b`
+        -- of `r`
+        grind
 
 theorem putL_eq {ub : ℕ} (hub : 0 < ub) (keys : List (List Bool)) (L : List Bool) (t : Tree) :
     putL ub keys (L ++ [true]) t = if ucount ub L = keys.length then
@@ -100,13 +93,7 @@ theorem tget_putAll (keys : List (List Bool)) (hk : keys.Nodup) (u : ℕ → Lis
   | cons k ks ih =>
     rw [List.nodup_cons] at hk
     rw [putAll, ih hk.2, tget_tset]
-    by_cases h1 : p ∈ ks
-    · have hne : k ≠ p := fun h => hk.1 (h ▸ h1)
-      rw [if_pos h1, if_pos (List.mem_cons_of_mem _ h1), List.idxOf_cons_ne _ hne]
-    · rw [if_neg h1]
-      by_cases h2 : p = k
-      · subst h2
-        simp
-      · rw [if_neg h2, if_neg (by simp [h1, h2])]
+    -- cases `p ∈ ks` (then `p ≠ k` by `hk.1`) and `p = k`
+    grind
 
 end Nc.Grp

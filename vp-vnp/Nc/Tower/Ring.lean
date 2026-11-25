@@ -101,8 +101,8 @@ theorem exists_of_red_eq_zero {m : ℕ} {x : R (m + 1)} (h : red m x = 0) :
     rw [add_comm, mul_comm, divX_mul_X_add]
   have h2 : mkR (m + 1) (X ^ (m + 1)) = 0 := mkR_eq_zero.2 dvd_rfl
   rw [s_pow, cst_apply]
-  conv_lhs => rw [h1, mul_add, ← mul_assoc, ← pow_succ, map_add, map_mul, map_mul _ (X ^ (m + 1)), h2, zero_mul,
-    add_zero, mul_comm]
+  -- expand `q` by `h1`; the term with `X ^ (m + 1)` vanishes by `h2`
+  grind
 
 /-- The value at s = 0. -/
 noncomputable def ev (m : ℕ) : R (m + 1) →+* ZMod 2 := liftR (Polynomial.evalRingHom 0) (by simp)

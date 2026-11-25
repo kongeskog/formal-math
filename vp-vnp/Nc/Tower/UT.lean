@@ -33,19 +33,16 @@ def U (h : ℕ) : Subgroup (SL2 h) :=
         mul_mem' := by
           intro A B hA hB i j
           have h1 : ∀ i j k, j < i → A.1 i k * B.1 k j = 0 := by
-            intro i j k hij
-            rcases lt_or_ge k i with hk | hk
-            · rw [(hA i k).1 hk, zero_mul]
-            · rw [(hB k j).1 (lt_of_lt_of_le hij hk), mul_zero]
+            -- by cases on `k < i` (then `hA` gives `0`) or `i ≤ k`, so `j < k`
+            -- (then `hB` gives `0`)
+            grind
           refine ⟨fun hij => ?_, ?_⟩
           · rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply]
             exact Finset.sum_eq_zero fun k _ => h1 i j k hij
           · rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Finset.sum_eq_single i]
             · rw [(hA i i).2, (hB i i).2, one_mul]
-            · intro k _ hk
-              rcases lt_or_gt_of_ne hk with h | h
-              · rw [(hA i k).1 h, zero_mul]
-              · rw [(hB k i).1 h, mul_zero]
+            -- for `k ≠ i` one factor is below the diagonal: `hA` if `k < i`, `hB` if `i < k`
+            · grind
             · simp }
   { S with inv_mem' := sl_pow_mem S }
 

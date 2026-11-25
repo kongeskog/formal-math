@@ -36,13 +36,8 @@ theorem exists_transvections (A : SL2 h) : ∃ l : List (TransvectionStruct (Fin
       det_diagonal, one_mul, mul_one] at h3
     exact h3
   have h3 : ∀ i, D i = 1 := by
-    intro i
-    have h4 : D i ≠ 0 := by
-      intro h0
-      rw [Finset.prod_eq_zero (mem_univ i) h0] at h1
-      exact absurd h1 (by decide)
-    have key : ∀ c : ZMod 2, c ≠ 0 → c = 1 := by decide
-    exact key _ h4
+    -- no factor of `h1` is `0`, and the only nonzero element of `ZMod 2` is `1`
+    simp_all
   have h5 : diagonal D = 1 := by
     have : D = fun _ => 1 := funext h3
     rw [this, diagonal_one]
@@ -121,26 +116,15 @@ theorem exists_diam (h : ℕ) [NeZero h] (h2 : 2 ≤ h) (h3 : 3 ≤ h) :
     intro g
     refine (WL.lift h3 ih g).mono ?_
     have h4 : h * h * (5 * bQ h n) ≤ B * (n + 1) ^ 6 := by
-      have h5 : (n + 2) ^ 3 ≤ 8 * (n + 1) ^ 3 := by
-        calc (n + 2) ^ 3 ≤ (2 * (n + 1)) ^ 3 := Nat.pow_le_pow_left (by omega) 3
-          _ = 8 * (n + 1) ^ 3 := by ring
       have h6 : bQ h n ≤ 4 ^ (h + 3) * 9 * 8 * (n + 1) ^ 6 := by
         unfold bQ
-        calc 4 ^ (h + 3) * (9 * (n + 2) ^ 3) * (n + 1) ^ 3 ≤ 4 ^ (h + 3) * (9 * (8 * (n + 1) ^ 3)) * (n + 1) ^ 3 := by
-              gcongr
-          _ = _ := by ring
+        -- `(n + 2) ^ 3 ≤ (2 * (n + 1)) ^ 3 = 8 * (n + 1) ^ 3` in the factor `(n + 2) ^ 3`, then
+        -- `(n + 1) ^ 3 * (n + 1) ^ 3 = (n + 1) ^ 6`
+        grind
       calc h * h * (5 * bQ h n) ≤ h * h * (5 * (4 ^ (h + 3) * 9 * 8 * (n + 1) ^ 6)) := by gcongr
         _ = B * (n + 1) ^ 6 := by simp only [B]; ring
-    have h7 : (n + 1) ^ 7 + (n + 1) ^ 6 ≤ (n + 1 + 1) ^ 7 := by
-      have h8 : (n + 1) ^ 6 ≤ (n + 2) ^ 6 := Nat.pow_le_pow_left (by omega) 6
-      calc (n + 1) ^ 7 + (n + 1) ^ 6 = (n + 1) ^ 6 * (n + 2) := by ring
-        _ ≤ (n + 2) ^ 6 * (n + 2) := Nat.mul_le_mul_right _ h8
-        _ = (n + 1 + 1) ^ 7 := by ring
-    calc (C + B) * (n + 1) ^ 7 + h * h * (5 * bQ h n) ≤ (C + B) * (n + 1) ^ 7 + B * (n + 1) ^ 6 :=
-          Nat.add_le_add_left h4 _
-      _ ≤ (C + B) * (n + 1) ^ 7 + (C + B) * (n + 1) ^ 6 := by
-          refine Nat.add_le_add_left (Nat.mul_le_mul_right _ (by omega)) _
-      _ = (C + B) * ((n + 1) ^ 7 + (n + 1) ^ 6) := by ring
-      _ ≤ (C + B) * (n + 1 + 1) ^ 7 := Nat.mul_le_mul_left _ h7
+    -- by `h4` and `B ≤ C + B` the sum is at most `(C + B) * ((n + 1) ^ 7 + (n + 1) ^ 6)`, and
+    -- `(n + 1) ^ 7 + (n + 1) ^ 6 = (n + 1) ^ 6 * (n + 2) ≤ (n + 2) ^ 7`
+    grind
 
 end Nc.Tower

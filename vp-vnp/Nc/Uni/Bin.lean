@@ -33,12 +33,9 @@ theorem bv_inj {w w' : List Bool} (h : w.length = w'.length) (e : bv w = bv w') 
       have h1 := bv_lt w
       have h2 := bv_lt w'
       simp only [bv, hl] at e
-      rw [hl] at h1
-      have hb : b = b' := by
-        cases b <;> cases b' <;> simp at e ⊢ <;> omega
-      subst hb
-      have : bv w = bv w' := by omega
-      rw [ih hl this]
+      -- `e` with the bounds `h1`, `h2` (after `hl`): the leading bits agree, then `ih hl` on the
+      -- rest
+      grind
 
 /-- The word of L bits of a number. -/
 def bin : ℕ → ℕ → List Bool
@@ -57,14 +54,8 @@ theorem bv_bin {L n : ℕ} (h : n < 2 ^ L) : bv (bin L n) = n := by
     simp [bin, bv, h]
   | succ L ih =>
     rw [bin, bv, length_bin]
-    rw [pow_succ] at h
-    by_cases hn : 2 ^ L ≤ n
-    · simp only [hn, decide_true, if_true]
-      rw [ih (by omega)]
-      omega
-    · simp only [hn, decide_false, Bool.false_eq_true, if_false]
-      rw [ih (by omega)]
-      omega
+    -- by cases on `2 ^ L ≤ n`: `ih` on `n - 2 ^ L` or on `n`, both below `2 ^ L` by `h`
+    grind
 
 theorem bin_bv (w : List Bool) : bin w.length (bv w) = w :=
   bv_inj (length_bin _ _) (bv_bin (bv_lt w))
@@ -129,10 +120,8 @@ theorem cut_unique {u u' : List Bool} {k k' : ℕ}
       intro k' a b e
       cases k' with
       | zero => simp [List.replicate_succ] at e
-      | succ k' =>
-        simp only [List.replicate_succ, List.cons_append, List.cons.injEq, true_and] at e
-        obtain ⟨h2, h3⟩ := ih k' a b e
-        exact ⟨by rw [h2], h3⟩
+      -- `ih k'` after removing the common head of `e`
+      | succ k' => grind
   obtain ⟨h2, h3⟩ := key k k' _ _ h1
   exact ⟨List.reverse_injective h3, h2⟩
 
