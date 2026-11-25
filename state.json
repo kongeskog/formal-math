@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:21:41.964001617Z",
+  "updated_at": "2026-11-25T04:22:56.719879579Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 3
   },
   "leaderboard": [
     {
@@ -230,10 +230,10 @@
     {
       "number": 97,
       "title": "Idea: shorten(*): end a tactic block with the specific closing tactic that already proves it",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-25T07:22:43Z",
       "pr": 107,
       "result_delta": -2752,
       "created_at": "2026-11-24T23:55:13Z",
@@ -950,19 +950,19 @@
       "loc": 394
     },
     {
-      "path": "vp-vnp/Paper/Prices.lean",
-      "tokens": 6851,
-      "loc": 397
-    },
-    {
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
       "tokens": 6820,
       "loc": 392
     },
     {
       "path": "vp-vnp/Nc/G/Move.lean",
-      "tokens": 6784,
-      "loc": 414
+      "tokens": 6670,
+      "loc": 408
+    },
+    {
+      "path": "vp-vnp/Paper/Prices.lean",
+      "tokens": 6652,
+      "loc": 388
     },
     {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
@@ -1000,14 +1000,14 @@
       "loc": 406
     },
     {
-      "path": "vp-vnp/NS1/OneCut.lean",
-      "tokens": 5716,
-      "loc": 305
-    },
-    {
       "path": "vp-vnp/Nc/Dl/Num0.lean",
       "tokens": 5707,
       "loc": 327
+    },
+    {
+      "path": "vp-vnp/NS1/OneCut.lean",
+      "tokens": 5648,
+      "loc": 303
     },
     {
       "path": "vp-vnp/Paper/Toolkit.lean",
