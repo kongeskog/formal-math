@@ -58,7 +58,7 @@ theorem KV.app_rel {β : Type*}
     exact (hF q hq).hl
   refine ⟨_, eU, ?_, ?_⟩
   · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hu
+    obtain ⟨s, hs, t, ht, h1, h2, -⟩ := mem_app hu
     obtain ⟨q, hq, -, h4, h5, h6⟩ := forall₂_exists rel hs
     rw [Fm.ofTree_code, h4] at ht
     obtain ⟨c1, c2⟩ := (hF q hq).evl.1 t ht

@@ -596,9 +596,9 @@ theorem prop_identity_reflection_coeff (sa : Wd μ) (sb : Wd ν) (sc : Wd μ) (s
     ∀ N M, N + M = 2 * (e₁ + e₂) →
       (psi (X : ℤ[X]) sa sb sc sd).coeff N = (psi (X : ℤ[X]) sa sd sc sb).coeff M := by
   have key := prop_identity_reverse sa sb sc sd ha hb hc hd
-  set P := psi (X : ℤ[X]) sa sb sc sd with hP
-  set Q := psi (X : ℤ[X]) sa sd sc sb with hQ
-  set H := 2 * (e₁ + e₂) with hH
+  set P := psi (X : ℤ[X]) sa sb sc sd
+  set Q := psi (X : ℤ[X]) sa sd sc sb
+  set H := 2 * (e₁ + e₂)
   have hdeg : P.natDegree ≤ H := by
     by_contra hcon
     have h1 := congrArg (fun p : ℤ[X] => p.coeff H) key

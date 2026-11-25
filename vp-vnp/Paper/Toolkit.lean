@@ -276,20 +276,19 @@ theorem lem_toolkit_c :
       linarith [h y]
     simpa using lem_toolkit_c_contract (fun _ => zero_le_one) (conv x b hb) (conv x' b' hb')
 
-/-- **Paper: Lemma lem:toolkit (d).** "A nonempty closed convex F has nearest points Py, with |yq|² ≥ |yPy|² + |Py,q|² for
+/-- **Paper: Lemma lem:toolkit (d).** "A nonempty closed convex F has a point Py with |yq|² ≥ |yPy|² + |Py,q|² for
 q ∈ F." A set is convex if it contains the midpoints of its points. -/
 theorem lem_toolkit_d (F : Set Y) (hF : IsClosed F) (hne : F.Nonempty)
     (hconv : ∀ x ∈ F, ∀ v ∈ F, ∀ m, dist x m = dist x v / 2 → dist m v = dist x v / 2 → m ∈ F) (y : Y) :
-    ∃ P ∈ F, (∀ q ∈ F, dist y P ≤ dist y q) ∧ ∀ q ∈ F, dist y P ^ 2 + dist P q ^ 2 ≤ dist y q ^ 2 := by
+    ∃ P ∈ F, ∀ q ∈ F, dist y P ^ 2 + dist P q ^ 2 ≤ dist y q ^ 2 := by
   obtain ⟨P, hP, h⟩ := lem_toolkit_minimization F hF hne
     (fun x hx v hv => hconv x hx v hv _ (dist_mid_left x v) (dist_mid_right x v))
     (fun q => dist y q ^ 2) (by fun_prop) (fun _ => sq_nonneg _) one_pos
     (fun x _ v _ => by linarith [cn x v y])
-  have h' : ∀ q ∈ F, dist y P ^ 2 + dist P q ^ 2 ≤ dist y q ^ 2 := fun q hq => by
-    have := h q hq
-    rw [dist_comm P q]
-    linarith
-  exact ⟨P, hP, fun q hq => (abs_le_of_sq_le_sq' (by nlinarith [h' q hq]) dist_nonneg).2, h'⟩
+  refine ⟨P, hP, fun q hq => ?_⟩
+  have := h q hq
+  rw [dist_comm P q]
+  linarith
 
 /-- Part (e) for factors that may differ. -/
 theorem lem_toolkit_e_general {ι : Type*} [Fintype ι] {X : ι → Type*} [∀ i, MetricSpace (X i)] [∀ i, CN (X i)] :
@@ -341,12 +340,12 @@ theorem lem_toolkit_f_parts {x u v y a b : Y} {h δ s t : ℝ} (hp : dist x u = 
   rw [e2, e4, hq] at f4
   nlinarith
 
-/-- The case s = t: then |ab| = δ, and |xb|² and |ay|² have the values that the inequality of (a) allows at most. -/
+/-- The case s = t: then |xb|² and |ay|² have the values that the inequality of (a) allows at most. -/
 theorem lem_toolkit_f_same {x u v y a b : Y} {h δ s : ℝ} (hp : dist x u = h) (hp' : dist y v = h)
     (hq : dist u v = δ) (hq' : dist x y = δ)
     (hd : 2 * h ^ 2 + 2 * δ ^ 2 ≤ dist x v ^ 2 + dist u y ^ 2)
     (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ha : IsPt x u s a) (hb : IsPt y v s b) :
-    dist a b = δ ∧ dist x b ^ 2 = (1 - s) * δ ^ 2 + s * dist x v ^ 2 - s * (1 - s) * h ^ 2 ∧
+    dist x b ^ 2 = (1 - s) * δ ^ 2 + s * dist x v ^ 2 - s * (1 - s) * h ^ 2 ∧
       dist a y ^ 2 = (1 - s) * δ ^ 2 + s * dist u y ^ 2 - s * (1 - s) * h ^ 2 := by
   have h1 := lem_toolkit_f_parts hp hp' hq hq' hd hs0 hs1 hs0 hs1 ha hb
   have h2 := lem_toolkit_b_first x a b y
@@ -369,7 +368,7 @@ theorem lem_toolkit_f_same {x u v y a b : Y} {h δ s : ℝ} (hp : dist x u = h) 
   have h8 : dist x v ^ 2 + dist u y ^ 2 = 2 * h ^ 2 + 2 * δ ^ 2 := le_antisymm (by linarith) hd
   have h9 : s * dist x v ^ 2 + s * dist u y ^ 2 = s * (2 * h ^ 2 + 2 * δ ^ 2) := by
     rw [← mul_add, h8]
-  refine ⟨h4, ?_, ?_⟩ <;> nlinarith
+  constructor <;> nlinarith
 
 /-- The values of |xb|² and |ay|² from lem_toolkit_f_same, inserted into lem_toolkit_f_parts: the formula for |ab|², still in
 terms of the two diagonals. -/
@@ -383,8 +382,8 @@ theorem lem_toolkit_f_parallelogram {x u v y a b : Y} {h δ s t : ℝ} (hp : dis
   have h1 := lem_toolkit_f_parts hp hp' hq hq' hd hs0 hs1 ht0 ht1 ha hb
   obtain ⟨a', ha'⟩ := lem_toolkit_a_isPt x u ht0 ht1
   obtain ⟨b', hb'⟩ := lem_toolkit_a_isPt y v hs0 hs1
-  have h2 := (lem_toolkit_f_same hp hp' hq hq' hd ht0 ht1 ha' hb).2.1
-  have h3 := (lem_toolkit_f_same hp hp' hq hq' hd hs0 hs1 ha hb').2.2
+  have h2 := (lem_toolkit_f_same hp hp' hq hq' hd ht0 ht1 ha' hb).1
+  have h3 := (lem_toolkit_f_same hp hp' hq hq' hd hs0 hs1 ha hb').2
   rw [h2, h3] at h1
   linarith
 

@@ -262,7 +262,7 @@ theorem size_dt (d : Fin D) : (C.dt d).size ≤ 4 * Lc + 1 := size_bits (H.dc d)
 
 theorem size_opS (x y z : NmT S M U0 U1 pS) {φ : Tree} (hφ : φ.size ≤ 60 * (X * Lc) ^ 2) :
     (DStep.op (C.nm x) (C.nm y) (C.nm z) φ).tree.size ≤ 120 * (X * Lc) ^ 2 := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   have h1 := size_bits (H.nm x)
   have h2 := size_bits (H.nm y)
   have h3 := size_bits (H.nm z)
@@ -284,7 +284,7 @@ theorem size_un (x z : NmT S M U0 U1 pS) {f : Fin D → Tree} (hf : ∀ d, (f d)
 
 theorem size_con (z : NmT S M U0 U1 pS) {t : Tree} (ht : t.size ≤ 5 * (X * Lc)) :
     (C.con z t).tree.size ≤ 120 * (X * Lc) ^ 2 := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   refine size_opS H _ _ _ ?_
   simp only [Tree.size]
   omega
@@ -305,7 +305,7 @@ theorem size_trie2 {α : Type} [Fintype α] {code : α → List Bool} (hc : ∀ 
 /-- The keys of units. -/
 theorem size_keysL {α : Type} {l : List α} {f : α → List Bool} (hl : l.length ≤ X) (hf : ∀ a, (f a).length ≤ Lc) :
     (listT (l.map fun a => ofBits (f a))).size ≤ 19 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   refine (size_listT_le (n := X) (b := 4 * Lc + 1) (by rw [List.length_map]; exact hl) ?_).trans ?_
   · intro t ht
     obtain ⟨a, -, rfl⟩ := List.mem_map.1 ht
@@ -314,7 +314,7 @@ theorem size_keysL {α : Type} {l : List α} {f : α → List Bool} (hl : l.leng
 
 /-- Every step is small. -/
 theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤ 120 * (X * Lc) ^ 2 := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   have hX1 := H.X1
   have hLc := H.hLc
   have hUX : U0 ≤ X := (Nat.le_succ _).trans H.hU0
@@ -442,7 +442,6 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
       omega
 
 theorem length_steps18 : (steps18 C tab qn i e hU0 hU1).length ≤ 11 * X ^ 2 := by
-  have hX1 := H.X1
   have hX2 : X ≤ X ^ 2 := Nat.le_self_pow (by norm_num) X
   have hK1 := H.hK1
   have hN := H.hN
@@ -472,7 +471,7 @@ theorem size_gN (y : NmT S M U0 U1 pS) : (gN C y).tree.size ≤ 4 * Lc + 5 := by
   omega
 
 theorem size_bodyTm (p : Fin (K + K)) : (bodyTm C p).tree.size ≤ 75 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   have h : ∀ l : List Tm, l.length ≤ X → (∀ t ∈ l, t.tree.size ≤ 4 * Lc + 5) → (listTm l).tree.size ≤ 19 * (X * Lc) := by
     intro l hl hb
     refine (size_listTm_le hl hb).trans ?_
@@ -496,7 +495,7 @@ theorem size_bodyTm (p : Fin (K + K)) : (bodyTm C p).tree.size ≤ 75 * (X * Lc)
   omega
 
 theorem size_baseTm (p : Fin (K + K)) : (baseTm C p).tree.size ≤ 120 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   unfold baseTm
   refine Fin.addCases (fun κ => ?_) (fun κ => ?_) p
   · rw [Fin.addCases_left, size_tmCons, size_tmCons, size_tmCons, size_c]
@@ -512,7 +511,7 @@ theorem size_baseTm (p : Fin (K + K)) : (baseTm C p).tree.size ≤ 120 * (X * Lc
     omega
 
 theorem size_basesTm (p : Fin (K + K)) : (basesTm C p).tree.size ≤ 140 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   have h1 := size_baseTm H p
   have h2 := size_gN H (.dg p)
   rw [basesTm, size_tmCons]
@@ -536,7 +535,7 @@ variable {d1 : Tree} (hd1 : d1.size ≤ 4 * Lc + 1) {gt : Fin mm → Tree} (hgt 
 include hd1
 
 theorem size_slotTm (z : M.Z) (a : Fin (K + K + A')) : (slotTm C tab d1 z a).tree.size ≤ 50 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   rw [slotTm]
   refine (size_catTm_le (n := X) (b := 12 * Lc + 21) (by
     rw [List.length_map, List.length_reverse]; exact length_allIds H) ?_).trans ?_
@@ -582,7 +581,7 @@ include hgt
 
 theorem size_endTm (g : Fin mm) (id : G.Uid (K + K) U0 M.N U1) :
     (endTm C tab gt d1 g id).tree.size ≤ 300 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
   have h1 := size_bits (H.nm (.slp (tab.kcur id)))
   have h2 := size_bits (H.nm (.slp (tab.kgrp (G.hold0 M.np id))))
   have h3 := size_bits (H.nm (.slp (tab.kgrp (G.hold1 M.np id))))
@@ -718,7 +717,6 @@ theorem size_dealProg : (dealProg C tab qn tg bT bub nl nub gt d1 gp cb b0 b1 i 
     calc 11 * X ^ 2 * (120 * (X * Lc) ^ 2 + 1) ≤ 11 * (X * Lc) ^ 2 * (121 * (X * Lc) ^ 2) :=
           Nat.mul_le_mul (Nat.mul_le_mul_left _ a1) (by omega)
       _ = 1331 * (X * Lc) ^ 4 := by ring
-  have e2 : X * (8 * Lc + 9 + 1) = 8 * (X * Lc) + 10 * X := by ring
   have e3 : X * (740 * (X * Lc) ^ 3 + 1) ≤ 741 * (X * Lc) ^ 4 := by
     have a2 : 1 ≤ (X * Lc) ^ 3 := Nat.one_le_pow _ _ f4
     calc X * (740 * (X * Lc) ^ 3 + 1) ≤ (X * Lc) * (741 * (X * Lc) ^ 3) := Nat.mul_le_mul f1 (by omega)

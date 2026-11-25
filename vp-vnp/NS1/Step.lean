@@ -82,14 +82,13 @@ theorem mem_app {p : Tree} {le : List (Run A)} {u : Run A}
     (h : u ∈ le.flatMap fun s => (NS1.evl θ (Fm.ofTree p) s.out).map fun t =>
       ((Run.det 1 p).seq s).seq t |>.tick t.out) :
     ∃ s ∈ le, ∃ t ∈ NS1.evl θ (Fm.ofTree p) s.out, u.cost = s.cost + t.cost + 2 ∧ u.bill = s.bill ++ t.bill ∧
-      u.out = t.out ∧ u.th = s.th * t.th := by
+      u.out = t.out := by
   rw [List.mem_flatMap] at h
   obtain ⟨s, hs, h⟩ := h
   obtain ⟨t, ht, rfl⟩ := List.mem_map.1 h
-  refine ⟨s, hs, t, ht, ?_, ?_, rfl, ?_⟩
+  refine ⟨s, hs, t, ht, ?_, ?_, rfl⟩
   · simp only [Run.seq, Run.tick, Run.det]
     omega
-  · simp [Run.seq, Run.tick, Run.det]
   · simp [Run.seq, Run.tick, Run.det]
 
 end App
@@ -194,7 +193,7 @@ theorem stepA_ev {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {P : List Bool →
   have hmem : ∀ u ∈ lG, (Hl θ F (.cons c u.out) ∧ (∀ r ∈ evl θ F (.cons c u.out), r.cost ≤ tF ∧ ∀ n ∈ r.bill, P n) ∧
       val κ (evl θ F (.cons c u.out)) = ω u.out) ∧ u.cost ≤ cg + tG + 8 ∧ ∀ n ∈ u.bill, P n := by
     intro u hu
-    obtain ⟨s, hs, t, ht, h1, h2, h3, -⟩ := mem_app hu
+    obtain ⟨s, hs, t, ht, h1, h2, h3⟩ := mem_app hu
     obtain ⟨q, hq, -, h4, h5, h6⟩ := hZ s hs
     rw [h4] at ht
     obtain ⟨g1, g2, l, g3, g4⟩ := (hG q hq).2 t ht
@@ -210,7 +209,7 @@ theorem stepA_ev {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {P : List Bool →
     exact (hmem u hu).1.1
   refine ⟨_, eF, ?_, ?_⟩
   · intro r hr
-    obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hr
+    obtain ⟨s, hs, t, ht, h1, h2, -⟩ := mem_app hr
     obtain ⟨u, hu, rfl⟩ := List.mem_map.1 hs
     rw [Fm.ofTree_code] at ht
     obtain ⟨m1, m2, m3⟩ := hmem u hu

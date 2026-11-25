@@ -51,7 +51,7 @@ theorem diagF_ev {κ : List Bool → R} {D z : Tree} {g : Fm} {cg tD : ℕ} {P :
     rcases hr with hr | hr
     · rw [List.mem_map] at hr
       obtain ⟨u, hu, rfl⟩ := hr
-      obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hu
+      obtain ⟨s, hs, t, ht, h1, h2, -⟩ := mem_app hu
       obtain ⟨q, hq, -, h4, h5, h6⟩ := hZ s hs
       rw [h4] at ht
       obtain ⟨c1, p1⟩ := (hD q hq).2 t ht

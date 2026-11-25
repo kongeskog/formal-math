@@ -225,7 +225,7 @@ theorem rep_baseT {p : Fin (K + K)} (hp : grp (Fin.castAdd A' p) = g) (R C : Opt
         exact mem_filter.2 ⟨mem_dom.2 ⟨hp, G.Plan.init_mem_seenAt.2 hi, Or.inr rfl⟩, rfl, rfl⟩
 
 /-- The comparison of the second copies. -/
-theorem diag_iff (hub : 0 < ub) {p : Fin (K + K)} {R C : Option S → Fin (K + K) → List Γ}
+theorem diag_iff {p : Fin (K + K)} {R C : Option S → Fin (K + K) → List Γ}
     (hR : ucount ub (strOf cb fun s => R s p) = n p p) (hC : ucount ub (strOf cb fun s => C s p) = n p p) (t : Tree) :
     (∀ k ∈ (List.finRange U0).filter fun k => k.1 < (n p p).1,
       tget (key (Fin.castAdd A' p, .init p p k)) (baseT ub n key dkey cb p R C t) =
@@ -278,7 +278,7 @@ theorem base_core (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < ub)
           (∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p)
   · rw [if_pos hc]
     obtain ⟨c1, c2, c3, c4, c5⟩ := hc
-    have hd := diag_iff (cb := cb) hkey hub (c4 p) (c5 p) t
+    have hd := diag_iff (cb := cb) hkey (c4 p) (c5 p) t
     by_cases hdiag : ∀ k : Fin U0, unitsOf ub (strOf cb fun s => R.words s p) k = unitsOf ub (strOf cb fun s => C.words s p) k
     · refine (if_pos (hd.2 hdiag)).trans ?_
       rw [if_pos ⟨c1, c2, c3, c4, c5, hdiag⟩]

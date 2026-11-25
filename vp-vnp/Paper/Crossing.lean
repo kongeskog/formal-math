@@ -330,8 +330,8 @@ theorem prop_crossing_spectral {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) {I : Ty
   obtain ⟨j, hj⟩ := prop_crossing_term F Ψ R L hR hL hΨ x y v u o o' w w'
   obtain ⟨r, l, hr, hl, hrl, h1, h2⟩ := hrl j
   refine ⟨(r, l), ⟨hr, hl, hrl⟩, ?_⟩
-  set A := Real.log (Fintype.card α) with hA
-  set B := Real.log (Fintype.card β) with hB
+  set A := Real.log (Fintype.card α)
+  set B := Real.log (Fintype.card β)
   obtain ⟨hα1, hα2⟩ := abs_le.1 hα
   obtain ⟨hβ1, hβ2⟩ := abs_le.1 hβ
   have hi : ∀ (a b : I) {Z c : ℝ}, Z ≤ c * s + δ / 8 * s → Z * F.e a b ≤ (c * F.e a b + δ / 8) * s := by
@@ -375,16 +375,16 @@ theorem prop_crossing_spectral {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) {I : Ty
 inequalities are homogeneous in the distances, and the pairs (r, l) lie in a compact set, so they pass to limits." -/
 theorem prop_crossing_first {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w w' : Y)
     {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) :
-    ∃ r l : ℝ, 0 ≤ r ∧ 0 ≤ l ∧ r ^ 2 + l ^ 2 ≤ 2 * (p ^ 2 + q ^ 2) ∧
+    ∃ r l : ℝ, r ^ 2 + l ^ 2 ≤ 2 * (p ^ 2 + q ^ 2) ∧
       p * d x v + q * d y u ≤ p * d x o + q * d y o + p * d v o' + q * d u o' + r * d o o' ∧
       p * d x v + q * d y u ≤ p * d x w + q * d u w + q * d y w' + p * d v w' + l * d w w' := by
-  set ρ := 2 * (p ^ 2 + q ^ 2) with hρ
+  set ρ := 2 * (p ^ 2 + q ^ 2)
   have hρ0 : 0 ≤ ρ := by positivity
-  obtain ⟨z, ⟨h1, h2, h3⟩, h⟩ : ∃ z ∈ quarter ρ, p * d x v + q * d y u ≤
+  obtain ⟨z, ⟨-, -, h3⟩, h⟩ : ∃ z ∈ quarter ρ, p * d x v + q * d y u ≤
       min (p * d x o + q * d y o + p * d v o' + q * d u o' + z.1 * d o o')
         (p * d x w + q * d u w + q * d y w' + p * d v w' + z.2 * d w w') := by
     refine exists_quarter hρ0 fun δ hδ => ?_
-    set T := 3 * (p + q) + ρ + 1 with hT
+    set T := 3 * (p + q) + ρ + 1
     have hT0 : 0 < T := by positivity
     set η := δ / T with hη
     have hη0 : 0 < η := by positivity
@@ -427,7 +427,7 @@ theorem prop_crossing_first {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) 
       linarith
     · have h4 := mul_le_mul_of_nonneg_left (h.trans (min_le_right _ _)) hc
       linarith
-  exact ⟨z.1, z.2, h1, h2, h3, le_min_iff.1 h⟩
+  exact ⟨z.1, z.2, h3, le_min_iff.1 h⟩
 
 /-- **Paper: display eq:Q**, the second statement of Proposition prop:crossing. "Let x, v, y, u, o, o′, w, w′ be points of
 a price and p, q ≥ 0. There are r, l ≥ 0 with r² + l² ≤ 2(p² + q²) such that p|xv| + q|yu| is at most each of
@@ -439,7 +439,7 @@ theorem eq_Q {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w
     2 * (p * d x v + q * d y u) ≤
       p * (d x o + d v o' + d x w + d v w') + q * (d y o + d u o' + d u w + d y w') +
         τ * (p ^ 2 + q ^ 2) + (d o o' ^ 2 + d w w' ^ 2) / (2 * τ) := by
-  obtain ⟨r, l, hr, hl, hrl, h1, h2⟩ := prop_crossing_first hd x v y u o o' w w' hp hq
+  obtain ⟨r, l, hrl, h1, h2⟩ := prop_crossing_first hd x v y u o o' w w' hp hq
   have am : ∀ a b : ℝ, a * b ≤ τ / 2 * a ^ 2 + b ^ 2 / (2 * τ) := by
     intro a b
     have e : τ / 2 * a ^ 2 + b ^ 2 / (2 * τ) - a * b = (τ * a - b) ^ 2 / (2 * τ) := by

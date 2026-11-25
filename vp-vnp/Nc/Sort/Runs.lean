@@ -35,11 +35,11 @@ section
 variable {X Y : Type*} {em : X → Z → List Γ} {wt : X → F} {em' : Y → Z → List Γ} {wt' : Y → F}
   {P : Series F (Z × Γ)}
 
-theorem IsRuns.exists_run (h : IsRuns P em wt) {v : Z → List Γ} (hv : hat P v ≠ 0) : ∃ x, em x = v ∧ wt x ≠ 0 := by
+theorem IsRuns.exists_run (h : IsRuns P em wt) {v : Z → List Γ} (hv : hat P v ≠ 0) : ∃ x, em x = v := by
   obtain ⟨R, h1, h2⟩ := h v
   rw [h2] at hv
-  obtain ⟨x, hx, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hv
-  exact ⟨x, (h1 x).1 hx, hne⟩
+  obtain ⟨x, hx, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero hv
+  exact ⟨x, (h1 x).1 hx⟩
 
 theorem IsRuns.of_fib (h : IsRuns P em wt) {v : Z → List Γ} (R : Finset X) (hR : ∀ x, x ∈ R ↔ em x = v) :
     hat P v = ∑ x ∈ R, wt x := by
