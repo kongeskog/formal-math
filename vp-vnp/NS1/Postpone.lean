@@ -3,7 +3,7 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import NS1.EvalThm
+import NS1.Eval
 
 /-!
 # Constants are postponed
@@ -294,12 +294,122 @@ theorem sum_budg (J : ℕ) (K : KT R) (b : List (List Bool)) (hb : b.length < 2 
       refine List.map_congr_left fun q _ => ?_
       by_cases h3 : ok p.1 (part false b) = true <;> by_cases h4 : ok q.1 (part true b) = true <;> simp [h3, h4]
 
+/-- The names in a tree of names: `nil` and `(nil, nil)` have none, `(x, (_, _))` is the name `x.path`, and
+`((a, b), nil)` has the names of `a` and then those of `b`. -/
+def names : Tree → List (List Bool)
+  | .nil => []
+  | .cons .nil .nil => []
+  | .cons (.cons a b) .nil => names a ++ names b
+  | .cons x (.cons _ _) => [x.path]
+
+/-- A tree has fewer names than nodes. -/
+theorem length_names_le (o : Tree) : (names o).length ≤ o.size := by
+  induction o using names.induct with
+  | case3 a b iha ihb => simp only [names, List.length_append, Tree.size]; omega
+  | _ => simp [names, Tree.size]
+
+/-- A tree of names with the one name that `F` gives. -/
+def leaf (F : Fm) : Fm := .cons F (.quote (.cons .nil .nil))
+
+/-- A tree of names with the names of `F` and then those of `G`. -/
+def node (F G : Fm) : Fm := .cons (.cons F G) (.quote .nil)
+
+/-- Subtract 1 in a budget at all names of a tree of names; the argument is (this program, (the tree, the budget)). -/
+def CK : Fm :=
+  .ite (.hd (.tl .id))
+    (.ite (.tl (.hd (.tl .id)))
+      (.run (.quote DC.code) (.cons (.quote DC.code) (.cons (.hd (.hd (.tl .id))) (.tl (.tl .id)))))
+      (.ite (.hd (.hd (.tl .id)))
+        (.run (.hd .id) (.cons (.hd .id) (.cons (.tl (.hd (.hd (.tl .id))))
+          (.run (.hd .id) (.cons (.hd .id) (.cons (.hd (.hd (.hd (.tl .id)))) (.tl (.tl .id))))))))
+        (.tl (.tl .id))))
+    (.tl (.tl .id))
+
+theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll (names o) t = some t' →
+    ∃ k ≤ (60 * H + 41) * o.size, Dt θ CK (.cons CK.code (.cons o t.enc)) t'.enc k := by
+  induction o using names.induct with
+  | case1 =>
+    intro t t' _ h
+    simp only [names, Bt.decAll, Option.some.injEq] at h
+    subst h
+    exact ⟨_, by simp only [Tree.size]; omega, Dt.ite_false (.hd (.tl (.id _))) (.tl (.tl (.id _)))⟩
+  | case2 =>
+    intro t t' _ h
+    simp only [names, Bt.decAll, Option.some.injEq] at h
+    subst h
+    exact ⟨_, by simp only [Tree.size]; omega, Dt.ite_true (.hd (.tl (.id _))) (by simp)
+      (Dt.ite_false (.tl (.hd (.tl (.id _)))) (Dt.ite_false (.hd (.hd (.tl (.id _)))) (.tl (.tl (.id _)))))⟩
+  | case3 a b iha ihb =>
+    intro t t' ht h
+    rw [names, Bt.decAll_append, Option.bind_eq_some_iff] at h
+    obtain ⟨t₁, h1, h2⟩ := h
+    obtain ⟨ka, hka, da⟩ := iha ht h1
+    obtain ⟨kb, hkb, db⟩ := ihb (by rw [(Bt.ht_nds_decAll h1).1]; exact ht) h2
+    have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by rwa [Fm.ofTree_code]
+    have eb : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) t'.enc kb := by rwa [Fm.ofTree_code]
+    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (by simp) (Dt.ite_false (.tl (.hd (.tl (.id _))))
+      (Dt.ite_true (.hd (.hd (.tl (.id _)))) (by simp) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
+        (.cons (.tl (.hd (.hd (.tl (.id _))))) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
+          (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))) eb)))⟩
+    simp only [Tree.size]
+    nlinarith
+  | case4 x u v =>
+    intro t t' ht h
+    simp only [names, Bt.decAll, Option.bind_eq_some_iff, Option.some.injEq, exists_eq_right] at h
+    obtain ⟨k, hk, d⟩ := DC_some (θ := θ) h
+    have e : Dt θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) t'.enc k := by rwa [Fm.ofTree_code]
+    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (by simp) (Dt.ite_true (.tl (.hd (.tl (.id _)))) (by simp)
+      (Dt.run (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _)))) (.tl (.tl (.id _))))) e))⟩
+    simp only [Tree.size]
+    nlinarith [Nat.mul_le_mul_left 60 ht, Tree.size_pos x, Tree.size_pos u, Tree.size_pos v]
+
+theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
+    Ev θ CK (.cons CK.code (.cons o t.enc)) [] := by
+  induction o using names.induct with
+  | case1 => intro t h; simp [names, Bt.decAll] at h
+  | case2 => intro t h; simp [names, Bt.decAll] at h
+  | case3 a b iha ihb =>
+    intro t h
+    rw [names, Bt.decAll_append] at h
+    refine Ev.ite_true_nil (.hd (.tl (.id _))) (by simp) (Ev.ite_false_nil (.tl (.hd (.tl (.id _))))
+      (Ev.ite_true_nil (.hd (.hd (.tl (.id _)))) (by simp) ?_))
+    cases h1 : Bt.decAll (names a) t with
+    | none =>
+      have ea : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) [] := by
+        rw [Fm.ofTree_code]; exact iha h1
+      have e1 := Ev.cons_nil_right (Dt.hd (Dt.id (θ := θ) (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc))))
+        (Ev.cons_nil_right (Dt.tl (Dt.hd (Dt.hd (Dt.tl (Dt.id (θ := θ)
+          (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))))))
+          (Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))
+      have e2 := Ev.run' (Dt.hd (Dt.id (θ := θ) (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))) e1
+        (by simp)
+      simpa using e2
+    | some t₁ =>
+      rw [h1, Option.bind_some] at h
+      obtain ⟨ka, -, da⟩ := CK_some (θ := θ) (H := t.ht) a le_rfl h1
+      have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by rwa [Fm.ofTree_code]
+      have eb : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) [] := by
+        rw [Fm.ofTree_code]; exact ihb h
+      exact Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.tl (.hd (.hd (.tl (.id _)))))
+        (Dt.run (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))) eb
+  | case4 x u v =>
+    intro t h
+    have h' : Bt.dec x.path t = none := by
+      cases hd : Bt.dec x.path t with
+      | none => rfl
+      | some t' => simp [names, Bt.decAll, hd] at h
+    have e : Ev θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) [] := by
+      rw [Fm.ofTree_code]; exact DC_none h'
+    exact Ev.ite_true_nil (.hd (.tl (.id _))) (by simp) (Ev.ite_true_nil (.tl (.hd (.tl (.id _)))) (by simp)
+      (Ev.run_nil (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _)))) (.tl (.tl (.id _))))) e))
+
+
 section Weights
 
 variable [Algebra A R]
 
-/-- The weight of a run, if the named constants are `κ`. -/
-def wt (κ : List Bool → R) (r : Run A) : R := algebraMap A R r.th * (r.bill.map κ).prod
+/-- The weight of a run, if the named constants are `κ`: its weight times the constants its value names. -/
+def wt (κ : List Bool → R) (r : Run A) : R := algebraMap A R r.th * ((names r.out).map κ).prod
 
 /-- The value of a list of runs. -/
 def val (κ : List Bool → R) (l : List (Run A)) : R := (l.map (wt κ)).sum
@@ -309,87 +419,118 @@ def pval (l : List (Run A)) : A := (l.map Run.th).sum
 
 end Weights
 
-/-- Apply a program; then check that the budgets are used up. The argument is (program, (argument, budgets)). -/
-def WF : Fm := lett (.cons (.quote AZ.code) (.tl (lett (.cons (.quote IF.code) .id) IF))) AZ
+/-- Apply a program; then check that the names in its value use up the budgets. The argument is
+(program, (argument, budgets)). -/
+def WN : Fm := lett (.cons (.quote AZ.code)
+  (lett (.cons (.quote CK.code) (.cons (.run (.hd .id) (.hd (.tl .id))) (.tl (.tl .id)))) CK)) AZ
 
-theorem simS_cons (t : Bt) (r : Run A) (l : List (Run A)) :
-    simS t (r :: l) = ((Bt.decAll r.bill t).map fun t' => (r, t')).toList ++ simS t l := by
-  simp only [simS, List.filterMap_cons]
-  cases Bt.decAll r.bill t <;> rfl
+/-- The runs with their budgets after the names of their values. -/
+def simN (t : Bt) (l : List (Run A)) : List (Run A × Bt) :=
+  l.flatMap fun q => ((Bt.decAll (names q.out) t).map fun t' => (q, t')).toList
 
-theorem map_simS (t : Bt) (l : List (Run A)) :
-    ((simS t l).flatMap fun q => if q.2.zero then [q] else []).map (fun q => q.1.th) =
-      (l.filter fun r => ok t r.bill).map Run.th := by
+theorem mem_simN {t : Bt} {l : List (Run A)} {q : Run A × Bt} (h : q ∈ simN t l) :
+    q.1 ∈ l ∧ Bt.decAll (names q.1.out) t = some q.2 := by
+  obtain ⟨r, hr, hq⟩ := List.mem_flatMap.1 h
+  cases hd : Bt.decAll (names r.out) t with
+  | none => simp [hd] at hq
+  | some t' =>
+    simp only [hd, Option.map_some, Option.toList_some, List.mem_singleton] at hq
+    subst hq
+    exact ⟨hr, hd⟩
+
+theorem map_simN (t : Bt) (l : List (Run A)) :
+    ((simN t l).flatMap fun q => if q.2.zero then [q] else []).map (fun q => q.1.th) =
+      (l.filter fun r => ok t (names r.out)).map Run.th := by
   induction l with
   | nil => rfl
   | cons r l ih =>
-    rw [simS_cons, List.flatMap_append, List.map_append, ih, List.filter_cons]
-    cases hd : Bt.decAll r.bill t with
+    rw [simN, List.flatMap_cons, List.flatMap_append, List.map_append, ← simN, ih, List.filter_cons]
+    cases hd : Bt.decAll (names r.out) t with
     | none =>
-      have : ok t r.bill = false := by rw [ok, hd]; rfl
+      have : ok t (names r.out) = false := by rw [ok, hd]; rfl
       simp [this]
     | some t' =>
-      have : ok t r.bill = t'.zero := by rw [ok, hd]; rfl
+      have : ok t (names r.out) = t'.zero := by rw [ok, hd]; rfl
       rw [this]
       by_cases hz : t'.zero <;> simp [hz]
 
 theorem sum_filter_th (t : Bt) (l : List (Run A)) :
-    ((l.filter fun r => ok t r.bill).map Run.th).sum = (l.map fun r => if ok t r.bill = true then r.th else 0).sum := by
+    ((l.filter fun r => ok t (names r.out)).map Run.th).sum =
+      (l.map fun r => if ok t (names r.out) = true then r.th else 0).sum := by
   induction l with
   | nil => rfl
-  | cons r l ih => cases hr : ok t r.bill <;> simp [hr, ih]
+  | cons r l ih => cases hr : ok t (names r.out) <;> simp [hr, ih]
 
-/-- **Lemma 1, one bill**: `WF` is plain; it has the runs whose bill is the budget. -/
-theorem WF_ev {H T : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) d l) (hT : ∀ r ∈ l, r.cost ≤ T)
-    {t : Bt} (ht : t.ht ≤ H) : ∃ l', Ev θ WF (.cons p (.cons d t.enc)) l' ∧
-      (∀ r ∈ l', r.bill = [] ∧ r.cost ≤ MM H * T + 40 * t.nds + 40) ∧
-      l'.map Run.th = (l.filter fun r => ok t r.bill).map Run.th := by
-  obtain ⟨l1, e1, r1⟩ := interp h p rfl t ht
-  -- the interpreter
-  obtain ⟨l2, e2, r2⟩ := lett_rel (body := IF) (Dt.cons (.quote IF.code (.cons p (.cons d t.enc))) (.id _))
-    (Q := [()]) (R := fun s _ => s = .det 3 (env p d t)) (.cons rfl .nil) (Q2 := fun _ => simS t l)
-    (R2 := fun r q => r.th = q.1.th ∧ r.bill = [] ∧ r.out = .cons q.1.out q.2.enc ∧ r.cost ≤ MM H * q.1.cost + 5)
+/-- **Postponing without an interpreter**: `WN` is plain; it has the runs of the program whose values name the
+constants as the budget prescribes, with their weights. -/
+theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) d l)
+    (hT : ∀ r ∈ l, r.cost ≤ T ∧ r.out.size ≤ S) {t : Bt} (ht : t.ht ≤ H) :
+    ∃ l', Ev θ WN (.cons p (.cons d t.enc)) l' ∧
+      (∀ r ∈ l', r.cost ≤ T + (60 * H + 41) * S + 40 * t.nds + 80) ∧
+      l'.map Run.th = (l.filter fun r => ok t (names r.out)).map Run.th := by
+  have e0 := Ev.cons (Dt.quote (θ := θ) CK.code (.cons p (.cons d t.enc)))
+    (Ev.cons (Ev.run_det (Dt.hd (Dt.id (θ := θ) (.cons p (.cons d t.enc))))
+      (Dt.hd (Dt.tl (Dt.id (θ := θ) (.cons p (.cons d t.enc))))) h)
+      (Dt.tl (Dt.tl (Dt.id (θ := θ) (.cons p (.cons d t.enc))))))
+  -- the names of every value
+  obtain ⟨l2, e2, r2⟩ := lett_rel (body := CK) e0 (Q := l)
+    (R := fun s q => s.th = q.th ∧ s.out = .cons CK.code (.cons q.out t.enc) ∧ s.cost ≤ q.cost + 20)
     (by
-      rintro s - - - rfl
-      refine ⟨l1, e1, r1.imp fun r q hr => ⟨?_, ?_, hr.out, ?_⟩⟩
-      · simp [Run.det, hr.th]
-      · simp [Run.det, hr.bill]
-      · have := hr.cost
-        simp only [Run.det]
+      simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_cons, List.map_nil, flatMap_single,
+        List.map_map, List.forall₂_map_left_iff]
+      refine List.forall₂_same.2 fun r hr => ⟨?_, ?_, ?_⟩
+      · simp [Run.seq, Run.tick, Run.det, Run.delay]
+      · simp [Run.seq, Run.tick, Run.det, Run.delay, Tree.tl]
+      · simp only [Function.comp, Run.seq, Run.tick, Run.det, Run.delay]
         omega)
-  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil] at r2
-  -- the check
-  have e3 := Ev.cons (Dt.quote (θ := θ) AZ.code (.cons p (.cons d t.enc))) (Ev.tl e2)
-  obtain ⟨l4, e4, r4⟩ := lett_rel (body := AZ) e3 (Q := simS t l)
-    (R := fun r q => r.th = q.1.th ∧ r.bill = [] ∧ r.out = .cons AZ.code q.2.enc ∧ r.cost ≤ MM H * q.1.cost + 10) (by
-      rw [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.forall₂_map_left_iff, List.forall₂_map_left_iff]
-      refine r2.imp fun r q hr => ?_
-      obtain ⟨h1, h2, h3, h4⟩ := hr
-      refine ⟨?_, ?_, ?_, ?_⟩
-      · simp [Run.seq, Run.tick, Run.det, h1]
-      · simp [Run.seq, Run.tick, Run.det, h2]
-      · simp [Run.seq, Run.tick, Run.det, h3]
-      · simp only [Run.seq, Run.tick, Run.det]
-        omega) (Q2 := fun q => if q.2.zero then [q] else [])
-    (R2 := fun r q => r.th = q.1.th ∧ r.bill = [] ∧ r.cost ≤ MM H * q.1.cost + 40 * t.nds + 40) (by
-      rintro s - q hq ⟨h1, h2, h3, h4⟩
-      obtain ⟨k, hk, o, h5⟩ := AZ_ev (θ := θ) q.2
-      rw [← h3] at h5
-      refine ⟨_, h5, ?_⟩
-      have hn : q.2.nds = t.nds := (Bt.ht_nds_decAll (mem_simS hq).2).2
-      by_cases hz : q.2.zero
-      · simp only [hz, if_true]
+    (Q2 := fun q => ((Bt.decAll (names q.out) t).map fun t' => (q, t')).toList)
+    (R2 := fun r q => r.th = q.1.th ∧ r.out = q.2.enc ∧ r.cost ≤ q.1.cost + (60 * H + 41) * S + 30)
+    (by
+      rintro s - q hq ⟨h1, h2, h3⟩
+      rw [h2]
+      cases hd : Bt.decAll (names q.out) t with
+      | none => exact ⟨[], CK_none q.out hd, by simp⟩
+      | some t' =>
+        obtain ⟨k, hk, dk⟩ := CK_some (θ := θ) q.out ht hd
+        refine ⟨_, dk, ?_⟩
+        simp only [Option.map_some, Option.toList_some]
         refine .cons ⟨?_, ?_, ?_⟩ .nil
         · simp [Run.det, h1]
-        · simp [Run.det, h2]
+        · simp [Run.det]
+        · have := Nat.mul_le_mul_left (60 * H + 41) (hT q hq).2
+          simp only [Run.det]
+          omega)
+  -- the check
+  have e3 := Ev.cons (Dt.quote (θ := θ) AZ.code (.cons p (.cons d t.enc))) e2
+  obtain ⟨l4, e4, r4⟩ := lett_rel (body := AZ) e3 (Q := simN t l)
+    (R := fun r q => r.th = q.1.th ∧ r.out = .cons AZ.code q.2.enc ∧
+      r.cost ≤ q.1.cost + (60 * H + 41) * S + 40) (by
+      rw [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.forall₂_map_left_iff]
+      refine r2.imp fun r q hr => ?_
+      obtain ⟨h1, h2, h3⟩ := hr
+      refine ⟨?_, ?_, ?_⟩
+      · simp [Run.seq, Run.tick, Run.det, h1]
+      · simp [Run.seq, Run.tick, Run.det, h2]
+      · simp only [Run.seq, Run.tick, Run.det]
+        omega) (Q2 := fun q => if q.2.zero then [q] else [])
+    (R2 := fun r q => r.th = q.1.th ∧ r.cost ≤ q.1.cost + (60 * H + 41) * S + 40 * t.nds + 80) (by
+      rintro s - q hq ⟨h1, h2, h3⟩
+      obtain ⟨k, hk, o, h5⟩ := AZ_ev (θ := θ) q.2
+      rw [← h2] at h5
+      refine ⟨_, h5, ?_⟩
+      have hn : q.2.nds = t.nds := (Bt.ht_nds_decAll (mem_simN hq).2).2
+      by_cases hz : q.2.zero
+      · simp only [hz, if_true]
+        refine .cons ⟨?_, ?_⟩ .nil
+        · simp [Run.det, h1]
         · simp only [Run.det]
           omega
       · simp only [hz]
         exact .nil)
   refine ⟨l4, e4, ?_, ?_⟩
   · intro r hr
-    obtain ⟨q, hq, h1, h2, h3⟩ := forall₂_exists r4 hr
-    refine ⟨h2, h3.trans ?_⟩
+    obtain ⟨q, hq, h1, h2⟩ := forall₂_exists r4 hr
+    refine h2.trans ?_
     rw [List.mem_flatMap] at hq
     obtain ⟨q', hq', hq⟩ := hq
     have : q = q' := by
@@ -397,12 +538,11 @@ theorem WF_ev {H T : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree 
       · simpa using hq
       · simp at hq
     subst this
-    have := hT _ (mem_simS hq').1
-    have := Nat.mul_le_mul_left (MM H) this
+    have := (hT _ (mem_simN hq').1).1
     omega
-  · rw [← map_simS]
+  · rw [← map_simN]
     clear e4
-    generalize ((simS t l).flatMap fun q => if q.2.zero then [q] else []) = Q at r4
+    generalize ((simN t l).flatMap fun q => if q.2.zero then [q] else []) = Q at r4
     induction r4 with
     | nil => rfl
     | cons h _ ih => simp [h.1, ih]
@@ -412,15 +552,15 @@ variable [Algebra A R]
 /-- **Lemma 1 (postponing).** The value of a list of runs is the sum, over all budgets, of the powers of the constants
 times the sums of the weights of the runs that use up the budgets. -/
 theorem val_eq_sum_budg {J : ℕ} {K : KT R} {κ : List Bool → R} {l : List (Run A)}
-    (hJ : ∀ r ∈ l, r.bill.length < 2 ^ J) (hκ : ∀ r ∈ l, ∀ p ∈ r.bill, κ p = K.lookup p) :
+    (hJ : ∀ r ∈ l, (names r.out).length < 2 ^ J) (hκ : ∀ r ∈ l, ∀ p ∈ (names r.out), κ p = K.lookup p) :
     val κ l = ((K.budg J).map fun q =>
-      q.2 * algebraMap A R (l.map fun r => if ok q.1 r.bill = true then r.th else 0).sum).sum := by
+      q.2 * algebraMap A R (l.map fun r => if ok q.1 (names r.out) = true then r.th else 0).sum).sum := by
   induction l with
   | nil => simp [val]
   | cons r l ih =>
     have h1 := ih (fun r hr => hJ r (List.mem_cons_of_mem _ hr)) fun r hr => hκ r (List.mem_cons_of_mem _ hr)
-    have h2 := sum_budg J K r.bill (hJ r List.mem_cons_self)
-    have h3 : (r.bill.map κ).prod = (r.bill.map K.lookup).prod := by
+    have h2 := sum_budg J K (names r.out) (hJ r List.mem_cons_self)
+    have h3 : ((names r.out).map κ).prod = ((names r.out).map K.lookup).prod := by
       congr 1
       exact List.map_congr_left fun p hp => hκ r List.mem_cons_self p hp
     have h4 : val κ (r :: l) = wt κ r + val κ l := by simp [val]
@@ -429,7 +569,7 @@ theorem val_eq_sum_budg {J : ℕ} {K : KT R} {κ : List Bool → R} {l : List (R
     refine List.map_congr_left fun q _ => ?_
     simp only [List.map_cons, List.sum_cons, map_add, mul_add]
     congr 1
-    by_cases h : ok q.1 r.bill = true
+    by_cases h : ok q.1 (names r.out) = true
     · simp only [h, if_true]
       ring
     · simp [h]

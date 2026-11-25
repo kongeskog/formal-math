@@ -22,10 +22,9 @@ variable {A : Type} [CommRing A] {R : Type} [CommRing R] [Algebra A R]
 /-- The number of binary digits. -/
 def lg (n : ℕ) : ℕ := Nat.log 2 n + 1
 
-/-- The program `z.hd` at the argument `z.tl`: all runs stop, the accepting ones within `T` steps and without named
-constants. -/
+/-- The program `z.hd` at the argument `z.tl`: all runs stop, the accepting ones within `T` steps. -/
 def Plain (θ : List Bool → A) (T : ℕ) (z : Tree) : Prop :=
-  Hl θ (Fm.ofTree z.hd) z.tl ∧ ∀ r ∈ evl θ (Fm.ofTree z.hd) z.tl, r.bill = [] ∧ r.cost ≤ T
+  Hl θ (Fm.ofTree z.hd) z.tl ∧ ∀ r ∈ evl θ (Fm.ofTree z.hd) z.tl, r.cost ≤ T
 
 /-- The universal plain sum: the sum of the weights of all accepting runs of the program `z.hd` at `z.tl`. -/
 noncomputable def pv (θ : List Bool → A) (z : Tree) : A := pval (evl θ (Fm.ofTree z.hd) z.tl)
@@ -34,7 +33,7 @@ noncomputable def pv (θ : List Bool → A) (z : Tree) : A := pval (evl θ (Fm.o
 are lists of instances. -/
 structure CutProg (θ : List Bool → A) (H v τ s : ℕ) (G : Tree) : Prop where
   size : G.size ≤ v ^ H
-  list : ∀ z, z.size ≤ s → Hl θ (Fm.ofTree G) z ∧ ∀ r ∈ evl θ (Fm.ofTree G) z, r.bill = [] ∧ r.cost * v ^ 24 ≤ τ ∧
+  list : ∀ z, z.size ≤ s → Hl θ (Fm.ofTree G) z ∧ ∀ r ∈ evl θ (Fm.ofTree G) z, r.cost * v ^ 24 ≤ τ ∧
     r.out.toList.length * v ^ H ≤ τ * v ^ 2 ∧ ∀ y ∈ r.out.toList, y.size ≤ v ^ (H - 32)
   val : ∀ z, z.size ≤ s → Plain θ τ z →
     (∀ r ∈ evl θ (Fm.ofTree G) z, ∀ y ∈ r.out.toList, Plain θ (v ^ H) y) ∧
@@ -46,63 +45,15 @@ def CutHyp (θ : List Bool → A) (H C₀ v₀ : ℕ) : Prop :=
     ∃ G, CutProg θ H v τ s G
 
 /-- The program `D`, with the constants `K` and their powers `2 ^ b`, `b < B`, has the values of all universal plain
-sums of `v ^ H` steps on instances of size `v ^ (H - 32)`, in `t` steps. -/
+sums of `v ^ H` steps on instances of size `v ^ (H - 32)`; the cost and the size of the value of a run are at most
+`t` together, and the value names constants of `K`. -/
 structure IsAccT (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : Tree) : Prop where
-  run : ∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧ ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost ≤ t ∧
-    ∀ p ∈ r.bill, K.InB B p
+  run : ∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧ ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost + r.out.size ≤ t ∧
+    ∀ p ∈ names r.out, K.InB B p
   val : ∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z →
     val K.lk (evl θ (Fm.ofTree D) z) = algebraMap A R (pv θ z)
 
 variable {θ : List Bool → A}
-
-/-- A run wants at most one constant a step. -/
-theorem bill_le {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l) : ∀ r ∈ l, r.bill.length ≤ r.cost := by
-  induction h with
-  | quote c x => simp [Run.det]
-  | id x => simp [Run.det]
-  | hd _ ih =>
-    simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Run.tick]
-    exact fun r hr => Nat.le_succ_of_le (ih r hr)
-  | tl _ ih =>
-    simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Run.tick]
-    exact fun r hr => Nat.le_succ_of_le (ih r hr)
-  | cons _ _ iha ihb =>
-    intro r hr
-    simp only [List.mem_flatMap, List.mem_map] at hr
-    obtain ⟨r1, h1, r2, h2, rfl⟩ := hr
-    have := iha r1 h1
-    have := ihb r2 h2
-    simp only [Run.tick, Run.seq, List.length_append]
-    omega
-  | ite _ _ _ iha ihb ihc =>
-    intro r hr
-    simp only [List.mem_flatMap, List.mem_map] at hr
-    obtain ⟨r1, h1, r2, h2, rfl⟩ := hr
-    have := iha r1 h1
-    have : r2.bill.length ≤ r2.cost := by
-      by_cases h : r1.out = .nil
-      · exact ihc r1 h1 h r2 h2
-      · exact ihb r1 h1 h r2 h2
-    simp only [Run.tick, Run.seq, List.length_append]
-    omega
-  | run _ _ _ iha ihb ih =>
-    intro r hr
-    simp only [List.mem_flatMap, List.mem_map] at hr
-    obtain ⟨r1, h1, r2, h2, r3, h3, rfl⟩ := hr
-    have := iha r1 h1
-    have := ihb r2 h2
-    have := ih r1 h1 r2 h2 r3 h3
-    simp only [Run.tick, Run.seq, List.length_append]
-    omega
-  | guess x => simp [Run.det]
-  | fail x => simp
-  | theta _ ih =>
-    simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
-    exact fun r hr => Nat.le_succ_of_le (ih r hr)
-  | mul _ ih =>
-    simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, List.length_append,
-      List.length_singleton]
-    exact fun r hr => Nat.succ_le_succ (ih r hr)
 
 /-- The universal program. -/
 def UF : Fm := .run (.hd .id) (.tl .id)
@@ -110,26 +61,22 @@ def UF : Fm := .run (.hd .id) (.tl .id)
 theorem UF_ev {z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree z.hd) z.tl l) :
     Ev θ UF z (l.map (Run.delay 5)) := Ev.run_det (Dt.hd (Dt.id z)) (Dt.tl (Dt.id z)) h
 
-theorem val_plain {κ : List Bool → R} {l : List (Run A)} (h : ∀ r ∈ l, r.bill = []) :
-    val κ l = algebraMap A R (pval l) := by
-  rw [val, pval, map_list_sum, List.map_map]
-  congr 1
-  refine List.map_congr_left fun r hr => ?_
-  simp [wt, h r hr]
-
 /-- The instances that arise from budgets are plain, and their sums are those of the runs that use up the budgets. -/
-theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ} (hT : ∀ r ∈ l, r.cost ≤ T)
-    {t : Bt} (ht : t.ht ≤ H) (hτ : MM H * T + 40 * t.nds + 40 ≤ τ) : Plain θ τ (zq p z t) ∧
-      pv θ (zq p z t) = (l.map fun r => if ok t r.bill = true then r.th else 0).sum ∧
-      (evl θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl).map Run.th = (l.filter fun r => ok t r.bill).map Run.th := by
-  obtain ⟨l', e, h1, h2⟩ := WF_ev h hT ht
+theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ}
+    (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T) {t : Bt} (ht : t.ht ≤ H) (hτ : (60 * H + 42) * T + 40 * t.nds + 80 ≤ τ) :
+    Plain θ τ (zq p z t) ∧
+      pv θ (zq p z t) = (l.map fun r => if ok t (names r.out) = true then r.th else 0).sum ∧
+      (evl θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl).map Run.th =
+        (l.filter fun r => ok t (names r.out)).map Run.th := by
+  obtain ⟨l', e, h1, h2⟩ := WN_ev (T := T) (S := T) h (fun r hr => ⟨by have := hT r hr; omega, by have := hT r hr; omega⟩) ht
   have e' : Ev θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl l' := by
-    show Ev θ (Fm.ofTree WF.code) _ l'
+    show Ev θ (Fm.ofTree WN.code) _ l'
     rw [Fm.ofTree_code]
     exact e
   refine ⟨⟨e'.hl, fun r hr => ?_⟩, ?_, by rw [e'.evl, h2]⟩
   · rw [e'.evl] at hr
-    exact ⟨(h1 r hr).1, (h1 r hr).2.trans hτ⟩
+    have := h1 r hr
+    nlinarith
   · rw [pv, e'.evl, pval, h2, sum_filter_th]
 
 end NS1

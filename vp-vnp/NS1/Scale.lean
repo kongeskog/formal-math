@@ -25,15 +25,15 @@ theorem CutHyp.at {H C₀ v₀ v α : ℕ} (h : CutHyp θ H C₀ v₀) (hv : v�
   fun τ s => h v hv α τ s hl
 
 theorem Plain.of_le {T T' : ℕ} {z : Tree} (h : Plain θ T z) (hT : T ≤ T') : Plain θ T' z :=
-  ⟨h.1, fun r hr => ⟨(h.2 r hr).1, (h.2 r hr).2.trans hT⟩⟩
+  ⟨h.1, fun r hr => (h.2 r hr).trans hT⟩
 
 /-- A constant: it bounds the sizes of the fixed programs. -/
-def cst : ℕ := WF.code.size + UF.code.size + 2000
+def cst : ℕ := WN.code.size + UF.code.size + 2000
 
-theorem cst_def : cst = WF.code.size + UF.code.size + 2000 := rfl
+theorem cst_def : cst = WN.code.size + UF.code.size + 2000 := rfl
 
 theorem size_LP (D : Tree) : (LP D).code.size ≤ D.size + 300 := by
-  simp only [LP, Fm.code, Tree.size, size_num]
+  simp only [LP, node, Fm.code, Tree.size, size_num]
   omega
 
 theorem pow_le_pow {u a b : ℕ} (hu : 1 ≤ u) (h : a ≤ b) : u ^ a ≤ u ^ b := Nat.pow_le_pow_right hu h

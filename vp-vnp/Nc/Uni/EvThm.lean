@@ -49,7 +49,8 @@ theorem inv_run {c : Tree} {a0 b0 : Fm} (h : Fm.ofTree c = .run a0 b0) :
 theorem inv_guess {c : Tree} (h : Fm.ofTree c = .guess) : ∃ o a, c = .cons o a ∧ o.len = 7 := by
   rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
-theorem inv_fail {c : Tree} (h : Fm.ofTree c = .fail) : ∃ o a, c = .cons o a ∧ (o.len = 8 ∨ 11 ≤ o.len) := by
+theorem inv_fail {c : Tree} (h : Fm.ofTree c = .fail) :
+    ∃ o a, c = .cons o a ∧ (o.len = 8 ∨ o.len = 10 ∨ 11 ≤ o.len) := by
   rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
   omega
 
@@ -57,13 +58,10 @@ theorem inv_theta {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .theta a0) :
     ∃ o a, c = .cons o a ∧ o.len = 9 ∧ Fm.ofTree a = a0 := by
   rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
 
-theorem inv_mul {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .mul a0) : ∃ o a, c = .cons o a ∧ o.len = 10 := by
-  rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
-
 end Inv
 
-/-- The sum over the runs without named constants. -/
-def tot (m : Run A → A) (l : List (Run A)) : A := (l.map fun r => if r.bill = [] then r.th * m r else 0).sum
+/-- The sum over the runs of their weights times `m`. -/
+def tot (m : Run A → A) (l : List (Run A)) : A := (l.map fun r => r.th * m r).sum
 
 theorem tot_nil (m : Run A → A) : tot m [] = 0 := rfl
 
@@ -83,19 +81,11 @@ theorem tot_seq (m : Run A → A) (la : List (Run A)) (L : Run A → List (Run A
   unfold tot
   congr 1
   refine List.map_congr_left fun r _ => ?_
-  rw [List.map_map]
-  by_cases hr : r.bill = []
-  · rw [if_pos hr, ← List.sum_map_mul_left]
-    congr 1
-    refine List.map_congr_left fun s _ => ?_
-    simp only [Function.comp, Run.tick, Run.seq, hr, List.nil_append]
-    split_ifs
-    · ring
-    · ring
-  · rw [if_neg hr]
-    refine List.sum_eq_zero fun y hy => ?_
-    obtain ⟨s, -, rfl⟩ := List.mem_map.1 hy
-    exact if_neg fun h => hr (List.append_eq_nil_iff.1 h).1
+  rw [List.map_map, ← List.sum_map_mul_left]
+  congr 1
+  refine List.map_congr_left fun s _ => ?_
+  simp only [Function.comp, Run.tick, Run.seq]
+  ring
 
 variable (supp) in
 /-- Steps of the machine for one step of the evaluation. -/
@@ -116,7 +106,7 @@ variable (θ supp) in
 /-- The machine evaluates the formula correctly. -/
 def EvOK (F : Fm) (x : Tree) (l : List (Run A)) : Prop :=
   ∀ σ : St supp, ES σ F x → ∀ (m : Run A → A) (Bd : Run A → ℤ) (B : ℤ),
-    (∀ r ∈ l, r.bill = [] → KS θ supp .R σ.heap (σ.regs 3) σ.inp r.out (m r) (Bd r) ∧ Cc supp * r.cost + Bd r ≤ B) →
+    (∀ r ∈ l, KS θ supp .R σ.heap (σ.regs 3) σ.inp r.out (m r) (Bd r) ∧ Cc supp * r.cost + Bd r ≤ B) →
     Mach.SumTo (UM θ supp) σ (tot m l) B
 
 /-- A step from an opcode. -/
@@ -136,7 +126,7 @@ theorem dstep {σ : St supp} (hσ : OKs σ) {c : Fin 11} (hm : σ.mode = .D c) (
 theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
   intro σ hσ m Bd B h
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
-  obtain ⟨hk, hB⟩ := h (.det 1 c0) (by simp) rfl
+  obtain ⟨hk, hB⟩ := h (.det 1 c0) (by simp)
   have ht : tot m [.det 1 c0] = m (.det 1 c0) := by simp [tot, Run.det]
   rw [ht]
   have hC := Cc_ge (supp := supp)
@@ -164,7 +154,7 @@ theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
 theorem EvOK.id (x : Tree) : EvOK θ supp .id x [.det 1 x] := by
   intro σ hσ m Bd B h
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
-  obtain ⟨hk, hB⟩ := h (.det 1 x) (by simp) rfl
+  obtain ⟨hk, hB⟩ := h (.det 1 x) (by simp)
   have ht : tot m [.det 1 x] = m (.det 1 x) := by simp [tot, Run.det]
   rw [ht]
   have hC := Cc_ge (supp := supp)
@@ -184,7 +174,7 @@ theorem EvOK.fail (x : Tree) : EvOK θ supp .fail x [] := by
   intro σ hσ m Bd B h
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
   rw [tot_nil]
-  obtain ⟨o, a, rfl, hl | hl⟩ := inv_fail hF
+  obtain ⟨o, a, rfl, hl | hl | hl⟩ := inv_fail hF
   · refine toOp (c := 8) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
     have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
       rw [hm1]
@@ -192,6 +182,17 @@ theorem EvOK.fail (x : Tree) : EvOK θ supp .fail x [] := by
       rw [h11]
       exact ok1.nil
     exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by rw [hm1]; simp) (by rw [hm1]; simp) _
+  · refine toOp (c := 10) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
+    have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
+      rw [hm1]
+      change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
+      rw [h11]
+      exact ok1.nil
+    exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
+        rw [hm1]
+        rintro ⟨h, -⟩
+        injection h with h
+        exact absurd h (by decide)) (by rw [hm1]; simp) _
   · exact noOp ok hm hc hl
 
 end Nc.Uni

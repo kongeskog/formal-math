@@ -27,32 +27,14 @@ theorem tot_seq3 (m : Run A → A) (la lb : List (Run A)) (L : Run A → Run A �
   have h1 := tot_flatMap m lb fun s => (L r s).map fun t => ((r.seq s).seq t).tick t.out
   unfold tot at h1
   rw [h1]
-  by_cases hr : r.bill = []
-  · rw [if_pos hr, ← List.sum_map_mul_left]
-    congr 1
-    refine List.map_congr_left fun s _ => ?_
-    rw [List.map_map]
-    by_cases hs : s.bill = []
-    · rw [if_pos hs, ← List.sum_map_mul_left, ← List.sum_map_mul_left]
-      congr 1
-      refine List.map_congr_left fun t _ => ?_
-      simp only [Function.comp, Run.tick, Run.seq, hr, hs, List.nil_append]
-      split_ifs
-      · ring
-      · ring
-    · rw [if_neg hs, mul_zero]
-      refine List.sum_eq_zero fun y hy => ?_
-      rw [List.mem_map] at hy
-      obtain ⟨t, -, rfl⟩ := hy
-      exact if_neg fun h => hs (List.append_eq_nil_iff.1 (List.append_eq_nil_iff.1 h).1).2
-  · rw [if_neg hr]
-    refine List.sum_eq_zero fun y hy => ?_
-    rw [List.mem_map] at hy
-    obtain ⟨s, -, rfl⟩ := hy
-    refine List.sum_eq_zero fun y hy => ?_
-    rw [List.map_map, List.mem_map] at hy
-    obtain ⟨t, -, rfl⟩ := hy
-    exact if_neg fun h => hr (List.append_eq_nil_iff.1 (List.append_eq_nil_iff.1 h).1).1
+  rw [← List.sum_map_mul_left]
+  congr 1
+  refine List.map_congr_left fun s _ => ?_
+  rw [List.map_map, ← List.sum_map_mul_left, ← List.sum_map_mul_left]
+  congr 1
+  refine List.map_congr_left fun t _ => ?_
+  simp only [Function.comp, Run.tick, Run.seq]
+  ring
 
 theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run A → List (Run A)}
     (iha : EvOK θ supp a x la) (ihb : EvOK θ supp b x lb)
@@ -79,7 +61,7 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
   · change Rep _ (σ2.regs 2) x
     rw [hr2]
     exact hx.mono hh2
-  · intro r hr hb
+  · intro r hr
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by linarith⟩
     have hfr : ((.RU1, ![σ3.regs 2, q, σ2.regs 2, σ2.regs 3]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
@@ -97,7 +79,7 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
     · change Rep σ4.heap (σ2.regs 2) x
       rw [hr2]
       exact hx.mono hh4
-    · intro s' hs' hb'
+    · intro s' hs'
       refine ⟨fun σ5 v' ok5 hm5 h51 h52 hh5 hi5 hv' => ?_, by linarith⟩
       have hfr' : ((.RU2, ![σ5.regs 2, σ3.regs 1, σ2.regs 3, σ3.regs 0]) : Rec Kd) ∈ σ5.heap := by
         rw [h52]
@@ -111,10 +93,9 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
         (fun t => Bd (((r.seq s').seq t).tick t.out)) (B - Cc supp * r.cost - Cc supp * s'.cost - Cc supp) ?_).mono
         (by linarith)
       · exact ((hv.mono (heap_nx _ _ _ _ _)).mono hh5).mono (heap_nx _ _ _ _ _)
-      · intro t ht hbt
+      · intro t ht
         obtain ⟨k1, k2⟩ := h (((r.seq s').seq t).tick t.out)
           (List.mem_flatMap.2 ⟨r, hr, List.mem_flatMap.2 ⟨s', hs', List.mem_map.2 ⟨t, ht, rfl⟩⟩⟩)
-          (by simp [Run.tick, Run.seq, hb, hb', hbt])
         rw [cost_tick, cost_seq, cost_seq] at k2
         refine ⟨?_, by linarith⟩
         have e1 : (nx θ σ5 (.inl .rru2) (σ3.regs 1) (σ2.regs 3) (σ3.regs 0)).regs 3 = σ.regs 3 := hr3
@@ -127,8 +108,8 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
 theorem EvOK.guess (x : Tree) : EvOK θ supp .guess x [.det 1 .nil, .det 1 Tree.one] := by
   intro σ hσ m Bd B h
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
-  obtain ⟨hk0, hB0⟩ := h (.det 1 .nil) (by simp) rfl
-  obtain ⟨hk1, hB1⟩ := h (.det 1 Tree.one) (by simp) rfl
+  obtain ⟨hk0, hB0⟩ := h (.det 1 .nil) (by simp)
+  obtain ⟨hk1, hB1⟩ := h (.det 1 Tree.one) (by simp)
   have ht : tot m [.det 1 .nil, .det 1 Tree.one] = 1 * m (.det 1 .nil) + 1 * m (.det 1 Tree.one) := by
     simp [tot, Run.det]
   rw [ht]
@@ -185,46 +166,20 @@ theorem EvOK.guess (x : Tree) : EvOK θ supp .guess x [.det 1 .nil, .det 1 Tree.
     exact absurd h8 (by simp)) hfire (g0.mono (B' := B - 12) (by linarith)) (g1.mono (B' := B - 12) (by linarith))
   exact h9.mono (by omega)
 
-theorem EvOK.mul {a : Fm} {x : Tree} {l : List (Run A)} :
-    EvOK θ supp (.mul a) x (l.map fun r => ⟨r.cost + 1, r.th, r.bill ++ [r.out.path], .nil⟩) := by
-  intro σ hσ m Bd B h
-  obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
-  have ht : tot m (l.map fun r => (⟨r.cost + 1, r.th, r.bill ++ [r.out.path], .nil⟩ : Run A)) = 0 := by
-    unfold tot
-    refine List.sum_eq_zero fun y hy => ?_
-    rw [List.map_map, List.mem_map] at hy
-    obtain ⟨r, -, rfl⟩ := hy
-    simp
-  rw [ht]
-  obtain ⟨o, a', rfl, hl⟩ := inv_mul hF
-  refine toOp (c := 10) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
-  have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
-    rw [hm1]
-    change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
-    rw [h11]
-    exact ok1.nil
-  exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
-      rw [hm1]
-      rintro ⟨h, -⟩
-      injection h with h
-      exact absurd h (by decide)) (by rw [hm1]; simp) _
-
 theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l) :
-    EvOK θ supp (.theta a) x (l.map fun r => ⟨r.cost + 1, r.th * θ r.out.path, r.bill, .nil⟩) := by
+    EvOK θ supp (.theta a) x (l.map fun r => ⟨r.cost + 1, r.th * θ r.out.path, .nil⟩) := by
   intro σ hσ m Bd B h
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
   obtain ⟨o, a', rfl, hl, rfl⟩ := inv_theta hF
   have hC := Cc_ge (supp := supp)
-  let f : Run A → Run A := fun r => ⟨r.cost + 1, r.th * θ r.out.path, r.bill, .nil⟩
+  let f : Run A → Run A := fun r => ⟨r.cost + 1, r.th * θ r.out.path, .nil⟩
   have ht : tot m (l.map f) = tot (fun r => θ r.out.path * m (f r)) l := by
     unfold tot
     rw [List.map_map]
     congr 1
     refine List.map_congr_left fun r _ => ?_
     simp only [Function.comp, f]
-    split_ifs
-    · ring
-    · rfl
+    ring
   change Mach.SumTo (UM θ supp) σ (tot m (l.map f)) B
   rw [ht]
   refine toOp (c := 9) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
@@ -235,8 +190,8 @@ theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l
   · change Rep _ (σ1.regs 3) x
     rw [h13]
     exact hx.mono hh2
-  · intro r hr hb
-    obtain ⟨k1, k2⟩ := h (f r) (List.mem_map.2 ⟨r, hr, rfl⟩) hb
+  · intro r hr
+    obtain ⟨k1, k2⟩ := h (f r) (List.mem_map.2 ⟨r, hr, rfl⟩)
     have hcost : ((f r).cost : ℤ) = r.cost + 1 := by simp [f]
     rw [hcost] at k2
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by unfold Cc at *; linarith⟩
@@ -285,6 +240,5 @@ theorem evOK (hθ : ∀ q, q ∉ supp → θ q = 0) {F : Fm} {x : Tree} {l : Lis
   | guess x => exact EvOK.guess x
   | fail x => exact EvOK.fail x
   | theta _ ih => exact EvOK.theta hθ ih
-  | mul _ _ => exact EvOK.mul
 
 end Nc.Uni

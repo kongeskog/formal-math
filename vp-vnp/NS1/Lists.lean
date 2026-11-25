@@ -45,13 +45,13 @@ theorem Does.runW {F G : Fm} {x p : Tree} {Q : List (A × Tree)} {R : Tree → L
   obtain ⟨l', f1, f2, f3⟩ := hG
   have ho : ∀ r ∈ l, r.out = p := by
     intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
+    obtain ⟨-, q, hq, h⟩ := e2 r hr
     rw [List.mem_singleton] at hq
     subst hq
     exact h.symm
   have hG' : ∀ s ∈ l', Does θ (Fm.ofTree p) s.out (R s.out) e := by
     intro s hs
-    obtain ⟨-, -, q, hq, h'⟩ := f2 s hs
+    obtain ⟨-, q, hq, h'⟩ := f2 s hs
     rw [← h']
     exact h q hq
   refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [ho r hr]; exact (hG' s hs).hl, ?_, fun φ => ?_⟩
@@ -59,11 +59,11 @@ theorem Does.runW {F G : Fm} {x p : Tree} {Q : List (A × Tree)} {R : Tree → L
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu
     rw [ho r hr] at ht
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2, q, hq, b3⟩ := f2 s hs
-    obtain ⟨c1, c2, q', hq', c3⟩ := (hG' s hs).evl.1 t ht
+    obtain ⟨a2, -⟩ := e2 r hr
+    obtain ⟨b2, q, hq, b3⟩ := f2 s hs
+    obtain ⟨c2, q', hq', c3⟩ := (hG' s hs).evl.1 t ht
     rw [← b3] at hq'
-    refine ⟨by simp [Run.seq, Run.tick, a1, b1, c1], ?_, (q.1 * q'.1, q'.2), mem_bindW_of hq hq', c3⟩
+    refine ⟨?_, (q.1 * q'.1, q'.2), mem_bindW_of hq hq', c3⟩
     simp only [Run.seq, Run.tick]
     omega
   · rw [sum_flatMap_map, wsum_bindW]

@@ -33,14 +33,14 @@ theorem CutD.cutProg {H v τ s P t : ℕ} {G : Tree} (h : CutD θ τ s (v ^ H) (
   refine ⟨hG, fun z hz => ?_, fun z hz hp => ?_⟩
   · obtain ⟨Q, hD, hQ, -⟩ := h z hz
     refine ⟨hD.hl, fun r hr => ?_⟩
-    obtain ⟨h1, h2, q, hq, h3⟩ := hD.evl.1 r hr
+    obtain ⟨h2, q, hq, h3⟩ := hD.evl.1 r hr
     obtain ⟨h4, h5⟩ := hQ q hq
     rw [← h3]
-    exact ⟨h1, (Nat.mul_le_mul_right _ h2).trans ht, (Nat.mul_le_mul_right _ h4).trans hP, h5⟩
+    exact ⟨(Nat.mul_le_mul_right _ h2).trans ht, (Nat.mul_le_mul_right _ h4).trans hP, h5⟩
   · obtain ⟨Q, hD, hQ, hv⟩ := h z hz
     obtain ⟨h1, h2⟩ := hv hp
     refine ⟨fun r hr y hy => ?_, ?_⟩
-    · obtain ⟨-, -, q, hq, h3⟩ := hD.evl.1 r hr
+    · obtain ⟨-, q, hq, h3⟩ := hD.evl.1 r hr
       rw [← h3] at hy
       exact h1 q hq y hy
     · rw [h2, ← hD.evl.2 (pvs θ)]
