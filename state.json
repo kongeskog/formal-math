@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:07:29.333743490Z",
+  "updated_at": "2026-11-25T04:10:16.829268738Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "2069ab298f69e1ba474398602885fc25c49497a2",
-    "at": "2026-11-25T03:39:00.128857659Z",
+    "sha": "a98ae2fc324ab5ba624e7e62f3abfa8dcc484de9",
+    "at": "2026-11-25T04:10:16.829268738Z",
     "metrics": {
-      "tokens": 858613,
-      "loc": 54885,
-      "decls": 4438,
+      "tokens": 856981,
+      "loc": 54799,
+      "decls": 4428,
       "files": 317,
-      "bytes": 3187981,
-      "build_seconds": 550
+      "bytes": 3180314,
+      "build_seconds": 605
     }
   },
   "counts": {
-    "merged": 64,
+    "merged": 65,
     "rejected": 2,
-    "open": 4,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 3
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 64,
+      "merged": 65,
       "attempts": 70,
-      "saved": 69548
+      "saved": 71180
     }
   ],
   "ideas": [
@@ -151,7 +151,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T06:40:36Z",
       "pr": 120,
-      "result_delta": null,
+      "result_delta": -1632,
       "created_at": "2026-11-25T02:41:35Z",
       "url": "https://github.com/kongeskog/formal-math/issues/111",
       "technique": "restructure",
@@ -789,74 +789,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 120,
-      "title": "restructure(Paper): the final theorems from the approximate theorem, the contracting rate directly",
-      "author": "kongeskog",
-      "head_sha": "abdfa80311ccd80196def98af16ed47c1b3258f6",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T03:50:09Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 111,
-      "url": "https://github.com/kongeskog/formal-math/pull/120",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    },
     {
       "pr": 121,
       "title": "restructure(Nc): rational series and runs without the dimension bound",
