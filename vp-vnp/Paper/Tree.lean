@@ -3,7 +3,8 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import Paper.Tower
+import Nc.Tower.Tower
+import Nc.Tow.Cst
 import Paper.Laws
 
 /-!
@@ -31,76 +32,6 @@ abbrev NodeTable (R : Type) {AA : ℕ} (n : Fin AA → Fin AA → ℕ) (ℓ : �
 /-- The value of a network: the sum over all contents of the units of the product of the tables. -/
 def netValue {R : Type} [CommRing R] {AA ℓ : ℕ} {n : Fin AA → Fin AA → ℕ} (tab : ∀ a, NodeTable R n ℓ a) : R :=
   ∑ w : NetUnit n → Fin ℓ → Bool, ∏ a, tab a fun u => w u.1
-
-/-- A law over A is a law over every A-algebra. -/
-noncomputable def lawMap {A R : Type} [CommRing A] [CommRing R] (f : A →+* R) (L : G.Law A) : G.Law R where
-  Ro := L.Ro
-  Sl := L.Sl
-  Cn := L.Cn
-  I := L.I
-  a := L.a
-  b := L.b
-  ab := L.ab
-  c := L.c
-  d := L.d
-  cd := L.cd
-  lam := L.lam
-  lab := L.lab
-  lab_inj := L.lab_inj
-  len := L.len
-  tab p i s y := f (L.tab p i s y)
-  law X := @laws_over_algebras A _ L R _ f.toAlgebra X
-  conn := L.conn
-
-/-- The laws at the vertices of a tower, over an A-algebra. -/
-noncomputable def flagMap {A R : Type} [CommRing A] [CommRing R] (f : A →+* R) {h b D J r : ℕ} {T : Tower h b D J r}
-    (FL : FlagLaws A T) : FlagLaws R T where
-  Di := FL.Di
-  L d := lawMap f (FL.L d)
-  ro := FL.ro
-  cn := FL.cn
-  ends := FL.ends
-  lam_pos := FL.lam_pos
-  nonempty := FL.nonempty
-  a₁ := FL.a₁
-  a₁_pos := FL.a₁_pos
-  C₁ := FL.C₁
-  C₁_nonneg := FL.C₁_nonneg
-  G₁ := FL.G₁
-  G₁_le := FL.G₁_le
-  L1 := FL.L1
-  L2 := FL.L2
-
-theorem TCst_map {A R : Type} [CommRing A] [CommRing R] (f : A →+* R) {h b D J r : ℕ} {T : Tower h b D J r}
-    {FL : FlagLaws A T} {laws : List (G.Law A)} {c p q : ℕ} {ρ : ℝ} (hC : TCst FL laws c ρ p q) :
-    TCst (flagMap f FL) (laws.map (lawMap f)) c ρ p q where
-  r_pos := hC.r_pos
-  b_pos := hC.b_pos
-  h_pos := hC.h_pos
-  bD := hC.bD
-  ρ_pos := hC.ρ_pos
-  ρ_lt := hC.ρ_lt
-  gain := hC.gain
-  two := hC.two
-  near := hC.near
-  h_le := hC.h_le
-  b_le := hC.b_le
-  r_le := hC.r_le
-  nr_le := hC.nr_le
-  g_le := hC.g_le
-  di_le := hC.di_le
-  fl_le := hC.fl_le
-  sl_le := hC.sl_le
-  bot := hC.bot
-  bot_pos := hC.bot_pos
-  cst := hC.cst
-  inv := hC.inv
-  pq := hC.pq
-  pow := hC.pow
-  mem d := List.mem_map.2 ⟨_, hC.mem d, rfl⟩
-  len L hL := by
-    obtain ⟨L', h1, rfl⟩ := List.mem_map.1 hL
-    exact ⟨⟨(hC.len L' h1).1.len_le⟩, (hC.len L' h1).2⟩
 
 section Start
 
@@ -1045,8 +976,8 @@ def _root_.Nc.Tow.Routes.mono {h b D J r m Uu m' Uu' : ℕ} {T : Tower h b D J r
   len c c' := (R.len c c').trans hm
   use e := (R.use e).trans hU
 
-/-- "Take the least n ≥ 1 with M ≤ |G_n|; so |G_n| = O(M)": towers of all sizes from Proposition prop:tower, whose
-parts (c) and (d) give the size, the bottom and the words of the routes. -/
+/-- "Take the least n ≥ 1 with M ≤ |G_n|; so |G_n| = O(M)": towers of all sizes from the
+tower construction, whose sizes, bottom and words of bounded length give the size, the bottom and the routes. -/
 theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (1 / 2 : ℝ) ^ 2 * h) (htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ)) :
@@ -1056,7 +987,7 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
       Uu ≤ 2 * Fintype.card (T.X 0) * m := by
   classical
   have h2 : 2 ≤ h := by omega
-  obtain ⟨C, hC⟩ := prop_tower h h3
+  obtain ⟨C, hC⟩ := Nc.Tower.exists_diam h h2 h3
   have hee2 : 2 ≤ ee h := by
     unfold Nc.Tower.ee
     have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
@@ -1069,7 +1000,7 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     omega
   let S : ℕ := Nat.card (SL2 h)
   let g : ℕ → ℕ := fun n => Nat.card (Nc.Tower.G h n)
-  have hg0 : ∀ n, g (n + 1) = g n * 2 ^ (h ^ 2 - 1) := fun n => (hC n).2.2.2.2.2.1
+  have hg0 : ∀ n, g (n + 1) = g n * 2 ^ (h ^ 2 - 1) := fun n => Nc.Tower.card_G_succ
   have hg1 : ∀ n, 0 < g n := fun n => Nat.card_pos
   have hS : 0 < S := Nat.card_pos
   obtain ⟨c, k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15⟩ : ∃ c : ℕ, h ≤ c ∧ 2 ^ ee h ≤ c ∧ 3 ≤ c ∧
@@ -1108,10 +1039,10 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     unfold Nc.Tower.JJ
     rw [Nat.le_div_iff_mul_le (by omega), mul_comm]
     exact Nat.mul_le_mul_right _ heeh
-  obtain ⟨hG0, -, -, -, hXJ, -, hword⟩ := hC n
-  obtain ⟨R⟩ := Nc.Tower.exists_routes h2 hword
-  have hX0 : Fintype.card ((tower h n h2).X 0) = g n := hG0
-  have hX0' : Fintype.card (XX h n 0) = g n := hG0
+  obtain ⟨R⟩ := Nc.Tower.exists_routes h2 (hC n)
+  have hX0' : Fintype.card (XX h n 0) = g n := by
+    simpa [g, Nat.card_eq_fintype_card] using Nc.Tower.card_XX (h := h) (n := n) (Nat.zero_le _)
+  have hX0 : Fintype.card ((tower h n h2).X 0) = g n := hX0'
   have hXJ0 : 0 < Fintype.card ((tower h n h2).X (JJ h n)) :=
     Fintype.card_pos_iff.2 ⟨((QuotientGroup.mk 1 : XX h n (JJ h n)))⟩
   refine ⟨JJ h n, (C + 1) * (n + 1) ^ 7, 2 * Fintype.card ((tower h n h2).X 0) * ((C + 1) * (n + 1) ^ 7),
@@ -1141,7 +1072,7 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
       have h4 : Fintype.card (VL.L d).Sl ≤ ∑ d, Fintype.card (VL.L d).Sl :=
         Finset.single_le_sum (f := fun d => Fintype.card (VL.L d).Sl) (fun _ _ => Nat.zero_le _) (mem_univ d)
       exact h4.trans k8
-    · exact hXJ.le.trans k12
+    · exact (Nc.Tower.card_XJ h n h2).le.trans k12
     · show √(h : ℝ) * ((1 : ℕ) : ℝ) + √VL.C₁ * VL.a₁ ≤ (c : ℝ)
       exact (Nat.le_ceil _).trans (Nat.cast_le.2 k11)
     · have h4 : (1 : ℝ) / (1 - 1 / 2) = ((2 : ℕ) : ℝ) := by norm_num
@@ -1361,7 +1292,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       omega
 
 /-- **Paper: Theorem thm:tree.** "There is a constant C with the following property. Let M ≥ 2, let ℓ, N ≥ 1, and let a
-network over an A-algebra have at most M nodes, no unit from a node to itself, and at most N units at each node. Its
+network over A have at most M nodes, no unit from a node to itself, and at most N units at each node. Its
 value is the sum, over a set of choices o (sequences of good outcomes), of values of networks with the following
 properties. Put Λ = (lg M)^C, where lg M = ⌊log M⌋+1, and γ = 1/log b. (a) The nodes form a rooted tree of depth at most
 Λ, by stages: the given nodes are of stage 0, every node but the root has its parent in the next stage and at most b
@@ -1373,7 +1304,8 @@ layers of the law moves at a node add up to at most the number of bits of all un
 the units present, the units and numbers of the moves, and which outcomes are good are computed from o and the given
 numbers of units by a straight-line program with at most (MN)^C steps on numbers below (MN)^C. A step is an input, a
 constant, or an arbitrary function of two earlier results, given by its table (a binary operation). The program does not
-depend on the numbers of units, the outcomes or the tables." The tests are relays, and the laws are the fixed list, mapped to R.
+depend on the numbers of units, the outcomes or the tables." The tests are relays, and the laws are the fixed list.
+The paper states this over every A-algebra; the proof needs it over A only.
 The structure ThinTrees states only what the proof of Proposition prop:pieces uses: not the stage 0 of the given nodes,
 the total of the units over all nodes in (b) (it bounds the total of the loads instead), the count of layers in (c), or
 the form of the test for good outcomes; what a node ever holds (seenAt) is bounded against the loads (copies_le). Units
@@ -1382,8 +1314,8 @@ without them). The operations of (d) are those of a straight-line program that m
 theorem thm_tree {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
-    ∃ C : ℕ, ∀ (R : Type) [CommRing R] [Algebra A R] (M AA N ℓ : ℕ), 2 ≤ M → AA ≤ M → 1 ≤ N → 1 ≤ ℓ →
-      Nonempty (ThinTrees R (((univ : Finset VL.Di).toList.map VL.L).map (lawMap (algebraMap A R))) AA N ℓ M
+    ∃ C : ℕ, ∀ (M AA N ℓ : ℕ), 2 ≤ M → AA ≤ M → 1 ≤ N → 1 ≤ ℓ →
+      Nonempty (ThinTrees A ((univ : Finset VL.Di).toList.map VL.L) AA N ℓ M
         (2 ^ ee h) C (1 / Real.logb 2 ((2 ^ ee h : ℕ) : ℝ))) := by
   have he : 2 ≤ ee h := by
     unfold Nc.Tower.ee
@@ -1394,13 +1326,13 @@ theorem thm_tree {A : Type} [CommRing A] {h : ℕ} [NeZero h]
       exact_mod_cast Nat.pow_le_pow_right (show 0 < 2 by norm_num) he
     linarith
   obtain ⟨c, hc⟩ := tree_towers VL h3 (by linarith) htwo
-  refine ⟨cTree c, fun R _ _ M AA N ℓ hM hAA hN hℓ => ?_⟩
+  refine ⟨cTree c, fun M AA N ℓ hM hAA hN hℓ => ?_⟩
   obtain ⟨J, m, Uu, T, Rt, FL, hC, hX1, hX2, hm1, hm2, hUu⟩ := hc M (by omega)
   have e : Real.logb 2 ((2 ^ ee h : ℕ) : ℝ) = (ee h : ℝ) := by
     push_cast
     rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num), mul_one]
   rw [e]
-  exact exists_thinTrees Rt (flagMap (algebraMap A R) FL) (TCst_map _ hC) le_rfl hm1 hm2 hUu hM hX1 hX2 hAA hN hℓ
+  exact exists_thinTrees Rt FL hC le_rfl hm1 hm2 hUu hM hX1 hX2 hAA hN hℓ
 
 end Thm
 

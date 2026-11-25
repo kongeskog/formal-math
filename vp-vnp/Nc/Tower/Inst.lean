@@ -126,12 +126,6 @@ theorem FQ_gen {j : ℕ} (h2 : 2 ≤ h) (k : Fin h) (c : XX h n j) :
 theorem gen_gen {j : ℕ} (h2 : 2 ≤ h) (k : Fin h) (c : XX h n j) :
     (gen h2 k : G h n) • (gen h2 k : G h n) • c = c := by rw [← mul_smul, gen_mul_self, one_smul]
 
-/-- **Paper: Proposition prop:tower(a).** The copy of U_h "acts freely on every X^(j)". -/
-theorem _root_.Paper.prop_tower_free {j : ℕ} (i : Fin h) (u : U h) (c : XX h n j) (e : (th i u : G h n) • c = c) :
-    u = 1 := by
-  have h1 := congrArg (cor i) e
-  rwa [cor_th, mul_eq_right] at h1
-
 /-- **Paper: Proposition prop:tower(b).** "c and X_i c always lie in different i-cosets." -/
 theorem _root_.Paper.prop_tower_cosets {j : ℕ} (h2 : 2 ≤ h) (i : Fin h) (c : XX h n j) (u : U h) :
     (th i u : G h n) • c ≠ (gen h2 i : G h n) • c := by

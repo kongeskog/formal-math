@@ -116,10 +116,6 @@ theorem evG_th0_injective (i : Fin h) : Function.Injective fun A : SL2 h => evG 
 /-- The h unitriangular subgroups. -/
 noncomputable def th (i : Fin h) : U h →* G h n := (th0 i).comp (U h).subtype
 
-theorem th_injective (i : Fin h) : Function.Injective (th i : U h →* G h n) := by
-  intro A B e
-  exact Subtype.ext (evG_th0_injective (n := n) i (congrArg evG e))
-
 theorem evG_th_eq_one {i : Fin h} {u : U h} (e : evG (th i u : G h n) = 1) : u = 1 := by
   refine Subtype.ext (evG_th0_injective (n := n) i ?_)
   simp only
