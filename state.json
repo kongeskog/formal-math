@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T00:15:11.592489382Z",
+  "updated_at": "2026-11-25T00:16:15.019681884Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -764,11 +764,6 @@
       "loc": 611
     },
     {
-      "path": "vp-vnp/Paper/Flat.lean",
-      "tokens": 9722,
-      "loc": 538
-    },
-    {
       "path": "vp-vnp/Paper/ApproxRound.lean",
       "tokens": 9219,
       "loc": 521
@@ -777,6 +772,11 @@
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
       "tokens": 9010,
       "loc": 655
+    },
+    {
+      "path": "vp-vnp/Paper/Flat.lean",
+      "tokens": 8875,
+      "loc": 490
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
@@ -792,11 +792,6 @@
       "path": "vp-vnp/Paper/Gauges.lean",
       "tokens": 8362,
       "loc": 519
-    },
-    {
-      "path": "vp-vnp/Paper/Rate.lean",
-      "tokens": 7719,
-      "loc": 468
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
@@ -822,6 +817,11 @@
       "path": "vp-vnp/NS1/DSteps.lean",
       "tokens": 7194,
       "loc": 425
+    },
+    {
+      "path": "vp-vnp/Paper/Rate.lean",
+      "tokens": 7180,
+      "loc": 428
     },
     {
       "path": "vp-vnp/Paper/Means.lean",
