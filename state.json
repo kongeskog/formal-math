@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:33:08.470778693Z",
+  "updated_at": "2026-11-25T03:39:00.128857659Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "c2ab099c4048fb8bf38ded6b37639928a70f7924",
-    "at": "2026-11-25T03:32:01.737287901Z",
+    "sha": "2069ab298f69e1ba474398602885fc25c49497a2",
+    "at": "2026-11-25T03:39:00.128857659Z",
     "metrics": {
-      "tokens": 859179,
-      "loc": 54932,
-      "decls": 4447,
+      "tokens": 858613,
+      "loc": 54885,
+      "decls": 4438,
       "files": 317,
-      "bytes": 3189983,
-      "build_seconds": 545
+      "bytes": 3187981,
+      "build_seconds": 550
     }
   },
   "counts": {
-    "merged": 63,
+    "merged": 64,
     "rejected": 3,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 63,
+      "merged": 64,
       "attempts": 67,
-      "saved": 68982
+      "saved": 69548
     }
   ],
   "ideas": [
@@ -109,7 +109,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T05:51:49Z",
       "pr": 119,
-      "result_delta": null,
+      "result_delta": -566,
       "created_at": "2026-11-25T02:41:40Z",
       "url": "https://github.com/kongeskog/formal-math/issues/114",
       "technique": "merge",
@@ -788,76 +788,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 119,
-      "title": "merge(*): one theorem for each group of identical statements about runs and units",
-      "author": "kongeskog",
-      "head_sha": "f234ad568dddd941eb335cedcc051e6f0574bd96",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T03:20:02Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 114,
-      "url": "https://github.com/kongeskog/formal-math/pull/119",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "*"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
