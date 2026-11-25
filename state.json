@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T19:50:20.111221124Z",
+  "updated_at": "2026-11-25T19:53:13.116152291Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 78,
     "rejected": 4,
-    "open": 3,
+    "open": 4,
     "contributors": 1,
     "ideas_open": 3
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 78,
-      "attempts": 85,
+      "attempts": 86,
       "saved": 85311
     }
   ],
@@ -928,6 +928,74 @@
       "scope": "*"
     },
     {
+      "pr": 142,
+      "title": "restructure(Paper/Pieces): inline thm_tree into prop_pieces, its only user",
+      "author": "kongeskog",
+      "head_sha": "b97faa91c0abec979607e7e5409809451721a489",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T19:44:44Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 112,
+      "url": "https://github.com/kongeskog/formal-math/pull/142",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper/Pieces"
+    },
+    {
       "pr": 143,
       "title": "restructure(NS1,Nc/Acc,Paper): programs return the names of their constants, and the interpreter with budgets goes",
       "author": "kongeskog",
@@ -1051,8 +1119,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
       "idea": 131,
