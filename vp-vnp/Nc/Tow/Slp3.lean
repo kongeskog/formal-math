@@ -140,12 +140,12 @@ theorem cy_numF (hm : ∀ τ, (fun x => L x τ) ∈ H) (hi : ∀ j i, ind (fun x
   · refine (CY.ite hA (py_actR hA hB hi y.1) (CY.base (hm (inpR T y.1)) hY) (CY.const 0 hA.zero_lt)
       (fun x => hA.lt_of_le ((hL x _).trans hB.w)) fun _ => hA.zero_lt).congr fun x => ?_
     unfold numF
-    simp only []
+    rfl
   · refine (CY.ite hA (PY.base (hp l) hY) (CY.base (ht l) hY) (CY.const 0 hA.zero_lt)
       (fun x => hA.lt_of_le (lt_of_lt_of_le (tmin_lt hb (fun τ => hL x τ) l) hB.tt).le) fun _ => hA.zero_lt).congr
       fun x => ?_
     unfold numF
-    simp only []
+    rfl
 
 /-- What is computed from loads. -/
 structure Chosen (L : Inp → Tg T m AA → ℕ) (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T)
