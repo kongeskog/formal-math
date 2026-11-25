@@ -52,10 +52,8 @@ theorem length_filterMap_le {α β : Type*} (f : α → Option β) (l : List α)
   induction l with
   | nil => rfl
   | cons a l ih =>
-    rw [List.filterMap_cons, List.filter_cons]
-    cases h : f a with
-    | none => simp [ih]
-    | some b => simp [ih]
+    -- `ih`, after unfolding the head of both lists by cases on `f a`
+    grind
 
 end lists
 
@@ -189,17 +187,12 @@ theorem cost_role {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length
   simp only [insCost]
   have h1 := putCost_le (ub := ub) (Lc := Lc) ((univ : Finset ((M.kind r.1).SlAt r.2)).toList.map fun e =>
       ((P.ids n o ⟨r.1, e.1⟩).map fun id => key (M.rp r, id)).reverse) (by
-    intro ks hks k hk'
-    obtain ⟨e, -, rfl⟩ := List.mem_map.1 hks
-    rw [List.mem_reverse] at hk'
-    obtain ⟨id, -, rfl⟩ := List.mem_map.1 hk'
-    exact hk _)
+    -- every entry is a `key` value, bounded by `hk`
+    grind)
   have h2 := putCost_le (ub := ub) (Lc := Lc) ((univ : Finset ((M.kind r.1).CnAt r.2)).toList.map fun ν =>
       ((List.finRange U1).filter fun k => k ≤ o ⟨r.1, ν.1⟩).map fun k => key (M.rp r, .new ⟨r.1, ν.1⟩ k)) (by
-    intro ks hks k hk'
-    obtain ⟨e, -, rfl⟩ := List.mem_map.1 hks
-    obtain ⟨id, -, rfl⟩ := List.mem_map.1 hk'
-    exact hk _)
+    -- every entry is a `key` value, bounded by `hk`
+    grind)
   have h3 : (((univ : Finset ((M.kind r.1).SlAt r.2)).toList.map fun e =>
       ((P.ids n o ⟨r.1, e.1⟩).map fun id => key (M.rp r, id)).reverse).map List.length).sum ≤
       Fintype.card ((M.kind r.1).SlAt r.2) * P.num n o r.1 := by
@@ -256,18 +249,12 @@ theorem cost_body {Lc X : ℕ} (hk : ∀ c, (key c).length ≤ Lc) (hd : ∀ c, 
   simp only
   have h1 := putCost_le (ub := ub) (Lc := Lc) (List.ofFn fun b => ((List.finRange U0).filter fun k => k.1 < (n p b).1).map
       fun k => key (Fin.castAdd A' p, .init p b k)) (by
-    intro ks hks k hk'
-    obtain ⟨b, rfl⟩ := List.mem_ofFn.1 hks
-    obtain ⟨id, -, rfl⟩ := List.mem_map.1 hk'
-    exact hk _)
+    -- every entry is a `key` value, bounded by `hk`
+    grind)
   have h2 := putCost_le (ub := ub) (Lc := Lc) (List.ofFn fun b => ((List.finRange U0).filter fun k => k.1 < (n b p).1).map
       fun k => if b = p then dkey (p, k) else key (Fin.castAdd A' p, .init b p k)) (by
-    intro ks hks k hk'
-    obtain ⟨b, rfl⟩ := List.mem_ofFn.1 hks
-    obtain ⟨id, -, rfl⟩ := List.mem_map.1 hk'
-    split_ifs
-    · exact hd _
-    · exact hk _)
+    -- every entry is a `dkey` value, bounded by `hd`, or a `key` value, bounded by `hk`
+    grind)
   have h3 : ((List.ofFn fun b => ((List.finRange U0).filter fun k => k.1 < (n p b).1).map
       fun k => key (Fin.castAdd A' p, .init p b k)).map List.length).sum ≤ ∑ b, (n p b).1 := by
     rw [List.map_ofFn, List.sum_ofFn]
@@ -330,13 +317,9 @@ theorem cost_base {T Lc X : ℕ} (hx : ∀ κ, (x κ).length ≤ T) (hk : ∀ c,
       rw [List.length_reverse, List.length_map]
       exact hx κ
   unfold baseIns
-  refine ⟨?_, ?_⟩
-  · rw [List.map_cons, List.sum_cons]
-    have h3 : inN n p * (660 * (ub + Lc + 1)) = inN n p * (330 * (ub + Lc + 1)) + inN n p * (330 * (ub + Lc + 1)) := by ring
-    rw [h3]
-    omega
-  · rw [List.length_cons, List.length_map]
-    omega
+  -- cost: the head's bound `h2` plus the rest's `h1`, each with `inN n p * (330 * (ub + Lc + 1))`,
+  -- and `330 + 330 = 660`; length: one more than the filter's, bounded by `hdg`
+  grind
 
 theorem length_roleList_le : (roleList grp g M).length ≤ Fintype.card M.R := by
   have hnd : (roleList grp g M).Nodup := pairwise_roleList.imp fun h => h.1
