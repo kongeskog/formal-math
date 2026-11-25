@@ -48,13 +48,12 @@ set_option maxHeartbeats 1200000 in
 (τΛ/k, (s/k + τ/v^256)Λ) with at most kΛ pieces, in (s + τk/v^256)Λ steps." The laws and the generators θ are the
 standing hypothesis "Fix the ring A and the laws". The proof takes the automaton from Proposition prop:universal and
 the formula and the bounds of the pieces from Proposition prop:pieces, and puts the evaluator and the program G on
-them. -/
+them. Stated without quotients, as `NS1.OneCutAt`: the cut is to any τ' ≥ τΛ/k, and the bounds of
+the size and the time are multiplied out. -/
 theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
-    ∃ a₀ C v₀ : ℕ, ∀ v, v₀ ≤ v → ∀ τ s k, v ^ a₀ ≤ τ → 4 * lg τ ≤ lg v ^ 2 → s ≤ τ → 2 ≤ k → k ≤ v ^ 64 →
-      ∃ G : Tree, G.size ≤ v ^ a₀ ∧ CutD θ τ s (τ * lg v ^ C / k) ((s / k + τ / v ^ 256) * lg v ^ C)
-        (k * lg v ^ C) ((s + τ * k / v ^ 256) * lg v ^ C) G := by
+    ∃ a₀ C v₀ : ℕ, ∀ v, v₀ ≤ v → OneCutAt θ v a₀ (lg v ^ C) := by
   classical
   obtain ⟨S, Γ, Q, i1, i2, i3, i4, i5, i6, mu, i, e', b0, b1, CU, hCU⟩ := prop_universal θ hθ.1
   obtain ⟨a, e, he, hpieces⟩ := prop_pieces VL h3 hgain
@@ -75,7 +74,8 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   obtain ⟨Z, hZ⟩ : ∃ Z, Z = 20000 + Cp + Zg + ml + cq + Fintype.card S + Fintype.card Q + kinds.length + Nc.Dl.dealC +
       16 * (CU + 1) + 3 * b₁ + 4 * Cp + 8 := ⟨_, rfl⟩
   obtain ⟨n1, hn1⟩ := poly_lg 1 C1
-  refine ⟨a + e + 6 * b₁ + 400, 10 * C1, 2 ^ (Z + 1) + v₁ + n1, fun v hv τ s k hτ hlτ hsτ hk hkv => ?_⟩
+  refine ⟨a + e + 6 * b₁ + 400, 10 * C1, 2 ^ (Z + 1) + v₁ + n1,
+    fun v hv τ s k τ' hτ hlτ hsτ hk hkv hτ' => ?_⟩
   -- logarithms
   generalize hl : lg v = l
   have hlbig : Z + 1 < l := by
@@ -393,15 +393,17 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
         refine this.trans (le_of_eq ?_)
         rw [t4, u4])
   have hm10 : l ^ (10 * C1) = m ^ 10 := by rw [← hm, ← pow_mul, Nat.mul_comm]
-  refine ⟨G, ?_, ?_⟩
+  refine ⟨G, _, _, ?_, ?_, hm10 ▸ hnums.size, hm10 ▸ hnums.deal⟩
   · calc G.size ≤ (Nc.Dl.dealC + 3000) * (X * Lc) ^ 4 := hGs
       _ ≤ v * (X * v) ^ 4 := Nat.mul_le_mul (by omega) (Nat.pow_le_pow_left (Nat.mul_le_mul_left _ (by omega)) 4)
       _ = v ^ ((b₁ + 1) * 4 + 1) := by rw [← hX, ← pow_succ, ← pow_mul, ← pow_succ']
       _ ≤ v ^ (a + e + 6 * b₁ + 400) := vpow (by omega)
   · rw [hm10]
     rw [u4] at hcut
-    refine hcut.mono (hnums.time (by omega)) hnums.size
-      (hnums.mm_le.trans (Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) m))) hnums.deal
+    refine hcut.mono (Nat.lt_succ_iff.1 (Nat.lt_of_mul_lt_mul_left (a := k) ?_)) le_rfl
+      (hnums.mm_le.trans (Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) m))) le_rfl
+    rw [Nat.mul_comm k]
+    exact (hnums.time (by omega)).trans_lt (by rw [← hm10, ← hl]; exact hτ')
 
 /-- **Paper: Theorem thm:cut.** "There are a multiple H ≥ 272 of 16 and constants C₀, v₀ such that the following holds
 whenever v ≥ v₀ and (lg v)^(C₀α) ≤ v. For v^H ≤ τ ≤ v^(Hα) and sv^48 ≤ τ some program of size at most v^H cuts (τ,s)
@@ -439,10 +441,8 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
   have hX1 : 100 * Λ ^ 3 ≤ v := (Nat.le_self_pow (by omega) _).trans hX
   have hL3 : Λ ≤ Λ ^ 3 := Nat.le_self_pow (by norm_num) Λ
   have hL2 : Λ ^ 2 ≤ Λ ^ 3 := Nat.pow_le_pow_right hΛ1 (by norm_num)
-  have hat0 : OneCutAt θ v a₀ (16 * h * α) (lg v ^ C) := by
-    intro τ' s' k' h1 h2 h3' h4 h5
-    refine hv₀ v (by omega) τ' s' k' h1 ?_ h3' h4 h5
-    have h6 : lg τ' ≤ 16 * h * α * lg v := (lg_mono h2).trans (lg_pow_le (Nat.mul_pos (by omega) hα))
+  have hlτ : 4 * lg τ ≤ lg v ^ 2 := by
+    have h6 : lg τ ≤ 16 * h * α * lg v := (lg_mono hτα).trans (lg_pow_le (Nat.mul_pos (by omega) hα))
     have h7 : 4 * (16 * h * α) ≤ lg v := by
       refine le_trans ?_ (le_lg_of_lg_pow_le (by omega) hlog)
       have h8 : 4 * (16 * h) * α ≤ (3 * C + 4) * (32 * h + 2) * α := by
@@ -451,17 +451,17 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
           _ ≤ _ := Nat.mul_le_mul_right _ (by omega)
       calc 4 * (16 * h * α) = 4 * (16 * h) * α := by ring
         _ ≤ _ := h8
-    calc 4 * lg τ' ≤ 4 * (16 * h * α * lg v) := Nat.mul_le_mul_left _ h6
+    calc 4 * lg τ ≤ 4 * (16 * h * α * lg v) := Nat.mul_le_mul_left _ h6
       _ = 4 * (16 * h * α) * lg v := by ring
       _ ≤ lg v * lg v := Nat.mul_le_mul_right _ h7
       _ = lg v ^ 2 := by ring
-  have hat : OneCutAt θ v a₀ (16 * h * α) Λ := OneCutAt.mono (Λ := lg v ^ C) hat0 (by
+  have hat : OneCutAt θ v a₀ Λ := (hv₀ v (by omega)).mono (by
     rw [← hΛ]
     exact Nat.pow_le_pow_right (by omega) (Nat.le_succ C))
   have pmono : ∀ {a b}, a ≤ b → v ^ a ≤ v ^ b := fun h => Nat.pow_le_pow_right hv0 h
   have ppos : ∀ a, 0 < v ^ a := fun a => Nat.pow_pos (by omega)
   obtain ⟨G, P, t, s', hcut, hP, ht, hs', hG⟩ := thm_cut_iterate hat (by omega) hΛ2 (by omega) (H := 16 * h) (by omega) (by omega)
-    r τ s 1 hτ hτα (by
+    r τ s 1 hτ hlτ (by
       calc τ * Λ < τ * v := Nat.mul_lt_mul_of_pos_left (by omega) (lt_of_lt_of_le (ppos _) hτ)
         _ ≤ v ^ (16 * h * α) * v := Nat.mul_le_mul_right _ hτα
         _ = v ^ (r + 1) := by rw [← hr, pow_succ]
