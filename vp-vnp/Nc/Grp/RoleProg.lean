@@ -104,7 +104,7 @@ theorem roleEnd_does (ub : ℕ) (t y sl ins : Tree) (c0 : Tree) (keys : List (Li
       (encT (putsL ub keys (outs.map fun w => w.reverse ++ [true]) t))
       (outs.length * (m * 31 + 100) + ((keys.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum + 200)) := by
   set x : Tree := .cons (.cons (num ub) (.cons t (.cons y (.cons sl (keysT keys)))))
-    (.cons c0 (.cons ins (listT (outs.map ofBits)))) with hx
+    (.cons c0 (.cons ins (listT (outs.map ofBits))))
   have h1 := mapF_gives (θ := θ) (x := x) (step := foldF .id (.quote (ofBits [true])) (.tl .id)) (ef := .quote .nil)
     (l := .tl (.tl (.tl .id))) (e := .nil) (xs := outs.map ofBits) (g := fun y => ofBits (y.path.reverse ++ [true]))
     (d := fun _ => m * 31 + 30) (Gives.quote _ _) (Gives.id _).tl.tl.tl (by
@@ -136,13 +136,13 @@ theorem ex_role (L : G.Law A) (p : L.Ro) : ∃ F κ, ∀ (ub : ℕ) (ct : List B
         (keys.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum + 1)) := by
   obtain ⟨F, κ, hF⟩ := ex_run (θ := θ) bit (roleTab θ L p)
   obtain ⟨κ', hκ'⟩ := exists_runL_length (θ := θ) (roleTab θ L p)
-  set nO := (cnList L p).length with hnO
+  set nO := (cnList L p).length
   refine ⟨lett (.cons .id (lett (.cons yardF (.cons (.quote (num 0)) (.cons
     (lett (.cons (.hd (.tl .id)) (.hd (.tl (.tl (.tl .id))))) streamsF)
     (.quote (listT (List.replicate nO .nil)))))) F)) roleEnd, κ + nO * (κ' * 31 + 100) + 1000,
     fun ub ct tt slots keys t hct hlen hslots => ?_⟩
   set x : Tree := .cons (num ub) (.cons t (.cons (num tt) (.cons (keysT slots)
-        (keysT keys)))) with hx
+        (keysT keys))))
   have h1 := yardF_gives (θ := θ) ub tt t (.cons (keysT slots) (keysT keys))
   have h2 : Gives θ (.cons (.hd (.tl .id)) (.hd (.tl (.tl (.tl .id))))) x (.cons t (keysT slots)) 15 :=
     (Gives.cons (Gives.id _).tl.hd (Gives.id _).tl.tl.tl.hd).mono (by omega)

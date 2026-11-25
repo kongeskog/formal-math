@@ -183,11 +183,9 @@ theorem mean_shift_one {f : Fn} (hf : Bd f) :
 theorem mean_shift_one' {f : Fn} (hf : Bd f) :
     mean (fun n b i k => f n b i (k + 1)) = mean f := by
   obtain ⟨C, hC⟩ := id hf
-  have hC0 : 0 ≤ C := (abs_nonneg _).trans (hC 0 true 0 0)
   refine mean_eq_of_sub (by simpa using hf.shift 0 1) hf ?_
   refine squeeze_zero_norm' (a := fun n : ℕ => 2 * C * (1 / (n : ℝ))) ?_ ?_
   · filter_upwards [eventually_ne_atTop 0] with n hn
-    have hn' : (0 : ℝ) < n := by exact_mod_cast Nat.pos_of_ne_zero hn
     have h1 : (avg n fun b i k => f n b i (k + 1)) - avg n (f n) =
         (∑ b, ∑ i ∈ range (n ^ 2), (f n b i (n : ℕ) - f n b i 0)) / (2 * n ^ 3) := by
       rw [avg, avg, ← sub_div, ← Finset.sum_sub_distrib]
@@ -266,7 +264,6 @@ theorem le_mean_tele {F : Fn} (hX : Bd fun n b i k => (n : ℝ) ^ 2 * (F n b (i 
     (tendsto_mean hX) ?_
   refine Filter.Eventually.filter_mono Nat.hyperfilter_le_atTop ?_
   filter_upwards [h, eventually_ne_atTop 0] with n hn hn0
-  have hn' : (0 : ℝ) < n := by exact_mod_cast Nat.pos_of_ne_zero hn0
   have h1 : (avg n fun b i k => (n : ℝ) ^ 2 * (F n b (i + 1) k - F n b i k)) =
       (∑ k ∈ range n, ∑ b, (F n b ((n ^ 2 : ℕ) : ℤ) k - F n b 0 k)) / (2 * n) := by
     rw [avg, Finset.sum_comm (s := range n)]

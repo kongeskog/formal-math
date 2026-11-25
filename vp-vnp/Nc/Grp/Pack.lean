@@ -96,8 +96,8 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
       (lett (.cons (.hd (.tl (.hd (.hd .id)))) (.cons (.tl (.tl (.tl (.tl (.tl (.hd (.hd .id)))))))
         (.cons (foldF .id (.quote .nil) (.tl .id)) (.tl (.hd .id))))) putsF)),
     10 * κR + κC * 100 + 2 * (nT S * (62 * c + 730)) + 2000, fun ub B o t O hO hc => ?_⟩
-  set x : Tree := .cons (encO o) (.cons (num ub) (.cons t B.tree)) with hx
-  set m := B.kR.length with hm
+  set x : Tree := .cons (encO o) (.cons (num ub) (.cons t B.tree))
+  set m := B.kR.length
   set N := O + flen B.flags + m + putCost ub B.kR + putCost ub B.kC + 1 with hN
   have gO : Gives θ (.hd .id) x (encO o) 2 := (Gives.id _).hd
   have gF : Gives θ (.hd (.tl (.tl (.tl .id)))) x (listT (B.flags.map fun l => listT (l.map num))) 5 :=

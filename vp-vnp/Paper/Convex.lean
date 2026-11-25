@@ -183,7 +183,7 @@ theorem hexp_convex (K : Type) [Field K] {V : Type} [Fintype V] [DecidableEq V] 
     ∃ δ > 0, ∀ (F : Spec K V) (c : ℝ), 0 ≤ c → (∀ u v, |w u v - c * F.e u v| < δ) →
       ∀ a b m : A → V, (∀ v, w (m v) (a v) ≤ w (a v) (b v) / 2) → (∀ v, w (m v) (b v) ≤ w (a v) (b v) / 2) →
         c * hexp F m ≤ (c * hexp F a + c * hexp F b) / 2 + ε := by
-  set R : ℝ := ∑ u, ∑ v, |w u v| with hR
+  set R : ℝ := ∑ u, ∑ v, |w u v|
   have hR0 : 0 ≤ R := Finset.sum_nonneg fun u _ => Finset.sum_nonneg fun v _ => abs_nonneg _
   have hwR : ∀ u v, w u v ≤ R := fun u v =>
     (le_abs_self _).trans ((Finset.single_le_sum (f := fun v => |w u v|) (fun _ _ => abs_nonneg _)
@@ -194,7 +194,7 @@ theorem hexp_convex (K : Type) [Field K] {V : Type} [Fintype V] [DecidableEq V] 
   have hden : 0 < (n ^ 2 + 1) * (2 * R + 4) := by positivity
   refine ⟨min 1 (ε ^ 2 / ((n ^ 2 + 1) * (2 * R + 4))), lt_min one_pos (by positivity), ?_⟩
   intro F c hc hF a b m ha hb
-  set δ : ℝ := min 1 (ε ^ 2 / ((n ^ 2 + 1) * (2 * R + 4))) with hδ
+  set δ : ℝ := min 1 (ε ^ 2 / ((n ^ 2 + 1) * (2 * R + 4)))
   have hδ0 : 0 < δ := lt_min one_pos (by positivity)
   have hδ1 : δ ≤ 1 := min_le_left _ _
   have hδ2 : δ * ((n ^ 2 + 1) * (2 * R + 4)) ≤ ε ^ 2 := by

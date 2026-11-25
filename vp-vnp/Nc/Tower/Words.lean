@@ -59,8 +59,8 @@ theorem El_comm (i j k : Fin h) (hik : i ≠ k) (hkj : k ≠ j) (hij : i ≠ j) 
     El i k hik y * El k j hkj y' * (El i k hik y * El k j hkj y') = El i j hij (y * y') := by
   refine Subtype.ext ?_
   simp only [Matrix.SpecialLinearGroup.coe_mul, El_val, transvection]
-  set a := Matrix.single i k y with ha
-  set b := Matrix.single k j y' with hb
+  set a := Matrix.single i k y
+  set b := Matrix.single k j y'
   have haa : a * a = 0 := Matrix.single_mul_single_of_ne _ _ _ _ hik.symm _
   have hbb : b * b = 0 := Matrix.single_mul_single_of_ne _ _ _ _ hkj.symm _
   have hba : b * a = 0 := Matrix.single_mul_single_of_ne _ _ _ _ hij.symm _
@@ -136,7 +136,6 @@ theorem WL.upper (d : ℕ) (i j : Fin h) (hij : i ≠ j) (hd : i.1 + (d + 1) = j
     omega
 
 theorem WL.upper' (i j : Fin h) (hij : i < j) : WL h2 (El i j hij.ne 1 : G h n) (4 ^ h) := by
-  have hlt := Fin.lt_def.1 hij
   refine (WL.upper (j.1 - i.1 - 1) i j hij.ne (by omega)).mono (Nat.pow_le_pow_right (by omega) ?_)
   have := j.2
   omega
@@ -176,7 +175,6 @@ theorem exists_third (h3 : 3 ≤ h) (i j : Fin h) : ∃ k, i ≠ k ∧ k ≠ j :
 theorem WL.el_t (h3 : 3 ≤ h) (i j : Fin h) (hij : i ≠ j) :
     WL h2 (El i j hij (t (n + 1)) : G h n) (4 ^ (h + 3)) := by
   have hp : 1 ≤ 4 ^ h := Nat.one_le_pow _ _ (by omega)
-  have e1 : 4 ^ (h + 1) = 4 * 4 ^ h := by ring
   have e2 : 4 ^ (h + 2) = 16 * 4 ^ h := by ring
   have e3 : 4 ^ (h + 3) = 64 * 4 ^ h := by ring
   have hL0 := zero_ne_last h2
