@@ -134,7 +134,11 @@ open Nc.Acc in
 with v^O(a+1) constants that takes v^(H−32)((a+1) lg v)^O(1) ≤ v^(H−16) steps, as n bounds the
 degree. All its runs halt, its names have O((a+1) lg v) bits, and B = 1": for n = v^(H−32)+1, the
 degree bound n and a circuit over any commutative ring. The steps bound the cost and the size of the
-value (which holds the names) together. -/
+value (which holds the names) together. Lemma lem:lowdeg ("a program of size O(log S + log n + d),
+with O((S+n)³) constants, has as value the sum of its parts of degree at most d at the code of the
+word of every z with |z| < n, in (d+|z|+1)(log(S+n+d))^O(1) steps") is used here in its Lean form:
+the program `accF`, its run `accF_kv` and its size `size_accF`, with `line_coeff_eq` for the parts
+of each degree. The degree bound is positive here, so the case of a constant does not arise. -/
 theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 100 ≤ v → c * (a + H + 2) * lg v ≤ v →
     ∀ (A : Type) [CommRing A] (R : Type) [CommRing R] [Algebra A R] (θ : List Bool → A) (s : ℕ)
       (p : MvPolynomial (Fin (v ^ (H - 32) + 1) × Option Bool) R), s ≤ v ^ a → Nc.Computes p s →
@@ -144,7 +148,7 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
         val K.lk (evl θ (Fm.ofTree D) z) = ∑ i ∈ Finset.range (v ^ (H - 32) + 1 + 1),
           MvPolynomial.eval (codeB R (v ^ (H - 32) + 1) (tbits z)) (MvPolynomial.homogeneousComponent i p)) ∧
       K.nds ≤ v ^ (3 * a + H + 20) ∧ D.size ≤ v ^ (3 * a + H + 20) ∧ K.ht ≤ (3 * a + H + 20) * lg v := by
-  obtain ⟨c, hc⟩ := lem_lowdeg
+  obtain ⟨c, hc⟩ := size_accF
   refine ⟨c + 10000, fun v a hv hlv A _ R _ _ θ s p hs hp => ?_⟩
   obtain ⟨d, hdd⟩ : ∃ d, d = v ^ (H - 32) + 1 := ⟨_, rfl⟩
   have hN1 : v ^ (H - 32) < v ^ (H - 32) + 1 := Nat.lt_succ_self _
@@ -172,9 +176,9 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
     have h1 := lt_two_pow_lg (v ^ H)
     rw [← hm] at h1
     exact hN2.trans h1.le
-  obtain ⟨K, D, hnds, hht, hDsize, hkv⟩ := hc R M m (v ^ (H - 32) + 1) d s p hp hsM hNm
+  obtain ⟨K, out, hout, hnds, hht, hkv⟩ := accF_kv hp hsM (show 0 < d by omega) hNm
   have hcost : ∀ z : Tree, z.size ≤ v ^ (H - 32) →
-      (d + 1) * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100 ≤ v ^ (H - 16) := by
+      d * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100 ≤ v ^ (H - 16) := by
     intro z hz
     have e1 : 10000 * ((a + H + 2) * l) ≤ v := by
       refine le_trans ?_ hlv
@@ -185,7 +189,7 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
     have e3 : 40 * m + 60 ≤ v := by omega
     have e4 : v ^ (H - 24) * v ^ 8 = v ^ (H - 16) := by rw [← pow_add]; congr 1; omega
     have e6 : 1 ≤ v ^ (H - 24) := Nat.one_le_pow _ _ hv1
-    have e7 : (d + 1) * (800 * (M + m) + 4000) ≤ 2 * v ^ (H - 24) * v := Nat.mul_le_mul (by omega) e2
+    have e7 : d * (800 * (M + m) + 4000) ≤ 2 * v ^ (H - 24) * v := Nat.mul_le_mul (by omega) e2
     have e8 : (z.size + 2) * (40 * m + 60) ≤ 3 * v ^ (H - 24) * v := Nat.mul_le_mul (by omega) e3
     have e9 : 10 * m + 100 ≤ 2 * v ^ (H - 24) * v := by
       have : v ≤ v ^ (H - 24) * v := Nat.le_mul_of_pos_left _ (by omega)
@@ -195,15 +199,17 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
       calc 7 * v ≤ v * v := Nat.mul_le_mul_right _ (by omega)
         _ = v ^ 2 := (pow_two v).symm
         _ ≤ v ^ 8 := Nat.pow_le_pow_right hv1 (by norm_num)
-    calc (d + 1) * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100
-        ≤ 2 * v ^ (H - 24) * v + 3 * v ^ (H - 24) * v + 2 * v ^ (H - 24) * v := by omega
+    calc d * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100
+        ≤ 2 * v ^ (H - 24) * v + 3 * v ^ (H - 24) * v + 2 * v ^ (H - 24) * v := by linarith
       _ = v ^ (H - 24) * (7 * v) := by ring
       _ ≤ v ^ (H - 24) * v ^ 8 := Nat.mul_le_mul_left _ e10
       _ = v ^ (H - 16) := e4
-  refine ⟨K, D, fun z hz => ?_, ?_, ?_, ?_⟩
-  · obtain ⟨a1, a2, a3⟩ := hkv A θ z (lt_of_le_of_lt hz hN1)
-    rw [hdd] at a3
-    exact ⟨a1, fun r hr => ⟨(a2 r hr).1.trans (hcost z hz), (a2 r hr).2⟩, a3⟩
+  refine ⟨K, (accF M m d out).code, fun z hz => ?_, ?_, ?_, ?_⟩
+  · have h := hkv A θ z (lt_of_le_of_lt hz hN1)
+    rw [Fm.ofTree_code]
+    refine ⟨h.hl, fun r hr => ⟨(h.evl.1 r hr).1.trans (hcost z hz), (h.evl.1 r hr).2⟩, ?_⟩
+    rw [h.evl.2, hdd]
+    exact Finset.sum_congr rfl fun i _ => line_coeff_eq _ p i
   · -- the number of constants
     have h1 : 2 ^ M ≤ 2 * v ^ (a + 1) := by
       have h2 := two_pow_lg_le (n := v ^ (a + 1)) (by positivity)
@@ -244,7 +250,8 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
       rw [this]
       exact Nat.le_add_right _ _
     have h4 : v ≤ v ^ H := Nat.le_self_pow (by omega) v
-    calc D.size ≤ 100 * v ^ H := by omega
+    calc (accF M m d out).code.size ≤ c * (M + m + 1) + 2 * d := hc M m d out hout
+      _ ≤ 100 * v ^ H := by omega
       _ ≤ v * v ^ H := Nat.mul_le_mul_right _ hv100
       _ = v ^ (H + 1) := by ring
       _ ≤ v ^ (3 * a + H + 20) := Nat.pow_le_pow_right hv1 (by omega)

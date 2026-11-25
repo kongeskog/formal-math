@@ -24,27 +24,15 @@ def full : ℕ → (List Bool → R) → KT R
   | 0, f => leaf (f [])
   | n + 1, f => node (full n fun w => f (false :: w)) (full n fun w => f (true :: w))
 
-theorem lk_full {n : ℕ} (f : List Bool → R) {w : List Bool} (h : w.length = n) : (full n f).lk (w ++ [false]) = f w := by
+/-- The name w0 of a name w of length `n` is in the trie of all names of length `n`, with the
+value `f w`. -/
+theorem lk_full {n : ℕ} (f : List Bool → R) {w : List Bool} (h : w.length = n) :
+    (full n f).lk (w ++ [false]) = f w ∧ (full n f).InB 1 (w ++ [false]) := by
   induction n generalizing f w with
   | zero =>
     rw [List.length_eq_zero_iff] at h
     subst h
-    rfl
-  | succ n ih =>
-    cases w with
-    | nil => simp at h
-    | cons b w =>
-      rw [List.length_cons, Nat.add_right_cancel_iff] at h
-      cases b with
-      | true => exact ih (fun w => f (true :: w)) h
-      | false => exact ih (fun w => f (false :: w)) h
-
-theorem inB_full {n : ℕ} (f : List Bool → R) {w : List Bool} (h : w.length = n) : (full n f).InB 1 (w ++ [false]) := by
-  induction n generalizing f w with
-  | zero =>
-    rw [List.length_eq_zero_iff] at h
-    subst h
-    exact ⟨0, zero_lt_one, rfl⟩
+    exact ⟨rfl, 0, zero_lt_one, rfl⟩
   | succ n ih =>
     cases w with
     | nil => simp at h
