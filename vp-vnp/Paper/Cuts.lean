@@ -193,7 +193,10 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       _ ≤ X := vX _ (by omega)
   have h3K : 3 * K ≤ v * K := Nat.mul_le_mul_right _ (by omega)
   have hK2 : K + K + 1 ≤ X := by
-    omega
+    calc K + K + 1 ≤ v * K := by omega
+      _ ≤ v * v ^ (e + 1) := Nat.mul_le_mul_left _ hKe
+      _ = v ^ (e + 2) := (pow_succ' v (e + 1)).symm
+      _ ≤ X := vX _ (by omega)
   have hcId : Fintype.card (Nc.G.Uid (K + K) pc.U0 pc.sys.N pc.U1) ≤ X := by
     refine Nc.Dl.card_uid_le.trans ?_
     have g1 : (K + K) * (K + K) * pc.U0 ≤ v ^ (b₁ - 1) := by
@@ -264,7 +267,9 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       _ ≤ l * l + (l * l + l * l + l * l) := by
           have : 3 * b₁ * l ≤ l * l := Nat.mul_le_mul_right _ (by omega)
           have : 2 * l ≤ l * l := Nat.mul_le_mul_right _ (by omega)
-          linarith
+          have : 3 ≤ l * l := le_trans (by omega : 3 ≤ l) (Nat.le_mul_self l)
+          rw [pow_two]
+          omega
       _ = 4 * (l * l) := by ring
       _ ≤ l * (l * l) := Nat.mul_le_mul_right _ (by omega)
       _ = l ^ 3 := by ring
