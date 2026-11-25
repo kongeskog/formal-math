@@ -67,7 +67,7 @@ theorem Len.rms_comap {G H : Type*} [Group G] [Group H] [Fintype G] [Fintype H] 
       intro h
       obtain ⟨k, rfl⟩ := hφ h
       rw [← Equiv.sum_comp (Equiv.mulLeft k) (fun g => l.val (φ g) ^ 2)]
-      exact sum_congr rfl fun g _ => by rw [Equiv.coe_mulLeft, map_mul]
+      simp
     rw [sum_congr rfl fun h _ => this h]
     simp
   show (∑ g : G, l.val (φ g) ^ 2) * _ = _

@@ -155,7 +155,6 @@ theorem DM_digit (l : Len G) {m : ℕ} {s : ℝ} (hC : Contr l m s)
     DM (fun M => l.val (τ M)) (dg ((univ : Finset (Fin m × κ)).map e)) ≤
       s ^ 2 * DM (fun M => l.val (τ M)) (dg ((({i} : Finset (Fin m)) ×ˢ univ).map e)) := by
   have h0 : (0 : ℝ) < (Fintype.card (GLM (Fin m)) : ℝ) ^ 2 := by
-    have : 0 < Fintype.card (GLM (Fin m)) := Fintype.card_pos
     positivity
   refine le_of_mul_le_mul_left ?_ h0
   rw [mul_left_comm, ← univ_product_univ, ← blow_dg, ← blow_dg, ← DM_blow, ← DM_blow, mul_sum]

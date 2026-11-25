@@ -34,9 +34,7 @@ theorem mem_span_singleton_F2 {u v : Fin m → F2} : v ∈ span F2 {u} ↔ v = 0
     have h : a = 0 ∨ a = 1 := by
       revert a
       decide
-    rcases h with rfl | rfl
-    · exact Or.inl (zero_smul _ _)
-    · exact Or.inr (one_smul _ _)
+    rcases h with rfl | rfl <;> simp
   · rintro (rfl | rfl)
     · exact ⟨0, zero_smul _ _⟩
     · exact ⟨1, one_smul _ _⟩
@@ -106,15 +104,7 @@ theorem connect {R : Submodule F2 (Fin m → F2)} (hR : Module.finrank F2 R + 2 
 /-! ### Matrices u xᵀ -/
 
 theorem vec_ne_zero {u x : Fin m → F2} : vecMulVec u x ≠ 0 ↔ u ≠ 0 ∧ x ≠ 0 := by
-  constructor
-  · intro h
-    refine ⟨?_, ?_⟩ <;> rintro rfl <;> simp at h
-  · rintro ⟨hu, hx⟩ h
-    obtain ⟨i, hi⟩ := Function.ne_iff.1 hu
-    obtain ⟨j, hj⟩ := Function.ne_iff.1 hx
-    have := congrFun (congrFun h i) j
-    rw [vecMulVec_apply] at this
-    exact (mul_ne_zero hi hj) this
+  simp
 
 theorem colSpace_vec (u : Fin m → F2) {x : Fin m → F2} (hx : x ≠ 0) : colSpace (vecMulVec u x) = span F2 {u} := by
   have hc : ∀ j, (vecMulVec u x).col j = x j • u := fun j => by

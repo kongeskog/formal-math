@@ -145,8 +145,7 @@ theorem switchF_does {t : Fm} {fs : List Fm} {x : Tree} {j c d : ℕ} {Q : List 
       simp only [List.getElem?_cons_succ] at hf
       have h1 := ih (t := .tl t) (c := c + 1) ht.tl hf
       refine (Does.ite_true ht (by simp [num]) h1).mono ?_
-      have : (j + 1 + 1) * (c + (j + 1) + 1) = (j + 1) * (c + 1 + j + 1) + (c + (j + 1) + 1) := by ring
-      omega
+      linarith
 
 section transducer
 

@@ -68,9 +68,7 @@ theorem flags_rowOk {m : ℕ} {d : RowData m} (hd : d.1 = false → d.2.1 ≤ d.
         simpa [rowFlag, h', okFlag] using this
       · have := hb b
         by_cases e1 : b = d.2.1 ∨ b = d.2.2
-        · rcases e1 with rfl | rfl
-          · exact ⟨le_rfl, hle⟩
-          · exact ⟨hle, le_rfl⟩
+        · omega
         · by_cases e2 : d.2.1 ≤ b ∧ b ≤ d.2.2
           · exact e2
           · simp [rowFlag, h', e1, e2, okFlag, hXb] at this
