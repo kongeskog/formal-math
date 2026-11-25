@@ -11,21 +11,17 @@
     "133": {
       "login": "kongeskog",
       "at": "2026-11-25T06:51:12Z"
-    },
-    "134": {
-      "login": "kongeskog",
-      "at": "2026-11-25T06:53:19Z"
     }
   },
-  "comments_seen_until": "2026-11-25T07:41:20Z",
+  "comments_seen_until": "2026-11-25T07:41:55Z",
   "dispatched": {
-    "137@51d28570fe4a653fe9b9924e4afa5f252265206f@e7d923a67c388cc230ecb03a57244a54040b98d7@": "2026-11-25T07:27:13.741646192Z"
+    "138@410f169128e76544e72e8f18b92adfb704e47083@8c780ea59b7b538452f14f88a05a068c1ebc3600@": "2026-11-25T07:42:37.232345648Z"
   },
   "lines": {
-    "137@51d28570fe4a653fe9b9924e4afa5f252265206f": []
+    "138@410f169128e76544e72e8f18b92adfb704e47083": []
   },
   "line_bases": {
-    "137@51d28570fe4a653fe9b9924e4afa5f252265206f": "07ecdfb205163050f01e76fa09ff02a89107274e"
+    "138@410f169128e76544e72e8f18b92adfb704e47083": "2c389b9f5b42eeab1234bea440fab04ec3788861"
   },
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
