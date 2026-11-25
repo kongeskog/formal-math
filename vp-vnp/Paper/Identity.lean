@@ -196,20 +196,15 @@ theorem prop_identity_exchange {x z : R} (h : x * z = 1) (sa : Wd μ) (sb : Wd �
     · entries
       linear_combination (x ^ (2 * sa.1 i + 1) * (x ^ 2 - 1)) * hC (sa.1 i) (sd.2 j)
     · entries
-      by_cases h1 : sa.1 i = sc.2 j
-      · rw [if_pos h1, if_pos h1, ← h1]
-        linear_combination x ^ (2 * sa.1 i + 1) * hz (sa.1 i)
-      · simp [h1]
+      grind
     · entries
-      linear_combination (x ^ 2 * (z ^ 2 - 1) * ((x ^ 2) ^ sb.2 j * mB (z ^ 2) (sa.1 i) (sb.2 j))) *
-        hz (sa.1 i) + (x ^ 2 * (z ^ 2 - 1)) * hB (sa.1 i) (sb.2 j) + mC (x ^ 2) (sa.1 i) (sb.2 j) * h2
+      grind
   · rcases j with (j | j) | (j | j)
     · entries
       linear_combination (-(x ^ (2 * sa.2 j + 1) * (x ^ 2 - 1))) * hC (sa.2 j) (sd.1 i)
     · entries
     · entries
-      linear_combination ((x ^ 2 - 1) * ((x ^ 2) ^ sd.1 i * mB (z ^ 2) (sc.2 j) (sd.1 i))) * hz (sc.2 j) +
-        (x ^ 2 - 1) * hB (sc.2 j) (sd.1 i)
+      grind
     · entries
       by_cases h1 : sd.1 i = sb.2 j
       · rw [if_pos h1, if_pos h1.symm, ← h1]
@@ -217,29 +212,22 @@ theorem prop_identity_exchange {x z : R} (h : x * z = 1) (sa : Wd μ) (sb : Wd �
       · simp [h1, Ne.symm h1]
   · rcases j with (j | j) | (j | j)
     · entries
-      by_cases h1 : sa.2 j = sc.1 i
-      · rw [if_pos h1, if_pos h1, ← h1]
-        linear_combination (-x ^ (2 * sa.2 j + 1)) * hz (sa.2 j)
-      · simp [h1]
+      grind
     · entries
-      linear_combination (-(x ^ 2 - 1) * ((x ^ 2) ^ sd.2 j * mB (z ^ 2) (sc.1 i) (sd.2 j))) * hz (sc.1 i) -
-        (x ^ 2 - 1) * hB (sc.1 i) (sd.2 j)
+      grind
     · entries
     · entries
-      linear_combination (-(x ^ (2 * sc.1 i + 1) * (1 - x ^ 2))) * hC (sc.1 i) (sb.2 j) -
-        (x ^ (2 * sc.1 i + 1) * (x ^ 2) ^ sb.2 j * mC (z ^ 2) (sc.1 i) (sb.2 j)) * h2
+      grind
   · rcases j with (j | j) | (j | j)
     · entries
-      linear_combination (-(x ^ 2 * (z ^ 2 - 1) * ((x ^ 2) ^ sb.1 i * mB (z ^ 2) (sa.2 j) (sb.1 i)))) *
-        hz (sa.2 j) - (x ^ 2 * (z ^ 2 - 1)) * hB (sa.2 j) (sb.1 i) - mC (x ^ 2) (sa.2 j) (sb.1 i) * h2
+      grind
     · entries
       by_cases h1 : sd.2 j = sb.1 i
       · rw [if_pos h1, if_pos h1.symm, ← h1]
         linear_combination (x ^ (2 * sd.2 j + 1) * (x ^ 2 - 1)) * hz (sd.2 j)
       · simp [h1, Ne.symm h1]
     · entries
-      linear_combination (x ^ (2 * sc.2 j + 1) * (1 - x ^ 2)) * hC (sc.2 j) (sb.1 i) +
-        (x ^ (2 * sc.2 j + 1) * (x ^ 2) ^ sb.1 i * mC (z ^ 2) (sc.2 j) (sb.1 i)) * h2
+      grind
     · entries
 
 /-- Proof of Proposition prop:identity, reflection: "Rows and columns are permuted alike, so there is no sign." So the product of
@@ -269,8 +257,7 @@ theorem prop_identity_reflection [IsDomain R] {x z : R} (h : x * z = 1) (h1 : x 
   have key := prop_identity_exchange_det h sa sb sc sd
   rw [prod_scal, prod_scal, prod_scal'] at key
   have hne : (1 - x ^ 2) ^ ν * (1 - x ^ 2) ^ ν ≠ 0 := by
-    have : (1 - x ^ 2) ≠ 0 := sub_ne_zero.2 (Ne.symm h1)
-    exact mul_ne_zero (pow_ne_zero _ this) (pow_ne_zero _ this)
+    positivity
   refine mul_left_cancel₀ hne ?_
   have hs : (x ^ 2 - 1) ^ ν * (x ^ 2 - 1) ^ ν = (1 - x ^ 2) ^ ν * (1 - x ^ 2) ^ ν := by
     rw [← mul_pow, ← mul_pow]
@@ -290,12 +277,7 @@ theorem prop_identity_reflection [IsDomain R] {x z : R} (h : x * z = 1) (h1 : x 
     have := hν2 sb.1
     have := hν2 sb.2
     omega
-  generalize (∑ i, (2 * sa.1 i + 1)) + (∑ i, (2 * sc.1 i + 1)) + (∑ i, 2 * sd.1 i) +
-    (∑ i, (2 * sb.1 i + 2)) = a at key hexp
-  generalize (∑ i, (2 * sa.2 i + 1)) + (∑ i, (2 * sc.2 i + 1)) + (∑ i, 2 * sd.2 i) +
-    (∑ i, (2 * sb.2 i + 2)) = b at key hexp
-  rw [← hexp, pow_add]
-  linear_combination key - (x ^ a * x ^ b * psi z sa sb sc sd) * hs
+  grind
 
 end Blocks
 
