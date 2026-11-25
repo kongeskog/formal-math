@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T06:03:10.161291565Z",
+  "updated_at": "2026-11-25T06:04:20.966395399Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 2
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -90,10 +90,10 @@
     {
       "number": 130,
       "title": "Idea: dead-code(*): second pass for conjuncts, fields, bound names and hypotheses that nothing uses",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-25T09:03:26Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-25T06:01:31Z",
@@ -823,7 +823,7 @@
       "author": "kongeskog",
       "head_sha": "b0a7526395797ba2c1ff7daed13d164998b92d39",
       "base_sha": null,
-      "status": "verifying",
+      "status": "conflict",
       "created_at": "2026-11-25T05:59:19Z",
       "decided_at": null,
       "metrics": null,
@@ -836,39 +836,10 @@
           "status": "pass"
         },
         {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "fail",
+          "detail": "Conflicts with main; merge main into your branch and push"
         },
         {
           "key": "review",
@@ -899,13 +870,13 @@
     },
     {
       "path": "vp-vnp/Paper/Fan.lean",
-      "tokens": 15548,
-      "loc": 851
+      "tokens": 15451,
+      "loc": 848
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 12080,
-      "loc": 745
+      "tokens": 12113,
+      "loc": 751
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
@@ -924,18 +895,13 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 9177,
-      "loc": 530
+      "tokens": 9030,
+      "loc": 526
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
       "tokens": 8542,
       "loc": 641
-    },
-    {
-      "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 7990,
-      "loc": 486
     },
     {
       "path": "vp-vnp/NS1/Lists.lean",
@@ -946,6 +912,11 @@
       "path": "vp-vnp/Paper/Gauges.lean",
       "tokens": 7481,
       "loc": 476
+    },
+    {
+      "path": "vp-vnp/Paper/Cuts.lean",
+      "tokens": 7289,
+      "loc": 459
     },
     {
       "path": "vp-vnp/NS1/DSteps.lean",
