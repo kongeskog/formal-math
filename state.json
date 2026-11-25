@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T00:13:54.029068039Z",
+  "updated_at": "2026-11-25T00:15:11.592489382Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "59a5cf956a2dd8ae93f59a34052603dc70a6fd00",
-    "at": "2026-11-24T23:55:19.360138184Z",
+    "sha": "9789e025ea612638292160d1462bf614b0245b0e",
+    "at": "2026-11-25T00:15:11.592489382Z",
     "metrics": {
-      "tokens": 899994,
-      "loc": 57244,
-      "decls": 4563,
+      "tokens": 899060,
+      "loc": 57181,
+      "decls": 4564,
       "files": 321,
-      "bytes": 3341529,
-      "build_seconds": 248
+      "bytes": 3339473,
+      "build_seconds": 327
     }
   },
   "counts": {
-    "merged": 53,
+    "merged": 54,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 53,
+      "merged": 54,
       "attempts": 57,
-      "saved": 28167
+      "saved": 29101
     }
   ],
   "ideas": [
@@ -123,7 +123,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T02:25:25Z",
       "pr": 98,
-      "result_delta": null,
+      "result_delta": -934,
       "created_at": "2026-11-24T23:13:47Z",
       "url": "https://github.com/kongeskog/formal-math/issues/94",
       "technique": "restructure",
@@ -663,74 +663,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 98,
-      "title": "restructure(Paper): prove the real-number theorems from the all-fields ones",
-      "author": "kongeskog",
-      "head_sha": "bb9c23b5c20b50a5150261613793ae82dc0e1051",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T00:00:09Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 94,
-      "url": "https://github.com/kongeskog/formal-math/pull/98",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    },
     {
       "pr": 99,
       "title": "shorten(*): close arithmetic bookkeeping tails with linarith or omega (slice A of #97)",
