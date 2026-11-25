@@ -60,7 +60,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
   have base : ∀ τ s c, v ^ H ≤ τ → 4 * lg τ ≤ lg v ^ 2 → τ * Λ < v ^ H * v ^ 64 → s * v ^ 48 ≤ c * τ → 1 ≤ c → c ≤ v →
       ∃ (G : Tree) (P t s' : ℕ), CutD θ τ s (v ^ H) s' P t G ∧ P * v ^ H ≤ τ * (4 * Λ ^ 2) ∧
       t * v ^ 48 ≤ c * τ * (100 * Λ ^ 3) ∧ s' * v ^ 48 ≤ c * v ^ H * (8 * Λ) ∧ G.size ≤ v ^ a₀ := by
-    intro τ s c hτ hτα hτΛ hs hc1 hcv
+    intro τ s c hτ hlτ hτΛ hs hc1 hcv
     obtain ⟨k, hk⟩ := exists_eq (a' := τ * Λ / v ^ H + 1)
     have hk1 : τ * Λ < k * v ^ H := hk ▸ (Nat.div_lt_iff_lt_mul (ppos H)).1 (Nat.lt_succ_self _)
     have hk2 : k ≤ v ^ 64 :=
@@ -74,7 +74,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
         _ < v ^ H * k := Nat.mul_comm k _ ▸ hk1
     have h208 : v ^ 256 = v ^ 48 * v ^ 208 := by rw [← pow_add]
     have hk208 : k ≤ v ^ 208 := hk2.trans (pmono (by norm_num))
-    obtain ⟨G, s', t, hG, hcut, hs', ht⟩ := hc τ s k (v ^ H) ((pmono hH).trans hτ) hτα (hsτ hs hcv) hk0
+    obtain ⟨G, s', t, hG, hcut, hs', ht⟩ := hc τ s k (v ^ H) ((pmono hH).trans hτ) hlτ (hsτ hs hcv) hk0
       hk2 (hk1.trans_le (Nat.mul_le_mul_left _ (Nat.le_succ _)))
     refine ⟨G, _, t, s', hcut, ?_, ?_, ?_, hG⟩
     · calc k * Λ * v ^ H = k * v ^ H * Λ := by ring
@@ -103,13 +103,13 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
   intro r
   induction r with
   | zero =>
-    intro τ s c hτ hτα hτΛ hs hc1 hcv
-    obtain ⟨G, P, t, s', h1, h2, h3, h4, h5⟩ := base τ s c hτ hτα (by simpa using hτΛ) hs hc1 (by omega)
+    intro τ s c hτ hlτ hτΛ hs hc1 hcv
+    obtain ⟨G, P, t, s', h1, h2, h3, h4, h5⟩ := base τ s c hτ hlτ (by simpa using hτΛ) hs hc1 (by omega)
     refine ⟨G, P, t, s', h1, by simpa using h2, by simpa using h3, by simpa using h4, ?_⟩
     simp only [pow_zero, one_mul]
     omega
   | succ r ih =>
-    intro τ s c hτ hτα hτΛ hs hc1 hcv
+    intro τ s c hτ hlτ hτΛ hs hc1 hcv
     have hc4 : 4 * c * 4 ^ (r + 1) ≤ v := by
       calc 4 * c * 4 ^ (r + 1) = c * 4 ^ (r + 1 + 1) := by rw [pow_succ 4 (r + 1)]; ring
         _ ≤ v := hcv
@@ -119,7 +119,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
     have hX2 : 1 ≤ (100 * Λ ^ 3) ^ (r + 1) := Nat.one_le_pow _ _ (by positivity)
     have hX3 : 1 ≤ (8 * Λ) ^ (r + 1) := Nat.one_le_pow _ _ (by positivity)
     by_cases hbase : τ * Λ < v ^ H * v ^ 64
-    · obtain ⟨G, P, t, s', h1, h2, h3, h4, h5⟩ := base τ s c hτ hτα hbase hs hc1 (by omega)
+    · obtain ⟨G, P, t, s', h1, h2, h3, h4, h5⟩ := base τ s c hτ hlτ hbase hs hc1 (by omega)
       refine ⟨G, P, t, s', h1, ?_, ?_, ?_, ?_⟩
       · refine h2.trans (Nat.mul_le_mul_left _ ?_)
         rw [pow_succ (4 * Λ ^ 2) (r + 1)]
@@ -138,7 +138,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
     have hk63 : 2 ≤ v ^ 63 := (by omega : 2 ≤ v).trans (Nat.le_self_pow (by norm_num) v)
     have hτ₁lt := Nat.lt_mul_div_succ (τ * Λ) (ppos 63)
     obtain ⟨G₁, s₁, t₁, hG₁, hcut₁, hs₁, ht₁⟩ := hc τ s (v ^ 63) (τ * Λ / v ^ 63) ((pmono hH).trans hτ)
-      hτα (hsτ hs (by omega)) hk63 (pmono (by norm_num)) hτ₁lt
+      hlτ (hsτ hs (by omega)) hk63 (pmono (by norm_num)) hτ₁lt
     generalize hτ₁ : τ * Λ / v ^ 63 = τ₁ at hcut₁ hτ₁lt
     have hτ₁le : τ₁ * v ^ 63 ≤ τ * Λ := by rw [← hτ₁]; exact Nat.div_mul_le_self _ _
     have hτ₁V : v ^ H ≤ τ₁ := by
@@ -175,7 +175,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
         _ = 2 * c * (τ * Λ) * v ^ 256 := by ring
         _ ≤ 2 * c * (2 * (τ₁ * v ^ 63)) * v ^ 256 := by gcongr
         _ = 4 * c * τ₁ * (v ^ 63 * v ^ 256) := by ring
-    obtain ⟨G₂, P₂, t₂, s₂, hcut₂, hP₂, ht₂, hs₂, hG₂⟩ := ih τ₁ s₁ (4 * c) hτ₁V ((Nat.mul_le_mul_left 4 (lg_mono hτ₁τ)).trans hτα) hτ₁Λ hs₁c (by omega) hc4
+    obtain ⟨G₂, P₂, t₂, s₂, hcut₂, hP₂, ht₂, hs₂, hG₂⟩ := ih τ₁ s₁ (4 * c) hτ₁V ((Nat.mul_le_mul_left 4 (lg_mono hτ₁τ)).trans hlτ) hτ₁Λ hs₁c (by omega) hc4
     have hP : v ^ 63 * Λ * P₂ * v ^ H ≤ τ * (4 * Λ ^ 2) ^ (r + 1 + 1) := by
       calc v ^ 63 * Λ * P₂ * v ^ H = v ^ 63 * Λ * (P₂ * v ^ H) := by ring
         _ ≤ v ^ 63 * Λ * (τ₁ * (4 * Λ ^ 2) ^ (r + 1)) := Nat.mul_le_mul_left _ hP₂
