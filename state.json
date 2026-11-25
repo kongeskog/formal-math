@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T19:54:16.330048446Z",
+  "updated_at": "2026-11-25T20:01:59.253587880Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "c09569a6ced7e22a454622ff34a33ca85d525a13",
-    "at": "2026-11-25T08:26:42.147479028Z",
+    "sha": "e754fc6c263ac98ed7fa8266bd354dcf0d131acb",
+    "at": "2026-11-25T20:01:59.253587880Z",
     "metrics": {
-      "tokens": 842850,
-      "loc": 54038,
+      "tokens": 840221,
+      "loc": 53818,
       "decls": 4383,
       "files": 315,
-      "bytes": 3133893,
-      "build_seconds": 768
+      "bytes": 3128177,
+      "build_seconds": 527
     }
   },
   "counts": {
-    "merged": 78,
+    "merged": 79,
     "rejected": 4,
-    "open": 4,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 3
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 78,
+      "merged": 79,
       "attempts": 86,
-      "saved": 85311
+      "saved": 87940
     }
   ],
   "ideas": [
@@ -859,74 +859,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 141,
-      "title": "shorten(*): close 47 tactic tails with grind or simp_all in 18 files of Nc, NS1 and Paper",
-      "author": "kongeskog",
-      "head_sha": "9878856abbe1f9f0d99090fc5ed10d1664b88e9c",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T19:39:15Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 131,
-      "url": "https://github.com/kongeskog/formal-math/pull/141",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "*"
-    },
     {
       "pr": 142,
       "title": "restructure(Paper/Pieces): inline thm_tree into prop_pieces, its only user",
