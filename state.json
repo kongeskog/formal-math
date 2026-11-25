@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:24:46.021148721Z",
+  "updated_at": "2026-11-25T04:26:33.889595808Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -808,13 +808,27 @@
       "title": "restructure(Paper/Tree, Paper/Tower): thm_tree over A; tree_towers calls the tower lemmas directly",
       "author": "kongeskog",
       "head_sha": "3aab577c15ab4b3de5f8c9deea22fd9a3a349a14",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "2069ab298f69e1ba474398602885fc25c49497a2",
+      "status": "stale",
       "created_at": "2026-11-25T04:02:52Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 857110,
+        "loc": 54769,
+        "decls": 4431,
+        "files": 316,
+        "bytes": 3181580,
+        "build_seconds": 829
+      },
+      "base_metrics": {
+        "tokens": 858613,
+        "loc": 54885,
+        "decls": 4438,
+        "files": 317,
+        "bytes": 3187981,
+        "build_seconds": null
+      },
+      "delta": -1503,
       "gates": [
         {
           "key": "format",
@@ -823,39 +837,47 @@
           "detail": "The title must be `<technique>(<scope>): <summary>` where technique is one of `dead-code`, `library`, `merge`, `generalize`, `shorten`, `restructure`; scope is the file or folder under the project directory without `.lean` (for example `Paper/Tree`), or `*` for many; and the summary is 10 to 90 characters. Edit the pull request; no new push is needed."
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "7 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 858613 → 857110 (-1503)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; will be re-verified once approved"
         },
         {
           "key": "review",
@@ -866,7 +888,7 @@
       ],
       "idea": 110,
       "url": "https://github.com/kongeskog/formal-math/pull/123",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45544085829",
       "merge_sha": null,
       "reason": null,
       "technique": null,
