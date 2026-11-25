@@ -37,7 +37,7 @@ theorem prop_universal (θ : List Bool → A) (hθ : (Function.support θ).Finit
     rw [Set.Finite.mem_toFinset, Function.mem_support, not_not] at hq
     exact hq
   obtain ⟨S₀, h1, C, h2⟩ := prop_universal_series θ hθ.toFinset hs
-  obtain ⟨Q, iQ, dQ, mu, i, e, -, h3⟩ := Nc.exists_run_val h1
+  obtain ⟨Q, iQ, dQ, mu, i, e, h3⟩ := Nc.exists_run_val h1
   refine ⟨_, _, Q, inferInstance, inferInstance, inferInstance, inferInstance, iQ, dQ, mu, i, e, .bit false, .bit true,
     27 * (2 * C + 2), fun τ z t hp ht => ?_⟩
   obtain ⟨a1, a2⟩ := h2 τ z hp

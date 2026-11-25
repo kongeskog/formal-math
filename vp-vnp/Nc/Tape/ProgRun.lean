@@ -28,10 +28,10 @@ variable {Ω : Type*}
 def Series.idle (P : Series F Ω) : Series F (Option Ω) := Series.mul
   (fun o => if o.all Option.isSome then P o.reduceOption else 0) (fun o => if o.all Option.isNone then 1 else 0)
 
-theorem RatLe.idle {n : ℕ} {P : Series F Ω} (hP : RatLe n P) : RatLe (n + 1) (Series.idle P) := by
-  refine RatLe.mul ?_ ?_
-  · obtain ⟨Q, _, r, hn, rfl⟩ := hP
-    refine ⟨Q, inferInstance, ⟨r.lam, fun a => a.elim 0 r.mu, r.gam⟩, hn, ?_⟩
+theorem Rational.idle {P : Series F Ω} (hP : Rational P) : Rational (Series.idle P) := by
+  refine Rational.mul ?_ ?_
+  · obtain ⟨Q, _, r, rfl⟩ := hP
+    refine ⟨Q, inferInstance, ⟨r.lam, fun a => a.elim 0 r.mu, r.gam⟩, ?_⟩
     have key : ∀ o : List (Option Ω), (⟨r.lam, fun a => a.elim 0 r.mu, r.gam⟩ : Rep F (Option Ω) Q).tail o =
         if o.all Option.isSome then r.tail o.reduceOption else 0 := by
       intro o
@@ -52,7 +52,7 @@ theorem RatLe.idle {n : ℕ} {P : Series F Ω} (hP : RatLe n P) : RatLe (n + 1) 
     by_cases h : o.all Option.isSome
     · simp only [h, if_true]; rfl
     · simp [h]
-  · refine ⟨Unit, inferInstance, ⟨1, fun a => a.elim 1 fun _ => 0, 1⟩, by simp, ?_⟩
+  · refine ⟨Unit, inferInstance, ⟨1, fun a => a.elim 1 fun _ => 0, 1⟩, ?_⟩
     have key : ∀ o : List (Option Ω), (⟨1, fun a => a.elim 1 fun _ => 0, 1⟩ : Rep F (Option Ω) Unit).tail o =
         if o.all Option.isNone then 1 else 0 := by
       intro o
@@ -169,13 +169,13 @@ theorem emit_idle (w : List (Ch S J × Γ)) (j : ℕ) :
   rw [emit, this]
 
 /-- **From programs to runs.** -/
-theorem exists_run {n : ℕ} {P : Series F (Ch S J × Γ)} (hP : RatLe n P) :
+theorem exists_run {P : Series F (Ch S J × Γ)} (hP : Rational P) :
     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (mu : Letter S J Γ → Matrix Q Q F) (i e : Q),
-      Fintype.card Q ≤ n + 3 ∧ ∀ t, 1 ≤ t → ∀ u : J → List Γ, runVal mu i e t u =
+      ∀ t, 1 ≤ t → ∀ u : J → List Γ, runVal mu i e t u =
         ∑ W ∈ (contents S Γ t).filter (fun W => 2 * ∑ s, (W s).length + ∑ j, (u j).length ≤ t),
           hat P (tup W u) := by
-  obtain ⟨Q, i1, i2, mu, i, e, hcard, hmu⟩ := hP.idle.normal
-  refine ⟨Q, i1, i2, mu, i, e, hcard, fun t ht u => ?_⟩
+  obtain ⟨Q, i1, i2, mu, i, e, hmu⟩ := hP.idle.normal
+  refine ⟨Q, i1, i2, mu, i, e, fun t ht u => ?_⟩
   have hne : ∀ o : Fin t → Letter S J Γ, List.ofFn o ≠ [] := by
     intro o h
     have := congrArg List.length h
@@ -242,12 +242,12 @@ theorem exists_run {n : ℕ} {P : Series F (Ch S J × Γ)} (hP : RatLe n P) :
     exact ⟨fun s => rfl, fun j => rfl⟩
 
 /-- A bounded program is an automaton. -/
-theorem exists_run_val {n : ℕ} {P : Series F (Ch S J × Γ)} (hP : RatLe n P) :
+theorem exists_run_val {P : Series F (Ch S J × Γ)} (hP : Rational P) :
     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (mu : Letter S J Γ → Matrix Q Q F) (i e : Q),
-      Fintype.card Q ≤ n + 3 ∧ ∀ (t₀ t : ℕ) (u : J → List Γ), Bdd t₀ P u →
+      ∀ (t₀ t : ℕ) (u : J → List Γ), Bdd t₀ P u →
         2 * t₀ + ∑ j, (u j).length + 1 ≤ t → runVal mu i e t u = val t₀ P u := by
-  obtain ⟨Q, i1, i2, mu, i, e, hcard, H⟩ := exists_run hP
-  refine ⟨Q, i1, i2, mu, i, e, hcard, fun t₀ t u hb ht => ?_⟩
+  obtain ⟨Q, i1, i2, mu, i, e, H⟩ := exists_run hP
+  refine ⟨Q, i1, i2, mu, i, e, fun t₀ t u hb ht => ?_⟩
   rw [H t (by omega) u, val]
   symm
   apply Finset.sum_subset

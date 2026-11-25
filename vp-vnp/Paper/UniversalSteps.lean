@@ -92,7 +92,7 @@ variable (θ supp) in
 /-- **Paper: proof of Proposition prop:universal, exactness and time.** The series of the automaton has the value pv(z) in
 O((|z|+τ) lg(|z|+τ)²) letters. -/
 theorem prop_universal_series (hθ : ∀ q, q ∉ supp → θ q = 0) :
-    ∃ S₀ : Series A (Ch (Tp Kd) Unit × Sy (Md (Nm supp)) Kd), RatLe (dimX (UM θ supp)) S₀ ∧
+    ∃ S₀ : Series A (Ch (Tp Kd) Unit × Sy (Md (Nm supp)) Kd), Rational S₀ ∧
       ∃ C : ℕ, ∀ (τ : ℕ) (z : Tree), Plain θ τ z →
         Bdd (C * ((z.size + τ + 2) * lg (z.size + τ + 2) ^ 2)) S₀ (fun _ => (word z).map .bit) ∧
         Nc.val (C * ((z.size + τ + 2) * lg (z.size + τ + 2) ^ 2)) S₀ (fun _ => (word z).map .bit) = pv θ z := by

@@ -151,34 +151,30 @@ abbrev cP : Zc K := .tp (.cm false) true
 abbrev cQ : Zc K := .tp (.cm true) true
 
 theorem runs_rk (zs : Finset (Zc K)) (hz : zs.Nonempty) :
-    Runs (2 * (2 * zs.card + 1) + (Fintype.card (Bl K) * (2 * zs.card + 1) + 1) + (2 * zs.card + 1))
-      (fun r : Rk K => on zs (rk r : List (Sy M K))) (fun _ => (1 : A)) := by
-  have h := ((Runs.letter (F := A) zs (fun f : Bool => (Sy.flag f : Sy M K)) (fun _ => 1)).mul
-    (Runs.wordstar (F := A) zs hz (be : Bl K → Sy M K))).mul (Runs.word (F := A) zs [(Sy.dot : Sy M K)])
-  refine (h.congr ⟨fun r => ((r.1, r.2), ()), fun y => (y.1.1, y.1.2), fun r => rfl, fun y => rfl⟩ (fun r z => ?_)
-    fun r => ?_).mono ?_
+    Runs (fun r : Rk K => on zs (rk r : List (Sy M K))) (fun _ => (1 : A)) := by
+  have h := ((Runs.pick (F := A) (fun f : Bool => on zs [(Sy.flag f : Sy M K)]) (fun _ => 1)).mul
+    (Runs.wordstar (F := A) zs hz (be : Bl K → Sy M K))).mul (Runs.const (F := A) (on zs [(Sy.dot : Sy M K)]))
+  refine h.congr ⟨fun r => ((r.1, r.2), ()), fun y => (y.1.1, y.1.2), fun r => rfl, fun y => rfl⟩ (fun r z => ?_)
+    fun r => ?_
   · simp only [Equiv.coe_fn_mk, on_append, rk_eq]
     rfl
-  · simp
   · simp
 
 /-- Emissions of a round. -/
 def emRd (d : RdG (List (Bl K))) : Zc K → List (Sy M K) := fun z => on {cP} (rk d.snd) z ++ on {cQ} (rk d.fst) z
 
-theorem runs_rdG : Runs ((9 + (Fintype.card (Bl K) * 3 + 1) + (3 + (Fintype.card (Bl K) * 3 + 1) + 3)) +
-    (6 + 3 + (Fintype.card (Bl K) * 5 + 1) + 5)) (emRd : RdG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
-  have hpq : (cP : Zc K) ≠ cQ := by simp
+theorem runs_rdG : Runs (emRd : RdG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := (runs_rk (A := A) (M := M) (K := K) {cQ} ⟨cQ, by simp⟩).mul
-    (((Runs.word (Z := Zc K) {cP} [(Sy.flag false : Sy M K)]).mul
+    (((Runs.const (Z := Zc K) (on {cP} [(Sy.flag false : Sy M K)])).mul
     (Runs.wordstar {cP} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
-    (Runs.word {cP} [(Sy.dot : Sy M K)]))
-  have h2 := (((Runs.letter (F := A) (Z := Zc K) {cQ} (fun f : Bool => (Sy.flag f : Sy M K)) (fun _ => 1)).mul
-    (Runs.word (F := A) {cP} [(Sy.flag true : Sy M K)])).mul
+    (Runs.const (on {cP} [(Sy.dot : Sy M K)])))
+  have h2 := (((Runs.pick (F := A) (Z := Zc K) (fun f : Bool => on {cQ} [(Sy.flag f : Sy M K)]) (fun _ => 1)).mul
+    (Runs.const (F := A) (on {cP} [(Sy.flag true : Sy M K)]))).mul
     (Runs.wordstar (F := A) {cP, cQ} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
-    (Runs.word (F := A) {cP, cQ} [(Sy.dot : Sy M K)])
-  refine ((h1.add h2).congr ⟨Sum.map (fun y => (y.1, (((), y.2), ()))) (fun y => (((y.1, ()), y.2), ())),
+    (Runs.const (F := A) (on {cP, cQ} [(Sy.dot : Sy M K)]))
+  refine (h1.add h2).congr ⟨Sum.map (fun y => (y.1, (((), y.2), ()))) (fun y => (((y.1, ()), y.2), ())),
     Sum.map (fun y => (y.1, y.2.1.2)) (fun y => (y.1.1.1, y.1.2)), fun y => ?_, fun y => ?_⟩
-    (fun y z => ?_) fun y => ?_).mono ?_
+    (fun y z => ?_) fun y => ?_
   · rcases y with ⟨a, b⟩ | ⟨a, b⟩ <;> rfl
   · rcases y with ⟨a, b⟩ | ⟨a, b⟩ <;> rfl
   · rcases y with ⟨a, b⟩ | ⟨a, b⟩
@@ -193,27 +189,19 @@ theorem runs_rdG : Runs ((9 + (Fintype.card (Bl K) * 3 + 1) + (3 + (Fintype.card
         · subst hz'; simp [on]
         · simp [on, hz, hz']
   · rcases y with ⟨a, b⟩ | ⟨a, b⟩ <;> simp
-  · rw [Finset.card_pair hpq]
-    simp
-    omega
 
 /-- Emissions of the comparison. -/
 def emCm (y : XG (List (Bl K))) : Zc K → List (Sy M K) := fun z =>
   on {cP} ((PlG y).flatMap rk) z ++ on {cQ} ((QlG y).flatMap rk) z
 
-/-- Dimension of the comparison. -/
-def dimCm (k : ℕ) : ℕ := (3 + (k * 3 + 1) + 3) +
-  ((((9 + (k * 3 + 1) + (3 + (k * 3 + 1) + 3)) + (6 + 3 + (k * 5 + 1) + 5)) + 1) + (6 + (k * 3 + 1) + 3))
-
-theorem runs_cm : Runs (dimCm (Fintype.card (Bl K)))
-    (emCm : XG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
+theorem runs_cm : Runs (emCm : XG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have hk := (runs_rdG (A := A) (M := M) (K := K)).kstar fun d => ⟨cP, by simp [emRd, on, rk_eq]⟩
-  have h := (((Runs.word (Z := Zc K) {cP} [(Sy.flag false : Sy M K)]).mul
+  have h := (((Runs.const (Z := Zc K) (on {cP} [(Sy.flag false : Sy M K)])).mul
     (Runs.wordstar {cP} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
-    (Runs.word {cP} [(Sy.dot : Sy M K)])).mul
+    (Runs.const (on {cP} [(Sy.dot : Sy M K)]))).mul
     (hk.mul (runs_rk {cQ} ⟨cQ, by simp⟩))
-  refine (h.congr ⟨fun y => ((((), y.1), ()), y.2), fun y => (y.1.1.2, y.2), fun y => rfl, fun y => rfl⟩
-    (fun y z => ?_) fun y => ?_).mono ?_
+  refine h.congr ⟨fun y => ((((), y.1), ()), y.2), fun y => (y.1.1.2, y.2), fun y => rfl, fun y => rfl⟩
+    (fun y z => ?_) fun y => ?_
   · obtain ⟨w, ds, r⟩ := y
     simp only [Equiv.coe_fn_mk, emCm, PlG, QlG]
     by_cases hz : z = cP
@@ -224,7 +212,5 @@ theorem runs_cm : Runs (dimCm (Fintype.card (Bl K)))
         simp [on, emRd, rk_eq, List.flatMap_map]
       · simp [on, emRd, hz, hz']
   · simp
-  · unfold dimCm
-    simp
 
 end Nc.Uni

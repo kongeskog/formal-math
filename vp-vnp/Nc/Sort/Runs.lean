@@ -25,9 +25,9 @@ variable {F : Type*} [CommRing F] {Z Γ : Type*} [Fintype Z] [DecidableEq Z] [Fi
 def IsRuns (P : Series F (Z × Γ)) {X : Type*} (em : X → Z → List Γ) (wt : X → F) : Prop :=
   ∀ v, ∃ R : Finset X, (∀ x, x ∈ R ↔ em x = v) ∧ hat P v = ∑ x ∈ R, wt x
 
-/-- There is a series of dimension at most n with these runs. -/
-def Runs (n : ℕ) {X : Type*} (em : X → Z → List Γ) (wt : X → F) : Prop :=
-  ∃ P : Series F (Z × Γ), RatLe n P ∧ IsRuns P em wt
+/-- There is a rational series with these runs. -/
+def Runs {X : Type*} (em : X → Z → List Γ) (wt : X → F) : Prop :=
+  ∃ P : Series F (Z × Γ), Rational P ∧ IsRuns P em wt
 
 section
 
@@ -247,35 +247,26 @@ theorem proj_chanWord (w : Z → List Γ) : proj (chanWord w) = w := by
   rw [this]
   exact flatMap_ite_eq _ (Finset.nodup_toList _) z (by simp) w
 
-theorem length_chanWord (w : Z → List Γ) : (chanWord w).length = ∑ z, (w z).length := by
-  rw [← sum_length_proj, proj_chanWord]
-
 namespace Runs
 
 section
 
--- Two families of runs, as above, and two dimensions.
+-- Two families of runs, as above.
 variable {X Y : Type*} {em : X → Z → List Γ} {wt : X → F} {em' : Y → Z → List Γ} {wt' : Y → F}
-  {n m : ℕ}
 
-theorem mono (h : Runs n em wt) (hm : n ≤ m) :
-    Runs m em wt := by
-  obtain ⟨P, h1, h2⟩ := h
-  exact ⟨P, h1.mono hm, h2⟩
-
-theorem congr (h : Runs n em wt) (e : Y ≃ X)
-    (h1 : ∀ y z, em (e y) z = em' y z) (h2 : ∀ y, wt (e y) = wt' y) : Runs n em' wt' := by
+theorem congr (h : Runs em wt) (e : Y ≃ X)
+    (h1 : ∀ y z, em (e y) z = em' y z) (h2 : ∀ y, wt (e y) = wt' y) : Runs em' wt' := by
   obtain ⟨P, g1, g2⟩ := h
   exact ⟨P, g1, g2.congr e h1 h2⟩
 
-theorem mul (hf : Runs n em wt) (hg : Runs m em' wt') :
-    Runs (n + m) (fun (x : X × Y) z => em x.1 z ++ em' x.2 z) (fun x => wt x.1 * wt' x.2) := by
+theorem mul (hf : Runs em wt) (hg : Runs em' wt') :
+    Runs (fun (x : X × Y) z => em x.1 z ++ em' x.2 z) (fun x => wt x.1 * wt' x.2) := by
   obtain ⟨P, g1, g2⟩ := hf
   obtain ⟨Q, g3, g4⟩ := hg
   exact ⟨_, g1.mul g3, g2.mul g4⟩
 
-theorem add (hf : Runs n em wt) (hg : Runs m em' wt') :
-    Runs (n + m) (Sum.elim em em') (Sum.elim wt wt') := by
+theorem add (hf : Runs em wt) (hg : Runs em' wt') :
+    Runs (Sum.elim em em') (Sum.elim wt wt') := by
   classical
   obtain ⟨P, g1, g2⟩ := hf
   obtain ⟨Q, g3, g4⟩ := hg
@@ -289,9 +280,9 @@ theorem add (hf : Runs n em wt) (hg : Runs m em' wt') :
   · rw [hat_add, h2, h4, Finset.sum_disjSum]
     simp
 
-theorem kstar (hf : Runs n em wt)
+theorem kstar (hf : Runs em wt)
     (hne : ∀ x, ∃ z, em x z ≠ []) :
-    Runs (n + 1) (fun (l : List X) z => l.flatMap fun x => em x z) (fun l => (l.map wt).prod) := by
+    Runs (fun (l : List X) z => l.flatMap fun x => em x z) (fun l => (l.map wt).prod) := by
   obtain ⟨P, g1, g2⟩ := hf
   refine ⟨_, g1.kstar, g2.kstar fun x h => ?_⟩
   obtain ⟨z, hz⟩ := hne x
@@ -299,57 +290,51 @@ theorem kstar (hf : Runs n em wt)
 
 end
 
-theorem sum {ι : Type*} [Fintype ι] {n : ι → ℕ} {X : ι → Type*} {em : ∀ i, X i → Z → List Γ}
-    {wt : ∀ i, X i → F} (h : ∀ i, Runs (n i) (em i) (wt i)) :
-    Runs (∑ i, n i) (fun (x : Σ i, X i) => em x.1 x.2) (fun x => wt x.1 x.2) := by
+theorem sum {ι : Type*} [Fintype ι] {X : ι → Type*} {em : ∀ i, X i → Z → List Γ}
+    {wt : ∀ i, X i → F} (h : ∀ i, Runs (em i) (wt i)) :
+    Runs (fun (x : Σ i, X i) => em x.1 x.2) (fun x => wt x.1 x.2) := by
   choose P h1 h2 using h
-  exact ⟨∑ i, P i, RatLe.sum _ _ _ fun i _ => h1 i, IsRuns.sum h2⟩
+  exact ⟨∑ i, P i, Rational.sum _ _ fun i _ => h1 i, IsRuns.sum h2⟩
 
-theorem one : Runs 1 (fun (_ : Unit) (_ : Z) => ([] : List Γ)) (fun _ => (1 : F)) :=
-  ⟨_, RatLe.one, IsRuns.one⟩
+theorem one : Runs (fun (_ : Unit) (_ : Z) => ([] : List Γ)) (fun _ => (1 : F)) :=
+  ⟨_, Rational.one, IsRuns.one⟩
 
 /-- One of finitely many families of words, with weights. -/
-theorem pick {κ : Type*} [Fintype κ] (w : κ → Z → List Γ) (c : κ → F) :
-    Runs (∑ k, (2 * ∑ z, (w k z).length + 1)) w c := by
+theorem pick {κ : Type*} [Fintype κ] (w : κ → Z → List Γ) (c : κ → F) : Runs w c := by
   classical
-  refine ⟨Series.body (fun k => chanWord (w k)) c, ?_, fun v => ?_⟩
-  · have := RatLe.body (F := F) (fun k => chanWord (w k)) c
-    simpa only [length_chanWord] using this
-  · refine ⟨univ.filter fun k => w k = v, by simp, ?_⟩
-    rw [hat_body, Finset.sum_filter]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [proj_chanWord]
-    by_cases h : w k = v
-    · simp [h]
-    · simp [h, Ne.symm h]
+  refine ⟨Series.body (fun k => chanWord (w k)) c, Rational.body _ c, fun v => ?_⟩
+  refine ⟨univ.filter fun k => w k = v, by simp, ?_⟩
+  rw [hat_body, Finset.sum_filter]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [proj_chanWord]
+  by_cases h : w k = v
+  · simp [h]
+  · simp [h, Ne.symm h]
 
 /-- Fixed words. -/
-theorem const (w : Z → List Γ) :
-    Runs (2 * ∑ z, (w z).length + 1) (fun (_ : Unit) => w) (fun _ => (1 : F)) := by
-  have := pick (F := F) (fun _ : Unit => w) (fun _ => 1)
-  simpa using this
+theorem const (w : Z → List Γ) : Runs (fun (_ : Unit) => w) (fun _ => (1 : F)) :=
+  pick _ _
 
 /-- A sequence of choices. -/
-theorem pi {k : ℕ} {n : Fin k → ℕ} {X : Fin k → Type*} {em : ∀ i, X i → Z → List Γ}
-    {wt : ∀ i, X i → F} (h : ∀ i, Runs (n i) (em i) (wt i)) :
-    Runs (∑ i, n i + 1) (fun (x : ∀ i, X i) z => (List.ofFn fun i => em i (x i) z).flatten)
+theorem pi {k : ℕ} {X : Fin k → Type*} {em : ∀ i, X i → Z → List Γ}
+    {wt : ∀ i, X i → F} (h : ∀ i, Runs (em i) (wt i)) :
+    Runs (fun (x : ∀ i, X i) z => (List.ofFn fun i => em i (x i) z).flatten)
       (fun x => ∏ i, wt i (x i)) := by
   induction k with
   | zero =>
-    refine Runs.mono (n := 1) ((one (F := F) (Z := Z) (Γ := Γ)).congr
-      ⟨fun _ => (), fun _ i => i.elim0, fun x => ?_, fun _ => rfl⟩ ?_ ?_) (by omega)
+    refine (one (F := F) (Z := Z) (Γ := Γ)).congr
+      ⟨fun _ => (), fun _ i => i.elim0, fun x => ?_, fun _ => rfl⟩ ?_ ?_
     · funext i; exact i.elim0
     · intro y z; simp
     · intro y; simp
   | succ k ih =>
-    have h1 := (h 0).mul (ih (n := fun i => n i.succ) (X := fun i => X i.succ) (em := fun i => em i.succ)
+    have h1 := (h 0).mul (ih (X := fun i => X i.succ) (em := fun i => em i.succ)
       (wt := fun i => wt i.succ) fun i => h i.succ)
-    refine (h1.congr (Fin.consEquiv X).symm ?_ ?_).mono ?_
+    refine h1.congr (Fin.consEquiv X).symm ?_ ?_
     · intro y z
       simp [Fin.consEquiv, List.ofFn_succ, Fin.tail]
     · intro y
       simp [Fin.consEquiv, Fin.prod_univ_succ, Fin.tail]
-    · rw [Fin.sum_univ_succ]; omega
 
 end Runs
 
