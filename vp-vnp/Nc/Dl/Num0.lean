@@ -21,7 +21,6 @@ structure CutNums (v K τ s k T ℓ ub lh X Lc m c ιb bd ev mm : ℕ) : Prop wh
   m_le : m ≤ v
   k_pos : 2 ≤ k
   kK : k ≤ K
-  vK : v ^ 300 ≤ K
   KT : K * T ≤ τ * m
   ℓeq : ℓ = s / K + 1
   ub_pos : 1 ≤ ub

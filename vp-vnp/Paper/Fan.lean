@@ -36,18 +36,10 @@ theorem dist_chain_le (hw : IsPrice K w) (p : ℕ → Y) {c : ℝ} {M : ℕ} (h 
     | succ l ih =>
       intro hl
       have h1 := hw.triangle (p i) (p (i + l)) (p (i + l + 1))
-      have h2 := h (i + l) (by omega)
-      have h3 := ih (by omega)
-      rw [← add_assoc]
-      push_cast
-      linarith
+      grind
   rcases le_total i i' with hii | hii
   · obtain ⟨l, rfl⟩ := Nat.exists_eq_add_of_le hii
-    have : |(i : ℝ) - (i + l : ℕ)| = l := by
-      push_cast
-      rw [sub_add_cancel_left, abs_neg, abs_of_nonneg (Nat.cast_nonneg l)]
-    rw [this]
-    exact key i l hi'
+    grind
   · obtain ⟨l, rfl⟩ := Nat.exists_eq_add_of_le hii
     have : |((i' + l : ℕ) : ℝ) - i'| = l := by
       push_cast
@@ -351,10 +343,7 @@ theorem lipschitz (F : IsFan K w x m z D T n d) (hT : 0 < T) (hn : 0 < n) (b : B
     rw [sub_add_cancel_left, abs_neg]
   have h8 : |((P.1 + P.2 + n : ℤ) : ℝ) - ((P + h).1 + (P + h).2 + n : ℤ)| ≤ |(h.1 : ℝ)| + |(h.2 : ℝ)| := by
     rw [Prod.fst_add, Prod.snd_add]
-    push_cast
-    have : ((P.1 : ℝ) + P.2 + n) - (P.1 + h.1 + (P.2 + h.2) + n) = -((h.1 : ℝ) + h.2) := by ring
-    rw [this, abs_neg]
-    exact abs_add_le _ _
+    grind
   rw [h7] at h5
   have h9 : (n : ℝ) ^ 2 * d (fanPt T n (b, P)) (G b (cl (n ^ 2) (P + h).1) (cl (n ^ 2 * T) (P.1 + P.2 + n))) ≤
       |(h.1 : ℝ)| * D := by
@@ -417,10 +406,7 @@ theorem step_iii (F : IsFan K w x m z D T n d) (hn : 0 < n) (b : Bool) (i k : �
   rw [cl_window h0 (by linarith), cl_window (by rw [e]; linarith) (by rw [e]; exact h1)] at h6
   rw [fanDist, fanLen, fanPt_mk, fanPt_mk]
   refine h6.trans (le_of_eq ?_)
-  push_cast
-  have : (i : ℝ) + k + n - (i + (k + 1) + n) = -1 := by ring
-  rw [this, abs_neg, abs_one]
-  ring
+  grind
 
 theorem fanLen_zero (F : IsFan K w x m z D T n d) (b : Bool) : fanLen d z n b 0 = w z (x b) := by
   rw [fanLen, cl_zero, F.z_γ_zero]
@@ -625,10 +611,7 @@ theorem thm_cn_i (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T
       nlinarith [mul_nonneg (show (0 : ℝ) ≤ T by positivity) (show (0 : ℝ) ≤ n by positivity)]
     have w1 := mul_le_mul_of_nonneg_right g4 (fan_w_nonneg hd z (x true))
     have w2 := mul_le_mul_of_nonneg_right g4 (fan_w_nonneg hd z (x false))
-    have e2 : 2 * (w z (x true) + w z (x false)) / T * (1 / (n : ℝ)) =
-        2 / T * (1 / n) * w z (x true) + 2 / T * (1 / n) * w z (x false) := by ring
-    rw [e2]
-    linarith)
+    grind)
   apply le_meanNorm
   intro S hS
   obtain ⟨h3, h4⟩ := mean_steps (F := fun n b i k => fanP d x T n b (i, k)) hX S
@@ -759,16 +742,7 @@ theorem thm_cn_iv_bound (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : �
     | zero => simp
     | succ S ih =>
       have h1 := fanL_step hd n b (i + S)
-      have e : (n : ℝ) ^ 2 * (fanL d z n b (i + (S + 1 : ℕ)) - fanL d z n b i) =
-          n ^ 2 * (fanL d z n b (i + S + 1) - fanL d z n b (i + S))
-            + n ^ 2 * (fanL d z n b (i + S) - fanL d z n b i) := by
-        push_cast
-        rw [← add_assoc]
-        ring
-      rw [e]
-      refine (abs_add_le _ _).trans ?_
-      push_cast
-      linarith
+      grind
   have e : (n : ℝ) ^ 2 * (fanL d z n b (i + S) ^ 2 - fanL d z n b i ^ 2) =
       (fanL d z n b (i + S) + fanL d z n b i) * (n ^ 2 * (fanL d z n b (i + S) - fanL d z n b i)) := by ring
   rw [e, abs_mul]

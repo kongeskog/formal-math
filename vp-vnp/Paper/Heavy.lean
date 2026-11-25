@@ -140,7 +140,7 @@ theorem below_kids (f : Fin P → ℕ) (p : Fin P) : T.below (T.kids f) p ≤ T.
 
 open Classical in
 /-- "As the sets below different nodes of one stage are disjoint, each stage has fewer than k heavy nodes." -/
-theorem _root_.Paper.prop_pieces_heavy_few (hk : 0 < k) (hM : 0 < M) (hY : 0 < Y) (hg : ∑ q, giv q ≤ M) (hu : ∑ q, u q ≤ Y)
+theorem _root_.Paper.prop_pieces_heavy_few (hk : 0 < k) (hg : ∑ q, giv q ≤ M) (hu : ∑ q, u q ≤ Y)
     {s : ℕ} (hs : s < T.depth) :
     (univ.filter fun p => T.stage p = s ∧ T.Heavy giv u M Y k p).card < k := by
   by_contra hcon
@@ -360,7 +360,7 @@ theorem piece_boundary (g : ℕ) : ∃ x, ∀ q, q ≠ T.root →
 
 open Classical in
 /-- "So there are at most kΛ pieces." -/
-theorem _root_.Paper.prop_pieces_count {b C : ℕ} (hk : 0 < k) (hM : 0 < M) (hY : 0 < Y) (hg : ∑ q, giv q ≤ M)
+theorem _root_.Paper.prop_pieces_count {b C : ℕ} (hk : 0 < k) (hg : ∑ q, giv q ≤ M)
     (hu : ∑ q, u q ≤ Y) (hb : ∀ p, p ≠ T.root → (univ.filter fun q => q ≠ T.root ∧ T.par q = p).card ≤ b)
     (hC : (univ.filter fun q => q ≠ T.root ∧ T.par q = T.root).card ≤ C) (p : Fin P) :
     T.piece giv u M Y k p < 1 + C + b * (T.depth * k) := by
@@ -390,7 +390,7 @@ theorem _root_.Paper.prop_pieces_count {b C : ℕ} (hk : 0 < k) (hM : 0 < M) (hY
     rw [Finset.sum_const, smul_eq_mul, Nat.mul_comm]
     refine Nat.mul_le_mul_left _ (card_biUnion_le.trans ?_)
     refine (Finset.sum_le_sum (g := fun _ => k) fun s hs =>
-      (prop_pieces_heavy_few hk hM hY hg hu (mem_range.1 hs)).le).trans (le_of_eq ?_)
+      (prop_pieces_heavy_few hk hg hu (mem_range.1 hs)).le).trans (le_of_eq ?_)
     simp
   refine lt_of_lt_of_le ?_ hall
   unfold piece rank

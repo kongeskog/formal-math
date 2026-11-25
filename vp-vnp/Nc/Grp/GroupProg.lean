@@ -242,16 +242,16 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
   -- the formulas
   set fBlock : Fm := lett (.cons .id (lett (.cons (.hd (.tl .id)) (.hd (.tl (.hd .id)))) Fs))
     (lett (.cons (.tl .id) (.cons (.hd (.tl (.tl (.hd .id)))) (.cons (.tl (.tl (.tl (.hd .id))))
-      (.tl (.tl (.hd (.hd .id))))))) Fp) with hBlock
+      (.tl (.tl (.hd (.hd .id))))))) Fp)
   set fInput : Fm := lett (.cons (Fi (.hd (.tl (.hd .id)))) (.cons (.hd (.tl (.tl .id))) (.cons (.tl (.tl (.tl .id)))
-      (.tl (.tl (.hd .id)))))) Fp with hInput
+      (.tl (.tl (.hd .id)))))) Fp
   set fBoth : Fm := .ite (eqF (getF (.hd (.tl (.hd .id))) (.tl (.tl (.tl .id)))) (getF (.tl (.tl (.hd .id)))
-      (.tl (.tl (.tl .id))))) (.tl (.tl (.tl .id))) .fail with hBoth
+      (.tl (.tl (.tl .id))))) (.tl (.tl (.tl .id))) .fail
   set fOne : Fm := .ite (eqF (getF (.hd (.tl (.hd .id))) (.tl (.tl (.tl .id)))) (.tl (.tl (.hd .id))))
-      (.tl (.tl (.tl .id))) .fail with hOne
+      (.tl (.tl (.tl .id))) .fail
   set fs : List Fm := fBlock :: fInput :: fBoth :: fOne :: Fk.map fun G =>
     lett (.cons (.hd (.tl (.tl .id))) (.cons (.tl (.tl (.tl .id))) (.tl (.hd .id)))) G with hfs
-  set sw : ℕ := (kinds.length + 5) * (kinds.length + 10) with hsw
+  set sw : ℕ := (kinds.length + 5) * (kinds.length + 10)
   refine ⟨.cons (.hd (.tl .id)) (.cons (.hd (.tl (.tl .id))) (switchF (.hd (.hd .id)) fs)),
     κs + κp * (κl + 2) + κi * 10 + κk + sw + 2000, fun T ub i t hi ht => ?_⟩
   set x : Tree := .cons i.tree (encG T ub t) with hx
@@ -297,7 +297,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     refine (e5.replace ?_).mono ?_
     · rw [insSem, dif_pos ⟨hq, hq'⟩]
     · simp only [insCost, bodyCost]
-      set N := flen B.flags + B.kR.length + putCost ub B.kR + putCost ub B.kC + 1 with hN
+      set N := flen B.flags + B.kR.length + putCost ub B.kR + putCost ub B.kC + 1
       have h1 : κp * (κl * T + flen B.flags + B.kR.length + putCost ub B.kR + putCost ub B.kC + 1) ≤
           κp * ((κl + 2) * (T + N)) := by
         refine Nat.mul_le_mul_left _ ?_
@@ -398,7 +398,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     refine (e5.replace ?_).mono ?_
     · rw [insSem, hz]
     · simp only [insCost]
-      set N := tt * (ub + 1) + putCost ub slots + putCost ub keys + 1 with hN
+      set N := tt * (ub + 1) + putCost ub slots + putCost ub keys + 1
       have h1 : (4 + j + 1) * (3 + (4 + j) + 1) ≤ sw * N := by
         have h2 : (4 + j + 1) * (3 + (4 + j) + 1) ≤ sw := Nat.mul_le_mul (by omega) (by omega)
         have h3 : 1 ≤ N := by omega

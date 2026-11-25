@@ -147,7 +147,7 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
   refine ⟨(dealProg C tab qn tg bT bub nl nub gt d1 GROUP.code cb b0 b1 i e hU0D hU1D).code,
     size_dealProg (tab := tab) (H := hH) (hd1 := hdts _) (hgt := fun g => hdts _) (hbT := hbT) (hbub := hbub) (hgp := hgp)
       (hmm := hmm) (hnl := hnll) (hnub := hnubl) (hc := hcX) .., ?_⟩
-  refine deal_cut C tab qn tg bT bub nl nub gt d1 GROUP.code cb b0 b1 i e hU0D hU1D hK hnl hnub hd1 hgt hU
+  refine deal_cut C tab qn tg bT bub nl nub gt d1 GROUP.code cb b0 b1 i e hU0D hU1D hK hd1 hgt hU
     hval ?_ ?_
   · intro z hz
     exact deal_does hK hnl hnub hnll hnubl hC.nm hC.dc hC.rc hLc hQ hrow hU0X hU1X hS (by omega) hId hSlAt hCnAt hR

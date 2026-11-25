@@ -255,7 +255,7 @@ theorem yhat_pos : 0 < yhat N M C := by
 
 theorem pieceFin_val (p : Fin (K + K + TT.A')) : (pieceFin TT k n o p : ℕ) = pieceAt TT k n o p := by
   have h : pieceAt TT k n o p < pieceNum TT k := lt_min
-    (prop_pieces_count hk (by omega) (yhat_pos hn hg hK hM hk) ((sum_given _).le.trans hM) (TT.up_total n hn o hg)
+    (prop_pieces_count hk ((sum_given _).le.trans hM) (TT.up_total n hn o hg)
       (fun p hp => TT.children_le n o p hp) (TT.root_children_le n o) p)
     (Staged.piece_lt p)
   rw [pieceFin, dif_pos h]

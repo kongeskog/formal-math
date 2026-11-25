@@ -304,7 +304,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   have hιK : ιb * k ≤ Cp * K := hιb ▸ Nat.div_mul_le_self _ _
   have hnums : Nc.Dl.CutNums v K τ s k T ℓ pc.ub pc.load X Lc m pc.c ιb bd ev pc.num :=
     { v_pos := hv1, m_ge := by omega, m_le := hmv, k_pos := hk, kK := hkv.trans ((vpow (by norm_num)).trans hvK),
-      vK := hvK, KT := hKT, ℓeq := hℓ, ub_pos := pc.ub_pos, ub_le := pc.unit_le.1.trans (Nat.le_succ T),
+      KT := hKT, ℓeq := hℓ, ub_pos := pc.ub_pos, ub_le := pc.unit_le.1.trans (Nat.le_succ T),
       lhub := by
         refine pc.unit_le.2.trans ?_
         rw [hL, Nat.mul_comm]

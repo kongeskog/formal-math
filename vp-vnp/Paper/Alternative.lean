@@ -137,7 +137,6 @@ theorem frames_pos (μ : ℕ) : 0 < frames μ := by
 theorem MD_eq_meanSq (w : Mt μ → Mt μ → ℝ) (S : Finset (Fin μ)) : MD w (dg S) = frames μ * meanSq w S.card := by
   have hn : (0 : ℝ) < ((univ : Finset (Mt μ)).filter fun W => W.rank = S.card).card := by
     exact_mod_cast card_pos.2 ⟨dg S, mem_filter.2 ⟨mem_univ _, rank_dg S⟩⟩
-  have hm : (0 : ℝ) < Fintype.card (Mt μ) := by exact_mod_cast Fintype.card_pos
   rw [frames, meanSq, ← mul_div_assoc, eq_div_iff (by positivity), MD, sum_mul, mul_sum]
   refine sum_congr rfl fun a _ => ?_
   have h := card_mul_DM (fun M => w a (a + M)) S
@@ -287,7 +286,7 @@ theorem thm_alt_extremal (hK : ¬ Contracting K) (hμ : 2 ≤ μ) : ∃ w : Mt �
       have : (0 : ℝ) ≤ n := Nat.cast_nonneg n
       linarith
     have hn0 : 0 < 1 / ((n : ℝ) + 1) := by positivity
-    set t : ℝ := (μ : ℝ) - 1 / ((n : ℝ) + 1) with ht
+    set t : ℝ := (μ : ℝ) - 1 / ((n : ℝ) + 1)
     have ht0 : 0 ≤ t := by linarith
     obtain ⟨w, hw, hlt⟩ : ∃ w : Mt μ → Mt μ → ℝ, IsPrice K w ∧ √t * distAtRank w 1 < distAtRank w μ := by
       by_contra hcon
@@ -654,7 +653,6 @@ theorem thm_alt_rank_one (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W : M
     rw [thm_alt_one_value hx hμ b hV hW, thm_alt_base_point hx hμ b a hW]
   have hn : (0 : ℝ) < ((univ : Finset (Mt μ)).filter fun W => W.rank = 1).card := by
     exact_mod_cast card_pos.2 ⟨W, mem_filter.2 ⟨mem_univ _, hW⟩⟩
-  have hm : (0 : ℝ) < Fintype.card (Mt μ) := by exact_mod_cast Fintype.card_pos
   have h1 := hx.one
   have h5 : ∑ b : Mt μ, ∑ V ∈ (univ : Finset (Mt μ)).filter (fun V => V.rank = 1), w b (b + V) ^ 2 =
       ∑ _b : Mt μ, ∑ _V ∈ (univ : Finset (Mt μ)).filter (fun V => V.rank = 1), nn w a W :=
@@ -711,7 +709,7 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
     (hF : ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k, dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2) :
     ∃ F' : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ (k + 1), ∀ y ∈ cubePts μ (k + 1),
       dist (F' x) (F' y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
-  set c : Fin μ := ⟨k, hk⟩ with hc
+  set c : Fin μ := ⟨k, hk⟩
   -- the point at z_c on the edge in the new direction, by Lemma lem:toolkit (a)
   have hγ : ∀ z : Fin μ → ℝ, ∃ γ : Y, 0 ≤ z c ∧ z c ≤ 1 →
       dist (F (Function.update z c 0)) γ =
@@ -805,10 +803,7 @@ end Cube
 theorem dg_sub_dg (S T : Finset (Fin μ)) : (dg S - dg T : Mt μ) = dg (symmDiff S T) := by
   ext i j
   simp only [dg, Matrix.sub_apply, Matrix.diagonal_apply, mem_symmDiff]
-  by_cases hij : i = j
-  · subst hij
-    by_cases h3 : i ∈ S <;> by_cases h4 : i ∈ T <;> simp [h3, h4]
-  · simp [hij]
+  grind
 
 /-- "The diagonal 0/1 matrices now form the vertices of a Euclidean cube [0,1]^μ in a price space." -/
 theorem thm_alt_vertices (hrk : ∀ a a' : Mt μ, w a a' ^ 2 = (a - a').rank) (S T : Finset (Fin μ)) :
@@ -826,8 +821,7 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
   obtain ⟨R, hR0, hR⟩ : ∃ R : ℝ, 0 < R ∧ ∀ v i, |E v i| ≤ R := by
     cases nonempty_fintype V
     refine ⟨1 + ∑ v, ∑ i, |E v i|, ?_, fun v i => ?_⟩
-    · have : 0 ≤ ∑ v, ∑ i, |E v i| := sum_nonneg fun _ _ => sum_nonneg fun _ _ => abs_nonneg _
-      linarith
+    · positivity
     · have h1 := single_le_sum (f := fun i => |E v i|) (fun _ _ => abs_nonneg _) (mem_univ i)
       have h2 := single_le_sum (f := fun v => ∑ i, |E v i|)
         (fun _ _ => sum_nonneg fun _ _ => abs_nonneg _) (mem_univ v)
@@ -874,11 +868,8 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
     rw [h3]
     field_simp
   have h1 := (hY.comp fun v => F (g v)).smul (c := 2 * R) (by positivity)
-  have e : (fun a b => dist (E a) (E b)) = fun a b => 2 * R * dist (F (g a)) (F (g b)) := by
-    funext u v
-    exact hdist u v
-  rw [e]
-  exact h1
+  -- `grind` rewrites the distance `dist (E a) (E b)` by `hdist` and closes with `h1`
+  grind
 
 /-- **Paper: Theorem thm:alt.** "One of the two cases occurs." -/
 theorem thm_alt (K : Type) [Field K] : Flat K ∨ Contracting K := by
