@@ -233,14 +233,14 @@ theorem After.weaken {H H' : Set (Inp → ℕ)} (ha : After nx ox lhat H) (hH : 
   load τ := hH (ha.load τ)
 
 theorem after_stage (hS : SY inp Y p c H) (hbs : Base nx ox H) :
-    ∃ H', SY inp Y p (c + 11 + 8 * Y) H' ∧ H ⊆ H' ∧ After nx ox lhat H' := by
+    ∃ H', SY inp Y p (c + 11 + 8 * Y) H' ∧ After nx ox lhat H' := by
   obtain ⟨H1, s1, u1, f1⟩ := stat_stage hA hB hR hS hbs (lhat := lhat)
   obtain ⟨H2, s2, u2, f2⟩ := num_stage hA hB hR hb s1 f1 (tend J m)
   obtain ⟨H3, s3, u3, f3, g3⟩ := ld_stage hA hB hR s2 (f1.weaken u2)
     (Nf := fun x => num R ch FL lhat (nx x) (ox x)) f2
   obtain ⟨H4, s4, u4, f4⟩ := pick_stage (L := fun x => load R ch FL lhat (nx x) (ox x)) hA hB hb
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 g3
-  refine ⟨H4, s4.le hA ?_, u1.trans (u2.trans (u3.trans u4)), (f1.weaken (u2.trans (u3.trans u4))), f4,
+  refine ⟨H4, s4.le hA ?_, (f1.weaken (u2.trans (u3.trans u4))), f4,
     fun mv => u4 (u3 (f2 mv)), fun ν => u4 (f3 ν), fun τ => u4 (g3 τ)⟩
   have := hB.t
   omega

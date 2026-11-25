@@ -87,7 +87,7 @@ theorem gets_parts (hnl : KT.val nl = ℓ) (z : Tree) :
 theorem mem_execAll (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] {pt : Fin K → Tree} {σ : List Bool → Tree}
     (hσ : σ ∈ execAll ub (allSteps C tab qn hU0 hU1 i e) (byPath C.nm (S0 pt))) :
     ∃ (q : Fin (K + 1) → Q) (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : NN K U0) (o : M.N → Fin U1)
-      (b : G.Uid (K + K) U0 M.N U1 → UW ub) (st : NmT S M U0 U1 pS → Tree), (q 0 = i ∧ q (Fin.last K) = e) ∧ ValidRows ρ ∧
+      (b : G.Uid (K + K) U0 M.N U1 → UW ub) (st : NmT S M U0 U1 pS → Tree), ValidRows ρ ∧
       tab.valid n ∧ (∀ x, P.good n o x) ∧
       (∀ id, b id ≠ none ↔ id ∈ cutUnits (G.hold0 M.np) (G.hold1 M.np) (grp n o) (P.cur n o E)) ∧
       Final C tab qn pt q ρ n o b st ∧ σ = byPath C.nm st := by
@@ -99,7 +99,7 @@ theorem mem_execAll (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] {pt : Fin K �
       (b : G.Uid (K + K) U0 M.N U1 → UW ub), (q 0 = i ∧ q (Fin.last K) = e) → ValidRows ρ → tab.valid n →
       (∀ x, P.good n o x) → (∀ id, b id ≠ none ↔ id ∈ cutUnits (G.hold0 M.np) (G.hold1 M.np) (grp n o) (P.cur n o E)) →
       byPath C.nm (st q ρ n o b) ≠ σ := fun q ρ n o b h1 h2 h3 h4 h5 h6 =>
-    hno ⟨q, ρ, n, o, b, st q ρ n o b, h1, h2, h3, h4, h5, hf q ρ n o b, h6.symm⟩
+    hno ⟨q, ρ, n, o, b, st q ρ n o b, h2, h3, h4, h5, hf q ρ n o b, h6.symm⟩
   have hR : (∑ q : Fin (K + 1) → Q, if q 0 = i ∧ q (Fin.last K) = e then
         ∑ ρ : Option S → Fin (K + K) → RowData (K + K), if ValidRows ρ then
           ∑ n : NN K U0, if tab.valid n then ∑ o : M.N → Fin U1, if ∀ x, P.good n o x then
@@ -141,7 +141,7 @@ variable {mu : Letter S Unit Γ → Matrix Q Q A} {τ s τ' s' t : ℕ}
 
 open Classical in
 /-- **One cut.** -/
-theorem deal_cut (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl = ℓ) (hnub : KT.val nub = ub)
+theorem deal_cut (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)]
     (hd1 : ∀ d : Fin D, C.dt d = d1 ↔ d.1 = 1) (hgt : ∀ (d : Fin D) (g : Fin mm), C.dt d = gt g ↔ d.1 = g.1)
     -- the automaton
     (hU : ∀ z, z.size ≤ s → Plain θ τ z → runVal mu i e (K * T) (fun _ => wordG b0 b1 z) = pv θ z)
@@ -196,7 +196,7 @@ theorem deal_cut (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl 
   have hpieces : ∀ q ∈ Qs, ∀ y ∈ q.2.toList, y.size ≤ s' ∧ Plain θ τ' y := by
     intro q hq y hy
     obtain ⟨σ, hσ, hq2⟩ := hmem q hq
-    obtain ⟨q', ρ, n, o, b, st, h1, h2, h3, h4, h5, h6, rfl⟩ := mem_execAll C tab qn i e hU0 hU1 hK hσ
+    obtain ⟨q', ρ, n, o, b, st, h2, h3, h4, h5, h6, rfl⟩ := mem_execAll C tab qn i e hU0 hU1 hK hσ
     rw [hq2, toList_listT, List.map_map, List.mem_map] at hy
     obtain ⟨g, -, rfl⟩ := hy
     simp only [Function.comp_apply]
