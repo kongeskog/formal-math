@@ -17,10 +17,16 @@
       "at": "2026-11-25T06:53:19Z"
     }
   },
-  "comments_seen_until": "2026-11-25T07:25:37Z",
-  "dispatched": {},
-  "lines": {},
-  "line_bases": {},
+  "comments_seen_until": "2026-11-25T07:27:01Z",
+  "dispatched": {
+    "137@51d28570fe4a653fe9b9924e4afa5f252265206f@e7d923a67c388cc230ecb03a57244a54040b98d7@": "2026-11-25T07:27:13.741646192Z"
+  },
+  "lines": {
+    "137@51d28570fe4a653fe9b9924e4afa5f252265206f": []
+  },
+  "line_bases": {
+    "137@51d28570fe4a653fe9b9924e4afa5f252265206f": "07ecdfb205163050f01e76fa09ff02a89107274e"
+  },
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],
