@@ -66,10 +66,8 @@ theorem startTab_run (p : Fin (K + K + TT.A')) (y : Uid (K + K) N TT.sys.N TT.U1
     simp only [yOf]
     split_ifs with h
     · obtain ⟨v, hv⟩ := Option.ne_none_iff_exists'.1 (hc ⟨⟨p', q', ⟨k.1, h.1⟩⟩, h.2⟩)
-      have hk : Fin.castLE (Nat.le_of_lt_succ (n p' q').2) (⟨k.1, h.1⟩ : Fin (n p' q').1) = k := Fin.ext rfl
-      simp only [hk] at hv ⊢
-      rw [hv]
-      rfl
+      -- `hv`, after `Fin.castLE … ⟨k.1, h.1⟩ = k`
+      grind
     · refine (hy p' q' k fun h' => h ⟨h'.1, ?_⟩).symm
       rcases h'.2 with e | e
       · exact Or.inl (Fin.castAdd_injective _ _ e).symm
@@ -313,11 +311,8 @@ theorem piece_cut (g : Fin (pieceNum TT k)) :
     have hne : ¬ (pieceAt TT k n o q = g.val ↔ pieceAt TT k n o (TT.par n o q) = g.val) := by
       rw [← pieceFin_iff hn hg hK hM hk, ← pieceFin_iff hn hg hK hM hk]
       unfold Nc.Plus.OneIn at hone
-      rcases Sym2.eq_iff.1 he with ⟨e1, e2⟩ | ⟨e1, e2⟩
-      · rw [e1, e2] at hone
-        tauto
-      · rw [e1, e2] at hone
-        tauto
+      -- the two orientations of `he` (`Sym2.eq_iff`), each against `hone`
+      grind
     have hxm : x ∈ s(hold0 TT.sys.np id, hold1 TT.sys.np id) := by
       rw [he, Sym2.mem_iff]
       exact (hx q hq hne).imp Eq.symm Eq.symm
@@ -342,10 +337,8 @@ theorem piece_all (hk' : k ≤ 4 * M) (g : Fin (pieceNum TT k)) :
     rw [← Finset.sum_fiberwise_of_maps_to (g := TT.sys.rp) (t := S)
       (fun r hr => mem_filter.2 ⟨mem_univ _, (mem_filter.1 hr).2⟩)]
     refine Finset.sum_congr rfl fun p hp => Finset.sum_congr ?_ fun _ _ => rfl
-    rw [Finset.filter_filter]
-    refine Finset.filter_congr fun r _ => ⟨fun e => e.2, fun e => ⟨?_, e⟩⟩
-    rw [e]
-    exact (mem_filter.1 hp).2
+    -- the filters agree: `filter_filter`, and the condition of `hp`
+    grind
   rw [h1]
   refine (Nat.mul_le_mul_right _ (Finset.sum_le_sum fun p _ => TT.copies_le n hn o hg p)).trans ?_
   rw [Finset.sum_add_distrib, Finset.sum_add_distrib, add_mul, add_mul]
@@ -456,9 +449,8 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
     exact s0
   have hlt : ∀ f ∈ H₀, ∀ x, f x ≤ Y := fun f hf x => by
     obtain ⟨fn, -, h2⟩ := hS
-    obtain ⟨i, -, e⟩ := h2 f hf
-    rw [← e x]
-    exact (fn i x).2.le.trans hDY
+    -- `h2` gives `f = fn i`, bounded by `hDY`
+    grind
   obtain ⟨H1, s1, u1, f1⟩ := Staged.piece_prog (T := treeAt TT)
     (fun _ => rfl) (fun _ => rfl) (fun _ => rfl) hA hP (giv := given K TT.A') (u := fun x => TT.up x.1 x.2)
     (Yh := yhat N M C) hS0 (fun q q' => Or.inl (p1 q q')) (fun q => Or.inl (p5 q)) (given_le _)

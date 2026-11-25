@@ -52,10 +52,8 @@ theorem sum_sep (A : Finset (Fin k)) :
   rw [Finset.sum_congr rfl fun e _ => h2 e, h1]
   have h3 : ∀ a b : Fin k, (if a = b then (0 : ℝ) else if a ∈ A ∧ b ∉ A then 1 else 0) =
       if a ∈ A then (if b ∈ A then 0 else 1) else 0 := by
-    intro a b
-    by_cases hab : a = b
-    · subst hab; by_cases ha : a ∈ A <;> simp [ha]
-    · by_cases ha : a ∈ A <;> by_cases hb : b ∈ A <;> simp [hab, ha, hb]
+    -- case split on `a = b`, `a ∈ A`, `b ∈ A`
+    grind
   simp only [h3]
   have h4 : ∀ a : Fin k, (∑ b : Fin k, if a ∈ A then (if b ∈ A then (0 : ℝ) else 1) else 0) =
       if a ∈ A then (k : ℝ) - A.card else 0 := by

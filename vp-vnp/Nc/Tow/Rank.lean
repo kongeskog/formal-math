@@ -24,13 +24,8 @@ theorem rk_congr {F F' : Finset U} {u : U} (h : ∀ v, key v = key u → (v ∈ 
     rk idx key F u = rk idx key F' u := by
   unfold rk
   congr 1
-  ext v
-  rw [mem_filter, mem_filter]
-  constructor
-  · rintro ⟨h1, h2, h3⟩
-    exact ⟨(h v h2).1 h1, h2, h3⟩
-  · rintro ⟨h1, h2, h3⟩
-    exact ⟨(h v h2).2 h1, h2, h3⟩
+  -- the two filters agree by `h`, since a member has key `key u`
+  grind
 
 theorem rk_lt {F : Finset U} {u : U} (hu : u ∈ F) : rk idx key F u < (F.filter fun v => key v = key u).card := by
   refine card_lt_card ?_
@@ -87,8 +82,7 @@ theorem exists_rk (hidx : Function.Injective idx) (F : Finset U) (k : κ) {w : �
     · rw [card_range, card_image_of_injOn hinj]
   have : w ∈ (F.filter fun u => key u = k).image (rk idx key F) := by
     rw [himg, mem_range]; exact hw
-  obtain ⟨u, hu, rfl⟩ := mem_image.1 this
-  obtain ⟨h1, h2⟩ := mem_filter.1 hu
-  exact ⟨u, h1, h2, rfl⟩
+  -- `this` gives `u` in the filter with rank `w`
+  grind
 
 end Nc.Tow

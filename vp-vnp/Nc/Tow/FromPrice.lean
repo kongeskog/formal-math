@@ -32,15 +32,13 @@ theorem sum_off {Fl : Type} [Fintype Fl] [DecidableEq Fl] (f : Sym2 Fl → ℝ) 
     · subst hab
       rw [if_pos (Sym2.mk_isDiag_iff.2 rfl), mul_zero]
       refine Finset.sum_eq_zero fun x hx => ?_
-      have := (Finset.mem_filter.1 hx).2
-      rw [Sym2.eq_iff] at this
-      rcases this with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> rw [if_pos (h1.trans h2.symm)]
+      -- by `Sym2.eq_iff`, `x = (a, a)`, so the `if` is true and the term is 0
+      grind
     · rw [if_neg (fun h => hab (Sym2.mk_isDiag_iff.1 h))]
       have hf : (Finset.univ.filter fun x : Fl × Fl => s(x.1, x.2) = s(a, b)) = {(a, b), (b, a)} := by
         ext ⟨x, y⟩
         simp
-      rw [hf, Finset.sum_pair (fun h => hab (Prod.ext_iff.1 h).1), if_neg hab, if_neg (Ne.symm hab),
-        Sym2.eq_swap (a := b)]
-      ring
+      -- rewrite by `hf`, sum over the pair `(a, b)`, `(b, a)`, both `if`s false, `s(a, b) = s(b, a)`
+      grind
 
 end Nc.Tow

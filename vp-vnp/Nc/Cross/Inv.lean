@@ -54,9 +54,8 @@ theorem prod_scal (x : R) (fa : Fin μ → ℕ) (fb : Fin ν → ℕ) (fc : Fin 
       x ^ ((∑ i, (2 * fa i + 1)) + (∑ i, (2 * fc i + 1)) + (∑ i, 2 * fd i) + ∑ i, (2 * fb i + 2)) := by
   simp only [scal, Fintype.prod_sum_type, Sum.elim_inl, Sum.elim_inr, Finset.prod_mul_distrib,
     Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← pow_mul, Finset.prod_pow_eq_pow_sum]
-  have e : ∀ i, 2 * (fb i + 1) = 2 * fb i + 2 := fun i => by ring
-  simp only [e, pow_add]
-  ring
+  -- `2 * (fb i + 1) = 2 * fb i + 2` in the exponent, then `pow_add` and ring normalisation
+  grind
 
 theorem prod_scal' (x : R) :
     ∏ i, (scal' x : (Fin μ ⊕ Fin ν) ⊕ (Fin μ ⊕ Fin ν) → R) i = (1 - x ^ 2) ^ ν := by

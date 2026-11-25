@@ -43,20 +43,8 @@ theorem tU_le (b T L : ℕ) : tU b T L ≤ (50 + b) * ((T + 1) * (L + 1) ^ 2) :=
   have hl : 1 ≤ L + 1 := by omega
   have ht : 1 ≤ T + 1 := by omega
   unfold tU
-  generalize T + 1 = t at *
-  generalize L + 1 = l at *
-  calc 5 * (t * l) + t + t * l + T * l + T * (L + 4) +
-        ((L + 2) * ((2 * T + 1) * (L + 4) + 1) + (l * ((2 * T + 1) * (L + 4)) + b * l) + 2 * ((2 * T + 1) * (L + 3)))
-      ≤ 5 * (t * l) + t + t * l + t * l + t * (4 * l) +
-        (2 * l * (2 * t * (4 * l) + 1) + (l * (2 * t * (4 * l)) + b * l) + 2 * (2 * t * (3 * l))) := by gcongr
-    _ = 24 * (t * l ^ 2) + 23 * (t * l) + t + 2 * l + b * l := by ring
-    _ ≤ 24 * (t * l ^ 2) + 23 * (t * l ^ 2) + t * l ^ 2 + 2 * (t * l ^ 2) + b * (t * l ^ 2) := by
-        have a1 : l ≤ l ^ 2 := by nlinarith
-        have a2 : t * l ≤ t * l ^ 2 := Nat.mul_le_mul_left _ a1
-        have a3 : t ≤ t * l ^ 2 := by nlinarith
-        have a4 : l ≤ t * l ^ 2 := by nlinarith
-        gcongr
-    _ = (50 + b) * (t * l ^ 2) := by ring
+  -- from `h3`, `h4`, `h5`, `hl`, `ht`: every term is at most a multiple of `(T + 1) * (L + 1) ^ 2`
+  grind
 
 theorem size_le_lg (n : ℕ) : Nat.size n ≤ lg n := by
   rw [Nat.size_le, lg]
