@@ -7,10 +7,9 @@ import Nc.Tow.Relay
 import Nc.Price.Norm
 
 /-!
-# The laws at the vertices of a tower, from prices
+# Pairs of chambers
 
-`VLaws`: the laws for one local structure (chambers Fl, near pairs Nr), the same for all towers. They exist by
-Paper.thm_laws, see Paper.exists_laws.
+Two facts about unordered pairs, used to build the laws at the vertices of a tower (`VLaws`) from prices.
 -/
 
 set_option linter.unusedSectionVars false
@@ -18,43 +17,6 @@ set_option linter.unusedSectionVars false
 namespace Nc.Tow
 
 open Finset Nc.G Nc.Price
-
-/-- The norm of loads on pairs of chambers at a vertex. -/
-noncomputable def vN2 {Fl : Type} [Fintype Fl] [DecidableEq Fl] (b : ℕ) (n : Sym2 Fl → ℕ) : ℝ :=
-  ((b : ℝ) * (b - 1) / 2) * ∑ q : Sym2 Fl, if q.IsDiag then 0 else (n q : ℝ) ^ 2
-
-/-- The laws for one local structure: chambers `Fl`, near pairs `Nr`. -/
-structure VLaws (F : Type) [CommRing F] {Fl Nr : Type} [Fintype Fl] [DecidableEq Fl] [Fintype Nr]
-    [DecidableEq Nr] (cN dN : Nr → Fl) (r b : ℕ) where
-  /-- kinds of laws -/
-  Di : Type
-  [fD : Fintype Di]
-  [dD : DecidableEq Di]
-  /-- the laws -/
-  L : Di → Law F
-  /-- roles are the chambers -/
-  ro : ∀ d, (L d).Ro ≃ Fl
-  /-- channels are the near pairs -/
-  cn : ∀ d, (L d).Cn ≃ Nr
-  ends : ∀ d ν, s(ro d ((L d).c ν), ro d ((L d).d ν)) = s(cN (cn d ν), dN (cn d ν))
-  lam_pos : ∀ d, 1 ≤ (L d).lam
-  nonempty : ∀ d, Nonempty (L d).I
-  /-- the scale -/
-  a₁ : ℕ
-  a₁_pos : 0 < a₁
-  /-- the constant of the contraction -/
-  C₁ : ℝ
-  C₁_nonneg : 0 ≤ C₁
-  /-- its integer form -/
-  G₁ : ℕ
-  G₁_le : (G₁ : ℝ) ≤ 2 * C₁ * (a₁ : ℝ) ^ 2
-  /-- every load is below one of finitely many -/
-  L1 : ∀ (n : Sym2 Fl → ℕ) (t : ℕ), √(vN2 b n) ≤ (a₁ : ℝ) * t → ∃ d, ∀ q : Sym2 Fl, ¬ q.IsDiag →
-    n q ≤ (univ.filter fun e : (L d).Sl => s(ro d ((L d).a e), ro d ((L d).b e)) = q).card * t
-  /-- the strings are short -/
-  L2 : ∀ d i, r * b * ∑ ν, ((L d).lam + (L d).len i ν) ^ 2 ≤ G₁
-
-attribute [instance] VLaws.fD VLaws.dD
 
 theorem out_mk {Fl : Type} (q : Sym2 Fl) : s(q.out.1, q.out.2) = q := Quot.out_eq q
 

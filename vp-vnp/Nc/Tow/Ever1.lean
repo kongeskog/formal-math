@@ -16,7 +16,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r}
+variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J}
 
 /-- Sums over relays. -/
 theorem sum_RM {M : Type*} [AddCommMonoid M] (g : RM T m AA → M) : ∑ x, g x =
@@ -154,15 +154,15 @@ theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn 
   · exact Nat.zero_le _
   · exact le_rfl
 
-theorem nR_mid (hr : 0 < r) (hb : 0 < b) (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
+theorem nR_mid (hb : 0 < b) (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
     if T.ty e = imin hh (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
     refine h2.trans ((num_mid0 j e hx0).1.trans (le_of_eq ?_))
     exact lev_castSucc j e
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
     refine h2.trans (le_of_eq ?_)
     refine (num_mid0 j e hx0).2 fun hm => h1 ?_
     exact (isMin_iff hh _ j.castSucc _).1 hm

@@ -17,7 +17,7 @@ namespace Nc.Tow
 open Finset
 
 /-- A tower of coverings, `J` steps, with `h` types. -/
-structure Tower (h b D J r : ℕ) where
+structure Tower (h b D J : ℕ) where
   /-- chambers -/
   X : ℕ → Type
   /-- typed edges -/
@@ -45,8 +45,8 @@ structure Tower (h b D J r : ℕ) where
   e_ne : ∀ {j} (e : Ed j), e0 e ≠ e1 e
   /-- the type of an edge -/
   ty : ∀ {j}, Ed j → Fin h
-  card_ed : ∀ j ≤ J, ∀ i, 2 * (univ.filter fun e : Ed j => ty e = i).card = r * Fintype.card (X j)
-  deg : ∀ j ≤ J, ∀ (c : X j) i, (univ.filter fun e : Ed j => ty e = i ∧ (e0 e = c ∨ e1 e = c)).card ≤ r
+  card_ed : ∀ j ≤ J, ∀ i, 2 * (univ.filter fun e : Ed j => ty e = i).card = Fintype.card (X j)
+  deg : ∀ j ≤ J, ∀ (c : X j) i, (univ.filter fun e : Ed j => ty e = i ∧ (e0 e = c ∨ e1 e = c)).card ≤ 1
   /-- the vertex of a chamber -/
   vx : ∀ {j} i, X j → V j i
   /-- the place of a chamber at its vertex -/
@@ -85,7 +85,7 @@ attribute [instance] Tower.fX Tower.dX Tower.fE Tower.dE Tower.fV Tower.dV Tower
 
 namespace Tower
 
-variable {h b D J r : ℕ} (T : Tower h b D J r)
+variable {h b D J : ℕ} (T : Tower h b D J)
 
 /-- The other end of an edge. -/
 def step {j : ℕ} (e : T.Ed j) (c : T.X j) : T.X j := if T.e0 e = c then T.e1 e else T.e0 e
@@ -99,7 +99,7 @@ end Tower
 
 /-- Routes: a walk from every chamber of `X 0` to every other one, at most `m` steps, in which every edge is used at
 most `Uu` times in all. -/
-structure Routes {h b D J r : ℕ} (T : Tower h b D J r) (m Uu : ℕ) where
+structure Routes {h b D J : ℕ} (T : Tower h b D J) (m Uu : ℕ) where
   /-- the route -/
   rt : T.X 0 → T.X 0 → List (T.Ed 0)
   walk : ∀ c c', T.Walk c (rt c c') c'

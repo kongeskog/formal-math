@@ -433,7 +433,7 @@ theorem thm_laws {K : Type} [Field K] (hK : Contracting K) :
 /-- What the sections on towers and cuts take from Theorem thm:laws. -/
 theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
     ∃ (h : ℕ) (_ : NeZero h), 3 ≤ h ∧ ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A)
-      (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)), 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4 := by
+      (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)), 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4 := by
   classical
   obtain ⟨u, C₀, ⟨h, hdvd, h2u, h3, hgain⟩, hlaws⟩ := thm_laws hK
   have hne : NeZero h := ⟨by omega⟩
