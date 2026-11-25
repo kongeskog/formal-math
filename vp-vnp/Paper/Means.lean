@@ -318,7 +318,7 @@ f² + f′² ≤ ½(f² + f′²) + N(a)² + N(b)² + O(1/R)", where M = R². He
 subtracted, and the O(1/R) becomes 36(N(a) + N(b))²/R. -/
 theorem lem_means_average (hN : Cat.Len N) (hh : Cat.Homog N) (a b : ℤ × ℤ) {R : ℕ} (hR : 0 < R) :
     N (a + b) ^ 2 + N (a - b) ^ 2 ≤ 2 * (N a ^ 2 + N b ^ 2) + 36 * (N a + N b) ^ 2 * (1 / (R : ℝ)) := by
-  set κ := N a + N b with hκ
+  set κ := N a + N b
   have hc : N (a + b) ≤ κ := hN.add a b
   have he : N (a - b) ≤ κ := hN.sub_le a b
   have ha : N a ≤ κ := by linarith [hN.nonneg b]

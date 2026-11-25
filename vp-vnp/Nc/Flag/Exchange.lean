@@ -149,18 +149,8 @@ theorem iSupIndep_two {B C : Submodule F2 (Fin m → F2)} : iSupIndep ![B, C] �
 
 theorem iSupIndep_three {B C D : Submodule F2 (Fin m → F2)} :
     iSupIndep ![B, C, D] ↔ Disjoint B (C ⊔ D) ∧ Disjoint C (B ⊔ D) ∧ Disjoint D (B ⊔ C) := by
-  have e0 : (⨆ (j : Fin 3) (_ : j ≠ 0), ![B, C, D] j) = C ⊔ D := by
-    simp
-  have e1 : (⨆ (j : Fin 3) (_ : j ≠ 1), ![B, C, D] j) = B ⊔ D := by
-    simp
-  have e2 : (⨆ (j : Fin 3) (_ : j ≠ 2), ![B, C, D] j) = B ⊔ C := by
-    simp
   rw [iSupIndep_def, Fin.forall_fin_succ, Fin.forall_fin_succ, Fin.forall_fin_succ]
-  constructor
-  · rintro ⟨h0, h1, h2, -⟩
-    exact ⟨e0 ▸ h0, e1 ▸ h1, e2 ▸ h2⟩
-  · rintro ⟨h0, h1, h2⟩
-    exact ⟨e0.symm ▸ h0, e1.symm ▸ h1, e2.symm ▸ h2, fun i => i.elim0⟩
+  simp
 
 theorem disjoint_span_F2 {u : Fin m → F2} (hu : u ≠ 0) : Disjoint A (span F2 {u}) ↔ u ∉ A := by
   rw [disjoint_def]

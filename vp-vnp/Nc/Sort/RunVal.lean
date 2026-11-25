@@ -65,7 +65,7 @@ theorem IsRuns.val_eq (h : IsRuns P em wt) (t : ℕ) (u : J → List Γ) (R : Fi
 
 theorem IsRuns.exists_mt (h : IsRuns P em wt) {u : J → List Γ} {W : S → List Γ} (hW : hat P (tup W u) ≠ 0) :
     ∃ x, Mt em u x ∧ (fun s => em x (.tp s true)) = W := by
-  obtain ⟨x, hx, -⟩ := h.exists_run hW
+  obtain ⟨x, hx⟩ := h.exists_run hW
   exact ⟨x, Mt.of_tup hx⟩
 
 theorem IsRuns.bdd (h : IsRuns P em wt) {u : J → List Γ} {t : ℕ}
