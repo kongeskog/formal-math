@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:30:08.358925612Z",
+  "updated_at": "2026-11-25T02:31:23.786395647Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -913,8 +913,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 24579,
-      "loc": 1472
+      "tokens": 23620,
+      "loc": 1423
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -938,8 +938,8 @@
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
-      "tokens": 10578,
-      "loc": 611
+      "tokens": 9930,
+      "loc": 564
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
@@ -947,34 +947,19 @@
       "loc": 521
     },
     {
-      "path": "vp-vnp/Paper/Flat.lean",
-      "tokens": 8875,
-      "loc": 490
-    },
-    {
-      "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 8566,
-      "loc": 523
-    },
-    {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
       "tokens": 8542,
       "loc": 641
     },
     {
-      "path": "vp-vnp/Paper/Gauges.lean",
-      "tokens": 8362,
-      "loc": 519
+      "path": "vp-vnp/Paper/Cuts.lean",
+      "tokens": 8096,
+      "loc": 493
     },
     {
       "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 8338,
-      "loc": 487
-    },
-    {
-      "path": "vp-vnp/Paper/Prices.lean",
-      "tokens": 7586,
-      "loc": 427
+      "tokens": 7829,
+      "loc": 468
     },
     {
       "path": "vp-vnp/Paper/Laws.lean",
@@ -987,6 +972,11 @@
       "loc": 475
     },
     {
+      "path": "vp-vnp/Paper/Gauges.lean",
+      "tokens": 7485,
+      "loc": 476
+    },
+    {
       "path": "vp-vnp/Paper/Crossing.lean",
       "tokens": 7310,
       "loc": 404
@@ -995,11 +985,6 @@
       "path": "vp-vnp/NS1/DSteps.lean",
       "tokens": 7194,
       "loc": 425
-    },
-    {
-      "path": "vp-vnp/Paper/Rate.lean",
-      "tokens": 7180,
-      "loc": 428
     },
     {
       "path": "vp-vnp/Paper/Means.lean",
@@ -1017,9 +1002,9 @@
       "loc": 399
     },
     {
-      "path": "vp-vnp/Paper/Toolkit.lean",
-      "tokens": 6944,
-      "loc": 393
+      "path": "vp-vnp/Paper/Prices.lean",
+      "tokens": 6921,
+      "loc": 401
     },
     {
       "path": "vp-vnp/Nc/G/Move.lean",
@@ -1030,6 +1015,16 @@
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
       "tokens": 6564,
       "loc": 398
+    },
+    {
+      "path": "vp-vnp/Paper/Toolkit.lean",
+      "tokens": 6389,
+      "loc": 368
+    },
+    {
+      "path": "vp-vnp/Paper/Rate.lean",
+      "tokens": 6335,
+      "loc": 383
     },
     {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
@@ -1060,6 +1055,11 @@
       "path": "vp-vnp/Nc/Dl/Num0.lean",
       "tokens": 5707,
       "loc": 327
+    },
+    {
+      "path": "vp-vnp/Nc/Tower/Inst.lean",
+      "tokens": 5690,
+      "loc": 348
     }
   ]
 }
