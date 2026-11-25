@@ -333,12 +333,11 @@ theorem gbit_ev (p : List Bool) (x : Tree) : Ev θ (gbit p) x
   simpa [Run.det, Run.seq, Run.tick, one, gbit] using this
 
 theorem gw_ev {pre : List Bool} {b L : ℕ} {c : R} (x : Tree) {n j : ℕ}
-    (h : ∀ i < j + n, κ (pre ++ KT.pw (ν (b + i))) = c ^ 2 ^ (b + i)
-        ∧ P (pre ++ KT.pw (ν (b + i))) ∧
-      (pre ++ KT.pw (ν (b + i))).length ≤ L) :
-    ∃ l, Ev θ (gw ν pre b j n) x l ∧ List.Forall₂ (fun r w => RelT κ P ((4 * L + 48)
-        * n + 4) r (ofBits w)
-      ((c ^ 2 ^ (b + j)) ^ KT.val w)) l (KT.words n) := by
+    (h : ∀ i < j + n, κ (pre ++ KT.pw (ν (b + i))) = c ^ 2 ^ (b + i) ∧
+      P (pre ++ KT.pw (ν (b + i))) ∧ (pre ++ KT.pw (ν (b + i))).length ≤ L) :
+    ∃ l, Ev θ (gw ν pre b j n) x l ∧
+      List.Forall₂ (fun r w => RelT κ P ((4 * L + 48) * n + 4) r (ofBits w)
+        ((c ^ 2 ^ (b + j)) ^ KT.val w)) l (KT.words n) := by
   induction n generalizing j with
   | zero => exact ⟨_, .quote _ x, .cons ⟨rfl, rfl, by simp [Run.det, KT.val, names],
       by simp [Run.det, names],
@@ -378,8 +377,8 @@ theorem gcomb_ev {J L : ℕ} {pre : List Bool} {c : R} (x : Tree) {n b : ℕ}
     (h : ∀ i < b + n + J, κ (pre ++ KT.pw (ν i)) = c ^ 2 ^ i ∧ P (pre ++ KT.pw (ν i)) ∧
       (pre ++ KT.pw (ν i)).length ≤ L) :
     ∃ l, Ev θ (gcomb ν J pre b n) x l ∧
-      List.Forall₂ (RelG κ P (((4 * L + 48) * J + 80) * n + 4)) l ((KT.comb (c ^ 2 ^ b)
-          n).budg J) := by
+      List.Forall₂ (RelG κ P (((4 * L + 48) * J + 80) * n + 4)) l
+        ((KT.comb (c ^ 2 ^ b) n).budg J) := by
   induction n generalizing b with
   | zero =>
     exact ⟨_, .quote _ x, .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names],
@@ -492,8 +491,8 @@ theorem size_gcomb (ν : ℕ → ℕ) (J : ℕ) (pre : List Bool) (N : ℕ) (n b
     nlinarith
 
 theorem size_gt (ν : ℕ → ℕ) (J B : ℕ) (K : KT R) (pre : List Bool) (N : ℕ) (h : ∀ i < B + J, ν i ≤ N) :
-    (gt ν J B K pre).code.size ≤ (K.expand B).nds * ((J + 1)
-        * (4 * (pre.length + K.ht + N) + 400)) := by
+    (gt ν J B K pre).code.size ≤
+      (K.expand B).nds * ((J + 1) * (4 * (pre.length + K.ht + N) + 400)) := by
   induction K generalizing pre with
   | none =>
     simp only [gt, Fm.code, Tree.size, size_num, KT.expand, KT.nds, KT.ht]

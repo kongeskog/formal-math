@@ -249,8 +249,8 @@ end KV
 theorem LP_kv {D : Tree} {T : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
     {ω : Tree → R} (ys : Tree)
     (h : ∀ y ∈ ys.toList, KV θ κ S (Fm.ofTree D) y (ω y) T) :
-    KV θ κ S (LP D) (.cons (LP D).code ys) (ys.toList.map ω).prod ((T + 30)
-        * ys.toList.length + 10) := by
+    KV θ κ S (LP D) (.cons (LP D).code ys) (ys.toList.map ω).prod
+      ((T + 30) * ys.toList.length + 10) := by
   induction ys with
   | nil => exact ((KV.ite_false (Gives.id _).tl (KV.gives (Gives.quote .nil _)
       (by simp [names]))).mono

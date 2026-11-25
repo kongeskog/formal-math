@@ -31,8 +31,8 @@ def finF (P : Tree) : Fm :=
 theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t : Bt}
     {o : List Bool} {τ : ℕ}
     (hu : u.hd = .cons t.enc (ofBits o)) (hP : Plain θ τ (zq P z t)) :
-    KV θ κ S (finF P) (.cons z u) ((if KT.val o = 0 then 1 else 0)
-        * algebraMap A E (pv θ (zq P z t)))
+    KV θ κ S (finF P) (.cons z u)
+      ((if KT.val o = 0 then 1 else 0) * algebraMap A E (pv θ (zq P z t)))
       (40 * (o.length + 1) + τ + 40) := by
   obtain ⟨k, hk, v, hv⟩ := AZ_ev (θ := θ) (.leaf o)
   generalize hx : Tree.cons z u = x
@@ -102,9 +102,9 @@ theorem extF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {g : F
       algebraMap A E (pv θ (zq P z q.1)))).sum (2 * cg + 40 * (W + 1) + τ + 60) := by
   refine (guess_kv (cg := cg) (o := fun q : Bt × E × List Bool => .cons q.1.enc (ofBits q.2.2))
       (v := fun q => q.2.1)
-    (ω := fun e => (if KT.val e.tl.path = 0 then 1 else 0)
-        * algebraMap A E (pv θ (.cons WN.code (.cons P (.cons z
-      e.hd))))) (d := 40 * (W + 1) + τ + 40) hg rg fun q hq u hu => ?_).mono (by omega) |>.congr ?_
+    (ω := fun e => (if KT.val e.tl.path = 0 then 1 else 0) *
+      algebraMap A E (pv θ (.cons WN.code (.cons P (.cons z e.hd)))))
+    (d := 40 * (W + 1) + τ + 40) hg rg fun q hq u hu => ?_).mono (by omega) |>.congr ?_
   · obtain ⟨h1, h2⟩ := hP q hq
     rw [← h2]
     simpa [path_ofBits, zq] using finF_kv (κ := κ) (S := S) hu h1

@@ -327,8 +327,8 @@ theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : 
     simp only [Run.det, Tree.size, Bt.enc, KT.nds, List.length_replicate] at this ⊢
     omega
   | leaf c =>
-    have hl := chT_ev (θ := θ) (κ := κ) (S := S) (c := 4 * W + 4 * L + 4 * (J + m)
-        + 30) (x := x) (n := J + m)
+    have hl := chT_ev (θ := θ) (κ := κ) (S := S) (c := 4 * W + 4 * L + 4 * (J + m) + 30)
+      (x := x) (n := J + m)
       (f := fun w => .cons (.quote (.cons (Bt.leaf (w.take J)).enc
         (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))))
         (leaf (.quote (ofBits (pre ++ (w ++ [false]))))))

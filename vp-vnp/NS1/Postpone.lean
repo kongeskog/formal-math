@@ -327,8 +327,8 @@ def CK : Fm :=
         (.tl (.tl .id))))
     (.tl (.tl .id))
 
-/-- If the names of `o` use up a part of the budget `t`, `CK` gives what is left, within `(60 H +
-41) |o|` steps. -/
+/-- If the names of `o` use up a part of the budget `t`, `CK` gives what is left, within
+`(60 H + 41) |o|` steps. -/
 theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll (names o) t = some t' →
     ∃ k ≤ (60 * H + 41) * o.size, Dt θ CK (.cons CK.code (.cons o t.enc)) t'.enc k := by
   induction o using names.induct with
@@ -581,11 +581,11 @@ variable [Algebra A R]
 /-- **Lemma 1 (postponing).** The value of a list of runs is the sum, over all budgets, of the powers of the constants
 times the sums of the weights of the runs that use up the budgets. -/
 theorem val_eq_sum_budg {J : ℕ} {K : KT R} {κ : List Bool → R} {l : List (Run A)}
-    (hJ : ∀ r ∈ l, (names r.out).length < 2 ^ J) (hκ : ∀ r ∈ l,
-        ∀ p ∈ (names r.out), κ p = K.lookup p) :
+    (hJ : ∀ r ∈ l, (names r.out).length < 2 ^ J)
+    (hκ : ∀ r ∈ l, ∀ p ∈ (names r.out), κ p = K.lookup p) :
     val κ l = ((K.budg J).map fun q =>
-      q.2 * algebraMap A R (l.map fun r => if ok q.1 (names r.out)
-          = true then r.th else 0).sum).sum := by
+      q.2 * algebraMap A R
+        (l.map fun r => if ok q.1 (names r.out) = true then r.th else 0).sum).sum := by
   induction l with
   | nil => simp [val]
   | cons r l ih =>

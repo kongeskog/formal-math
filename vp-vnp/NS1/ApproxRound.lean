@@ -75,12 +75,13 @@ theorem rebF_kv {g : Fm} {P z : Tree} {cg τ : ℕ} {lg : List (Run A)}
 /-- **A program with renamed constants**: with the names `pre ++ p` for the images under `f` of its constants. -/
 theorem renamed_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {P z : Tree}
     {T L : ℕ} {l : List (Run A)}
-    (hP : Ev θ (Fm.ofTree P) z l) (hT : ∀ r ∈ l,
-        r.cost + r.out.size ≤ T ∧ ∀ p ∈ names r.out, K.InB B p)
-    (hJ : T < 2 ^ J) (hS : ∀ p, K.InB (B + J) p → κ (pre ++ p) = f (K.lk p)
-        ∧ pre ++ p ∈ S ∧ (pre ++ p).length ≤ L) :
+    (hP : Ev θ (Fm.ofTree P) z l)
+    (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T ∧ ∀ p ∈ names r.out, K.InB B p) (hJ : T < 2 ^ J)
+    (hS : ∀ p, K.InB (B + J) p →
+      κ (pre ++ p) = f (K.lk p) ∧ pre ++ p ∈ S ∧ (pre ++ p).length ≤ L) :
     KV θ κ S (rebF (gt id J B K pre) P) z (f (val K.lk l))
-      (2 * (((4 * L + 48) * J + 80) * (K.expand B).nds) + (60 * (K.ht + B + J + 1) + 42) * T +
+      (2 * (((4 * L + 48) * J + 80) * (K.expand B).nds) +
+        (60 * (K.ht + B + J + 1) + 42) * T +
         40 * ((K.expand B).nds * (J + 1)) + 120) := by
   obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (J := J) (B := B) (L := L) (κ := κ)
     (P := (· ∈ S)) z (K.map f) pre

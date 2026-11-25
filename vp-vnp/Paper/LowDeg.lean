@@ -48,8 +48,8 @@ theorem lem_lowdeg : ∃ c : ℕ, ∀ (R : Type) [CommRing R] (M m N d S : ℕ) 
       ∀ (A : Type) [CommRing A] [Algebra A R] (θ : List Bool → A) (z : Tree), z.size < N →
         Hl θ (Fm.ofTree D) z ∧
         (∀ r ∈ evl θ (Fm.ofTree D) z,
-          r.cost + r.out.size ≤ (d + 1) * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60)
-              + 10 * m + 100 ∧
+          r.cost + r.out.size ≤
+            (d + 1) * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100 ∧
           ∀ q ∈ names r.out, K.InB 1 q) ∧
         val K.lk (evl θ (Fm.ofTree D) z) =
           ∑ i ∈ Finset.range (d + 1), MvPolynomial.eval (codeB R N (tbits z)) (MvPolynomial.homogeneousComponent i p) := by
