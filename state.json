@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T07:52:54.512765245Z",
+  "updated_at": "2026-11-25T07:59:12.695904483Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "2c389b9f5b42eeab1234bea440fab04ec3788861",
-    "at": "2026-11-25T07:41:14.840960561Z",
+    "sha": "062d6dfd7b407fdc59326050f2a89b6d8285278f",
+    "at": "2026-11-25T07:59:12.695904483Z",
     "metrics": {
-      "tokens": 845297,
-      "loc": 54158,
+      "tokens": 843959,
+      "loc": 54078,
       "decls": 4385,
       "files": 315,
-      "bytes": 3139920,
-      "build_seconds": 297
+      "bytes": 3137628,
+      "build_seconds": 409
     }
   },
   "counts": {
-    "merged": 75,
+    "merged": 76,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 75,
+      "merged": 76,
       "attempts": 79,
-      "saved": 82864
+      "saved": 84202
     }
   ],
   "ideas": [
@@ -859,74 +859,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 138,
-      "title": "shorten(*): close 24 tactic tails in Paper, Nc/CaseI, Nc/Tow, Nc/Cut and five other files",
-      "author": "kongeskog",
-      "head_sha": "410f169128e76544e72e8f18b92adfb704e47083",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T07:30:58Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 131,
-      "url": "https://github.com/kongeskog/formal-math/pull/138",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "*"
-    },
     {
       "pr": 139,
       "title": "shorten(*): leftovers of #130 and #97: unused set names and haves, a closed iff, a conjunct",
