@@ -42,8 +42,8 @@ theorem size_run (a b : Fm) : (Fm.run a b).code.size = a.code.size + b.code.size
 theorem size_guess : Fm.guess.code.size = 17 := by
   simp only [Fm.code, Tree.size, size_num]
 
-theorem size_mul (a : Fm) : (Fm.mul a).code.size = a.code.size + 22 := by
-  simp only [Fm.code, Tree.size, size_num]; ring
+theorem size_leaf (a : Fm) : (leaf a).code.size = a.code.size + 16 := by
+  simp only [leaf, Fm.code, Tree.size, size_num]; ring
 
 theorem size_app (p : Tree) (e : Fm) : (app p e).code.size = p.size + e.code.size + 17 := by
   rw [app, size_run, size_quote]; ring
@@ -94,7 +94,7 @@ theorem size_accF : ∃ c : ℕ, ∀ (M m d : ℕ) (out : List Bool), out.length
   have h1 := hloop M m
   have h2 := size_ofBits out
   rw [ho] at h2
-  rw [accF, size_ite, size_mul, size_app, size_cons, size_cons, size_cons, treeF, size_hd, size_pairsF, size_app, size_cons,
+  rw [accF, size_ite, size_leaf, size_app, size_cons, size_cons, size_cons, treeF, size_hd, size_pairsF, size_app, size_cons,
     size_cons]
   simp only [size_guess, size_quote, size_id, size_num, hc4, hc5, hc6, hc7, List.map_cons, List.map_nil, listT,
     Tree.size]

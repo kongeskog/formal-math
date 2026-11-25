@@ -84,7 +84,7 @@ def treeF (m : ℕ) : Fm := .hd (pairsF m (app (wordB lt0 lt1).code
   (.cons (.quote (wordB lt0 lt1).code) (.cons .id (.quote (listT [lt2]))))))
 
 /-- The program. -/
-def accF (M m d : ℕ) (out : List Bool) : Fm := .ite .guess (.mul (.quote (ofBits [true, false])))
+def accF (M m d : ℕ) (out : List Bool) : Fm := .ite .guess (leaf (.quote (ofBits [true, false])))
   (app (loopF M m).code (.cons (.quote (loopF M m).code) (.cons (.quote (num (d - 1)))
     (.cons (.quote (listT ([out].map ofBits))) (treeF m)))))
 
@@ -283,7 +283,7 @@ theorem accF_kv {M m N d s : ℕ} {p : MvPolynomial (Fin N × Option Bool) R} (h
     (fun g l r hg hl hr => accK_k hg hl hr) ha
     (fun g p c hg hp hc => (accK_l (γ := MvPolynomial.constantCoeff (P o)) (k := k) (lam := lam) hg hp hc).2) hT
     (2 * (d - 1) + 1) (d - 1) [out] (by simp) (by simpa using hout)
-  have h1 := KV.mul (κ := K.lk) (S := {q | K.InB 1 q}) (Gives.quote (θ := θ) (ofBits [true, false]) z) (by
+  have h1 := KV.leaf (κ := K.lk) (S := {q | K.InB 1 q}) (Gives.quote (θ := θ) (ofBits [true, false]) z) (by
     rw [path_ofBits]
     exact (accK_c (M := M) (m := m) (γ := MvPolynomial.constantCoeff (P o)) (k := k) (lam := lam)).2)
   rw [path_ofBits, hK, accK_c.1, ← hK] at h1
@@ -298,6 +298,7 @@ theorem accF_kv {M m N d s : ℕ} {p : MvPolynomial (Fin N × Option Bool) R} (h
     have h4 : d * (800 * (M + m) + 4000) = 2 * d * (400 * (M + m) + 2000) := by ring
     have h5 : m * (40 * (z.size + 2) + 10) = 40 * ((z.size + 2) * m) + 10 * m := by ring
     have h6 : (z.size + 2) * (40 * m + 60) = 40 * ((z.size + 2) * m) + 60 * (z.size + 2) := by ring
+    have h7 : (ofBits [true, false]).size = 7 := rfl
     omega
   · rw [sum_coeff_line _ _ _ _ hd, List.map_singleton, hval]
 

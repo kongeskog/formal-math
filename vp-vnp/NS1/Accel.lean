@@ -55,11 +55,19 @@ structure IsAccT (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : 
 
 variable {θ : List Bool → A}
 
-/-- The universal program. -/
-def UF : Fm := .run (.hd .id) (.tl .id)
+/-- The universal program: it runs the program `z.hd` at `z.tl`, and its value is empty, so that it names no
+constants. -/
+def UF : Fm := .tl (.cons (.run (.hd .id) (.tl .id)) (.quote .nil))
 
 theorem UF_ev {z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree z.hd) z.tl l) :
-    Ev θ UF z (l.map (Run.delay 5)) := Ev.run_det (Dt.hd (Dt.id z)) (Dt.tl (Dt.id z)) h
+    Ev θ UF z (l.map fun r => ⟨r.cost + 8, r.th, .nil⟩) := by
+  have := Ev.tl (Ev.cons (Ev.run_det (Dt.hd (Dt.id z)) (Dt.tl (Dt.id z)) h) (Ev.quote .nil z))
+  simp only [List.map_cons, List.map_nil, flatMap_single, List.map_map] at this
+  refine Eq.mp ?_ this
+  congr 1
+  refine List.map_congr_left fun r _ => ?_
+  simp [Run.delay, Run.seq, Run.tick, Run.det]
+  omega
 
 /-- The instances that arise from budgets are plain, and their sums are those of the runs that use up the budgets. -/
 theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ}

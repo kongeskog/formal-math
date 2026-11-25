@@ -252,10 +252,47 @@ theorem LP_kv {D : Tree} {T : ℕ} {κ : List Bool → R} {S : Set (List Bool)} 
 /-- Form the plain instance; the argument is (`z`, (budgets, names)) and `fp` gives the program. -/
 def ZE (fp : Fm) : Fm := .cons (.quote WN.code) (.cons fp (.cons (.hd .id) (.hd (.tl .id))))
 
+/-- Guess with `g`, apply `B` to (argument, guess), and join the names of the guess with those of the value. -/
+def guessF (g B : Fm) : Fm := lett (.cons .id g) (node (.tl (.tl .id)) B)
+
+/-- If `g` guesses the data `o q` with names whose constants multiply to `v q`, and `B` has the value `ω (o q)` at
+(argument, guess), then the value of `guessF g B` is the sum over the guesses of `v q * ω (o q)`. -/
+theorem guess_kv {β : Type*} {g B : Fm} {z : Tree} {cg d : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
+    {lg : List (Run A)} {Q : List β} {o : β → Tree} {v : β → R} {ω : Tree → R} (hg : Ev θ g z lg)
+    (rg : List.Forall₂ (fun r q => RelT κ (· ∈ S) cg r (o q) (v q)) lg Q)
+    (hB : ∀ q ∈ Q, ∀ u : Tree, u.hd = o q → KV θ κ S B (.cons z u) (ω (o q)) d) :
+    KV θ κ S (guessF g B) z (Q.map fun q => v q * ω (o q)).sum (2 * cg + d + 13) := by
+  have e1 := Ev.cons (Ev.id (θ := θ) z) hg
+  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil] at e1
+  have e2 := KV.app_ev (κ := κ) (S := S) (c := cg + 2) (d := cg + d + 9) (p := (node (.tl (.tl .id)) B).code)
+    (ω := fun u => ((names u.out.tl.tl).map κ).prod * ω u.out.tl.hd) e1 ?_ ?_
+  · refine (e2.mono (by omega)).congr ?_
+    simp only [List.map_map, Function.comp_def, Run.seq, Run.tick, Run.det, one_mul, tl_cons]
+    clear e1 e2 hB hg
+    induction rg with
+    | nil => rfl
+    | cons h _ ih =>
+      obtain ⟨h1, h2, h3, -⟩ := h
+      simp only [List.map_cons, List.sum_cons, h1, h2, h3, map_one, one_mul, ih]
+  · intro s hs
+    obtain ⟨s', hs', rfl⟩ := List.mem_map.1 hs
+    obtain ⟨q, -, -, -, -, -, h5⟩ := forall₂_exists rg hs'
+    simp only [Run.seq, Run.tick, Run.det]
+    omega
+  · intro s hs
+    obtain ⟨u, hu, rfl⟩ := List.mem_map.1 hs
+    obtain ⟨q, hq, h1, h2, h3, h4, h5⟩ := forall₂_exists rg hu
+    have e := KV.node (KV.gives (κ := κ) (Gives.id _).tl.tl (by simpa using h4)) (hB q hq u.out h2)
+    rw [Fm.ofTree_code]
+    refine (e.mono ?_).congr ?_
+    · have := size_tl_le u.out
+      simp only [tl_cons]
+      omega
+    · simp [Run.seq, Run.tick, Run.det, h2]
+
 /-- A round: guess budgets and names with `g`, form the plain instance of `p`, cut it with `G`, apply `F` to
 (`c`, pieces), and join the names that `g` guessed with those of the value. -/
-def stepA (F : Fm) (c G p : Tree) (g : Fm) : Fm :=
-  lett (.cons .id g) (node (.tl (.tl .id)) (app F.code (.cons (.quote c) (app G (ZE (.quote p))))))
+def stepA (F : Fm) (c G p : Tree) (g : Fm) : Fm := guessF g (app F.code (.cons (.quote c) (app G (ZE (.quote p)))))
 
 /-- **A round.** If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2`, `G` cuts the
 instance of the budgets `q.1` into the pieces `L`, and `F` has the value `ω` at every piece, then the value of the
@@ -267,49 +304,27 @@ theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {κ : List Bool �
     (hF : ∀ q ∈ Q, ∀ u ∈ L (zq p z q.1), KV θ κ S F (.cons c u.2) (ω u.2) tF) :
     KV θ κ S (stepA F c G p g) z (Q.map fun q =>
       q.2 * ((L (zq p z q.1)).map fun u => algebraMap A R u.1 * ω u.2).sum).sum (2 * cg + tG + tF + 30) := by
-  have e1 := Ev.cons (Ev.id (θ := θ) z) hg
-  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil] at e1
-  have e2 := KV.app_ev (κ := κ) (S := S) (c := cg + 2) (d := cg + tG + tF + 26)
-    (p := (node (.tl (.tl .id)) (app F.code (.cons (.quote c) (app G (ZE (.quote p)))))).code)
-    (ω := fun u => ((names u.out.tl.tl).map κ).prod * ((L (.cons WN.code (.cons p (.cons u.out.hd u.out.tl.hd)))).map
-      fun u => algebraMap A R u.1 * ω u.2).sum) e1 ?_ ?_
-  · refine (e2.mono (by omega)).congr ?_
-    simp only [List.map_map, Function.comp_def, Run.seq, Run.tick, Run.det, one_mul, hd_cons, tl_cons]
-    clear e1 e2 hG hF hg
-    induction rg with
-    | nil => rfl
-    | cons h _ ih =>
-      obtain ⟨h1, h2, h3, -⟩ := h
-      simp only [List.map_cons, List.sum_cons, h1, h2, h3, map_one, one_mul, zq] at ih ⊢
-      rw [ih]
-  · intro s hs
-    obtain ⟨s', hs', rfl⟩ := List.mem_map.1 hs
-    obtain ⟨q, -, -, -, -, -, h5⟩ := forall₂_exists rg hs'
-    simp only [Run.seq, Run.tick, Run.det]
-    omega
-  · intro s hs
-    obtain ⟨u, hu, rfl⟩ := List.mem_map.1 hs
-    obtain ⟨q, hq, h1, h2, h3, h4, h5⟩ := forall₂_exists rg hu
-    have hZ : Gives θ (ZE (.quote p)) (.cons z u.out) (zq p z q.1) 10 := by
-      simpa [zq, ZE, h2] using (Gives.quote (θ := θ) WN.code (.cons z u.out)).cons
+  have hB : ∀ q ∈ Q, ∀ u : Tree, u.hd = q.1.enc → KV θ κ S (app F.code (.cons (.quote c) (app G (ZE (.quote p)))))
+      (.cons z u) (((L (.cons WN.code (.cons p (.cons z q.1.enc)))).map fun u => algebraMap A R u.1 * ω u.2).sum)
+      (tG + tF + 16) := by
+    intro q hq u hu
+    have hZ : Gives θ (ZE (.quote p)) (.cons z u) (zq p z q.1) 10 := by
+      simpa [zq, ZE, hu] using (Gives.quote (θ := θ) WN.code (.cons z u)).cons
         ((Gives.quote p _).cons ((Gives.id _).hd.cons (Gives.id _).tl.hd))
     have hP := Does.app (p := G) (R := fun _ => L (zq p z q.1)) hZ fun v hv => by
       rw [List.mem_singleton] at hv
       subst hv
       exact hG q hq
     simp only [bindW, List.flatMap_cons, List.flatMap_nil, List.append_nil, one_mul, Prod.mk.eta, List.map_id'] at hP
-    have hD := Does.cons (Gives.quote (θ := θ) c (.cons z u.out)) hP
-    have e := KV.node (KV.gives (κ := κ) (Gives.id _).tl.tl (by simpa using h4)) (KV.app (p := F.code)
-      (ω := fun o => ω o.tl) hD fun v hv => by
-        simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_map] at hv
-        obtain ⟨v, hv, rfl⟩ := hv
-        rw [Fm.ofTree_code]
-        exact hF q hq v hv)
-    rw [Fm.ofTree_code]
-    refine (e.mono ?_).congr ?_
-    · have := size_tl_le u.out
-      simp only [tl_cons]
-      omega
-    · simp [Run.seq, Run.tick, Run.det, zq, h2, Function.comp_def]
+    refine ((KV.app (p := F.code) (d := tF) (ω := fun o => ω o.tl) (Does.cons (Gives.quote (θ := θ) c (.cons z u)) hP)
+      fun v hv => ?_).mono (by omega)).congr ?_
+    · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_map] at hv
+      obtain ⟨v, hv, rfl⟩ := hv
+      rw [Fm.ofTree_code]
+      exact hF q hq v hv
+    · simp [zq, Function.comp_def]
+  refine (guess_kv (ω := fun e => ((L (.cons WN.code (.cons p (.cons z e)))).map
+    fun u => algebraMap A R u.1 * ω u.2).sum) hg rg hB).mono ?_
+  omega
 
 end NS1
