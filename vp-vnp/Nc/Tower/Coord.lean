@@ -70,11 +70,9 @@ theorem x_ne_one (l : Fin (h - 1)) : x h l ≠ 1 := by
   intro e
   have h1 := congrFun (congrFun (congrArg (fun u : U h => u.1.1) e) (lo l)) (hi l)
   simp only [x_val] at h1
-  rw [Matrix.add_apply, Matrix.single_apply_same] at h1
-  have h2 : ((1 : U h).1.1 : Matrix (Fin h) (Fin h) (ZMod 2)) (lo l) (hi l) = 0 :=
-    Matrix.one_apply_ne (lo_ne_hi l)
-  rw [h2, Matrix.one_apply_ne (lo_ne_hi l)] at h1
-  exact absurd h1 (by decide)
+  -- `h1 : (1 + Matrix.single (lo l) (hi l) 1) (lo l) (hi l) = (1 : U h) (lo l) (hi l)`; off the
+  -- diagonal (`lo_ne_hi`) it reads `0 + 1 = 0` in `ZMod 2`
+  simp_all
 
 theorem x_mul_self (l : Fin (h - 1)) : x h l * x h l = 1 := by
   refine Subtype.ext (Subtype.ext ?_)
