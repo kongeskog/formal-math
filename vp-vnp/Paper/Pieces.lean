@@ -66,7 +66,7 @@ theorem startTab_run (p : Fin (K + K + TT.A')) (y : Uid (K + K) N TT.sys.N TT.U1
     simp only [yOf]
     split_ifs with h
     · obtain ⟨v, hv⟩ := Option.ne_none_iff_exists'.1 (hc ⟨⟨p', q', ⟨k.1, h.1⟩⟩, h.2⟩)
-      -- `hv`, after `Fin.castLE … ⟨k.1, h.1⟩ = k`
+      -- rewrite `hv` with `Fin.castLE … ⟨k.1, h.1⟩ = k` (`Fin.ext rfl`)
       grind
     · refine (hy p' q' k fun h' => h ⟨h'.1, ?_⟩).symm
       rcases h'.2 with e | e

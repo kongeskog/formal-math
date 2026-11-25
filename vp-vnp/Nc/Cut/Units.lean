@@ -90,14 +90,16 @@ theorem bitsOf_inj {cb : Γ → Fin c → Bool} (hcb : Function.Injective cb) (h
     | cons a X' =>
       have := congrArg List.length h
       rw [length_bitsOf, length_bitsOf] at this
-      -- `this` says `0 = (n + 1) * c`, against `hc : 0 < c`
+      -- `this : [].length * c = (a :: X').length * c`, so `0 = (X'.length + 1) * c`,
+      -- against `hc : 0 < c`
       simp_all
   | cons a X ih =>
     cases X' with
     | nil =>
       have := congrArg List.length h
       rw [length_bitsOf, length_bitsOf] at this
-      -- `this` says `0 = (n + 1) * c`, against `hc : 0 < c`
+      -- `this : (a :: X).length * c = [].length * c`, so `(X.length + 1) * c = 0`,
+      -- against `hc : 0 < c`
       simp_all
     | cons a' X' =>
       simp only [bitsOf, List.flatMap_cons] at h

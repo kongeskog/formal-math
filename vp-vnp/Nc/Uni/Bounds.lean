@@ -35,15 +35,16 @@ def stepsU (supp : Finset (List Bool)) (τ s : ℕ) : ℕ := 3 * s + (40 + 2 * L
 
 theorem tU_le (b T L : ℕ) : tU b T L ≤ (50 + b) * ((T + 1) * (L + 1) ^ 2) := by
   obtain ⟨t, rfl⟩ : ∃ t, T = t := ⟨T, rfl⟩
-  have h1 : T ≤ T + 1 := Nat.le_succ _
-  have h2 : L + 4 ≤ 4 * (L + 1) := by omega
   have h3 : L + 2 ≤ 2 * (L + 1) := by omega
   have h4 : L + 3 ≤ 3 * (L + 1) := by omega
   have h5 : 2 * T + 1 ≤ 2 * (T + 1) := by omega
   have hl : 1 ≤ L + 1 := by omega
   have ht : 1 ≤ T + 1 := by omega
   unfold tU
-  -- from `h3`, `h4`, `h5`, `hl`, `ht`: every term is at most a multiple of `(T + 1) * (L + 1) ^ 2`
+  -- With `t = T + 1` and `l = L + 1`: bounding `T ≤ t`, `L + 2 ≤ 2 l` (`h3`), `L + 3 ≤ 3 l` (`h4`),
+  -- `L + 4 ≤ 4 l` and `2 T + 1 ≤ 2 t` (`h5`) term by term gives at most
+  -- `24 t l² + 23 t l + t + 2 l + b l`; since `1 ≤ l` (`hl`) and `1 ≤ t` (`ht`), each of
+  -- `t l`, `t`, `l` is at most `t l²`, and the coefficients sum to `24 + 23 + 1 + 2 + b = 50 + b`.
   grind
 
 theorem size_le_lg (n : ℕ) : Nat.size n ≤ lg n := by
