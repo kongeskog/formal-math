@@ -50,10 +50,8 @@ theorem asm_congr {x y : Pr k → Fin 2 → Fin ℓ → Bool} {a : Fin k}
     asm x a = asm y a := by
   funext b
   simp only [asm]
-  split_ifs with h1 h2
-  · rw [h ⟨(a, b), h1⟩ 0 rfl]
-  · rw [h ⟨(b, a), h2⟩ 1 rfl]
-  · rfl
+  -- the three `if` cases: `h` rewrites the entry at `(a, b)` and at `(b, a)`; otherwise `rfl`
+  grind
 
 section Poly
 

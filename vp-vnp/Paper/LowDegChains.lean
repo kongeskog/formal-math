@@ -46,8 +46,8 @@ theorem lem_lowdeg_chains [Fintype σ] (l : ℕ → MvPolynomial σ F) (hl : ∀
       · obtain ⟨ha, hb, e⟩ := hlr ⟨n, hn⟩ hmul
         obtain ⟨κa, la, Ha⟩ := ih _ ha (left ⟨n, hn⟩).2
         obtain ⟨κb, lb, Hb⟩ := ih _ hb (right ⟨n, hn⟩).2
-        set a := left ⟨n, hn⟩ with hadef
-        set b := right ⟨n, hn⟩ with hbdef
+        set a := left ⟨n, hn⟩
+        set b := right ⟨n, hn⟩
         refine ⟨fun h => MvPolynomial.constantCoeff (l a) * κb h +
           MvPolynomial.constantCoeff (l b) * κa h + (if h = ⟨n, hn⟩ then 1 else 0),
           fun i => MvPolynomial.constantCoeff (l a) * lb i +

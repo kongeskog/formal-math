@@ -107,11 +107,11 @@ theorem prop_extend_gauge (ι : I → I') (π : L → I' → I) (hπ : ∀ l i, 
     ∃ p : PreSpec K I', (∀ t, p.p t ≤ extendProduct π θ φ t) ∧ ∀ A : Ten K I, p.p (Ten.push ι A) = φ.F A := by
   classical
   obtain ⟨f0, f1, fmul, fmono⟩ := prop_extend_product π θ hθ φ
-  set f : Ten K I' → ℝ := extendProduct π θ φ with hf
+  set f : Ten K I' → ℝ := extendProduct π θ φ
   have hcongr : ∀ {s t : Ten K I'}, Equi s t → f s = f t := fun h => le_antisymm (fmono h.1) (fmono h.2)
   -- the sums ∑ f(b_j) over the covers of a class of tensors
   set S : Cls K I' → Set ℝ := fun m => {W | ∃ (κ : Type) (_ : Fintype κ) (b : κ → Cls K I'),
-    (tenCover K I').cov m b ∧ ∑ k, f (rep (b k)) = W} with hS
+    (tenCover K I').cov m b ∧ ∑ k, f (rep (b k)) = W}
   have hne : ∀ t, (S t).Nonempty := fun t =>
     ⟨_, Unit, inferInstance, fun _ => t, (tenCover K I').refl t, rfl⟩
   have h0 : ∀ t, ∀ w ∈ S t, 0 ≤ w := by
