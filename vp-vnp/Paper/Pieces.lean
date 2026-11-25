@@ -641,13 +641,14 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
         ∀ T k, v ^ a ≤ T → 2 ≤ k → k ≤ v ^ 64 →
           Nonempty (PieceCut (kindList A ((univ : Finset VL.Di).toList.map VL.L)) mu v K T k C) := by
   classical
-  have he : 2 ≤ ee h := by
+  -- the tree theorem (thm:tree): towers for the nodes, then thin trees on one of them
+  have he2 : 2 ≤ ee h := by
     unfold Nc.Tower.ee
     have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
     omega
   have htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ) := by
     have : (4 : ℝ) ≤ ((2 ^ ee h : ℕ) : ℝ) := by
-      exact_mod_cast Nat.pow_le_pow_right (show 0 < 2 by norm_num) he
+      exact_mod_cast Nat.pow_le_pow_right (show 0 < 2 by norm_num) he2
     linarith
   obtain ⟨ct, htow⟩ := tree_towers VL h3 (by linarith) htwo
   generalize hC₀ : cTree ct = C₀
@@ -684,6 +685,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   have hload1 : 1 ≤ load := (Nat.le_add_left 1 _).trans b7
   obtain ⟨J, m, Uu, Tw, Rt, FL, hct, hX1, hX2, hm1, hm2, hUu⟩ := htow (K + K) (by omega)
   obtain ⟨TT⟩ := exists_thinTrees Rt FL hct hC₀.le hm1 hm2 hUu (by omega) hX1 hX2 le_rfl hload1 b1
+  -- the tower facts are not used below, and they slow the later `omega` calls
   clear htow Rt FL hct hX1 hX2 hm1 hm2 hUu htwo Tw
   have hk64 : k ≤ v ^ 300 := hk'.trans (vp (by norm_num))
   have hkM : k ≤ 4 * (K + K) := by
