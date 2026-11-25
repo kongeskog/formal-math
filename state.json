@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T07:33:40.280495515Z",
+  "updated_at": "2026-11-25T07:41:14.840960561Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "07ecdfb205163050f01e76fa09ff02a89107274e",
-    "at": "2026-11-25T07:07:43.710049692Z",
+    "sha": "2c389b9f5b42eeab1234bea440fab04ec3788861",
+    "at": "2026-11-25T07:41:14.840960561Z",
     "metrics": {
-      "tokens": 845888,
-      "loc": 54210,
-      "decls": 4386,
+      "tokens": 845297,
+      "loc": 54158,
+      "decls": 4385,
       "files": 315,
-      "bytes": 3142248,
-      "build_seconds": 343
+      "bytes": 3139920,
+      "build_seconds": 297
     }
   },
   "counts": {
-    "merged": 74,
+    "merged": 75,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 74,
+      "merged": 75,
       "attempts": 78,
-      "saved": 82273
+      "saved": 82864
     }
   ],
   "ideas": [
@@ -109,7 +109,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T09:53:19Z",
       "pr": 137,
-      "result_delta": null,
+      "result_delta": -591,
       "created_at": "2026-11-25T06:40:53Z",
       "url": "https://github.com/kongeskog/formal-math/issues/134",
       "technique": "restructure",
@@ -860,78 +860,10 @@
   ],
   "open": [
     {
-      "pr": 137,
-      "title": "restructure(NS1/OneCut,Nc/Dl/Num0,Paper/Cuts): state the one cut without quotients of naturals",
-      "author": "kongeskog",
-      "head_sha": "51d28570fe4a653fe9b9924e4afa5f252265206f",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T07:22:42Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 134,
-      "url": "https://github.com/kongeskog/formal-math/pull/137",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "NS1/OneCut,Nc/Dl/Num0,Paper/Cuts"
-    },
-    {
       "pr": 138,
       "title": "shorten(*): close 24 tactic tails in Paper, Nc/CaseI, Nc/Tow, Nc/Cut and five other files",
       "author": "kongeskog",
-      "head_sha": "f673390cb97c42e6370e80cd10a22d6238c950c9",
+      "head_sha": "410f169128e76544e72e8f18b92adfb704e47083",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-25T07:30:58Z",
