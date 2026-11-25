@@ -241,7 +241,7 @@ end Start
 
 open Classical in
 /-- The networks on trees of Theorem thm:tree, for networks on AA nodes with units of ℓ bits, at most N units at a
-node and at most M nodes, over R, with the exponent C, the gain γ and the integer G₁ of the test for good outcomes.
+node and at most M nodes, over R, with the bound b for children, the exponent C and the gain γ.
 The nodes are the parties 0, ..., AA + A' − 1. For numbers n of units and outcomes o the units of the tree are those
 that are current at the end, plan.cur. A unit from a node to itself is allowed; it stays at its node, whose value sums
 over it. -/

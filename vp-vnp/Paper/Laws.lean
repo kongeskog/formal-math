@@ -51,13 +51,13 @@ theorem laws_over_algebras {A : Type} [CommRing A] (L : Nc.G.Law A) (R : Type) [
 of |e|² over all pairs is at most C₀ times 2/b times the sum of |e|² over near pairs, for every price", where h is a
 multiple of u with h ≥ 2u and b = |U_h|. C is the constant of the theorem and C₀ the integer. -/
 theorem thm_laws_poincare {K : Type} [Field K] (hK : Contracting K) :
-    ∃ u : ℕ, 2 ≤ u ∧ ∃ (C : ℝ) (C₀ : ℕ), 0 ≤ C ∧ PoincareBound K u C ∧ 2 * C + 1 ≤ (C₀ : ℝ) ∧
+    ∃ u : ℕ, 2 ≤ u ∧ ∃ (C : ℝ) (C₀ : ℕ), 0 ≤ C ∧ 2 * C + 1 ≤ (C₀ : ℝ) ∧
       ∀ (h : ℕ) [NeZero h], u ∣ h → 2 * u ≤ h → ∀ w : U h → U h → ℝ, IsPrice K w →
         (∑ p, ∑ q, w p q ^ 2) / ((Fintype.card (U h) : ℝ) * ((Fintype.card (U h) : ℝ) - 1)) ≤
           (C₀ : ℝ) * (2 / (Fintype.card (U h) : ℝ) * ∑ ν : NN h, w (cNear ν) (dNear ν) ^ 2) := by
   obtain ⟨u, hu, C, hC, hP⟩ := thm_poincare hK
   obtain ⟨C₀, hC₀⟩ := exists_nat_ge (2 * C + 1)
-  refine ⟨u, hu, C, C₀, hC, hP, hC₀, fun h _ hdvd hle w hw => ?_⟩
+  refine ⟨u, hu, C, C₀, hC, hC₀, fun h _ hdvd hle w hw => ?_⟩
   obtain ⟨l, rfl⟩ := dvd_iff_exists_eq_mul_left.1 hdvd
   have h1 := hP l (Nat.le_of_mul_le_mul_right hle (by omega)) w hw
   set b : ℝ := (Fintype.card (U (l * u)) : ℝ) with hb
@@ -435,7 +435,7 @@ theorem thm_laws {K : Type} [Field K] (hK : Contracting K) :
               n q ≤ (univ.filter fun e : (L d).Sl => s(ro d ((L d).a e), ro d ((L d).b e)) = q).card * t) ∧
           ∀ d i, √((Fintype.card (U h) : ℝ) / 2 * ∑ ν, (((L d).lam + (L d).len i ν : ℕ) : ℝ) ^ 2) ≤
             √(4 * (C₀ : ℝ)) * a₁ := by
-  obtain ⟨u, hu, C, C₀, hC, hP, hC₀, hpairs⟩ := thm_laws_poincare hK
+  obtain ⟨u, hu, C, C₀, hC, hC₀, hpairs⟩ := thm_laws_poincare hK
   refine ⟨u, C₀, ?_, fun h _ hdvd h2u h3 _ => ?_⟩
   · have hl : 4 * (1 + 8 * (4 * C₀)) + 3 ≤ (4 * (1 + 8 * (4 * C₀)) + 3) * u :=
       Nat.le_mul_of_pos_right _ (by omega)
