@@ -27,6 +27,7 @@ variable {A : Type} [CommRing A] {θ : List Bool → A} {R : Type} [CommRing R] 
 def KV (θ : List Bool → A) (κ : List Bool → R) (S : Set (List Bool)) (F : Fm) (x : Tree) (w : R) (c : ℕ) : Prop :=
   ∃ l, Ev θ F x l ∧ (∀ r ∈ l, r.cost + r.out.size ≤ c ∧ ∀ p ∈ names r.out, p ∈ S) ∧ val κ l = w
 
+/-- The weight of a run after another one whose value it keeps: the first weight times the second. -/
 theorem wt_seq (κ : List Bool → R) (r s : Run A) : wt κ ((r.seq s).tick s.out) = algebraMap A R r.th * wt κ s := by
   simp [wt, Run.seq, Run.tick, mul_assoc]
 
@@ -68,6 +69,7 @@ theorem gives {o : Tree} (h : Gives θ F x o c) (ho : ∀ p ∈ names o, p ∈ S
   · rw [val, ← one_mul ((names o).map κ).prod, ← sum_th e3, ← List.sum_map_mul_right]
     exact congrArg List.sum (List.map_congr_left fun r hr => by simp [wt, (e2 r hr).2])
 
+/-- A leaf of names: the value is the constant with the name that `F` gives. -/
 theorem leaf {o : Tree} (h : Gives θ F x o c) (ho : o.path ∈ S) : KV θ κ S (leaf F) x (κ o.path) (c + o.size + 6) := by
   obtain ⟨l, e1, e2, e3⟩ := h.runs
   refine ⟨_, Ev.cons e1 (.quote _ x), ?_, ?_⟩
@@ -80,6 +82,7 @@ theorem leaf {o : Tree} (h : Gives θ F x o c) (ho : o.path ∈ S) : KV θ κ S 
     exact congrArg List.sum (List.map_congr_left fun r hr => by
       simp [wt, Run.seq, Run.tick, Run.det, (e2 r hr).2, names])
 
+/-- A node of names: the value is the product of the two values. -/
 theorem node (hF : KV θ κ S F x w c) (hG : KV θ κ S G x w' d) : KV θ κ S (node F G) x (w * w') (c + d + 6) := by
   obtain ⟨l, e1, e2, e3⟩ := hF
   obtain ⟨l', f1, f2, f3⟩ := hG

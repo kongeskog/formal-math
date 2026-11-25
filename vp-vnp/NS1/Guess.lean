@@ -264,6 +264,7 @@ def RelG (κ : List Bool → R) (P : List Bool → Prop) (c : ℕ) (r : Run A) (
 
 variable {κ : List Bool → R} {P : List Bool → Prop} {ν : ℕ → ℕ}
 
+/-- The two subtrees are no larger than the tree, plus 1 (for `nil`). -/
 theorem size_hd_tl (t : Tree) : t.hd.size + t.tl.size ≤ t.size + 1 := by
   cases t with
   | nil => simp [Tree.size, hd, tl]
@@ -308,9 +309,11 @@ theorem zip_rel {α β : Type*} {E F G : Fm} {x : Tree} {lf lg : List (Run A)} {
   rw [flatMap_single, List.map_id'] at r
   exact ⟨l, e, r⟩
 
+/-- `pairE` pairs the first parts of the two halves of its argument. -/
 theorem pairE_dt (u w : Tree) : Dt θ pairE (.cons u w) (.cons u.hd w.hd) 7 :=
   Dt.cons (Dt.hd (Dt.hd (Dt.id _))) (Dt.hd (Dt.tl (Dt.id _)))
 
+/-- The two runs of `gbit`: (0, no names) and (1, the name `p`). -/
 theorem gbit_ev (p : List Bool) (x : Tree) : Ev θ (gbit p) x
     [.det 3 (.cons .nil .nil), .det 7 (.cons one (.cons (ofBits p) (.cons .nil .nil)))] := by
   have h1 := Dt.cons (θ := θ) (Dt.quote one x) (Dt.cons (Dt.quote (ofBits p) x) (Dt.quote (.cons .nil .nil) x))

@@ -284,6 +284,7 @@ theorem sum_xL (hK : K.All fun c => ∀ n < 2 ^ J, (c ^ n).coeff.support.card �
 
 end
 
+/-- A word of bits as a tree has at least two nodes per bit. -/
 theorem le_size_ofBits (w : List Bool) : 2 * w.length + 1 ≤ (ofBits w).size := by
   induction w with
   | nil => simp [ofBits, Tree.size]

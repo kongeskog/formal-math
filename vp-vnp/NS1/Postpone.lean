@@ -326,6 +326,7 @@ def CK : Fm :=
         (.tl (.tl .id))))
     (.tl (.tl .id))
 
+/-- If the names of `o` use up a part of the budget `t`, `CK` gives what is left, within `(60 H + 41) |o|` steps. -/
 theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll (names o) t = some t' →
     ∃ k ≤ (60 * H + 41) * o.size, Dt θ CK (.cons CK.code (.cons o t.enc)) t'.enc k := by
   induction o using names.induct with
@@ -364,6 +365,7 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     simp only [Tree.size]
     nlinarith [Nat.mul_le_mul_left 60 ht, Tree.size_pos x, Tree.size_pos u, Tree.size_pos v]
 
+/-- If the names of `o` do not fit into the budget `t`, `CK` rejects. -/
 theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
     Ev θ CK (.cons CK.code (.cons o t.enc)) [] := by
   induction o using names.induct with
@@ -429,6 +431,7 @@ def WN : Fm := lett (.cons (.quote AZ.code)
 def simN (t : Bt) (l : List (Run A)) : List (Run A × Bt) :=
   l.flatMap fun q => ((Bt.decAll (names q.out) t).map fun t' => (q, t')).toList
 
+/-- A run with its budget in `simN` is a run of the list whose names leave that budget. -/
 theorem mem_simN {t : Bt} {l : List (Run A)} {q : Run A × Bt} (h : q ∈ simN t l) :
     q.1 ∈ l ∧ Bt.decAll (names q.1.out) t = some q.2 := by
   obtain ⟨r, hr, hq⟩ := List.mem_flatMap.1 h
@@ -439,6 +442,7 @@ theorem mem_simN {t : Bt} {l : List (Run A)} {q : Run A × Bt} (h : q ∈ simN t
     subst hq
     exact ⟨hr, hd⟩
 
+/-- The weights of the runs of `simN` with a used up budget are those of the runs that `ok` accepts. -/
 theorem map_simN (t : Bt) (l : List (Run A)) :
     ((simN t l).flatMap fun q => if q.2.zero then [q] else []).map (fun q => q.1.th) =
       (l.filter fun r => ok t (names r.out)).map Run.th := by
@@ -455,6 +459,7 @@ theorem map_simN (t : Bt) (l : List (Run A)) :
       rw [this]
       by_cases hz : t'.zero <;> simp [hz]
 
+/-- The sum of the weights of the accepted runs, as a sum with zeros. -/
 theorem sum_filter_th (t : Bt) (l : List (Run A)) :
     ((l.filter fun r => ok t (names r.out)).map Run.th).sum =
       (l.map fun r => if ok t (names r.out) = true then r.th else 0).sum := by
