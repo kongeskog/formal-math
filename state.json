@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T06:02:12.803452736Z",
+  "updated_at": "2026-11-25T06:03:10.161291565Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "cb54431bbd6ba88e9ee057d56591b92823d86870",
-    "at": "2026-11-25T05:33:43.469400060Z",
+    "sha": "620380c14cfbd4adb7581e74e6abebf338f75e75",
+    "at": "2026-11-25T06:03:10.161291565Z",
     "metrics": {
-      "tokens": 850700,
-      "loc": 54383,
-      "decls": 4394,
-      "files": 316,
-      "bytes": 3157348,
-      "build_seconds": 525
+      "tokens": 849152,
+      "loc": 54322,
+      "decls": 4388,
+      "files": 315,
+      "bytes": 3150422,
+      "build_seconds": 273
     }
   },
   "counts": {
-    "merged": 70,
+    "merged": 71,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 70,
+      "merged": 71,
       "attempts": 74,
-      "saved": 77461
+      "saved": 79009
     }
   ],
   "ideas": [
@@ -165,7 +165,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T08:39:23Z",
       "pr": 128,
-      "result_delta": null,
+      "result_delta": -1548,
       "created_at": "2026-11-25T02:41:37Z",
       "url": "https://github.com/kongeskog/formal-math/issues/112",
       "technique": "restructure",
@@ -818,74 +818,6 @@
   ],
   "open": [
     {
-      "pr": 128,
-      "title": "restructure(Paper,Nc): drop six wrappers that only hand a result on",
-      "author": "kongeskog",
-      "head_sha": "1f2b7c72556a122c04e0ca33b0f59e7e5feaae10",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T05:49:28Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 112,
-      "url": "https://github.com/kongeskog/formal-math/pull/128",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper,Nc"
-    },
-    {
       "pr": 129,
       "title": "restructure(Nc/Tow): remove the tower parameters r and p, always 1, and FlagLaws, a copy of VLaws",
       "author": "kongeskog",
@@ -941,8 +873,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 2 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 115,
