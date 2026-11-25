@@ -55,11 +55,6 @@ structure IsAccT (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : 
 
 variable {θ : List Bool → A}
 
-theorem IsAccT.mono {H v t t' : ℕ} {K : KT R} {B B' : ℕ} {D : Tree} (h : IsAccT θ H v t K B D) (ht : t ≤ t')
-    (hB : B ≤ B') : IsAccT θ H v t' K B' D :=
-  ⟨fun z hz => ⟨(h.run z hz).1, fun r hr => ⟨((h.run z hz).2 r hr).1.trans ht, fun p hp' =>
-    (((h.run z hz).2 r hr).2 p hp').mono hB⟩⟩, h.val⟩
-
 /-- A run wants at most one constant a step. -/
 theorem bill_le {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l) : ∀ r ∈ l, r.bill.length ≤ r.cost := by
   induction h with

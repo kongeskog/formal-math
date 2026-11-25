@@ -323,8 +323,6 @@ theorem deal : dealB Lc X K mm ub (mm * bd) (4 * (X * X) + 10 * X) s ≤ (s + τ
       have g4 : 1060 ≤ X ^ 3 * (1060 * m) := by
         calc 1060 ≤ 1 * (1060 * m) := by omega
           _ ≤ X ^ 3 * (1060 * m) := Nat.mul_le_mul_right _ y3
-      have g5 : X ^ 3 * (20000 * m) = X ^ 3 * (3000 * m) + X ^ 3 * (4000 * m) + X ^ 3 * (5000 * m) + X ^ 3 * (1060 * m) +
-          X ^ 3 * (6940 * m) := by ring
       unfold tmB'
       linarith
     have f5 : mm * (tmB' Lc X + 60) ≤ X ^ 4 * (20000 * m) := by

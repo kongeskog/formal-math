@@ -128,11 +128,7 @@ theorem nodup_allBits (n : ℕ) : (allBits n).Nodup := by
   | succ n ih =>
     rw [allBits, List.nodup_append]
     refine ⟨ih.map fun a b h => by simpa using h, ih.map fun a b h => by simpa using h, ?_⟩
-    intro a ha b hb hab
-    rw [List.mem_map] at ha hb
-    obtain ⟨u, -, rfl⟩ := ha
-    obtain ⟨u', -, rfl⟩ := hb
-    simp at hab
+    simp
 
 theorem uwBits_wOf {u : List Bool} (h : u.length = ub) : uwBits (wOf ub u) = u.reverse := by
   unfold wOf uwBits
@@ -150,9 +146,6 @@ theorem exists_wOf {w : UW ub} (h : w ≠ none) : ∃ u ∈ allBits ub, wOf ub u
   obtain ⟨v, rfl⟩ := Option.ne_none_iff_exists'.1 h
   refine ⟨(List.ofFn v).reverse, mem_allBits (by simp), ?_⟩
   unfold wOf
-  congr 1
-  funext j
-  rw [List.reverse_reverse, List.getD_eq_getElem _ _ (by simp)]
   simp
 
 /-- Options for a content. -/
@@ -195,7 +188,7 @@ theorem foldl_ov9 (b : G.Uid (K + K) U0 M.N U1 → UW ub) (s : List (G.Uid (K + 
     (∀ id ∈ s, ∀ v, b id = some v → (s.foldl (fun st id => ov9 id (b id) st) st) (.cont id) = ofBits (List.ofFn v)) ∧
     ∀ y, (∀ id, y ≠ .cont id) → (s.foldl (fun st id => ov9 id (b id) st) st) y = st y := by
   induction s using List.reverseRecOn generalizing st with
-  | nil => exact ⟨fun id h => absurd h (by simp), fun _ _ => rfl⟩
+  | nil => simp
   | append_singleton s id ih =>
     obtain ⟨h1, h2⟩ := ih st
     rw [List.foldl_append, List.foldl_cons, List.foldl_nil]

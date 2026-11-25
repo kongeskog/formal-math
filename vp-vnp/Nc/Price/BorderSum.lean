@@ -74,21 +74,7 @@ theorem coeff_prod_choices {τ : Type} [Fintype τ] [DecidableEq τ] (f : τ →
     ?_ ?_ ?_ ?_ ?_
   · rw [Finset.mem_finsuppAntidiag] at hl
     exact Nat.lt_succ_of_le (hl.1 ▸ Finset.single_le_sum (fun q _ => Nat.zero_le (l q)) (Finset.mem_univ p))
-  · intro l hl
-    rw [Finset.mem_finsuppAntidiag] at hl
-    simpa using hl.1
-  · intro d hd
-    simp only [Finset.mem_filter] at hd
-    rw [Finset.mem_finsuppAntidiag]
-    exact ⟨by simpa using hd.2, Finset.subset_univ _⟩
-  · intro l _
-    ext p
-    simp
-  · intro d _
-    funext p
-    simp
-  · intro l _
-    rfl
+  all_goals simp
 
 /-- **Paper: Lemma few, extraction of a coefficient.** The coefficient of ε ^ D of the image of a tensor z under
 local maps with polynomial entries is a sum of at most (D + 1) ^ #parties restrictions of z, so a spectral point
