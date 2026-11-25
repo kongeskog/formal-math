@@ -8,7 +8,7 @@ import Paper.Prices
 /-!
 # Lemmas for the crossing inequality
 
-For Paper.prop_crossing (Paper/Crossing.lean): tensors with four legs, the two wires among them, and the compact set of the
+For Proposition prop:crossing (Paper/Crossing.lean): tensors with four legs, the two wires among them, and the compact set of the
 pairs (r, l).
 -/
 

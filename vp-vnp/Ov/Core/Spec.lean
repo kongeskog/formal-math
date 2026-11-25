@@ -127,11 +127,6 @@ theorem le_sum_val {κ : Type} [Fintype κ] (s : Ten K I) (v : κ → (∀ p, s.
 theorem le_mul {s t u : Ten K I} (h : Restr s (t * u)) : F.F s ≤ F.F t * F.F u := by
   rw [← F.mul]; exact F.mono h
 
-/-- A restriction of the product of a family costs at most the product of the prices. -/
-theorem le_prod {κ : Type} [Fintype κ] [DecidableEq κ] {s : Ten K I} {b : κ → Ten K I}
-    (h : Restr s (Ten.prod b)) : F.F s ≤ ∏ k, F.F (b k) := by
-  rw [← F.prod]; exact F.mono h
-
 /-- The pull-back of a spectral point along a map π of parties: a tensor over J costs what it costs
 if the leg j is held by π j. -/
 def pull (F : Spec K I) (π : J → I) : Spec K J where

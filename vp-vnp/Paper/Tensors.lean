@@ -50,19 +50,11 @@ theorem tensor_push_id (t : Ten K I) : Equi (Ten.push id t) t := Equi.push_id t
 /-- "Push-forward … sends 1 to 1". -/
 theorem tensor_push_one (π : J → I) : Equi (Ten.push π (1 : Ten K J)) 1 := Equi.push_one π
 
-/-- "Push-forward … sends … covers to covers"; in particular restrictions to restrictions. -/
-theorem tensor_push_cover (π : J → I) :
-    (∀ {κ : Type} [Fintype κ] {s : Ten K J} {b : κ → Ten K J}, SumRestr s b →
-      SumRestr (Ten.push π s) fun k => Ten.push π (b k)) ∧
-    ∀ {s t : Ten K J}, Restr s t → Restr (Ten.push π s) (Ten.push π t) :=
-  ⟨fun h => h.push π, fun h => h.push π⟩
-
 end Tensors
 
-/-- The text after the definition: "So φ(t) ≥ 1 if t ≠ 0, and φ(0) = 0 (the empty sum)." -/
-theorem def_spectral_values [Nonempty I] (φ : Spec K I) (t : Ten K I) :
-    ((∃ x, t.val x ≠ 0) → 1 ≤ φ.F t) ∧ ((∀ x, t.val x = 0) → φ.F t = 0) :=
-  ⟨fun ⟨_, hx⟩ => φ.one_le hx, φ.zero⟩
+/-- The text after the definition: "So φ(t) ≥ 1 if t ≠ 0". -/
+theorem def_spectral_values [Nonempty I] (φ : Spec K I) (t : Ten K I) : (∃ x, t.val x ≠ 0) → 1 ≤ φ.F t :=
+  fun ⟨_, hx⟩ => φ.one_le hx
 
 /-- Tensors that are restrictions of each other are identified: a spectral point is monotone under restriction, so it has
 the same value on them. -/
@@ -158,99 +150,5 @@ theorem lem_exponents_triangle (φ : Spec K I) (u v w : I) : φ.e u w ≤ φ.e u
   have h := φ.le_mul (lem_exponents_contract (K := K) 2 u v w)
   rw [lem_exponents_wire_two, lem_exponents_wire_two, lem_exponents_wire_two, ← Real.rpow_add (by norm_num)] at h
   exact (Real.rpow_le_rpow_left_iff (by norm_num)).1 h
-
-/-- Proof of Lemma lem:exponents: "Identifying the indices at every vertex in the same way shows that ⟨q⟩_P is a restriction of
-the product of the wires on the edges of the tree." The unit tensor has a leg at π p for every vertex p ∈ A; the edge e joins
-a e and b e; of the graph only connectedness is used, in the form that a function to Fin q that is constant along edges is
-constant. -/
-theorem lem_exponents_tree {A E : Type} [Fintype A] [DecidableEq A] [Nonempty A] [Fintype E] [DecidableEq E] (q : ℕ)
-    (π : A → I) (a b : E → A) (hconn : ∀ f : A → Fin q, (∀ e, f (a e) = f (b e)) → ∀ p p', f p = f p') :
-    Restr (Ten.push π (Ten.unit K A q)) (Ten.prod fun e => Ten.wire K q (π (a e)) (π (b e))) := by
-  classical
-  have key := Restr.of_edges π (ξ := fun o : Option A => o.elim (π (Classical.arbitrary A)) π) (Ten.unit K A q)
-    (fun _ : E => Fin q) (fun e => some (a e)) (fun e => some (b e))
-    (fun o x l => o.elim 1 fun p => ∏ e, if a e = p ∨ b e = p then (if l e = x p then (1 : K) else 0) else 1)
-    (by
-      rintro (_ | p) x x' l l' hx hl
-      · rfl
-      · refine Finset.prod_congr rfl fun e _ => ?_
-        by_cases he : a e = p ∨ b e = p
-        · have h2 : l e = l' e := hl e (he.imp (congrArg some) (congrArg some))
-          have h3 : x p = x' p := hx p rfl
-          rw [if_pos he, if_pos he, h2, h3]
-        · rw [if_neg he, if_neg he])
-    (by
-      intro x
-      refine Eq.trans ?_ (Fintype.sum_eq_single (fun e => (x (a e) : Fin q)) ?_).symm
-      · rw [Fintype.prod_option]
-        show _ = 1 * _
-        rw [one_mul]
-        by_cases h : ∀ i j, x i = x j
-        · rw [Ten.unit_val_of h]
-          refine (Finset.prod_eq_one fun p _ => Finset.prod_eq_one fun e _ => ?_).symm
-          exact (ite_eq_right_iff.2 fun _ => if_pos (h (a e) p))
-        · rw [Ten.unit_val_not h]
-          obtain ⟨e, he⟩ : ∃ e, x (a e) ≠ x (b e) := by
-            by_contra hne
-            push Not at hne
-            exact h (hconn x hne)
-          refine (Finset.prod_eq_zero (Finset.mem_univ (b e)) (Finset.prod_eq_zero (Finset.mem_univ e) ?_)).symm
-          exact (if_pos (Or.inr rfl)).trans (if_neg he)
-      · intro l hl
-        obtain ⟨e, he⟩ := Function.ne_iff.1 hl
-        refine Finset.prod_eq_zero (Finset.mem_univ (some (a e))) (Finset.prod_eq_zero (Finset.mem_univ e) ?_)
-        exact (if_pos (Or.inl rfl)).trans (if_neg he))
-  simpa only [Fintype.card_fin, Option.elim_some] using key
-
-/-- The consequence of lem_exponents_tree in exponents: g_φ(P) ≤ ∑ d_φ(e) over the edges. -/
-theorem lem_exponents_tree_le [Nonempty I] (φ : Spec K I) {A E : Type} [Fintype A] [DecidableEq A] [Nonempty A]
-    [Fintype E] [DecidableEq E] (π : A → I) (a b : E → A)
-    (hconn : ∀ f : A → Fin 2, (∀ e, f (a e) = f (b e)) → ∀ p p', f p = f p') :
-    hexp φ π ≤ ∑ e, φ.e (π (a e)) (π (b e)) := by
-  rw [hexp, Real.logb_le_iff_le_rpow (by norm_num) (zero_lt_one.trans_le (φ.one_le_unit π (by norm_num)))]
-  refine (φ.le_prod (lem_exponents_tree 2 π a b hconn)).trans (le_of_eq ?_)
-  rw [Real.rpow_sum_of_pos (by norm_num : (0 : ℝ) < 2)]
-  exact Finset.prod_congr rfl fun e _ => lem_exponents_wire_two φ _ _
-
-/-- **Paper: Lemma lem:exponents.** "Let φ be a spectral point on I. For every nonempty P ⊆ I there is g_φ(P) ≥ 0 with
-φ(⟨q⟩_P) = q ^ g_φ(P) for all q ≥ 1. The function d_φ(u,v) = g_φ({u,v}), d_φ(u,u) = 0, is a pseudometric with values in
-[0,1], and g_φ(P) ≤ ∑ d_φ(e) over the edges of any tree on P." The function d_φ is Ov.Spec.e. -/
-theorem lem_exponents [Nonempty I] (φ : Spec K I) :
-    ∃ g : Finset I → ℝ,
-      (∀ P : Finset I, P.Nonempty → 0 ≤ g P ∧
-        ∀ q : ℕ, 1 ≤ q → φ.F (Ten.push (Subtype.val : P → I) (Ten.unit K P q)) = (q : ℝ) ^ g P) ∧
-      (∀ u v, u ≠ v → φ.e u v = g {u, v}) ∧ (∀ u, φ.e u u = 0) ∧
-      (∀ u v, φ.e u v = φ.e v u) ∧ (∀ u v w, φ.e u w ≤ φ.e u v + φ.e v w) ∧ (∀ u v, φ.e u v ∈ Set.Icc (0 : ℝ) 1) ∧
-      ∀ (P : Finset I) (G : SimpleGraph P) [DecidableRel G.Adj], G.IsTree →
-        g P ≤ ∑ e ∈ G.edgeFinset, Sym2.lift ⟨fun u v => φ.e u v, fun _ _ => lem_exponents_symm φ _ _⟩ (e.map Subtype.val) := by
-  classical
-  refine ⟨fun P => hexp φ (Subtype.val : P → I), fun P _ =>
-    ⟨(lem_exponents_power φ _).1, (lem_exponents_power φ _).2⟩,
-    fun u v _ => ?_, lem_exponents_self φ, lem_exponents_symm φ, lem_exponents_triangle φ,
-    lem_exponents_unit_interval φ, ?_⟩
-  · show hexp φ ![u, v] = hexp φ (Subtype.val : ({u, v} : Finset I) → I)
-    have h : Set.range ![u, v] = Set.range (Subtype.val : ({u, v} : Finset I) → I) := by
-      simp only [Matrix.range_cons, Matrix.range_empty, Subtype.range_coe_subtype]
-      ext x
-      simp [or_comm]
-    rw [hexp, hexp, (def_spectral_congr φ).2 (Ten.Equi.push_unit_congr _ _ h 2)]
-  · intro P G _ hT
-    have : Nonempty P := hT.connected.nonempty
-    refine (lem_exponents_tree_le φ (Subtype.val : P → I) (E := G.edgeFinset)
-      (fun e => e.1.out.1) (fun e => e.1.out.2) fun f hf p q => ?_).trans (le_of_eq ?_)
-    · obtain ⟨w⟩ := hT.connected.preconnected p q
-      induction w with
-      | nil => rfl
-      | @cons u v _ hadj _ ih =>
-        refine Eq.trans ?_ ih
-        have hmem : s(u, v) ∈ G.edgeFinset := SimpleGraph.mem_edgeFinset.2 hadj
-        have h1 : f (s(u, v) : Sym2 P).out.1 = f (s(u, v) : Sym2 P).out.2 := hf ⟨_, hmem⟩
-        have h2 : (s((s(u, v) : Sym2 P).out.1, (s(u, v) : Sym2 P).out.2) : Sym2 P) = s(u, v) := Quot.out_eq _
-        rcases Sym2.eq_iff.1 h2 with ⟨e1, e2⟩ | ⟨e1, e2⟩ <;> rw [e1, e2] at h1
-        exacts [h1, h1.symm]
-    · rw [← Finset.sum_coe_sort G.edgeFinset]
-      refine Finset.sum_congr rfl fun e _ => ?_
-      conv_rhs => rw [← Quot.out_eq e.1]
-      rfl
 
 end Paper

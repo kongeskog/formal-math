@@ -34,9 +34,7 @@ theorem grow_mono (m : ℕ) {s : ℝ} (hs : 1 ≤ s) {r r' : ℕ} (h : r ≤ r')
 
 /-- Facts about `f = l ∘ τ`. -/
 structure Good (f : Matrix ι ι F2 → ℝ) (m : ℕ) (s : ℝ) : Prop where
-  nonneg : ∀ M, 0 ≤ f M
   zero : f 0 = 0
-  add : ∀ M N, f (M + N) ≤ f M + f N
   digit : ∀ (q : ℕ) (e : Fin m × Fin q ↪ ι) (i : Fin m),
     DM f (dg ((univ : Finset (Fin m × Fin q)).map e)) ≤
       s ^ 2 * DM f (dg ((({i} : Finset (Fin m)) ×ˢ univ).map e))
@@ -44,15 +42,11 @@ structure Good (f : Matrix ι ι F2 → ℝ) (m : ℕ) (s : ℝ) : Prop where
 theorem good_of_contr (l : Len G) {m : ℕ} {s : ℝ} (hC : Contr l m s)
     (τ : Matrix ι ι F2 → G) (hτ : ∀ M N, τ (M + N) = τ M * τ N) :
     Good (fun M => l.val (τ M)) m s where
-  nonneg _ := l.nonneg _
   zero := by
     have h := hτ 0 0
     rw [add_zero] at h
     have : τ 0 = 1 := by simpa using h
     simp only [this, l.one']
-  add M N := by
-    simp only [hτ]
-    exact l.mul' _ _
   digit _ e i := DM_digit l hC τ hτ e i
 
 variable {f : Matrix ι ι F2 → ℝ} {m : ℕ} {s : ℝ}

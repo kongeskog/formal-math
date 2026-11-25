@@ -118,26 +118,25 @@ theorem role_congr {o' : M.N → Fin U1} {y' : Uid A U0 M.N U1 → UW ub} (ho : 
     rw [slotBits_congr (h1 e)]
 
 theorem role_ne_zero (h : role M x p t ids o y ≠ 0) :
-    (∀ e, ∀ id ∈ ids e, y id ≠ none) ∧ ∃ (i : Fin (t * ub) → (M.kind x).I)
+    ∃ (i : Fin (t * ub) → (M.kind x).I)
       (g : ∀ k, ∀ ν : (M.kind x).CnAt p, Fin ((M.kind x).len (i k) ν) → Bool),
       (∀ ν : (M.kind x).CnAt p, ChOk ⟨x, ν.1⟩ (o ⟨x, ν.1⟩).1
-        (chString (M.kind x).lab (fun j => (M.kind x).len j ν) i fun k => g k ν) y) ∧
-      ∏ k : Fin (t * ub), (M.kind x).tab p (i k) (fun e => (slotBits t (ids e) y).getD k false) (g k) ≠ 0 := by
+        (chString (M.kind x).lab (fun j => (M.kind x).len j ν) i fun k => g k ν) y) := by
   classical
   rw [role] at h
-  split_ifs at h with hy
+  split_ifs at h
   swap
   · exact absurd rfl h
   obtain ⟨i, -, h⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   obtain ⟨g, -, h⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   split_ifs at h with hc
-  · exact ⟨hy, i, g, hc, h⟩
+  · exact ⟨i, g, hc⟩
   · exact absurd rfl h
 
 /-- The roles at the ends of a channel force its new units to be present. -/
 theorem role_new_ne_none (h : role M x p t ids o y ≠ 0) {ν : (M.kind x).Cn}
     (hν : (M.kind x).c ν = p ∨ (M.kind x).d ν = p) {k : Fin U1} (hk : k ≤ o ⟨x, ν⟩) : y (.new ⟨x, ν⟩ k) ≠ none := by
-  obtain ⟨-, i, g, hg, -⟩ := role_ne_zero h
+  obtain ⟨i, g, hg⟩ := role_ne_zero h
   exact (hg ⟨ν, hν⟩).ne_none hk
 
 end Role

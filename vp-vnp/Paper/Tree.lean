@@ -245,7 +245,7 @@ node and at most M nodes, over R, with the exponent C, the gain γ and the integ
 The nodes are the parties 0, ..., AA + A' − 1. For numbers n of units and outcomes o the units of the tree are those
 that are current at the end, plan.cur. A unit from a node to itself is allowed; it stays at its node, whose value sums
 over it. -/
-structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M b G₁ C : ℕ) (γ : ℝ) where
+structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M b C : ℕ) (γ : ℝ) where
   /-- the number of further nodes -/
   A' : ℕ
   /-- the number of moves -/
@@ -277,21 +277,12 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
   isLaw : Fin E → Bool
   depth_le : depth ≤ lg M ^ C
   stage_le : ∀ p, stage p ≤ depth
-  stage_given : ∀ a, stage (Fin.castAdd A' a) = 0
   stage_root : ∀ p, stage p = depth ↔ p = root
   stage_par : ∀ n o p, p ≠ root → stage (par n o p) = stage p + 1
   children_le : ∀ n o q, q ≠ root → (univ.filter fun p => p ≠ root ∧ par n o p = q).card ≤ b
   root_children_le : ∀ n o, (univ.filter fun p => p ≠ root ∧ par n o p = root).card ≤ C
   dead_le : ∀ o, (dead o).card ≤ M ^ C
   kinds : ∀ x, if isLaw x then sys.kind x ∈ laws else sys.kind x = relay R
-  law_stage : ∀ r : sys.R, isLaw r.1 = true → 0 < stage (sys.rp r)
-  /-- what good means -/
-  good_iff : ∀ n o x, plan.good n o x ↔ if isLaw x then
-      b * ∑ ν : (sys.kind x).Cn, (o ⟨x, ν⟩).val ^ 2 ≤ G₁ * plan.num n o x ^ 2 ∧
-        ∀ ν : (sys.kind x).Cn, plan.num n o x ≤ o ⟨x, ν⟩
-    else ∀ ν : (sys.kind x).Cn, (o ⟨x, ν⟩).val = plan.num n o x
-  /-- every possible outcome is good -/
-  poss_good : ∀ n o x, plan.Poss n o ℓ x → plan.good n o x
   edge : ∀ n, (∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) → ∀ o, (∀ x, plan.good n o x) →
     ∀ u ∈ cutUnits (hold0 sys.np) (hold1 sys.np) id (plan.cur n o E \ dead o),
       ∃ p, p ≠ root ∧ s(hold0 sys.np u, hold1 sys.np u) = s(p, par n o p)
@@ -299,19 +290,11 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
     ∀ p, (((cutUnits (hold0 sys.np) (hold1 sys.np) id (plan.cur n o E \ dead o)).filter
         (Holds (hold0 sys.np) (hold1 sys.np) p)).card : ℝ) ≤
       (lg M ^ C : ℕ) * (M : ℝ) ^ (1 - γ) * (N + (M : ℝ) ^ 2)
-  total_le : ∀ n, (∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) → ∀ o, (∀ x, plan.good n o x) →
-    (cutUnits (hold0 sys.np) (hold1 sys.np) id (plan.cur n o E \ dead o)).card ≤ lg M ^ C * M * (N + M ^ 2)
-  between_le : ∀ n, (∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) → ∀ o, (∀ x, plan.good n o x) → ∀ p, p ≠ root →
-    ((cutUnits (hold0 sys.np) (hold1 sys.np) id (plan.cur n o E \ dead o)).filter
-      (fun u => s(hold0 sys.np u, hold1 sys.np u) = s(p, par n o p))).card ≤ up n o p
   up_node : ∀ n, (∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) → ∀ o, (∀ x, plan.good n o x) →
     ∀ p, ((up n o p + ∑ q ∈ univ.filter (fun q => q ≠ root ∧ par n o q = p), up n o q : ℕ) : ℝ) ≤
       (lg M ^ C : ℕ) * (M : ℝ) ^ (1 - γ) * (N + (M : ℝ) ^ 2)
   up_total : ∀ n, (∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) → ∀ o, (∀ x, plan.good n o x) →
     ∑ p, up n o p ≤ lg M ^ C * M * (N + M ^ 2)
-  layers_le : ∀ n o, (∀ x, plan.good n o x) → ∀ p,
-    ∑ r ∈ univ.filter (fun r : sys.R => sys.rp r = p ∧ isLaw r.1 = true), plan.num n o r.1 ≤
-      ((Plan.seenAt n o E).filter (Holds (hold0 sys.np) (hold1 sys.np) p)).card
   /-- copies: what a node ever holds, with the zeros in slots and the counts of the moves, against the units that it
   has in the end -/
   copies_le : ∀ n, (∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) → ∀ o, (∀ x, plan.good n o x) → ∀ p,
@@ -336,9 +319,6 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
     (∀ p q, (ind fun x => par x.1 x.2 p = q) ∈ H) ∧ (∀ u, (ind fun x => u ∈ plan.cur x.1 x.2 E) ∈ H) ∧
     (∀ z u, (ind fun x => u ∈ plan.cons x.1 x.2 z) ∈ H) ∧ (∀ y, (fun x => plan.num x.1 x.2 y) ∈ H) ∧
     (∀ p, (fun x => up x.1 x.2 p) ∈ H) ∧ ∀ y, (ind fun x => plan.good x.1 x.2 y) ∈ H
-
-/-- The integer of the test for good outcomes: "the test for good outcomes compare[s] integers, as C₀ is an integer". -/
-noncomputable def goodBound (C₁ : ℝ) (a₁ : ℕ) : ℕ := ⌊2 * C₁ * (a₁ : ℝ) ^ 2⌋₊
 
 section Build
 
@@ -508,88 +488,6 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
       rw [h4, treePar, Equiv.symm_apply_apply]
       rfl
     · simp [tgM] at hdone
-
-/-- The law moves at a node have no more layers than the node has units. -/
-theorem layers_le_seen (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
-    (hg : ∀ x, (plan R FL Pl N N U1).good n o x) (p : Fin (AA + A')) :
-    ∑ r' ∈ univ.filter (fun r' : (sys R FL Pl).R => (sys R FL Pl).rp r' = p ∧ (eE R FL r'.1).isRight = true),
-      (plan R FL Pl N N U1).num n o r'.1 ≤
-    ((Plan.seenAt n o (Fintype.card (Mv T R ch FL))).filter
-      (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
-  classical
-  have key : ∀ r' ∈ univ.filter (fun r' : (sys R FL Pl).R => (sys R FL Pl).rp r' = p ∧ (eE R FL r'.1).isRight = true),
-      ∃ ν : (sys R FL Pl).N, ν.1 = r'.1 ∧ (∃ d, (sys R FL Pl).np ν d = p) ∧
-        (plan R FL Pl N N U1).num n o r'.1 ≤ (o ν).1 := by
-    rintro ⟨x, ro⟩ hr'
-    obtain ⟨-, hrp, hlaw⟩ := mem_filter.1 hr'
-    have hch : ∀ mv : Mv T R ch FL, mv.isRight = true → ∀ ro : (kindM R ch FL mv).Ro,
-        GoodMv R ch FL N (nn n) (oo R FL Pl o) mv →
-        ∃ ν : (kindM R ch FL mv).Cn, (∃ d, (kindM R ch FL mv).cnEnd ν d = ro) ∧
-          num R ch FL N (nn n) (oo R FL Pl o) mv ≤ oo R FL Pl o ⟨mv, ν⟩ := by
-      rintro (y | l) hl ro hgood
-      · simp at hl
-      obtain ⟨ν, hν⟩ := hH.near (FL.ro l.2.2.2 ro)
-      refine ⟨(FL.cn l.2.2.2).symm ν, ?_, hgood.2 _⟩
-      have h1 := FL.ends l.2.2.2 ((FL.cn l.2.2.2).symm ν)
-      rw [Equiv.apply_symm_apply] at h1
-      have h2 : FL.ro l.2.2.2 ro ∈ s(T.cN ν, T.dN ν) := by
-        rcases hν with hν | hν <;> simp [hν]
-      rw [← h1, Sym2.mem_iff] at h2
-      rcases h2 with h2 | h2
-      · exact ⟨false, ((FL.ro l.2.2.2).injective h2).symm⟩
-      · exact ⟨true, ((FL.ro l.2.2.2).injective h2).symm⟩
-    obtain ⟨ν, ⟨d, hd⟩, hle⟩ := hch (eE R FL x) hlaw ro (hg x)
-    refine ⟨⟨x, ν⟩, rfl, ⟨d, ?_⟩, ?_⟩
-    · rw [← hrp]
-      exact congrArg (fun z => (sys R FL Pl).rp ⟨x, z⟩) hd
-    · have e : (eN R FL Pl).symm ⟨eE R FL x, ν⟩ = ⟨x, ν⟩ := by
-        rw [Equiv.symm_apply_eq]
-        rfl
-      unfold oo at hle
-      rw [e] at hle
-      exact hle
-  choose ν hν1 hν2 hν3 using key
-  let Fr : ∀ r' ∈ univ.filter (fun r' : (sys R FL Pl).R => (sys R FL Pl).rp r' = p ∧ (eE R FL r'.1).isRight = true),
-      Finset (Un R FL Pl N U1) := fun r' hr' =>
-    (univ.filter fun k : Fin U1 => k.1 < (plan R FL Pl N N U1).num n o r'.1).image (Uid.new (ν r' hr'))
-  rw [← Finset.sum_attach]
-  calc _ = ∑ q ∈ (univ.filter fun r' : (sys R FL Pl).R =>
-        (sys R FL Pl).rp r' = p ∧ (eE R FL r'.1).isRight = true).attach, (Fr q.1 q.2).card := by
-        refine Finset.sum_congr rfl fun q _ => ?_
-        rw [card_image_of_injective _ (fun k k' e => (Uid.new.inj e).2), card_fin_lt']
-        exact (hν3 q.1 q.2).trans (o _).2.le
-    _ = ((univ.filter fun r' : (sys R FL Pl).R =>
-        (sys R FL Pl).rp r' = p ∧ (eE R FL r'.1).isRight = true).attach.biUnion fun q => Fr q.1 q.2).card := by
-        rw [card_biUnion]
-        intro q _ q' _ hne
-        rw [Function.onFun, Finset.disjoint_left]
-        intro u hu hu'
-        obtain ⟨k, -, rfl⟩ := mem_image.1 hu
-        obtain ⟨k', -, e⟩ := mem_image.1 hu'
-        apply hne
-        have e1 : (ν q'.1 q'.2).1 = (ν q.1 q.2).1 := congrArg Sigma.fst (Uid.new.inj e).1
-        rw [hν1, hν1] at e1
-        obtain ⟨⟨x, ro⟩, hq⟩ := q
-        obtain ⟨⟨x', ro'⟩, hq'⟩ := q'
-        simp only at e1
-        subst e1
-        have a1 := (mem_filter.1 hq).2.1
-        have a2 := (mem_filter.1 hq').2.1
-        obtain rfl : ro = ro' := (sys R FL Pl).inj x' (a1.trans a2.symm)
-        rfl
-    _ ≤ _ := by
-        refine card_le_card fun u hu => ?_
-        obtain ⟨q, -, hu⟩ := mem_biUnion.1 hu
-        obtain ⟨k, hk, rfl⟩ := mem_image.1 hu
-        refine mem_filter.2 ⟨mem_seen_new.2 ?_, ?_⟩
-        · rw [Fin.le_def]
-          have := (mem_filter.1 hk).2
-          have := hν3 q.1 q.2
-          omega
-        · obtain ⟨d, hd⟩ := hν2 q.1 q.2
-          cases d
-          · exact Or.inl hd.symm
-          · exact Or.inr hd.symm
 
 end Build
 
@@ -880,55 +778,6 @@ theorem tree_node_le (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
         split_ifs at this <;> omega
 
 open Classical in
-/-- All units of the tree. -/
-theorem tree_total_le (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
-    (hv : Valid N (nn n)) {o : (sys R FL Pl).N → Fin U1} (hg : ∀ x, (Tow.plan R FL Pl N N U1).good n o x) :
-    (cutUnits (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) id
-      ((Tow.plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)) \ deadU R FL Pl N o)).card ≤
-      YhN FL Uu AA N ρ := by
-  refine le_trans (card_le_card (t := univ.biUnion (AsU R FL Pl N n o)) ?_) ?_
-  · intro u hu
-    obtain ⟨hu, hu4⟩ := mem_filter.1 hu
-    obtain ⟨hu1, hu3⟩ := mem_sdiff.1 hu
-    obtain ⟨s, hs1, -⟩ := cur_tree hH hv hg hu1 hu3 hu4
-    exact mem_biUnion.2 ⟨s, mem_univ _, hs1⟩
-  refine card_biUnion_le.trans ((Finset.sum_le_sum fun s _ => card_AsU hH.r_pos hH.b_pos hH.h_pos s).trans ?_)
-  rw [Fintype.sum_sigma, Fin.sum_univ_eq_sum_range
-    (fun j => ∑ x : T.X j, fb (lev (load R ch FL N (nn n) (oo R FL Pl o))) j x) (J + 1)]
-  exact sum_fb_le hH.r_pos hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.ρ_lt hH.gain hH.two
-
-open Classical in
-/-- The units between a party and its parent are at most the load at it. -/
-theorem tree_between (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)} (hv : Valid N (nn n))
-    {o : (sys R FL Pl).N → Fin U1} (hg : ∀ x, (Tow.plan R FL Pl N N U1).good n o x) {p : Fin (AA + A')}
-    (hp : p ≠ Pl.pt none) :
-    ((cutUnits (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) id
-      ((Tow.plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)) \ deadU R FL Pl N o)).filter
-      (fun u => s(hold0 (sys R FL Pl).np u, hold1 (sys R FL Pl).np u) =
-        s(p, treePar R FL Pl hH.h_pos n o p))).card ≤ treeUp R FL Pl n o p := by
-  obtain ⟨ν, rfl⟩ := Pl.pt.surjective p
-  rcases ν with _ | q
-  · exact absurd rfl hp
-  refine (card_le_card (t := AsU R FL Pl N n o q) fun u hu => ?_).trans ?_
-  · obtain ⟨hu, hu2⟩ := mem_filter.1 hu
-    obtain ⟨hu, hu4⟩ := mem_filter.1 hu
-    obtain ⟨hu1, hu3⟩ := mem_sdiff.1 hu
-    obtain ⟨s', hs1, hs2⟩ := cur_tree hH hv hg hu1 hu3 hu4
-    have he := hs2.symm.trans hu2
-    rcases Sym2.eq_iff.1 he with ⟨e1, -⟩ | ⟨e1, e2⟩
-    · rwa [← Option.some.inj (Pl.pt.injective e1)]
-    · exfalso
-      simp only [treePar, Equiv.symm_apply_apply] at e1 e2
-      have a1 := ndStage_par hH.h_pos (lev (load R ch FL N (nn n) (oo R FL Pl o))) (Option.some_ne_none q)
-      have a2 := ndStage_par hH.h_pos (lev (load R ch FL N (nn n) (oo R FL Pl o))) (Option.some_ne_none s')
-      rw [← Pl.pt.injective e1] at a1
-      rw [Pl.pt.injective e2] at a2
-      omega
-  · refine (card_AsU hH.r_pos hH.b_pos hH.h_pos q).trans (le_of_eq ?_)
-    simp only [treeUp, Equiv.symm_apply_apply]
-    rfl
-
-open Classical in
 /-- The loads at one node. -/
 theorem tree_up_node (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
     (hb : b ≤ c) (hX : Fintype.card (T.X J) ≤ c) (p : Fin (AA + A')) :
@@ -1202,7 +1051,7 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (1 / 2 : ℝ) ^ 2 * h) (htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ)) :
     ∃ c, ∀ y, 1 ≤ y → ∃ (J m Uu : ℕ) (T : Tower h (2 ^ ee h) (2 ^ ee h) J 1) (_ : Routes T m Uu) (FL : FlagLaws A T),
-      FL.G₁ = VL.G₁ ∧ TCst FL ((univ : Finset VL.Di).toList.map VL.L) c (1 / 2) 1 (ee h) ∧
+      TCst FL ((univ : Finset VL.Di).toList.map VL.L) c (1 / 2) 1 (ee h) ∧
       y ≤ Fintype.card (T.X 0) ∧ Fintype.card (T.X 0) ≤ c * y ∧ 1 ≤ m ∧ m ≤ c * (J + 1) ^ 7 ∧
       Uu ≤ 2 * Fintype.card (T.X 0) * m := by
   classical
@@ -1266,7 +1115,7 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
   have hXJ0 : 0 < Fintype.card ((tower h n h2).X (JJ h n)) :=
     Fintype.card_pos_iff.2 ⟨((QuotientGroup.mk 1 : XX h n (JJ h n)))⟩
   refine ⟨JJ h n, (C + 1) * (n + 1) ^ 7, 2 * Fintype.card ((tower h n h2).X 0) * ((C + 1) * (n + 1) ^ 7),
-    tower h n h2, R.mono (Nat.mul_le_mul_right _ (by omega)) ?_, towFlag VL h2 n, rfl, ?_, ?_, ?_, ?_, ?_, le_rfl⟩
+    tower h n h2, R.mono (Nat.mul_le_mul_right _ (by omega)) ?_, towFlag VL h2 n, ?_, ?_, ?_, ?_, ?_, le_rfl⟩
   · rw [hX0, hX0', ← mul_assoc]
     exact Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega))
   · have hlaw : ∀ d : VL.Di, VL.L d ∈ (univ : Finset VL.Di).toList.map VL.L := fun d =>
@@ -1338,7 +1187,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     (hC : TCst FL laws c ρ 1 q) {C : ℕ} (hC0 : cTree c ≤ C) (hm1 : 1 ≤ m)
     (hm : m ≤ c * (J + 1) ^ 7) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hM : 2 ≤ M)
     (hX1 : M ≤ Fintype.card (T.X 0)) (hX2 : Fintype.card (T.X 0) ≤ c * M) (hAA : AA ≤ M) (hN : 1 ≤ N) (hℓ : 1 ≤ ℓ) :
-    Nonempty (ThinTrees F laws AA N ℓ M b FL.G₁ C (1 / (q : ℝ))) := by
+    Nonempty (ThinTrees F laws AA N ℓ M b C (1 / (q : ℝ))) := by
   classical
   obtain ⟨hCc, hC8, hC9⟩ : (c + 4) * 200000 + cKap c * (2 * c + 1) + 7 ≤ C ∧ (4 + (2 * c * c + 1 + c) * c) * 8 ≤ C ∧
       1 + 8 * (c * (2 * c + 1) ^ 7) + 7 ≤ C := by unfold cTree at hC0; omega
@@ -1417,7 +1266,6 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     isLaw := fun x => (eE R FL x).isRight
     depth_le := hdep.trans ((le_of_eq (by rw [pow_one])).trans (const_mul_pow_le hl (show 2 * c + 1 + 1 ≤ C by omega)))
     stage_le := fun p => ?_
-    stage_given := fun a => by rw [← Pl.pt_base, Equiv.symm_apply_apply]; rfl
     stage_root := fun p => by rw [ndStage_eq_top, Equiv.symm_apply_eq]
     stage_par := fun n o p hp => by
       rw [treePar, Equiv.symm_apply_apply]
@@ -1431,21 +1279,15 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       exact this.trans (hC.bot.trans (by omega))
     dead_le := fun o => ?_
     kinds := fun x => ?_
-    law_stage := fun r' hr' => ?_
     U1_pos := by rw [hU1]; exact Nat.succ_pos _
     cap := capN FL N Uu AA N
     ok := plan_ok_cap hH.r_pos hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.ρ_lt hH.gain hH.two
     up := treeUp R FL Pl
-    good_iff := fun n o x => ?_
-    poss_good := fun n o x hp => thm_tree_poss_good hℓ n o x hp
     edge := fun n hv o hg u hu => ?_
     node_le := fun n hv o hg p => ?_
-    total_le := fun n hv o hg => ?_
-    between_le := fun n hv o hg p hp => tree_between hH (valid_of n hv) hg hp
     up_node := fun n hv o hg p => ?_
     up_total := fun n hv o hg => ?_
     copies_le := fun n hv o hg p => ?_
-    layers_le := fun n o hg p => layers_le_seen hH n o hg p
     value := fun n hv tab => tree_value hH hℓ (capN_capB hC hm1 hUu hAX) (fun d => hC.len _ (hC.mem d)) hc hU1 tab
     computed := ?_ }⟩
   · rcases Pl.pt.symm p with _ | ⟨j, x⟩
@@ -1468,39 +1310,12 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     · simp [kindM]
     · simp only [Sum.isRight_inr, if_true]
       exact hC.mem _
-  · change 0 < ndStage (Pl.pt.symm (Pl.pt (partM R ch FL (eE R FL r'.1) r'.2)))
-    rw [Equiv.symm_apply_apply]
-    have key : ∀ mv : Mv T R ch FL, mv.isRight = true → ∀ ro, 0 < ndStage (partM R ch FL mv ro) := by
-      rintro (y | l) hl ro
-      · simp at hl
-      · exact Nat.succ_pos _
-    exact key _ hr' _
-  · have e : ∀ ν : (kindM R ch FL (eE R FL x)).Cn, oo R FL Pl o ⟨eE R FL x, ν⟩ = (o ⟨x, ν⟩ : ℕ) := fun ν => by
-      unfold oo
-      have h1 : (eN R FL Pl).symm ⟨eE R FL x, ν⟩ = ⟨x, ν⟩ := by
-        rw [Equiv.symm_apply_eq]
-        rfl
-      rw [h1]
-    change GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL x) ↔ if (eE R FL x).isRight = true then
-      b * ∑ ν : (kindM R ch FL (eE R FL x)).Cn, (o ⟨x, ν⟩).val ^ 2 ≤
-          FL.G₁ * num R ch FL N (nn n) (oo R FL Pl o) (eE R FL x) ^ 2 ∧
-        ∀ ν : (kindM R ch FL (eE R FL x)).Cn, num R ch FL N (nn n) (oo R FL Pl o) (eE R FL x) ≤ (o ⟨x, ν⟩ : ℕ)
-      else ∀ ν : (kindM R ch FL (eE R FL x)).Cn, (o ⟨x, ν⟩).val = num R ch FL N (nn n) (oo R FL Pl o) (eE R FL x)
-    simp only [← e]
-    clear e
-    generalize eE R FL x = mv
-    rcases mv with y | l
-    · exact Iff.rfl
-    · simp only [Sum.isRight_inr, if_true, GoodMv, GoodL, Nat.one_mul]
-      rfl
   · obtain ⟨hu, hl'⟩ := mem_filter.1 hu
     obtain ⟨hu, hd⟩ := mem_sdiff.1 hu
     obtain ⟨s, -, hs⟩ := cur_tree hH (valid_of n hv) hg hu hd hl'
     exact ⟨_, fun e => Option.some_ne_none s (Pl.pt.injective e), hs⟩
   · -- the units at one node
     exact (Nat.cast_le.2 (tree_node_le (R := R) (FL := FL) (Pl := Pl) hH (valid_of n hv) hg hC.b_le hC.bot p)).trans hnode
-  · -- all units
-    exact (tree_total_le hH (valid_of n hv) hg).trans htot
   · exact (Nat.cast_le.2 (tree_up_node hH n o hC.b_le hC.bot p)).trans hnode
   · exact (tree_up_total hH n o).trans htot
   · -- copies
@@ -1558,16 +1373,18 @@ layers of the law moves at a node add up to at most the number of bits of all un
 the units present, the units and numbers of the moves, and which outcomes are good are computed from o and the given
 numbers of units by a straight-line program with at most (MN)^C steps on numbers below (MN)^C. A step is an input, a
 constant, or an arbitrary function of two earlier results, given by its table (a binary operation). The program does not
-depend on the numbers of units, the outcomes or the tables." The tests are relays, and the laws are the fixed list, mapped to R. A move of num
-units uses num·ℓ layers, so (c) is stated as num summed over the law moves at a node against the units ever seen at it
-(seenAt). Units from a node to itself are also allowed: they stay, and their node sums over them (the printed formula is
-the case without them). The operations of (d) are those of a straight-line program that may depend on M, N and ℓ. -/
+depend on the numbers of units, the outcomes or the tables." The tests are relays, and the laws are the fixed list, mapped to R.
+The structure ThinTrees states only what the proof of Proposition prop:pieces uses: not the stage 0 of the given nodes,
+the total of the units over all nodes in (b) (it bounds the total of the loads instead), the count of layers in (c), or
+the form of the test for good outcomes; what a node ever holds (seenAt) is bounded against the loads (copies_le). Units
+from a node to itself are also allowed: they stay, and their node sums over them (the printed formula is the case
+without them). The operations of (d) are those of a straight-line program that may depend on M, N and ℓ. -/
 theorem thm_tree {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
     ∃ C : ℕ, ∀ (R : Type) [CommRing R] [Algebra A R] (M AA N ℓ : ℕ), 2 ≤ M → AA ≤ M → 1 ≤ N → 1 ≤ ℓ →
       Nonempty (ThinTrees R (((univ : Finset VL.Di).toList.map VL.L).map (lawMap (algebraMap A R))) AA N ℓ M
-        (2 ^ ee h) (goodBound VL.C₁ VL.a₁) C (1 / Real.logb 2 ((2 ^ ee h : ℕ) : ℝ))) := by
+        (2 ^ ee h) C (1 / Real.logb 2 ((2 ^ ee h : ℕ) : ℝ))) := by
   have he : 2 ≤ ee h := by
     unfold Nc.Tower.ee
     have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
@@ -1576,18 +1393,13 @@ theorem thm_tree {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     have : (4 : ℝ) ≤ ((2 ^ ee h : ℕ) : ℝ) := by
       exact_mod_cast Nat.pow_le_pow_right (show 0 < 2 by norm_num) he
     linarith
-  obtain ⟨c, hc⟩ := tree_towers
-    { VL with
-      G₁ := goodBound VL.C₁ VL.a₁
-      G₁_le := Nat.floor_le (by have := VL.C₁_nonneg; positivity)
-      L2 := fun d i => (VL.L2 d i).trans (Nat.le_floor VL.G₁_le) } h3 (by linarith) htwo
+  obtain ⟨c, hc⟩ := tree_towers VL h3 (by linarith) htwo
   refine ⟨cTree c, fun R _ _ M AA N ℓ hM hAA hN hℓ => ?_⟩
-  obtain ⟨J, m, Uu, T, Rt, FL, hG, hC, hX1, hX2, hm1, hm2, hUu⟩ := hc M (by omega)
+  obtain ⟨J, m, Uu, T, Rt, FL, hC, hX1, hX2, hm1, hm2, hUu⟩ := hc M (by omega)
   have e : Real.logb 2 ((2 ^ ee h : ℕ) : ℝ) = (ee h : ℝ) := by
     push_cast
     rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num), mul_one]
-  simp only [] at hG
-  rw [e, ← hG]
+  rw [e]
   exact exists_thinTrees Rt (flagMap (algebraMap A R) FL) (TCst_map _ hC) le_rfl hm1 hm2 hUu hM hX1 hX2 hAA hN hℓ
 
 end Thm

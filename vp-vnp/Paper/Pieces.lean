@@ -27,7 +27,7 @@ variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
 
 section Identity
 
-variable (mu : Nc.Letter S Unit Γ → Matrix Q Q A) {T c ub K N M b G₁ C : ℕ} (cb : Option Γ → Fin c → Bool)
+variable (mu : Nc.Letter S Unit Γ → Matrix Q Q A) {T c ub K N M b C : ℕ} (cb : Option Γ → Fin c → Bool)
   {laws : List (G.Law A)} {γ : ℝ}
 
 /-- The contents of the units at a node, as copies of all units. -/
@@ -37,7 +37,7 @@ def yOf {AA E U1 : ℕ} {sysN : Type} [Fintype sysN] [DecidableEq sysN] (n : Fin
   | .init p q k => if h : k.1 < (n p q).1 ∧ (p = a ∨ q = a) then some (w ⟨⟨p, q, ⟨k.1, h.1⟩⟩, h.2⟩) else none
   | .new _ _ => none
 
-variable (TT : ThinTrees A laws (K + K) N ub M b G₁ C γ) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
+variable (TT : ThinTrees A laws (K + K) N ub M b C γ) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
   (ρ : Option S → Fin (K + K) → Nc.Cut.RowData (K + K)) (n : Dl.NN K N)
 
 /-- The tables of the blocks and parts, as tables of the units at them. -/
@@ -132,12 +132,11 @@ C and the list kinds of roles that may occur in moves. An input word is cut into
 numbers of units, o the outcomes, and grp says in which piece a node is. At the beginning a node holds at most load
 units. -/
 structure PieceCut (kinds : List (Σ L : G.Law A, L.Ro)) (mu : Nc.Letter S Unit Γ → Matrix Q Q A)
-    (b G₁ v K T k C : ℕ) where
+    (v K T k C : ℕ) where
   /-- bits for a symbol -/
   c : ℕ
   /-- the code of symbols -/
   cb : Option Γ → Fin c → Bool
-  cb_inj : Function.Injective cb
   c_le : c ≤ C
   /-- bits of a unit -/
   ub : ℕ
@@ -169,16 +168,6 @@ structure PieceCut (kinds : List (Σ L : G.Law A, L.Ro)) (mu : Nc.Letter S Unit 
   cap : ℕ
   /-- the plan is causal and gives only current units between the ends of their slots -/
   ok : plan.Ok cap
-  /-- is the move a law move? -/
-  isLaw : Fin E → Bool
-  relay_kind : ∀ x, isLaw x = false → sys.kind x = relay A
-  /-- what good means -/
-  good_iff : ∀ n o x, plan.good n o x ↔ if isLaw x then
-      b * ∑ ν : (sys.kind x).Cn, (o ⟨x, ν⟩).val ^ 2 ≤ G₁ * plan.num n o x ^ 2 ∧
-        ∀ ν : (sys.kind x).Cn, plan.num n o x ≤ o ⟨x, ν⟩
-    else ∀ ν : (sys.kind x).Cn, (o ⟨x, ν⟩).val = plan.num n o x
-  /-- every possible outcome is good -/
-  poss_good : ∀ n o x, plan.Poss n o ub x → plan.good n o x
   /-- the piece of a node -/
   grp : Dl.NN K U0 → (sys.N → Fin U1) → Fin (K + K + A') → Fin num
   /-- the program that computes units, moves, good outcomes and pieces from n and o -/
@@ -213,7 +202,7 @@ structure PieceCut (kinds : List (Σ L : G.Law A, L.Ro)) (mu : Nc.Letter S Unit 
 
 section Build
 
-variable {K N ℓ M b G₁ C : ℕ} {laws : List (G.Law A)} {γ : ℝ} (TT : ThinTrees A laws (K + K) N ℓ M b G₁ C γ)
+variable {K N ℓ M b C : ℕ} {laws : List (G.Law A)} {γ : ℝ} (TT : ThinTrees A laws (K + K) N ℓ M b C γ)
 
 /-- The tree of the numbers of units and outcomes x. -/
 def treeAt (x : Dl.NN K N × (TT.sys.N → Fin TT.U1)) : Staged (K + K + TT.A') where
@@ -436,7 +425,7 @@ theorem slp_inputs {Inp ι : Type} [Fintype ι] {D p : ℕ} {inp : ι → Inp �
   rw [coe_univ, Set.image_univ, card_univ] at h2
   exact h2
 
-variable {K N ℓ M b G₁ C : ℕ} {laws : List (G.Law A)} {γ : ℝ} (TT : ThinTrees A laws (K + K) N ℓ M b G₁ C γ)
+variable {K N ℓ M b C : ℕ} {laws : List (G.Law A)} {γ : ℝ} (TT : ThinTrees A laws (K + K) N ℓ M b C γ)
 
 open Classical in
 /-- "The units, the pieces and what each table does are computed from the numbers of units and the outcomes": the
@@ -656,8 +645,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       (mu : Nc.Letter S Unit Γ → Matrix Q Q A),
       ∃ C v₀ : ℕ, ∀ v, v₀ ≤ v → ∃ K, v ^ e ≤ K ∧ K ≤ C * v ^ e ∧
         ∀ T k, v ^ a ≤ T → 2 ≤ k → k ≤ v ^ 64 →
-          Nonempty (PieceCut (kindList A ((univ : Finset VL.Di).toList.map VL.L)) mu (2 ^ ee h)
-            (goodBound VL.C₁ VL.a₁) v K T k C) := by
+          Nonempty (PieceCut (kindList A ((univ : Finset VL.Di).toList.map VL.L)) mu v K T k C) := by
   classical
   obtain ⟨C₀, htree⟩ := thm_tree VL h3 hgain
   have hq : 0 < ee h := by
@@ -764,7 +752,6 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   refine ⟨{
     c := c
     cb := cb
-    cb_inj := hcb
     c_le := by omega
     ub := ub
     ub_pos := b1
@@ -782,10 +769,6 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     plan := TT.plan
     cap := TT.cap
     ok := TT.ok
-    isLaw := TT.isLaw
-    relay_kind := fun x hx => by simpa [hx] using TT.kinds x
-    good_iff := TT.good_iff
-    poss_good := TT.poss_good
     grp := fun n o => pieceFin TT k n o
     tab := tab
     tab_valid := htab

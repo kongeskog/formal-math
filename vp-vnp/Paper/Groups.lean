@@ -310,12 +310,11 @@ theorem projection_var (A : IsoAct G Z) {q : Z} (hq : A.Fix q) (z : Z) :
   rw [← dist_eq_zero.1 (pow_eq_zero_iff two_ne_zero |>.1 (le_antisymm h4 (sq_nonneg _)))]
   exact hvar q hq
 
-/-- The P of the windows is the nearest-point projection to the fixed set: P z is fixed, is at least as near to z as every
-fixed point, and is the only fixed point with this property. -/
+/-- The P of the windows is the nearest-point projection to the fixed set: P z is at least as near to z as every fixed
+point, and is the only fixed point with this property. -/
 theorem projection_nearest [DecidableEq G] (A : IsoAct G Z) (z : Z) :
-    A.Fix (A.P z) ∧ (∀ y, A.Fix y → dist z (A.P z) ≤ dist z y) ∧
-      ∀ y, A.Fix y → dist z y ≤ dist z (A.P z) → y = A.P z := by
-  refine ⟨A.P_fix z, fun y hy => ?_, fun y hy h => ?_⟩
+    (∀ y, A.Fix y → dist z (A.P z) ≤ dist z y) ∧ ∀ y, A.Fix y → dist z y ≤ dist z (A.P z) → y = A.P z := by
+  refine ⟨fun y hy => ?_, fun y hy h => ?_⟩
   · refine (abs_le_of_sq_le_sq' (show dist z (A.P z) ^ 2 ≤ dist z y ^ 2 from ?_) dist_nonneg).2
     linarith [projection_var A hy z, sq_nonneg (dist (A.P z) y)]
   · have h1 := projection_var A hy z
@@ -334,9 +333,9 @@ theorem projection_sq_le (A : IsoAct G Z) (z : Z) :
 /-- "q projects to v": a point between v = Pa and a has the projection v. -/
 theorem projection_segment [DecidableEq G] (A : IsoAct G Z) {a q : Z} {σ : ℝ}
     (e1 : dist (A.P a) q = σ * dist (A.P a) a) (e2 : dist q a = (1 - σ) * dist (A.P a) a) : A.P q = A.P a := by
-  refine (projection_nearest A a).2.2 _ (A.P_fix q) ?_
+  refine (projection_nearest A a).2 _ (A.P_fix q) ?_
   have h1 := dist_triangle a q (A.P q)
-  have h2 := (projection_nearest A q).2.1 _ (A.P_fix a)
+  have h2 := (projection_nearest A q).1 _ (A.P_fix a)
   rw [dist_comm a q] at h1
   rw [dist_comm q (A.P a)] at h2
   rw [dist_comm a (A.P a)]
@@ -349,23 +348,16 @@ section Windows
 variable {μ : ℕ} {s : ℝ} {h : ℕ} {Z : Type} [MetricSpace Z] [Cat.CN Z] (A : IsoAct (U h) Z)
 
 /-- "For disjoint windows the projection of one maps the fixed set of the other into itself, as the two groups
-commute." -/
+commute": the projection of the later window maps the fixed set of the earlier one into itself. -/
 theorem windows_commute {p n p' n' : ℕ} (hd : p + n ≤ p') (hp' : p' + n' ≤ h) :
-    (∀ z, (A.W p n).Fix z → (A.W p n).Fix ((A.W p' n').P z)) ∧
-      ∀ z, (A.W p' n').Fix z → (A.W p' n').Fix ((A.W p n).P z) := by
-  refine ⟨fun z hz a => ?_, fun z hz b => ?_⟩
-  · have h1 := (A.W p' n').P_comm (A.act (wh h p n a)) (A.isometry _) (A.surj _)
-      (fun b z => by
-        show A.act _ (A.act (wh h p' n' b) z) = A.act (wh h p' n' b) (A.act _ z)
-        rw [← A.mul', ← A.mul', IsoAct.wh_comm hd hp']) z
-    show A.act (wh h p n a) _ = _
-    rw [h1, show A.act (wh h p n a) z = z from hz a]
-  · have h1 := (A.W p n).P_comm (A.act (wh h p' n' b)) (A.isometry _) (A.surj _)
-      (fun a z => by
-        show A.act _ (A.act (wh h p n a) z) = A.act (wh h p n a) (A.act _ z)
-        rw [← A.mul', ← A.mul', IsoAct.wh_comm hd hp']) z
-    show A.act (wh h p' n' b) _ = _
-    rw [h1, show A.act (wh h p' n' b) z = z from hz b]
+    ∀ z, (A.W p n).Fix z → (A.W p n).Fix ((A.W p' n').P z) := by
+  intro z hz a
+  have h1 := (A.W p' n').P_comm (A.act (wh h p n a)) (A.isometry _) (A.surj _)
+    (fun b z => by
+      show A.act _ (A.act (wh h p' n' b) z) = A.act (wh h p' n' b) (A.act _ z)
+      rw [← A.mul', ← A.mul', IsoAct.wh_comm hd hp']) z
+  show A.act (wh h p n a) _ = _
+  rw [h1, show A.act (wh h p n a) z = z from hz a]
 
 /-- The inequality (eq:window) of the paper: |z Pz|² ≤ C(n) ∑ e_j(z)² over the generators of the window. "By Lemma
 lem:first and the Cauchy–Schwarz inequality." -/
@@ -442,7 +434,7 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
       dist a (B k) ^ 2 - dist a ((A.W (p + (k + 1)) (3 * u - (k + 1))).P a) ^ 2
     linarith
   have hφR : dist a (B u) ≤ R :=
-    (projection_nearest (A.W (p + u) (3 * u - u)) a).2.1 _
+    (projection_nearest (A.W (p + u) (3 * u - u)) a).1 _
       (((A.W p (3 * u)).P_fix a).sub A (by omega) (by omega) hp)
   have hφ : ∀ k, u ≤ k → k ≤ 3 * u → dist a (B k) ≤ dist a (B u) := by
     intro k hk
@@ -474,7 +466,7 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
     by_cases htk : k ≤ t
     · exact A.e_zero (hBfix k) (by omega) (by omega) (by omega)
     · have h1 : (A.W (p + t) 2).Fix a := ha.sub A (by omega) (by omega) (by omega)
-      exact A.e_zero ((windows_commute A (by omega) (by omega)).1 a h1) le_rfl le_rfl (by omega)
+      exact A.e_zero (windows_commute A (by omega) (by omega) a h1) le_rfl le_rfl (by omega)
   have he2 : ∀ t, u ≤ t → t + 1 < 2 * u → A.e (p + t) (B (t + 1)) ≤ 2 * dist (B t) (B (t + 1)) := by
     intro t h1 h2
     rw [dist_comm]
@@ -557,7 +549,7 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
         _ ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2 * R ^ 2 := mul_le_mul_of_nonneg_right hC (sq_nonneg _)
         _ = _ := by ring
     exact le_of_mul_le_mul_left h2 (by positivity)
-  have h1 := (projection_nearest (A.W p (3 * u)) a).2.1 _ ((A.W p (3 * u)).P_fix b)
+  have h1 := (projection_nearest (A.W p (3 * u)) a).1 _ ((A.W p (3 * u)).P_fix b)
   rw [← hR] at h1
   have h2 := dist_triangle a b ((A.W p (3 * u)).P b)
   rw [← hBu]
@@ -618,7 +610,7 @@ theorem lem_angle_projections {G₁ G₂ Z : Type} [Group G₁] [Fintype G₁] [
     have h2 := hq q σ hσ0 hσ1 q1 q2
     have f2 : A₂.Fix q' := segment_fixed A₂ hτ0.le hτ1 hv2 (A₂.P_fix z) p1 p2
     have h4 : dist q (A₂.P q) ^ 2 ≤ dist q q' ^ 2 :=
-      pow_le_pow_left₀ dist_nonneg ((projection_nearest A₂ q).2.1 _ f2) 2
+      pow_le_pow_left₀ dist_nonneg ((projection_nearest A₂ q).1 _ f2) 2
     have h5 := p3 q
     have h6 := q3 a'
     rw [dist_comm a' q, dist_comm a' v, dist_comm a' a] at h6
@@ -681,7 +673,7 @@ theorem thm_poincare_far {h : ℕ} {Z : Type} [MetricSpace Z] [Cat.CN Z] (A : Is
   have hr0 : 0 ≤ r := mul_nonneg dist_nonneg dist_nonneg
   have hc : 0 < ε / (2 * r + 1) := by positivity
   set v := (A.W p' n').P ((A.W p n).P z) with hv
-  have hv1 : (A.W p n).Fix v := (windows_commute A hd hp').1 _ (IsoAct.P_fix _ z)
+  have hv1 : (A.W p n).Fix v := windows_commute A hd hp' _ (IsoAct.P_fix _ z)
   refine (lem_angle_projections _ _ hc z v hv1 (IsoAct.P_fix _ _) fun q σ hσ0 hσ1 q1 q2 => ?_).trans ?_
   · rw [projection_segment _ q1 q2, ← hv, dist_comm q v]
     exact mul_le_of_le_one_left (sq_nonneg _) (by linarith [sq_nonneg (ε / (2 * r + 1))])
@@ -859,7 +851,7 @@ theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA
     linarith
   have h4 : windowSum A u L b ≤ ∑ i, dist b (Q i) ^ 2 :=
     sum_le_sum fun a _ => pow_le_pow_left₀ dist_nonneg
-      ((projection_nearest _ b).2.1 _ (IsoAct.P_fix _ z)) 2
+      ((projection_nearest _ b).1 _ (IsoAct.P_fix _ z)) 2
   refine ⟨b, h4.trans h3, ?_⟩
   have h5 := hb z
   have e : windowSum A u L z = ∑ i, dist z (Q i) ^ 2 := rfl
@@ -926,7 +918,7 @@ theorem thm_poincare_limit (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
       unfold windowSum
       refine continuous_finsetSum _ fun a _ => Continuous.pow ?_ 2
       refine (LipschitzWith.of_le_add fun x w => ?_).continuous
-      have h1 := (projection_nearest (A.W (a.1 * u) (2 * u)) x).2.1 _ (IsoAct.P_fix _ w)
+      have h1 := (projection_nearest (A.W (a.1 * u) (2 * u)) x).1 _ (IsoAct.P_fix _ w)
       have h2 := dist_triangle x w ((A.W (a.1 * u) (2 * u)).P w)
       linarith
     have hlim : F y₀ = 0 := tendsto_nhds_unique ((hcont.tendsto y₀).comp hy₀) hF0lim

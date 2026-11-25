@@ -559,7 +559,7 @@ theorem thm_duality [Nonempty I] {B : Type} [Fintype B] [DecidableEq B] {C : Ten
       rw [← cls_mul, ← cls_mul] at h5
       exact h5) 1
     rw [(def_spectral_congr φ).2 (Equi.one_mul _), (def_spectral_congr φ).2 (Equi.one_mul _)] at h2
-    have h3 : 1 ≤ φ.F C := (def_spectral_values φ C).1 hC
+    have h3 : 1 ≤ φ.F C := def_spectral_values φ C hC
     nlinarith
 
 end Paper
