@@ -346,10 +346,7 @@ theorem stepOK_base (hkey : Function.Injective (Sum.elim key dkey)) (hub : 0 < u
         tget (key (Fin.castAdd A' p, .init p p k)) t' = tget (dkey (p, k)) t' then Ψ t' else 0 := by
     funext t'
     rw [wsum_boths]
-    by_cases hh : ∀ k ∈ (List.finRange U0).filter fun k => k.1 < (n p p).1,
-        tget (key (Fin.castAdd A' p, .init p p k)) t' = tget (dkey (p, k)) t'
-    · rw [if_pos hh, if_pos hh]
-    · rw [if_neg hh, if_neg hh]
+    simp
   unfold baseIns
   rw [wsum_script_cons, hB]
   induction p using Fin.addCases with

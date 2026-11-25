@@ -266,9 +266,7 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
     refine ((Does.cons gT (Does.cons gU h)).replace ?_).mono ?_
     · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_map, one_mul]
       rfl
-    · have : (κs + κp * (κl + 2) + κi * 10 + κk + sw + 2000) * insCost T ub i =
-        (κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900) * insCost T ub i + 100 * insCost T ub i := by ring
-      omega
+    · linarith
   -- every case ends with this bound, split by the summands of the constant
   set K := κs + κp * (κl + 2) + κi * 10 + κk + sw + 1900 with hK
   have hKN (N : ℕ) : K * N = κs * N + κp * ((κl + 2) * N) + κi * 10 * N + κk * N + sw * N + 1900 * N := by

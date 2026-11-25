@@ -31,9 +31,7 @@ noncomputable def kNew (o : M.N → Fin U1) (key : Cell M U0 U1 → List Bool) (
 theorem kNew_eq (r : M.R) (ν : (M.kind r.1).CnAt r.2) : kNew o key r ν =
     ((List.finRange U1).filter fun k => k.1 < (o ⟨r.1, ν.1⟩).1 + 1).map fun k => key (M.rp r, .new ⟨r.1, ν.1⟩ k) := by
   unfold kNew
-  congr 1
-  refine List.filter_congr fun k _ => ?_
-  rw [decide_eq_decide, Nat.lt_succ_iff]
+  simp only [Nat.lt_succ_iff]
   rfl
 
 theorem length_kNew (r : M.R) (ν : (M.kind r.1).CnAt r.2) : (kNew o key r ν).length = (o ⟨r.1, ν.1⟩).1 + 1 := by
@@ -129,9 +127,7 @@ theorem getD_append_replicate (l : List Bool) (m k : ℕ) : (l ++ List.replicate
   rcases lt_or_ge k l.length with h | h
   · rw [List.getD_append _ _ _ _ h]
   · rw [List.getD_append_right _ _ _ _ h, List.getD_eq_default l _ h]
-    rcases lt_or_ge (k - l.length) m with h' | h'
-    · rw [List.getD_eq_getElem _ _ (by simpa using h'), List.getElem_replicate]
-    · rw [List.getD_eq_default _ _ (by simpa using h')]
+    simp
 
 open Classical in
 /-- **The step of a role.** -/

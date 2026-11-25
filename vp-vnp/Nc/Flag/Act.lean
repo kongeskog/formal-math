@@ -69,8 +69,7 @@ theorem P_spec (z : Z) : IsBary (fun _ : G => (1 : ℝ)) (fun g => A.act g z) (A
   Classical.choose_spec (A.exists_proj z)
 
 theorem card_pos' : (0 : ℝ) < ∑ _g : G, (1 : ℝ) := by
-  rw [sum_const, card_univ, nsmul_eq_mul, mul_one]
-  exact_mod_cast Fintype.card_pos
+  positivity
 
 /-- An isometry that commutes with the action commutes with the projection. -/
 theorem P_comm (f : Z → Z) (hf : Isometry f) (hs : Function.Surjective f)

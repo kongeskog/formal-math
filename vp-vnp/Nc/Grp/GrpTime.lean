@@ -220,8 +220,7 @@ theorem cost_role {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length
     simp only [Function.comp, List.length_map]
     have h5 : ((List.finRange U1).filter fun k => k ≤ o ⟨r.1, ν.1⟩) =
         (List.finRange U1).filter fun k => k.1 < (o ⟨r.1, ν.1⟩).1 + 1 := by
-      refine List.filter_congr fun k _ => ?_
-      rw [decide_eq_decide, Nat.lt_succ_iff]
+      simp only [Nat.lt_succ_iff]
       rfl
     rw [h5]
     exact length_filter_lt _ _
@@ -233,9 +232,7 @@ theorem cost_role {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length
   have h6 : t * (ub + 1) ≤ t * W := Nat.mul_le_mul_left _ (by omega)
   have h7 := Nat.mul_le_mul_right W h3
   have h8 := Nat.mul_le_mul_right W h4
-  have h9 : ((1 + sl) * t + cs) * W = t * W + sl * t * W + cs * W := by ring
-  rw [h9]
-  omega
+  linarith
 
 theorem cost_roles {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length ≤ Lc)
     (hsl : ∀ r : M.R, Fintype.card ((M.kind r.1).SlAt r.2) ≤ X) (hcn : ∀ r : M.R, Fintype.card ((M.kind r.1).CnAt r.2) ≤ X)
@@ -314,7 +311,6 @@ theorem cost_base {T Lc X : ℕ} (hx : ∀ κ, (x κ).length ≤ T) (hk : ∀ c,
     ((baseIns qn cb q x ρ n key dkey p).map (insCost T ub)).sum ≤
       T + inN n p * (660 * (ub + Lc + 1)) + X * X + 401 * X + 1 ∧
     (baseIns qn cb q x ρ n key dkey p).length ≤ 1 + inN n p := by
-  have hb := cost_body (ub := ub) (Lc := Lc) (X := X) (ρ := ρ) (n := n) (key := key) (dkey := dkey) hk hd hS hA p
   have hdg := diag_le (n := n) p
   have h1 : ((((List.finRange U0).filter fun k => k.1 < (n p p).1).map fun k =>
       Ins.both (key (Fin.castAdd A' p, .init p p k)) (dkey (p, k))).map (insCost T ub)).sum ≤
@@ -408,7 +404,6 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
       calc ιb * (X * X + 401 * X + 1) ≤ X * (X * X + 401 * (X * X) + X * X) := by
             refine Nat.mul_le_mul hιX ?_
             have : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
-            have : 1 ≤ X * X := Nat.one_le_iff_ne_zero.2 (by positivity)
             omega
         _ = 403 * X ^ 3 := by ring
     calc ιb * (T + lh * (660 * W) + X * X + 401 * X + 1) = ιb * T + 660 * (ιb * lh * W) + ιb * (X * X + 401 * X + 1) := by

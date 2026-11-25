@@ -65,9 +65,7 @@ theorem wsum_role_gen (L : G.Law A) (p : L.Ro) (htab : ∀ i x g, ∃ e : WE, e.
         simp only [tail_getD]
     · congr 1
       refine Prod.ext rfl (Prod.ext ?_ ?_)
-      · funext i
-        show (ins i).tail.drop B = (ins i).drop (B + 1)
-        cases ins i <;> simp
+      · simp
       · funext j
         show (chS L p f ((cnList L p).get j)).reverse ++ ((List.ofFn (L.lab z.1) ++
           List.ofFn (z.2 ((cnList L p).get j))).reverse ++ out j) =

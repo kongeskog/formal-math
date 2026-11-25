@@ -151,10 +151,7 @@ theorem putF_does (ub : ℕ) (keys : List (List Bool)) (r : List Bool) (t : Tree
       | cons b r => exact (Does.ite_true (Gives.id _).tl.hd (by simp [ofBits]) (Does.fail _)).mono (by omega))
   rw [bind_putOne] at h2
   refine h2.mono ?_
-  have e : (keys.map fun k => ub * 90 + k.length * 60 + 300 + 30) = keys.map fun k => ub * 90 + k.length * 60 + 330 :=
-    List.map_congr_left fun k _ => by omega
-  rw [e]
-  omega
+  linarith
 
 /-- Step for several strings: argument (keys, (yardstick, (strings, trie))). -/
 def putsStep : Fm := .cons (.hd (.tl .id)) (.cons (.tl (.hd (.tl (.tl .id))))

@@ -76,7 +76,6 @@ theorem sum_items_le {items : List Item} {n c N : ℕ} (hn : items.length = n)
     obtain ⟨it, hit, rfl⟩ := List.mem_map.1 hy
     have := h it hit
     have h2 : (62 * c + 700) * (it.1.length + it.2.length + 1) ≤ (62 * c + 700) * N := Nat.mul_le_mul_left _ this
-    have h3 : 1 ≤ N := by omega
     nlinarith
   have := List.sum_le_card_nsmul _ _ h1
   simpa using this
@@ -195,10 +194,6 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
       10 * (κR * N) + 100 * (κC * N) + 2 * (nT S * (62 * c + 730) * N) + 2000 * N := by ring
     have h9 : κC * 71 * N = 71 * (κC * N) := by ring
     have h10 : κR * 8 * N = 8 * (κR * N) := by ring
-    rw [h8]
-    rw [h7] at h1 h2
-    rw [h9] at h5
-    rw [h10] at h6
     omega
 
 end Nc.Grp

@@ -98,7 +98,6 @@ def permU (σ : Equiv.Perm ι) : GLM ι where
     ext i j
     simp [Matrix.mul_apply, Matrix.one_apply, σ.injective.eq_iff]
   inv_val := by
-    rw [Matrix.submatrix_mul_equiv (1 : Matrix ι ι F2) (1 : Matrix ι ι F2) id σ id]
     simp
 
 theorem permU_conj (σ : Equiv.Perm ι) (M : Matrix ι ι F2) :

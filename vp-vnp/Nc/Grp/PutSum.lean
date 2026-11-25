@@ -106,7 +106,7 @@ theorem tget_putAll (keys : List (List Bool)) (hk : keys.Nodup) (u : ℕ → Lis
     · rw [if_neg h1]
       by_cases h2 : p = k
       · subst h2
-        rw [if_pos rfl, if_pos List.mem_cons_self, List.idxOf_cons_self]
+        simp
       · rw [if_neg h2, if_neg (by simp [h1, h2])]
 
 end Nc.Grp

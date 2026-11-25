@@ -154,8 +154,8 @@ theorem exists_col_aux (l : Len (U n)) (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + 
       by_cases h : i = lo j
       · subst h
         rw [if_neg (by rw [hlo]; omega), if_pos rfl, if_pos, if_pos, zero_add]
-        · exact ⟨hlo.ge, Fin.le_def.2 (by omega)⟩
-        · exact ⟨hhi.ge, Fin.le_def.2 (by omega)⟩
+        · omega
+        · omega
       · rw [if_neg h, add_zero]
         have : i.1 ≠ p := fun h2 => h (Fin.ext h2)
         congr 1
