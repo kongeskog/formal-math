@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:44:19.650795587Z",
+  "updated_at": "2026-11-25T03:50:55.727202692Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 64,
     "rejected": 2,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 3
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 64,
-      "attempts": 66,
+      "attempts": 67,
       "saved": 69548
     }
   ],
@@ -150,7 +150,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T06:40:36Z",
-      "pr": null,
+      "pr": 120,
       "result_delta": null,
       "created_at": "2026-11-25T02:41:35Z",
       "url": "https://github.com/kongeskog/formal-math/issues/111",
@@ -788,7 +788,76 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 120,
+      "title": "restructure(Paper): the final theorems from the approximate theorem, the contracting rate directly",
+      "author": "kongeskog",
+      "head_sha": "abdfa80311ccd80196def98af16ed47c1b3258f6",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T03:50:09Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 111,
+      "url": "https://github.com/kongeskog/formal-math/pull/120",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
