@@ -14,17 +14,9 @@
     }
   },
   "comments_seen_until": "2026-11-25T08:02:33Z",
-  "dispatched": {
-    "140@e559604d2df66ef1f6b54d4a6b419400fcdf3a83@27cc32654748ed60eea2fee7a5db40e1dfcc7e7c@139@00434c693dc88cbe7b215749df88db153ddf59c8": "2026-11-25T08:03:06.550996614Z"
-  },
-  "lines": {
-    "140@e559604d2df66ef1f6b54d4a6b419400fcdf3a83": [
-      "139@00434c693dc88cbe7b215749df88db153ddf59c8"
-    ]
-  },
-  "line_bases": {
-    "140@e559604d2df66ef1f6b54d4a6b419400fcdf3a83": "062d6dfd7b407fdc59326050f2a89b6d8285278f"
-  },
+  "dispatched": {},
+  "lines": {},
+  "line_bases": {},
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],

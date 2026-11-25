@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T08:26:42.147479028Z",
+  "updated_at": "2026-11-25T08:34:15.640171604Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -926,11 +926,6 @@
       "loc": 425
     },
     {
-      "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 7161,
-      "loc": 412
-    },
-    {
       "path": "vp-vnp/Paper/Crossing.lean",
       "tokens": 6848,
       "loc": 388
@@ -949,6 +944,11 @@
       "path": "vp-vnp/Paper/Prices.lean",
       "tokens": 6652,
       "loc": 388
+    },
+    {
+      "path": "vp-vnp/Paper/Laws.lean",
+      "tokens": 6619,
+      "loc": 394
     },
     {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
