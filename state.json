@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:01:31.151098376Z",
+  "updated_at": "2026-11-25T03:02:39.216331931Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "5704f77738804355d3346999cda5be5d58772e67",
-    "at": "2026-11-25T02:40:35.934845549Z",
+    "sha": "564b09bbb18df59483c753b7fcb718b955d6f8f8",
+    "at": "2026-11-25T03:02:39.216331931Z",
     "metrics": {
-      "tokens": 876743,
-      "loc": 55897,
-      "decls": 4484,
-      "files": 319,
-      "bytes": 3252869,
-      "build_seconds": 601
+      "tokens": 873808,
+      "loc": 55759,
+      "decls": 4474,
+      "files": 318,
+      "bytes": 3241318,
+      "build_seconds": 240
     }
   },
   "counts": {
-    "merged": 59,
+    "merged": 60,
     "rejected": 3,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 59,
+      "merged": 60,
       "attempts": 64,
-      "saved": 51418
+      "saved": 54353
     }
   ],
   "ideas": [
@@ -789,74 +789,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 116,
-      "title": "restructure(Paper): drop lem_toolkit, the restatements in Paper/Means and a duplicate lemma",
-      "author": "kongeskog",
-      "head_sha": "6c9762a44a61c436923888e01416662ecc011367",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T02:50:25Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 109,
-      "url": "https://github.com/kongeskog/formal-math/pull/116",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    },
     {
       "pr": 117,
       "title": "restructure(Paper): prove thm_noacc through the approximate rounds, delete the exact round",
