@@ -8,7 +8,7 @@ import NS1.Accel
 /-!
 # Weighted functions computed by formulas
 
-`Does θ F x Q c`: all runs of the formula `F` at the tree `x` stop, they use no named constants, the accepting ones
+`Does θ F x Q c`: all runs of the formula `F` at the tree `x` stop, the accepting ones
 have cost at most `c`, and for every function of the value their weighted sum is that of the list `Q` of pairs
 (weight, value).
 -/

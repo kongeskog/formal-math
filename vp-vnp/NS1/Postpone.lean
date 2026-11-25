@@ -417,7 +417,7 @@ def wt (κ : List Bool → R) (r : Run A) : R := algebraMap A R r.th * ((names r
 /-- The value of a list of runs. -/
 def val (κ : List Bool → R) (l : List (Run A)) : R := (l.map (wt κ)).sum
 
-/-- The value of a list of runs without named constants. -/
+/-- The plain sum of a list of runs: the sum of their weights. -/
 def pval (l : List (Run A)) : A := (l.map Run.th).sum
 
 end Weights
@@ -467,7 +467,7 @@ theorem sum_filter_th (t : Bt) (l : List (Run A)) :
   | nil => rfl
   | cons r l ih => cases hr : ok t (names r.out) <;> simp [hr, ih]
 
-/-- **Postponing without an interpreter**: `WN` is plain; it has the runs of the program whose values name the
+/-- **Postponing**: `WN` is plain; it has the runs of the program whose values name the
 constants as the budget prescribes, with their weights. -/
 theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) d l)
     (hT : ∀ r ∈ l, r.cost ≤ T ∧ r.out.size ≤ S) {t : Bt} (ht : t.ht ≤ H) :
