@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T20:01:59.253587880Z",
+  "updated_at": "2026-11-25T20:03:37.496114331Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -932,13 +932,27 @@
       "title": "restructure(NS1,Nc/Acc,Paper): programs return the names of their constants, and the interpreter with budgets goes",
       "author": "kongeskog",
       "head_sha": "675ed8e21c5b46db3894fc052acc307685b8f2c0",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "c09569a6ced7e22a454622ff34a33ca85d525a13",
+      "status": "stale",
       "created_at": "2026-11-25T19:45:54Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 837290,
+        "loc": 53491,
+        "decls": 4354,
+        "files": 314,
+        "bytes": 3113784,
+        "build_seconds": 475
+      },
+      "base_metrics": {
+        "tokens": 842850,
+        "loc": 54038,
+        "decls": 4383,
+        "files": 315,
+        "bytes": 3133893,
+        "build_seconds": null
+      },
+      "delta": -5560,
       "gates": [
         {
           "key": "format",
@@ -946,39 +960,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "34 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 842850 → 837290 (-5560)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; will be re-verified once approved"
         },
         {
           "key": "review",
@@ -989,7 +1011,7 @@
       ],
       "idea": 133,
       "url": "https://github.com/kongeskog/formal-math/pull/143",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45688419181",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
@@ -1127,8 +1149,8 @@
     },
     {
       "path": "vp-vnp/NS1/DSteps.lean",
-      "tokens": 7194,
-      "loc": 425
+      "tokens": 7039,
+      "loc": 414
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
@@ -1141,29 +1163,29 @@
       "loc": 392
     },
     {
-      "path": "vp-vnp/Nc/G/Move.lean",
-      "tokens": 6670,
-      "loc": 408
-    },
-    {
-      "path": "vp-vnp/Paper/Prices.lean",
-      "tokens": 6652,
-      "loc": 388
-    },
-    {
       "path": "vp-vnp/Paper/Laws.lean",
       "tokens": 6619,
       "loc": 394
     },
     {
-      "path": "vp-vnp/Nc/G/PlayThm.lean",
-      "tokens": 6588,
-      "loc": 445
-    },
-    {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
       "tokens": 6485,
       "loc": 396
+    },
+    {
+      "path": "vp-vnp/Nc/G/Move.lean",
+      "tokens": 6460,
+      "loc": 395
+    },
+    {
+      "path": "vp-vnp/Paper/Prices.lean",
+      "tokens": 6357,
+      "loc": 363
+    },
+    {
+      "path": "vp-vnp/Nc/G/PlayThm.lean",
+      "tokens": 6329,
+      "loc": 420
     },
     {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
@@ -1179,11 +1201,6 @@
       "path": "vp-vnp/Paper/Rate.lean",
       "tokens": 5842,
       "loc": 353
-    },
-    {
-      "path": "vp-vnp/Nc/Tow/Load0.lean",
-      "tokens": 5802,
-      "loc": 454
     },
     {
       "path": "vp-vnp/Nc/Tow/Load2.lean",
@@ -1209,6 +1226,11 @@
       "path": "vp-vnp/Nc/Dl/Num0.lean",
       "tokens": 5486,
       "loc": 311
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Load0.lean",
+      "tokens": 5475,
+      "loc": 417
     },
     {
       "path": "vp-vnp/Nc/Tow/Load.lean",
