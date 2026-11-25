@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T23:34:14.153555814Z",
+  "updated_at": "2026-11-25T23:35:28.251040534Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -87,6 +87,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 148,
+      "title": "Idea: shorten(Nc/Uni,NS1): local simp sets for repeated simp arguments, default proofs for side conditions",
+      "status": "claimed",
+      "author": "kongeskog",
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-26T02:35:17Z",
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T23:35:12Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/148",
+      "technique": "shorten",
+      "scope": "Nc/Uni,NS1"
+    },
     {
       "number": 147,
       "title": "Idea: restructure(Paper/Fan,Paper/Groups): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
