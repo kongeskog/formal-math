@@ -57,8 +57,8 @@ theorem le_F_cross (x y v u : I) :
       F.F (Ten.push ![x, y, v, u]
         (four fun (a : α) (b : β) c d => if a = c ∧ b = d then (1 : K) else 0)) := by
   classical
-  set D := Fintype.card α with hD
-  set D' := Fintype.card β with hD'
+  set D := Fintype.card α
+  set D' := Fintype.card β
   rw [← F.wire_eq x v (n := D) Fintype.card_pos, ← F.wire_eq y u (n := D') Fintype.card_pos,
     ← F.mul]
   refine F.mono ?_

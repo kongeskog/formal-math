@@ -55,21 +55,13 @@ theorem unitsOf_inj (hub : 0 < ub) {L L' : List Bool} (h : ∀ k, unitsOf ub L k
     rw [mul_comm] at this
     omega
   have hlen : L.length = L'.length := by
-    rcases lt_trichotomy L.length L'.length with hlt | heq | hlt
-    · exfalso
-      have := hp L'.length (hc ▸ hl L')
-      rw [List.getD_eq_default _ _ (by simp; omega)] at this
-      simp at this
-    · exact heq
-    · exfalso
-      have := hp L.length (hl L)
-      rw [List.getD_eq_default (L' ++ [true]) _ (by simp; omega)] at this
-      simp at this
+    -- from `hp` at the index past the shorter word: the `getD` there is the default on one side and `true` on the other
+    grind
   apply List.ext_getElem hlen
   intro i h1 h2
   have := hp i (h1.trans (hl L))
-  rw [List.getD_eq_getElem _ _ (by simp; omega), List.getD_eq_getElem _ _ (by simp; omega)] at this
-  rwa [List.getElem_append_left h1, List.getElem_append_left h2] at this
+  -- both `getD` are in range (`h1`, `h2`), so `this` compares the entries of `L` and `L'`
+  grind
 
 theorem unitsOf_eq_none {L : List Bool} {k : ℕ} : unitsOf ub L k = none ↔ ucount ub L ≤ k := by
   simp [unitsOf]
@@ -97,17 +89,17 @@ theorem bitsOf_inj {cb : Γ → Fin c → Bool} (hcb : Function.Injective cb) (h
     | cons a X' =>
       have := congrArg List.length h
       rw [length_bitsOf, length_bitsOf] at this
-      simp only [List.length_nil, List.length_cons, zero_mul] at this
-      have : 0 < (X'.length + 1) * c := Nat.mul_pos (by omega) hc
-      omega
+      -- `this : [].length * c = (a :: X').length * c`, so `0 = (X'.length + 1) * c`,
+      -- against `hc : 0 < c`
+      simp_all
   | cons a X ih =>
     cases X' with
     | nil =>
       have := congrArg List.length h
       rw [length_bitsOf, length_bitsOf] at this
-      simp only [List.length_nil, List.length_cons, zero_mul] at this
-      have : 0 < (X.length + 1) * c := Nat.mul_pos (by omega) hc
-      omega
+      -- `this : (a :: X).length * c = [].length * c`, so `(X.length + 1) * c = 0`,
+      -- against `hc : 0 < c`
+      simp_all
     | cons a' X' =>
       simp only [bitsOf, List.flatMap_cons] at h
       obtain ⟨h1, h2⟩ := List.append_inj h (by simp)

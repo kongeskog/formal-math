@@ -69,10 +69,8 @@ theorem runVal_rename (φ : J ≃ J') (mu : Letter S J' Γ → Matrix Q Q F) (i 
       · intro h j
         have h1 := emit_rename φ (List.ofFn o) (.inp (φ.symm j))
         have h2 : chEquiv S φ (.inp (φ.symm j)) = .inp j := by simp [chEquiv]
-        have h3 := h (φ.symm j)
-        rw [h2] at h1
-        rw [h1, h3]
-        exact congrArg u (φ.apply_symm_apply j)
+        -- `h1` rewritten by `h2`, then `h` at `φ.symm j` and `φ.apply_symm_apply`
+        grind
       · intro h j
         exact (emit_rename φ (List.ofFn o) (.inp j)).symm.trans (h (φ j))
   rw [hl]

@@ -396,61 +396,38 @@ theorem thm_laws_over_field {K : Type} [Field K] {h : ℕ} [NeZero h] (h2 : 2 �
         _ ≤ _ := mul_le_mul_of_nonneg_left (by linarith) (by linarith)
     nlinarith [mul_le_mul_of_nonneg_left h5 (show (0 : ℝ) ≤ q by positivity)]
 
-/-- **Paper: Theorem thm:laws.** "There are a finitely generated subring A of k, a positive integer a₁, and finitely
-many laws over A such that (a) for every load n and t ∈ ℕ with ‖n‖ ≤ a₁t some law has n ≤ tσ; (b) for every law and
-index, ‖λ + len_i‖_* ≤ √C₁·a₁." Here, as fixed before it, u is that of Theorem thm:poincare, with its constant C, and
-C₀ is an integer that is at least 2C+1 (the statement only names u and C₀); h is a multiple of u with h ≥ 2u, h ≥ 3
-and 1 + 8C₁ ≤ h/4, where C₁ = 4C₀. Such an h exists, and the theorem holds for every one. -/
-theorem thm_laws {K : Type} [Field K] (hK : Contracting K) :
-    ∃ u C₀ : ℕ, (∃ h : ℕ, u ∣ h ∧ 2 * u ≤ h ∧ 3 ≤ h ∧ 1 + 8 * (4 * (C₀ : ℝ)) ≤ (h : ℝ) / 4) ∧
-      ∀ (h : ℕ) [NeZero h], u ∣ h → 2 * u ≤ h → 3 ≤ h → 1 + 8 * (4 * (C₀ : ℝ)) ≤ (h : ℝ) / 4 →
-        ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A) (a₁ : ℕ) (Di : Type) (_ : Fintype Di) (L : Di → Nc.G.Law A)
-          (ro : ∀ d, (L d).Ro ≃ U h) (cn : ∀ d, (L d).Cn ≃ NN h), 0 < a₁ ∧
-          (∀ d ν, s(ro d ((L d).c ν), ro d ((L d).d ν)) = s(cNear (cn d ν), dNear (cn d ν))) ∧
-          (∀ d, 1 ≤ (L d).lam ∧ Nonempty (L d).I) ∧
-          (∀ (n : Sym2 (U h) → ℕ) (t : ℕ),
-            √(((Fintype.card (U h) : ℝ) * ((Fintype.card (U h) : ℝ) - 1) / 2) *
-                ∑ q : Sym2 (U h), if q.IsDiag then 0 else (n q : ℝ) ^ 2) ≤ a₁ * t →
-            ∃ d, ∀ q : Sym2 (U h), ¬ q.IsDiag →
-              n q ≤ (univ.filter fun e : (L d).Sl => s(ro d ((L d).a e), ro d ((L d).b e)) = q).card * t) ∧
-          ∀ d i, √((Fintype.card (U h) : ℝ) / 2 * ∑ ν, (((L d).lam + (L d).len i ν : ℕ) : ℝ) ^ 2) ≤
-            √(4 * (C₀ : ℝ)) * a₁ := by
-  obtain ⟨u, hu, C, C₀, hC, hC₀, hpairs⟩ := thm_laws_poincare hK
-  refine ⟨u, C₀, ?_, fun h _ hdvd h2u h3 _ => ?_⟩
-  · have hl : 4 * (1 + 8 * (4 * C₀)) + 3 ≤ (4 * (1 + 8 * (4 * C₀)) + 3) * u :=
-      Nat.le_mul_of_pos_right _ (by omega)
-    refine ⟨(4 * (1 + 8 * (4 * C₀)) + 3) * u, dvd_mul_left _ _, Nat.mul_le_mul_right u (by omega), by omega, ?_⟩
-    rw [le_div_iff₀ (by norm_num)]
-    exact_mod_cast (by omega : (1 + 8 * (4 * C₀)) * 4 ≤ (4 * (1 + 8 * (4 * C₀)) + 3) * u)
-  · have hC₀1 : 1 ≤ C₀ := by
-      have : (1 : ℝ) ≤ (C₀ : ℝ) := by linarith
-      exact_mod_cast this
-    obtain ⟨a₁, Di, fD, L, ro, cn, ha₁, hends, hlam, ha, hb⟩ :=
-      thm_laws_over_field (by omega) hC₀1 (hpairs h hdvd h2u)
-    obtain ⟨A, hA, hmem⟩ := thm_laws_ring L
-    exact ⟨A, hA, a₁, Di, fD, fun d => restrictLaw (L d) A (hmem d), ro, cn, ha₁, hends, hlam, ha, hb⟩
-
 /-- What the sections on towers and cuts take from Theorem thm:laws. -/
 theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
     ∃ (h : ℕ) (_ : NeZero h), 3 ≤ h ∧ ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A)
       (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)), 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4 := by
   classical
-  obtain ⟨u, C₀, ⟨h, hdvd, h2u, h3, hgain⟩, hlaws⟩ := thm_laws hK
+  obtain ⟨u, hu, C, C₀, hC, hC₀, hpairs⟩ := thm_laws_poincare hK
+  -- h is a multiple of u with h ≥ 2u, h ≥ 3 and 1 + 8C₁ ≤ h/4, where C₁ = 4C₀
+  set h := (4 * (1 + 8 * (4 * C₀)) + 3) * u
+  have hl : 4 * (1 + 8 * (4 * C₀)) + 3 ≤ h := Nat.le_mul_of_pos_right _ (by omega)
+  have h3 : 3 ≤ h := by omega
+  have hgain : 1 + 8 * (4 * (C₀ : ℝ)) ≤ (h : ℝ) / 4 := by
+    rw [le_div_iff₀ (by norm_num)]
+    exact_mod_cast (by omega : (1 + 8 * (4 * C₀)) * 4 ≤ h)
   have hne : NeZero h := ⟨by omega⟩
-  obtain ⟨A, hA, a₁, Di, fD, L, ro, cn, ha₁, hends, hlam, ha, hb⟩ := hlaws h hdvd h2u h3 hgain
+  have hC₀1 : 1 ≤ C₀ := by exact_mod_cast (by linarith : (1 : ℝ) ≤ C₀)
+  obtain ⟨a₁, Di, fD, L, ro, cn, ha₁, hends, hlam, ha, hb⟩ :=
+    thm_laws_over_field (by omega) hC₀1 (hpairs h (dvd_mul_left _ _) (Nat.mul_le_mul_right u (by omega)))
+  obtain ⟨A, hA, hmem⟩ := thm_laws_ring L
   have hcard : Fintype.card (U h) = 2 ^ ee h := card_U h
-  refine ⟨h, hne, h3, A, hA,
-    { Di := Di, L := L, ro := ro, cn := cn, ends := hends
+  have hL2 : ∀ d i, 2 ^ ee h * ∑ ν, ((L d).lam + (L d).len i ν) ^ 2 ≤ 8 * C₀ * a₁ ^ 2 := fun d i => by
+    have h1 := hb d i
+    rw [Real.sqrt_le_left (by positivity), mul_pow, Real.sq_sqrt (by positivity), hcard] at h1
+    push_cast at h1
+    rw [← @Nat.cast_le ℝ]
+    push_cast
+    linarith
+  exact ⟨h, hne, h3, A, hA,
+    { Di := Di, L := fun d => restrictLaw (L d) A (hmem d), ro := ro, cn := cn, ends := hends
       lam_pos := fun d => (hlam d).1, nonempty := fun d => (hlam d).2
       a₁ := a₁, a₁_pos := ha₁, C₁ := 4 * (C₀ : ℝ), C₁_nonneg := by positivity
       G₁ := 8 * C₀ * a₁ ^ 2, G₁_le := le_of_eq (by push_cast; ring)
       L1 := fun n t ht => ha n t (by rw [hcard]; exact ht)
-      L2 := fun d i => ?_ }, hgain⟩
-  have h1 := hb d i
-  rw [Real.sqrt_le_left (by positivity), mul_pow, Real.sq_sqrt (by positivity), hcard] at h1
-  push_cast at h1
-  rw [← @Nat.cast_le ℝ]
-  push_cast
-  linarith
+      L2 := hL2 }, hgain⟩
 
 end Paper

@@ -85,7 +85,7 @@ def relay : Law F where
 end Relay
 
 /-- The laws for one local structure: chambers `Fl`, near pairs `Nr`, the same for all towers. They exist by
-`Paper.thm_laws`, see `Paper.exists_laws`. -/
+Theorem thm:laws, see `Paper.exists_laws`. -/
 structure VLaws (F : Type) [CommRing F] {Fl Nr : Type} [Fintype Fl] [DecidableEq Fl] [Fintype Nr]
     [DecidableEq Nr] (cN dN : Nr → Fl) (b : ℕ) where
   /-- kinds of laws -/

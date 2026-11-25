@@ -33,9 +33,7 @@ theorem prop_universal (θ : List Bool → A) (hθ : (Function.support θ).Finit
         Nc.runVal mu i e t (fun _ => Nc.Dl.wordG b0 b1 z) = pv θ z := by
   classical
   have hs : ∀ q, q ∉ hθ.toFinset → θ q = 0 := by
-    intro q hq
-    rw [Set.Finite.mem_toFinset, Function.mem_support, not_not] at hq
-    exact hq
+    simp
   obtain ⟨S₀, h1, C, h2⟩ := prop_universal_series θ hθ.toFinset hs
   obtain ⟨Q, iQ, dQ, mu, i, e, h3⟩ := Nc.exists_run_val h1
   refine ⟨_, _, Q, inferInstance, inferInstance, inferInstance, inferInstance, iQ, dQ, mu, i, e, .bit false, .bit true,

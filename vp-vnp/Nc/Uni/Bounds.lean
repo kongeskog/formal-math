@@ -34,28 +34,17 @@ def stepsU (supp : Finset (List Bool)) (τ s : ℕ) : ℕ := 3 * s + (40 + 2 * L
 
 theorem tU_le (b T L : ℕ) : tU b T L ≤ (50 + b) * ((T + 1) * (L + 1) ^ 2) := by
   obtain ⟨t, rfl⟩ : ∃ t, T = t := ⟨T, rfl⟩
-  have h1 : T ≤ T + 1 := Nat.le_succ _
-  have h2 : L + 4 ≤ 4 * (L + 1) := by omega
   have h3 : L + 2 ≤ 2 * (L + 1) := by omega
   have h4 : L + 3 ≤ 3 * (L + 1) := by omega
   have h5 : 2 * T + 1 ≤ 2 * (T + 1) := by omega
   have hl : 1 ≤ L + 1 := by omega
   have ht : 1 ≤ T + 1 := by omega
   unfold tU
-  generalize T + 1 = t at *
-  generalize L + 1 = l at *
-  calc 5 * (t * l) + t + t * l + T * l + T * (L + 4) +
-        ((L + 2) * ((2 * T + 1) * (L + 4) + 1) + (l * ((2 * T + 1) * (L + 4)) + b * l) + 2 * ((2 * T + 1) * (L + 3)))
-      ≤ 5 * (t * l) + t + t * l + t * l + t * (4 * l) +
-        (2 * l * (2 * t * (4 * l) + 1) + (l * (2 * t * (4 * l)) + b * l) + 2 * (2 * t * (3 * l))) := by gcongr
-    _ = 24 * (t * l ^ 2) + 23 * (t * l) + t + 2 * l + b * l := by ring
-    _ ≤ 24 * (t * l ^ 2) + 23 * (t * l ^ 2) + t * l ^ 2 + 2 * (t * l ^ 2) + b * (t * l ^ 2) := by
-        have a1 : l ≤ l ^ 2 := by nlinarith
-        have a2 : t * l ≤ t * l ^ 2 := Nat.mul_le_mul_left _ a1
-        have a3 : t ≤ t * l ^ 2 := by nlinarith
-        have a4 : l ≤ t * l ^ 2 := by nlinarith
-        gcongr
-    _ = (50 + b) * (t * l ^ 2) := by ring
+  -- With `t = T + 1` and `l = L + 1`: bounding `T ≤ t`, `L + 2 ≤ 2 l` (`h3`), `L + 3 ≤ 3 l` (`h4`),
+  -- `L + 4 ≤ 4 l` and `2 T + 1 ≤ 2 t` (`h5`) term by term gives at most
+  -- `24 t l² + 23 t l + t + 2 l + b l`; since `1 ≤ l` (`hl`) and `1 ≤ t` (`ht`), each of
+  -- `t l`, `t`, `l` is at most `t l²`, and the coefficients sum to `24 + 23 + 1 + 2 + b = 50 + b`.
+  grind
 
 theorem size_le_lg (n : ℕ) : Nat.size n ≤ lg n := by
   rw [Nat.size_le, lg]

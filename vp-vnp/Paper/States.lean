@@ -136,7 +136,7 @@ theorem lem_count : ∃ κ : ℝ, 0 < κ ∧ (∀ E : ℕ, Real.log (stateCount 
     refine Real.log_le_log (by have := pairs_pos E; positivity) ?_
     exact_mod_cast lem_count_interleave k E
   show ∃ κ : ℝ, 0 < κ ∧ (∀ E : ℕ, lp E ≤ κ * √E) ∧ ∀ ε : ℝ, 0 < ε → ∀ᶠ E : ℕ in atTop, (κ - ε) * √E ≤ lp E
-  set S : Set ℝ := {z | ∃ E : ℕ, 1 ≤ E ∧ z = lp E / Real.sqrt E} with hS
+  set S : Set ℝ := {z | ∃ E : ℕ, 1 ≤ E ∧ z = lp E / Real.sqrt E}
   have hb : BddAbove S := by
     refine ⟨10, ?_⟩
     rintro _ ⟨E, hE, rfl⟩
@@ -167,7 +167,7 @@ theorem lem_count : ∃ κ : ℝ, 0 < κ ∧ (∀ E : ℕ, Real.log (stateCount 
     rcases le_or_gt c ε with hcε | hcε
     · have : (c - ε) * Real.sqrt E ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) (Real.sqrt_nonneg _)
       exact this.trans (lp_nonneg E)
-    set k := Nat.sqrt (E / E₁) with hk
+    set k := Nat.sqrt (E / E₁)
     have hk1 : k * k * E₁ ≤ E :=
       (Nat.mul_le_mul_right _ (Nat.sqrt_le _)).trans (Nat.div_mul_le_self _ _)
     have hk2 : E < (k + 1) * (k + 1) * E₁ := by
