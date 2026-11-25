@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:02:39.216331931Z",
+  "updated_at": "2026-11-25T03:04:42.580200339Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 60,
     "rejected": 3,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 6
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 60,
-      "attempts": 64,
+      "attempts": 65,
       "saved": 54353
     }
   ],
@@ -790,10 +790,100 @@
   ],
   "open": [
     {
+      "pr": 108,
+      "title": "dead-code(*): remove 12 declarations the final theorems do not reach",
+      "author": "kongeskog",
+      "head_sha": "b5733de67cddf179136fa2c22e48e93d14c2e76e",
+      "base_sha": "ddce58739bf7acc8df8f5a75df2b0b6398216891",
+      "status": "stale",
+      "created_at": "2026-11-25T02:27:56Z",
+      "decided_at": null,
+      "metrics": {
+        "tokens": 895567,
+        "loc": 57004,
+        "decls": 4552,
+        "files": 321,
+        "bytes": 3326274,
+        "build_seconds": 425
+      },
+      "base_metrics": {
+        "tokens": 896950,
+        "loc": 57066,
+        "decls": 4564,
+        "files": 321,
+        "bytes": 3332976,
+        "build_seconds": null
+      },
+      "delta": -1383,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pass"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pass",
+          "detail": "12 files changed"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pass"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pass",
+          "detail": "tokens 896950 → 895567 (-1383)"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pass"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pass"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+        }
+      ],
+      "idea": 102,
+      "url": "https://github.com/kongeskog/formal-math/pull/108",
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45533134641",
+      "merge_sha": null,
+      "reason": null,
+      "technique": "dead-code",
+      "scope": "*"
+    },
+    {
       "pr": 117,
       "title": "restructure(Paper): prove thm_noacc through the approximate rounds, delete the exact round",
       "author": "kongeskog",
-      "head_sha": "f1eb87a6368e80fb11a7c842ffb3c0567f64c84d",
+      "head_sha": "027f849718afda006a081f488f06df0a22a4cb09",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-25T02:58:20Z",
@@ -845,8 +935,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "fail",
-          "detail": "Changes requested by kongeskog"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 104,
@@ -866,7 +956,7 @@
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 16488,
+      "tokens": 16462,
       "loc": 1006
     },
     {
@@ -876,7 +966,7 @@
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
-      "tokens": 12543,
+      "tokens": 12533,
       "loc": 744
     },
     {
@@ -935,11 +1025,6 @@
       "loc": 425
     },
     {
-      "path": "vp-vnp/Paper/Means.lean",
-      "tokens": 7042,
-      "loc": 367
-    },
-    {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
       "tokens": 6960,
       "loc": 473
@@ -963,11 +1048,6 @@
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
       "tokens": 6499,
       "loc": 396
-    },
-    {
-      "path": "vp-vnp/Paper/Toolkit.lean",
-      "tokens": 6389,
-      "loc": 368
     },
     {
       "path": "vp-vnp/Paper/Rate.lean",
@@ -1008,6 +1088,16 @@
       "path": "vp-vnp/Nc/Tower/Inst.lean",
       "tokens": 5690,
       "loc": 348
+    },
+    {
+      "path": "vp-vnp/Nc/Dl/SizeScript.lean",
+      "tokens": 5622,
+      "loc": 366
+    },
+    {
+      "path": "vp-vnp/Paper/Toolkit.lean",
+      "tokens": 5615,
+      "loc": 341
     }
   ]
 }
