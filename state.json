@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T20:36:19.542344947Z",
+  "updated_at": "2026-11-25T20:47:40.886281291Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "8fa6890c0f50ca77aa9e7ae6ca1e24afe6d631b9",
-    "at": "2026-11-25T20:15:53.111598477Z",
+    "sha": "52b592b78706469ee3562c645de68094a2c5cc64",
+    "at": "2026-11-25T20:47:40.886281291Z",
     "metrics": {
-      "tokens": 839329,
-      "loc": 53755,
-      "decls": 4382,
-      "files": 315,
-      "bytes": 3126396,
-      "build_seconds": 625
+      "tokens": 833768,
+      "loc": 53372,
+      "decls": 4353,
+      "files": 314,
+      "bytes": 3108703,
+      "build_seconds": 382
     }
   },
   "counts": {
-    "merged": 81,
+    "merged": 82,
     "rejected": 4,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 5
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 81,
+      "merged": 82,
       "attempts": 86,
-      "saved": 88832
+      "saved": 94393
     }
   ],
   "ideas": [
@@ -118,12 +118,12 @@
     {
       "number": 133,
       "title": "Idea: restructure(NS1,Nc/Acc): programs return the names of their constants, and the interpreter with budgets goes",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
+      "claimed_by": null,
       "lease_expires": null,
       "pr": 143,
-      "result_delta": null,
+      "result_delta": -5561,
       "created_at": "2026-11-25T06:40:51Z",
       "url": "https://github.com/kongeskog/formal-math/issues/133",
       "technique": "restructure",
@@ -858,76 +858,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 143,
-      "title": "restructure(NS1,Nc/Acc,Paper): programs return the names of their constants, and the interpreter with budgets goes",
-      "author": "kongeskog",
-      "head_sha": "1e53359d1720eb4a3945bebb2359ffb1341f99b7",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T19:45:54Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 2 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 133,
-      "url": "https://github.com/kongeskog/formal-math/pull/143",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "NS1,Nc/Acc,Paper"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
