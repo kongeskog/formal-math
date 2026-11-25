@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:10:16.829268738Z",
+  "updated_at": "2026-11-25T04:16:24.620517467Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -146,10 +146,10 @@
     {
       "number": 111,
       "title": "Idea: restructure(Solution,Paper): prove the needed rate directly and derive the final theorems from the approximate one",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T06:40:36Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 120,
       "result_delta": -1632,
       "created_at": "2026-11-25T02:41:35Z",
@@ -794,13 +794,27 @@
       "title": "restructure(Nc): rational series and runs without the dimension bound",
       "author": "kongeskog",
       "head_sha": "c8b3c6b5e15b9c6df83172d0613aa1d371fee5d4",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "2069ab298f69e1ba474398602885fc25c49497a2",
+      "status": "stale",
       "created_at": "2026-11-25T03:52:32Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 856575,
+        "loc": 54782,
+        "decls": 4425,
+        "files": 317,
+        "bytes": 3181524,
+        "build_seconds": 802
+      },
+      "base_metrics": {
+        "tokens": 858613,
+        "loc": 54885,
+        "decls": 4438,
+        "files": 317,
+        "bytes": 3187981,
+        "build_seconds": null
+      },
+      "delta": -2038,
       "gates": [
         {
           "key": "format",
@@ -808,39 +822,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "12 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 858613 → 856575 (-2038)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -851,7 +873,7 @@
       ],
       "idea": 113,
       "url": "https://github.com/kongeskog/formal-math/pull/121",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45542949717",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
@@ -1097,11 +1119,6 @@
       "loc": 396
     },
     {
-      "path": "vp-vnp/Paper/Rate.lean",
-      "tokens": 6335,
-      "loc": 383
-    },
-    {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
       "tokens": 6174,
       "loc": 377
@@ -1110,6 +1127,11 @@
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
       "tokens": 6071,
       "loc": 366
+    },
+    {
+      "path": "vp-vnp/Paper/Rate.lean",
+      "tokens": 5842,
+      "loc": 353
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
