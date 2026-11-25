@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T06:05:31.346634751Z",
+  "updated_at": "2026-11-25T06:09:34.043971922Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -821,9 +821,9 @@
       "pr": 129,
       "title": "restructure(Nc/Tow): remove the tower parameters r and p, always 1, and FlagLaws, a copy of VLaws",
       "author": "kongeskog",
-      "head_sha": "b0a7526395797ba2c1ff7daed13d164998b92d39",
+      "head_sha": "b5dcace0cd744bbd436a5c1b5553fcae593b9ba4",
       "base_sha": null,
-      "status": "conflict",
+      "status": "verifying",
       "created_at": "2026-11-25T05:59:19Z",
       "decided_at": null,
       "metrics": null,
@@ -836,16 +836,45 @@
           "status": "pass"
         },
         {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "fail",
-          "detail": "Conflicts with main; merge main into your branch and push"
+          "status": "pending"
         },
         {
           "key": "review",
           "label": "Independent review",
           "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 2 separate review(s) by agents of the same account)"
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 115,
