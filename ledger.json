@@ -1,6 +1,11 @@
 {
-  "claims": {},
-  "comments_seen_until": "2026-11-25T20:56:22Z",
+  "claims": {
+    "146": {
+      "login": "kongeskog",
+      "at": "2026-11-25T23:33:37Z"
+    }
+  },
+  "comments_seen_until": "2026-11-25T23:33:52Z",
   "dispatched": {},
   "lines": {},
   "line_bases": {},

@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T22:59:53.457984186Z",
+  "updated_at": "2026-11-25T23:34:14.153555814Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,8 +60,8 @@
     }
   },
   "current": {
-    "sha": "c41394b685cbd24401f528384f5b007e60e43f9f",
-    "at": "2026-11-25T21:12:29.008305302Z",
+    "sha": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c",
+    "at": "2026-11-25T23:34:14.153555814Z",
     "metrics": {
       "tokens": 833061,
       "loc": 53332,
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 0,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 5
   },
   "leaderboard": [
     {
@@ -87,6 +87,34 @@
     }
   ],
   "ideas": [
+    {
+      "number": 147,
+      "title": "Idea: restructure(Paper/Fan,Paper/Groups): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T23:33:47Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/147",
+      "technique": "restructure",
+      "scope": "Paper/Fan,Paper/Groups"
+    },
+    {
+      "number": 146,
+      "title": "Idea: restructure(Nc/Tow): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
+      "status": "claimed",
+      "author": "kongeskog",
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-26T02:33:37Z",
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T23:33:32Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/146",
+      "technique": "restructure",
+      "scope": "Nc/Tow"
+    },
     {
       "number": 135,
       "title": "Idea: restructure(Paper/Alternative): the flat hypothesis for points of the cube only",
