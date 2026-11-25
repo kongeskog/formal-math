@@ -537,14 +537,10 @@ noncomputable def fanΛ₂ (d : ℕ → FanPts Y → FanPts Y → ℝ) (z : Y) :
 theorem fanW_price (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) : IsPrice K (fanW d T n) :=
   (hd n).fanDist_price
 
-/-- "As L_i ≤ D + |zm|, we may take Λ = 2D + |zm|." -/
-theorem thm_cn_lipschitz (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 0 < T) (n : ℕ) (b : Bool)
-    (P g : ℤ × ℤ) : fanW d T n (b, P) (b, P + g) ≤ (2 * D + w z m) * (|(g.1 : ℝ)| + |(g.2 : ℝ)|) :=
-  (hd n).lipschitz hT (max_one_pos n) b P g
-
 theorem fanWs_lip (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 0 < T) :
     Lip (fanWs d T) (2 * D + w z m) :=
-  lem_means_lip (fanW_price hd) (thm_cn_lipschitz hd hT)
+  -- "As L_i ≤ D + |zm|, we may take Λ = 2D + |zm|."
+  lem_means_lip (fanW_price hd) fun n => (hd n).lipschitz hT (max_one_pos n)
 
 theorem fan_w_nonneg (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (a b : Y) : 0 ≤ w a b := by
   rw [← (hd 0).old]
@@ -925,7 +921,7 @@ theorem thm_cn_end (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤
     1 / T * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2) - 4 * (1 / T : ℝ) ^ 2 * D * (D + w z m) ≤
       D ^ 2 * (-(1 / T) + (1 / T : ℝ) ^ 2) + (1 / T : ℝ) ^ 2 * fanΛ₂ d z := by
   have hT0 : 0 < T := by omega
-  have par := lem_means_norm (fanW_price hd) (thm_cn_lipschitz hd hT0)
+  have par := lem_means_norm (fanW_price hd) fun n => (hd n).lipschitz hT0 (max_one_pos n)
   have s1 := thm_cn_i hd hT hxx
   have s2 := thm_cn_ii hd hT
   have s3 := thm_cn_iii hd hT
