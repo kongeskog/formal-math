@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:32:01.737287901Z",
+  "updated_at": "2026-11-25T03:33:08.470778693Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -861,13 +861,13 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 23620,
-      "loc": 1423
+      "tokens": 20598,
+      "loc": 1243
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 16462,
-      "loc": 1006
+      "tokens": 16289,
+      "loc": 998
     },
     {
       "path": "vp-vnp/Paper/Fan.lean",
@@ -876,13 +876,13 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 12283,
-      "loc": 761
+      "tokens": 12099,
+      "loc": 747
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
-      "tokens": 12195,
-      "loc": 730
+      "tokens": 11931,
+      "loc": 718
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
@@ -906,7 +906,7 @@
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 8096,
+      "tokens": 8094,
       "loc": 493
     },
     {
@@ -916,18 +916,13 @@
     },
     {
       "path": "vp-vnp/Paper/Gauges.lean",
-      "tokens": 7485,
+      "tokens": 7481,
       "loc": 476
     },
     {
       "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 7403,
-      "loc": 420
-    },
-    {
-      "path": "vp-vnp/Paper/Crossing.lean",
-      "tokens": 7310,
-      "loc": 404
+      "tokens": 7306,
+      "loc": 418
     },
     {
       "path": "vp-vnp/NS1/DSteps.lean",
@@ -935,24 +930,29 @@
       "loc": 425
     },
     {
+      "path": "vp-vnp/Paper/Crossing.lean",
+      "tokens": 6997,
+      "loc": 394
+    },
+    {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
       "tokens": 6960,
       "loc": 473
     },
     {
-      "path": "vp-vnp/Paper/Prices.lean",
-      "tokens": 6921,
-      "loc": 401
-    },
-    {
-      "path": "vp-vnp/Nc/G/Move.lean",
-      "tokens": 6856,
-      "loc": 415
-    },
-    {
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
       "tokens": 6851,
       "loc": 394
+    },
+    {
+      "path": "vp-vnp/Paper/Prices.lean",
+      "tokens": 6851,
+      "loc": 397
+    },
+    {
+      "path": "vp-vnp/Nc/G/Move.lean",
+      "tokens": 6784,
+      "loc": 414
     },
     {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
