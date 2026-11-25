@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:25:20.170570104Z",
+  "updated_at": "2026-11-25T03:32:01.737287901Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "b576da7961163ae69fc17856471032e61439d2c6",
-    "at": "2026-11-25T03:25:20.170570104Z",
+    "sha": "c2ab099c4048fb8bf38ded6b37639928a70f7924",
+    "at": "2026-11-25T03:32:01.737287901Z",
     "metrics": {
-      "tokens": 865198,
-      "loc": 55274,
-      "decls": 4458,
+      "tokens": 859179,
+      "loc": 54932,
+      "decls": 4447,
       "files": 317,
-      "bytes": 3211415,
-      "build_seconds": 638
+      "bytes": 3189983,
+      "build_seconds": 545
     }
   },
   "counts": {
-    "merged": 62,
+    "merged": 63,
     "rejected": 3,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 62,
+      "merged": 63,
       "attempts": 67,
-      "saved": 62963
+      "saved": 68982
     }
   ],
   "ideas": [
@@ -207,7 +207,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T04:37:09Z",
       "pr": 118,
-      "result_delta": null,
+      "result_delta": -6019,
       "created_at": "2026-11-25T01:32:58Z",
       "url": "https://github.com/kongeskog/formal-math/issues/100",
       "technique": "dead-code",
@@ -790,74 +790,6 @@
   ],
   "open": [
     {
-      "pr": 118,
-      "title": "dead-code(*): drop unused fields of ThinTrees and PieceCut and unused clauses of lemmas",
-      "author": "kongeskog",
-      "head_sha": "f7ee19ba79169ce64e7c0fc7421e402f490ae685",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T03:08:36Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 100,
-      "url": "https://github.com/kongeskog/formal-math/pull/118",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "dead-code",
-      "scope": "*"
-    },
-    {
       "pr": 119,
       "title": "merge(*): one theorem for each group of identical statements about runs and units",
       "author": "kongeskog",
@@ -959,8 +891,13 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 9219,
-      "loc": 521
+      "tokens": 9220,
+      "loc": 522
+    },
+    {
+      "path": "vp-vnp/Paper/ApproxScales.lean",
+      "tokens": 9177,
+      "loc": 530
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
@@ -971,11 +908,6 @@
       "path": "vp-vnp/Paper/Cuts.lean",
       "tokens": 8096,
       "loc": 493
-    },
-    {
-      "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 7829,
-      "loc": 468
     },
     {
       "path": "vp-vnp/NS1/Lists.lean",
