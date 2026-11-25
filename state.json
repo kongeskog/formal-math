@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:31:23.786395647Z",
+  "updated_at": "2026-11-25T02:33:09.669130638Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -710,13 +710,27 @@
       "title": "dead-code(Nc/Grp): drop the unused accepting-run clause of GroupOK and Facts.lean",
       "author": "kongeskog",
       "head_sha": "1d0b841494984d6540ff0e78e47e2c8e82539073",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "ddce58739bf7acc8df8f5a75df2b0b6398216891",
+      "status": "stale",
       "created_at": "2026-11-25T02:16:54Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 892238,
+        "loc": 56776,
+        "decls": 4544,
+        "files": 320,
+        "bytes": 3316514,
+        "build_seconds": 364
+      },
+      "base_metrics": {
+        "tokens": 896950,
+        "loc": 57066,
+        "decls": 4564,
+        "files": 321,
+        "bytes": 3332976,
+        "build_seconds": null
+      },
+      "delta": -4712,
       "gates": [
         {
           "key": "format",
@@ -724,39 +738,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "3 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 896950 → 892238 (-4712)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -767,7 +789,7 @@
       ],
       "idea": 103,
       "url": "https://github.com/kongeskog/formal-math/pull/106",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45531820663",
       "merge_sha": null,
       "reason": null,
       "technique": "dead-code",
