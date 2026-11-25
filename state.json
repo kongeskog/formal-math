@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:46:14.065057640Z",
+  "updated_at": "2026-11-25T02:51:07.127174702Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 59,
     "rejected": 3,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 6
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 59,
-      "attempts": 62,
+      "attempts": 63,
       "saved": 51418
     }
   ],
@@ -788,7 +788,76 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 116,
+      "title": "restructure(Paper): drop lem_toolkit, the restatements in Paper/Means and a duplicate lemma",
+      "author": "kongeskog",
+      "head_sha": "6c9762a44a61c436923888e01416662ecc011367",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T02:50:25Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 109,
+      "url": "https://github.com/kongeskog/formal-math/pull/116",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
