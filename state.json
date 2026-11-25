@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T20:09:06.251188479Z",
+  "updated_at": "2026-11-25T20:10:24.085171203Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1043,8 +1043,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 19865,
-      "loc": 1170
+      "tokens": 19497,
+      "loc": 1148
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -1058,8 +1058,8 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 11945,
-      "loc": 739
+      "tokens": 12013,
+      "loc": 743
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
