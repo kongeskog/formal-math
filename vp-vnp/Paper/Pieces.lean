@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
 import Paper.Tree
-import Paper.Runnet
+import Nc.G.Start
+import Nc.Dl.Facts
 import Paper.HeavyProg
 import Nc.Dl.Cost
 import Nc.G.Exact
@@ -637,8 +638,9 @@ numbers below v^C."
 Here Λ = (lg v)^C, e ≥ 300 (as chosen in the printed proof) and the bound on lg T is not needed; bits in all count every copy that the nodes of the piece ever
 hold and the zeros in slots. What a table does is given by the units and the number of each move (cons and num),
 because the kind of each role is one of the fixed list of roles of the relay and the laws. A step is one binary
-operation on numbers below v^C, in a program that may depend on v, T and k. The proof applies Lemma lem:runnet, then
-Theorem thm:tree, and calls the nodes heavy as printed. -/
+operation on numbers below v^C, in a program that may depend on v, T and k. The proof applies Lemma lem:runnet
+(Nc.G.start for the value, Nc.Dl.init_count for the units of a node), then Theorem
+thm:tree, and calls the nodes heavy as printed. -/
 theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
     ∃ a e : ℕ, 300 ≤ e ∧ ∀ (Γ S Q : Type) [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q]
@@ -839,8 +841,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     · rw [← pow_mul]
       exact vp (by omega)
   · have hU : (T + (Fintype.card S + 1)) * c / ub + 1 ≤ load := by rwa [hσ]
-    obtain ⟨hr1, hr2⟩ := lem_runnet mu cb hcb hc0 b1 hU TT.sys.np i e' u hℓ hu
-    rw [hr1]
+    rw [Nc.G.start hcb hc0 b1 hU TT.sys.np i e' u hℓ hu]
     refine Finset.sum_congr rfl fun q _ => if_congr Iff.rfl ?_ rfl
     refine Finset.sum_congr rfl fun ρ _ => if_congr Iff.rfl ?_ rfl
     refine Finset.sum_congr rfl fun n _ => ?_
@@ -857,7 +858,13 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       · rfl
       refine Finset.prod_eq_zero (mem_univ p) ?_
       by_contra h0
-      have := hr2 q (fun s => ρ s p) n p _ h0
+      rw [Nc.G.tabInit_eq] at h0
+      obtain ⟨R, -, h3⟩ := Finset.exists_ne_zero_of_sum_ne_zero h0
+      obtain ⟨C, -, h4⟩ := Finset.exists_ne_zero_of_sum_ne_zero h3
+      split_ifs at h4 with h5
+      swap
+      · exact h4 rfl
+      have := Nc.Dl.init_count (fun κ => (Nc.Cut.length_parts_le _ _ _).trans hℓ) h5 h4
       rw [hσ, ← hload] at this
       exact absurd this (not_le.2 hp)
 
