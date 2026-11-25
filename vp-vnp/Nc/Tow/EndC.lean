@@ -17,7 +17,7 @@ open Finset Nc.G
 
 section Ends
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J r} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 /-- The outcome of a move is possible. -/
@@ -60,21 +60,21 @@ theorem poss_inr (hub : 0 < ub) {l : LMv T FL} (hp : PossM R ch FL lhat n o ub (
             (f := fun k => ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν))
           rwa [card_univ, Fintype.card_fin] at this
       _ = _ := by rw [← Finset.mul_sum, Finset.sum_comm]
-  have h2 : r * b * ∑ k : Fin (t * ub), ∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν) ^ 2 ≤
+  have h2 : b * ∑ k : Fin (t * ub), ∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν) ^ 2 ≤
       (t * ub) * FL.G₁ := by
     rw [Finset.mul_sum]
     calc _ ≤ ∑ _k : Fin (t * ub), FL.G₁ := Finset.sum_le_sum fun k _ => FL.L2 l.2.2.2 (i k)
       _ = _ := by simp
-  have h3 : (r * b * ∑ ν : (FL.L l.2.2.2).Cn, o ⟨.inr l, ν⟩ ^ 2) * ub ^ 2 ≤ (FL.G₁ * t ^ 2) * ub ^ 2 := by
-    have e1 : (r * b * ∑ ν : (FL.L l.2.2.2).Cn, o ⟨.inr l, ν⟩ ^ 2) * ub ^ 2 =
-        r * b * ∑ ν : (FL.L l.2.2.2).Cn, (o ⟨.inr l, ν⟩ * ub) ^ 2 := by
+  have h3 : (b * ∑ ν : (FL.L l.2.2.2).Cn, o ⟨.inr l, ν⟩ ^ 2) * ub ^ 2 ≤ (FL.G₁ * t ^ 2) * ub ^ 2 := by
+    have e1 : (b * ∑ ν : (FL.L l.2.2.2).Cn, o ⟨.inr l, ν⟩ ^ 2) * ub ^ 2 =
+        b * ∑ ν : (FL.L l.2.2.2).Cn, (o ⟨.inr l, ν⟩ * ub) ^ 2 := by
       rw [mul_assoc, Finset.sum_mul]
       congr 1
       exact Finset.sum_congr rfl fun ν _ => by rw [mul_pow]
     rw [e1]
-    calc _ ≤ r * b * ((t * ub) * ∑ k : Fin (t * ub), ∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν) ^ 2) :=
+    calc _ ≤ b * ((t * ub) * ∑ k : Fin (t * ub), ∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν) ^ 2) :=
           Nat.mul_le_mul_left _ h1
-      _ = (t * ub) * (r * b * ∑ k : Fin (t * ub), ∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν) ^ 2) := by ring
+      _ = (t * ub) * (b * ∑ k : Fin (t * ub), ∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν) ^ 2) := by ring
       _ ≤ (t * ub) * ((t * ub) * FL.G₁) := Nat.mul_le_mul_left _ h2
       _ = _ := by ring
   exact Nat.le_of_mul_le_mul_right h3 (by positivity)
@@ -131,7 +131,7 @@ theorem mem_AsU_init {a c : Fin AA} {kk : Fin U0} {s : Σ j : Fin (J + 1), T.X j
   rintro ⟨-, ν', k', he, -⟩
   cases he
 
-theorem card_AsU (hr : 0 < r) (hb : 0 < b) (hh : 0 < h) (s : Σ j : Fin (J + 1), T.X j) :
+theorem card_AsU (hb : 0 < b) (hh : 0 < h) (s : Σ j : Fin (J + 1), T.X j) :
     (AsU R FL Pl lhat n o s : Finset (Un R FL Pl U0 U1)).card ≤ fb (lev (load R ch FL lhat (nn n) (oo R FL Pl o))) s.1.1 s.2 := by
   classical
   obtain ⟨j, c⟩ := s
@@ -142,7 +142,7 @@ theorem card_AsU (hr : 0 < r) (hb : 0 < b) (hh : 0 < h) (s : Σ j : Fin (J + 1),
   have h2 : (∑ a, ∑ c', ∑ kk, if (Uid.init a c' kk : Un R FL Pl U0 U1) ∈ AsU R FL Pl lhat n o ⟨j, c⟩ then 1 else 0) = 0 :=
     Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c' _ => Finset.sum_eq_zero fun kk _ => if_neg mem_AsU_init
   rw [h2, Nat.zero_add]
-  refine le_trans ?_ (sum_child (n := nn n) (o := oo R FL Pl o) hr hb hh j.1
+  refine le_trans ?_ (sum_child (n := nn n) (o := oo R FL Pl o) hb hh j.1
     (Nat.le_of_lt_succ j.2) c)
   rw [← Equiv.sum_comp (eN R FL Pl)]
   refine Finset.sum_le_sum fun ν _ => ?_

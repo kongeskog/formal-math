@@ -21,7 +21,7 @@ attribute [-instance] Subtype.instBEq
 variable (h n : ℕ) [NeZero h]
 
 /-- **The tower.** -/
-noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (JJ h n) 1 where
+noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (JJ h n) where
   X := XX h n
   Ed := EE h n h2
   V := VV h n

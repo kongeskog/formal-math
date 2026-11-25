@@ -641,7 +641,7 @@ because the kind of each role is one of the fixed list of roles of the relay and
 operation on numbers below v^C, in a program that may depend on v, T and k. The proof applies Lemma lem:runnet
 (Nc.G.start for the value, Nc.Dl.init_count for the units of a node), then Theorem
 thm:tree, and calls the nodes heavy as printed. -/
-theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
+theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
     ∃ a e : ℕ, 300 ≤ e ∧ ∀ (Γ S Q : Type) [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q]
       (mu : Nc.Letter S Unit Γ → Matrix Q Q A),

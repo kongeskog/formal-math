@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J r} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 theorem isMin_unique {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h1 : IsMin L j i) (h2 : IsMin L j i') :
@@ -256,7 +256,7 @@ section Causal
 
 variable {o' : (sys R FL Pl).N → Fin U1} {t : ℕ}
 
-theorem alU_congr (hr : 0 < r) (hb : 0 < b) (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t →
+theorem alU_congr (hb : 0 < b) (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t →
     ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) {u : Un R FL Pl U0 U1} (hu : tgTime (tgU R FL Pl u) ≤ t) :
     AlU R FL Pl lhat n o u ↔ AlU R FL Pl lhat n o' u := by
   cases u with
@@ -266,24 +266,24 @@ theorem alU_congr (hr : 0 < r) (hb : 0 < b) (hag : ∀ mv' : Mv T R ch FL, timeM
     have h2 : alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) =
         alv R ch FL lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν) := by
       unfold alv
-      rw [num_congr hr hb fun mv' hmv' c => hag mv' (hmv'.trans h1) c]
+      rw [num_congr hb fun mv' hmv' c => hag mv' (hmv'.trans h1) c]
       exact alvN_congr (fun c => hag _ h1 c) _
     change k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ↔
       k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν)
     rw [h2]
 
-theorem consM_congr_inl (hr : 0 < r) (hb : 0 < b) (x : {x : RM T m AA // okR T R ch x}) (e : (kindM R ch FL (.inl x)).Sl)
+theorem consM_congr_inl (hb : 0 < b) (x : {x : RM T m AA // okR T R ch x}) (e : (kindM R ch FL (.inl x)).Sl)
     (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL (.inl x) →
       ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) (u : Un R FL Pl U0 U1) :
     u ∈ consM R FL Pl lhat n o ⟨.inl x, e⟩ ↔ u ∈ consM R FL Pl lhat n o' ⟨.inl x, e⟩ := by
   rw [consM_inl, consM_inl]
   have h1 : ActR (load R ch FL lhat (nn n) (oo R FL Pl o)) x.1 ↔ ActR (load R ch FL lhat (nn n) (oo R FL Pl o')) x.1 :=
-    actR_congr fun τ hτ => load_congr hr hb hτ hag
+    actR_congr fun τ hτ => load_congr hb hτ hag
   rw [h1]
   refine and_congr_right fun _ => ?_
   have h2 : tgU R FL Pl u = inpR T x.1 → (AlU R FL Pl lhat n o u ↔ AlU R FL Pl lhat n o' u) := by
     intro hu
-    refine alU_congr hr hb hag ?_
+    refine alU_congr hb hag ?_
     rw [hu]
     exact inp_time x.1
   constructor
@@ -292,18 +292,18 @@ theorem consM_congr_inl (hr : 0 < r) (hb : 0 < b) (x : {x : RM T m AA // okR T R
   · rintro ⟨h3, h4⟩
     exact ⟨(h2 h4).2 h3, h4⟩
 
-theorem consM_congr_inr (hr : 0 < r) (hb : 0 < b) (l : LMv T FL) (e : (kindM R ch FL (.inr l)).Sl)
+theorem consM_congr_inr (hb : 0 < b) (l : LMv T FL) (e : (kindM R ch FL (.inr l)).Sl)
     (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL (.inr l) →
       ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) (u : Un R FL Pl U0 U1) :
     u ∈ consM R FL Pl lhat n o ⟨.inr l, e⟩ ↔ u ∈ consM R FL Pl lhat n o' ⟨.inr l, e⟩ := by
   have hpk : Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o)) l ↔ Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o')) l :=
-    pick_congr fun q => load_congr hr hb (le_refl _) hag
+    pick_congr fun q => load_congr hb (le_refl _) hag
   have hnum : num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) = num R ch FL lhat (nn n) (oo R FL Pl o') (.inr l) :=
-    num_congr hr hb hag
+    num_congr hb hag
   have hal : ∀ v : Un R FL Pl U0 U1, tgU R FL Pl v = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) →
       (AlU R FL Pl lhat n o v ↔ AlU R FL Pl lhat n o' v) := by
     intro v hv
-    refine alU_congr hr hb hag ?_
+    refine alU_congr hb hag ?_
     rw [hv]
     exact le_refl _
   have hrk : tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) →
@@ -321,14 +321,14 @@ theorem consM_congr_inr (hr : 0 < r) (hb : 0 < b) (l : LMv T FL) (e : (kindM R c
     rw [← hrk h2] at h3
     exact ⟨(hal u h2).2 h1, h2, h3⟩
 
-theorem consM_congr (hr : 0 < r) (hb : 0 < b) (z : ZM R FL (ch := ch))
+theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
     (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL z.1 →
       ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) :
     (consM R FL Pl lhat n o z : Finset (Un R FL Pl U0 U1)) = consM R FL Pl lhat n o' z := by
   ext u
   rcases z with ⟨x | l, e⟩
-  · exact consM_congr_inl hr hb x e hag u
-  · exact consM_congr_inr hr hb l e hag u
+  · exact consM_congr_inl hb x e hag u
+  · exact consM_congr_inr hb l e hag u
 
 theorem agree_of (ho : ∀ ν : (sys R FL Pl).N, timeM R ch FL (eE R FL ν.1) < t → o ν = o' ν) :
     ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t → ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩ := by
@@ -379,18 +379,18 @@ theorem consM_cur {z : (sys R FL Pl).Z} {u : Un R FL Pl U0 U1} (hu : u ∈ consM
     exact lt_irrefl _ hlt
 
 /-- **The plan obeys the rules.** -/
-theorem plan_ok (hr : 0 < r) (hb : 0 < b) {cap : ℕ}
+theorem plan_ok (hb : 0 < b) {cap : ℕ}
     (hcap : ∀ (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) mv,
       num R ch FL lhat (nn n) (oo R FL Pl o) mv ≤ cap) : (plan R FL Pl lhat U0 U1).Ok cap where
   causal n o o' z ho := by
-    refine consM_congr hr hb (eZ R FL Pl z) (agree_of fun ν hν => ho ν ?_)
+    refine consM_congr hb (eZ R FL Pl z) (agree_of fun ν hν => ho ν ?_)
     rw [eZ_fst] at hν
     exact lt_of_time hν
   causal' n o o' x ho := by
-    refine num_congr hr hb (agree_of fun ν hν => ho ν ?_)
+    refine num_congr hb (agree_of fun ν hν => ho ν ?_)
     exact lt_of_time hν
   causal'' n o o' x ho := by
-    refine good_congr hr hb (agree_of fun ν hν => ho ν (lt_of_time hν).le) fun c => ?_
+    refine good_congr hb (agree_of fun ν hν => ho ν (lt_of_time hν).le) fun c => ?_
     unfold oo
     rw [ho]
     have h1 : (eN R FL Pl ((eN R FL Pl).symm ⟨eE R FL x, c⟩)).1 = eE R FL x := by rw [Equiv.apply_symm_apply]

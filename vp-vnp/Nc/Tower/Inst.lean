@@ -173,7 +173,7 @@ theorem edge_gen {j : ℕ} (h2 : 2 ≤ h) (k : Fin h) (c : XX h n j) : edge h2 k
 
 /-- The edges of one type are half of the chambers. -/
 theorem card_edges (h2 : 2 ≤ h) (j : ℕ) (i : Fin h) :
-    2 * (univ.filter fun e : EE h n h2 j => e.1.1 = i).card = 1 * Fintype.card (XX h n j) := by
+    2 * (univ.filter fun e : EE h n h2 j => e.1.1 = i).card = Fintype.card (XX h n j) := by
   classical
   have h1 : (univ.filter fun e : EE h n h2 j => e.1.1 = i).card =
       (univ.filter fun c : XX h n j => FQ h2 i (evX c)).card := by
@@ -205,7 +205,7 @@ theorem card_edges (h2 : 2 ≤ h) (j : ℕ) (i : Fin h) :
     · intro c _; exact gen_gen h2 i c
   have h4 := Finset.card_filter_add_card_filter_not (s := (univ : Finset (XX h n j))) (fun c => FQ h2 i (evX c))
   rw [Finset.card_univ] at h4
-  rw [h1, one_mul]
+  rw [h1]
   omega
 
 theorem deg_edges (h2 : 2 ≤ h) (j : ℕ) (c : XX h n j) (i : Fin h) :

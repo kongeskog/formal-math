@@ -26,10 +26,4 @@ abbrev cNear {h : ℕ} [NeZero h] (ν : NN h) : U h := ν.1.2
 /-- The other end of a near pair of U h. -/
 abbrev dNear {h : ℕ} [NeZero h] (ν : NN h) : U h := x h ν.1.1 * ν.1.2
 
-/-- The laws at the vertices of the tower of U h with parameter n. -/
-noncomputable def towFlag {F : Type} [CommRing F] {h : ℕ} [NeZero h]
-    (VL : VLaws F (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h2 : 2 ≤ h) (n : ℕ) :
-    FlagLaws F (tower h n h2) :=
-  { VL with }
-
 end Nc.Vp

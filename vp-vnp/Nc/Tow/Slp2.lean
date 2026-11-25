@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G Unc
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA U0 U1 : ℕ} {T : Tower h b D J r}
+variable {F : Type} [CommRing F] {h b D J m Uu AA U0 U1 : ℕ} {T : Tower h b D J}
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T}
 variable {Inp ι : Type} {Dd Y p c : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
 variable (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R FL (ch := ch) → ℕ) (lhat : ℕ)
@@ -155,7 +155,7 @@ theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ} (hN
       (CY.base (hN (.inl y)) hY) fun x => hA.lt_of_le (hlt x)).congr fun x => ?_) (by omega)
     exact (alvN_inl y ν _).symm
   · have hg : PY Dd H Y 1 fun x => GoodL R ch FL (ox x) l (Nf x (.inr l)) :=
-      PY.rel hA (fun q t => r * b * q ≤ FL.G₁ * t ^ 2) (CY.base (hs.q l) hY) (CY.base (hN (.inr l)) hY)
+      PY.rel hA (fun q t => b * q ≤ FL.G₁ * t ^ 2) (CY.base (hs.q l) hY) (CY.base (hN (.inr l)) hY)
     have ho : ∀ x, ox x ⟨.inr l, ν⟩ ≤ Y := fun x => (hR.o x _).trans (hB.u1 ⟨.inr l, ν⟩)
     have hm : CY Dd H Y 1 fun x => min (ox x ⟨.inr l, ν⟩) (Nf x (.inr l)) :=
       CY.op hA (fun s t => min s t) (CY.base (hs.o _) hY) (CY.base (hN (.inr l)) hY)
