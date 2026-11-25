@@ -11,8 +11,8 @@ import Nc.Hc.Vnp
 /-!
 # The paper, appendix "All fields and the Hamiltonian cycle polynomial": the ingredients
 
-The closed fields KK, the transfer polynomials, the comparison of the two bounds and HC in VNP. Theorem
-thm:allfields itself is derived from Theorem thm:approx in `Paper/Approximate.lean`.
+The closed fields KK, the transfer polynomials, the form of the bound and HC in VNP. The theorem on all
+fields follows from Theorem thm:approx (`Paper/Approximate.lean`) in `Solution.lean`.
 -/
 
 namespace Paper
@@ -50,18 +50,6 @@ theorem two_ne_zero_of_char (K : Type) [Field K] (p : ℕ) [CharP K p] (hp : p =
   · simp at h3
   · exact h2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).1 h3)
 
-/-- "The bound of the contracting case, although its constant depends on p, exceeds that of the flat case for large m." -/
-theorem thm_allfields_exceeds {P : ℕ → ℕ → Prop}
-    (h : ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, P m s →
-      (2 : ℝ) ^ (c * Real.logb 2 m ^ 2 / Real.logb 2 (Real.logb 2 m)) < s) :
-    ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, P m s → (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
-  obtain ⟨c, hc, m₁, h⟩ := h
-  obtain ⟨m₂, hm₂⟩ := thm_main_calculation (1 / (c * 1600 ^ 2))
-  refine ⟨m₁ + m₂, fun m hm s hs => lt_of_le_of_lt ?_ (h m (by omega) s hs)⟩
-  refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
-  refine le_trans (le_of_eq ?_) ((mul_le_mul_of_nonneg_left (hm₂ m (by omega)) hc.le).trans_eq (mul_div_assoc _ _ _).symm)
-  field_simp
-
 /-- The bound 2^((log m)^(4/3)/1600²) in the form of the main theorems. -/
 theorem beyond_of_rate {m s : ℕ} (hm : 2 ≤ m) (h : (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s) :
     (m : ℝ) ^ (1 / 1600 ^ 2 * Real.logb 2 m ^ (1 / 3 : ℝ)) < s := by
@@ -95,8 +83,5 @@ theorem hc_mem_VNP (F : Type u) [Field F] :
   show Fintype.card ((Fin n × Fin n) ⊕ Fin (n * n)) ≤ _
   simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_fin]
   nlinarith [Nat.zero_le (n ^ 4), Nat.zero_le (n ^ 3), Nat.zero_le (n ^ 2)]
-
--- Theorem thm:allfields and Corollary cor:allclasses are in `Paper/Approximate.lean`, where they follow
--- from Theorem thm:approx.
 
 end Paper

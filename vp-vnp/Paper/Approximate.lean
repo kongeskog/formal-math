@@ -9,8 +9,8 @@ import Paper.ApproxScales
 /-!
 # The paper, appendix "Approximate computation"
 
-The exact end theorems, thm:allfields and cor:allclasses, are derived here from Theorem thm:approx.
-Theorem thm:main of the introduction, over ℝ, follows at the end from thm:allfields.
+Theorem thm:approx; the exact end theorems follow from it in `Solution.lean`, exact computation being
+approximation without error.
 -/
 
 namespace Paper
@@ -223,15 +223,6 @@ theorem flat_rate_approx_complete (κ : ℕ) : ∃ m₀ : ℕ, ∀ (K : Type) [F
   obtain ⟨Q, ⟨l, -, a, ha, -⟩, -⟩ := hap
   omega
 
-/-- The contracting case with the calculation of Theorem thm:contracting. -/
-theorem contracting_approx_rate {K : Type} [Field K] (hK : Contracting K)
-    {G : ∀ S, MvPolynomial (Fin S × Fin S) K} {κ : ℕ} (hG : GridComplete K G κ) :
-    ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, Approximates (G m) s →
-      (2 : ℝ) ^ (c * Real.logb 2 m ^ 2 / Real.logb 2 (Real.logb 2 m)) < s := by
-  obtain ⟨C, M₁, h⟩ := contracting_approx_complete hK hG
-  exact quasi_of_exponents (P := fun m s => Approximates (G m) s)
-    (fun _ _ _ hst ⟨Q, hQ, hQf⟩ => ⟨Q, Computes.mono hQ hst, hQf⟩) h
-
 /-- Both cases over KK, for circuits with constants in KK[ε,ε⁻¹]. -/
 theorem approx_rate_closed {K : Type} [Field K] {G : ∀ S, MvPolynomial (Fin S × Fin S) K} {κ : ℕ}
     (hG : GridComplete K G κ) :
@@ -243,7 +234,9 @@ theorem approx_rate_closed {K : Type} [Field K] {G : ∀ S, MvPolynomial (Fin S 
     rcases thm_alt K with hK | hK
     · obtain ⟨m₀, h⟩ := flat_rate_approx_complete κ
       exact ⟨m₀, h K hK _ hG⟩
-    · exact thm_allfields_exceeds (contracting_approx_rate hK hG)
+    · obtain ⟨C, M₁, h⟩ := contracting_approx_complete hK hG
+      exact rate_of_exponents (P := fun m s => Approximates (G m) s)
+        (fun _ _ _ hst ⟨Q, hQ, hQf⟩ => ⟨Q, Computes.mono hQ hst, hQf⟩) h
   refine ⟨m₀, fun m hm s P hP hc => h m hm s (Approximates.of_laurentPolynomial hP fun d i hi => ?_)⟩
   rcases eq_or_lt_of_le hi with rfl | hlt
   · rw [if_pos rfl, (hc d).2]
@@ -284,46 +277,5 @@ theorem thm_approx :
   obtain ⟨m₀, hlow⟩ := main p (CharP.char_is_prime_or_zero F p).symm
   obtain ⟨m, hm1, hm2⟩ := exists_beyond_poly (show (0 : ℝ) < 1 / 1600 ^ 2 by norm_num) m₀ C
   exact hm2 ((hlow F m hm1 _).1 (hC m).2.2)
-
-/- Theorem thm:allfields and Corollary cor:allclasses, moved here from `Paper/Fields.lean`: exact
-computation is the special case of approximation without error. -/
-
-/-- **Paper: Theorem thm:allfields.** "There is an absolute constant c > 0 such that for every p, zero or prime,
-there is m₀: over every field of characteristic p and for every m ≥ m₀ every circuit for HC_m, and for PERM_m if p ≠ 2,
-has more than m^(c(log m)^(1/3)) gates." -/
-theorem thm_allfields : ∃ c : ℝ, 0 < c ∧ ∀ p : ℕ, p = 0 ∨ p.Prime → ∃ m₀ : ℕ,
-    ∀ (F : Type u) [Field F] [CharP F p], ∀ m ≥ m₀, ∀ s : ℕ,
-      (Computes (genHC F m) s → (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) < s) ∧
-      (p ≠ 2 → Computes (genPerm F m) s → (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) < s) := by
-  -- a circuit that computes HC_m or PERM_m approximates it with no error, so thm:approx gives the bound
-  obtain ⟨c, hc, h⟩ := thm_approx.{u}.1
-  refine ⟨c, hc, fun p hp => ?_⟩
-  obtain ⟨m₀, hm⟩ := h p hp
-  exact ⟨m₀, fun F _ _ m hm' s => ⟨fun hs => (hm F m hm' s).1 hs.approximates,
-    fun h2 hs => (hm F m hm' s).2 h2 hs.approximates⟩⟩
-
-/-- **Paper: Corollary cor:allclasses.** "Over every field, VP is a proper subset of VNP." -/
-theorem cor_allclasses (F : Type u) [Field F] : VP F ⊂ VNP F := by
-  refine ⟨vp_subset_vnp F, fun h => ?_⟩
-  obtain ⟨C, hC⟩ := h (hc_mem_VNP F)
-  obtain ⟨p, _⟩ := CharP.exists F
-  obtain ⟨c, hc, hall⟩ := thm_allfields.{u}
-  obtain ⟨m₀, hlow⟩ := hall p (CharP.char_is_prime_or_zero F p).symm
-  obtain ⟨m, hm1, hm2⟩ := exists_beyond_poly hc m₀ C
-  exact hm2 ((hlow F m hm1 _).1 (hC m).2.2)
-
-/- Theorem thm:main, moved here from `Paper/Rate.lean`. -/
-
-/- Theorem thm:main is the PERM_m part of Theorem thm:allfields for the field ℝ, of characteristic
-p = 0 (so the hypothesis p ≠ 2 holds); genPerm_eq rewrites the permanent into the printed sum. -/
-
-/-- **Paper: Theorem thm:main.** "There are c > 0 and m₀ such that for all m ≥ m₀ every circuit over ℝ that computes
-PERM_m has more than m^(c(log m)^(1/3)) gates." -/
-theorem thm_main : ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s : ℕ,
-    Computes (∑ σ : Equiv.Perm (Fin m), ∏ i, MvPolynomial.X (σ i, i) : MvPolynomial (Fin m × Fin m) ℝ) s →
-      (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) < s := by
-  obtain ⟨c, hc, h⟩ := thm_allfields.{0}
-  obtain ⟨m₀, hm⟩ := h 0 (Or.inl rfl)
-  exact ⟨c, hc, m₀, fun m hm' s hs => (hm ℝ m hm' s).2 (by norm_num) (genPerm_eq ℝ m ▸ hs)⟩
 
 end Paper

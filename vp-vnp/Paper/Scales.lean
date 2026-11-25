@@ -16,35 +16,37 @@ namespace Paper
 open Finset NS1
 open _root_.NS1.Tree
 
-/-- If circuits with M^a gates are impossible whenever (lg M)^(Ca) ≤ M, then more than 2^(c(log M)²/log log M) gates
-are needed. -/
-theorem quasi_of_exponents {P : ℕ → ℕ → Prop} (hmono : ∀ M s t, s ≤ t → P M s → P M t) {C M₁ : ℕ}
+/-- If circuits with M^a gates are impossible whenever (lg M)^(Ca) ≤ M, then more than 2^((log M)^(4/3)/1600²) gates
+are needed: take a = ⌈(log M)^(1/3)⌉. This is the rate of the main theorems in the contracting case. -/
+theorem rate_of_exponents {P : ℕ → ℕ → Prop} (hmono : ∀ M s t, s ≤ t → P M s → P M t) {C M₁ : ℕ}
     (h : ∀ M ≥ M₁, ∀ a : ℕ, lg M ^ (C * a) ≤ M → ¬ P M (M ^ a)) :
-    ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, P m s →
-      (2 : ℝ) ^ (c * Real.logb 2 m ^ 2 / Real.logb 2 (Real.logb 2 m)) < s := by
-  refine ⟨1 / (4 * (C + 1)), by positivity, ?_⟩
+    ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, P m s → (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
   have ht : Filter.Tendsto (fun m : ℕ => Real.logb 2 m) Filter.atTop Filter.atTop :=
     (Real.tendsto_logb_atTop (by norm_num)).comp tendsto_natCast_atTop_atTop
-  have ho := Real.isLittleO_log_id_atTop.bound (show (0 : ℝ) < Real.log 2 / (4 * C + 4) by positivity)
+  have ho := (isLittleO_log_rpow_atTop (show (0 : ℝ) < 2 / 3 by norm_num)).bound
+    (show (0 : ℝ) < Real.log 2 / (4 * C + 4) by positivity)
   obtain ⟨M₀, hM₀⟩ := Filter.eventually_atTop.1 ((ht.eventually ho).and (ht.eventually_ge_atTop 2))
   refine ⟨M₀ + M₁ + 2, fun m hm s hs => ?_⟩
   obtain ⟨h1, hL⟩ := hM₀ m (by omega)
   set L := Real.logb 2 m with hLd
   set l := Real.logb 2 L with hld
-  have hl1 : 1 ≤ l := by
-    rw [hld, Real.le_logb_iff_rpow_le (by norm_num) (by linarith), Real.rpow_one]
-    exact hL
-  have hlb : (4 * (C : ℝ) + 4) * l ≤ L := by
-    rw [Real.norm_eq_abs, Real.norm_eq_abs, id, abs_of_nonneg (Real.log_nonneg (by linarith)),
-      abs_of_nonneg (by linarith)] at h1
+  have hL0 : 0 < L := by linarith
+  have hl0 : 0 ≤ l := Real.logb_nonneg (by norm_num) (by linarith)
+  have hlb : (4 * (C : ℝ) + 4) * l ≤ L ^ (2 / 3 : ℝ) := by
+    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (Real.log_nonneg (by linarith)),
+      abs_of_nonneg (Real.rpow_nonneg hL0.le _)] at h1
     have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
-    have : l ≤ L / (4 * C + 4) := by
+    have : l ≤ L ^ (2 / 3 : ℝ) / (4 * C + 4) := by
       rw [hld, Real.logb, div_le_iff₀ hlog]
       calc Real.log L ≤ _ := h1
         _ = _ := by field_simp
     rwa [le_div_iff₀ (by positivity), mul_comm] at this
-  generalize ha : ⌈1 / (4 * ((C : ℝ) + 1)) * L / l⌉₊ = a
-  have ha1 : (a : ℝ) ≤ 1 / (4 * ((C : ℝ) + 1)) * L / l + 1 := ha ▸ (Nat.ceil_lt_add_one (by positivity)).le
+  have hc1 : (1 : ℝ) ≤ L ^ (1 / 3 : ℝ) := Real.one_le_rpow (by linarith) (by norm_num)
+  generalize ha : ⌈L ^ (1 / 3 : ℝ)⌉₊ = a
+  have ha1 : (a : ℝ) ≤ 2 * L ^ (1 / 3 : ℝ) := by
+    have := (Nat.ceil_lt_add_one (Real.rpow_nonneg hL0.le (1 / 3))).le
+    rw [ha] at this
+    linarith
   have hmR : (0 : ℝ) < m := by exact_mod_cast (by omega : 0 < m)
   have hlgR : (0 : ℝ) < lg m := by exact_mod_cast Nat.succ_pos _
   by_contra hb
@@ -61,17 +63,12 @@ theorem quasi_of_exponents {P : ℕ → ℕ → Prop} (hmono : ∀ M s t, s ≤ 
   have hkey : lg m ^ (C * a) ≤ m := by
     have key : ((C * a : ℕ) : ℝ) * Real.logb 2 (lg m) ≤ L := by
       push_cast
-      calc (C : ℝ) * a * Real.logb 2 (lg m) ≤ C * (1 / (4 * ((C : ℝ) + 1)) * L / l + 1) * (2 * l) := by
+      calc (C : ℝ) * a * Real.logb 2 (lg m) ≤ C * (2 * L ^ (1 / 3 : ℝ)) * (2 * l) := by
             gcongr
             exact Real.logb_nonneg (by norm_num) (by exact_mod_cast Nat.succ_pos _)
-        _ = (C : ℝ) / (C + 1) * (L / 2) + 2 * C * l := by
-            field_simp
-            ring
-        _ ≤ 1 * (L / 2) + 2 * C * l := by
-            gcongr
-            rw [div_le_one (by positivity)]
-            linarith
-        _ ≤ L := by linarith
+        _ = L ^ (1 / 3 : ℝ) * (4 * C * l) := by ring
+        _ ≤ L ^ (1 / 3 : ℝ) * L ^ (2 / 3 : ℝ) := by gcongr; linarith
+        _ = L := by rw [← Real.rpow_add hL0]; norm_num
     have h3 := Real.rpow_le_rpow_of_exponent_le (show (1 : ℝ) ≤ 2 by norm_num) key
     rw [hLd, Real.rpow_logb (by norm_num) (by norm_num) hmR, mul_comm, Real.rpow_mul (by norm_num),
       Real.rpow_logb (by norm_num) (by norm_num) hlgR, Real.rpow_natCast] at h3
@@ -79,8 +76,9 @@ theorem quasi_of_exponents {P : ℕ → ℕ → Prop} (hmono : ∀ M s t, s ≤ 
   refine h m (by omega) a hkey (hmono m s _ ?_ hs)
   have h4 : (s : ℝ) ≤ (2 : ℝ) ^ (L * a) := by
     refine hb.trans (Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_)
-    rw [pow_two, ← mul_assoc, mul_div_right_comm, mul_comm L]
-    exact mul_le_mul_of_nonneg_right (ha ▸ Nat.le_ceil _) (by linarith)
+    calc L ^ (4 / 3 : ℝ) / 1600 ^ 2 ≤ L ^ (4 / 3 : ℝ) := div_le_self (Real.rpow_nonneg hL0.le _) (by norm_num)
+      _ = L * L ^ (1 / 3 : ℝ) := by rw [show (4 / 3 : ℝ) = 1 + 1 / 3 by norm_num, Real.rpow_add hL0, Real.rpow_one]
+      _ ≤ L * a := by gcongr; exact ha ▸ Nat.le_ceil _
   rw [Real.rpow_mul (by norm_num), hLd, Real.rpow_logb (by norm_num) (by norm_num) hmR, Real.rpow_natCast] at h4
   exact_mod_cast h4
 

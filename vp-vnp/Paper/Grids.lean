@@ -141,16 +141,5 @@ theorem clauses_of_complete {F : Type} [Field F] {G : ∀ S, MvPolynomial (Fin S
       obtain ⟨i, rfl⟩ := List.mem_iff_get.1 hl
       rw [Finset.prod_eq_zero (mem_univ i) (if_neg hne'), zero_add]
 
-/-- **Paper: Corollary cor:clauses.** "Let 2 ≠ 0 in k. A clause sum with N literals in all, whose weights are constants
-or variables, is the permanent of an S×S matrix, S ≥ 3N, with entries that are affine in one variable each." -/
-theorem cor_clauses {F : Type} [Field F] (h2 : (2 : F) ≠ 0) {ι V K : Type} [Fintype V] [DecidableEq V] [Fintype K]
-    [DecidableEq K] (lits : K → List (V × Bool)) (hne : ∀ κ, lits κ ≠ []) (hocc : ∀ b, ∃ κ, ∃ l ∈ lits κ, l.1 = b)
-    (wt : K → MvPolynomial ι F) (hwt : ∀ κ, (∃ i, wt κ = X i) ∨ ∃ a, wt κ = C a) {S : ℕ}
-    (hS : 3 * ∑ κ, (lits κ).length ≤ S) :
-    ∃ M : Matrix (Fin S) (Fin S) (MvPolynomial ι F), (∀ i j, IsAffine (M i j)) ∧
-      M.permanent = clauseSum lits wt := by
-  obtain ⟨M, hM, he⟩ := clauses_of_complete (gridComplete_perm h2) lits hne hocc wt hwt hS
-  exact ⟨Matrix.of fun i j => M (i, j), fun i j => hM (i, j), by rw [← aeval_genPerm, ← he]; rfl⟩
-
 
 end Paper

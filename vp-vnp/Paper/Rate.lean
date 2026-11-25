@@ -11,8 +11,8 @@ import Nc.CaseI.Hub
 /-!
 # The paper, section "The main theorem"
 
-Theorem thm:main of the introduction, over ℝ, is at the end of `Paper/Approximate.lean`, derived
-from Theorem thm:allfields.
+Theorem thm:main of the introduction, over ℝ, is `Solution.permanent_over_real`, derived from the main
+theorem at p = 0.
 -/
 
 namespace Paper
@@ -383,40 +383,6 @@ theorem rate_of_projection (κ : ℕ) : ∃ m₀ : ℕ, ∀ P : ℕ → ℕ → 
   rw [← Real.lt_logb_iff_rpow_lt (by norm_num) hs0, div_lt_iff₀ (by norm_num)]
   nlinarith
 
-/-- "(log m)²/log log m ≥ (log m)^(4/3) for large m", and indeed more than any multiple: the bound of the contracting
-case exceeds that of the flat case. -/
-theorem thm_main_calculation (C : ℝ) : ∃ m₀ : ℕ, ∀ m ≥ m₀,
-    C * Real.logb 2 m ^ (4 / 3 : ℝ) ≤ Real.logb 2 m ^ 2 / Real.logb 2 (Real.logb 2 m) := by
-  have ht : Filter.Tendsto (fun m : ℕ => Real.logb 2 m) Filter.atTop Filter.atTop :=
-    (Real.tendsto_logb_atTop (by norm_num)).comp tendsto_natCast_atTop_atTop
-  have h0 := (isLittleO_log_rpow_atTop (show (0 : ℝ) < 2 / 3 by norm_num)).bound
-    (show (0 : ℝ) < Real.log 2 / (|C| + 1) by positivity)
-  obtain ⟨m₀, hm₀⟩ := Filter.eventually_atTop.1 ((ht.eventually h0).and (ht.eventually_gt_atTop 2))
-  refine ⟨m₀, fun m hm => ?_⟩
-  obtain ⟨h1, hL⟩ := hm₀ m hm
-  set L := Real.logb 2 m
-  have hL0 : 0 < L := by linarith
-  have hl : 0 < Real.logb 2 L := Real.logb_pos (by norm_num) (by linarith)
-  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (Real.log_nonneg (by linarith)),
-    abs_of_nonneg (Real.rpow_nonneg hL0.le _)] at h1
-  have h3 : (|C| + 1) * Real.logb 2 L ≤ L ^ (2 / 3 : ℝ) := by
-    have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
-    rw [Real.logb, ← mul_div_assoc, div_le_iff₀ hlog]
-    calc (|C| + 1) * Real.log L ≤ (|C| + 1) * (Real.log 2 / (|C| + 1) * L ^ (2 / 3 : ℝ)) :=
-          mul_le_mul_of_nonneg_left h1 (by positivity)
-      _ = _ := by field_simp
-  rw [le_div_iff₀ hl]
-  calc C * L ^ (4 / 3 : ℝ) * Real.logb 2 L = L ^ (4 / 3 : ℝ) * (C * Real.logb 2 L) := by ring
-    _ ≤ L ^ (4 / 3 : ℝ) * L ^ (2 / 3 : ℝ) := by
-        refine mul_le_mul_of_nonneg_left ?_ (Real.rpow_nonneg hL0.le _)
-        nlinarith [le_abs_self C]
-    _ = L ^ 2 := by
-        rw [← Real.rpow_add hL0, show (4 / 3 : ℝ) + 2 / 3 = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
-
-theorem genPerm_eq.{u} (F : Type u) [Field F] (m : ℕ) :
-    genPerm F m = ∑ σ : Equiv.Perm (Fin m), ∏ i, MvPolynomial.X (σ i, i) := by
-  simp [genPerm, Matrix.permanent]
-
 /-- "VP is contained in VNP." -/
 theorem vp_subset_vnp.{u} (F : Type u) [CommSemiring F] : VP F ⊆ VNP F := by
   rintro p ⟨C, hC⟩
@@ -437,8 +403,5 @@ theorem thm_main_form {m : ℕ} (hm : 2 ≤ m) (c : ℝ) :
   rw [show (4 / 3 : ℝ) = 1 + 1 / 3 by norm_num, Real.rpow_add hL, Real.rpow_one, mul_left_comm]
   congr 2
   rw [Real.rpow_logb (by norm_num) (by norm_num) hm0]
-
-/- Theorem thm:main moved to the end of `Paper/Approximate.lean`, where it is derived from Theorem
-thm:allfields. -/
 
 end Paper
