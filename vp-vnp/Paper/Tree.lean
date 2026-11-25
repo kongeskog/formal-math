@@ -1285,27 +1285,47 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       have : V ≤ V ^ 9 := Nat.le_self_pow (by norm_num) V
       omega
 
-/- **Paper: Theorem thm:tree.** "There is a constant C with the following property. Let M ≥ 2, let ℓ, N ≥ 1, and let a
-network over A have at most M nodes, no unit from a node to itself, and at most N units at each node. Its
-value is the sum, over a set of choices o (sequences of good outcomes), of values of networks with the following
-properties. Put Λ = (lg M)^C, where lg M = ⌊log M⌋+1, and γ = 1/log b. (a) The nodes form a rooted tree of depth at most
-Λ, by stages: the given nodes are of stage 0, every node but the root has its parent in the next stage and at most b
-children, and the root has at most C. (b) A set of at most M^C dead units may join any two nodes. All others join a node
-and its parent; their number is at most ΛM^(1−γ)(N+M²) for one node, its children included, and ΛM(N+M²) in all. (c)
-The table of a node is the given one (or 1) times the tables of the moves at it, summed over the units that they have
-used up. At stage 0 these are tests only; elsewhere they are tests and table entries of laws, and the numbers of
-layers of the law moves at a node add up to at most the number of bits of all units that it ever holds. (d) The parents,
-the units present, the units and numbers of the moves, and which outcomes are good are computed from o and the given
-numbers of units by a straight-line program with at most (MN)^C steps on numbers below (MN)^C. A step is an input, a
-constant, or an arbitrary function of two earlier results, given by its table (a binary operation). The program does not
-depend on the numbers of units, the outcomes or the tables." The tests are relays, and the laws are the fixed list.
+/- **Paper: Theorem thm:tree.** "There is a constant C with the following property. Let M ≥ 2, let
+ℓ, N ≥ 1, and let a
+network over A have at most M nodes, no unit from a node to itself, and at most N units at each
+node. Its
+value is the sum, over a set of choices o (sequences of good outcomes), of values of networks with
+the following
+properties. Put Λ = (lg M)^C, where lg M = ⌊log M⌋+1, and γ = 1/log b. (a) The nodes form a rooted
+tree of depth at most
+Λ, by stages: the given nodes are of stage 0, every node but the root has its parent in the next
+stage and at most b
+children, and the root has at most C. (b) A set of at most M^C dead units may join any two nodes.
+All others join a node
+and its parent; their number is at most ΛM^(1−γ)(N+M²) for one node, its children included, and
+ΛM(N+M²) in all. (c)
+The table of a node is the given one (or 1) times the tables of the moves at it, summed over the
+units that they have
+used up. At stage 0 these are tests only; elsewhere they are tests and table entries of laws, and
+the numbers of
+layers of the law moves at a node add up to at most the number of bits of all units that it ever
+holds. (d) The parents,
+the units present, the units and numbers of the moves, and which outcomes are good are computed from
+o and the given
+numbers of units by a straight-line program with at most (MN)^C steps on numbers below (MN)^C. A
+step is an input, a
+constant, or an arbitrary function of two earlier results, given by its table (a binary operation).
+The program does not
+depend on the numbers of units, the outcomes or the tables." The tests are relays, and the laws are
+the fixed list.
 The paper states this over every A-algebra; the proof needs it over A only.
-The structure ThinTrees states only what the proof of Proposition prop:pieces uses: not the stage 0 of the given nodes,
-the total of the units over all nodes in (b) (it bounds the total of the loads instead), the count of layers in (c), or
-the form of the test for good outcomes; what a node ever holds (seenAt) is bounded against the loads (copies_le). Units
-from a node to itself are also allowed: they stay, and their node sums over them (the printed formula is the case
-without them). The operations of (d) are those of a straight-line program that may depend on M, N and ℓ.
-It is applied in the proof of Proposition prop:pieces, as `tree_towers` (the towers for at least M nodes) followed by
+The structure ThinTrees states only what the proof of Proposition prop:pieces uses: not the stage 0
+of the given nodes,
+the total of the units over all nodes in (b) (it bounds the total of the loads instead), the count
+of layers in (c), or
+the form of the test for good outcomes; what a node ever holds (seenAt) is bounded against the loads
+(copies_le). Units
+from a node to itself are also allowed: they stay, and their node sums over them (the printed
+formula is the case
+without them). The operations of (d) are those of a straight-line program that may depend on M, N
+and ℓ.
+It is applied in the proof of Proposition prop:pieces, as `tree_towers` (the towers for at least M
+nodes) followed by
 `exists_thinTrees` (the thin trees from one tower), with γ = 1/e(h) = 1/log b. -/
 
 end Thm

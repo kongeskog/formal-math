@@ -695,7 +695,8 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       ((K + K : ℕ) : ℝ) ^ (1 - 1 / (ee h : ℝ)) * (load + ((K + K : ℕ) : ℝ) ^ 2) →
       X * v ^ 300 ≤ yhat load (K + K) C₀ := by
     intro X hX
-    refine pieces_gain (q := ee h) (by omega) (by omega) ?_ (R := load + (K + K) ^ 2) (by push_cast at hX ⊢; exact hX)
+    refine pieces_gain (q := ee h) (by omega) (by omega) ?_ (R := load + (K + K) ^ 2)
+      (by push_cast at hX ⊢; exact hX)
     rw [← pow_mul]
     exact (vp (show 300 * ee h ≤ e by omega)).trans (by omega)
   -- bits
