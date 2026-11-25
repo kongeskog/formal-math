@@ -6,11 +6,10 @@ SPDX-License-Identifier: Apache-2.0
 import NS1.Budget
 
 /-!
-# An interpreter that counts the names of constants
+# Formulas that subtract from budgets and check them
 
-`IF` is a formula of the language that evaluates formulas; instead of multiplying by a named constant it subtracts 1
-from a budget. `WF` also checks that in the end the budgets are used up. These formulas are plain: they use no
-named constants.
+`DC` subtracts 1 from a budget at a name, `AZ` checks that all numbers of a budget are 0. With them `CK` and `WN`
+(`NS1/Postpone.lean`) check the names in the value of a program against a budget.
 -/
 
 namespace NS1

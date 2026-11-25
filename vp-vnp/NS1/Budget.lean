@@ -53,7 +53,7 @@ def dec : List Bool → Bt → Option Bt
   | true :: p, node l r => (dec p r).map (node l)
   | false :: p, node l r => (dec p l).map fun l' => node l' r
 
-/-- Subtract 1 at all names of a bill. -/
+/-- Subtract 1 at all names of a list. -/
 def decAll : List (List Bool) → Bt → Option Bt
   | [], t => some t
   | p :: b, t => (dec p t).bind (decAll b)

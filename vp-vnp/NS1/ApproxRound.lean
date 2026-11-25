@@ -10,9 +10,10 @@ import Nc.Acc.CompK
 /-!
 # One round for approximate accelerators
 
-The budgets of the outer program are guessed and multiplied exactly. The constants of the inner
+The budgets of the outer program are guessed and their constants named exactly. The constants of the inner
 program are rescaled by ε ↦ ε^r, with r above every exponent in the outer weights. To give the rescaled constants names
-of their own the round guesses budgets for all inner calls at once and runs the list program inside the interpreter.
+of their own the round guesses budgets for all inner calls at once and runs the plain instance of the list program
+with these budgets (`rebF`).
 -/
 
 set_option linter.unusedSectionVars false

@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import NS1.Postpone
 
 /-!
-# Guessing the budgets and multiplying by the powers of the constants
+# Guessing the budgets and naming the powers of the constants
 -/
 
 set_option linter.unusedSectionVars false

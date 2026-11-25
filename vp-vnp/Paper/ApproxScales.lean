@@ -201,19 +201,22 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
         _ ≤ _ := Nat.pow_le_pow_right (by norm_num) (by omega))
     (by
       rw [hnB]
-      have m1 : MM (K.ht + B + J + 1) + 1 ≤ u := by
-        unfold MM
-        omega
-      have m2 : nB * (60 * W + 3 * (J + m) + 100) + 40 * (nB * (J + 1)) + 40 * (W + 1) + 120 ≤ u ^ (16 * h - 17) := by
-        have s1 : nB * (60 * W + 3 * (J + m) + 100) ≤ u ^ 2 * u := Nat.mul_le_mul hnB2 (by omega)
+      have m1 : 60 * (K.ht + B + J + 1) + 42 + 1 ≤ u := by omega
+      have m2 : 2 * (nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200)) + 40 * (nB * (J + 1)) +
+          40 * (W + 1) + 140 ≤ u ^ (16 * h - 17) := by
+        have s1 : nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200) ≤ u ^ 2 * u :=
+          Nat.mul_le_mul hnB2 (by omega)
         have s2 : nB * (J + 1) ≤ u ^ 2 * u := Nat.mul_le_mul hnB2 (by omega)
         have s3 : u ^ 2 * u = u ^ 3 := by ring
-        have s4 : 40 * (W + 1) + 120 ≤ u ^ 3 := (by omega : _ ≤ u).trans (Nat.le_self_pow (by norm_num) u)
+        have s4 : 40 * (W + 1) + 140 ≤ u ^ 3 := (by omega : _ ≤ u).trans (Nat.le_self_pow (by norm_num) u)
         have s5 : 2000 * u ^ 3 ≤ u ^ (3 + 1) := pbig 3
         have s6 : u ^ (3 + 1) ≤ u ^ (16 * h - 17) := pow_le_pow hu1 (by omega)
         omega
-      calc nB * (60 * W + 3 * (J + m) + 100) + MM (K.ht + B + J + 1) * u ^ (16 * h - 17) + 40 * (nB * (J + 1)) +
-            40 * (W + 1) + 120 ≤ (MM (K.ht + B + J + 1) + 1) * u ^ (16 * h - 17) := by rw [add_mul, one_mul]; omega
+      calc 2 * (nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200)) + 40 * (W + 1) +
+            ((60 * (K.ht + B + J + 1) + 42) * u ^ (16 * h - 17) + 40 * (nB * (J + 1)) + 80) + 60
+            ≤ (60 * (K.ht + B + J + 1) + 42 + 1) * u ^ (16 * h - 17) := by
+              have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 1 (u ^ (16 * h - 17))
+              omega
         _ ≤ u * u ^ (16 * h - 17) := Nat.mul_le_mul_right _ m1
         _ = u ^ (16 * h - 16) := by rw [← pu]; congr 1; omega)
   rw [hnB] at hn' hs'

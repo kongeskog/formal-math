@@ -8,8 +8,9 @@ import NS1.Eval
 /-!
 # Constants are postponed
 
-`WF` applied to (program, (argument, budgets)) has, as plain weighted sum, the sum of the weights of the runs whose
-names of constants are exactly the given budgets. Summed over all budgets with the powers of the constants this is
+A program names the constants it wants in its value, a tree of names (`names`). `WN` applied to
+(program, (argument, budgets)) has, as plain weighted sum, the sum of the weights of the runs whose values name the
+constants exactly as the given budgets prescribe. Summed over all budgets with the powers of the constants this is
 the value of the program.
 -/
 
@@ -71,7 +72,7 @@ def budg (J : ℕ) : KT R → List (Bt × R)
 
 end KT
 
-/-- The bill uses up the budgets. -/
+/-- The names `b` use up the budgets. -/
 def ok (t : Bt) (b : List (List Bool)) : Bool := ((Bt.decAll b t).map Bt.zero).getD false
 
 theorem ok_nil (t : Bt) : ok t [] = t.zero := rfl

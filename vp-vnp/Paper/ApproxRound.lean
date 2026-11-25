@@ -20,8 +20,8 @@ open _root_.NS1.Tree LaurentPolynomial
 variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] [Algebra A E]
 
 /-- **Paper: proof of Proposition prop:approx-acc, one round.** "So the new value lies in ∑_e λ^e(pv(z_e) + ε^r E[ε]) ⊆
-(value of p) + εE[ε] ⊆ pv(z) + εE[ε]": the new program guesses e, cuts z_e, and lets the interpreter run D on all
-pieces with the constants σ_r(κ′), where r exceeds the exponents of all λ^e. -/
+(value of p) + εE[ε] ⊆ pv(z) + εE[ε]": the new program guesses e, cuts z_e, and runs D on all
+pieces with the constants σ_r(κ′) (as the plain instances of renamed budgets), where r exceeds the exponents of all λ^e. -/
 theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D : Tree}
     (hD : IsAccA θ H u (u ^ (H - 16)) K' B' D) {K : KT E[T;T⁻¹]} {p : Tree} {B τ : ℕ} (hp : IsPreA θ H v τ K B p)
     {J n : ℕ} (hJ : τ < 2 ^ J) (hn : ∀ q ∈ (K.expand B).budg J, Span n q.2)

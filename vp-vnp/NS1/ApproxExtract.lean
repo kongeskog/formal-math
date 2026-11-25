@@ -10,7 +10,7 @@ import Nc.Acc.Trie
 /-!
 # Back to equality
 
-A program guesses, for every constant, the digits of its power and one term of that power, multiplies by the
+A program guesses, for every constant, the digits of its power and one term of that power, names the
 coefficient of the term, an element of the ring E, and adds the exponent of ε on a counter. It accepts only if the
 counter is 0. So its value is the coefficient of ε^0 of an approximate value: the exact one.
 -/
