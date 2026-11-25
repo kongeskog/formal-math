@@ -462,7 +462,7 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     rw [Nat.zero_mul, Nat.add_zero]
     exact hS
   have hb0 : Base (nX nI) (oX oI : Inp → NM R FL → ℕ) H := ⟨hn, fun ν => ho _⟩
-  obtain ⟨H1, s1, u1, f1⟩ := after_stage hA hB hR hb hS0 hb0
+  obtain ⟨H1, s1, f1⟩ := after_stage hA hB hR hb hS0 hb0
   obtain ⟨H2, s2, u2, f2⟩ := units_stage hA hB hB2 s1 f1
   obtain ⟨H3, s3, u3, f3⟩ := host_stage hh (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
     (fun j i => u2 (f1.isMin j i))

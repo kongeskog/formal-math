@@ -45,7 +45,7 @@ theorem prop_gauge_minimal {p₀ : M → ℝ} (h₀ : IsPre D p₀) :
       ∀ q : M → ℝ, IsPre D q → (∀ x y c, 0 ≤ c → Keeps p₀ x y c → Keeps q x y c) → (∀ t, q t ≤ p t) →
         ∀ t, q t = p t := by
   set Q : Set (M → ℝ)ᵒᵈ := {q | IsPre D (OrderDual.ofDual q) ∧
-    ∀ x y c, 0 ≤ c → Keeps p₀ x y c → Keeps (OrderDual.ofDual q) x y c} with hQ
+    ∀ x y c, 0 ≤ c → Keeps p₀ x y c → Keeps (OrderDual.ofDual q) x y c}
   obtain ⟨m, hm0, hmax⟩ := zorn_le_nonempty₀ Q (by
     intro c hcQ hchain y hy
     have : Nonempty c := ⟨⟨y, hy⟩⟩
@@ -77,7 +77,7 @@ theorem prop_gauge_radius_cover (h : IsPre D p) {κ : Type} [Fintype κ] (t : M)
   have hmem : ∀ y, ∃ C : ℝ, ∀ m : ℕ, p (y ^ m) ≤ C * a y ^ m := fun y =>
     (h.mem_rad_of_lt (show sInf (rad p y) < a y by simp only [ha]; linarith)).2
   choose C hC using hmem
-  set S := Finset.univ.image b with hS
+  set S := Finset.univ.image b
   set A := ∑ k, a (b k) with hA
   have hA0 : 0 ≤ A := Finset.sum_nonneg fun k _ => (ha0 _).le
   have key : ∀ n : ℕ, ∀ e : M → ℕ, p ((∏ y ∈ S, y ^ e y) * t ^ n) ≤
@@ -95,7 +95,7 @@ theorem prop_gauge_radius_cover (h : IsPre D p) {κ : Type} [Fintype κ] (t : M)
       have h3 : ∀ k, p (b k * ((∏ y ∈ S, y ^ e y) * t ^ n)) ≤
           (∏ y ∈ S, C y) * (∏ y ∈ S, a y ^ e y) * A ^ n * a (b k) := by
         intro k
-        set y := b k with hy
+        set y := b k
         have hyS : y ∈ S := Finset.mem_image_of_mem _ (Finset.mem_univ _)
         have h4 := ih (fun z => if z = y then e z + 1 else e z)
         have e1 : ∏ z ∈ S, z ^ (if z = y then e z + 1 else e z) =
@@ -165,8 +165,8 @@ theorem prop_gauge_radius (h : IsPre D p) : IsPre D (fun t => sInf (rad p t)) :=
     have hs := h0 s
     have ht := h0 t
     refine le_of_forall_pos_le_add fun δ hδ => ?_
-    set A := sInf (rad p s) with hA
-    set B := sInf (rad p t) with hB
+    set A := sInf (rad p s)
+    set B := sInf (rad p t)
     obtain ⟨ε, hε, hε1, hε2⟩ : ∃ ε : ℝ, 0 < ε ∧ ε ≤ 1 ∧ ε * (A + B + 1) ≤ δ := by
       refine ⟨min 1 (δ / (A + B + 1)), by positivity, min_le_left _ _, ?_⟩
       calc min 1 (δ / (A + B + 1)) * (A + B + 1) ≤ δ / (A + B + 1) * (A + B + 1) := by
@@ -219,10 +219,10 @@ theorem prop_gauge_radius_root (h : IsPre D p) {t : M} {n : ℕ} (hn : 0 < n) {a
     a ^ ((n : ℝ)⁻¹) ∈ rad p t := by
   obtain ⟨ha, C, hC⟩ := ha
   have hC1 := h.rad_const_pos hC
-  set b := a ^ ((n : ℝ)⁻¹) with hb
+  set b := a ^ ((n : ℝ)⁻¹)
   have hb0 : 0 < b := Real.rpow_pos_of_pos ha _
   have hbn : b ^ n = a := Real.rpow_inv_natCast_pow ha.le (by omega)
-  set E := max 1 (p t / b) with hE
+  set E := max 1 (p t / b)
   have hE1 : 1 ≤ E := le_max_left _ _
   refine ⟨hb0, C * E ^ n, fun m => ?_⟩
   have h1 : t ^ m = (t ^ n) ^ (m / n) * t ^ (m % n) := by
@@ -363,7 +363,7 @@ theorem thm_duality_gauge {C : M} {A : B → M} {η : ℝ} (hη : 0 < η)
     (h : ∀ k W, Cert D C A η 1 k W → 1 ≤ W) :
     IsPre D (fun t => sInf {W | ∃ k, Cert D C A η t k W}) ∧
       ∀ β, Keeps (fun t => sInf {W | ∃ k, Cert D C A η t k W}) (A β) C η := by
-  set S : M → Set ℝ := fun t => {W | ∃ k, Cert D C A η t k W} with hS
+  set S : M → Set ℝ := fun t => {W | ∃ k, Cert D C A η t k W}
   have hne : ∀ t, (S t).Nonempty := by
     intro t
     obtain ⟨r, hr⟩ := hone t
@@ -468,7 +468,7 @@ theorem thm_duality_cover {C : M} {A : B → M} {η : ℝ} (hη : 0 < η) (hη1 
   obtain ⟨κ, _, u, v, hu, huk, hc, hw⟩ := thm_duality_exchange hη h hW1
   obtain ⟨κ', _, u', v', hu', hs', hc', hw'⟩ := thm_duality_replace hη hu huk hc hw N
   choose μ i hμ hcov using fun j : κ' => thm_duality_copies hcA (u' j)
-  set E : ℝ := ((c : ℝ) + 1) ^ (k₀ + 1) with hE
+  set E : ℝ := ((c : ℝ) + 1) ^ (k₀ + 1)
   refine ⟨Σ j, μ j, inferInstance, fun x β => v' x.1 β + if β = β₀ then u' x.1 else 0,
     ?_, fun x => ?_, ?_⟩
   · rw [Fintype.card_sigma]

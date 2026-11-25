@@ -137,7 +137,6 @@ theorem frames_pos (μ : ℕ) : 0 < frames μ := by
 theorem MD_eq_meanSq (w : Mt μ → Mt μ → ℝ) (S : Finset (Fin μ)) : MD w (dg S) = frames μ * meanSq w S.card := by
   have hn : (0 : ℝ) < ((univ : Finset (Mt μ)).filter fun W => W.rank = S.card).card := by
     exact_mod_cast card_pos.2 ⟨dg S, mem_filter.2 ⟨mem_univ _, rank_dg S⟩⟩
-  have hm : (0 : ℝ) < Fintype.card (Mt μ) := by exact_mod_cast Fintype.card_pos
   rw [frames, meanSq, ← mul_div_assoc, eq_div_iff (by positivity), MD, sum_mul, mul_sum]
   refine sum_congr rfl fun a _ => ?_
   have h := card_mul_DM (fun M => w a (a + M)) S
@@ -287,7 +286,7 @@ theorem thm_alt_extremal (hK : ¬ Contracting K) (hμ : 2 ≤ μ) : ∃ w : Mt �
       have : (0 : ℝ) ≤ n := Nat.cast_nonneg n
       linarith
     have hn0 : 0 < 1 / ((n : ℝ) + 1) := by positivity
-    set t : ℝ := (μ : ℝ) - 1 / ((n : ℝ) + 1) with ht
+    set t : ℝ := (μ : ℝ) - 1 / ((n : ℝ) + 1)
     have ht0 : 0 ≤ t := by linarith
     obtain ⟨w, hw, hlt⟩ : ∃ w : Mt μ → Mt μ → ℝ, IsPrice K w ∧ √t * distAtRank w 1 < distAtRank w μ := by
       by_contra hcon
@@ -654,7 +653,6 @@ theorem thm_alt_rank_one (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W : M
     rw [thm_alt_one_value hx hμ b hV hW, thm_alt_base_point hx hμ b a hW]
   have hn : (0 : ℝ) < ((univ : Finset (Mt μ)).filter fun W => W.rank = 1).card := by
     exact_mod_cast card_pos.2 ⟨W, mem_filter.2 ⟨mem_univ _, hW⟩⟩
-  have hm : (0 : ℝ) < Fintype.card (Mt μ) := by exact_mod_cast Fintype.card_pos
   have h1 := hx.one
   have h5 : ∑ b : Mt μ, ∑ V ∈ (univ : Finset (Mt μ)).filter (fun V => V.rank = 1), w b (b + V) ^ 2 =
       ∑ _b : Mt μ, ∑ _V ∈ (univ : Finset (Mt μ)).filter (fun V => V.rank = 1), nn w a W :=
@@ -711,7 +709,7 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
     (hF : ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k, dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2) :
     ∃ F' : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ (k + 1), ∀ y ∈ cubePts μ (k + 1),
       dist (F' x) (F' y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
-  set c : Fin μ := ⟨k, hk⟩ with hc
+  set c : Fin μ := ⟨k, hk⟩
   -- the point at z_c on the edge in the new direction, by Lemma lem:toolkit (a)
   have hγ : ∀ z : Fin μ → ℝ, ∃ γ : Y, 0 ≤ z c ∧ z c ≤ 1 →
       dist (F (Function.update z c 0)) γ =
