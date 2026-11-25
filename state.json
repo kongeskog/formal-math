@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T06:21:35.673938481Z",
+  "updated_at": "2026-11-25T06:26:14.135866008Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -118,10 +118,10 @@
     {
       "number": 115,
       "title": "Idea: restructure(Nc/Tow): remove the parameters r and p that are always 1, and FlagLaws, which repeats VLaws",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T08:39:27Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 129,
       "result_delta": -1392,
       "created_at": "2026-11-25T02:41:42Z",
@@ -820,8 +820,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 20127,
-      "loc": 1179
+      "tokens": 20026,
+      "loc": 1177
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -835,7 +835,7 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 12113,
+      "tokens": 12112,
       "loc": 751
     },
     {
@@ -875,7 +875,7 @@
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 7289,
+      "tokens": 7287,
       "loc": 459
     },
     {
@@ -885,7 +885,7 @@
     },
     {
       "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 7162,
+      "tokens": 7161,
       "loc": 412
     },
     {
@@ -920,7 +920,7 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
-      "tokens": 6174,
+      "tokens": 6150,
       "loc": 377
     },
     {
@@ -935,12 +935,12 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
-      "tokens": 5828,
+      "tokens": 5802,
       "loc": 454
     },
     {
       "path": "vp-vnp/Nc/Tow/Load2.lean",
-      "tokens": 5744,
+      "tokens": 5711,
       "loc": 406
     },
     {
@@ -965,7 +965,7 @@
     },
     {
       "path": "vp-vnp/Nc/Tower/Inst.lean",
-      "tokens": 5536,
+      "tokens": 5532,
       "loc": 339
     }
   ]
