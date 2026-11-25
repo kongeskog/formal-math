@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T19:45:22.845215650Z",
+  "updated_at": "2026-11-25T19:46:35.695380263Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -73,16 +73,16 @@
   },
   "counts": {
     "merged": 78,
-    "rejected": 2,
+    "rejected": 3,
     "open": 2,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 3
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 78,
-      "attempts": 82,
+      "attempts": 83,
       "saved": 85311
     }
   ],
@@ -118,11 +118,11 @@
     {
       "number": 133,
       "title": "Idea: restructure(NS1,Nc/Acc): programs return the names of their constants, and the interpreter with budgets goes",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
+      "claimed_by": "kongeskog",
       "lease_expires": null,
-      "pr": null,
+      "pr": 143,
       "result_delta": null,
       "created_at": "2026-11-25T06:40:51Z",
       "url": "https://github.com/kongeskog/formal-math/issues/133",
@@ -928,13 +928,13 @@
       "scope": "*"
     },
     {
-      "pr": 142,
-      "title": "restructure(Paper/Pieces): inline thm_tree into prop_pieces, its only user",
+      "pr": 143,
+      "title": "restructure(NS1,Nc/Acc,Paper): programs return the names of their constants, and the interpreter with budgets goes",
       "author": "kongeskog",
-      "head_sha": "7d0db05e4ef4f27a03f0b7f80b8bd0553224202c",
+      "head_sha": "675ed8e21c5b46db3894fc052acc307685b8f2c0",
       "base_sha": null,
       "status": "verifying",
-      "created_at": "2026-11-25T19:44:44Z",
+      "created_at": "2026-11-25T19:45:54Z",
       "decided_at": null,
       "metrics": null,
       "base_metrics": null,
@@ -987,13 +987,13 @@
           "detail": "0 of 1 approvals from vetted reviewers"
         }
       ],
-      "idea": 112,
-      "url": "https://github.com/kongeskog/formal-math/pull/142",
+      "idea": 133,
+      "url": "https://github.com/kongeskog/formal-math/pull/143",
       "run_url": null,
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
-      "scope": "Paper/Pieces"
+      "scope": "NS1,Nc/Acc,Paper"
     }
   ],
   "top_files": [
