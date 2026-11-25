@@ -256,8 +256,7 @@ theorem size_pickS {α : Type} {opts : List α} {o : α → List (NmT S M U0 U1 
   have h3 := size_bits (H.nm .zero)
   rw [pickS, size_pick]
   simp only [Tree.size]
-  have h4 : X * (105 * (X * Lc) + 1) = 105 * (X * (X * Lc)) + X := by ring
-  omega
+  linarith
 
 theorem size_dt (d : Fin D) : (C.dt d).size ≤ 4 * Lc + 1 := size_bits (H.dc d)
 
@@ -281,8 +280,7 @@ theorem size_un (x z : NmT S M U0 U1 pS) {f : Fin D → Tree} (hf : ∀ d, (f d)
       omega
   rw [Fintype.card_fin] at h
   have h2 := Nat.mul_le_mul_right (7 * (X * Lc) + 4 * Lc + 4) H.hD
-  have h3 : X * (7 * (X * Lc) + 4 * Lc + 4) = 7 * (X * (X * Lc)) + 4 * (X * Lc) + 4 * X := by ring
-  omega
+  linarith
 
 theorem size_con (z : NmT S M U0 U1 pS) {t : Tree} (ht : t.size ≤ 5 * (X * Lc)) :
     (C.con z t).tree.size ≤ 120 * (X * Lc) ^ 2 := by
@@ -299,12 +297,10 @@ theorem size_trie2 {α : Type} [Fintype α] {code : α → List Bool} (hc : ∀ 
     intro a
     have h := size_trieOf_le (f := fun b => f a b) hc (hf a)
     have h2 := Nat.mul_le_mul_right (4 * Lc + 1 + 4 * Lc + 4) hα
-    have h3 : X * (4 * Lc + 1 + 4 * Lc + 4) = 8 * (X * Lc) + 5 * X := by ring
-    omega
+    linarith
   have h := size_trieOf_le (f := fun a => trieOf code fun b => f a b) hc h1
   have h2 := Nat.mul_le_mul_right (13 * (X * Lc) + 1 + 4 * Lc + 4) hα
-  have h3 : X * (13 * (X * Lc) + 1 + 4 * Lc + 4) = 13 * (X * (X * Lc)) + 4 * (X * Lc) + 5 * X := by ring
-  omega
+  linarith
 
 /-- The keys of units. -/
 theorem size_keysL {α : Type} {l : List α} {f : α → List Bool} (hl : l.length ≤ X) (hf : ∀ a, (f a).length ≤ Lc) :
@@ -314,8 +310,7 @@ theorem size_keysL {α : Type} {l : List α} {f : α → List Bool} (hl : l.leng
   · intro t ht
     obtain ⟨a, -, rfl⟩ := List.mem_map.1 ht
     exact size_bits (hf a)
-  · have : X * (4 * Lc + 1 + 1) = 4 * (X * Lc) + 2 * X := by ring
-    omega
+  · linarith
 
 /-- Every step is small. -/
 theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤ 120 * (X * Lc) ^ 2 := by
@@ -388,8 +383,7 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
             have k2 := size_bits (H.dkey (a.1, k))
             simp only [Grp.Ins.tree, Tree.size, size_num]
             omega
-          · have : X * (8 * Lc + 9 + 1) = 8 * (X * Lc) + 10 * X := by ring
-            omega
+          · linarith
         · simp at hb
   · rw [steps4, List.mem_map] at h
     obtain ⟨ν, -, rfl⟩ := h
@@ -482,8 +476,7 @@ theorem size_bodyTm (p : Fin (K + K)) : (bodyTm C p).tree.size ≤ 75 * (X * Lc)
   have h : ∀ l : List Tm, l.length ≤ X → (∀ t ∈ l, t.tree.size ≤ 4 * Lc + 5) → (listTm l).tree.size ≤ 19 * (X * Lc) := by
     intro l hl hb
     refine (size_listTm_le hl hb).trans ?_
-    have : X * (4 * Lc + 5 + 7) = 4 * (X * Lc) + 12 * X := by ring
-    omega
+    linarith
   have h1 := h ((univ : Finset (Option S)).toList.map fun s => gN C (.flag s p)) (by
     rw [List.length_map, Finset.length_toList, Finset.card_univ]; exact H.hS) (by
       intro t ht
@@ -554,8 +547,7 @@ theorem size_slotTm (z : M.Z) (a : Fin (K + K + A')) : (slotTm C tab d1 z a).tre
     rw [size_ifTm, size_c]
     simp only [listT, Tree.size]
     omega
-  · have : X * (12 * Lc + 21 + 11) = 12 * (X * Lc) + 32 * X := by ring
-    omega
+  · linarith
 
 theorem size_roleTm (r : M.R) : (roleTm C tab tg d1 r).tree.size ≤ 120 * (X * Lc) ^ 2 := by
   obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
@@ -575,9 +567,7 @@ theorem size_roleTm (r : M.R) : (roleTm C tab tg d1 r).tree.size ≤ 120 * (X * 
   have h3 := size_gN H (.num r.1)
   have h4 := H.htg r
   rw [roleTm, size_tmCons, size_tmCons, size_tmCons, size_c, size_num]
-  have e1 : X * (50 * (X * Lc) + 7) = 50 * (X * (X * Lc)) + 7 * X := by ring
-  have e2 : X * (4 * Lc + 5 + 7) = 4 * (X * Lc) + 12 * X := by ring
-  omega
+  linarith
 
 omit hd1 in
 theorem size_oneTm {k : List Bool} (hk : k.length ≤ Lc) (id : G.Uid (K + K) U0 M.N U1) :
@@ -656,10 +646,7 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
   rw [scriptTm, size_tmCons, size_c, size_catTm, List.map_append, List.map_append, List.sum_append, List.sum_append,
     List.length_append, List.length_append]
   simp only [Tree.size]
-  have e1 : X * (170 * (X * Lc)) = 170 * (X * (X * Lc)) := by ring
-  have e2 : X * (160 * (X * Lc) ^ 2) = 160 * (X * (X * Lc) ^ 2) := by ring
-  have e3 : X * (300 * (X * Lc)) = 300 * (X * (X * Lc)) := by ring
-  omega
+  linarith
 
 variable {gp : Tree} (hgp : gp.size ≤ X)
 
@@ -737,8 +724,7 @@ theorem size_dealProg : (dealProg C tab qn tg bT bub nl nub gt d1 gp cb b0 b1 i 
     calc X * (740 * (X * Lc) ^ 3 + 1) ≤ (X * Lc) * (741 * (X * Lc) ^ 3) := Nat.mul_le_mul f1 (by omega)
       _ = 741 * (X * Lc) ^ 4 := by ring
   have e4 : dealC ≤ dealC * (X * Lc) ^ 4 := Nat.le_mul_of_pos_right _ f7
-  have e5 : (dealC + 3000) * (X * Lc) ^ 4 = dealC * (X * Lc) ^ 4 + 3000 * (X * Lc) ^ 4 := by ring
-  omega
+  linarith
 
 end sizes
 

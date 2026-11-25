@@ -681,8 +681,7 @@ theorem thm_cn_ii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ 
     have g : _ → _ → fanWs d T n b (i, k) (i + 1, k - 1) ≤ _ := (hd n).step_ii hT0 (max_one_pos n) b i k
     rw [e] at g
     have k1 : (i : ℤ) + k + n ≤ n ^ 2 * T := by
-      have : i + k + n ≤ n ^ 2 * T := by omega
-      exact_mod_cast this
+      linarith
     have g := g (by positivity) k1
     push_cast at g
     have h2 : df (fanWs d T) 0 (1, -1) n b i k = fanWs d T n b (i, k) (i + 1, k - 1) := by
@@ -699,7 +698,6 @@ theorem thm_cn_ii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ 
     rw [h3, h4]
     have h5 : (i : ℝ) / (n ^ 2 * T) ≤ (i + k + n) / (n ^ 2 * T) := by
       apply div_le_div_of_nonneg_right _ (by positivity)
-      have : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       linarith
     linarith
   have h2 : nm (fun n b i k => D * (1 - θ * place n b i k)) ^ 2 ≤ D ^ 2 * (1 - θ + θ ^ 2) := by
@@ -736,8 +734,7 @@ theorem thm_cn_iii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤
       (hd n).step_iii (max_one_pos n) b i k
     rw [e] at g
     have k1 : (i : ℤ) + k + 1 + n ≤ n ^ 2 * T := by
-      have : i + k + 1 + n ≤ n ^ 2 * T := by omega
-      exact_mod_cast this
+      linarith
     have g := g (by positivity) k1
     have h2 : df (fanWs d T) 0 (0, 1) n b i k = fanWs d T n b (i, k) (i, k + 1) := by simp [df]
     rw [h2]
@@ -823,11 +820,9 @@ theorem thm_cn_iv_square (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT :
   have hD0 := fan_D_nonneg hd
   have hB0 := fan_w_nonneg hd z m
   have k0 : ((A * S : ℕ) : ℤ) ≤ (i : ℤ) + k + n := by
-    have : ((A * S : ℕ) : ℤ) ≤ n := by exact_mod_cast hAS
-    linarith [Int.natCast_nonneg i, Int.natCast_nonneg k]
+    omega
   have k1 : (i : ℤ) + k + n ≤ n ^ 2 * T := by
-    have : i + k + n ≤ n ^ 2 * T := by omega
-    exact_mod_cast this
+    linarith
   have g : _ → _ → |((max n 1 : ℕ) : ℝ) ^ 2 * (_ * (fanL d z n b (i + S) - fanL d z n b i))
       + A * S * (1 / T) * fanL d z n b (i + S)| ≤ fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) :=
     thm_cn_iv_step (hd n) (by omega) (max_one_pos n) b i k A S
