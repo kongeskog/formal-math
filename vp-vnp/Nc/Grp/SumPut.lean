@@ -74,11 +74,6 @@ theorem TOk.putAll {ub : ℕ} {keys : List (List Bool)} {u : ℕ → List Bool} 
   | nil => exact h
   | cons k ks ih => exact ih (fun i => hu (i + 1)) (h.tset k _ (hu 0))
 
-theorem length_uwBits_le {ub : ℕ} (w : UW ub) : (uwBits w).length ≤ ub := by
-  cases w with
-  | none => exact Nat.zero_le _
-  | some w => simp [uwBits]
-
 theorem TOk.putsAll {ub : ℕ} {P : List (List (List Bool) × List Bool)} {t : Tree} (h : TOk ub t) :
     TOk ub (Grp.putsAll ub P t) := by
   induction P generalizing t with

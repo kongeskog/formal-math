@@ -47,7 +47,7 @@ theorem held_le_chan (M : Sys F (A + A') E) (n : Fin A → Fin A → Fin (U0 + 1
       ∑ u : Uid A U0 M.N U1, ∑ d : Bool, if cparty M.np u d = p ∧ unum u < ucnt n o u then 1 else 0 := by
     rw [card_filter]
     refine (Finset.sum_le_sum fun u hu => ?_).trans (Finset.sum_le_sum_of_subset (subset_univ _))
-    have h4 := mem_seen_iff.1 hu
+    have h4 := Plan.mem_seenAt_end.1 hu
     split_ifs with h3
     · rw [Fintype.sum_bool]
       rcases h3 with h3 | h3

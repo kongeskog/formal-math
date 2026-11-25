@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
 import Nc.G.Move
+import Nc.G.RouteFacts
 
 /-!
 # The play, for general laws
@@ -16,14 +17,6 @@ namespace Nc.G
 open Finset Nc.Cut
 
 variable {F : Type} [CommRing F] {A A' E U0 U1 ub : ℕ} {M : Sys F (A + A') E}
-
-theorem init_mem_seen0 {N : Type} [Fintype N] [DecidableEq N] {n : Fin A → Fin A → Fin (U0 + 1)} {a b : Fin A}
-    {k : Fin U0} : (Uid.init a b k : Uid A U0 N U1) ∈ seen0 n ↔ k.1 < (n a b).1 := by
-  simp [seen0]
-
-theorem new_not_mem_seen0 {N : Type} [Fintype N] [DecidableEq N] {n : Fin A → Fin A → Fin (U0 + 1)} {ν : N}
-    {k : Fin U1} : (Uid.new ν k : Uid A U0 N U1) ∉ seen0 n := by
-  simp [seen0]
 
 namespace Plan
 
@@ -38,32 +31,8 @@ theorem mem_seenAt : id ∈ seenAt n o x ↔
     id ∈ seen0 n ∨ ∃ x' : Fin E, x'.1 < x ∧ id ∈ newUnits M x' o := by
   simp [seenAt]
 
-theorem new_mem_seenAt {ν : M.N} {k : Fin U1} :
-    (Uid.new ν k : Uid A U0 M.N U1) ∈ seenAt n o x ↔ ν.1.1 < x ∧ k ≤ o ν := by
-  rw [mem_seenAt]
-  constructor
-  · rintro (h | ⟨x', hx', h⟩)
-    · exact absurd h new_not_mem_seen0
-    · obtain ⟨rfl, h2⟩ := new_mem_newUnits.1 h
-      exact ⟨hx', h2⟩
-  · rintro ⟨h1, h2⟩
-    exact Or.inr ⟨ν.1, h1, new_mem_newUnits.2 ⟨rfl, h2⟩⟩
-
-theorem init_mem_seenAt {a b : Fin A} {k : Fin U0} :
-    (Uid.init a b k : Uid A U0 M.N U1) ∈ seenAt n o x ↔ k.1 < (n a b).1 := by
-  rw [mem_seenAt, init_mem_seen0]
-  refine or_iff_left ?_
-  rintro ⟨x', -, h⟩
-  exact init_not_mem_newUnits h
-
-/-- The units seen in the end. -/
-theorem mem_seenAt_end : id ∈ seenAt n o E ↔ unum id < ucnt n o id := by
-  cases id with
-  | init a b k => exact init_mem_seenAt
-  | new ν k =>
-    rw [new_mem_seenAt]
-    simp only [unum, ucnt, Nat.lt_succ_iff, ν.1.2, true_and]
-    exact Iff.rfl
+-- `new_mem_seenAt`, `init_mem_seenAt` and `mem_seenAt_end` are in `Nc/G/RouteFacts.lean`, with `init_mem_seen0`
+-- and `new_not_mem_seen0`.
 
 theorem mem_used : id ∈ P.used n o x ↔ ∃ z : M.Z, z.1.1 < x ∧ id ∈ P.cons n o z := by
   simp [used]
