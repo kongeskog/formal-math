@@ -78,7 +78,7 @@ theorem ex_sim : ∃ F κ, ∀ (T : ℕ) (q q' : Fin (Fintype.card Q)),
     (.quote (listT (List.replicate (nT S + nT S) .nil)))))) F))
     (.ite (eqF (.hd (.tl .id)) (.tl (.tl (.hd .id)))) (.tl (.tl (.tl .id))) .fail),
     κ + 120 * Fintype.card Q + 300, fun T q q' => ?_⟩
-  set x : Tree := .cons (num T) (.cons (num q) (num q')) with hx
+  set x : Tree := .cons (num T) (.cons (num q) (num q'))
   let s₀ : TSt (Fintype.card Q) 0 (nT S + nT S) (List Bool) := (q, Fin.elim0, fun _ => [])
   have hs₀ : encS ofBits s₀ = .cons (num q) (.cons .nil (listT (List.replicate (nT S + nT S) .nil))) := by
     have e2 : (List.ofFn fun _ : Fin (nT S + nT S) => listT (([] : List (List Bool)).map ofBits)) =

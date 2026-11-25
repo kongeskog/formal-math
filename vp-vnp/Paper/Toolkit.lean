@@ -32,7 +32,7 @@ theorem lem_toolkit_minimization (C : Set Y) (hC : IsClosed C) (hne : C.Nonempty
     (hF0 : ∀ x, 0 ≤ Θ x) {c : ℝ} (hc : 0 < c)
     (hconv : ∀ x ∈ C, ∀ v ∈ C, Θ (mid x v) ≤ (Θ x + Θ v) / 2 - c / 4 * dist x v ^ 2) :
     ∃ b ∈ C, ∀ y ∈ C, Θ b + c * dist y b ^ 2 ≤ Θ y := by
-  set I := sInf (Θ '' C) with hI
+  set I := sInf (Θ '' C)
   have hbdd : BddBelow (Θ '' C) := ⟨0, by rintro _ ⟨x, -, rfl⟩; exact hF0 x⟩
   have hle : ∀ y ∈ C, I ≤ Θ y := fun y hy => csInf_le hbdd ⟨y, hy, rfl⟩
   have hseq : ∀ n : ℕ, ∃ y ∈ C, Θ y < I + 1 / ((n : ℝ) + 1) := by

@@ -77,8 +77,8 @@ theorem isPre_iInf {ι : Type*} [Nonempty ι] {P : ι → M → ℝ} (dir : Dire
   · simp [one]
   · intro s t
     refine le_of_forall_pos_le_add fun δ hδ => ?_
-    set A := ⨅ i, P i s with hA
-    set B := ⨅ i, P i t with hB
+    set A := ⨅ i, P i s
+    set B := ⨅ i, P i t
     have hA0 : 0 ≤ A := h0 s
     have hB0 : 0 ≤ B := h0 t
     obtain ⟨ε, hε, hε1, hε2⟩ : ∃ ε : ℝ, 0 < ε ∧ ε ≤ 1 ∧ ε * (A + B + 1) ≤ δ := by
