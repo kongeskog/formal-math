@@ -151,7 +151,6 @@ theorem okStep_pick {α : Type} (opts : List α) (o : α → List (NmT S M U0 U1
       omega
     · rw [h]
       rw [List.length_map]
-      have : 20 * opts.length ≤ 20 * X := Nat.mul_le_mul_left _ hX
       omega
 
 /-- Operations. -/
@@ -215,10 +214,6 @@ theorem okSteps18 {Lc X : ℕ} (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ 
     (hXr : Fintype.card (RowData (K + K)) ≤ X) (hXU : U0 + 1 ≤ X) (hXU1 : U1 ≤ X) :
     ∀ st ∈ steps18 C tab qn i e hU0 hU1, OkStep (m := m) (mb := mb) C Lc (stepB Lc X) st := by
   have hdt : ∀ d, (C.dt d).len ≤ Lc := fun d => by rw [dt, len_ofBits]; exact hdc d
-  have hbit : ∀ b : Bool, (bit b).len ≤ Lc := fun b => by
-    cases b
-    · simp [bit, len]
-    · simpa [bit, one, len] using hLc
   have hop : 180 * Lc + 200 ≤ stepB Lc X := by unfold stepB; omega
   have hck : 30 * Lc + 100 ≤ stepB Lc X := by unfold stepB; omega
   have hpk : ∀ w, w ≤ 4 → 60 * Lc + 20 * X + X * (w * (60 * Lc + 80)) + 200 ≤ stepB Lc X := by

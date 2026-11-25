@@ -23,8 +23,7 @@ theorem sum_pi_coe {ι β : Type} [Fintype ι] [DecidableEq ι] [DecidableEq β]
     ∑ x ∈ Fintype.piFinset fun _ : ι => s, f x = ∑ x : ι → s, f fun i => (x i : β) := by
   symm
   refine Finset.sum_bij (fun (x : ι → s) _ => fun i => (x i : β)) ?_ ?_ ?_ ?_
-  · intro x _
-    exact Fintype.mem_piFinset.2 fun i => (x i).2
+  · simp
   · intro x _ y _ h
     funext i
     exact Subtype.ext (congrFun h i)
@@ -118,9 +117,7 @@ theorem wsum_segs (sep : List Bool) {m : ℕ} (hm : 0 < m) (bits : Γ → List B
         intro b
         rw [e2]
         funext i
-        refine Fin.lastCases ?_ (fun i => ?_) i
-        · rw [Fin.snoc_last, Fin.snoc_last]
-        · rw [Fin.snoc_castSucc, Fin.snoc_castSucc]
+        refine Fin.lastCases ?_ (fun i => ?_) i <;> simp
       refine if_congr e3.symm ?_ rfl
       congr 2
       congr 1

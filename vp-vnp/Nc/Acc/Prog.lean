@@ -68,9 +68,7 @@ theorem pairsF_gives (m : ℕ) {l : Fm} {x : Tree} {xs : List Tree} {c : ℕ} (h
       apply Nat.mul_le_mul_left
       have := length_pairL_le xs
       omega
-    have h4 : (m + 1) * (40 * (xs.length + 1) + 10) = m * (40 * (xs.length + 1) + 10) + (40 * (xs.length + 1) + 10) := by
-      ring
-    omega
+    linarith
 
 /-- The letter of the empty tree. -/
 def lt0 : Tree := ofBits [true, false]

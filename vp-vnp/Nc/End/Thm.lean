@@ -47,10 +47,7 @@ theorem eval_letS {K : Type} [Field K] {Γ : Type} [DecidableEq Γ] {bt : Bool �
   simp only [decide_eq_true_eq, hget]
   rcases o with _ | γ
   · simp only [letS, eval_X, codeB]
-    refine if_congr ⟨fun h => ⟨_, h, rfl⟩, ?_⟩ rfl rfl
-    rintro ⟨x, h1, h2⟩
-    rw [Option.map_eq_none_iff] at h2
-    rw [h1, h2]
+    simp
   · have hx : ∀ b : Bool, γ = bt b → ((∃ x, (w.map some ++ [none])[(p : ℕ)]? = some x ∧
         Option.map bt x = some γ) ↔ (w.map some ++ [none])[(p : ℕ)]? = some (some b)) := by
       intro b hγ
@@ -95,10 +92,7 @@ theorem totalDegree_letS {K : Type} [Field K] {Γ : Type} [DecidableEq Γ] (bt :
   · simp only [letS]
     exact (totalDegree_X _).le
   · simp only [letS]
-    split_ifs
-    · exact (totalDegree_X _).le
-    · exact (totalDegree_X _).le
-    · simp
+    split_ifs <;> simp
 
 theorem totalDegree_aeval_le {K : Type*} [Field K] {σ τ : Type*} (p : MvPolynomial σ K)
     (f : σ → MvPolynomial τ K) (hf : ∀ i, (f i).totalDegree ≤ 1) :

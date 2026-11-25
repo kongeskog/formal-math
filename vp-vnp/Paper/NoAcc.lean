@@ -113,9 +113,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     have s3 := size_gt red J B' K [] M (fun i _ => (hM i).le)
     rw [List.length_nil] at s3
     have s4 : g.code.size ≤ 2 * v ^ 2 := by
-      have := hnBX (14 * X) (by
-        rw [show 14 * X * X ^ 2 = 14 * X ^ 3 by ring]
-        omega)
+      have := hnBX (14 * X) (by linarith)
       calc g.code.size ≤ nB * ((J + 1) * (4 * (0 + K.ht + M) + 100)) := s3
         _ ≤ nB * (X * (14 * X)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul hJX (by
             have := le_max_right B M
@@ -182,8 +180,6 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     have m5 : 16 * h - 15 = 16 * h - 16 + 1 := by omega
     rw [m5]
     omega
-  have hJ' : ∀ r ∈ l, r.bill.length < 2 ^ J := fun r hr =>
-    lt_of_le_of_lt ((bill_le ep r hr).trans (hT r hr)) hJ
   -- Lemma lem:postpone for the program applied to itself
   have hbill : ∀ r ∈ l, ∀ n ∈ r.bill, K.lk n = (K.expand B').lookup n := fun r hr n hn => KT.lookup_expand ((hl r hr).2 n hn)
   obtain ⟨hsum, hze⟩ := lem_postpone p p (T := v ^ (16 * h - 15)) hJ ep.hl (by rw [ep.evl]; exact hT)
@@ -195,7 +191,6 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     refine Plain.of_le pl ?_
     have hht := KT.ht_expand B' K
     have m1 : 1000 + 100 * ((K.expand B').ht + J + 1) + 2 ≤ v := by omega
-    have m2 : 40 * (nB * (J + 1)) ≤ 20 * v ^ 2 := by omega
     have m3 : v ^ 2 ≤ v ^ (16 * h - 16) := pow_le_pow hv1 (by omega)
     have m4 := pbig (16 * h - 16)
     have m5 : 16 * h - 15 = 16 * h - 16 + 1 := by omega

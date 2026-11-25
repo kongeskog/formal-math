@@ -159,12 +159,7 @@ theorem sum_pos (hcb : Function.Injective cb) (hc : 0 < c) (hub : 0 < ub)
       | .new _ _ => none
   have hst : ∀ X, (if ∀ s, Stair (X s) then segW mu T q x X else 0) ≠ 0 →
       (∀ s, Stair (X s)) ∧ segW mu T q x X ≠ 0 := by
-    intro X h
-    by_cases hs : ∀ s, Stair (X s)
-    · rw [if_pos hs] at h
-      exact ⟨hs, h⟩
-    · rw [if_neg hs] at h
-      exact absurd rfl h
+    simp
   have hrows : ∀ X : Option S → Fin (K + K) → Fin (K + K) → List Γ, (∀ s, Stair (X s)) →
       ∃ ρ : Option S → Fin (K + K) → RowData (K + K), ValidRows ρ ∧ ∀ s p, RowOk (ρ s p) (X s p) := by
     intro X h

@@ -51,9 +51,7 @@ theorem inv_guess {c : Tree} (h : Fm.ofTree c = .guess) : ∃ o a, c = .cons o a
 
 theorem inv_fail {c : Tree} (h : Fm.ofTree c = .fail) : ∃ o a, c = .cons o a ∧ (o.len = 8 ∨ 11 ≤ o.len) := by
   rcases c with _ | ⟨o, a⟩ <;> rw [Fm.ofTree] at h <;> [skip; split at h] <;> simp_all
-  by_contra hc
-  generalize o.len = k at *
-  interval_cases k <;> simp_all
+  omega
 
 theorem inv_theta {c : Tree} {a0 : Fm} (h : Fm.ofTree c = .theta a0) :
     ∃ o a, c = .cons o a ∧ o.len = 9 ∧ Fm.ofTree a = a0 := by
@@ -105,8 +103,7 @@ def Cc : ℤ := 40 + 2 * (Lm supp : ℤ)
 
 theorem Cc_ge : 40 ≤ Cc supp := by
   unfold Cc
-  have : (0 : ℤ) ≤ (Lm supp : ℤ) := Int.natCast_nonneg _
-  linarith
+  omega
 
 /-- The machine is about to evaluate the formula F at the tree x. -/
 structure ES (σ : St supp) (F : Fm) (x : Tree) : Prop where
@@ -194,11 +191,7 @@ theorem EvOK.fail (x : Tree) : EvOK θ supp .fail x [] := by
       change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
       rw [h11]
       exact ok1.nil
-    exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
-      rw [hm1]
-      rintro ⟨h, -⟩
-      injection h with h
-      exact absurd h (by decide)) (by rw [hm1]; simp) _
+    exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by rw [hm1]; simp) (by rw [hm1]; simp) _
   · exact noOp ok hm hc hl
 
 end Nc.Uni
