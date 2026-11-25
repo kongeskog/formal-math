@@ -267,7 +267,7 @@ distances. -/
 theorem segment_fixed (A : IsoAct G Z) {x v q : Z} {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) (hx : A.Fix x) (hv : A.Fix v)
     (e1 : dist x q = t * dist x v) (e2 : dist q v = (1 - t) * dist x v) : A.Fix q := by
   intro g
-  obtain ⟨γ, -, huniq, -⟩ := lem_toolkit.1 x v t h0 h1
+  obtain ⟨γ, -, huniq, -⟩ := lem_toolkit_a x v t h0 h1
   rw [huniq q e1 e2]
   refine huniq _ ?_ ?_
   · rw [← huniq q e1 e2]
@@ -295,7 +295,7 @@ theorem fixed_closed_convex (A : IsoAct G Z) :
 theorem projection_var (A : IsoAct G Z) {q : Z} (hq : A.Fix q) (z : Z) :
     dist z (A.P z) ^ 2 + dist (A.P z) q ^ 2 ≤ dist z q ^ 2 := by
   obtain ⟨hcl, hconv, hP⟩ := fixed_closed_convex A
-  obtain ⟨P₀, hP₀, -, hvar⟩ := lem_toolkit.2.2.2.1 {y | A.Fix y} hcl ⟨_, hP z⟩ hconv z
+  obtain ⟨P₀, hP₀, -, hvar⟩ := lem_toolkit_d {y | A.Fix y} hcl ⟨_, hP z⟩ hconv z
   have h1 := hvar _ (hP z)
   have h2 := A.P_spec z P₀
   have e1 : ∀ g, dist (A.P z) (A.act g z) = dist z (A.P z) := fun g => by
@@ -410,7 +410,7 @@ theorem lem_tele_generator {n : ℕ} {y : Fin n → Z} {b : Z}
     (n : ℝ) * A.e j b ≤ ∑ i, A.e j (y i) := by
   unfold IsoAct.e
   split_ifs with hj
-  · refine lem_toolkit.2.2.1.2 n y (fun i => A.act (x h ⟨j, hj⟩) (y i)) b (A.act (x h ⟨j, hj⟩) b) hb
+  · refine lem_toolkit_c.2 n y (fun i => A.act (x h ⟨j, hj⟩) (y i)) b (A.act (x h ⟨j, hj⟩) b) hb
       fun w => ?_
     obtain ⟨w, rfl⟩ := A.surj (x h ⟨j, hj⟩) w
     simp only [A.iso']
@@ -454,7 +454,7 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
       exact (abs_le_of_sq_le_sq' (show dist a (B (k + 1)) ^ 2 ≤ dist a (B k) ^ 2 by
         linarith [hstep k (by omega), sq_nonneg (dist (B k) (B (k + 1)))]) dist_nonneg).2
   -- the barycenter of the u-1 points
-  obtain ⟨b, hb⟩ := lem_toolkit.2.2.1.1 (u - 1) (fun i => B (u + 1 + i.1)) (by omega)
+  obtain ⟨b, hb⟩ := lem_toolkit_c.1 (u - 1) (fun i => B (u + 1 + i.1)) (by omega)
   have hw : ((u - 1 : ℕ) : ℝ) = (u : ℝ) - 1 := by
     rw [Nat.cast_sub (by omega : 1 ≤ u), Nat.cast_one]
   have hab : dist a b ≤ dist a (B u) := by
@@ -613,8 +613,8 @@ theorem lem_angle_projections {G₁ G₂ Z : Type} [Group G₁] [Fintype G₁] [
     have hτ1 : τ ≤ 1 := by
       rw [hτ, div_le_one hN0, hN]
       linarith
-    obtain ⟨q, ⟨q1, q2⟩, -, q3⟩ := lem_toolkit.1 v a σ hσ0.le hσ1
-    obtain ⟨q', ⟨p1, p2⟩, -, p3⟩ := lem_toolkit.1 v a' τ hτ0.le hτ1
+    obtain ⟨q, ⟨q1, q2⟩, -, q3⟩ := lem_toolkit_a v a σ hσ0.le hσ1
+    obtain ⟨q', ⟨p1, p2⟩, -, p3⟩ := lem_toolkit_a v a' τ hτ0.le hτ1
     have h2 := hq q σ hσ0 hσ1 q1 q2
     have f2 : A₂.Fix q' := segment_fixed A₂ hτ0.le hτ1 hv2 (A₂.P_fix z) p1 p2
     have h4 : dist q (A₂.P q) ^ 2 ≤ dist q q' ^ 2 :=
@@ -635,8 +635,8 @@ theorem lem_angle_projections {G₁ G₂ Z : Type} [Group G₁] [Fintype G₁] [
   refine angle_num (α := α) (β := β) (A := dist z v ^ 2) hr hr' hα hβ (by linarith) (by linarith) hQ ?_
   -- Lemma lem:toolkit (a) twice, for the points at η on [a,a′] and at t on [z,v]
   intro η t hη0 hη1 ht0 ht1
-  obtain ⟨m, -, -, hm⟩ := lem_toolkit.1 a a' η hη0 hη1
-  obtain ⟨g, -, -, hg⟩ := lem_toolkit.1 z v t ht0 ht1
+  obtain ⟨m, -, -, hm⟩ := lem_toolkit_a a a' η hη0 hη1
+  obtain ⟨g, -, -, hg⟩ := lem_toolkit_a z v t ht0 ht1
   have h1 := mul_le_mul_of_nonneg_left (hm z) (show 0 ≤ 1 - t by linarith)
   have h2 := mul_le_mul_of_nonneg_left (hm v) ht0
   have h3 := hg m
@@ -844,7 +844,7 @@ theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA
       (L : ℝ) * dist z b ^ 2 ≤ windowSum A u L z - windowSum A u L b := by
   set Q : Fin L → Z := fun a => (A.W (a.1 * u) (2 * u)).P z with hQ
   have hLr : (0 : ℝ) < L := by exact_mod_cast hL
-  obtain ⟨b, hb⟩ := lem_toolkit.2.2.1.1 L Q hL
+  obtain ⟨b, hb⟩ := lem_toolkit_c.1 L Q hL
   have h1 : 2 * ((L : ℝ) * ∑ i, dist b (Q i) ^ 2) ≤ ∑ i, ∑ j, dist (Q i) (Q j) ^ 2 := by
     refine le_trans (le_of_eq ?_) (sum_le_sum fun i _ => hb (Q i))
     rw [sum_add_distrib, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, ← mul_sum,
@@ -1092,7 +1092,7 @@ theorem thm_poincare {K : Type} [Field K] (hK : Contracting K) :
     div_nonneg (by have := windowConst_nonneg μ s (2 * u); linarith) (by norm_num), fun l hl w hw => ?_⟩
   have hb : (0 : ℝ) < Fintype.card (U (l * u)) := by exact_mod_cast Fintype.card_pos
   obtain ⟨Y, hYm, hYc, f, hY, hf⟩ := prop_space hw
-  have hCN : Cat.CN (PiLp 2 fun _ : U (l * u) => Y) := lem_toolkit.2.2.2.2.1 _
+  have hCN : Cat.CN (PiLp 2 fun _ : U (l * u) => Y) := lem_toolkit_e _
   have hA : ∀ z : PiLp 2 fun _ : U (l * u) => Y, Contr ((transAct (U (l * u)) Y).len z) μ s := by
     intro z
     obtain ⟨len, hlen, hcon⟩ := lengths_of_maps (by omega) (by linarith) hcase hY (fun k => z k)

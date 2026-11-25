@@ -417,41 +417,4 @@ theorem lem_toolkit_f (x y u v a b : Y) (δ h s t : ℝ) (hxy : dist x y = δ) (
 
 end Toolkit
 
-open Cat in
-/-- **Paper: Lemma lem:toolkit.** "Let Y be CAT(0). (a) For x, v and t ∈ [0,1] exactly one point γ(t) has distances t|xv|,
-(1−t)|xv| from them, and |zγ(t)|² ≤ (1−t)|zx|² + t|zv|² − t(1−t)|xv|². (b) |xv|² + |yu|² ≤ |xu|² + |yv|² + 2|xy||uv|; in
-particular the squared diagonals of a quadrangle add up to at most its squared sides, and if there is equality, opposite sides
-are equal. (c) Points x₁, …, x_n, n ≥ 1, have a barycenter b, the minimizer of y ↦ ∑|yx_i|², with
-∑|yx_i|² ≥ n|yb|² + ∑|bx_i|² for all y; if b′ is that of x′₁, …, x′_n, then n|bb′| ≤ ∑|x_ix′_i|. (d) A nonempty closed
-convex F has nearest points Py, with |yq|² ≥ |yPy|² + |Py,q|² for q ∈ F. (e) Finite L² products of copies of Y are CAT(0).
-(f) Flat rectangles: if |xy| = |uv| = δ, |xu| = |yv| = h and both diagonals have squared length δ² + h², and a ∈ [x,u],
-b ∈ [y,v] have |xa| = sh, |yb| = th, then |ab|² = δ² + h²(s−t)²." In (c) a barycenter is a point with the displayed
-inequality. -/
-theorem lem_toolkit {Y : Type} [MetricSpace Y] [CN Y] :
-    (∀ (x v : Y) (t : ℝ), 0 ≤ t → t ≤ 1 → ∃ γ : Y,
-      (dist x γ = t * dist x v ∧ dist γ v = (1 - t) * dist x v) ∧
-      (∀ γ', dist x γ' = t * dist x v → dist γ' v = (1 - t) * dist x v → γ' = γ) ∧
-      ∀ z, dist z γ ^ 2 ≤ (1 - t) * dist z x ^ 2 + t * dist z v ^ 2 - t * (1 - t) * dist x v ^ 2) ∧
-    (∀ x v y u : Y,
-      dist x v ^ 2 + dist y u ^ 2 ≤ dist x u ^ 2 + dist y v ^ 2 + 2 * dist x y * dist u v ∧
-      dist x v ^ 2 + dist y u ^ 2 ≤ dist x y ^ 2 + dist y v ^ 2 + dist v u ^ 2 + dist x u ^ 2 ∧
-      (dist x v ^ 2 + dist y u ^ 2 = dist x y ^ 2 + dist y v ^ 2 + dist v u ^ 2 + dist x u ^ 2 →
-        dist x y = dist v u ∧ dist y v = dist x u)) ∧
-    ((∀ (n : ℕ) (x : Fin n → Y), 0 < n → ∃ b, ∀ y,
-        (n : ℝ) * dist y b ^ 2 + ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2) ∧
-      ∀ (n : ℕ) (x x' : Fin n → Y) (b b' : Y),
-        (∀ y, (n : ℝ) * dist y b ^ 2 + ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2) →
-        (∀ y, (n : ℝ) * dist y b' ^ 2 + ∑ i, dist b' (x' i) ^ 2 ≤ ∑ i, dist y (x' i) ^ 2) →
-        (n : ℝ) * dist b b' ≤ ∑ i, dist (x i) (x' i)) ∧
-    (∀ F : Set Y, IsClosed F → F.Nonempty →
-      (∀ x ∈ F, ∀ v ∈ F, ∀ m, dist x m = dist x v / 2 → dist m v = dist x v / 2 → m ∈ F) →
-      ∀ y, ∃ P ∈ F, (∀ q ∈ F, dist y P ≤ dist y q) ∧ ∀ q ∈ F, dist y P ^ 2 + dist P q ^ 2 ≤ dist y q ^ 2) ∧
-    (∀ (ι : Type) [Fintype ι], CN (PiLp 2 fun _ : ι => Y)) ∧
-    ∀ (x y u v a b : Y) (δ h s t : ℝ), dist x y = δ → dist u v = δ → dist x u = h → dist y v = h →
-      dist x v ^ 2 = δ ^ 2 + h ^ 2 → dist y u ^ 2 = δ ^ 2 + h ^ 2 → 0 ≤ s → s ≤ 1 → 0 ≤ t → t ≤ 1 →
-      dist x a = s * dist x u → dist a u = (1 - s) * dist x u →
-      dist y b = t * dist y v → dist b v = (1 - t) * dist y v →
-      dist a b ^ 2 = δ ^ 2 + h ^ 2 * (s - t) ^ 2 :=
-  ⟨lem_toolkit_a, lem_toolkit_b, lem_toolkit_c, lem_toolkit_d, fun ι _ => lem_toolkit_e ι, lem_toolkit_f⟩
-
 end Paper
