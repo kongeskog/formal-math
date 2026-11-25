@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:39:40.911760410Z",
+  "updated_at": "2026-11-25T04:44:36.426448311Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 67,
     "rejected": 2,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 3
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 67,
-      "attempts": 70,
+      "attempts": 71,
       "saved": 73784
     }
   ],
@@ -893,6 +893,74 @@
       "reason": null,
       "technique": null,
       "scope": null
+    },
+    {
+      "pr": 126,
+      "title": "shorten(*): last sweep of #97 slice 1, early stops, dead haves, two unused declarations",
+      "author": "kongeskog",
+      "head_sha": "6a69b0cab1580eaa1bb809e3cf67556088f3b90c",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T04:43:52Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 97,
+      "url": "https://github.com/kongeskog/formal-math/pull/126",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "*"
     }
   ],
   "top_files": [
