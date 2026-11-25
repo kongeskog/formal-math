@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T06:53:52.526951792Z",
+  "updated_at": "2026-11-25T07:04:52.706735705Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "5f8def713012f22949531de6337c60b48cb70da9",
-    "at": "2026-11-25T06:21:35.673938481Z",
+    "sha": "942246f349160eb031fe929233a665e2f6dec154",
+    "at": "2026-11-25T07:04:52.706735705Z",
     "metrics": {
-      "tokens": 847760,
-      "loc": 54288,
+      "tokens": 846302,
+      "loc": 54219,
       "decls": 4386,
       "files": 315,
-      "bytes": 3146640,
-      "build_seconds": 250
+      "bytes": 3143598,
+      "build_seconds": 244
     }
   },
   "counts": {
-    "merged": 72,
+    "merged": 73,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 72,
+      "merged": 73,
       "attempts": 76,
-      "saved": 80401
+      "saved": 81859
     }
   ],
   "ideas": [
@@ -859,74 +859,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 132,
-      "title": "shorten(Paper): close 23 tactic tails in Fan, Groups, Identity, Alternative",
-      "author": "kongeskog",
-      "head_sha": "7f3a6bba22c6e807bbb42c9506161818e182794b",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T06:40:18Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 131,
-      "url": "https://github.com/kongeskog/formal-math/pull/132",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Paper"
-    },
     {
       "pr": 136,
       "title": "dead-code(*): drop unused conjuncts, hypotheses, a field and bound names",
