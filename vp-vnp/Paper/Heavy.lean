@@ -13,7 +13,6 @@ A rooted tree by stages with two weights at every node: "Call a node of the tree
 a heavy parent." A node is below itself, and the units below a node are counted at their lower ends.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Paper
 

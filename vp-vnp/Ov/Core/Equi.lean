@@ -12,7 +12,6 @@ The paper identifies tensors that are restrictions of one another (in the subsec
 powers, products of families and `push` (giving legs to parties) up to equivalence.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Ov
 

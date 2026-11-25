@@ -15,7 +15,6 @@ import Nc.G.Exact
 -/
 
 set_option linter.unusedSectionVars false
-set_option exponentiation.threshold 1000
 
 namespace Paper
 

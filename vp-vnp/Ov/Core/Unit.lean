@@ -13,7 +13,6 @@ Relations between unit tensors, whose legs may be at any parties, also several a
 what the proof of Lemma lem:exponents (`Paper/Tensors.lean`) uses.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Ov
 

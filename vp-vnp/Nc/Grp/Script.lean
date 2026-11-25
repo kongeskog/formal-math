@@ -13,7 +13,6 @@ The script of a group is a list of instructions for the program GROUP. Keys are 
 units are lists of `ub` bits. All bit lists are `ofBits`, all small numbers `num`, all lists `listT`.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

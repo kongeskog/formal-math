@@ -9,7 +9,6 @@ import NS1.Lists
 # Words of trees, parts of lists, choices, straight-line programs
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 

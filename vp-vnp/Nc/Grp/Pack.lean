@@ -9,7 +9,6 @@ import Nc.Grp.BaseProg
 # The program of a base party: cutting and writing
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

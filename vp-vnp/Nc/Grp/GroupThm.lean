@@ -12,7 +12,6 @@ For a fixed automaton and a fixed list of roles of laws there is one formula GRO
 is the value of the group.
 -/
 
-set_option linter.unusedSectionVars false
 
 -- `grpT` and `GroupOK` are stated here so that `exists_group` can conclude `GroupOK` directly.
 -- They keep their `Nc.Dl` names because the rest of `Nc/Dl` and the paper statements use them.

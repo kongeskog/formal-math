@@ -14,7 +14,6 @@ The sum over the segments with staircase support is the sum, over the row data a
 values of the starting positions.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Cut
 

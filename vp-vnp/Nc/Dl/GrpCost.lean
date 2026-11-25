@@ -12,7 +12,6 @@ import Nc.Grp.GroupThm
 # The time of the evaluator; bits and numbers of names
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

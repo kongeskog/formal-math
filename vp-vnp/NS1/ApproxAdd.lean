@@ -11,7 +11,6 @@ import NS1.Postpone
 A program that adds two numbers of the same number of binary digits, modulo that power of 2, and is plain.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 

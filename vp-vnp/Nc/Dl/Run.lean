@@ -10,7 +10,6 @@ import Nc.Cut.Rows
 # The runs of the dealing program
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

@@ -11,7 +11,6 @@ import Paper.Heavy
 From the parents and the loads, the pieces are computed by binary operations.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Paper
 

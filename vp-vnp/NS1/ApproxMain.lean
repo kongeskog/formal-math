@@ -12,7 +12,6 @@ An approximate accelerator is carried to scales that are large against the expon
 there it gives an exact accelerator, which does not exist.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 

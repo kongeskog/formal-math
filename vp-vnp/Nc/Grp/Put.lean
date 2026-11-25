@@ -10,7 +10,6 @@ import Nc.Grp.Seg
 # Writing units: programs
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

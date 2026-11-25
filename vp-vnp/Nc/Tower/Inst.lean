@@ -10,7 +10,6 @@ import Nc.Tow.Defs
 # The tower
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tower
 

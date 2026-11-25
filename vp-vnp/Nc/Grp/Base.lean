@@ -14,7 +14,6 @@ The automaton is simulated (or the part of the input is taken); the letters of e
 partners; the strings of the partners are cut into units.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

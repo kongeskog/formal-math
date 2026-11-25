@@ -11,7 +11,6 @@ import Nc.Cut.Defs
 The string on a side determines the indices and the strings of all blocks.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Cut
 

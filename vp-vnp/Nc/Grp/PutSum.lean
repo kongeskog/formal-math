@@ -11,7 +11,6 @@ import Nc.Plus.UnitBits
 # Writing the units of a string into a store
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

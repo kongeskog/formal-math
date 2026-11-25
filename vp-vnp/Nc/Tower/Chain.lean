@@ -9,7 +9,6 @@ import Nc.Tower.Layer
 # The chain of subgroups
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tower
 

@@ -10,7 +10,6 @@ import Nc.Plus.Interface
 # The copies and the zeros of a group
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

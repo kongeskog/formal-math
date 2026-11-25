@@ -12,7 +12,6 @@ A state is a trie. Steps: choose an option (a list of assignments) from a table,
 list, check. Templates: trees with holes that are filled from the state.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 
