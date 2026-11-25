@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T05:52:20.769319574Z",
+  "updated_at": "2026-11-25T06:00:10.692977366Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 70,
     "rejected": 2,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 1
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 70,
-      "attempts": 73,
+      "attempts": 74,
       "saved": 77461
     }
   ],
@@ -108,7 +108,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T08:39:27Z",
-      "pr": null,
+      "pr": 129,
       "result_delta": null,
       "created_at": "2026-11-25T02:41:42Z",
       "url": "https://github.com/kongeskog/formal-math/issues/115",
@@ -870,6 +870,74 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Paper,Nc"
+    },
+    {
+      "pr": 129,
+      "title": "restructure(Nc/Tow): remove the tower parameters r and p, always 1, and FlagLaws, a copy of VLaws",
+      "author": "kongeskog",
+      "head_sha": "b0a7526395797ba2c1ff7daed13d164998b92d39",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T05:59:19Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 115,
+      "url": "https://github.com/kongeskog/formal-math/pull/129",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/Tow"
     }
   ],
   "top_files": [
