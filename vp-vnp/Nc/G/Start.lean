@@ -102,16 +102,29 @@ theorem prod_tabInit (q : Fin (K + 1) → Q) (x : Fin K → List Γ) (ρ : Optio
   simp only [Finset.mem_univ, true_imp_iff]
 
 open Classical in
-/-- **Units.** -/
-theorem sum_pos (hcb : Function.Injective cb) (hc : 0 < c) (hub : 0 < ub)
-    (hU : (T + (Fintype.card S + 1)) * c / ub + 1 ≤ U0) (np : N → Bool → Fin (K + K + A'))
-    (q : Fin (K + 1) → Q) {x : Fin K → List Γ} (hx : ∀ κ, (x κ).length ≤ T) :
-    (∑ ρ : Option S → Fin (K + K) → RowData (K + K), if ValidRows ρ then
-      ∑ n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1),
-        posVal (hold0 np) (hold1 np) (none : UW ub) (seen0 (N := N) (U1 := U1) n) (seen0 n) fun y =>
-          ∏ p : Fin (K + K), tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p (y (Fin.castAdd A' p))
-      else 0) =
-    ∑ X ∈ segs Γ S K T, if ∀ s, Stair (X s) then segW mu T q x X else 0 := by
+/-- **Start.** The value of an automaton in `K * T` steps is the sum, over the states between the blocks, the row data
+and the numbers of units, of the values of the starting positions. -/
+theorem start (hcb : Function.Injective cb) (hc : 0 < c) (hub : 0 < ub)
+    (hU : (T + (Fintype.card S + 1)) * c / ub + 1 ≤ U0) (np : N → Bool → Fin (K + K + A')) (i e : Q)
+    (u : Unit → List Γ) {ℓ : ℕ} (hℓ : ℓ ≤ T) (hu : (u ()).length ≤ K * ℓ) :
+    runVal mu i e (K * T) u = ∑ q : Fin (K + 1) → Q, if q 0 = i ∧ q (Fin.last K) = e then
+      ∑ ρ : Option S → Fin (K + K) → RowData (K + K), if ValidRows ρ then
+        ∑ n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1),
+          posVal (hold0 np) (hold1 np) (none : UW ub) (seen0 (N := N) (U1 := U1) n) (seen0 n) fun y =>
+            ∏ p : Fin (K + K), tabInit mu T cb q (parts ℓ (u ())) (fun s => ρ s p) (fun a b => (n a b).1) p
+              (y (Fin.castAdd A' p))
+      else 0
+    else 0 := by
+  rw [runVal_blocks]
+  refine Finset.sum_congr rfl fun q _ => ?_
+  have hx : ∀ κ : Fin K, (parts ℓ (u ()) κ).length ≤ T := fun κ => (length_parts_le _ _ _).trans hℓ
+  have hcat : cat (parts ℓ (u ()) : Fin K → List Γ) = u () := by
+    rw [cat_parts, List.take_of_length_le hu]
+  rw [sum_segs q hx u hcat]
+  congr 1
+  symm
+  -- the units
+  generalize parts ℓ (u ()) = x at hx
   have hpos : ∀ (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (f : (Fin (K + K + A') → Uid (K + K) U0 N U1 → UW ub) → F),
       posVal (hold0 np) (hold1 np) (none : UW ub) (seen0 n) (seen0 n) f = ∑ y, if
         y ∈ Contents (hold0 np) (hold1 np) none (seen0 n) ∧ Agree (hold0 np) (hold1 np) (seen0 n) y then
@@ -278,26 +291,5 @@ theorem sum_pos (hcb : Function.Injective cb) (hc : 0 < c) (hub : 0 < ub)
     · intro p
       refine ⟨fun s => hρ2 X hs s p, fun b => ⟨(hn p b).symm, fun k => hy _ p b k (Or.inl rfl)⟩,
         fun b => ⟨(hn b p).symm, fun k => hy _ b p k (Or.inr rfl)⟩⟩
-
-open Classical in
-/-- **Start.** The value of an automaton in `K * T` steps is the sum, over the states between the blocks, the row data
-and the numbers of units, of the values of the starting positions. -/
-theorem start (hcb : Function.Injective cb) (hc : 0 < c) (hub : 0 < ub)
-    (hU : (T + (Fintype.card S + 1)) * c / ub + 1 ≤ U0) (np : N → Bool → Fin (K + K + A')) (i e : Q)
-    (u : Unit → List Γ) {ℓ : ℕ} (hℓ : ℓ ≤ T) (hu : (u ()).length ≤ K * ℓ) :
-    runVal mu i e (K * T) u = ∑ q : Fin (K + 1) → Q, if q 0 = i ∧ q (Fin.last K) = e then
-      ∑ ρ : Option S → Fin (K + K) → RowData (K + K), if ValidRows ρ then
-        ∑ n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1),
-          posVal (hold0 np) (hold1 np) (none : UW ub) (seen0 (N := N) (U1 := U1) n) (seen0 n) fun y =>
-            ∏ p : Fin (K + K), tabInit mu T cb q (parts ℓ (u ())) (fun s => ρ s p) (fun a b => (n a b).1) p
-              (y (Fin.castAdd A' p))
-      else 0
-    else 0 := by
-  rw [runVal_blocks]
-  refine Finset.sum_congr rfl fun q _ => ?_
-  have hx : ∀ κ : Fin K, (parts ℓ (u ()) κ).length ≤ T := fun κ => (length_parts_le _ _ _).trans hℓ
-  have hcat : cat (parts ℓ (u ()) : Fin K → List Γ) = u () := by
-    rw [cat_parts, List.take_of_length_le hu]
-  rw [sum_pos hcb hc hub hU np q hx, ← sum_segs q hx u hcat]
 
 end Nc.G
