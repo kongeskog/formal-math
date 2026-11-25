@@ -251,8 +251,8 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
         · rw [if_neg hc, Nat.mul_zero, Nat.le_zero, card_eq_zero]
           refine filter_false_of_mem fun k hk h3 => hc ?_
           have h4 := (mem_filter.1 hk).2
-          -- only the edge case is left, where `h4` gives `e' = e`, and `h3` with `h0`, `h5`
-          -- the two conditions
+          -- the first two cases are different constructors in `h4`; in the edge case `h4` gives
+          -- `e' = e`, and `h3` with `h0`, `h5` the two conditions
           rcases tgB_cases a c k with h1 | ⟨hm, h1⟩ | ⟨e', h0, h1, h2, h5⟩ <;> rw [h1] at h4 <;>
             grind
     · rw [if_neg hv]

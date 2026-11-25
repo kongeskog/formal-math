@@ -33,7 +33,8 @@ theorem bv_inj {w w' : List Bool} (h : w.length = w'.length) (e : bv w = bv w') 
       have h1 := bv_lt w
       have h2 := bv_lt w'
       simp only [bv, hl] at e
-      -- `e` with the bounds `h1`, `h2` (after `hl`): the leading bits agree, then `ih hl` on the rest
+      -- `e` with the bounds `h1`, `h2` (after `hl`): the leading bits agree, then `ih hl` on the
+      -- rest
       grind
 
 /-- The word of L bits of a number. -/
