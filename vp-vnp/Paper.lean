@@ -11,7 +11,6 @@ import Paper.Grids
 import Paper.Flat
 import Paper.Groups
 import Paper.Laws
-import Paper.Tower
 import Paper.Universal
 import Paper.Runnet
 import Paper.Heavy

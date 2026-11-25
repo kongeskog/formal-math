@@ -27,15 +27,6 @@ theorem indices_agree {h : ℕ} [NeZero h] {I : Type} (f : U h → I) (hf : ∀ 
   · exact (congrArg f e2).trans (h2.symm.trans (congrArg f e1.symm))
   · exact (congrArg f e2).trans (h2.trans (congrArg f e1.symm))
 
-/-- "The laws are finitely many polynomial identities with coefficients in A, so they hold over every commutative
-A-algebra." -/
-theorem laws_over_algebras {A : Type} [CommRing A] (L : Nc.G.Law A) (R : Type) [CommRing R] [Algebra A R]
-    (X : L.Ro → L.Sl → Bool) : (if ∀ e, X (L.a e) e = X (L.b e) e then (1 : R) else 0) =
-      ∑ i, ∑ y : ∀ ν, Fin (L.len i ν) → Bool,
-        ∏ p, algebraMap A R (L.tab p i (fun e => X p e) (fun ν => y ν)) := by
-  simpa only [apply_ite (algebraMap A R), map_one, map_zero, map_sum, map_prod] using
-    congrArg (algebraMap A R) (L.law X)
-
 /-- The opening of the section: "Replacing C₀ by an integer that is at least 2C₀+1, Theorem thm:poincare reads: the mean
 of |e|² over all pairs is at most C₀ times 2/b times the sum of |e|² over near pairs, for every price", where h is a
 multiple of u with h ≥ 2u and b = |U_h|. C is the constant of the theorem and C₀ the integer. -/

@@ -683,7 +683,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   obtain ⟨b1, b2, b3, b4, b5, b6, b7⟩ := pieces_numbers (σ := σ) hc0 (by omega) hv (by omega) hMv ha'.le hT
     hub hload
   have hload1 : 1 ≤ load := (Nat.le_add_left 1 _).trans b7
-  obtain ⟨TT⟩ := htree A (K + K) (K + K) load ub (by omega) le_rfl hload1 b1
+  obtain ⟨TT⟩ := htree (K + K) (K + K) load ub (by omega) le_rfl hload1 b1
   have hk64 : k ≤ v ^ 300 := hk'.trans (vp (by norm_num))
   have hkM : k ≤ 4 * (K + K) := by
     have : v ^ 64 ≤ K := hK ▸ vp (by omega)
@@ -788,9 +788,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   · have hk' : TT.sys.kind r.1 ∈ relay A :: (univ : Finset VL.Di).toList.map VL.L := by
       have h1 := TT.kinds r.1
       split_ifs at h1 with hl
-      · obtain ⟨L', h2, h4⟩ := List.mem_map.1 h1
-        rw [← h4]
-        exact List.mem_cons_of_mem _ h2
+      · exact List.mem_cons_of_mem _ h1
       · rw [h1]
         exact List.mem_cons_self
     exact List.mem_flatMap.2 ⟨_, hk', List.mem_map.2 ⟨r.2, by simp, rfl⟩⟩
