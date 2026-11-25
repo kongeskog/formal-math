@@ -283,7 +283,8 @@ theorem accF_kv {M m N d s : ℕ} {p : MvPolynomial (Fin N × Option Bool) R} (h
     (fun g l r hg hl hr => accK_k hg hl hr) ha
     (fun g p c hg hp hc => (accK_l (γ := MvPolynomial.constantCoeff (P o)) (k := k) (lam := lam) hg hp hc).2) hT
     (2 * (d - 1) + 1) (d - 1) [out] (by simp) (by simpa using hout)
-  have h1 := KV.leaf (κ := K.lk) (S := {q | K.InB 1 q}) (Gives.quote (θ := θ) (ofBits [true, false]) z) (by
+  have h1 := KV.leaf (κ := K.lk) (S := {q | K.InB 1 q}) (Gives.quote (θ := θ)
+      (ofBits [true, false]) z) (by
     rw [path_ofBits]
     exact (accK_c (M := M) (m := m) (γ := MvPolynomial.constantCoeff (P o)) (k := k) (lam := lam)).2)
   rw [path_ofBits, hK, accK_c.1, ← hK] at h1

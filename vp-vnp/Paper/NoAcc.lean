@@ -166,7 +166,8 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     omega
   -- its runs
   obtain ⟨lg, eg, rg⟩ := hgev p
-  have hkv := diagF_kv (D := D) (ω := fun y => val K.lk (evl θ (Fm.ofTree D) y)) (tD := v ^ (16 * h - 16)) eg rg
+  have hkv := diagF_kv (D := D) (ω := fun y => val K.lk (evl θ (Fm.ofTree D)
+      y)) (tD := v ^ (16 * h - 16)) eg rg
     fun q hq => by
       obtain ⟨a1, a2⟩ := hD.run _ (hsz q hq)
       exact ⟨_, a1.ev, fun r hr => ⟨(a2 r hr).1, fun n hn => ((a2 r hr).2 n hn).mono (le_max_left _ _)⟩, rfl⟩

@@ -32,7 +32,8 @@ def chT : ℕ → (List Bool → Fm) → Fm
 
 /-- A run that gives budgets and the digits of a counter, and names constants whose product is a
 coefficient. -/
-def RelX (κ : List Bool → E) (S : Set (List Bool)) (c : ℕ) (r : Run A) (q : Bt × E × List Bool) : Prop :=
+def RelX (κ : List Bool → E) (S : Set (List Bool)) (c : ℕ) (r : Run A)
+    (q : Bt × E × List Bool) : Prop :=
   RelT κ (· ∈ S) c r (.cons q.1.enc (ofBits q.2.2)) q.2.1
 
 theorem RelX.mono {κ : List Bool → E} {S : Set (List Bool)} {c d : ℕ} {r : Run A} {q : Bt × E × List Bool}
@@ -55,11 +56,13 @@ theorem chT_ev {κ : List Bool → E} {S : Set (List Bool)} {c : ℕ} {x : Tree}
     simp only [KT.words, List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_append, List.map_map,
       Run.det, Tree.one, if_true, reduceCtorEq, if_false, Function.comp_def]
     refine List.rel_append ?_ ?_ <;> rw [List.forall₂_map_left_iff]
-    · refine r0.imp fun r q hr => ⟨by simp [Run.seq, Run.tick, hr.1], hr.2.1, hr.2.2.1, hr.2.2.2.1, ?_⟩
+    · refine r0.imp fun r q hr => ⟨by simp [Run.seq, Run.tick, hr.1], hr.2.1,
+        hr.2.2.1, hr.2.2.2.1, ?_⟩
       have := hr.2.2.2.2
       simp only [Run.seq, Run.tick]
       omega
-    · refine r1.imp fun r q hr => ⟨by simp [Run.seq, Run.tick, hr.1], hr.2.1, hr.2.2.1, hr.2.2.2.1, ?_⟩
+    · refine r1.imp fun r q hr => ⟨by simp [Run.seq, Run.tick, hr.1], hr.2.1,
+        hr.2.2.1, hr.2.2.2.1, ?_⟩
       have := hr.2.2.2.2
       simp only [Run.seq, Run.tick]
       omega
@@ -291,7 +294,8 @@ theorem le_size_ofBits (w : List Bool) : 2 * w.length + 1 ≤ (ofBits w).size :=
   | nil => simp [ofBits, Tree.size]
   | cons b w ih => cases b <;> simp [ofBits, bit, one, Tree.size] <;> omega
 
-theorem combF_dt {W : ℕ} {t t' : Bt} {o o' : List Bool} (h : o.length = W) (h' : o'.length = W) {u w : Tree}
+theorem combF_dt {W : ℕ} {t t' : Bt} {o o' : List Bool} (h : o.length = W)
+    (h' : o'.length = W) {u w : Tree}
     (hu : u.hd = .cons t.enc (ofBits o)) (hw : w.hd = .cons t'.enc (ofBits o')) :
     ∃ k ≤ 60 * W + 90, Dt θ combF (.cons u w) (.cons (Bt.node t t').enc (ofBits (addc false o o'))) k := by
   obtain ⟨k, hk, hd⟩ := AD_dt (θ := θ) false (h.trans h'.symm)
@@ -307,7 +311,8 @@ theorem combF_dt {W : ℕ} {t t' : Bt} {o o' : List Bool} (h : o.length = W) (h'
   exact ⟨_, by omega, this⟩
 
 /-- **The runs of the gadget.** -/
-theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : Tree) (K : KT E[T;T⁻¹]) (pre : List Bool)
+theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : Tree)
+    (K : KT E[T;T⁻¹]) (pre : List Bool)
     (h : ∀ p, (coefK J m K).InB 1 p → κ (pre ++ p) = (coefK J m K).lk p ∧ pre ++ p ∈ S ∧ (pre ++ p).length ≤ L) :
     ∃ l, Ev θ (xF J m W K pre) x l ∧
       List.Forall₂ (RelX κ S (K.nds * (70 * W + 4 * L + 7 * (J + m) + 200))) l (xL J m W K) := by
@@ -318,7 +323,8 @@ theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : 
     simp only [Run.det, Tree.size, Bt.enc, KT.nds, List.length_replicate] at this ⊢
     omega
   | leaf c =>
-    have hl := chT_ev (θ := θ) (κ := κ) (S := S) (c := 4 * W + 4 * L + 4 * (J + m) + 30) (x := x) (n := J + m)
+    have hl := chT_ev (θ := θ) (κ := κ) (S := S) (c := 4 * W + 4 * L + 4 * (J + m)
+        + 30) (x := x) (n := J + m)
       (f := fun w => .cons (.quote (.cons (Bt.leaf (w.take J)).enc
         (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))))
         (leaf (.quote (ofBits (pre ++ (w ++ [false]))))))
@@ -329,7 +335,8 @@ theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : 
           (Dt.cons (Dt.quote (ofBits (pre ++ (w ++ [false]))) x) (Dt.quote (.cons .nil .nil) x))
         refine ⟨_, e, .cons ⟨rfl, rfl, ?_, ?_, ?_⟩ .nil⟩
         · obtain ⟨h1, -, -⟩ := h (w ++ [false]) (KT.inB_full _ hw)
-          simp only [Run.det, tl_cons, names, path_ofBits, List.map_cons, List.map_nil, List.prod_cons,
+          simp only [Run.det, tl_cons, names, path_ofBits, List.map_cons,
+              List.map_nil, List.prod_cons,
             List.prod_nil, mul_one]
           rw [h1]
           exact KT.lk_full _ hw
@@ -350,7 +357,8 @@ theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : 
       simpa [coefK, KT.lk] using h (false :: p) hp
     obtain ⟨lr, er, rr⟩ := ihr (pre ++ [true]) fun p hp => by
       simpa [coefK, KT.lk] using h (true :: p) hp
-    obtain ⟨L', eL, rL⟩ := zip_rel (e := fun a b => .cons (.cons (.cons a.hd b.hd) .nil) (ofBits (addc false a.tl.path
+    obtain ⟨L', eL, rL⟩ := zip_rel (e := fun a b => .cons (.cons (.cons a.hd b.hd) .nil)
+        (ofBits (addc false a.tl.path
       b.tl.path))) el er rl rr (fun a ha b hb u w hu hw => by
         simpa [path_ofBits, Bt.enc] using combF_dt (θ := θ) (length_xL a ha) (length_xL b hb) hu hw)
       fun a ha b hb => by
@@ -363,7 +371,8 @@ theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : 
         simp only [hd_cons, tl_cons, path_ofBits, Tree.size]
         omega
     refine ⟨L', eL, ?_⟩
-    have e : xL J m W (l.node r) = (((xL J m W l).flatMap fun a => (xL J m W r).map fun b => (a, b)).map
+    have e : xL J m W (l.node r) = (((xL J m W l).flatMap fun a => (xL J m W r).map
+        fun b => (a, b)).map
         fun p => (Bt.node p.1.1 p.2.1, p.1.2.1 * p.2.2.1, addc false p.1.2.2 p.2.2.2)) := by
       simp [xL, List.map_flatMap, Function.comp_def]
     rw [e, List.forall₂_map_right_iff]

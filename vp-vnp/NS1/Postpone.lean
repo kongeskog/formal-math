@@ -342,7 +342,8 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     simp only [names, Bt.decAll, Option.some.injEq] at h
     subst h
     exact ⟨_, by simp only [Tree.size]; omega, Dt.ite_true (.hd (.tl (.id _))) (by simp)
-      (Dt.ite_false (.tl (.hd (.tl (.id _)))) (Dt.ite_false (.hd (.hd (.tl (.id _)))) (.tl (.tl (.id _)))))⟩
+      (Dt.ite_false (.tl (.hd (.tl (.id _)))) (Dt.ite_false (.hd (.hd (.tl (.id _))))
+          (.tl (.tl (.id _)))))⟩
   | case3 a b iha ihb =>
     intro t t' ht h
     rw [names, Bt.decAll_append, Option.bind_eq_some_iff] at h
@@ -365,7 +366,8 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     obtain ⟨k, hk, d⟩ := DC_some (θ := θ) h
     have e : Dt θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) t'.enc k := by rwa [Fm.ofTree_code]
     refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (by simp) (Dt.ite_true (.tl (.hd (.tl (.id _)))) (by simp)
-      (Dt.run (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _)))) (.tl (.tl (.id _))))) e))⟩
+      (Dt.run (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
+          (.tl (.tl (.id _))))) e))⟩
     have e : (60 * H + 41) * (x.size + (u.size + v.size + 1) + 1) =
         (60 * H + 41) * x.size + (60 * H + 41) * (u.size + v.size) + 2 * (60 * H + 41) := by ring
     have := Nat.mul_le_mul_left (60 * H + 41) (Tree.size_pos x)
@@ -388,10 +390,12 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
     | none =>
       have ea : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) [] := by
         rw [Fm.ofTree_code]; exact iha h1
-      have e1 := Ev.cons_nil_right (Dt.hd (Dt.id (θ := θ) (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc))))
+      have e1 := Ev.cons_nil_right (Dt.hd (Dt.id (θ := θ)
+          (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc))))
         (Ev.cons_nil_right (Dt.tl (Dt.hd (Dt.hd (Dt.tl (Dt.id (θ := θ)
           (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))))))
-          (Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))
+          (Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _)))))
+              (.tl (.tl (.id _))))) ea))
       have e2 := Ev.run' (Dt.hd (Dt.id (θ := θ) (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))) e1
         (by simp)
       simpa using e2
@@ -402,7 +406,8 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
       have eb : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) [] := by
         rw [Fm.ofTree_code]; exact ihb h
       exact Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.tl (.hd (.hd (.tl (.id _)))))
-        (Dt.run (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))) eb
+        (Dt.run (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _)))))
+            (.tl (.tl (.id _))))) ea))) eb
   | case4 x u v =>
     intro t h
     have h' : Bt.dec x.path t = none := by
@@ -412,7 +417,8 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
     have e : Ev θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) [] := by
       rw [Fm.ofTree_code]; exact DC_none h'
     exact Ev.ite_true_nil (.hd (.tl (.id _))) (by simp) (Ev.ite_true_nil (.tl (.hd (.tl (.id _)))) (by simp)
-      (Ev.run_nil (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _)))) (.tl (.tl (.id _))))) e))
+      (Ev.run_nil (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
+          (.tl (.tl (.id _))))) e))
 
 
 section Weights
@@ -492,7 +498,8 @@ theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTre
   obtain ⟨l2, e2, r2⟩ := lett_rel (body := CK) e0 (Q := l)
     (R := fun s q => s.th = q.th ∧ s.out = .cons CK.code (.cons q.out t.enc) ∧ s.cost ≤ q.cost + 20)
     (by
-      simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_cons, List.map_nil, flatMap_single,
+      simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_cons,
+          List.map_nil, flatMap_single,
         List.map_map, List.forall₂_map_left_iff]
       refine List.forall₂_same.2 fun r hr => ⟨?_, ?_, ?_⟩
       · simp [Run.seq, Run.tick, Run.det, Run.delay]
@@ -568,9 +575,11 @@ variable [Algebra A R]
 /-- **Lemma 1 (postponing).** The value of a list of runs is the sum, over all budgets, of the powers of the constants
 times the sums of the weights of the runs that use up the budgets. -/
 theorem val_eq_sum_budg {J : ℕ} {K : KT R} {κ : List Bool → R} {l : List (Run A)}
-    (hJ : ∀ r ∈ l, (names r.out).length < 2 ^ J) (hκ : ∀ r ∈ l, ∀ p ∈ (names r.out), κ p = K.lookup p) :
+    (hJ : ∀ r ∈ l, (names r.out).length < 2 ^ J) (hκ : ∀ r ∈ l,
+        ∀ p ∈ (names r.out), κ p = K.lookup p) :
     val κ l = ((K.budg J).map fun q =>
-      q.2 * algebraMap A R (l.map fun r => if ok q.1 (names r.out) = true then r.th else 0).sum).sum := by
+      q.2 * algebraMap A R (l.map fun r => if ok q.1 (names r.out)
+          = true then r.th else 0).sum).sum := by
   induction l with
   | nil => simp [val]
   | cons r l ih =>

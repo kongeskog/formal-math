@@ -47,7 +47,8 @@ budgets. -/
 def rebF (g : Fm) (P : Tree) : Fm := guessF g (app UF.code (ZE (.quote P)))
 
 /-- The universal program on a plain instance: its value is the plain sum. -/
-theorem UF_kv {y : Tree} {τ : ℕ} (hy : Plain θ τ y) : KV θ κ S UF y (algebraMap A R (pv θ y)) (τ + 9) := by
+theorem UF_kv {y : Tree} {τ : ℕ} (hy : Plain θ τ y) : KV θ κ S UF y
+    (algebraMap A R (pv θ y)) (τ + 9) := by
   refine ⟨_, UF_ev hy.1.ev, ?_, ?_⟩
   · intro r hr
     obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
@@ -57,7 +58,8 @@ theorem UF_kv {y : Tree} {τ : ℕ} (hy : Plain θ τ y) : KV θ κ S UF y (alge
   · simp [val, wt, names, pv, pval, map_list_sum, Function.comp_def]
 
 /-- **The weight of a budget times the plain sum of its instance**, summed over the budgets. -/
-theorem rebF_kv {g : Fm} {P z : Tree} {cg τ : ℕ} {lg : List (Run A)} {Q : List (Bt × R)} (hg : Ev θ g z lg)
+theorem rebF_kv {g : Fm} {P z : Tree} {cg τ : ℕ} {lg : List (Run A)}
+    {Q : List (Bt × R)} (hg : Ev θ g z lg)
     (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q) (hP : ∀ q ∈ Q, Plain θ τ (zq P z q.1)) :
     KV θ κ S (rebF g P) z (Q.map fun q => q.2 * algebraMap A R (pv θ (zq P z q.1))).sum (2 * cg + τ + 40) := by
   refine (guess_kv (ω := fun e => algebraMap A R (pv θ (.cons WN.code (.cons P (.cons z e))))) (d := τ + 21) hg rg
@@ -68,9 +70,11 @@ theorem rebF_kv {g : Fm} {P z : Tree} {cg τ : ℕ} {lg : List (Run A)} {Q : Lis
   exact (KV.app_gives (d := τ + 9) hZ (by rw [Fm.ofTree_code]; exact UF_kv (hP q hq))).mono (by omega)
 
 /-- **A program with renamed constants**: with the names `pre ++ p` for the images under `f` of its constants. -/
-theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {P z : Tree} {T L : ℕ} {l : List (Run A)}
+theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {P z : Tree}
+    {T L : ℕ} {l : List (Run A)}
     (hP : Ev θ (Fm.ofTree P) z l) (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T ∧ ∀ p ∈ names r.out, K.InB B p)
-    (hJ : T < 2 ^ J) (hS : ∀ p, K.InB (B + J) p → κ (pre ++ p) = f (K.lk p) ∧ pre ++ p ∈ S ∧ (pre ++ p).length ≤ L) :
+    (hJ : T < 2 ^ J) (hS : ∀ p, K.InB (B + J) p → κ (pre ++ p) = f (K.lk p)
+        ∧ pre ++ p ∈ S ∧ (pre ++ p).length ≤ L) :
     KV θ κ S (rebF (gt id J B K pre) P) z (f (val K.lk l))
       (2 * (((4 * L + 48) * J + 80) * (K.expand B).nds) + (60 * (K.ht + B + J + 1) + 42) * T +
         40 * ((K.expand B).nds * (J + 1)) + 120) := by

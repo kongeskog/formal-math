@@ -56,7 +56,8 @@ theorem lett_rel {e body : Fm} {x : Tree} {le : List (Run A)} (he : Ev θ e x le
     exact h3
 
 /-- A `flatMap` of singletons is a `map`. -/
-theorem flatMap_single {α β : Type*} (l : List α) (g : α → β) : (l.flatMap fun a => [g a]) = l.map g := by
+theorem flatMap_single {α β : Type*} (l : List α) (g : α → β) :
+    (l.flatMap fun a => [g a]) = l.map g := by
   induction l with
   | nil => rfl
   | cons a l ih => simp [List.flatMap_cons, ih]

@@ -29,7 +29,8 @@ def KV (θ : List Bool → A) (κ : List Bool → R) (S : Set (List Bool)) (F : 
 
 /-- The weight of a run after another one whose value it keeps: the first weight times the second.
 -/
-theorem wt_seq (κ : List Bool → R) (r s : Run A) : wt κ ((r.seq s).tick s.out) = algebraMap A R r.th * wt κ s := by
+theorem wt_seq (κ : List Bool → R) (r s : Run A) : wt κ ((r.seq s).tick s.out)
+    = algebraMap A R r.th * wt κ s := by
   simp [wt, Run.seq, Run.tick, mul_assoc]
 
 namespace KV
@@ -46,7 +47,8 @@ theorem hl (h : KV θ κ S F x w c) : Hl θ F x := by
   obtain ⟨l, h1, -⟩ := h
   exact h1.hl
 
-theorem evl (h : KV θ κ S F x w c) : (∀ r ∈ NS1.evl θ F x, r.cost + r.out.size ≤ c ∧ ∀ p ∈ names r.out, p ∈ S) ∧
+theorem evl (h : KV θ κ S F x w c) : (∀ r ∈ NS1.evl θ F x,
+    r.cost + r.out.size ≤ c ∧ ∀ p ∈ names r.out, p ∈ S) ∧
     val κ (NS1.evl θ F x) = w := by
   obtain ⟨l, h1, h2, h3⟩ := h
   rw [h1.evl]
@@ -71,7 +73,8 @@ theorem gives {o : Tree} (h : Gives θ F x o c) (ho : ∀ p ∈ names o, p ∈ S
     exact congrArg List.sum (List.map_congr_left fun r hr => by simp [wt, (e2 r hr).2])
 
 /-- A leaf of names: the value is the constant with the name that `F` gives. -/
-theorem leaf {o : Tree} (h : Gives θ F x o c) (ho : o.path ∈ S) : KV θ κ S (leaf F) x (κ o.path) (c + o.size + 6) := by
+theorem leaf {o : Tree} (h : Gives θ F x o c) (ho : o.path ∈ S) : KV θ κ S (leaf F) x (κ o.path)
+    (c + o.size + 6) := by
   obtain ⟨l, e1, e2, e3⟩ := h.runs
   refine ⟨_, Ev.cons e1 (.quote _ x), ?_, ?_⟩
   · simp only [List.mem_flatMap, List.mem_map, List.mem_singleton]
@@ -84,7 +87,8 @@ theorem leaf {o : Tree} (h : Gives θ F x o c) (ho : o.path ∈ S) : KV θ κ S 
       simp [wt, Run.seq, Run.tick, Run.det, (e2 r hr).2, names])
 
 /-- A node of names: the value is the product of the two values. -/
-theorem node (hF : KV θ κ S F x w c) (hG : KV θ κ S G x w' d) : KV θ κ S (node F G) x (w * w') (c + d + 6) := by
+theorem node (hF : KV θ κ S F x w c) (hG : KV θ κ S G x w' d) : KV θ κ S (node F G) x
+    (w * w') (c + d + 6) := by
   obtain ⟨l, e1, e2, e3⟩ := hF
   obtain ⟨l', f1, f2, f3⟩ := hG
   refine ⟨_, Ev.cons (Ev.cons e1 f1) (.quote _ x), ?_, ?_⟩
@@ -213,14 +217,16 @@ theorem run {p y : Tree} {e : ℕ} (hF : Gives θ F x p c) (hG : Gives θ G x y 
     exact ⟨by omega, c2⟩
   · rw [val, sum_flatMap_map, ← one_mul w, ← sum_th e3, ← List.sum_map_mul_right]
     refine congrArg List.sum (List.map_congr_left fun r hr => ?_)
-    rw [sum_flatMap_map, ← one_mul w, ← sum_th f3, ← List.sum_map_mul_right, ← List.sum_map_mul_left]
+    rw [sum_flatMap_map, ← one_mul w, ← sum_th f3, ← List.sum_map_mul_right,
+        ← List.sum_map_mul_left]
     refine congrArg List.sum (List.map_congr_left fun s hs => ?_)
     rw [(e2 r hr).2, (f2 s hs).2, List.map_map, ← h.evl.2, val, ← List.sum_map_mul_left,
       ← List.sum_map_mul_left]
     exact congrArg List.sum (List.map_congr_left fun t _ => by simp [wt, Run.seq, Run.tick, mul_assoc])
 
 /-- A computation, then a value at each of its runs. -/
-theorem app_ev {p : Tree} {l : List (Run A)} {ω : Run A → R} (he : Ev θ F x l) (hc : ∀ s ∈ l, s.cost ≤ c)
+theorem app_ev {p : Tree} {l : List (Run A)} {ω : Run A → R} (he : Ev θ F x l)
+    (hc : ∀ s ∈ l, s.cost ≤ c)
     (hG : ∀ s ∈ l, KV θ κ S (Fm.ofTree p) s.out (ω s) d) :
     KV θ κ S (NS1.app p F) x (l.map fun s => algebraMap A R s.th * ω s).sum (c + d + 2) := by
   refine ⟨_, Ev.app he fun s hs => (hG s hs).hl, ?_, ?_⟩
@@ -238,14 +244,18 @@ theorem app_ev {p : Tree} {l : List (Run A)} {ω : Run A → R} (he : Ev θ F x 
 end KV
 
 /-- The value of `LP D` is the product of the values of `D` on the trees of the list. -/
-theorem LP_kv {D : Tree} {T : ℕ} {κ : List Bool → R} {S : Set (List Bool)} {ω : Tree → R} (ys : Tree)
+theorem LP_kv {D : Tree} {T : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
+    {ω : Tree → R} (ys : Tree)
     (h : ∀ y ∈ ys.toList, KV θ κ S (Fm.ofTree D) y (ω y) T) :
-    KV θ κ S (LP D) (.cons (LP D).code ys) (ys.toList.map ω).prod ((T + 30) * ys.toList.length + 10) := by
+    KV θ κ S (LP D) (.cons (LP D).code ys) (ys.toList.map ω).prod ((T + 30)
+        * ys.toList.length + 10) := by
   induction ys with
-  | nil => exact ((KV.ite_false (Gives.id _).tl (KV.gives (Gives.quote .nil _) (by simp [names]))).mono
+  | nil => exact ((KV.ite_false (Gives.id _).tl (KV.gives (Gives.quote .nil _)
+      (by simp [names]))).mono
       (by simp [Tree.size])).congr (by simp [names, toList])
   | cons a ys _ ih =>
-    have e := KV.ite_true (H := .quote .nil) (Gives.id (θ := θ) (.cons (LP D).code (.cons a ys))).tl (by simp)
+    have e := KV.ite_true (H := .quote .nil) (Gives.id (θ := θ)
+        (.cons (LP D).code (.cons a ys))).tl (by simp)
       (KV.node (KV.run (Gives.quote D _) (Gives.id _).tl.hd (h a List.mem_cons_self))
         (KV.run (Gives.id _).hd (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl)
           (by simp only [hd_cons, tl_cons, Fm.ofTree_code]; exact ih fun y hy => h y (List.mem_cons_of_mem _ hy))))
@@ -263,7 +273,8 @@ def guessF (g B : Fm) : Fm := lett (.cons .id g) (node (.tl (.tl .id)) B)
 /-- If `g` guesses the data `o q` with names whose constants multiply to `v q`, and `B` has the
 value `ω (o q)` at (argument, guess), then the value of `guessF g B` is the sum over the guesses of
 `v q * ω (o q)`. -/
-theorem guess_kv {β : Type*} {g B : Fm} {z : Tree} {cg d : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
+theorem guess_kv {β : Type*} {g B : Fm} {z : Tree} {cg d : ℕ} {κ : List Bool → R}
+    {S : Set (List Bool)}
     {lg : List (Run A)} {Q : List β} {o : β → Tree} {v : β → R} {ω : Tree → R} (hg : Ev θ g z lg)
     (rg : List.Forall₂ (fun r q => RelT κ (· ∈ S) cg r (o q) (v q)) lg Q)
     (hB : ∀ q ∈ Q, ∀ u : Tree, u.hd = o q → KV θ κ S B (.cons z u) (ω (o q)) d) :
@@ -298,21 +309,25 @@ theorem guess_kv {β : Type*} {g B : Fm} {z : Tree} {cg d : ℕ} {κ : List Bool
 
 /-- A round: guess budgets and names with `g`, form the plain instance of `p`, cut it with `G`,
 apply `F` to (`c`, pieces), and join the names that `g` guessed with those of the value. -/
-def stepA (F : Fm) (c G p : Tree) (g : Fm) : Fm := guessF g (app F.code (.cons (.quote c) (app G (ZE (.quote p)))))
+def stepA (F : Fm) (c G p : Tree) (g : Fm) : Fm := guessF g
+    (app F.code (.cons (.quote c) (app G (ZE (.quote p)))))
 
 /-- **A round.** If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2`, `G`
 cuts the instance of the budgets `q.1` into the pieces `L`, and `F` has the value `ω` at every
 piece, then the value of the round is the sum over the guesses of `q.2` times the weighted sum of
 `ω` over the pieces. -/
-theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
+theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {κ : List Bool → R}
+    {S : Set (List Bool)}
     {lg : List (Run A)} {Q : List (Bt × R)} {L : Tree → List (A × Tree)} {ω : Tree → R}
     (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q)
     (hG : ∀ q ∈ Q, Does θ (Fm.ofTree G) (zq p z q.1) (L (zq p z q.1)) tG)
     (hF : ∀ q ∈ Q, ∀ u ∈ L (zq p z q.1), KV θ κ S F (.cons c u.2) (ω u.2) tF) :
     KV θ κ S (stepA F c G p g) z (Q.map fun q =>
       q.2 * ((L (zq p z q.1)).map fun u => algebraMap A R u.1 * ω u.2).sum).sum (2 * cg + tG + tF + 30) := by
-  have hB : ∀ q ∈ Q, ∀ u : Tree, u.hd = q.1.enc → KV θ κ S (app F.code (.cons (.quote c) (app G (ZE (.quote p)))))
-      (.cons z u) (((L (.cons WN.code (.cons p (.cons z q.1.enc)))).map fun u => algebraMap A R u.1 * ω u.2).sum)
+  have hB : ∀ q ∈ Q, ∀ u : Tree, u.hd = q.1.enc → KV θ κ S (app F.code (.cons (.quote c)
+      (app G (ZE (.quote p)))))
+      (.cons z u) (((L (.cons WN.code (.cons p (.cons z q.1.enc)))).map
+          fun u => algebraMap A R u.1 * ω u.2).sum)
       (tG + tF + 16) := by
     intro q hq u hu
     have hZ : Gives θ (ZE (.quote p)) (.cons z u) (zq p z q.1) 10 := by
@@ -322,8 +337,10 @@ theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {κ : List Bool �
       rw [List.mem_singleton] at hv
       subst hv
       exact hG q hq
-    simp only [bindW, List.flatMap_cons, List.flatMap_nil, List.append_nil, one_mul, Prod.mk.eta, List.map_id'] at hP
-    refine ((KV.app (p := F.code) (d := tF) (ω := fun o => ω o.tl) (Does.cons (Gives.quote (θ := θ) c (.cons z u)) hP)
+    simp only [bindW, List.flatMap_cons, List.flatMap_nil, List.append_nil, one_mul,
+        Prod.mk.eta, List.map_id'] at hP
+    refine ((KV.app (p := F.code) (d := tF) (ω := fun o => ω o.tl)
+        (Does.cons (Gives.quote (θ := θ) c (.cons z u)) hP)
       fun v hv => ?_).mono (by omega)).congr ?_
     · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_map] at hv
       obtain ⟨v, hv, rfl⟩ := hv

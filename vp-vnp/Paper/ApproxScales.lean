@@ -202,7 +202,8 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
     (by
       rw [hnB]
       have m1 : 60 * (K.ht + B + J + 1) + 42 + 1 ≤ u := by omega
-      have m2 : 2 * (nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200)) + 40 * (nB * (J + 1)) +
+      have m2 : 2 * (nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m)
+          + 200)) + 40 * (nB * (J + 1)) +
           40 * (W + 1) + 140 ≤ u ^ (16 * h - 17) := by
         have s1 : nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200) ≤ u ^ 2 * u :=
           Nat.mul_le_mul hnB2 (by omega)

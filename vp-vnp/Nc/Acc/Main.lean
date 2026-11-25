@@ -94,7 +94,8 @@ theorem size_accF : ∃ c : ℕ, ∀ (M m d : ℕ) (out : List Bool), out.length
   have h1 := hloop M m
   have h2 := size_ofBits out
   rw [ho] at h2
-  rw [accF, size_ite, size_leaf, size_app, size_cons, size_cons, size_cons, treeF, size_hd, size_pairsF, size_app, size_cons,
+  rw [accF, size_ite, size_leaf, size_app, size_cons, size_cons, size_cons, treeF, size_hd,
+      size_pairsF, size_app, size_cons,
     size_cons]
   simp only [size_guess, size_quote, size_id, size_num, hc4, hc5, hc6, hc7, List.map_cons, List.map_nil, listT,
     Tree.size]

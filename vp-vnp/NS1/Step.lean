@@ -50,7 +50,8 @@ end App
 /-- Apply the program `D` to all trees of a list, and join the names of the values. The argument is
 (this program, the list). -/
 def LP (D : Tree) : Fm := .ite (.tl .id)
-  (node (.run (.quote D) (.hd (.tl .id))) (.run (.hd .id) (.cons (.hd .id) (.tl (.tl .id))))) (.quote .nil)
+  (node (.run (.quote D) (.hd (.tl .id))) (.run (.hd .id)
+      (.cons (.hd .id) (.tl (.tl .id))))) (.quote .nil)
 
 /-- The plain instance for a program `p`, an argument `z` and budgets `t`. -/
 def zq (p z : Tree) (t : Bt) : Tree := .cons WN.code (.cons p (.cons z t.enc))

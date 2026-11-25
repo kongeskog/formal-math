@@ -365,7 +365,8 @@ def lett (e body : Fm) : Fm := .run (.quote body.code) e
 
 theorem Ev.lett {e body : Fm} {x : Tree} {le : List (Run A)} (he : Ev θ e x le)
     (h : ∀ s ∈ le, Hl θ body s.out) : Ev θ (lett e body) x
-      (le.flatMap fun s => (NS1.evl θ body s.out).map fun t => ⟨s.cost + t.cost + 2, s.th * t.th, t.out⟩) := by
+      (le.flatMap fun s => (NS1.evl θ body s.out).map fun t => ⟨s.cost + t.cost + 2,
+          s.th * t.th, t.out⟩) := by
   have := Ev.run' (Dt.quote (θ := θ) body.code x) he (fun r hr s hs => by
     simp only [List.mem_singleton] at hr
     subst hr

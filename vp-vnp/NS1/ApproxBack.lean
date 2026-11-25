@@ -23,12 +23,16 @@ variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] 
 /-- Accept only with the counter at 0; then run the plain instance. The argument is
 (argument, ((budgets, counter), names)). -/
 def finF (P : Tree) : Fm :=
-  .tl (.cons (.run (.quote AZ.code) (.cons (.quote AZ.code) (.cons (.quote .nil) (.tl (.hd (.tl .id))))))
-    (app UF.code (.cons (.quote WN.code) (.cons (.quote P) (.cons (.hd .id) (.hd (.hd (.tl .id))))))))
+  .tl (.cons (.run (.quote AZ.code) (.cons (.quote AZ.code)
+      (.cons (.quote .nil) (.tl (.hd (.tl .id))))))
+    (app UF.code (.cons (.quote WN.code) (.cons (.quote P)
+        (.cons (.hd .id) (.hd (.hd (.tl .id))))))))
 
-theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t : Bt} {o : List Bool} {τ : ℕ}
+theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t : Bt}
+    {o : List Bool} {τ : ℕ}
     (hu : u.hd = .cons t.enc (ofBits o)) (hP : Plain θ τ (zq P z t)) :
-    KV θ κ S (finF P) (.cons z u) ((if KT.val o = 0 then 1 else 0) * algebraMap A E (pv θ (zq P z t)))
+    KV θ κ S (finF P) (.cons z u) ((if KT.val o = 0 then 1 else 0)
+        * algebraMap A E (pv θ (zq P z t)))
       (40 * (o.length + 1) + τ + 40) := by
   obtain ⟨k, hk, v, hv⟩ := AZ_ev (θ := θ) (.leaf o)
   generalize hx : Tree.cons z u = x
@@ -38,10 +42,12 @@ theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t :
     exact hv
   have eA := Ev.run_det (Dt.quote (θ := θ) AZ.code x) (Dt.cons (Dt.quote AZ.code x) (Dt.cons (Dt.quote .nil x)
     (Dt.tl (Dt.hd (Dt.tl (Dt.id x)))))) (by rw [← hx]; simpa [hu] using hv')
-  have g : Gives θ (.cons (.quote WN.code) (.cons (.quote P) (.cons (.hd .id) (.hd (.hd (.tl .id)))))) x
+  have g : Gives θ (.cons (.quote WN.code) (.cons (.quote P)
+      (.cons (.hd .id) (.hd (.hd (.tl .id)))))) x
       (zq P z t) 11 := by
     subst hx
-    simpa [zq, hu] using (Gives.cons (Gives.quote (θ := θ) WN.code (.cons z u)) (Gives.cons (Gives.quote P _)
+    simpa [zq, hu] using (Gives.cons (Gives.quote (θ := θ) WN.code (.cons z u))
+        (Gives.cons (Gives.quote P _)
       (Gives.cons (Gives.id _).hd (Gives.id _).tl.hd.hd)))
   obtain ⟨l, e, h1, h2⟩ := KV.app_gives (κ := κ) (S := S) (p := UF.code) g
     (by rw [Fm.ofTree_code]; exact NS1.UF_kv (κ := κ) (S := S) hP)
@@ -50,7 +56,8 @@ theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t :
   have hz : (Bt.leaf o).zero = true ↔ KT.val o = 0 := by rw [Bt.zero]; exact all_not_iff o
   refine ⟨_, e', ?_, ?_⟩
   · intro r hr
-    by_cases hb : (Bt.leaf o).zero <;> simp only [hb, if_true, if_false, List.map_cons, List.map_nil,
+    by_cases hb : (Bt.leaf o).zero <;> simp only [hb, if_true, if_false,
+        List.map_cons, List.map_nil,
       List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_map, reduceCtorEq] at hr
     · obtain ⟨_, ⟨s, hs, rfl⟩, rfl⟩ := hr
       obtain ⟨a1, a2⟩ := h1 s hs
@@ -92,8 +99,10 @@ theorem extF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {g : F
     (hP : ∀ q ∈ Q, Plain θ τ (zq P z q.1) ∧ q.2.2.length = W) :
     KV θ κ S (extF P g) z (Q.map fun q => q.2.1 * ((if KT.val q.2.2 = 0 then 1 else 0) *
       algebraMap A E (pv θ (zq P z q.1)))).sum (2 * cg + 40 * (W + 1) + τ + 60) := by
-  refine (guess_kv (cg := cg) (o := fun q : Bt × E × List Bool => .cons q.1.enc (ofBits q.2.2)) (v := fun q => q.2.1)
-    (ω := fun e => (if KT.val e.tl.path = 0 then 1 else 0) * algebraMap A E (pv θ (.cons WN.code (.cons P (.cons z
+  refine (guess_kv (cg := cg) (o := fun q : Bt × E × List Bool => .cons q.1.enc (ofBits q.2.2))
+      (v := fun q => q.2.1)
+    (ω := fun e => (if KT.val e.tl.path = 0 then 1 else 0)
+        * algebraMap A E (pv θ (.cons WN.code (.cons P (.cons z
       e.hd))))) (d := 40 * (W + 1) + τ + 40) hg rg fun q hq u hu => ?_).mono (by omega) |>.congr ?_
   · obtain ⟨h1, h2⟩ := hP q hq
     rw [← h2]
@@ -129,7 +138,8 @@ theorem size_xF (J m W : ℕ) (K : KT E[T;T⁻¹]) (pre : List Bool) :
   | leaf c =>
     have h := size_chT (n := J + m) (C := 4 * (pre.length + KT.ht (KT.leaf c)) + 8 * (J + m + W) + xcst)
       (f := fun w => .cons
-      (.quote (.cons (Bt.leaf (w.take J)).enc (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))))
+      (.quote (.cons (Bt.leaf (w.take J)).enc (ofBits (expBits W (termExp (c ^ KT.val (w.take J))
+          (KT.val (w.drop J)))))))
       (leaf (.quote (ofBits (pre ++ (w ++ [false]))))))
       fun w hw => by
         have h1 := size_ofBits (pre ++ (w ++ [false]))
@@ -158,7 +168,8 @@ theorem size_xF (J m W : ℕ) (K : KT E[T;T⁻¹]) (pre : List Bool) :
       refine le_trans ?_ (Nat.le_mul_of_pos_left _ (Nat.two_pow_pos _))
       rw [xcst_def]
       omega
-    rw [← hP, KT.nds, xF, zipF, size_lett, size_cons, size_cons, node, size_cons, size_cons, size_quote]
+    rw [← hP, KT.nds, xF, zipF, size_lett, size_cons, size_cons, node, size_cons,
+        size_cons, size_quote]
     simp only [size_tl, size_hd, size_id, Tree.size]
     linarith
 

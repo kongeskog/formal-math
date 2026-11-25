@@ -27,12 +27,14 @@ def diagF (D : Tree) (g : Fm) : Fm := .ite .guess (.quote .nil) (guessF g (app D
 /-- If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2` and `D` has the
 value `ω` at the plain instances `zq z z q.1`, then the value of `diagF D g` is `1` plus the sum
 over the guesses of `q.2` times that value. -/
-theorem diagF_kv {κ : List Bool → R} {S : Set (List Bool)} {D z : Tree} {g : Fm} {cg tD : ℕ} {lg : List (Run A)}
+theorem diagF_kv {κ : List Bool → R} {S : Set (List Bool)} {D z : Tree} {g : Fm}
+    {cg tD : ℕ} {lg : List (Run A)}
     {Q : List (Bt × R)} {ω : Tree → R} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q)
     (hD : ∀ q ∈ Q, KV θ κ S (Fm.ofTree D) (zq z z q.1) (ω (zq z z q.1)) tD) :
     KV θ κ S (diagF D g) z (1 + (Q.map fun q => q.2 * ω (zq z z q.1)).sum) (2 * cg + tD + 30) := by
   have h1 := KV.gives (κ := κ) (S := S) (Gives.quote (θ := θ) .nil z) (by simp [names])
-  have h2 := guess_kv (B := app D (ZE (.hd .id))) (ω := fun e => ω (.cons WN.code (.cons z (.cons z e)))) hg rg
+  have h2 := guess_kv (B := app D (ZE (.hd .id))) (ω :=
+      fun e => ω (.cons WN.code (.cons z (.cons z e)))) hg rg
     fun q hq u hu => by
       have hZ : Gives θ (ZE (.hd .id)) (.cons z u) (zq z z q.1) 11 := by
         simpa [zq, ZE, hu] using (Gives.quote (θ := θ) WN.code (.cons z u)).cons

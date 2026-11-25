@@ -72,7 +72,8 @@ theorem UF_ev {z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree z.hd) z.tl l) 
 
 /-- The instances that arise from budgets are plain, and their sums are those of the runs that use up the budgets. -/
 theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ}
-    (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T) {t : Bt} (ht : t.ht ≤ H) (hτ : (60 * H + 42) * T + 40 * t.nds + 80 ≤ τ) :
+    (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T) {t : Bt} (ht : t.ht ≤ H) (hτ : (60 * H + 42)
+        * T + 40 * t.nds + 80 ≤ τ) :
     Plain θ τ (zq p z t) ∧
       pv θ (zq p z t) = (l.map fun r => if ok t (names r.out) = true then r.th else 0).sum ∧
       (evl θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl).map Run.th =

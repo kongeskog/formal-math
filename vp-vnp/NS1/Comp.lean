@@ -124,7 +124,8 @@ theorem plain (h : Does θ F x Q c) : Plain θ c (.cons F.code x) ∧ pv θ (.co
 /-- The runs of a formula, with their weights and values. -/
 theorem of_ev {l : List (Run A)} (h : Ev θ F x l) (hc : ∀ r ∈ l, r.cost ≤ c) :
     Does θ F x (l.map fun r => (r.th, r.out)) c :=
-  ⟨l, h, fun r hr => ⟨hc r hr, _, List.mem_map_of_mem hr, rfl⟩, fun φ => by simp [wsum, Function.comp_def]⟩
+  ⟨l, h, fun r hr => ⟨hc r hr, _, List.mem_map_of_mem hr, rfl⟩,
+      fun φ => by simp [wsum, Function.comp_def]⟩
 
 theorem of_dt {o : Tree} (h : Dt θ F x o c) : Does θ F x [(1, o)] c := by
   refine ⟨_, h, ?_, fun φ => ?_⟩
@@ -145,7 +146,8 @@ theorem cons {R : List (A × Tree)} (hF : Does θ F x Q c) (hG : Does θ G x R d
     obtain ⟨r1, h1, r2, h2, rfl⟩ := hr
     obtain ⟨a2, q, hq, a3⟩ := e2 r1 h1
     obtain ⟨b2, p, hp, b3⟩ := f2 r2 h2
-    refine ⟨?_, (q.1 * p.1, .cons q.2 p.2), List.mem_flatMap.2 ⟨q, hq, List.mem_map.2 ⟨p, hp, rfl⟩⟩, ?_⟩
+    refine ⟨?_, (q.1 * p.1, .cons q.2 p.2), List.mem_flatMap.2 ⟨q, hq,
+        List.mem_map.2 ⟨p, hp, rfl⟩⟩, ?_⟩
     · simp only [Run.seq, Run.tick]
       omega
     · simp [Run.tick, a3, b3]
