@@ -12,7 +12,6 @@ import NS1.Interp
 # The universal automaton in the form of the dealing program, and finitely many generators
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

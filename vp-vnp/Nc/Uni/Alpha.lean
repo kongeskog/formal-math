@@ -10,7 +10,6 @@ import Nc.Sort.Words
 # Letters and tapes of the universal program; loops over letters
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc
 

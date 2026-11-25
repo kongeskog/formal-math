@@ -10,7 +10,6 @@ import Nc.End.PermThm
 # Affine substitutions preserve approximation
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc
 

@@ -10,7 +10,6 @@ import Nc.G.Defs
 # Cardinalities of the tower plan
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

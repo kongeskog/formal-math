@@ -9,7 +9,6 @@ import NS1.Deal
 # The interpreter of steps and templates
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 

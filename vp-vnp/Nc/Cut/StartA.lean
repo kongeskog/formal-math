@@ -12,7 +12,6 @@ For given states between the blocks, the sum over what the blocks emit is a sum 
 parties on all tapes, with staircase support.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Cut
 

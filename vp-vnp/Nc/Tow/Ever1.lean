@@ -10,7 +10,6 @@ import Nc.Tow.Tree
 # The units given at a node: relays of the stages
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

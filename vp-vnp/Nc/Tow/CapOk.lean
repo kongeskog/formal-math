@@ -11,7 +11,6 @@ import Nc.Tow.Tree
 # The tower plan: rules, numbers of units of the tree
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

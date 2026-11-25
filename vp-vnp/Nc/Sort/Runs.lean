@@ -13,7 +13,6 @@ The sum of the series over all words with given projections is the sum of the we
 these projections.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc
 

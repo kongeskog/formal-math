@@ -17,7 +17,6 @@ units are given at every slot (missing units are replaced by zeros), and the str
 string of the law for every block) are cut into new units.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.G
 

@@ -20,7 +20,6 @@ The input is treated as one more tape (`none`), written by the input parties and
 All segments written by party `a` and read by party `b` are put into one string, which is cut into units.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Cut
 

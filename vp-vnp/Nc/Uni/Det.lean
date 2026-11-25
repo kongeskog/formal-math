@@ -9,7 +9,6 @@ import Nc.Uni.Rules
 # The universal machine is deterministic but for the guesses and the input
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Uni
 

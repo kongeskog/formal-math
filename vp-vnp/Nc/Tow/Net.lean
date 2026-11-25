@@ -13,7 +13,6 @@ Every channel has a target: what becomes of its units. `done`: they stay between
 units of stage `j` on the edge `e`; `nxt x`: given in the relay `x`; `seg …`: end segments on a pair of a vertex.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

@@ -12,7 +12,6 @@ The letters come in reverse order; the segments are made from the last partner t
 closed by a separator and stands in front of the string that the partner has from the later tapes.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

@@ -12,7 +12,6 @@ import Nc.Cut.Facts
 The numbers of units that a party holds at the beginning, and the outcomes of the moves.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

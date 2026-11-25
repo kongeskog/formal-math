@@ -10,8 +10,6 @@ import Nc.Tow.Tree
 # The units that a party ever holds, by the loads at its chamber
 -/
 
-set_option linter.unusedSectionVars false
-set_option synthInstance.maxSize 20000
 
 namespace Nc.Tow
 

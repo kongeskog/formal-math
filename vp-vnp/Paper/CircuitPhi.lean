@@ -10,7 +10,6 @@ import Nc.RunMn
 # The paper, proof of Lemma lem:circuit: the clause sum Φ
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Paper
 
@@ -166,7 +165,6 @@ variable {F : Type} [Field F] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fin
   [Fintype Q] [DecidableEq Q]
 
 set_option synthInstance.maxSize 4000 in
-set_option maxHeartbeats 1000000 in
 /-- **Paper: proof of Lemma lem:circuit, Φ.** A clause sum with at most 1600 B⁹ literals, weights that are constants or
 variables, degree at most N, and the automaton's value at the code of every word of fewer than N symbols: what the proof
 uses of Φ. ("It has degree at most n, and at the code of a word it takes that word's value ... This has v^O(1) literals.")

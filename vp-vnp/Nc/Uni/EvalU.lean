@@ -9,7 +9,6 @@ import Nc.Uni.Det
 # Trees in the heap, opcodes, names
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Uni
 

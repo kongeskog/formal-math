@@ -12,7 +12,6 @@ import Nc.Grp.Script
 The contents of the units given at the slots are put together to streams of bits.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

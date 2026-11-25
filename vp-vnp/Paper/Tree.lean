@@ -14,7 +14,6 @@ A network is given by numbers of units between pairs of nodes and, at every node
 it. The moves of the tower plan rewrite its value as a sum, over good outcomes, of values of networks on trees.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Paper
 

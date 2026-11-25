@@ -11,7 +11,6 @@ import Nc.Acc.Main
 # The substitution that names letters by bits
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 

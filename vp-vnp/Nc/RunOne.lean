@@ -13,7 +13,6 @@ namespace Nc
 
 open Finset MvPolynomial
 
-set_option linter.unusedSectionVars false
 
 section Rename
 

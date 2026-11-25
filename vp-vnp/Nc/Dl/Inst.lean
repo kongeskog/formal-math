@@ -13,7 +13,6 @@ import Nc.Grp.GroupThm
 # One cut, with numbers
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

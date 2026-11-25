@@ -16,7 +16,6 @@ import Nc.Cut.Slp
 # Facts about the routing of units (general moves)
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.G
 

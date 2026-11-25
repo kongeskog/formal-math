@@ -10,7 +10,6 @@ import Nc.Grp.SumRole
 # The step of a role
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

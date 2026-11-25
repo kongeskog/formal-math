@@ -9,7 +9,6 @@ import Nc.Uni.Bounds
 # The paper, section "Cutting computations": the universal automaton is exact
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Paper
 

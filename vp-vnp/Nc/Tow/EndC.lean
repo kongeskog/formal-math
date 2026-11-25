@@ -9,7 +9,6 @@ import Nc.Tow.EndB
 # The tower plan: possible outcomes, units between a node and its parent
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

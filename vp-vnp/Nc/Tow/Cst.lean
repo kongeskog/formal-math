@@ -17,8 +17,6 @@ import NS1.Accel
 # The conditions on a tower and its laws, and the numbers that follow
 -/
 
-set_option linter.unusedSectionVars false
-set_option synthInstance.maxSize 20000
 
 namespace Nc.Tow
 

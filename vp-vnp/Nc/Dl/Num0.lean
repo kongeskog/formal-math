@@ -9,7 +9,6 @@ import Nc.Dl.Does
 # Inequalities between the numbers of one cut
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

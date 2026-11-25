@@ -9,7 +9,6 @@ import Nc.Tow.Slp1
 # The program of the tower plan: one step of time
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

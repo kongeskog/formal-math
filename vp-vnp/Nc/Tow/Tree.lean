@@ -9,7 +9,6 @@ import Nc.Tow.Load4
 # The tree of the tower plan
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

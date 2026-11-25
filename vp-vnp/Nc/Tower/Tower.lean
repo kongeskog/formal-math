@@ -10,7 +10,6 @@ import Nc.Tower.Base
 # The tower as a structure, and routes
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tower
 

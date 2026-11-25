@@ -9,7 +9,6 @@ import Nc.Tow.Plan
 # The tower plan obeys the rules
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

@@ -9,7 +9,6 @@ import Nc.RunPerm
 # Values of automata: names of inputs, change of rings
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc
 

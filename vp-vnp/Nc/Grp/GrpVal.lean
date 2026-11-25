@@ -9,7 +9,6 @@ import Nc.Grp.GrpSteps
 # The value of a group as a sum over executions: the theorem
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

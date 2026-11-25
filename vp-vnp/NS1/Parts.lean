@@ -9,7 +9,6 @@ import NS1.Picks
 # Parts of a list, written into a trie
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 

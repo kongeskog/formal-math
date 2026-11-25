@@ -14,7 +14,6 @@ a tensor t that is not 0. A spectral point can be pulled back along a map g of s
 paper's t ↦ φ(gt)).
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Ov
 

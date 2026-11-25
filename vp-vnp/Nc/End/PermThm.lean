@@ -10,7 +10,6 @@ import Nc.RunMn
 # Roots and logarithms; substitutions at a code
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace NS1
 

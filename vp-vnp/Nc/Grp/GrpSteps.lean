@@ -13,7 +13,6 @@ Steps: the base parties of the group (blocks and input parties) write their init
 order of the moves, write the new units.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

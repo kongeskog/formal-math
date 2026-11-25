@@ -13,7 +13,6 @@ at once for tensors whose legs are moved. The values at wires themselves (`wire_
 stated in `Paper/Tensors.lean`, in this namespace.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Ov
 

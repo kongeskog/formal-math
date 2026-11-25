@@ -9,8 +9,6 @@ import Nc.Tow.Ever6
 # The copies at a node
 -/
 
-set_option linter.unusedSectionVars false
-set_option synthInstance.maxSize 20000
 
 namespace Nc.Tow
 

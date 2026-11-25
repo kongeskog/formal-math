@@ -10,7 +10,6 @@ import Nc.Tow.Load3
 # The tower plan: bounds for all stages
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

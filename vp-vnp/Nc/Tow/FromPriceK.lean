@@ -9,7 +9,6 @@ import Nc.Tow.FromPrice
 # Laws with tables in a subring
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

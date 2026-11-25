@@ -10,7 +10,6 @@ import Nc.Grp.SumSim
 # Sums over the runs of the transducer of a role
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

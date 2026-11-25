@@ -10,7 +10,6 @@ import Nc.G.RouteFacts
 # The play, for general laws
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.G
 

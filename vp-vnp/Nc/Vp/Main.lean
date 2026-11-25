@@ -13,7 +13,6 @@ import Nc.CaseI.Lower
 # Near pairs and laws at the vertices of the towers
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Vp
 

@@ -12,7 +12,6 @@ A bit string is cut into units of `ub` bits: a 1 and then zeros are appended. Th
 the units.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc
 

@@ -11,7 +11,6 @@ import Mathlib
 Every step loads one record and allocates one record, at the next address.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Uni
 

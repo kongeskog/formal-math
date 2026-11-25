@@ -12,7 +12,6 @@ import Nc.Tape.ProgRun
 # The universal automaton: bounds for the time
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Uni
 

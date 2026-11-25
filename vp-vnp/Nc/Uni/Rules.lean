@@ -10,7 +10,6 @@ import NS1.Accel
 # The rules of the universal machine
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Uni
 

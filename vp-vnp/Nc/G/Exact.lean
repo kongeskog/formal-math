@@ -10,7 +10,6 @@ import Nc.Cut.Exact
 # The tables of the parties at the beginning and after the moves, and the values of groups
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.G
 

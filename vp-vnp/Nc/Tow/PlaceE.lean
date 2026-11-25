@@ -9,7 +9,6 @@ import Nc.Tow.Net
 # Places of the nodes
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

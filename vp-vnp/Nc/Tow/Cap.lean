@@ -9,7 +9,6 @@ import Nc.Tow.Load4
 # The number of units of a move; numbers
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

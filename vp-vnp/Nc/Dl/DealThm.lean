@@ -12,7 +12,6 @@ import Nc.G.Exact
 # The dealing program
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Dl
 

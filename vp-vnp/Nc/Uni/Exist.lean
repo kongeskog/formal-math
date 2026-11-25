@@ -9,7 +9,6 @@ import Nc.Uni.Trace
 # Every run of the machine is a matched run
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Uni
 

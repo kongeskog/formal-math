@@ -10,7 +10,6 @@ import Nc.Tow.Rank
 # The tower plan
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

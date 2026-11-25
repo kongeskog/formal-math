@@ -11,8 +11,6 @@ import Nc.G.RouteFacts
 # The units that a party ever holds, and the units of zeros
 -/
 
-set_option linter.unusedSectionVars false
-set_option synthInstance.maxSize 20000
 
 namespace Nc.G
 

@@ -11,7 +11,6 @@ import Nc.Tow.Tree
 # The tower plan: the units in the end
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

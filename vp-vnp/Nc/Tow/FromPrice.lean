@@ -12,7 +12,6 @@ import Nc.Price.Norm
 Two facts about unordered pairs, used to build the laws at the vertices of a tower (`VLaws`) from prices.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

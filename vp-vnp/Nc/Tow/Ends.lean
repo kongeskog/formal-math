@@ -9,7 +9,6 @@ import Nc.Tow.Flow
 # The tower plan: holders of units
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

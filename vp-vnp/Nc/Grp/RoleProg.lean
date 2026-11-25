@@ -9,7 +9,6 @@ import Nc.Grp.Role
 # The program of a role: the loop
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Grp
 

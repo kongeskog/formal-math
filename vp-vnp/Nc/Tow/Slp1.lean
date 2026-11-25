@@ -11,7 +11,6 @@ import Nc.Tow.Load3
 # The program of the tower plan: bounds, loads from numbers of units
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

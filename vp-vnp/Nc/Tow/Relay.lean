@@ -10,7 +10,6 @@ import Nc.Tow.Load
 # Relays, the laws of a tower, monotone enumerations
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 

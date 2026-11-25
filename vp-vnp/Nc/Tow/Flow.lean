@@ -12,7 +12,6 @@ import Nc.Tow.Net
 of alive units with target `τ`, as functions of the numbers `n` of initial units and of the outcomes `o`.
 -/
 
-set_option linter.unusedSectionVars false
 
 namespace Nc.Tow
 
