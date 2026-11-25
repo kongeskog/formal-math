@@ -19,9 +19,9 @@ variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] 
 
 theorem size_roundA {R : Type} (K K' : KT R) (B B' J : ℕ) (D G p : Tree) :
     (roundA K B K' B' J D G p).code.size ≤ 2 * D.size + G.size + p.size + (gt id J B K [false]).code.size +
-      (gt id J B' K' [true]).code.size + 2 * WF.code.size + UF.code.size + 2000 := by
+      (gt id J B' K' [true]).code.size + 2 * WN.code.size + UF.code.size + 2000 := by
   have := size_LP D
-  simp only [roundA, stepA, rebF, app, ZE, Fm.code, Tree.size, size_num]
+  simp only [roundA, stepA, rebF, guessF, lett, node, app, ZE, Fm.code, Tree.size, size_num]
   omega
 
 /-- **The exponents of the outer weights**: products of powers of constants of span `M`. -/

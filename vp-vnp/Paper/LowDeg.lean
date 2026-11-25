@@ -35,10 +35,12 @@ theorem line_coeff_eq {R σ : Type} [CommRing R] (u : σ → R) (p : MvPolynomia
   | add p q hp hq => simp [map_add, hp, hq]
 
 open Nc.Acc in
-/-- **Paper: Lemma lem:lowdeg.** "Let a polynomial over R in variables (place, symbol), with n places, have a circuit
-with S gates. A program of size O(log S + log n + d), with O((S+n)³) constants, has as value the sum of its parts of
-degree at most d at the code of the word of every z with |z| < n, in (d+|z|+1)(log(S+n+d))^O(1) steps. All its runs halt, and it names only constants, not powers." The bound on
-the height of the trie, O(log S + log n), is the one that Lemma lem:circuit needs. -/
+/-- **Paper: Lemma lem:lowdeg.** "Let a polynomial over R in variables (place, symbol), with n
+places, have a circuit with S gates. A program of size O(log S + log n + d), with O((S+n)³)
+constants, has as value the sum of its parts of degree at most d at the code of the word of every z
+with |z| < n, in (d+|z|+1)(log(S+n+d))^O(1) steps. All its runs halt, and it names only constants,
+not powers." The steps bound the cost and the size of the value (which holds the names) together.
+The bound on the height of the trie, O(log S + log n), is the one that Lemma lem:circuit needs. -/
 theorem lem_lowdeg : ∃ c : ℕ, ∀ (R : Type) [CommRing R] (M m N d S : ℕ) (p : MvPolynomial (Fin N × Option Bool) R),
     Nc.Computes p S → S ≤ 2 ^ M → N ≤ 2 ^ m →
     ∃ (K : KT R) (D : Tree),
@@ -46,8 +48,9 @@ theorem lem_lowdeg : ∃ c : ℕ, ∀ (R : Type) [CommRing R] (M m N d S : ℕ) 
       ∀ (A : Type) [CommRing A] [Algebra A R] (θ : List Bool → A) (z : Tree), z.size < N →
         Hl θ (Fm.ofTree D) z ∧
         (∀ r ∈ evl θ (Fm.ofTree D) z,
-          r.cost ≤ (d + 1) * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100 ∧
-          ∀ q ∈ r.bill, K.InB 1 q) ∧
+          r.cost + r.out.size ≤
+            (d + 1) * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100 ∧
+          ∀ q ∈ names r.out, K.InB 1 q) ∧
         val K.lk (evl θ (Fm.ofTree D) z) =
           ∑ i ∈ Finset.range (d + 1), MvPolynomial.eval (codeB R N (tbits z)) (MvPolynomial.homogeneousComponent i p) := by
   obtain ⟨c, hc⟩ := size_accF

@@ -130,14 +130,17 @@ theorem lem_circuit_universal (hθ : (Function.support θ).Finite) {H : ℕ} (hH
       _ = t := by rw [ht, pow_succ]
 
 open Nc.Acc in
-/-- **Paper: proof of Lemma lem:circuit, the program.** "Lemma lem:lowdeg turns it into a program with v^O(a+1) constants
-that takes v^(H−32)((a+1) lg v)^O(1) ≤ v^(H−16) steps, as n bounds the degree. All its runs halt, its names have
-O((a+1) lg v) bits, and B = 1": for n = v^(H−32)+1, the degree bound n and a circuit over any commutative ring. -/
+/-- **Paper: proof of Lemma lem:circuit, the program.** "Lemma lem:lowdeg turns it into a program
+with v^O(a+1) constants that takes v^(H−32)((a+1) lg v)^O(1) ≤ v^(H−16) steps, as n bounds the
+degree. All its runs halt, its names have O((a+1) lg v) bits, and B = 1": for n = v^(H−32)+1, the
+degree bound n and a circuit over any commutative ring. The steps bound the cost and the size of the
+value (which holds the names) together. -/
 theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 100 ≤ v → c * (a + H + 2) * lg v ≤ v →
     ∀ (A : Type) [CommRing A] (R : Type) [CommRing R] [Algebra A R] (θ : List Bool → A) (s : ℕ)
       (p : MvPolynomial (Fin (v ^ (H - 32) + 1) × Option Bool) R), s ≤ v ^ a → Nc.Computes p s →
     ∃ (K : KT R) (D : Tree), (∀ z : Tree, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧
-        (∀ r ∈ evl θ (Fm.ofTree D) z, r.cost ≤ v ^ (H - 16) ∧ ∀ q ∈ r.bill, K.InB 1 q) ∧
+        (∀ r ∈ evl θ (Fm.ofTree D) z, r.cost + r.out.size ≤ v ^ (H - 16)
+            ∧ ∀ q ∈ names r.out, K.InB 1 q) ∧
         val K.lk (evl θ (Fm.ofTree D) z) = ∑ i ∈ Finset.range (v ^ (H - 32) + 1 + 1),
           MvPolynomial.eval (codeB R (v ^ (H - 32) + 1) (tbits z)) (MvPolynomial.homogeneousComponent i p)) ∧
       K.nds ≤ v ^ (3 * a + H + 20) ∧ D.size ≤ v ^ (3 * a + H + 20) ∧ K.ht ≤ (3 * a + H + 20) * lg v := by

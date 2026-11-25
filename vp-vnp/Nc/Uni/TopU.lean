@@ -169,11 +169,8 @@ theorem KS_halt {H : List (Rec Kd)} {k : ℕ} (hk : ((.HT, ![k, 0, 0, 0]) : Rec 
   refine (Mach.SumTo.halt (P := UM θ supp) rfl ?_ (fun r => src_ne r)).mono (by norm_num)
   rw [inpA _ _ (by simp) (by simp), hi]
 
-theorem pv_eq {τ : ℕ} {z : Tree} (h : Plain θ τ z) : pv θ z = tot (fun _ => 1) (evl θ (Fm.ofTree z.hd) z.tl) := by
-  unfold pv tot pval
-  congr 1
-  refine List.map_congr_left fun r hr => ?_
-  rw [if_pos (h.2 r hr).1, mul_one]
+theorem pv_eq (z : Tree) : pv θ z = tot (fun _ => 1) (evl θ (Fm.ofTree z.hd) z.tl) := by
+  simp [pv, tot, pval]
 
 /-- After the tree has been read. -/
 theorem KS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : Plain θ τ z) {H : List (Rec Kd)} {k j s0 s1 : ℕ}
@@ -197,17 +194,17 @@ theorem KS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h 
   generalize nx θ σ3 (.inl .pe) k s0 s1 = σ4 at *
   generalize decide (z ≠ .nil) = b at hrec4
   refine lstep ok4 hm4 rfl hrec4 (.s2 b) (by cases b <;> rfl) (by simp) (by simp) rfl rfl ?_
-  rw [pv_eq h]
+  rw [pv_eq z]
   refine (hev (nx θ σ4 (.inl (.s2 b)) p q s) ⟨ok4.nx _ _ _ _, rfl, ⟨z.hd, hp'.mono (heap_nx _ _ _ _ _), rfl⟩,
     hq'.mono (heap_nx _ _ _ _ _)⟩ (fun _ => 1) (fun _ => 1) (Cc supp * τ + 1) ?_).mono (by linarith)
-  intro r hr hb
+  intro r hr
   refine ⟨?_, ?_⟩
   · have e1 : (nx θ σ4 (.inl (.s2 b)) p q s).regs 3 = k := hr4
     have e2 : (nx θ σ4 (.inl (.s2 b)) p q s).inp = [] := (inpA _ _ (by simp) (by simp) _ _ _).trans hi4
     rw [e1, e2]
     exact KS_halt (heap_nx _ _ _ _ _ (hh4 hk)) _
   · have hC := Cc_ge (supp := supp)
-    have h9 : (r.cost : ℤ) ≤ τ := by exact_mod_cast (h.2 r hr).2
+    have h9 : (r.cost : ℤ) ≤ τ := by exact_mod_cast h.2 r hr
     have h10 : Cc supp * r.cost ≤ Cc supp * τ := mul_le_mul_of_nonneg_left h9 (by linarith)
     linarith
 

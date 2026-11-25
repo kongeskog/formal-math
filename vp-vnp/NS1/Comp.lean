@@ -8,7 +8,7 @@ import NS1.Accel
 /-!
 # Weighted functions computed by formulas
 
-`Does θ F x Q c`: all runs of the formula `F` at the tree `x` stop, they use no named constants, the accepting ones
+`Does θ F x Q c`: all runs of the formula `F` at the tree `x` stop, the accepting ones
 have cost at most `c`, and for every function of the value their weighted sum is that of the list `Q` of pairs
 (weight, value).
 -/
@@ -66,7 +66,7 @@ theorem mem_bindW_of {Q : List (A × α)} {R : α → List (A × β)} {q : A × 
 
 /-- The formula computes the weighted list `Q` at `x`. -/
 def Does (θ : List Bool → A) (F : Fm) (x : Tree) (Q : List (A × Tree)) (c : ℕ) : Prop :=
-  ∃ l, Ev θ F x l ∧ (∀ r ∈ l, r.bill = [] ∧ r.cost ≤ c ∧ ∃ q ∈ Q, q.2 = r.out) ∧
+  ∃ l, Ev θ F x l ∧ (∀ r ∈ l, r.cost ≤ c ∧ ∃ q ∈ Q, q.2 = r.out) ∧
     ∀ φ : Tree → A, (l.map fun r => r.th * φ r.out).sum = wsum Q φ
 
 /-- The formula has the value `o` at `x`, with weight 1. -/
@@ -74,13 +74,13 @@ def Gives (θ : List Bool → A) (F : Fm) (x o : Tree) (c : ℕ) : Prop := Does 
 
 /-- The runs of a formula that has the value `o`: they give `o`, and their weights add up to 1. -/
 theorem Gives.runs {F : Fm} {x o : Tree} {c : ℕ} (h : Gives θ F x o c) :
-    ∃ l, Ev θ F x l ∧ (∀ r ∈ l, r.bill = [] ∧ r.cost ≤ c ∧ r.out = o) ∧ (l.map Run.th).sum = 1 := by
+    ∃ l, Ev θ F x l ∧ (∀ r ∈ l, r.cost ≤ c ∧ r.out = o) ∧ (l.map Run.th).sum = 1 := by
   obtain ⟨l, e1, e2, e3⟩ := h
   refine ⟨l, e1, fun r hr => ?_, by simpa [wsum] using e3 fun _ => 1⟩
-  obtain ⟨a1, a2, q, hq, a3⟩ := e2 r hr
+  obtain ⟨a2, q, hq, a3⟩ := e2 r hr
   rw [List.mem_singleton] at hq
   subst hq
-  exact ⟨a1, a2, a3.symm⟩
+  exact ⟨a2, a3.symm⟩
 
 namespace Does
 
@@ -88,14 +88,14 @@ variable {F G H : Fm} {x : Tree} {Q : List (A × Tree)} {c d : ℕ}
 
 theorem mono (h : Does θ F x Q c) (hc : c ≤ d) : Does θ F x Q d := by
   obtain ⟨l, h1, h2, h3⟩ := h
-  exact ⟨l, h1, fun r hr => ⟨(h2 r hr).1, (h2 r hr).2.1.trans hc, (h2 r hr).2.2⟩, h3⟩
+  exact ⟨l, h1, fun r hr => ⟨(h2 r hr).1.trans hc, (h2 r hr).2⟩, h3⟩
 
 /-- Replace the list by an equivalent one. -/
 theorem congr {Q' : List (A × Tree)} (h : Does θ F x Q c) (h1 : ∀ q ∈ Q, ∃ q' ∈ Q', q'.2 = q.2)
     (h2 : ∀ φ : Tree → A, wsum Q φ = wsum Q' φ) : Does θ F x Q' c := by
   obtain ⟨l, e1, e2, e3⟩ := h
-  refine ⟨l, e1, fun r hr => ⟨(e2 r hr).1, (e2 r hr).2.1, ?_⟩, fun φ => (e3 φ).trans (h2 φ)⟩
-  obtain ⟨q, hq, hqr⟩ := (e2 r hr).2.2
+  refine ⟨l, e1, fun r hr => ⟨(e2 r hr).1, ?_⟩, fun φ => (e3 φ).trans (h2 φ)⟩
+  obtain ⟨q, hq, hqr⟩ := (e2 r hr).2
   obtain ⟨q', hq', e⟩ := h1 q hq
   exact ⟨q', hq', e.trans hqr⟩
 
@@ -103,7 +103,7 @@ theorem hl (h : Does θ F x Q c) : Hl θ F x := by
   obtain ⟨l, h1, -⟩ := h
   exact h1.hl
 
-theorem evl (h : Does θ F x Q c) : (∀ r ∈ NS1.evl θ F x, r.bill = [] ∧ r.cost ≤ c ∧ ∃ q ∈ Q, q.2 = r.out) ∧
+theorem evl (h : Does θ F x Q c) : (∀ r ∈ NS1.evl θ F x, r.cost ≤ c ∧ ∃ q ∈ Q, q.2 = r.out) ∧
     ∀ φ : Tree → A, ((NS1.evl θ F x).map fun r => r.th * φ r.out).sum = wsum Q φ := by
   obtain ⟨l, h1, h2, h3⟩ := h
   rw [h1.evl]
@@ -116,17 +116,23 @@ theorem plain (h : Does θ F x Q c) : Plain θ c (.cons F.code x) ∧ pv θ (.co
   · simp only [hd_cons, tl_cons, Fm.ofTree_code]
     exact h.hl
   · simp only [hd_cons, tl_cons, Fm.ofTree_code] at hr
-    exact ⟨(h1 r hr).1, (h1 r hr).2.1⟩
+    exact (h1 r hr).1
   · simp only [pv, hd_cons, tl_cons, Fm.ofTree_code, pval]
     have := h2 fun _ => 1
     simpa [wsum] using this
+
+/-- The runs of a formula, with their weights and values. -/
+theorem of_ev {l : List (Run A)} (h : Ev θ F x l) (hc : ∀ r ∈ l, r.cost ≤ c) :
+    Does θ F x (l.map fun r => (r.th, r.out)) c :=
+  ⟨l, h, fun r hr => ⟨hc r hr, _, List.mem_map_of_mem hr, rfl⟩,
+      fun φ => by simp [wsum, Function.comp_def]⟩
 
 theorem of_dt {o : Tree} (h : Dt θ F x o c) : Does θ F x [(1, o)] c := by
   refine ⟨_, h, ?_, fun φ => ?_⟩
   · intro r hr
     simp only [List.mem_singleton] at hr
     subst hr
-    exact ⟨rfl, le_rfl, (1, o), List.mem_singleton_self _, rfl⟩
+    exact ⟨le_rfl, (1, o), List.mem_singleton_self _, rfl⟩
   · simp [Run.det]
 
 /-- Pairs. -/
@@ -138,10 +144,10 @@ theorem cons {R : List (A × Tree)} (hF : Does θ F x Q c) (hG : Does θ G x R d
   · intro r hr
     simp only [List.mem_flatMap, List.mem_map] at hr
     obtain ⟨r1, h1, r2, h2, rfl⟩ := hr
-    obtain ⟨a1, a2, q, hq, a3⟩ := e2 r1 h1
-    obtain ⟨b1, b2, p, hp, b3⟩ := f2 r2 h2
-    refine ⟨?_, ?_, (q.1 * p.1, .cons q.2 p.2), List.mem_flatMap.2 ⟨q, hq, List.mem_map.2 ⟨p, hp, rfl⟩⟩, ?_⟩
-    · simp [Run.seq, Run.tick, a1, b1]
+    obtain ⟨a2, q, hq, a3⟩ := e2 r1 h1
+    obtain ⟨b2, p, hp, b3⟩ := f2 r2 h2
+    refine ⟨?_, (q.1 * p.1, .cons q.2 p.2), List.mem_flatMap.2 ⟨q, hq,
+        List.mem_map.2 ⟨p, hp, rfl⟩⟩, ?_⟩
     · simp only [Run.seq, Run.tick]
       omega
     · simp [Run.tick, a3, b3]
@@ -168,16 +174,16 @@ theorem app {p : Tree} {R : Tree → List (A × Tree)} (hF : Does θ F x Q c)
   obtain ⟨l, e1, e2, e3⟩ := hF
   have hG' : ∀ s ∈ l, Does θ (Fm.ofTree p) s.out (R s.out) d := by
     intro s hs
-    obtain ⟨-, -, q, hq, h⟩ := e2 s hs
+    obtain ⟨-, q, hq, h⟩ := e2 s hs
     rw [← h]
     exact hG q hq
   refine ⟨_, Ev.app e1 fun s hs => (hG' s hs).hl, ?_, fun φ => ?_⟩
   · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h2, h3, -⟩ := mem_app hu
-    obtain ⟨a1, a2, q, hq, a3⟩ := e2 s hs
-    obtain ⟨b1, b2, r, hr, b3⟩ := (hG' s hs).evl.1 t ht
+    obtain ⟨s, hs, t, ht, h1, h3, -⟩ := mem_app hu
+    obtain ⟨a2, q, hq, a3⟩ := e2 s hs
+    obtain ⟨b2, r, hr, b3⟩ := (hG' s hs).evl.1 t ht
     rw [← a3] at hr
-    refine ⟨by rw [h2, a1, b1]; rfl, by omega, (q.1 * r.1, r.2), mem_bindW_of hq hr, ?_⟩
+    refine ⟨by omega, (q.1 * r.1, r.2), mem_bindW_of hq hr, ?_⟩
     rw [h3, ← b3]
   · rw [wsum_bindW, sum_flatMap_map, ← wsum_congr (φ := fun o => ((NS1.evl θ (Fm.ofTree p) o).map fun t =>
       t.th * φ t.out).sum) (fun q hq => (hG q hq).evl.2 φ), ← e3]
@@ -216,15 +222,16 @@ theorem run {p y : Tree} {R : List (A × Tree)} {e : ℕ} (hF : Gives θ F x p c
     (h : Does θ (Fm.ofTree p) y R e) : Does θ (.run F G) x R (c + d + e + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := hF.runs
   obtain ⟨l', f1, f2, f3⟩ := hG.runs
-  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [(e2 r hr).2.2, (f2 s hs).2.2]; exact h.hl, ?_, fun φ => ?_⟩
+  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [(e2 r hr).2, (f2 s hs).2]; exact h.hl, ?_,
+    fun φ => ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu
-    obtain ⟨a1, a2, a3⟩ := e2 r hr
-    obtain ⟨b1, b2, b3⟩ := f2 s hs
+    obtain ⟨a2, a3⟩ := e2 r hr
+    obtain ⟨b2, b3⟩ := f2 s hs
     rw [a3, b3] at ht
-    obtain ⟨c1, c2, c3⟩ := h.evl.1 t ht
-    refine ⟨by simp [Run.seq, Run.tick, a1, b1, c1], ?_, c3⟩
+    obtain ⟨c2, c3⟩ := h.evl.1 t ht
+    refine ⟨?_, c3⟩
     simp only [Run.seq, Run.tick]
     omega
   · rw [sum_flatMap_map]
@@ -235,7 +242,7 @@ theorem run {p y : Tree} {R : List (A × Tree)} {e : ℕ} (hF : Gives θ F x p c
       have h2 : ∀ s ∈ l', (((NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
           ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum = s.th * (r.th * wsum R φ) := by
         intro s hs
-        rw [(e2 r hr).2.2, (f2 s hs).2.2, List.map_map, ← h.evl.2 φ, ← List.sum_map_mul_left,
+        rw [(e2 r hr).2, (f2 s hs).2, List.map_map, ← h.evl.2 φ, ← List.sum_map_mul_left,
           ← List.sum_map_mul_left]
         congr 1
         refine List.map_congr_left fun t _ => ?_
@@ -250,14 +257,14 @@ theorem ite_of {o : Tree} {K : Fm} (hF : Gives θ F x o c) (hK : Does θ K x Q d
     (hH : o = .nil → K = H) : Does θ (.ite F G H) x Q (c + d + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := hF.runs
   obtain ⟨l', f1, f2, f3⟩ := hK
-  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => hG ((e2 r hr).2.2 ▸ h) ▸ f1)
-    (fun r hr h => hH ((e2 r hr).2.2.symm.trans h) ▸ f1), ?_, fun φ => ?_⟩
+  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => hG ((e2 r hr).2 ▸ h) ▸ f1)
+    (fun r hr h => hH ((e2 r hr).2.symm.trans h) ▸ f1), ?_, fun φ => ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, rfl⟩ := hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2, b3⟩ := f2 s hs
-    refine ⟨by simp [Run.seq, Run.tick, a1, b1], ?_, b3⟩
+    obtain ⟨a2, -⟩ := e2 r hr
+    obtain ⟨b2, b3⟩ := f2 s hs
+    refine ⟨?_, b3⟩
     simp only [Run.seq, Run.tick]
     omega
   · rw [sum_flatMap_map]
@@ -286,12 +293,12 @@ theorem either {R : List (A × Tree)} (hG : Does θ G x Q c) (hH : Does θ H x R
     simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_append, List.mem_map, Run.det, Tree.one,
       if_true, reduceCtorEq, if_false] at hu
     rcases hu with ⟨s, hs, rfl⟩ | ⟨s, hs, rfl⟩
-    · obtain ⟨a1, a2, q, hq, a3⟩ := f2 s hs
-      refine ⟨by simp [Run.seq, Run.tick, a1], ?_, q, List.mem_append_right _ hq, a3⟩
+    · obtain ⟨a2, q, hq, a3⟩ := f2 s hs
+      refine ⟨?_, q, List.mem_append_right _ hq, a3⟩
       simp only [Run.seq, Run.tick]
       omega
-    · obtain ⟨a1, a2, q, hq, a3⟩ := e2 s hs
-      refine ⟨by simp [Run.seq, Run.tick, a1], ?_, q, List.mem_append_left _ hq, a3⟩
+    · obtain ⟨a2, q, hq, a3⟩ := e2 s hs
+      refine ⟨?_, q, List.mem_append_left _ hq, a3⟩
       simp only [Run.seq, Run.tick]
       omega
   · rw [wsum_append, ← e3 φ, ← f3 φ]
@@ -307,17 +314,17 @@ theorem fail (x : Tree) : Does θ .fail x [] 0 := ⟨[], .fail x, by simp, by si
 /-- A step that changes every run of a formula with one value in the same way. -/
 theorem step {F' : Fm} {o o' : Tree} {a : A} {g : Run A → Run A} (h : Gives θ F x o c)
     (hE : ∀ l, Ev θ F x l → Ev θ F' x (l.map g))
-    (hg : ∀ r, r.out = o → (g r).bill = r.bill ∧ (g r).cost = r.cost + 1 ∧ (g r).th = r.th * a ∧ (g r).out = o') :
+    (hg : ∀ r, r.out = o → (g r).cost = r.cost + 1 ∧ (g r).th = r.th * a ∧ (g r).out = o') :
     Does θ F' x [(a, o')] (c + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := h.runs
   refine ⟨_, hE l e1, ?_, fun φ => ?_⟩
   · intro u hu
     obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hu
-    obtain ⟨a1, a2, a3⟩ := e2 r hr
-    obtain ⟨g1, g2, -, g4⟩ := hg r a3
-    exact ⟨g1.trans a1, by omega, _, List.mem_singleton_self _, g4.symm⟩
+    obtain ⟨a2, a3⟩ := e2 r hr
+    obtain ⟨g2, -, g4⟩ := hg r a3
+    exact ⟨by omega, _, List.mem_singleton_self _, g4.symm⟩
   · rw [List.map_map, List.map_congr_left fun r hr => show _ = r.th * (a * φ o') by
-      obtain ⟨-, -, g3, g4⟩ := hg r (e2 r hr).2.2
+      obtain ⟨-, g3, g4⟩ := hg r (e2 r hr).2
       rw [Function.comp_apply, g3, g4, mul_assoc]]
     simp [List.sum_map_mul_right, e3, wsum]
 
