@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T01:44:23.782665250Z",
+  "updated_at": "2026-11-25T01:55:35.354008083Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,8 +60,8 @@
     }
   },
   "current": {
-    "sha": "4a3ae16cd97738d97a775a71ee5fb9b8cf3a0983",
-    "at": "2026-11-25T00:27:56.379302934Z",
+    "sha": "74161dfed9ebd1e382cbf079540f8e3c2498b256",
+    "at": "2026-11-25T01:55:35.354008083Z",
     "metrics": {
       "tokens": 898445,
       "loc": 57160,
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 55,
     "rejected": 2,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 0
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 55,
-      "attempts": 57,
+      "attempts": 58,
       "saved": 29716
     }
   ],
@@ -676,7 +676,76 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 101,
+      "title": "shorten(Nc/Tow): drop dead arithmetic haves and close bookkeeping tails early",
+      "author": "kongeskog",
+      "head_sha": "9b60d7936a0b8b27c98553a8c55fbee0dbede969",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T01:54:43Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 97,
+      "url": "https://github.com/kongeskog/formal-math/pull/101",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Tow"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
