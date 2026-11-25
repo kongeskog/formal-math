@@ -205,12 +205,7 @@ theorem alg {C N y k : ℝ} (hC : 0 ≤ C) (hN : 0 ≤ N) (hy : 0 ≤ y) (hk : k
 theorem NN2_nonneg (hb : 0 < b) (m : Sym2 T.Fl → ℕ) : 0 ≤ T.NN2 m := by
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast hb
   unfold NN2
-  refine mul_nonneg ?_ (Finset.sum_nonneg fun q _ => ?_)
-  · have : (0 : ℝ) ≤ b - 1 := by linarith
-    positivity
-  · split_ifs
-    · exact le_rfl
-    · exact sq_nonneg _
+  positivity
 
 /-- The norms of the loads of end segments. -/
 theorem end_norm {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fin h} {n : T.Ed j → ℕ} :
@@ -224,9 +219,7 @@ theorem end_norm {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fi
   have h6 := sum_end_sq (T := T) (n := n) (i := i) hj
   have h7 := sum_be_sq (T := T) (n := n) (i := i) hj.le
   set Pn : ℝ := ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 with hP
-  have hP0 : 0 ≤ Pn := Finset.sum_nonneg fun e _ => sq_nonneg _
   set x : ℝ := (Fintype.card (T.X (j + 1)) : ℝ) with hx
-  have hx0 : 0 ≤ x := Nat.cast_nonneg _
   have h1 : ∀ ω, √(T.NN2 (T.nEnd i n ω)) ^ 2 ≤ (b : ℝ) ^ 2 / 2 * ∑ q : Sym2 T.Fl, (T.nEnd i n ω q : ℝ) ^ 2 := by
     intro ω
     rw [Real.sq_sqrt (NN2_nonneg hb _)]
@@ -240,12 +233,10 @@ theorem end_norm {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fi
     have h3 : (0 : ℝ) ≤ ∑ q : Sym2 T.Fl, (T.nEnd i n ω q : ℝ) ^ 2 := Finset.sum_nonneg fun q _ => sq_nonneg _
     have h4 : (b : ℝ) * (b - 1) / 2 ≤ (b : ℝ) ^ 2 / 2 := by nlinarith
     have h5 : (0 : ℝ) ≤ (b : ℝ) * (b - 1) / 2 := by
-      have : (0 : ℝ) ≤ b - 1 := by linarith
       positivity
     calc _ ≤ (b : ℝ) * (b - 1) / 2 * ∑ q : Sym2 T.Fl, (T.nEnd i n ω q : ℝ) ^ 2 :=
           mul_le_mul_of_nonneg_left h2 h5
       _ ≤ _ := mul_le_mul_of_nonneg_right h4 h3
-  have hrP : (0 : ℝ) ≤ r * x * Pn := by positivity
   calc x / b * ∑ ω, √(T.NN2 (T.nEnd i n ω)) ^ 2 ≤
       x / b * ∑ ω, (b : ℝ) ^ 2 / 2 * ∑ q : Sym2 T.Fl, (T.nEnd i n ω q : ℝ) ^ 2 :=
         mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun ω _ => h1 ω) (by positivity)
@@ -269,12 +260,10 @@ theorem other_le {j : ℕ} (hj : j < J) (hr : 0 < r) (hb : 0 < b) (hbD : b ≤ 2
     (r : ℝ) * Fintype.card (T.X (j + 1)) / 2 * ∑ e' ∈ univ.filter (fun e' => ¬ T.ty e' = i), (n' e' : ℝ) ^ 2 ≤
       C₁ * (√8 * N + a₁ * (Fintype.card (T.X (j + 1)) / b)) ^ 2 := by
   have hj' := Nat.succ_le_of_lt hj
-  have hrR : (0 : ℝ) < r := by exact_mod_cast hr
   have hbR : (0 : ℝ) < b := by exact_mod_cast hb
   have hfsq := end_norm (T := T) (n := n) (i := i) hj hb hbD
   rw [← hN2] at hfsq
   set x : ℝ := (Fintype.card (T.X (j + 1)) : ℝ) with hx
-  have hx0 : 0 ≤ x := Nat.cast_nonneg _
   have hcV : (Fintype.card (T.V (j + 1) i) : ℝ) = x / b := by
     rw [hx, eq_div_iff hbR.ne']; exact_mod_cast card_V hj' i
   have hxb : 0 ≤ x / b := by positivity

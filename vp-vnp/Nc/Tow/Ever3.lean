@@ -188,11 +188,7 @@ theorem NR0_le (x : T.X 0) : NR0 R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
     refine (Finset.sum_le_sum fun c _ => h2 c).trans ?_
     split_ifs with hx
     · obtain ⟨c0, rfl⟩ := hx
-      rw [Finset.sum_eq_single c0]
-      · rw [if_pos rfl]
-      · intro c _ hc
-        rw [if_neg fun he => hc (ch.injective he)]
-      · intro hn; exact absurd (mem_univ _) hn
+      simp
     · refine le_of_eq (Finset.sum_eq_zero fun c _ => if_neg fun he => hx ⟨c, he⟩)
   · -- on the paths
     refine le_trans (le_of_eq ?_) (paths_at hr hb hg x)
@@ -302,10 +298,7 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL R ch FL lhat
       · rfl
       · simp
     rw [Finset.sum_congr rfl fun i _ => h2 i, Finset.sum_comm]
-    refine Finset.sum_congr rfl fun y _ => ?_
-    split_ifs
-    · rfl
-    · simp
+    simp
   rw [h1, sum_level_succ (fun j y => ∑ i, ∑ d, num R ch FL lhat n o (.inr ⟨j, i, T.vx i y, d⟩)) k hk x]
   set j : Fin J := ⟨k, hk⟩ with hj
   rw [Finset.sum_eq_single (imin hh (ldL R ch FL lhat n o) k)]
@@ -362,9 +355,7 @@ theorem NR_zero (x : T.X 0) : NR R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
     split_ifs
     · exact le_rfl
     · exact Nat.zero_le _
-  have h6 : (if hlt : 0 < J then 5 * fb (ldL R ch FL lhat n o) (⟨0, hlt⟩ : Fin J) x else 0) =
-      if hlt : 0 < J then 5 * fb (ldL R ch FL lhat n o) 0 x else 0 := rfl
-  omega
+  linarith
 
 open Classical in
 theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR R ch FL lhat n o (nd T (k + 1) hk x) ≤
@@ -390,9 +381,7 @@ theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR R ch FL lhat
     split_ifs
     · exact le_rfl
     · exact Nat.zero_le _
-  have h6 : 3 * chs hh (ldL R ch FL lhat n o) (⟨k, hk⟩ : Fin J) x + 2 * fb (ldL R ch FL lhat n o) ((⟨k, hk⟩ : Fin J) + 1) x =
-      3 * chs hh (ldL R ch FL lhat n o) k x + 2 * fb (ldL R ch FL lhat n o) (k + 1) x := rfl
-  omega
+  linarith
 
 open Classical in
 theorem NR_none : NR R ch FL lhat n o none ≤ ∑ e : T.Ed J, ldL R ch FL lhat n o J e := by

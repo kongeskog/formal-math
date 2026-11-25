@@ -28,9 +28,7 @@ def extra (T : Tower h b D J r) (AA : ℕ) : ℕ := Fintype.card (Nd T) - AA
 /-- **Places exist.** -/
 theorem exists_place (T : Tower h b D J r) (ch : Fin AA ↪ T.X 0) : Nonempty (Place T ch (extra T AA)) := by
   classical
-  have hle : AA ≤ Fintype.card (Nd T) := by
-    have := Fintype.card_le_of_embedding (baseNd T ch)
-    rwa [Fintype.card_fin] at this
+  -- `AA ≤ Fintype.card (Nd T)`, since the base nodes embed `Fin AA`
   -- the base nodes and the others
   let S : Finset (Nd T) := univ.map (baseNd T ch)
   have hS : S.card = AA := by rw [card_map, card_univ, Fintype.card_fin]

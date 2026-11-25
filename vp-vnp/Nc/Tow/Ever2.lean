@@ -299,8 +299,6 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
       have c1 := hH 1 (T.e0 e)
       have c3 := hH 3 (T.e1 e)
       have d1 := hp 1 (nd T (j + 1) j.2 (T.π (T.e0 e)) = P) (Or.inl rfl)
-      have d2 := hp 2 (nd T (j + 1) j.2 (T.π (T.e0 e)) = P) (Or.inr (Or.inl rfl))
-      have d3 := hp 2 (nd T (j + 1) j.2 (T.π (T.e1 e)) = P) (Or.inr (Or.inl rfl))
       have d4 := hp 3 (nd T (j + 1) j.2 (T.π (T.e1 e)) = P) (Or.inr (Or.inr rfl))
       change ((if nd T j j.2.le (T.e0 e) = P then _ else 0) + (if nd T (j + 1) j.2 (hst T (T.ty e) (T.e0 e)) = P then _ else 0) +
           if nd T j j.2.le (T.e1 e) = P then _ else 0) +

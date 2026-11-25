@@ -204,7 +204,6 @@ theorem bhat_pow_le (hh : 0 < h) (hX : 0 < Fintype.card (T.X J)) {p q : ℕ} (hp
   have hx1 : 1 ≤ x := hDJ1.trans hDJ
   have hx0 : 0 < x := by linarith
   set M : ℝ := max 1 (√D * ρ) with hM
-  have hM0 : 0 ≤ M := le_trans zero_le_one (le_max_left _ _)
   -- the square of the base
   have hMq : (M ^ 2) ^ q ≤ (D : ℝ) ^ (q - 2 * p) := by
     have e1 : 1 ≤ (D : ℝ) ^ (q - 2 * p) := one_le_pow₀ hDR
@@ -276,9 +275,6 @@ theorem kbar_le (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA 
       _ = 2 * m * (X * (lhat / X) + 2 * X ^ 2) := by ring
       _ ≤ 2 * m * (lhat + 2 * X ^ 2) := by gcongr
   have hnR : (nhat T Uu AA lhat : ℝ) ≤ 2 * m * (lhat + 2 * (X : ℝ) ^ 2) := by exact_mod_cast hn
-  have hC := Real.sqrt_nonneg FL.C₁
-  have hsh := Real.sqrt_nonneg (h : ℝ)
-  have hl0 : (0 : ℝ) ≤ lhat := Nat.cast_nonneg _
   have h2 : (1 : ℝ) ≤ m * (lhat + 2 * (X : ℝ) ^ 2) := by
     have : (1 : ℝ) ≤ lhat + 2 * (X : ℝ) ^ 2 := by nlinarith
     nlinarith

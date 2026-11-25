@@ -59,8 +59,7 @@ theorem NN2_mono {n n' : Sym2 T.Fl → ℕ} (hb : 0 < b) (hn : ∀ q, n q ≤ n'
   · split_ifs
     · exact le_rfl
     · exact pow_le_pow_left₀ (Nat.cast_nonneg _) (by exact_mod_cast hn q) 2
-  · have : (0 : ℝ) ≤ b - 1 := by linarith
-    positivity
+  · positivity
 
 /-- Some number of units is enough. -/
 theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv T FL) : ∃ t d, Fits FL L (withD FL l d) t := by
@@ -117,7 +116,6 @@ theorem tmin_le (hb : 0 < b) (L : Tg T m AA → ℕ) (l : LMv T FL) {n' : Sym2 T
       Real.sqrt_le_sqrt (NN2_mono hb hn')
     rw [Nat.cast_sub h0] at h2
     push_cast at h2
-    have : (FL.a₁ : ℝ) * tmin FL L l = FL.a₁ * ((tmin FL L l : ℝ) - 1) + FL.a₁ := by ring
     linarith [not_le.1 h2]
 
 theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv T FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) : tmin FL L l = 0 := by
@@ -264,8 +262,6 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
         by_contra hcon
         exact hne (alv_inr_zero hr hb (Or.inr hcon) ν')
       have hdd : d' = d := by
-        have e : tmin FL (load R ch FL lhat n o) (⟨j', i', ω', d'⟩ : LMv T FL) =
-          tmin FL (load R ch FL lhat n o) (⟨j', i', ω', d⟩ : LMv T FL) := rfl
         rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di d') with hlt | heq | hlt
         · exact absurd hd.1 (hpk.2 d hlt)
         · exact ((Fintype.equivFin FL.Di).injective heq).symm
@@ -317,10 +313,6 @@ theorem _root_.Paper.thm_tree_kappa (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} 
         FL.G₁ * (t : ℝ) ^ 2 := by exact_mod_cast h5
     have h7 : (FL.G₁ : ℝ) * (t : ℝ) ^ 2 ≤ 2 * FL.C₁ * (FL.a₁ : ℝ) ^ 2 * (t : ℝ) ^ 2 :=
       mul_le_mul_of_nonneg_right FL.G₁_le (sq_nonneg _)
-    change (r : ℝ) * b / 2 * ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) : ℝ) ^ 2 ≤ _
-    have h8 : (r : ℝ) * b / 2 * ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) : ℝ) ^ 2 =
-        ((r : ℝ) * b * ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) : ℝ) ^ 2) / 2 := by ring
-    rw [h8]
     linarith
   · intro ω
     exact tmin_le hb _ _ fun q => seg_le hr hb j i ω q

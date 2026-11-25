@@ -152,7 +152,7 @@ theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d 
   calc _ ≤ ∑ _ν : (FL.L l.2.2.2).Cn, ∑ _d : Bool, FL.G₁ * S :=
         Finset.sum_le_sum fun ν _ => Finset.sum_le_sum fun d _ => h5 ν d
     _ = Fintype.card (FL.L l.2.2.2).Cn * (2 * (FL.G₁ * S)) := by
-        rw [Finset.sum_const, Finset.sum_const, smul_eq_mul, smul_eq_mul, card_univ, card_univ, Fintype.card_bool]
+        simp only [Finset.sum_const, smul_eq_mul, card_univ, Fintype.card_bool]
     _ = _ := by
         rw [Fintype.card_congr (FL.cn l.2.2.2)]
         ring

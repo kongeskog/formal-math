@@ -25,7 +25,6 @@ noncomputable def BhN (FL : FlagLaws F T) (Uu AA lhat : ℕ) (ρ : ℝ) : ℕ :=
 
 theorem bhat_nonneg (ρ : ℝ) : 0 ≤ bhat FL Uu AA lhat ρ := by
   have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
-  have h1 : (0 : ℝ) ≤ max 1 (√D * ρ) := le_trans zero_le_one (le_max_left _ _)
   unfold bhat
   positivity
 

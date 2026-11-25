@@ -90,10 +90,7 @@ theorem card_RM_le (hD : 0 < D) : Fintype.card (RM T m AA) ≤ rmN h r m J AA (F
           Finset.sum_le_sum fun j _ => Nat.mul_le_mul_right _ (h1 j)
       _ = _ := by simp
   unfold rmN
-  refine Nat.add_le_add_left ?_ _
-  calc _ ≤ J * (h * (h * r * Fintype.card (T.X 0))) + (J * (h * r * Fintype.card (T.X 0) * 4) +
-        h * r * Fintype.card (T.X 0)) := Nat.add_le_add h3 (Nat.add_le_add h4 h2)
-    _ = _ := by ring
+  linarith
 
 section Moves
 
@@ -239,12 +236,10 @@ theorem cards_le (hD : 0 < D) (hb : 0 < b) (hV : 1 ≤ V) (hh : h ≤ V) (hr : r
   have p56 : V ^ 5 ≤ V ^ 6 := Nat.pow_le_pow_right hV (by norm_num)
   have p37 : V ^ 3 ≤ V ^ 7 := Nat.pow_le_pow_right hV (by norm_num)
   have p12 : V ≤ V ^ 2 := Nat.le_self_pow (by norm_num) V
-  have p02 : 1 ≤ V ^ 2 := Nat.one_le_pow _ _ hV
   have hN : Fintype.card (sys R FL Pl).N ≤ 17 * V ^ 6 := by
     have h3 := card_N_le (R := R) (FL := FL) (Pl := Pl) hD
     have h4 : J * (h * (h * r * Fintype.card (T.X 0) * Fintype.card FL.Di)) ≤ V * (V * (V * V * V * V)) := by gcongr
-    have h5 : V * (V * (V * V * V * V)) = V ^ 6 := by ring
-    omega
+    linarith
   refine ⟨hN, ?_, ?_, ?_, ?_, ?_⟩
   · have h3 := card_Z_le (R := R) (FL := FL) (Pl := Pl) hD hb hS
     have h4 := Nat.mul_le_mul_right V h2
@@ -257,9 +252,7 @@ theorem cards_le (hD : 0 < D) (hb : 0 < b) (hV : 1 ≤ V) (hh : h ≤ V) (hr : r
   · rw [card_Un]
     have h4 : AA * AA * U0 ≤ V * V * V := by gcongr
     have h5 : Fintype.card (sys R FL Pl).N * U1 ≤ 17 * V ^ 6 * V := Nat.mul_le_mul hN hU1
-    have h6 : V * V * V = V ^ 3 := by ring
-    have h7 : 17 * V ^ 6 * V = 17 * V ^ 7 := by ring
-    omega
+    linarith
   · have h3 := card_Mv_le (R := R) (ch := ch) (FL := FL) hD hb
     omega
   · have h3 := card_Nd_le (T := T) hD

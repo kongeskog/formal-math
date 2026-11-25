@@ -65,9 +65,7 @@ theorem NR_onN (P : Nd T) : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P
           rw [if_pos ⟨a, rfl⟩, if_pos ⟨a, rfl⟩, Nat.one_mul]
         · rw [if_neg hc]
           exact Nat.zero_le _
-      · change 7 * fb (LfO R ch FL Pl lhat n o) 0 c ≤ 8 * fb (LfO R ch FL Pl lhat n o) 0 c +
-          3 * chF hh (LfO R ch FL Pl lhat n o) 0 c
-        omega
+      · linarith
     | succ j =>
       refine (NR_succ hh hr hb hg hj c).trans (le_trans (le_of_eq ?_) (Nat.le_add_left _ _))
       rfl
@@ -87,9 +85,7 @@ theorem NL_onN (P : Nd T) : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.
       exact Nat.zero_le _
     | succ j =>
       refine (NL_succ hh hr hb hg hnr hj c).trans (Nat.mul_le_mul_left _ ?_)
-      change fb (LfO R ch FL Pl lhat n o) (j + 1) c ≤ 8 * fb (LfO R ch FL Pl lhat n o) (j + 1) c +
-        3 * chF hh (LfO R ch FL Pl lhat n o) (j + 1) c
-      omega
+      linarith
 
 open Classical in
 theorem initN_le {ℓf : ℕ} (P : Nd T) (hP : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) →
@@ -114,12 +110,7 @@ theorem initN_le {ℓf : ℕ} (P : Nd T) (hP : ∀ a, P = nd T 0 (Nat.zero_le _)
       · subst ha; simp
       · rw [if_neg fun he => ha (Fin.castAdd_injective _ _ he), if_neg ha]
     simp only [h1, h2, Finset.sum_add_distrib]
-    congr 1
-    · rw [Finset.sum_comm]
-      refine Finset.sum_congr rfl fun c _ => ?_
-      rw [Finset.sum_ite_eq', if_pos (mem_univ _)]
-    · refine Finset.sum_congr rfl fun a' _ => ?_
-      rw [Finset.sum_ite_eq', if_pos (mem_univ _)]
+    simp
   · refine le_trans (le_of_eq ?_) (Nat.zero_le _)
     unfold initN
     refine Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c _ => ?_

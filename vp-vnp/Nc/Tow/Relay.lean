@@ -59,8 +59,7 @@ def relay : Law F where
       simp only [h20, h21, dite_false]
       have key : ∀ x y u v : Bool, ((if x = u then (1 : F) else 0) * (if u = v then 1 else 0) *
           if v = y then 1 else 0) = if u = x ∧ v = x ∧ x = y then 1 else 0 := by
-        intro x y u v
-        cases x <;> cases y <;> cases u <;> cases v <;> simp
+        simp
       exact key _ _ _ _
     rw [show (∑ g : ∀ _ : Bool, Fin 1 → Bool, ∏ p : Fin 3, relTab F p (fun e => X p e) fun ν => g ν) =
       ∑ g : ∀ _ : Bool, Fin 1 → Bool, if g false 0 = X 0 () ∧ g true 0 = X 0 () ∧ X 0 () = X 2 () then (1 : F) else 0 from
