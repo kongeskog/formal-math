@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T00:27:56.379302934Z",
+  "updated_at": "2026-11-25T00:29:00.136290499Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -676,8 +676,8 @@
     },
     {
       "path": "vp-vnp/Paper/Fan.lean",
-      "tokens": 15683,
-      "loc": 859
+      "tokens": 15588,
+      "loc": 854
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
@@ -700,11 +700,6 @@
       "loc": 521
     },
     {
-      "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
-      "tokens": 9010,
-      "loc": 655
-    },
-    {
       "path": "vp-vnp/Paper/Flat.lean",
       "tokens": 8875,
       "loc": 490
@@ -715,14 +710,19 @@
       "loc": 523
     },
     {
-      "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 8390,
-      "loc": 489
+      "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
+      "tokens": 8542,
+      "loc": 641
     },
     {
       "path": "vp-vnp/Paper/Gauges.lean",
       "tokens": 8362,
       "loc": 519
+    },
+    {
+      "path": "vp-vnp/Paper/ApproxScales.lean",
+      "tokens": 8338,
+      "loc": 487
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
