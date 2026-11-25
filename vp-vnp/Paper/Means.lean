@@ -79,41 +79,15 @@ theorem lem_means_lip (hW : ∀ n, IsPrice K (W n))
   q n b x v y u o o' w w' _ _ τ hp hq hτ :=
     eq_Q (hW n) (b, x) (b, v) (b, y) (b, u) (b, o) (b, o') (b, w) (b, w') hp hq τ hτ
 
-/-- The text before Lemma lem:means: "By translation invariance and Minkowski's inequality ν is even …" -/
-theorem lem_means_even (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (g : ℤ × ℤ) :
-    meanLength W (-g) = meanLength W g :=
-  (lem_means_lip hW hΛ).len_neg g
-
-/-- The text before Lemma lem:means: "… and subadditive". -/
-theorem lem_means_subadditive (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (g h : ℤ × ℤ) :
-    meanLength W (g + h) ≤ meanLength W g + meanLength W h :=
-  (lem_means_lip hW hΛ).len_add g h
-
-/-- The first step of the proof of Lemma lem:means: "By the Cauchy–Schwarz inequality ν satisfies (Q) with the norms of
-differences for the distances, p and q the norms of x − v and y − u." -/
-theorem lem_means_Q (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|))
-    (x v y u o o' w w' : ℤ × ℤ) {τ : ℝ} (hτ : 0 < τ) :
-    2 * (meanLength W (x - v) ^ 2 + meanLength W (y - u) ^ 2) ≤
-      meanLength W (x - v) *
-        (meanLength W (x - o) + meanLength W (v - o') + meanLength W (x - w) + meanLength W (v - w'))
-      + meanLength W (y - u) *
-        (meanLength W (y - o) + meanLength W (u - o') + meanLength W (u - w) + meanLength W (y - w'))
-      + τ * (meanLength W (x - v) ^ 2 + meanLength W (y - u) ^ 2)
-      + (meanLength W (o - o') ^ 2 + meanLength W (w - w') ^ 2) / (2 * τ) :=
-  (lem_means_lip hW hΛ).len_q x v y u o o' w w' τ hτ
-
 /-- ν is an even subadditive function with (Q). -/
 theorem meanLength_len (hW : ∀ n, IsPrice K (W n))
     (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) :
     Cat.Len (meanLength W) where
   nonneg := meanLength_nonneg W
   zero := (lem_means_lip hW hΛ).len_zero
-  neg := lem_means_even hW hΛ
-  add := lem_means_subadditive hW hΛ
-  q x v y u o o' w w' _ hτ := lem_means_Q hW hΛ x v y u o o' w w' hτ
+  neg := (lem_means_lip hW hΛ).len_neg
+  add := (lem_means_lip hW hΛ).len_add
+  q x v y u o o' w w' τ hτ := (lem_means_lip hW hΛ).len_q x v y u o o' w w' τ hτ
 
 /-- N is an even subadditive function with (Q), and homogeneous. -/
 theorem meanNorm_len (hW : ∀ n, IsPrice K (W n))
@@ -129,51 +103,11 @@ theorem meanNorm_len (hW : ∀ n, IsPrice K (W n))
       rwa [le_div_iff₀ (by exact_mod_cast hS)] at this
   exact e ▸ ⟨hN, hom⟩
 
-/-- The definition of N: "N(g) = lim ν(Sg)/S = inf ν(Sg)/S." The limit exists and is the infimum, as ν is subadditive. -/
-theorem lem_means_limit (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (g : ℤ × ℤ) :
-    Tendsto (fun S : ℕ => meanLength W (S • g) / S) atTop (𝓝 (meanNorm W g)) := by
-  have hν := meanLength_len hW hΛ
-  have hb : BddBelow (Set.range fun S : ℕ => meanLength W (S • g) / S) :=
-    ⟨0, by rintro _ ⟨S, rfl⟩; exact div_nonneg (hν.nonneg _) (Nat.cast_nonneg _)⟩
-  have ht := (hν.subadditive g).tendsto_lim hb
-  have e : (hν.subadditive g).lim = meanNorm W g := by
-    refine le_antisymm (le_meanNorm W g fun S hS => ?_) ?_
-    · have := (hν.subadditive g).lim_le_div hb (n := S) hS.ne'
-      rwa [le_div_iff₀ (by exact_mod_cast hS)] at this
-    · exact ge_of_tendsto ht (eventually_atTop.2 ⟨1, fun S hS => meanNorm_le W g hS⟩)
-  rwa [e] at ht
-
-/-- The text before Lemma lem:means: "so N is also homogeneous". -/
-theorem lem_means_homogeneous (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (S : ℕ) (g : ℤ × ℤ) :
-    meanNorm W (S • g) = S * meanNorm W g :=
-  (meanNorm_len hW hΛ).2 S g
-
-/-- The text before Lemma lem:means: N is even and subadditive, as ν is. With lem_means_homogeneous and meanNorm_nonneg this
-makes N a seminorm on ℤ². -/
-theorem lem_means_seminorm (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) :
-    (∀ g, meanNorm W (-g) = meanNorm W g) ∧ ∀ g h, meanNorm W (g + h) ≤ meanNorm W g + meanNorm W h :=
-  ⟨(meanNorm_len hW hΛ).1.neg, (meanNorm_len hW hΛ).1.add⟩
-
-/-- The second step of the proof of Lemma lem:means: "Apply this to eight vectors multiplied by S, divide by S² and let
-S → ∞: so does N, with the same τ." -/
-theorem lem_means_Q_norm (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|))
-    (x v y u o o' w w' : ℤ × ℤ) {τ : ℝ} (hτ : 0 < τ) :
-    2 * (meanNorm W (x - v) ^ 2 + meanNorm W (y - u) ^ 2) ≤
-      meanNorm W (x - v) * (meanNorm W (x - o) + meanNorm W (v - o') + meanNorm W (x - w) + meanNorm W (v - w'))
-      + meanNorm W (y - u) * (meanNorm W (y - o) + meanNorm W (u - o') + meanNorm W (u - w) + meanNorm W (y - w'))
-      + τ * (meanNorm W (x - v) ^ 2 + meanNorm W (y - u) ^ 2)
-      + (meanNorm W (o - o') ^ 2 + meanNorm W (w - w') ^ 2) / (2 * τ) :=
-  (meanNorm_len hW hΛ).1.q x v y u o o' w w' τ hτ
-
 /-! ### The proof of Lemma lem:means
 
 The steps after "so does N" use of N only that it is even, subadditive and homogeneous and satisfies (Q). This is
-Cat.Len N and Cat.Homog N, and it holds for N = meanNorm W by lem_means_seminorm, lem_means_homogeneous and
-lem_means_Q_norm. As in the paper c = a + b, e = a − b, f = N(c), f′ = N(e). -/
+Cat.Len N and Cat.Homog N, and it holds for N = meanNorm W by meanNorm_len. As in the paper c = a + b, e = a − b,
+f = N(c), f′ = N(e). -/
 
 section Parallelogram
 
@@ -437,22 +371,12 @@ theorem lem_means_parallelogram_le (hN : Cat.Len N) (hh : Cat.Homog N) (a b : �
 
 end Parallelogram
 
-/-- **Paper: Lemma lem:means.** For prices W_n on two sheets of ℤ² with W_n(P,P+g) ≤ Λ|g| for points of one sheet, and
-N(g) = lim ν(Sg)/S = inf ν(Sg)/S: "N(a+b)² + N(a−b)² = 2N(a)² + 2N(b)² for all a, b ∈ ℤ²." -/
-theorem lem_means (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ × ℤ) → ℝ) (hW : ∀ n, IsPrice K (W n)) (Λ : ℝ)
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) :
-    ∃ N : ℤ × ℤ → ℝ,
-      (∀ g, Tendsto (fun S : ℕ => meanLength W (S • g) / S) atTop (𝓝 (N g)) ∧
-        IsGLB {r : ℝ | ∃ S : ℕ, 0 < S ∧ r = meanLength W (S • g) / S} (N g)) ∧
-      ∀ a b, N (a + b) ^ 2 + N (a - b) ^ 2 = 2 * N a ^ 2 + 2 * N b ^ 2 := by
-  refine ⟨meanNorm W, fun g => ⟨lem_means_limit hW hΛ g, meanNorm_isGLB W g⟩, fun a b => ?_⟩
-  have hom : Cat.Homog (meanNorm W) := lem_means_homogeneous hW hΛ
-  have hN : Cat.Len (meanNorm W) :=
-    { nonneg := meanNorm_nonneg W
-      zero := by simpa using hom 0 0
-      neg := (lem_means_seminorm hW hΛ).1
-      add := (lem_means_seminorm hW hΛ).2
-      q := fun x v y u o o' w w' _ hτ => lem_means_Q_norm hW hΛ x v y u o o' w w' hτ }
+/-- **Paper: Lemma lem:means**, for N = meanNorm W: "N(a+b)² + N(a−b)² = 2N(a)² + 2N(b)² for all a, b ∈ ℤ²", for
+prices W_n on two sheets of ℤ² with W_n(P,P+g) ≤ Λ|g| for points of one sheet. -/
+theorem lem_means_norm (hW : ∀ n, IsPrice K (W n))
+    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (a b : ℤ × ℤ) :
+    meanNorm W (a + b) ^ 2 + meanNorm W (a - b) ^ 2 = 2 * meanNorm W a ^ 2 + 2 * meanNorm W b ^ 2 := by
+  obtain ⟨hN, hom⟩ := meanNorm_len hW hΛ
   refine le_antisymm (by linarith [lem_means_parallelogram_le hN hom a b]) ?_
   -- "applied to a+b, a−b it gives equality"
   have h := lem_means_parallelogram_le hN hom (a + b) (a - b)
@@ -460,14 +384,5 @@ theorem lem_means (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ × ℤ) →
     show a + b - (a - b) = (2 : ℕ) • b by rw [two_nsmul]; abel, hom, hom] at h
   push_cast at h
   linarith
-
-/-- Lemma lem:means for the function N = meanNorm W. -/
-theorem lem_means_norm (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (a b : ℤ × ℤ) :
-    meanNorm W (a + b) ^ 2 + meanNorm W (a - b) ^ 2 = 2 * meanNorm W a ^ 2 + 2 * meanNorm W b ^ 2 := by
-  obtain ⟨N, hN, h⟩ := lem_means W hW Λ hΛ
-  have e : N = meanNorm W := funext fun g => (hN g).2.unique (meanNorm_isGLB W g)
-  rw [← e]
-  exact h a b
 
 end Paper

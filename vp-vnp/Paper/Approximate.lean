@@ -5,7 +5,6 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import Paper.Fields
 import Paper.ApproxScales
-import Nc.Rate.Circuit
 
 /-!
 # The paper, appendix "Approximate computation"
@@ -219,7 +218,7 @@ theorem flat_rate_approx_complete (κ : ℕ) : ∃ m₀ : ℕ, ∀ (K : Type) [F
   obtain ⟨m₀, h⟩ := rate_of_projection κ
   refine ⟨m₀, fun K _ hK G hG => h _ fun k ℓ m s hk hℓ hℓk hm hs => ?_⟩
   obtain ⟨E, hE, he⟩ := fkl_complete hG hk hℓ hm
-  have hap : Approximates (fkl K k ℓ) (5 * s) := he ▸ hs.aeval E hE
+  have hap : Approximates (fkl K k ℓ) (5 * s) := he ▸ hs.substitute_affine E hE
   refine rate_pow hk ?_ (flat_rate_approximating hK hk hℓk hap)
   obtain ⟨Q, ⟨l, -, a, ha, -⟩, -⟩ := hap
   omega

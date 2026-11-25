@@ -194,7 +194,7 @@ theorem thm_alt_quadrangle {V : Type} {w : V → V → ℝ} (hw : IsPrice K w) (
     (w x v ^ 2 + w y u ^ 2 = w x y ^ 2 + w y v ^ 2 + w v u ^ 2 + w x u ^ 2 → w x y = w v u ∧ w y v = w x u) := by
   obtain ⟨Y, _, _, f, -, hf⟩ := prop_space hw
   simp only [← hf]
-  exact (lem_toolkit.2.1 (f x) (f v) (f y) (f u)).2
+  exact (lem_toolkit_b (f x) (f v) (f y) (f u)).2
 
 theorem defect_nonneg (hw : IsPrice K w) (a W W' : Mt μ) : 0 ≤ defect w a W W' := by
   have := (thm_alt_quadrangle hw a (a + W + W') (a + W) (a + W')).1
@@ -743,7 +743,7 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
         (1 - z c) * dist (F (Function.update z c 0)) (F (Function.update z c 1)) := by
     intro z
     by_cases hz : 0 ≤ z c ∧ z c ≤ 1
-    · obtain ⟨γ, h, -⟩ := lem_toolkit.1 (F (Function.update z c 0)) (F (Function.update z c 1)) (z c) hz.1 hz.2
+    · obtain ⟨γ, h, -⟩ := lem_toolkit_a (F (Function.update z c 0)) (F (Function.update z c 1)) (z c) hz.1 hz.2
       exact ⟨γ, fun _ => h⟩
     · exact ⟨F z, fun h => absurd h hz⟩
   choose F' hF' using hγ
@@ -785,7 +785,7 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
   have d6 : dist (F (Function.update y c 0)) (F (Function.update x c 1)) ^ 2 = 1 + E := by
     rw [dist_comm, hD hx hy 1 0 (Or.inr rfl) (Or.inl rfl)]
     simp [hE]
-  have h := lem_toolkit.2.2.2.2.2 (F (Function.update x c 0)) (F (Function.update y c 0)) (F (Function.update x c 1))
+  have h := lem_toolkit_f (F (Function.update x c 0)) (F (Function.update y c 0)) (F (Function.update x c 1))
     (F (Function.update y c 1)) (F' x) (F' y) _ _ (x c) (y c) rfl
     ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d3.trans d4.symm)) rfl
     ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d2.trans d1.symm))
