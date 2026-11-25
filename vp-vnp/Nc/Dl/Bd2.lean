@@ -40,7 +40,8 @@ theorem mem_steps18 (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] {σ : List Boo
     swap
     · rfl
     refine Finset.sum_eq_zero fun ρ _ => Finset.sum_eq_zero fun n _ => Finset.sum_eq_zero fun o _ => ?_
-    -- both conditions together give the witness that `hno` excludes (`hf`, `h5.2`, `h6`)
+    -- in the case where both `if` conditions hold, they with `hf` give the witness `hno`
+    -- excludes; the other cases are `0`
     grind
   rw [hR] at h
   have hpos : (0 : ℤ) < ((execAll m (steps18 C tab qn i e hU0 hU1) (byPath C.nm (S0 pt))).map
