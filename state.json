@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:41:41.086223133Z",
+  "updated_at": "2026-11-25T02:42:44.059122486Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 5
+    "ideas_open": 6
   },
   "leaderboard": [
     {
@@ -87,6 +87,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 115,
+      "title": "Idea: restructure(Nc/Tow): remove the parameters r and p that are always 1, and FlagLaws, which repeats VLaws",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T02:41:42Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/115",
+      "technique": "restructure",
+      "scope": "Nc/Tow"
+    },
     {
       "number": 114,
       "title": "Idea: merge(*): one theorem for each group of theorems with identical statements",
