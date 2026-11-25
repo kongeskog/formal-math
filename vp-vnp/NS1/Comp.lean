@@ -121,6 +121,11 @@ theorem plain (h : Does θ F x Q c) : Plain θ c (.cons F.code x) ∧ pv θ (.co
     have := h2 fun _ => 1
     simpa [wsum] using this
 
+/-- The runs of a formula, with their weights and values. -/
+theorem of_ev {l : List (Run A)} (h : Ev θ F x l) (hc : ∀ r ∈ l, r.cost ≤ c) :
+    Does θ F x (l.map fun r => (r.th, r.out)) c :=
+  ⟨l, h, fun r hr => ⟨hc r hr, _, List.mem_map_of_mem hr, rfl⟩, fun φ => by simp [wsum, Function.comp_def]⟩
+
 theorem of_dt {o : Tree} (h : Dt θ F x o c) : Does θ F x [(1, o)] c := by
   refine ⟨_, h, ?_, fun φ => ?_⟩
   · intro r hr

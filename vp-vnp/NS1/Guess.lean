@@ -79,6 +79,22 @@ theorem Leaf.inB {K : KT R} {p : List Bool} (h : K.Leaf p) {b B : ℕ} (hb : b <
       | true => exact ihr h
       | false => exact ihl h
 
+/-- A name of a power of a constant is not longer than the height of the trie plus `B`. -/
+theorem InB.length_le {K : KT R} {B : ℕ} {p : List Bool} (h : K.InB B p) : p.length ≤ K.ht + B := by
+  induction K generalizing p with
+  | none => exact h.elim
+  | leaf c =>
+    obtain ⟨b, hb, rfl⟩ := h
+    simp [pw, ht]
+    omega
+  | node l r ihl ihr =>
+    cases p with
+    | nil => exact h.elim
+    | cons a p =>
+      cases a with
+      | true => have := ihr h; simp only [ht, List.length_cons]; omega
+      | false => have := ihl h; simp only [ht, List.length_cons]; omega
+
 theorem pw_succ (b : ℕ) : pw (b + 1) = true :: pw b := rfl
 
 theorem combVal_pw (c : R) (b : ℕ) : combVal c (pw b) = c ^ 2 ^ b := by

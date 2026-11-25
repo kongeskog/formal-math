@@ -25,27 +25,34 @@ pieces with the constants σ_r(κ′), where r exceeds the exponents of all λ^e
 theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D : Tree}
     (hD : IsAccA θ H u (u ^ (H - 16)) K' B' D) {K : KT E[T;T⁻¹]} {p : Tree} {B τ : ℕ} (hp : IsPreA θ H v τ K B p)
     {J n : ℕ} (hJ : τ < 2 ^ J) (hn : ∀ q ∈ (K.expand B).budg J, Span n q.2)
-    {τ' s t tG Ln : ℕ} {G : Tree} (hG : CutProg θ H u τ' s G)
-    (hτ' : MM (K.ht + B + J + 1) * τ + 40 * ((K.expand B).nds * (J + 1)) + 40 ≤ τ')
-    (hs : WF.code.size + p.size + v ^ (H - 32) + 4 * ((K.expand B).nds * (J + 1)) + 3 ≤ s)
+    {τ' s t tG Ln L : ℕ} {G : Tree} (hG : CutProg θ H u τ' s G)
+    (hτ' : (60 * (K.ht + B + J + 1) + 42) * τ + 40 * ((K.expand B).nds * (J + 1)) + 80 ≤ τ')
+    (hs : WN.code.size + p.size + v ^ (H - 32) + 4 * ((K.expand B).nds * (J + 1)) + 3 ≤ s)
     (htG : ∀ k, k * u ^ 24 ≤ τ' → k ≤ tG) (hLn : ∀ k, k * u ^ H ≤ τ' * u ^ 2 → k ≤ Ln)
-    (hJ' : (u ^ (H - 16) + 30) * Ln + 10 < 2 ^ J)
-    (ht : (8 * J + 10) * (K.expand B).nds + tG + ((8 * J + 10) * (K'.expand B').nds +
-      MM (K'.ht + B' + J + 1) * ((u ^ (H - 16) + 30) * Ln + 10) + 40 * ((K'.expand B').nds * (J + 1)) + 60) + 20 ≤ t) :
+    (hJ' : (u ^ (H - 16) + 30) * Ln + 10 < 2 ^ J) (hL : K.ht + K'.ht + max B B' + J + 1 ≤ L)
+    (ht : 2 * (((4 * L + 48) * J + 80) * (K.expand B).nds) + tG + (2 * (((4 * L + 48) * J + 80) * (K'.expand B').nds) +
+      (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (H - 16) + 30) * Ln + 10) + 40 * ((K'.expand B').nds * (J + 1)) + 120) +
+        30 ≤ t) :
     IsAccA θ H v t (.node K (K'.map (rescale A (n + 1)))) (max B B' + J) (roundA K B K' B' J D G p).code := by
   obtain ⟨f, hf⟩ : ∃ f, f = rescale A (E := E) (n + 1) := ⟨_, rfl⟩
   rw [← hf]
   obtain ⟨K2, hK2⟩ : ∃ K2, K2 = KT.node K (K'.map f) := ⟨_, rfl⟩
   rw [← hK2]
-  have hl : ∀ q, K.InB (B + J) q → K2.lk ([false] ++ q) = K.lk q ∧ K2.InB (max B B' + J) ([false] ++ q) := by
+  have hl : ∀ q, K.InB (B + J) q → K2.lk ([false] ++ q) = K.lk q ∧ K2.InB (max B B' + J) ([false] ++ q) ∧
+      ([false] ++ q).length ≤ L := by
     intro q hq
     subst hK2
-    exact ⟨rfl, hq.mono (Nat.add_le_add_right (le_max_left _ _) _)⟩
-  have hr : ∀ q, K'.InB (B' + J) q → K2.lk ([true] ++ q) = f (K'.lk q) ∧ K2.InB (max B B' + J) ([true] ++ q) := by
+    have h1 := hq.length_le
+    have h2 : ([false] ++ q).length ≤ L := by simp only [List.singleton_append, List.length_cons]; omega
+    exact ⟨rfl, hq.mono (Nat.add_le_add_right (le_max_left _ _) _), h2⟩
+  have hr : ∀ q, K'.InB (B' + J) q → K2.lk ([true] ++ q) = f (K'.lk q) ∧ K2.InB (max B B' + J) ([true] ++ q) ∧
+      ([true] ++ q).length ≤ L := by
     intro q hq
     subst hK2
+    have h1 := hq.length_le
+    have h2 : ([true] ++ q).length ≤ L := by simp only [List.singleton_append, List.length_cons]; omega
     exact ⟨KT.lk_map (f : E[T;T⁻¹] →+* E[T;T⁻¹]) K' q,
-      (KT.inB_map f _ K' q).2 (hq.mono (Nat.add_le_add_right (le_max_right _ _) _))⟩
+      (KT.inB_map f _ K' q).2 (hq.mono (Nat.add_le_add_right (le_max_right _ _) _)), h2⟩
   have hqs : ∀ q ∈ (K.expand B).budg J, q.1.ht ≤ K.ht + B + J + 1 ∧ q.1.nds ≤ (K.expand B).nds * (J + 1) := by
     intro q hq
     obtain ⟨h1, h3⟩ := KT.ht_nds_budg hq
@@ -57,31 +64,39 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
     have h2 := (hqs q hq).2
     simp only [zq, Tree.size]
     omega
+  -- the value of `D` on all pieces, renamed
+  obtain ⟨ω, hω⟩ : ∃ ω : Tree → E[T;T⁻¹], ω = fun o => f (o.toList.map fun y => val K'.lk (evl θ (Fm.ofTree D) y)).prod :=
+    ⟨_, rfl⟩
   have inner : ∀ z : Tree, z.size ≤ v ^ (H - 32) → ∀ q ∈ (K.expand B).budg J,
-      Hl θ (Fm.ofTree G) (zq p z q.1) ∧ ∀ r ∈ evl θ (Fm.ofTree G) (zq p z q.1), r.bill = [] ∧ r.cost ≤ tG ∧
+      ∀ r ∈ evl θ (Fm.ofTree G) (zq p z q.1),
         KV θ K2.lk {m | K2.InB (max B B' + J) m} (rebF (gt id J B' K' [true]) (LP D).code) (.cons (LP D).code r.out)
-          (f (r.out.toList.map fun y => val K'.lk (evl θ (Fm.ofTree D) y)).prod)
-          ((8 * J + 10) * (K'.expand B').nds + MM (K'.ht + B' + J + 1) * ((u ^ (H - 16) + 30) * Ln + 10) +
-            40 * ((K'.expand B').nds * (J + 1)) + 60) := by
-    intro z hz q hq
-    obtain ⟨h1, h2⟩ := hG.list _ (hsz z hz q hq)
-    refine ⟨h1, fun r hr' => ?_⟩
-    obtain ⟨a1, a2, a3, a4⟩ := h2 r hr'
-    refine ⟨a1, htG _ a2, ?_⟩
-    obtain ⟨l, e, e1, e2⟩ := LP_ev (θ := θ) (κ := K'.lk) (T := u ^ (H - 16)) (P := fun m => K'.InB B' m) r.out
-      fun y hy => hD.run y (a4 y hy)
+          (ω r.out) (2 * (((4 * L + 48) * J + 80) * (K'.expand B').nds) + (60 * (K'.ht + B' + J + 1) + 42) *
+            ((u ^ (H - 16) + 30) * Ln + 10) + 40 * ((K'.expand B').nds * (J + 1)) + 120) := by
+    intro z hz q hq r hr'
+    obtain ⟨a2, a3, a4⟩ := (hG.list _ (hsz z hz q hq)).2 r hr'
+    obtain ⟨l, e, e1, e2⟩ := LP_kv (θ := θ) (κ := K'.lk) (S := {m | K'.InB B' m}) (T := u ^ (H - 16))
+      (ω := fun y => val K'.lk (evl θ (Fm.ofTree D) y)) r.out fun y hy => by
+        obtain ⟨d1, d2⟩ := hD.run y (a4 y hy)
+        exact ⟨_, d1.ev, d2, rfl⟩
+    rw [hω]
+    simp only
     rw [← e2]
     refine rebill_kv f (by rw [Fm.ofTree_code]; exact e) (fun x hx => ⟨(e1 x hx).1.trans ?_, (e1 x hx).2⟩) hJ' hr
     have := Nat.mul_le_mul_left (u ^ (H - 16) + 30) (hLn _ a3)
     omega
   have key : ∀ z : Tree, z.size ≤ v ^ (H - 32) → KV θ K2.lk {m | K2.InB (max B B' + J) m}
       (roundA K B K' B' J D G p) z (((K.expand B).budg J).map fun q => q.2 *
-        sumF K2.lk (evl θ (Fm.ofTree G) (zq p z q.1))
-          (fun o => f (o.toList.map fun y => val K'.lk (evl θ (Fm.ofTree D) y)).prod)).sum t := by
+        ((evl θ (Fm.ofTree G) (zq p z q.1)).map fun r => algebraMap A E[T;T⁻¹] r.th * ω r.out).sum).sum t := by
     intro z hz
-    obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (κ := K2.lk)
-      (P := fun m => K2.InB (max B B' + J) m) z K [false] fun q hq i hi => hl _ (hq.inB hi)
-    exact (stepA_kv eg rg (inner z hz)).mono ht
+    obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (L := L) (κ := K2.lk)
+      (P := (· ∈ {m | K2.InB (max B B' + J) m})) z K [false] fun q hq i hi => hl _ (hq.inB hi)
+    refine ((stepA_kv (L := fun y => (evl θ (Fm.ofTree G) y).map fun r => (r.th, r.out)) (ω := ω) eg rg (fun q hq => ?_)
+      (fun q hq w hw => ?_)).mono ht).congr ?_
+    · obtain ⟨h1, h2⟩ := hG.list _ (hsz z hz q hq)
+      exact Does.of_ev h1.ev fun r hr' => htG _ (h2 r hr').1
+    · obtain ⟨r, hr', rfl⟩ := List.mem_map.1 hw
+      exact inner z hz q hq r hr'
+    · simp [Function.comp_def]
   constructor
   · intro z hz
     rw [Fm.ofTree_code]
@@ -89,32 +104,29 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
   · intro z hz hpl
     rw [Fm.ofTree_code, (key z hz).evl.2]
     obtain ⟨hp1, hp2⟩ := hp.run z hz hpl
-    obtain ⟨L, hL⟩ : ∃ L, L = (K.expand B).budg J := ⟨_, rfl⟩
-    rw [← hL]
+    obtain ⟨L₀, hL₀⟩ : ∃ L₀, L₀ = (K.expand B).budg J := ⟨_, rfl⟩
+    rw [← hL₀]
     have hval := hp.val z hz hpl
     obtain ⟨hsum, hze⟩ := lem_postpone p z hJ hp1 (fun r hr' => (hp2 r hr').1) (K.expand B) K.lk
       fun r hr' m hm => KT.lookup_expand ((hp2 r hr').2 m hm)
-    rw [hsum, ← hL] at hval
-    obtain ⟨S1, hS1⟩ : ∃ S1 : Bt × E[T;T⁻¹] → E[T;T⁻¹], S1 = fun q => q.2 * sumF K2.lk
-        (evl θ (Fm.ofTree G) (zq p z q.1))
-        (fun o => f (o.toList.map fun y => val K'.lk (evl θ (Fm.ofTree D) y)).prod) := ⟨_, rfl⟩
+    rw [hsum, ← hL₀] at hval
+    obtain ⟨S1, hS1⟩ : ∃ S1 : Bt × E[T;T⁻¹] → E[T;T⁻¹], S1 = fun q => q.2 *
+        ((evl θ (Fm.ofTree G) (zq p z q.1)).map fun r => algebraMap A E[T;T⁻¹] r.th * ω r.out).sum := ⟨_, rfl⟩
     obtain ⟨S2, hS2⟩ : ∃ S2 : Bt × E[T;T⁻¹] → E[T;T⁻¹], S2 = fun q => q.2 * algebraMap A E[T;T⁻¹]
         (pv θ (postponed p z q.1)) := ⟨_, rfl⟩
     rw [← hS2] at hval
     rw [← hS1]
-    have diff : ∀ q ∈ L, OrdGE 1 (S1 q - S2 q) := by
+    have diff : ∀ q ∈ L₀, OrdGE 1 (S1 q - S2 q) := by
       intro q hq
-      rw [hL] at hq
-      obtain ⟨q1, q2⟩ := hqs q hq
+      rw [hL₀] at hq
       have pl : Plain θ τ' (zq p z q.1) := Plain.of_le (hze q hq).1 ((Nat.add_le_add_right (Nat.add_le_add_right
-        (Nat.mul_le_mul_right _ (show 1000 + 100 * ((K.expand B).ht + J + 1) ≤ MM (K.ht + B + J + 1) by
+        (Nat.mul_le_mul_right _ (show 60 * ((K.expand B).ht + J + 1) + 42 ≤ 60 * (K.ht + B + J + 1) + 42 by
           have := KT.ht_expand B K
-          unfold MM; omega)) _) _).trans hτ')
+          omega)) _) _).trans hτ')
       obtain ⟨v1, v2⟩ := hG.val _ (hsz z hz q hq) pl
       rw [hS1, hS2]
-      simp only
       simp only [postponed]
-      rw [v2, ← mul_sub, map_list_sum, List.map_map, sumF]
+      rw [v2, ← mul_sub, map_list_sum, List.map_map]
       refine ((hn q hq).ordGE.mul (s := ((n : ℤ) + 1)) ?_).mono (by omega)
       have e : ∀ (l : List (Run A)) (a b : Run A → E[T;T⁻¹]),
           (∀ r ∈ l, OrdGE ((n : ℤ) + 1) (a r - b r)) → OrdGE ((n : ℤ) + 1) ((l.map a).sum - (l.map b).sum) := by
@@ -126,16 +138,16 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
           rw [add_sub_add_comm]
           exact (hab x List.mem_cons_self).add (ih fun r hr' => hab r (List.mem_cons_of_mem _ hr'))
       refine e _ _ _ fun r hr' => ?_
-      obtain ⟨a1, a2, a3, a4⟩ := (hG.list _ (hsz z hz q hq)).2 r hr'
+      obtain ⟨a2, a3, a4⟩ := (hG.list _ (hsz z hz q hq)).2 r hr'
       have h1 := OrdGE.prod_sub (r := 1) zero_le_one r.out.toList
         (fun y => val K'.lk (evl θ (Fm.ofTree D) y)) (pv θ) fun y hy => hD.val y (a4 y hy) (v1 r hr' y hy)
       have h2 := h1.rescale (A := A) (r := n + 1)
       rw [← hf, map_sub, AlgHom.commutes] at h2
       have h3 := (OrdGE.of_algebraMap r.th).mul h2
-      simp only [Function.comp_apply, map_mul, wt, a1, List.map_nil, List.prod_nil, mul_one, ← mul_sub]
+      simp only [Function.comp_apply, map_mul, hω, ← mul_sub]
       exact h3.mono (by omega)
-    have e : (L.map S1).sum - algebraMap A E[T;T⁻¹] (pv θ z) =
-        (L.map fun q => S1 q - S2 q).sum + ((L.map S2).sum - algebraMap A E[T;T⁻¹] (pv θ z)) := by
+    have e : (L₀.map S1).sum - algebraMap A E[T;T⁻¹] (pv θ z) =
+        (L₀.map fun q => S1 q - S2 q).sum + ((L₀.map S2).sum - algebraMap A E[T;T⁻¹] (pv θ z)) := by
       have : ∀ l : List (Bt × E[T;T⁻¹]), (l.map fun q => S1 q - S2 q).sum = (l.map S1).sum - (l.map S2).sum := by
         intro l
         induction l with
@@ -171,7 +183,7 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
   have hX2 : 10 * X ≤ X ^ 2 := by rw [pow_two]; exact Nat.mul_le_mul_right _ hX10
   rw [cst_def] at hcst
   obtain ⟨sU, hsU⟩ : ∃ n, n = UF.code.size := ⟨_, rfl⟩
-  obtain ⟨sW, hsW⟩ : ∃ n, n = WF.code.size := ⟨_, rfl⟩
+  obtain ⟨sW, hsW⟩ : ∃ n, n = WN.code.size := ⟨_, rfl⟩
   rw [← hsU, ← hsW] at hcst
   have hu4 : 2000 ≤ u := by omega
   have hu1 : 1 ≤ u := by omega
@@ -209,7 +221,8 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     omega
   have hn : ∀ q ∈ (K.expand B).budg J, Span (nB * 2 ^ J * (2 ^ B * M)) q.2 :=
     fun q hq => hnB ▸ span_expand_budg hM hq
-  refine ⟨_, _, ?_, prop_approx_acc_round hD hp hJ hn hG (tG := u ^ f) (Ln := u ^ g) (t := u ^ e) ?_ ?_ ?_ ?_ ?_ ?_, ?_⟩
+  refine ⟨_, _, ?_, prop_approx_acc_round hD hp hJ hn hG (tG := u ^ f) (Ln := u ^ g) (L := X) (t := u ^ e) ?_ ?_ ?_ ?_ ?_ (by omega) ?_,
+    ?_⟩
   · -- the exponent of the rescaling
     have h1 : nB ≤ 2 ^ J := by
       calc nB ≤ nB * (1 * X) := Nat.le_mul_of_pos_right _ (by omega)
@@ -225,21 +238,21 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
       _ ≤ _ := Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by norm_num) (by omega))
   · -- time of the plain instances
     rw [← hnB]
-    have m1 : MM (K.ht + B + J + 1) + 2 ≤ u := by
-      unfold MM
-      omega
+    have m1 : 60 * (K.ht + B + J + 1) + 42 + 2 ≤ u := by nlinarith
     have m2 : 40 * (nB * (J + 1)) ≤ u ^ (e + 8) := by
       calc 40 * (nB * (J + 1)) ≤ 40 * (nB * X) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
         _ = nB * (40 * X) := by ring
         _ ≤ 2 * u ^ (h * α + 1) := (hb 40 (by omega)).1
         _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
         _ ≤ u ^ (e + 8) := pow_le_pow hu1 (by omega)
-    have m3 : 40 ≤ u ^ (e + 8) := by
+    have m3 : 80 ≤ u ^ (e + 8) := by
       have h7 : 2000 * u ^ (e + 7) ≤ u ^ (e + 8) := pbig (e + 7)
       have := ppos (e + 7)
       omega
-    calc MM (K.ht + B + J + 1) * u ^ (e + 8) + 40 * (nB * (J + 1)) + 40
-        ≤ (MM (K.ht + B + J + 1) + 2) * u ^ (e + 8) := by rw [add_mul]; omega
+    calc (60 * (K.ht + B + J + 1) + 42) * u ^ (e + 8) + 40 * (nB * (J + 1)) + 80
+        ≤ (60 * (K.ht + B + J + 1) + 42 + 2) * u ^ (e + 8) := by
+          have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 2 (u ^ (e + 8))
+          omega
       _ ≤ u * u ^ (e + 8) := Nat.mul_le_mul_right _ m1
       _ = u ^ (e + 9) := (pow_succ' u (e + 8)).symm
   · -- size of the plain instances
@@ -270,32 +283,32 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     exact lt_of_le_of_lt (hLP.trans (pow_le_pow hu1 (by omega))) hJ
   · -- time
     rw [← hnB, ← hnB']
-    have m1 : (8 * J + 10) * nB ≤ u ^ e' ∧ (8 * J + 10) * nB' ≤ u ^ e' ∧ 40 * (nB' * (J + 1)) ≤ u ^ e' := by
-      have h9 := hb 9 (by omega)
+    have h3 : 2 * u ^ (h * α + 1) ≤ u ^ e' := by
+      have := pbig (h * α + 1)
+      exact le_trans (by omega : _ ≤ u ^ (h * α + 1 + 1)) (pow_le_pow hu1 (by omega))
+    have e8 : (4 * X + 48) * J + 80 ≤ 10 * X * X := by nlinarith
+    have h10 := hb (10 * X) (by nlinarith)
+    have m1 : 2 * (((4 * X + 48) * J + 80) * nB) ≤ 2 * u ^ e' ∧ 2 * (((4 * X + 48) * J + 80) * nB') ≤ 2 * u ^ e' ∧
+        40 * (nB' * (J + 1)) ≤ u ^ e' := by
       have h40 := (hb 40 (by omega)).2
-      have h3 : 2 * u ^ (h * α + 1) ≤ u ^ e' := by
-        have := pbig (h * α + 1)
-        exact le_trans (by omega : _ ≤ u ^ (h * α + 1 + 1)) (pow_le_pow hu1 (by omega))
-      have e8 : (8 * J + 10) ≤ 9 * X := by omega
       refine ⟨?_, ?_, ?_⟩
-      · refine (Nat.mul_le_mul_right _ e8).trans ?_
+      · refine Nat.mul_le_mul_left _ ((Nat.mul_le_mul_right _ e8).trans ?_)
         rw [Nat.mul_comm]
-        exact h9.1.trans h3
-      · refine (Nat.mul_le_mul_right _ e8).trans ?_
+        exact h10.1.trans h3
+      · refine Nat.mul_le_mul_left _ ((Nat.mul_le_mul_right _ e8).trans ?_)
         rw [Nat.mul_comm]
-        exact h9.2.trans h3
+        exact h10.2.trans h3
       · refine le_trans ?_ (h40.trans h3)
         calc 40 * (nB' * (J + 1)) ≤ 40 * (nB' * X) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
           _ = nB' * (40 * X) := by ring
     have m2 : u ^ f ≤ u ^ e' := pow_le_pow hu1 (by omega)
-    have m3 : MM (K'.ht + B' + J + 1) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤ u ^ e' := by
-      calc MM (K'.ht + B' + J + 1) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤ u * u ^ (e - 4) := by
+    have m3 : (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤ u ^ e' := by
+      calc (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤ u * u ^ (e - 4) := by
             refine Nat.mul_le_mul ?_ hLP
-            unfold MM
-            omega
+            nlinarith
         _ = u ^ (e - 4 + 1) := (pow_succ' u _).symm
         _ ≤ u ^ e' := pow_le_pow hu1 (by omega)
-    have m4 : 80 ≤ u ^ e' := by
+    have m4 : 200 ≤ u ^ e' := by
       obtain ⟨e'', he''⟩ : ∃ e'', e' = e'' + 1 := ⟨e' - 1, by omega⟩
       have := pbig e''
       have := ppos e''
@@ -311,13 +324,13 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     have s3 : ∀ (K₀ : KT E[T;T⁻¹]) (B₀ : ℕ) (pre : List Bool), K₀.nds ≤ u ^ (h * α) → pre.length ≤ 1 →
         K₀.ht + B₀ + J + 1 ≤ X → (gt id J B₀ K₀ pre).code.size ≤ 2 * u ^ (h * α + 1) := by
       intro K₀ B₀ pre h0 h1 h2
-      have s4 := nds_expand_le (B := B₀) (c := 18 * X) h0 (by omega) hXu (by
-        rw [show 18 * X * X ^ 2 = 18 * X ^ 3 by ring]
+      have s4 := nds_expand_le (B := B₀) (c := 44 * X) h0 (by omega) hXu (by
+        rw [show 44 * X * X ^ 2 = 44 * X ^ 3 by ring]
         omega)
       refine (size_gt id J B₀ K₀ pre (B₀ + J) (fun i hi => (show id i ≤ B₀ + J from hi.le))).trans ?_
       refine le_trans (Nat.mul_le_mul_left _ (Nat.mul_le_mul (show J + 1 ≤ X by omega)
-        (show 4 * (pre.length + K₀.ht + (B₀ + J)) + 100 ≤ 18 * X by omega))) ?_
-      calc (K₀.expand B₀).nds * (X * (18 * X)) = (K₀.expand B₀).nds * (18 * X * X) := by ring
+        (show 4 * (pre.length + K₀.ht + (B₀ + J)) + 400 ≤ 44 * X by omega))) ?_
+      calc (K₀.expand B₀).nds * (X * (44 * X)) = (K₀.expand B₀).nds * (44 * X * X) := by ring
         _ ≤ _ := s4
     have sg := s3 K B [false] hK (by simp) (by omega)
     have sg' := s3 K' B' [true] hK' (by simp) (by omega)
@@ -441,8 +454,8 @@ value of D, that is, pv(z) on plain instances": the coefficients of the powers a
 theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D : Tree} (hD : IsAccA θ H v t K B D)
     {J m W Δ M : ℕ} (hJ : t < 2 ^ J) (hT : K.All (Thin Δ)) (hM : K.All (Span M))
     (hm : 2 * (2 ^ (B + J) * Δ) + 1 ≤ 2 ^ m) (hW : (K.expand B).nds * 2 ^ J * (2 ^ B * M) < 2 ^ W)
-    (ht : (K.expand B).nds * (60 * W + 3 * (J + m) + 100) + MM (K.ht + B + J + 1) * t +
-      40 * ((K.expand B).nds * (J + 1)) + 40 * (W + 1) + 120 ≤ t') :
+    (ht : 2 * ((K.expand B).nds * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200)) + 40 * (W + 1) +
+      ((60 * (K.ht + B + J + 1) + 42) * t + 40 * ((K.expand B).nds * (J + 1)) + 80) + 60 ≤ t') :
     ∃ (K' : KT E) (D' : Tree), IsAccT θ H v t' K' 1 D' ∧ K'.nds ≤ (K.expand B).nds * 2 ^ (J + m + 1) ∧
       K'.ht ≤ K.ht + B + J + m ∧
       D'.size ≤ (K.expand B).nds * (2 ^ (J + m) * (8 * (K.ht + B + J + m + W) + xcst + 31)) + D.size + xcst := by
@@ -475,15 +488,21 @@ theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D
   all_goals
     have key : ∀ z : Tree, z.size ≤ v ^ (H - 32) → KV θ K'.lk {p | K'.InB 1 p} (extF D g) z
         ((xL J m W K₂).map fun q => q.2.1 * ((if KT.val q.2.2 = 0 then 1 else 0) *
-          algebraMap A E ((evl θ (Fm.ofTree D) z).map fun r => if ok q.1 r.bill = true then r.th else 0).sum)).sum t' := by
+          algebraMap A E (pv θ (zq D z q.1)))).sum t' := by
       intro z hz
       obtain ⟨hD1, hD2⟩ := hD.run z hz
-      obtain ⟨lx, ex, rx⟩ := xF_ev (θ := θ) (κ := K'.lk) (S := {p | K'.InB 1 p}) z K₂ []
-        fun p hp => by subst hK'; exact ⟨rfl, hp⟩
+      obtain ⟨lx, ex, rx⟩ := xF_ev (θ := θ) (κ := K'.lk) (S := {p | K'.InB 1 p}) (L := K.ht + B + J + m + 1) z K₂ []
+        fun p hp => by
+          subst hK'
+          have := hp.length_le
+          have := ht_coefK J m K₂
+          exact ⟨rfl, hp, by simp only [List.nil_append]; omega⟩
       rw [← hg] at ex
-      refine (extF_kv ex rx hD1.ev (fun r hr => (hD2 r hr).1) (H := K.ht + B + J + 1) (n := K₂.nds * (J + 1))
-        fun q hq => ⟨(bt_xL q hq).1.trans (by omega), (bt_xL q hq).2, length_xL q hq⟩).mono ?_
-      omega
+      refine (extF_kv (τ := (60 * (K.ht + B + J + 1) + 42) * t + 40 * (K₂.nds * (J + 1)) + 80) ex rx fun q hq => ⟨(zq_plain hD1.ev (fun r hr => (hD2 r hr).1)
+        ((bt_xL q hq).1.trans (by omega : K₂.ht + J + 1 ≤ K.ht + B + J + 1)) le_rfl).1.of_le ?_, length_xL q hq⟩).mono ?_
+      · have := Nat.mul_le_mul_left 40 (bt_xL q hq).2
+        omega
+      · omega
   · intro z hz
     rw [Fm.ofTree_code]
     exact ⟨(key z hz).hl, fun r hr => (key z hz).evl.1 r hr⟩
@@ -492,16 +511,16 @@ theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D
     obtain ⟨hD1, hD2⟩ := hD.run z hz
     have hv := hD.val z hz hpl
     obtain ⟨l, hl⟩ : ∃ l, l = evl θ (Fm.ofTree D) z := ⟨_, rfl⟩
-    rw [← hl] at hD2 hv ⊢
+    rw [← hl] at hD2 hv
     obtain ⟨hsum₀, hze⟩ := lem_postpone D z hJ hD1 (fun r hr => (hD2 r (hl ▸ hr)).1) (K.expand B) K.lk
       fun r hr p hp => KT.lookup_expand ((hD2 r (hl ▸ hr)).2 p hp)
     have hbud : NS1.val K.lk l = (((K.expand B).budg J).map fun q => q.2 *
-        algebraMap A E[T;T⁻¹] (l.map fun r => if ok q.1 r.bill = true then r.th else 0).sum).sum := by
+        algebraMap A E[T;T⁻¹] (pv θ (zq D z q.1))).sum := by
       rw [hl, hsum₀]
-      exact congrArg List.sum (List.map_congr_left fun q hq => by rw [(hze q hq).2.2.1])
+      rfl
     rw [← hK₂] at hbud
-    obtain ⟨s, hs⟩ : ∃ s : Bt → A, s = fun b => (l.map fun r => if ok b r.bill = true then r.th else 0).sum := ⟨_, rfl⟩
-    have hs' : ∀ b, (l.map fun r => if ok b r.bill = true then r.th else 0).sum = s b := fun b => by rw [hs]
+    obtain ⟨s, hs⟩ : ∃ s : Bt → A, s = fun b => pv θ (zq D z b) := ⟨_, rfl⟩
+    have hs' : ∀ b, pv θ (zq D z b) = s b := fun b => by rw [hs]
     simp only [hs'] at hbud ⊢
     have hsum := sum_xL (A := A) (W := W) hsupp fun b => algebraMap A (AddMonoidAlgebra E (ZMod (2 ^ W))) (s b)
     -- the right side is the image of the approximate value

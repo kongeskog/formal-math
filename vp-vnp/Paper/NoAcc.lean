@@ -90,7 +90,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
   have hX2 : 10 * X ≤ X ^ 2 := by rw [pow_two]; exact Nat.mul_le_mul_right _ hX10
   rw [cst_def] at hcst
   generalize hsU : UF.code.size = sU
-  generalize hsW : WF.code.size = sW
+  generalize hsW : WN.code.size = sW
   rw [hsU, hsW] at hcst
   have hv4 : 2000 ≤ v := by omega
   have hv1 : 1 ≤ v := by omega
@@ -113,15 +113,15 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     have s3 := size_gt red J B' K [] M (fun i _ => (hM i).le)
     rw [List.length_nil] at s3
     have s4 : g.code.size ≤ 2 * v ^ 2 := by
-      have := hnBX (14 * X) (by linarith)
-      calc g.code.size ≤ nB * ((J + 1) * (4 * (0 + K.ht + M) + 100)) := s3
-        _ ≤ nB * (X * (14 * X)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul hJX (by
+      have := hnBX (44 * X) (by nlinarith)
+      calc g.code.size ≤ nB * ((J + 1) * (4 * (0 + K.ht + M) + 400)) := s3
+        _ ≤ nB * (X * (44 * X)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul hJX (by
             have := le_max_right B M
             omega))
-        _ = nB * (14 * X * X) := by ring
+        _ = nB * (44 * X * X) := by ring
         _ ≤ 2 * v ^ 2 := this
     have s5 : p.size ≤ D.size + g.code.size + sW + 500 := by
-      simp only [hp, diagF, app, ZE, Fm.code, Tree.size, size_num, ← hsW]
+      simp only [hp, diagF, guessF, lett, node, app, ZE, Fm.code, Tree.size, size_num, ← hsW]
       omega
     have s6 : v ^ 2 ≤ v ^ (4 * h) := pow_le_pow hv1 (by omega)
     have s7 : sW + 500 ≤ v ^ (4 * h) := by
@@ -129,13 +129,18 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
         _ ≤ _ := pow_le_pow hv1 (by omega)
     have := pbig (4 * h)
     omega
-  have hgev : ∀ z : Tree, ∃ l, Ev θ g z l ∧ List.Forall₂ (RelG K.lk (K.InB B') ((8 * J + 10) * nB)) l
-      ((K.expand B').budg J) := by
+  have hgev : ∀ z : Tree, ∃ l, Ev θ g z l ∧ List.Forall₂ (RelG K.lk (· ∈ {n | K.InB B' n})
+      (((4 * X + 48) * J + 80) * nB)) l ((K.expand B').budg J) := by
     intro z
-    refine gt_ev z K [] fun q hq i _ => ⟨?_, ?_⟩
+    refine gt_ev z K [] fun q hq i _ => ⟨?_, ?_, ?_⟩
     · obtain ⟨c, hc⟩ := hq.lk
       rw [List.nil_append, hc, hc, hred]
     · exact hq.inB (lt_of_lt_of_le (hM i) (le_max_right _ _))
+    · have := (hq.inB (Nat.lt_succ_self (red i))).length_le
+      have := hM i
+      have := le_max_right B M
+      simp only [List.nil_append]
+      omega
   have hqs : ∀ q ∈ (K.expand B').budg J, q.1.ht ≤ K.ht + B' + J + 1 ∧ q.1.nds ≤ nB * (J + 1) := by
     intro q hq
     obtain ⟨h1, h3⟩ := KT.ht_nds_budg hq
@@ -161,18 +166,21 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     omega
   -- its runs
   obtain ⟨lg, eg, rg⟩ := hgev p
-  obtain ⟨l, e, hl, hval⟩ := diagF_ev (D := D) eg rg (tD := v ^ (16 * h - 16)) fun q hq => by
-    obtain ⟨a1, a2⟩ := hD.run _ (hsz q hq)
-    exact ⟨a1, fun r hr => ⟨(a2 r hr).1, fun n hn => ((a2 r hr).2 n hn).mono (le_max_left _ _)⟩⟩
-  have ep : Ev θ (Fm.ofTree p) p l := by rw [hp, Fm.ofTree_code]; exact e
+  have hkv := diagF_kv (D := D) (ω := fun y => val K.lk (evl θ (Fm.ofTree D) y)) (tD := v ^ (16 * h - 16)) eg rg
+    fun q hq => by
+      obtain ⟨a1, a2⟩ := hD.run _ (hsz q hq)
+      exact ⟨_, a1.ev, fun r hr => ⟨(a2 r hr).1, fun n hn => ((a2 r hr).2 n hn).mono (le_max_left _ _)⟩, rfl⟩
+  obtain ⟨hl, hval⟩ := hkv.evl
+  have ep : Ev θ (Fm.ofTree p) p (evl θ (diagF D g) p) := by rw [hp, Fm.ofTree_code]; exact hkv.hl.ev
+  set l := evl θ (diagF D g) p
   -- time
-  have hT : ∀ r ∈ l, r.cost ≤ v ^ (16 * h - 15) := by
+  have hT : ∀ r ∈ l, r.cost + r.out.size ≤ v ^ (16 * h - 15) := by
     intro r hr
     refine (hl r hr).1.trans ?_
-    have m1 : (8 * J + 10) * nB ≤ 2 * v ^ 2 := by
-      have := hnBX 9 (by omega)
-      calc (8 * J + 10) * nB ≤ 9 * X * nB := Nat.mul_le_mul_right _ (by omega)
-        _ = nB * (9 * X) := by ring
+    have m1 : ((4 * X + 48) * J + 80) * nB ≤ 2 * v ^ 2 := by
+      have := hnBX (18 * X) (by nlinarith)
+      calc ((4 * X + 48) * J + 80) * nB ≤ 18 * X * X * nB := Nat.mul_le_mul_right _ (by nlinarith)
+        _ = nB * (18 * X * X) := by ring
         _ ≤ _ := this
     have m2 : v ^ 2 ≤ v ^ (16 * h - 16) := pow_le_pow hv1 (by omega)
     have m3 := pbig (16 * h - 16)
@@ -181,7 +189,8 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     rw [m5]
     omega
   -- Lemma lem:postpone for the program applied to itself
-  have hbill : ∀ r ∈ l, ∀ n ∈ r.bill, K.lk n = (K.expand B').lookup n := fun r hr n hn => KT.lookup_expand ((hl r hr).2 n hn)
+  have hbill : ∀ r ∈ l, ∀ n ∈ names r.out, K.lk n = (K.expand B').lookup n := fun r hr n hn =>
+    KT.lookup_expand ((hl r hr).2 n hn)
   obtain ⟨hsum, hze⟩ := lem_postpone p p (T := v ^ (16 * h - 15)) hJ ep.hl (by rw [ep.evl]; exact hT)
     (K.expand B') K.lk (by rw [ep.evl]; exact hbill)
   rw [ep.evl] at hsum
@@ -190,25 +199,26 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     obtain ⟨pl, -, -⟩ := hze q hq
     refine Plain.of_le pl ?_
     have hht := KT.ht_expand B' K
-    have m1 : 1000 + 100 * ((K.expand B').ht + J + 1) + 2 ≤ v := by omega
+    have m1 : 60 * ((K.expand B').ht + J + 1) + 42 + 2 ≤ v := by omega
     have m3 : v ^ 2 ≤ v ^ (16 * h - 16) := pow_le_pow hv1 (by omega)
     have m4 := pbig (16 * h - 16)
     have m5 : 16 * h - 15 = 16 * h - 16 + 1 := by omega
     have m6 : 1 ≤ v ^ (16 * h - 16) := ppos _
-    have m7 : 40 * (nB * (J + 1)) + 40 ≤ v ^ (16 * h - 15) := by
+    have m7 : 40 * (nB * (J + 1)) + 80 ≤ v ^ (16 * h - 15) := by
       rw [m5]
       omega
     have m8 : v * v ^ (16 * h - 15) ≤ v ^ (16 * h) := by
       rw [← pu]
       exact pow_le_pow hv1 (by omega)
     rw [← hnB]
-    calc (1000 + 100 * ((K.expand B').ht + J + 1)) * v ^ (16 * h - 15) + 40 * (nB * (J + 1)) + 40
-        ≤ (1000 + 100 * ((K.expand B').ht + J + 1) + 2) * v ^ (16 * h - 15) := by rw [add_mul _ 2]; omega
+    calc (60 * ((K.expand B').ht + J + 1) + 42) * v ^ (16 * h - 15) + 40 * (nB * (J + 1)) + 80
+        ≤ (60 * ((K.expand B').ht + J + 1) + 42 + 2) * v ^ (16 * h - 15) := by rw [add_mul _ 2]; omega
       _ ≤ v * v ^ (16 * h - 15) := Nat.mul_le_mul_right _ m1
       _ ≤ _ := m8
   -- 1 + its own value
   have key : val K.lk l = 1 + val K.lk l := by
     conv_lhs => rw [hval]
+    simp only [zq] at hsum ⊢
     congr 1
     rw [hsum]
     refine congrArg List.sum (List.map_congr_left fun q hq => congrArg (q.2 * ·) ?_)
