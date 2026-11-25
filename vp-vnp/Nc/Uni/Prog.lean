@@ -40,14 +40,9 @@ def rgs (b : Bool) : Finset (Zc K) := univ.image fun i => tp (.rg i) b
 theorem mem_rgs (b : Bool) (z : Zc K) : z ∈ rgs b ↔ ∃ i, z = tp (.rg i) b := by
   simp [rgs, eq_comm]
 
-theorem card_rgs (b : Bool) : (rgs b : Finset (Zc K)).card = 5 := by
-  rw [rgs, Finset.card_image_of_injective, Finset.card_univ, Fintype.card_fin]
-  intro i j h
-  simpa using h
-
 /-- Loops with a fixed body. -/
 theorem runs_rep (w : Zc K → List (Sy M K)) (hw : ∃ z, w z ≠ []) :
-    Runs (2 * ∑ z, (w z).length + 1 + 1) (fun (l : List Unit) z => l.flatMap fun _ => w z) (fun _ => (1 : A)) := by
+    Runs (fun (l : List Unit) z => l.flatMap fun _ => w z) (fun _ => (1 : A)) := by
   have h := (Runs.const (F := A) w).kstar fun _ => hw
   exact h.congr (Equiv.refl _) (fun l z => rfl) fun l => by simp
 
@@ -66,19 +61,16 @@ theorem flatMap_unit {γ : Type*} (l : List Unit) (a : γ) : (l.flatMap fun _ =>
   | nil => rfl
   | cons x l ih => rw [List.flatMap_cons, ih]; rfl
 
-theorem runs_ct : Runs 60 (emCt : List Bool × List Unit → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
-  have hc : ({tp .cp true, tp .fr false, tp .cp false} : Finset (Zc K)).card = 3 := by
-    rw [Finset.card_insert_of_notMem (by simp), Finset.card_pair (by simp)]
-  have hc2 : ({tp .cp true, tp .fr false} : Finset (Zc K)).card = 2 := Finset.card_pair (by simp)
+theorem runs_ct : Runs (emCt : List Bool × List Unit → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := Runs.wordstar (F := A) (Z := Zc K) {tp .cp true, tp .fr false, tp .cp false} ⟨tp .cp true, by simp⟩
     (fun b : Bool => (Sy.bit b : Sy M K))
   have h2 := Runs.const (F := A) fun z : Zc K => on {tp .cp true, tp .fr false} [(Sy.bit false : Sy M K)] z ++
     on {tp .cp false} [Sy.bit true] z
   have h3 := runs_rep (A := A) (fun z : Zc K => on {tp .cp true, tp .fr false} [(Sy.bit true : Sy M K)] z ++
     on {tp .cp false} [Sy.bit false] z) ⟨tp .cp false, by simp [on]⟩
-  have h4 := Runs.word (F := A) (Z := Zc K) {tp .cp true, tp .fr false, tp .cp false} [(Sy.semi : Sy M K)]
-  refine ((((h1.mul h2).mul h3).mul h4).congr ⟨fun r => (((r.1, ()), r.2), ()), fun y => (y.1.1.1, y.1.2), fun r => rfl,
-    fun y => rfl⟩ (fun r z => ?_) fun r => ?_).mono ?_
+  have h4 := Runs.const (F := A) (Z := Zc K) (on {tp .cp true, tp .fr false, tp .cp false} [(Sy.semi : Sy M K)])
+  refine (((h1.mul h2).mul h3).mul h4).congr ⟨fun r => (((r.1, ()), r.2), ()), fun y => (y.1.1.1, y.1.2), fun r => rfl,
+    fun y => rfl⟩ (fun r z => ?_) fun r => ?_
   · obtain ⟨w, l⟩ := r
     simp only [Equiv.coe_fn_mk, emCt, cn, cn1, bw]
     by_cases hz1 : z = tp .cp true
@@ -92,8 +84,6 @@ theorem runs_ct : Runs 60 (emCt : List Bool × List Unit → Zc K → List (Sy M
           simp [on, flatMap_unit]
         · simp [on, hz1, hz2, hz3]
   · simp
-  · simp only [List.length_append, Finset.sum_add_distrib, sum_on, hc, hc2]
-    simp
 
 /-- The first words: registers 0, counter 1. -/
 def i0 (l : List Unit) : List Bool := List.replicate (l.length + 1) false
@@ -106,14 +96,14 @@ def emIn (m0 : M) (kN : K) (l : List Unit) : Zc K → List (Sy M K) := fun z =>
   on (rgs false) (bw (i0 l)) z ++ on {tp .cp false} (bw (i1 l)) z ++
     on {lsF} (rec' false kN (List.replicate (l.length + 1) fun _ => false)) z ++ on {tp .md false} [.md m0] z
 
-theorem runs_in (m0 : M) (kN : K) : Runs 80 (emIn m0 kN : List Unit → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
+theorem runs_in (m0 : M) (kN : K) : Runs (emIn m0 kN : List Unit → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := Runs.const (F := A) fun z : Zc K => on {lsF} [(Sy.flag false : Sy M K), .kd kN] z ++ on {tp .md false} [.md m0] z
   have h2 := runs_rep (A := A) (fun z : Zc K => on (insert (tp .cp false) (rgs false)) [(Sy.bit false : Sy M K)] z ++
     on {lsF} [.col fun _ => false] z) ⟨lsF, by simp [on, mem_rgs]⟩
   have h3 := Runs.const (F := A) fun z : Zc K => on (rgs false) [(Sy.bit false : Sy M K), .semi] z ++
     on {tp .cp false} [.bit true, .semi] z ++ on {lsF} [.col fun _ => false, .mark, .dot] z
-  refine (((h1.mul h2).mul h3).congr ⟨fun l => (((), l), ()), fun y => y.1.2, fun l => rfl, fun y => rfl⟩
-    (fun l z => ?_) fun l => ?_).mono ?_
+  refine ((h1.mul h2).mul h3).congr ⟨fun l => (((), l), ()), fun y => y.1.2, fun l => rfl, fun y => rfl⟩
+    (fun l z => ?_) fun l => ?_
   · simp only [Equiv.coe_fn_mk, emIn, i0, i1, bw, rec'_eq]
     by_cases hz1 : z ∈ rgs false
     · obtain ⟨i, rfl⟩ := (mem_rgs _ _).1 hz1
@@ -126,10 +116,6 @@ theorem runs_in (m0 : M) (kN : K) : Runs 80 (emIn m0 kN : List Unit → Zc K →
           simp [on, mem_rgs, flatMap_unit, List.replicate_succ']
         · simp [on, hz1, hz2, hz3]
   · simp
-  · have hc : (insert (tp .cp false) (rgs false) : Finset (Zc K)).card = 6 := by
-      rw [Finset.card_insert_of_notMem (by simp [mem_rgs]), card_rgs]
-    simp only [List.length_append, Finset.sum_add_distrib, sum_on, hc, card_rgs]
-    simp
 
 section Steps
 
@@ -217,23 +203,16 @@ theorem emSt_eq (x : P.Rl × List (Fin 9 → Bool)) (z : Zc K) :
 
 theorem st1_ne (r : P.Rl) (v : Fin 9 → Bool) : ∃ z, st1 P r v z ≠ [] := ⟨tp .fr true, by simp [st1]⟩
 
-/-- Dimension of a step. -/
-def dimSt : ℕ := ∑ r : P.Rl, (2 * ∑ z, (st0 P r z).length + 1 +
-  ((∑ v : Fin 9 → Bool, (2 * ∑ z, (st1 P r v z).length + 1)) + 1 + (2 * ∑ z, ((st2 z : List (Sy M K))).length + 1)))
-
-theorem runs_st : Runs (dimSt P) (emSt P : P.Rl × List (Fin 9 → Bool) → Zc K → List (Sy M K)) (fun x => P.wt x.1) := by
+theorem runs_st : Runs (emSt P : P.Rl × List (Fin 9 → Bool) → Zc K → List (Sy M K)) (fun x => P.wt x.1) := by
   have h := Runs.sum fun r : P.Rl =>
     (Runs.pick (fun _ : Unit => st0 P r) fun _ => P.wt r).mul
     (((Runs.pick (fun v : Fin 9 → Bool => st1 P r v) fun _ => 1).kstar fun v => st1_ne P r v).mul
     (Runs.const (st2 : Zc K → List (Sy M K))))
-  refine (h.congr ⟨fun x => ⟨x.1, ((), x.2, ())⟩, fun y => (y.1, y.2.2.1), fun x => rfl, fun y => rfl⟩ (fun x z => ?_)
-    fun x => ?_).mono ?_
+  refine h.congr ⟨fun x => ⟨x.1, ((), x.2, ())⟩, fun y => (y.1, y.2.2.1), fun x => rfl, fun y => rfl⟩ (fun x z => ?_)
+    fun x => ?_
   · simp only [Equiv.coe_fn_mk]
     exact emSt_eq P x z
   · simp
-  · unfold dimSt
-    refine Finset.sum_le_sum fun r _ => ?_
-    simp
 
 end Steps
 
@@ -249,16 +228,15 @@ def ed1 (v : Fin 5 → Bool) : Zc K → List (Sy M K)
   | .tp (.rg i) s => if s then [.bit (v i)] else []
   | _ => []
 
-theorem runs_ed (mh : M) : Runs ((∑ v : Fin 5 → Bool, (2 * ∑ z, (ed1 v z : List (Sy M K)).length + 1)) + 1 + 30)
-    (emEd mh : List (Fin 5 → Bool) × List Bool → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
+theorem runs_ed (mh : M) : Runs (emEd mh : List (Fin 5 → Bool) × List Bool → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := (Runs.pick (F := A) (fun v : Fin 5 → Bool => (ed1 v : Zc K → List (Sy M K))) fun _ => 1).kstar
     fun v => ⟨tp (.rg 0) true, by simp [ed1]⟩
   have h2 := Runs.const (F := A) fun z : Zc K => on (rgs true) [(Sy.semi : Sy M K)] z ++
     on {tp .md true} [.md mh] z ++ on {tp .cp true} [.bit true] z
   have h3 := Runs.wordstar (F := A) (Z := Zc K) {tp .cp true} ⟨tp .cp true, by simp⟩ (fun b : Bool => (Sy.bit b : Sy M K))
-  have h4 := Runs.word (F := A) (Z := Zc K) {tp .cp true} [(Sy.semi : Sy M K)]
-  refine ((((h1.mul h2).mul h3).mul h4).congr ⟨fun x => (((x.1, ()), x.2), ()), fun y => (y.1.1.1, y.1.2), fun r => rfl,
-    fun y => rfl⟩ (fun x z => ?_) fun x => ?_).mono ?_
+  have h4 := Runs.const (F := A) (Z := Zc K) (on {tp .cp true} [(Sy.semi : Sy M K)])
+  refine (((h1.mul h2).mul h3).mul h4).congr ⟨fun x => (((x.1, ()), x.2), ()), fun y => (y.1.1.1, y.1.2), fun r => rfl,
+    fun y => rfl⟩ (fun x z => ?_) fun x => ?_
   · obtain ⟨w, u⟩ := x
     simp only [Equiv.coe_fn_mk]
     match z with
@@ -275,22 +253,16 @@ theorem runs_ed (mh : M) : Runs ((∑ v : Fin 5 → Bool, (2 * ∑ z, (ed1 v z :
     | .tp (.cm k) s => simp [ed1, emEd, on, mem_rgs]
     | .inp j => simp [ed1, emEd, on, mem_rgs]
   · simp
-  · simp only [List.length_append, Finset.sum_add_distrib, sum_on, card_rgs]
-    simp
 
 /-- Emissions of the phase that appends the lookups to the list. -/
 def emAp (w : List (Sy M K)) : Zc K → List (Sy M K) := fun z => on {tp .lk true, lsF} w z ++ on {lsF} [.bar] z
 
-theorem runs_ap : Runs (Fintype.card (Sy M K) * 5 + 1 + 3)
-    (emAp : List (Sy M K) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
-  have hc : ({tp .lk true, lsF} : Finset (Zc K)).card = 2 := Finset.card_pair (by simp)
+theorem runs_ap : Runs (emAp : List (Sy M K) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h := (Runs.wordstar (Z := Zc K) {tp .lk true, lsF} ⟨lsF, by simp⟩ (fun γ : Sy M K => γ)).mul
-    (Runs.word (F := A) (Z := Zc K) {lsF} [(Sy.bar : Sy M K)])
-  refine (h.congr ⟨fun w => (w, ()), Prod.fst, fun w => rfl, fun y => rfl⟩ (fun w z => ?_) fun w => ?_).mono ?_
+    (Runs.const (F := A) (Z := Zc K) (on {lsF} [(Sy.bar : Sy M K)]))
+  refine h.congr ⟨fun w => (w, ()), Prod.fst, fun w => rfl, fun y => rfl⟩ (fun w z => ?_) fun w => ?_
   · simp [emAp]
   · simp
-  · rw [hc]
-    simp
 
 /-- Runs of the program. -/
 abbrev XP (P : Mach A M K) := List Unit × List (List Bool × List Unit) × List (P.Rl × List (Fin 9 → Bool)) ×
@@ -303,14 +275,9 @@ noncomputable def emX (x : XP P) : Zc K → List (Sy M K) := fun z =>
   emIn P.m0 P.kN x.1 z ++ ((x.2.1.flatMap fun r => emCt r z) ++ ((x.2.2.1.flatMap fun s => emSt P s z) ++
     (emEd P.mh x.2.2.2.1 z ++ (emAp x.2.2.2.2.1 z ++ emU x.2.2.2.2.2 z))))
 
-/-- Dimension of the program. -/
-noncomputable def dimX : ℕ := 80 + ((60 + 1) + ((dimSt P + 1) +
-  (((∑ v : Fin 5 → Bool, (2 * ∑ z, (ed1 v z : List (Sy M K)).length + 1)) + 1 + 30) +
-    ((Fintype.card (Sy M K) * 5 + 1 + 3) + dimU (Fintype.card (Sy M K)) (Fintype.card (Bl K))))))
-
 theorem emSt_ne (x : P.Rl × List (Fin 9 → Bool)) : ∃ z, emSt P x z ≠ [] := ⟨tp .md true, by simp [emSt]⟩
 
-theorem runs_X : Runs (dimX P) (emX P : XP P → Zc K → List (Sy M K)) (fun x => (x.2.2.1.map fun s => P.wt s.1).prod) := by
+theorem runs_X : Runs (emX P : XP P → Zc K → List (Sy M K)) (fun x => (x.2.2.1.map fun s => P.wt s.1).prod) := by
   have h := (runs_in P.m0 P.kN).mul
     (((runs_ct).kstar fun r => ⟨tp .cp true, by simp [emCt, on, bw]⟩).mul
     (((runs_st P).kstar fun s => emSt_ne P s).mul ((runs_ed P.mh).mul

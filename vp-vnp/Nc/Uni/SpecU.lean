@@ -123,11 +123,7 @@ abbrev XU (M K : Type) := List (Ps M K) × List (Rk K) × XG (List (Bl K))
 noncomputable def emU (x : XU M K) : Zc K → List (Sy M K) := fun z =>
   (x.1.flatMap fun p => emPs p z) ++ (emFi x.2.1 z ++ emCm x.2.2 z)
 
-/-- Dimension of the sort. -/
-def dimU (m k : ℕ) : ℕ := (dimPs m k + 1) + ((14 + 3 + (k * 7 + 1) + 7 + 1 + 3) + dimCm k)
-
-theorem runs_U : Runs (dimU (Fintype.card (Sy M K)) (Fintype.card (Bl K)))
-    (emU : XU M K → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
+theorem runs_U : Runs (emU : XU M K → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h := ((runs_ps (A := A) (M := M) (K := K)).kstar fun p => ⟨lsT, by
     intro h
     have := congrArg List.length h

@@ -20,12 +20,12 @@ variable {F : Type*} [CommRing F] {Z Γ : Type*} [Fintype Z] [DecidableEq Z] [Fi
 /-- The series of one word. -/
 def Series.word {Ω : Type*} [DecidableEq Ω] (w : List Ω) : Series F Ω := fun o => if o = w then 1 else 0
 
-theorem RatLe.word {Ω : Type*} [DecidableEq Ω] (w : List Ω) :
-    RatLe (2 * w.length + 1) (Series.word w : Series F Ω) := by
+theorem Rational.word {Ω : Type*} [DecidableEq Ω] (w : List Ω) :
+    Rational (Series.word w : Series F Ω) := by
   induction w with
-  | nil => exact RatLe.one
+  | nil => exact Rational.one
   | cons a w ih =>
-    have h := (RatLe.letter (F := F) a).mul ih
+    have h := (Rational.letter (F := F) a).mul ih
     have e : Series.mul (Series.letter a) (Series.word w) = (Series.word (a :: w) : Series F Ω) := by
       funext o
       cases o with
@@ -52,8 +52,7 @@ theorem RatLe.word {Ω : Type*} [DecidableEq Ω] (w : List Ω) :
         · subst hb
           by_cases ho : o = w <;> simp [Series.letter, Series.word, ho]
         · simp [Series.letter, Series.word, hb]
-    rw [e] at h
-    exact h.mono (by simp; omega)
+    rwa [e] at h
 
 theorem hat_word (w : List (Z × Γ)) (v : Z → List Γ) :
     hat (Series.word w : Series F (Z × Γ)) v = if v = proj w then 1 else 0 := by
@@ -70,9 +69,8 @@ variable {κ : Type*} [Fintype κ] [DecidableEq κ]
 def Series.body (wd : κ → List (Z × Γ)) (c : κ → F) : Series F (Z × Γ) :=
   ∑ k, c k • Series.word (wd k)
 
-theorem RatLe.body (wd : κ → List (Z × Γ)) (c : κ → F) :
-    RatLe (∑ k, (2 * (wd k).length + 1)) (Series.body wd c) :=
-  RatLe.sum _ _ _ fun k _ => (RatLe.word (wd k)).smul (c k)
+theorem Rational.body (wd : κ → List (Z × Γ)) (c : κ → F) : Rational (Series.body wd c) :=
+  Rational.sum _ _ fun k _ => (Rational.word (wd k)).smul (c k)
 
 theorem hat_body (wd : κ → List (Z × Γ)) (c : κ → F) (v : Z → List Γ) :
     hat (Series.body wd c) v = ∑ k, if v = proj (wd k) then c k else 0 := by

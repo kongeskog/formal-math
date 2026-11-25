@@ -65,25 +65,4 @@ theorem flatMap_on {κ : Type*} (zs : Finset Z) (f : κ → List Γ) (l : List �
   · rfl
   · simp
 
-theorem sum_on (zs : Finset Z) (w : List Γ) : ∑ z, (on zs w z).length = zs.card * w.length := by
-  unfold on
-  simp only [apply_ite List.length, List.length_nil]
-  rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, smul_eq_mul]
-
-namespace Runs
-
-/-- Choose a letter and write it on the channels of zs. -/
-theorem letter {κ : Type*} [Fintype κ] (zs : Finset Z) (f : κ → Γ) (c : κ → F) :
-    Runs (Fintype.card κ * (2 * zs.card + 1)) (fun k => on zs [f k]) c := by
-  refine (pick (fun k => on zs [f k]) c).mono ?_
-  simp [sum_on]
-
-/-- A fixed word on the channels of zs. -/
-theorem word (zs : Finset Z) (w : List Γ) :
-    Runs (2 * (zs.card * w.length) + 1) (fun _ : Unit => on zs w) (fun _ => (1 : F)) := by
-  refine (const (on zs w)).mono ?_
-  rw [sum_on]
-
-end Runs
-
 end Nc

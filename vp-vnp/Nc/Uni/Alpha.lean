@@ -22,9 +22,9 @@ variable {F : Type*} [CommRing F] {Z Γ : Type*} [Fintype Z] [DecidableEq Z] [Fi
 
 /-- Any word over a set of letters, written on the channels of zs. -/
 theorem Runs.wordstar {κ : Type*} [Fintype κ] (zs : Finset Z) (hz : zs.Nonempty) (f : κ → Γ) :
-    Runs (Fintype.card κ * (2 * zs.card + 1) + 1) (fun l : List κ => on zs (l.map f)) (fun _ => (1 : F)) := by
+    Runs (fun l : List κ => on zs (l.map f)) (fun _ => (1 : F)) := by
   obtain ⟨z₀, hz₀⟩ := hz
-  have h := (Runs.letter (F := F) zs f fun _ => 1).kstar fun k => ⟨z₀, by simp [on, hz₀]⟩
+  have h := (Runs.pick (F := F) (fun k => on zs [f k]) fun _ => 1).kstar fun k => ⟨z₀, by simp [on, hz₀]⟩
   refine h.congr (Equiv.refl _) (fun l z => ?_) fun l => by simp
   rw [Equiv.refl_apply, flatMap_on]
   congr 1
