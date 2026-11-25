@@ -19,9 +19,6 @@ open Nc.Tower (U x lo hi)
 /-- The constant κ_n of the first estimate. -/
 noncomputable def kappa (μ : ℕ) (s : ℝ) (n : ℕ) : ℝ := 18 * Nat.clog 2 n * grow μ s (2 ^ Nat.clog 2 n)
 
-theorem kappa_nonneg (μ : ℕ) {s : ℝ} (hs : 1 ≤ s) (n : ℕ) : 0 ≤ kappa μ s n :=
-  mul_nonneg (by positivity) (grow_nonneg μ hs _)
-
 /-- The proof of Lemma lem:first, rank one in the upper right block (Lemma lem:words). -/
 theorem lem_first_rank_one {a : ℕ} (l : Len (U (a + a))) (u φ : Fin a → F2) :
     l.val (up (Matrix.vecMulVec u φ)) ≤ 18 * l.S := by
@@ -175,65 +172,10 @@ theorem lem_first_double {m : ℕ} {s : ℝ} (hm : 2 ≤ m) (hs : 1 ≤ s) {a : 
         linarith
     _ = _ := by ring
 
-/-- κ_n² n = o(n²). -/
-theorem kappa_small {μ : ℕ} {s : ℝ} (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) :
-    Tendsto (fun n : ℕ => kappa μ s n ^ 2 * n / (n : ℝ) ^ 2) atTop (nhds 0) := by
-  have hm0 : (0 : ℝ) < μ := by exact_mod_cast (by omega : 0 < μ)
-  set ρ : ℝ := s ^ 2 / μ with hρ
-  have hρ0 : 0 < ρ := by positivity
-  have hρ1 : ρ < 1 := by rw [hρ, div_lt_one hm0]; exact hsm
-  rw [Metric.tendsto_atTop]
-  intro ε hε
-  obtain ⟨L₀, hL₀⟩ := exists_log_large hρ0 hρ1 (show (0 : ℝ) < ε / (2 * (324 * 2 * (μ : ℝ) ^ 4)) by positivity)
-  refine ⟨μ ^ L₀ + 2, fun n hn => ?_⟩
-  set i := Nat.clog 2 n with hi
-  set L := Nat.log μ (2 ^ i) with hL
-  have hn0 : (0 : ℝ) < n := Nat.cast_pos.2 (by omega)
-  have hni : n ≤ 2 ^ i := Nat.le_pow_clog one_lt_two n
-  have hi2 : 2 ^ i ≤ 2 * n := by
-    obtain ⟨j, hj⟩ : ∃ j, i = j + 1 := ⟨i - 1, by have := Nat.clog_pos one_lt_two (show 2 ≤ n by omega); omega⟩
-    have h : 2 ^ i.pred < n := Nat.pow_pred_clog_lt_self one_lt_two (by omega)
-    rw [hj, Nat.pred_succ] at h
-    rw [hj, pow_succ]
-    omega
-  have hLL : L₀ ≤ L := Nat.le_log_of_pow_le (by omega) (by omega)
-  have hiL : (i : ℝ) ≤ μ * ((L : ℝ) + 1) := by
-    have h1 : 2 ^ i < 2 ^ (μ * (L + 1)) := by
-      calc 2 ^ i < μ ^ (L + 1) := Nat.lt_pow_succ_log_self (by omega) _
-        _ ≤ (2 ^ μ) ^ (L + 1) := Nat.pow_le_pow_left Nat.lt_two_pow_self.le _
-        _ = 2 ^ (μ * (L + 1)) := by rw [← pow_mul]
-    have h2 : i < μ * (L + 1) := (Nat.pow_lt_pow_iff_right (by norm_num)).1 h1
-    exact_mod_cast h2.le
-  have hmL : (μ : ℝ) ^ L ≤ 2 * n := by
-    exact_mod_cast (Nat.pow_log_le_self μ (Nat.two_pow_pos i).ne').trans hi2
-  have e0 : (s ^ L) ^ 2 = ρ ^ L * (μ : ℝ) ^ L := by
-    rw [← mul_pow, hρ, div_mul_cancel₀ _ hm0.ne', ← pow_mul, ← pow_mul, mul_comm]
-  have h5 : kappa μ s n ^ 2 ≤ 324 * 2 * (μ : ℝ) ^ 4 * (((L : ℝ) + 1) ^ 4 * ρ ^ L) * n := by
-    have e : kappa μ s n ^ 2 = 324 * (i : ℝ) ^ 2 * ((μ : ℝ) ^ 2 * ((L : ℝ) + 1) ^ 2 * (ρ ^ L * (μ : ℝ) ^ L)) := by
-      rw [kappa, grow, ← hi, ← hL, ← e0]
-      ring
-    rw [e]
-    calc _ ≤ 324 * ((μ : ℝ) * ((L : ℝ) + 1)) ^ 2 * ((μ : ℝ) ^ 2 * ((L : ℝ) + 1) ^ 2 * (ρ ^ L * (2 * n))) := by
-          gcongr
-      _ = _ := by ring
-  rw [Real.dist_eq, sub_zero, abs_of_nonneg (by positivity), div_lt_iff₀ (by positivity)]
-  calc kappa μ s n ^ 2 * n ≤ 324 * 2 * (μ : ℝ) ^ 4 * (ε / (2 * (324 * 2 * (μ : ℝ) ^ 4))) * n * n := by
-        gcongr
-        refine h5.trans ?_
-        gcongr
-        exact hL₀ L hLL
-    _ = ε / 2 * (n : ℝ) ^ 2 := by field_simp
-    _ < ε * (n : ℝ) ^ 2 := by
-        have : 0 < ε * (n : ℝ) ^ 2 := by positivity
-        linarith
-
 /-- **Paper: Lemma lem:first.** "There are κ_n with κ_n² n = o(n²) such that every contracting length on U_n satisfies
-(E_g|g|²)^(1/2) ≤ κ_n ∑_j|x_j|." Here κ_n is the explicit kappa μ s n. -/
-theorem lem_first {μ : ℕ} {s : ℝ} (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) :
-    Tendsto (fun n : ℕ => kappa μ s n ^ 2 * n / (n : ℝ) ^ 2) atTop (nhds 0) ∧
-      ∀ (n : ℕ) (l : Len (U n)), Contr l μ s →
-        √((∑ g : U n, l.val g ^ 2) / Fintype.card (U n)) ≤ kappa μ s n * ∑ j : Fin (n - 1), l.val (x n j) := by
-  refine ⟨kappa_small hμ hs hsm, fun n => ?_⟩
+(E_g|g|²)^(1/2) ≤ κ_n ∑_j|x_j|." Here κ_n is the explicit kappa μ s n; that κ_n² n = o(n²) is
+proved in thm_poincare_size, where it is used. -/
+theorem lem_first {μ : ℕ} {s : ℝ} (hμ : 2 ≤ μ) (hs : 1 ≤ s) (n : ℕ) : Bd μ s n (kappa μ s n) := by
   have hpow : ∀ i : ℕ, Bd μ s (2 ^ i) (18 * i * grow μ s (2 ^ i)) := by
     intro i
     induction i with
@@ -247,7 +189,8 @@ theorem lem_first {μ : ℕ} {s : ℝ} (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s 
       have : 18 * (i : ℝ) * grow μ s (2 ^ i) ≤ 18 * i * grow μ s (2 ^ (i + 1)) := by gcongr
       push_cast
       linarith
-  exact bd_mono (Nat.le_pow_clog one_lt_two n) (kappa_nonneg μ hs n) (hpow _)
+  exact bd_mono (Nat.le_pow_clog one_lt_two n) (mul_nonneg (by positivity) (grow_nonneg μ hs _))
+    (hpow _)
 
 /-- C(n) = κ_n² n. -/
 noncomputable def windowConst (μ : ℕ) (s : ℝ) (n : ℕ) : ℝ := kappa μ s n ^ 2 * n
@@ -361,11 +304,11 @@ theorem windows_commute {p n p' n' : ℕ} (hd : p + n ≤ p') (hp' : p' + n' ≤
 
 /-- The inequality (eq:window) of the paper: |z Pz|² ≤ C(n) ∑ e_j(z)² over the generators of the window. "By Lemma
 lem:first and the Cauchy–Schwarz inequality." -/
-theorem eq_window (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {n p : ℕ}
+theorem eq_window (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {n p : ℕ}
     (hp : p + n ≤ h) (z : Z) :
     dist z ((A.W p n).P z) ^ 2 ≤ windowConst μ s n * ∑ j ∈ Ico p (p + n - 1), A.e j z ^ 2 := by
   have hC : Contr ((A.W p n).len z) μ s := (hA z).comap (wh h p n)
-  have h1 : ((A.W p n).len z).rms ≤ kappa μ s n * ((A.W p n).len z).S := (lem_first hμ hs hsm).2 n _ hC
+  have h1 : ((A.W p n).len z).rms ≤ kappa μ s n * ((A.W p n).len z).S := lem_first hμ hs n _ hC
   have h2 := projection_sq_le (A.W p n) z
   have h3 : (∑ g : U n, dist z ((A.W p n).act g z) ^ 2) / Fintype.card (U n) = ((A.W p n).len z).rms ^ 2 := by
     rw [Len.rms_sq]
@@ -411,7 +354,7 @@ theorem lem_tele_generator {n : ℕ} {y : Fin n → Z} {b : Z}
 
 /-- **Paper: Lemma lem:tele.** "Let u ≥ 2, p+3u ≤ h, ζ ≥ 0 and 4C(3u) ≤ ζ²(u−1)². If a is fixed by [p,p+2u), then
 |a, P_{[p+u,p+3u)}a| ≥ (1−ζ)R, where R = |a, P_{[p,p+3u)}a|." -/
-theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u p : ℕ} {ζ : ℝ}
+theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u p : ℕ} {ζ : ℝ}
     (hu : 2 ≤ u) (hp : p + 3 * u ≤ h) (hζ : 0 ≤ ζ)
     (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) {a : Z} (ha : (A.W p (2 * u)).Fix a) :
     (1 - ζ) * dist a ((A.W p (3 * u)).P a) ≤ dist a ((A.W (p + u) (2 * u)).P a) := by
@@ -540,7 +483,7 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
       (mul_nonneg hζ hR0)).2
     have h2 : ((u : ℝ) - 1) ^ 2 * dist b ((A.W p (3 * u)).P b) ^ 2 ≤ ((u : ℝ) - 1) ^ 2 * (ζ * R) ^ 2 := by
       calc _ ≤ ((u : ℝ) - 1) ^ 2 * (windowConst μ s (3 * u) * ∑ j ∈ Ico p (p + 3 * u - 1), A.e j b ^ 2) :=
-            mul_le_mul_of_nonneg_left (eq_window A hμ hs hsm hA hp b) (sq_nonneg _)
+            mul_le_mul_of_nonneg_left (eq_window A hμ hs hA hp b) (sq_nonneg _)
         _ = windowConst μ s (3 * u) * (((u : ℝ) - 1) ^ 2 * ∑ j ∈ Ico p (p + 3 * u - 1), A.e j b ^ 2) := by ring
         _ ≤ windowConst μ s (3 * u) * (4 * R ^ 2) := mul_le_mul_of_nonneg_left hsum (windowConst_nonneg μ s _)
         _ = 4 * windowConst μ s (3 * u) * R ^ 2 := by ring
@@ -637,7 +580,7 @@ theorem lem_angle_projections {G₁ G₂ Z : Type} [Group G₁] [Fintype G₁] [
 /-- **Paper: Lemma lem:angle.** "Let u, p, ζ be as in Lemma lem:tele, 0 ≤ ζ ≤ 1, and 1−c² ≤ (1−ζ)², c > 0. If a, a′
 are the projections of z for [p,p+2u) and [p+u,p+3u), then |aa′|² ≤ |za|² + |za′|² + 2c|za||za′|." -/
 theorem lem_angle {μ : ℕ} {s : ℝ} {h : ℕ} {Z : Type} [MetricSpace Z] [Cat.CN Z] (A : IsoAct (U h) Z)
-    (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u p : ℕ} {ζ c : ℝ}
+    (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u p : ℕ} {ζ c : ℝ}
     (hu : 2 ≤ u) (hp : p + 3 * u ≤ h) (hζ : 0 ≤ ζ)
     (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) (hζ1 : ζ ≤ 1)
     (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc : 0 < c) (z : Z) :
@@ -651,7 +594,7 @@ theorem lem_angle {μ : ℕ} {s : ℝ} {h : ℕ} {Z : Type} [MetricSpace Z] [Cat
   refine lem_angle_projections _ _ hc z v hv1 (hvf.sub A (by omega) (by omega) hp) fun q σ hσ0 hσ1 q1 q2 => ?_
   have hqf : (A.W p (2 * u)).Fix q := segment_fixed _ hσ0.le hσ1 hv1 (IsoAct.P_fix _ z) q1 q2
   have hqv : (A.W p (3 * u)).P q = v := projection_segment _ q1 q2
-  have h1 := lem_tele A hμ hs hsm hA hu hp hζ hC hqf
+  have h1 := lem_tele A hμ hs hA hu hp hζ hC hqf
   rw [hqv] at h1
   rw [dist_comm v q]
   calc (1 - c ^ 2) * dist q v ^ 2 ≤ ((1 - ζ) * dist q v) ^ 2 := by
@@ -696,7 +639,7 @@ theorem window_le {u L : ℕ} (hh : (L + 1) * u = h) (a : Fin L) : a.1 * u + 2 *
 
 /-- The proof of Theorem thm:poincare: "For neighbours Lemma lem:angle allows c(r_i²+r_{i′}²) more", so
 ∑_{i,i′} |Q_iz Q_{i′}z|² ≤ 2(L−1+2c)F(z). -/
-theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
+theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
     {ζ c : ℝ} (hu : 2 ≤ u) (hh : (L + 1) * u = h) (hζ : 0 ≤ ζ)
     (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) (hζ1 : ζ ≤ 1)
     (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc0 : 0 < c) (z : Z) :
@@ -714,7 +657,7 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
         have := hwin b
         rw [hb] at this
         nlinarith
-      have h1 := lem_angle A hμ hs hsm hA hu h3 hζ hC hζ1 hcζ hc0 z
+      have h1 := lem_angle A hμ hs hA hu h3 hζ hC hζ1 hcζ hc0 z
       rw [show a.1 * u + u = b.1 * u by rw [hb]; ring] at h1
       have h2 : 2 * c * (dist z (Q a z) * dist z (Q b z)) ≤
           c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) := by
@@ -813,7 +756,7 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
 
 /-- The proof of Theorem thm:poincare: for the barycenter b of the points Q_iz, "F(b) ≤ ∑_i|b Q_iz|² ≤ (1 − (1−2c)/L)F(z)
 and L|zb|² ≤ F(z) − F(b)", by Lemma lem:toolkit(c). -/
-theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
+theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
     {ζ c : ℝ} (hu : 2 ≤ u) (hL : 1 ≤ L) (hh : (L + 1) * u = h) (hζ : 0 ≤ ζ)
     (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) (hζ1 : ζ ≤ 1)
     (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc0 : 0 < c) (z : Z) :
@@ -827,7 +770,7 @@ theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA
     rw [sum_add_distrib, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, ← mul_sum,
       sum_congr rfl fun i _ => congrArg (· ^ 2) (dist_comm (Q i) b)]
     ring
-  have h2 := h1.trans (thm_poincare_pairs A hμ hs hsm hA hu hh hζ hC hζ1 hcζ hc0 z)
+  have h2 := h1.trans (thm_poincare_pairs A hμ hs hA hu hh hζ hC hζ1 hcζ hc0 z)
   have h3 : ∑ i, dist b (Q i) ^ 2 ≤ (1 - (1 - 2 * c) / L) * windowSum A u L z := by
     refine le_of_mul_le_mul_left ?_ hLr
     have e : (L : ℝ) * ((1 - (1 - 2 * c) / L) * windowSum A u L z) = (L - (1 - 2 * c)) * windowSum A u L z := by
@@ -844,12 +787,12 @@ theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA
 
 /-- The proof of Theorem thm:poincare: "Iterate: F decreases geometrically and the steps add up to at most
 2√(F(z)/(1−2c)), so the points converge to one fixed by every window, hence by U_h. So |z P_{[0,h)}z|² ≤ 4F(z)/(1−2c)." -/
-theorem thm_poincare_limit (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
+theorem thm_poincare_limit (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
     {ζ c : ℝ} (hu : 2 ≤ u) (hL : 1 ≤ L) (hh : (L + 1) * u = h) (hζ : 0 ≤ ζ)
     (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) (hζ1 : ζ ≤ 1)
     (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc0 : 0 < c) (hc : c < 1 / 2) (z : Z) :
     ∃ y, A.Fix y ∧ dist z y ^ 2 ≤ 4 / (1 - 2 * c) * windowSum A u L z := by
-  choose b hb1 hb2 using thm_poincare_step A hμ hs hsm hA hu hL hh hζ hC hζ1 hcζ hc0
+  choose b hb1 hb2 using thm_poincare_step A hμ hs hA hu hL hh hζ hC hζ1 hcζ hc0
   set F := windowSum A u L with hF
   have hF0 : ∀ z, 0 ≤ F z := windowSum_nonneg A u L
   set δ := 1 - 2 * c
@@ -961,7 +904,7 @@ theorem thm_poincare_limit (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
 
 /-- The proof of Theorem thm:poincare: "(eq:window) for n = 2u, each generator lying in at most two windows, bounds
 F(z) by 2C(2u) ∑_j e_j(z)²." -/
-theorem thm_poincare_windows (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
+theorem thm_poincare_windows (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
     (hu : 2 ≤ u) (hh : (L + 1) * u = h) (z : Z) :
     windowSum A u L z ≤ 2 * windowConst μ s (2 * u) * ∑ j ∈ range (h - 1), A.e j z ^ 2 := by
   set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z
@@ -971,7 +914,7 @@ theorem thm_poincare_windows (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) 
   have h1 : ∀ a : Fin L, dist z (Q a z) ^ 2 ≤ C₂ * ∑ j ∈ range (h - 1),
       if a.1 * u ≤ j ∧ j + 1 < a.1 * u + 2 * u then A.e j z ^ 2 else 0 := by
     intro a
-    refine (eq_window A hμ hs hsm hA (hwin a) z).trans (le_of_eq ?_)
+    refine (eq_window A hμ hs hA (hwin a) z).trans (le_of_eq ?_)
     rw [← sum_filter]
     congr 1
     refine sum_congr ?_ fun _ _ => rfl
@@ -1011,15 +954,16 @@ theorem thm_poincare_windows (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) 
 
 /-- The Poincaré bound for every isometric action of U_h, h = lu, on a CAT(0) space with contracting lengths, from the
 proof of Theorem thm:poincare, with ζ = 1/32 and c = 1/4: "|z,gz| ≤ 2|z P_{[0,h)}z|", so E_g|z,gz|² ≤ 32C(2u)/(1−2c) ∑_j e_j(z)². -/
-theorem thm_poincare_action (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u l : ℕ}
+theorem thm_poincare_action (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u l : ℕ}
     (hu : 2 ≤ u) (hl : 2 ≤ l) (hh : l * u = h)
     (hC : 4 * windowConst μ s (3 * u) ≤ (1 / 32) ^ 2 * ((u : ℝ) - 1) ^ 2) (z : Z) :
     (∑ g, dist z (A.act g z) ^ 2) / Fintype.card (U h) ≤
       32 * windowConst μ s (2 * u) / (1 - 2 * (1 / 4)) * ∑ j, dist z (A.act (x h j) z) ^ 2 := by
   obtain ⟨L, rfl⟩ : ∃ L, l = L + 1 := ⟨l - 1, by omega⟩
-  obtain ⟨y, hy, hy2⟩ := thm_poincare_limit A hμ hs hsm hA hu (by omega) hh (by norm_num) hC (by norm_num)
+  obtain ⟨y, hy, hy2⟩ :=
+    thm_poincare_limit A hμ hs hA hu (by omega) hh (by norm_num) hC (by norm_num)
     (c := 1 / 4) (by norm_num) (by norm_num) (by norm_num) z
-  have hw := thm_poincare_windows A hμ hs hsm hA hu hh z
+  have hw := thm_poincare_windows A hμ hs hA hu hh z
   have hd : ∀ g, dist z (A.act g z) ^ 2 ≤ 4 * dist z y ^ 2 := fun g => by
     have h1 := dist_triangle z y (A.act g z)
     have h2 : dist y (A.act g z) = dist z y := by
@@ -1043,18 +987,64 @@ theorem thm_poincare_action (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (
 
 end Poincare
 
-/-- The proof of Theorem thm:poincare: "Since C(n) = o(n²), some u has 4C(3u) ≤ (u−1)²/32²; fix it." -/
+/-- The proof of Theorem thm:poincare: "Since C(n) = o(n²), some u has 4C(3u) ≤ (u−1)²/32²; fix
+it." That C(n) = κ_n² n = o(n²) (Lemma lem:first) is shown here for n = 3u. -/
 theorem thm_poincare_size {μ : ℕ} {s : ℝ} (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) :
     ∃ u : ℕ, 2 ≤ u ∧ 4 * windowConst μ s (3 * u) ≤ (1 / 32) ^ 2 * ((u : ℝ) - 1) ^ 2 := by
-  obtain ⟨n₀, hn⟩ := eventually_atTop.1
-    ((lem_first hμ hs hsm).1.eventually (gt_mem_nhds (show (0 : ℝ) < 1 / (36 * 4096) by norm_num)))
-  refine ⟨n₀ + 2, by omega, ?_⟩
-  have h1 := hn (3 * (n₀ + 2)) (by omega)
-  have hpos : (0 : ℝ) < ((3 * (n₀ + 2) : ℕ) : ℝ) ^ 2 := by positivity
-  rw [div_lt_iff₀ hpos] at h1
+  have hm0 : (0 : ℝ) < μ := by exact_mod_cast (by omega : 0 < μ)
+  set ρ : ℝ := s ^ 2 / μ with hρ
+  have hρ0 : 0 < ρ := by positivity
+  have hρ1 : ρ < 1 := by rw [hρ, div_lt_one hm0]; exact hsm
+  obtain ⟨L₀, hL₀⟩ := exists_log_large hρ0 hρ1
+    (show (0 : ℝ) < 1 / (2 ^ 27 * (μ : ℝ) ^ 4) by positivity)
+  set u := μ ^ L₀ + 2 with hu
+  refine ⟨u, by omega, ?_⟩
+  set n := 3 * u with hn
+  set i := Nat.clog 2 n with hi
+  set L := Nat.log μ (2 ^ i) with hL
+  have hni : n ≤ 2 ^ i := Nat.le_pow_clog one_lt_two n
+  have hi2 : 2 ^ i ≤ 2 * n := by
+    obtain ⟨j, hj⟩ : ∃ j, i = j + 1 :=
+      ⟨i - 1, by have := Nat.clog_pos one_lt_two (show 2 ≤ n by omega); omega⟩
+    have h : 2 ^ i.pred < n := Nat.pow_pred_clog_lt_self one_lt_two (by omega)
+    rw [hj, Nat.pred_succ] at h
+    rw [hj, pow_succ]
+    omega
+  have hLL : L₀ ≤ L := Nat.le_log_of_pow_le (by omega) (by omega)
+  have hiL : (i : ℝ) ≤ μ * ((L : ℝ) + 1) := by
+    have h1 : 2 ^ i < 2 ^ (μ * (L + 1)) := by
+      calc 2 ^ i < μ ^ (L + 1) := Nat.lt_pow_succ_log_self (by omega) _
+        _ ≤ (2 ^ μ) ^ (L + 1) := Nat.pow_le_pow_left Nat.lt_two_pow_self.le _
+        _ = 2 ^ (μ * (L + 1)) := by rw [← pow_mul]
+    have h2 : i < μ * (L + 1) := (Nat.pow_lt_pow_iff_right (by norm_num)).1 h1
+    exact_mod_cast h2.le
+  have hmL : (μ : ℝ) ^ L ≤ 2 * n := by
+    exact_mod_cast (Nat.pow_log_le_self μ (Nat.two_pow_pos i).ne').trans hi2
+  have e0 : (s ^ L) ^ 2 = ρ ^ L * (μ : ℝ) ^ L := by
+    rw [← mul_pow, hρ, div_mul_cancel₀ _ hm0.ne', ← pow_mul, ← pow_mul, mul_comm]
+  have h5 : kappa μ s n ^ 2 ≤ 324 * 2 * (μ : ℝ) ^ 4 * (((L : ℝ) + 1) ^ 4 * ρ ^ L) * n := by
+    have e : kappa μ s n ^ 2 =
+        324 * (i : ℝ) ^ 2 * ((μ : ℝ) ^ 2 * ((L : ℝ) + 1) ^ 2 * (ρ ^ L * (μ : ℝ) ^ L)) := by
+      rw [kappa, grow, ← hi, ← hL, ← e0]
+      ring
+    rw [e]
+    calc _ ≤ 324 * ((μ : ℝ) * ((L : ℝ) + 1)) ^ 2 *
+          ((μ : ℝ) ^ 2 * ((L : ℝ) + 1) ^ 2 * (ρ ^ L * (2 * n))) := by
+          gcongr
+      _ = _ := by ring
+  have h6 : kappa μ s n ^ 2 ≤ 648 * n / 2 ^ 27 := by
+    refine h5.trans ?_
+    calc _ ≤ 324 * 2 * (μ : ℝ) ^ 4 * (1 / (2 ^ 27 * (μ : ℝ) ^ 4)) * n := by
+          gcongr
+          exact hL₀ L hLL
+      _ = _ := by field_simp; ring
+  have hu2 : (2 : ℝ) ≤ u := by exact_mod_cast (by omega : 2 ≤ u)
+  have hn3 : (n : ℝ) = 3 * u := by rw [hn, Nat.cast_mul, Nat.cast_ofNat]
   rw [windowConst]
-  push_cast at h1 ⊢
-  nlinarith [show (0 : ℝ) ≤ n₀ from Nat.cast_nonneg _]
+  calc 4 * (kappa μ s n ^ 2 * n) ≤ 4 * (648 * n / 2 ^ 27 * n) := by gcongr
+    _ = 23328 / 2 ^ 27 * (u : ℝ) ^ 2 := by rw [hn3]; ring
+    _ ≤ (1 / 32) ^ 2 * ((u : ℝ) / 2) ^ 2 := by rw [div_pow]; linarith [sq_nonneg (u : ℝ)]
+    _ ≤ _ := by gcongr; linarith
 
 /-- **Paper: Theorem thm:poincare.** "There are u ≥ 2 and C₀ such that for every l ≥ 2, h = lu, and every price on U_h,
 E_{g,k}|k,gk|² ≤ C₀ ∑_{j<h−1} E_k|k,x_jk|²." In the proof Z = L²(U_h,Y) has the sum for the mean; this scales all
@@ -1077,7 +1067,7 @@ theorem thm_poincare {K : Type} [Field K] (hK : Contracting K) :
     rw [hlen, Real.sqrt_div' _ hb.le, mul_div_cancel₀ _ (Real.sqrt_pos.2 hb).ne', IsoAct.len_val,
       ← Real.sqrt_sq (dist_nonneg (y := (transAct (U (l * u)) Y).act g z)), transAct_dist]
     exact congrArg _ (sum_congr rfl fun k _ => by rw [dist_comm])
-  have h1 := thm_poincare_action (transAct (U (l * u)) Y) hμ hs hsm hA hu hl rfl hC (WithLp.toLp 2 f)
+  have h1 := thm_poincare_action (transAct (U (l * u)) Y) hμ hs hA hu hl rfl hC (WithLp.toLp 2 f)
   have h2 : ∀ g : U (l * u), dist (WithLp.toLp 2 f : PiLp 2 fun _ : U (l * u) => Y)
       ((transAct (U (l * u)) Y).act g (WithLp.toLp 2 f)) ^ 2 = ∑ k, w k (g * k) ^ 2 := by
     intro g

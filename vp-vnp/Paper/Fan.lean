@@ -363,26 +363,6 @@ theorem lipschitz (F : IsFan K w x m z D T n d) (hT : 0 < T) (hn : 0 < n) (b : B
   unfold fanDist
   linarith
 
-/-- A step in the direction (1,−1) "changes i only": it has length at most ρD. -/
-theorem step_ii (F : IsFan K w x m z D T n d) (hT : 0 < T) (hn : 0 < n) (b : Bool) (i k : ℤ) (h0 : 0 ≤ i + k + n)
-    (h1 : i + k + n ≤ n ^ 2 * T) :
-    fanDist d T n (b, (i, k)) (b, (i + 1, k - 1)) ≤ (1 - (i + k + n) / (n ^ 2 * T)) * D := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
-  have hT' : (0 : ℝ) < T := by exact_mod_cast hT
-  have e : i + 1 + (k - 1) + n = i + k + n := by ring
-  have h6 := F.G_i_le hn b (cl (n ^ 2) i) (cl (n ^ 2) (i + 1)) (cl (n ^ 2 * T) (i + k + n)) (cl_le _ _)
-    (cl_le _ _) (cl_le _ _)
-  rw [cl_window h0 h1] at h6
-  rw [fanDist, fanPt_mk, fanPt_mk, e]
-  refine h6.trans ?_
-  have h7 : ((i : ℝ) + k + n) ≤ n ^ 2 * T := by exact_mod_cast h1
-  have h8 : 0 ≤ 1 - ((i : ℝ) + k + n) / (n ^ 2 * T) := by
-    rw [sub_nonneg, div_le_one (by positivity)]
-    exact h7
-  apply mul_le_mul_of_nonneg_left _ h8
-  calc _ ≤ 1 * D := mul_le_mul_of_nonneg_right (cl_succ _ i) (F.D_nonneg hn)
-    _ = D := one_mul D
-
 /-- "The distance from z gives" a lower bound for W_n: n²(ρL_i − ρ′L_i′) ≤ W_n(P(i,k), P(i′,k′)). -/
 theorem from_z (F : IsFan K w x m z D T n d) (b : Bool) (i k i' k' : ℤ) (h0 : 0 ≤ i + k + n)
     (h1 : i + k + n ≤ n ^ 2 * T) (h0' : 0 ≤ i' + k' + n) (h1' : i' + k' + n ≤ n ^ 2 * T) :
@@ -395,18 +375,6 @@ theorem from_z (F : IsFan K w x m z D T n d) (b : Bool) (i k i' k' : ℤ) (h0 : 
     (G b (cl (n ^ 2) i') (cl (n ^ 2 * T) (i' + k' + n)))]
   apply mul_le_mul_of_nonneg_left _ (by positivity)
   linarith
-
-/-- A step in the direction (0,1) has length at most θL_i. -/
-theorem step_iii (F : IsFan K w x m z D T n d) (hn : 0 < n) (b : Bool) (i k : ℤ) (h0 : 0 ≤ i + k + n)
-    (h1 : i + k + 1 + n ≤ n ^ 2 * T) :
-    fanDist d T n (b, (i, k)) (b, (i, k + 1)) ≤ fanLen d z n b i / T := by
-  have e : i + (k + 1) + n = i + k + 1 + n := by ring
-  have h6 := F.G_j_le hn b (cl (n ^ 2) i) (cl (n ^ 2 * T) (i + k + n)) (cl (n ^ 2 * T) (i + (k + 1) + n))
-    (cl_le _ _) (cl_le _ _)
-  rw [cl_window h0 (by linarith), cl_window (by rw [e]; linarith) (by rw [e]; exact h1)] at h6
-  rw [fanDist, fanLen, fanPt_mk, fanPt_mk]
-  refine h6.trans (le_of_eq ?_)
-  grind
 
 theorem fanLen_zero (F : IsFan K w x m z D T n d) (b : Bool) : fanLen d z n b 0 = w z (x b) := by
   rw [fanLen, cl_zero, F.z_γ_zero]
@@ -464,34 +432,6 @@ theorem fanPot_zero (F : IsFan K w x m z D T n d) (b : Bool) (k : ℤ) (h0 : 0 �
   ring
 
 end IsFan
-
-/-- The display of claim (iv): "Let L′ = L_{i+S}, L = L_i; for n ≥ AS the new j is not negative. The distance from z gives
-W(P, P + S(1,−1−A)) ≥ |n²ρ(L′ − L) + ASθL′|." Here P = P(i,k), j = i + k + n ≥ AS, ρ = 1 − jθ/n² and θ = 1/T. -/
-theorem thm_cn_iv_step {x : Bool → Y} {m z : Y} {D : ℝ} {T n : ℕ} {d : FanPts Y → FanPts Y → ℝ}
-    (F : IsFan K w x m z D T n d) (hT : 0 < T) (hn : 0 < n) (b : Bool) (i k : ℤ) (A S : ℕ)
-    (h0 : ((A * S : ℕ) : ℤ) ≤ i + k + n) (h1 : i + k + n ≤ n ^ 2 * T) :
-    |(n : ℝ) ^ 2 * ((1 - (i + k + n) / (n ^ 2 * T)) * (fanLen d z n b (i + S) - fanLen d z n b i))
-        + A * S * (1 / T) * fanLen d z n b (i + S)| ≤
-      fanDist d T n (b, (i, k)) (b, (i + S, k - S - (A * S : ℕ))) := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
-  have hT' : (0 : ℝ) < T := by exact_mod_cast hT
-  have k0 : 0 ≤ i + k + n := le_trans (Int.natCast_nonneg _) h0
-  have k2 : (0 : ℤ) ≤ (i + S) + (k - S - (A * S : ℕ)) + n := by linarith
-  have k3 : (i + S) + (k - S - (A * S : ℕ)) + n ≤ n ^ 2 * T := by linarith [Int.natCast_nonneg (A * S)]
-  have g1 := F.from_z b (i + S) (k - S - (A * S : ℕ)) i k k2 k3 k0 h1
-  have g2 := F.from_z b i k (i + S) (k - S - (A * S : ℕ)) k0 h1 k2 k3
-  rw [F.fanDist_price.symm] at g1
-  push_cast at g1 g2
-  have e1 : 1 - ((i : ℝ) + S + (k - S - A * S) + n) / (n ^ 2 * T) =
-      1 - (i + k + n) / (n ^ 2 * T) + A * S / (n ^ 2 * T) := by ring
-  have e2 : (n : ℝ) ^ 2 * (A * S / (n ^ 2 * T)) = A * S * (1 / T) := by field_simp
-  rw [e1] at g1 g2
-  rw [abs_le, ← e2]
-  constructor
-  · refine le_trans (neg_le_neg g2) (le_of_eq ?_)
-    ring
-  · refine le_trans (le_of_eq ?_) g1
-    ring
 
 /-! ### The sequence of fans and its seminorm
 
@@ -656,19 +596,25 @@ theorem thm_cn_ii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ 
   have h1 : meanLength (fanW d T) (1, -1) ≤ nm fun n b i k => D * (1 - θ * place n b i k) := by
     apply nm_mono (H.bd _ _) hg (fun n b i k => H.nonneg _ _ _ _)
     filter_upwards [eventually_large hT 0] with n hnn b i hi k hk
+    -- a step in the direction (1,−1) "changes i only": it has length at most ρD
     obtain ⟨e, hn1, -, hn2, -⟩ := hnn
-    have g : _ → _ → fanWs d T n b (i, k) (i + 1, k - 1) ≤ _ := (hd n).step_ii hT0 (max_one_pos n) b i k
-    rw [e] at g
+    have F := hd n
+    rw [e] at F
     have k1 : (i : ℤ) + k + n ≤ n ^ 2 * T := by
       linarith
-    have g := g (by positivity) k1
-    push_cast at g
     have h2 : df (fanWs d T) 0 (1, -1) n b i k = fanWs d T n b (i, k) (i + 1, k - 1) := by
       simp [df, sub_eq_add_neg]
     rw [h2]
-    refine g.trans ?_
-    rw [mul_comm]
-    apply mul_le_mul_of_nonneg_left _ hD0
+    unfold fanWs fanW
+    rw [e, fanDist, fanPt_mk, fanPt_mk, show (i : ℤ) + 1 + (k - 1) + n = i + k + n by ring]
+    have h6 := F.G_i_le (e ▸ max_one_pos n) b (cl (n ^ 2) i) (cl (n ^ 2) (i + 1))
+      (cl (n ^ 2 * T) (i + k + n)) (cl_le _ _) (cl_le _ _) (cl_le _ _)
+    rw [cl_window (by positivity) k1] at h6
+    refine h6.trans ?_
+    push_cast
+    rw [mul_comm D]
+    refine mul_le_mul ?_ ((mul_le_mul_of_nonneg_right (cl_succ _ (i : ℤ)) hD0).trans (one_mul D).le)
+      (by positivity) (hpos n b i k)
     have h3 : place n b i k = (i : ℝ) / n ^ 2 := by
       rw [place, cl_cast (Int.natCast_nonneg i) (by exact_mod_cast hi.le)]
       push_cast
@@ -708,18 +654,23 @@ theorem thm_cn_iii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤
   have h1 : meanLength (fanW d T) (0, 1) ≤ nm (θ • (fun n b i _ => fanL d z n b i : Fn)) := by
     apply nm_mono (H.bd _ _) (hLf.smul θ) (fun n b i k => H.nonneg _ _ _ _)
     filter_upwards [eventually_large hT 1] with n hnn b i hi k hk
+    -- a step in the direction (0,1) has length at most θL_i
     obtain ⟨e, hn1, hn3, hn2, -⟩ := hnn
-    have g : _ → _ → fanWs d T n b (i, k) (i, k + 1) ≤ fanL d z n b i / T :=
-      (hd n).step_iii (max_one_pos n) b i k
-    rw [e] at g
+    have F := hd n
+    rw [e] at F
     have k1 : (i : ℤ) + k + 1 + n ≤ n ^ 2 * T := by
       linarith
-    have g := g (by positivity) k1
     have h2 : df (fanWs d T) 0 (0, 1) n b i k = fanWs d T n b (i, k) (i, k + 1) := by simp [df]
     rw [h2]
-    refine g.trans (le_of_eq ?_)
     simp only [Pi.smul_apply, smul_eq_mul, hθ]
-    ring
+    unfold fanWs fanW fanL
+    rw [e]
+    have h6 := F.G_j_le (e ▸ max_one_pos n) b (cl (n ^ 2) i) (cl (n ^ 2 * T) (i + k + n))
+      (cl (n ^ 2 * T) (i + (k + 1) + n)) (cl_le _ _) (cl_le _ _)
+    rw [cl_window (by positivity) (by linarith), cl_window (by positivity) (by linarith)] at h6
+    rw [fanDist, fanLen, fanPt_mk, fanPt_mk]
+    refine h6.trans (le_of_eq ?_)
+    grind
   have h2 : nm (θ • (fun n b i _ => fanL d z n b i : Fn)) ^ 2 = θ ^ 2 * fanΛ₂ d z := by
     rw [nm_sq (hLf.smul θ)]
     have : (θ • (fun n b i _ => fanL d z n b i : Fn) : Fn) * (θ • (fun n b i _ => fanL d z n b i : Fn)) =
@@ -774,100 +725,6 @@ theorem thm_cn_iv_telescope (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (h
       linarith)
   linarith
 
-/-- The next sentence of claim (iv): "Square this, use 2L′(L′ − L) ≥ L′² − L², and note that … 1 − ρ ≤ 2θ … and
-n²|L′² − L²| ≤ 2SD(D + |zm|)." So for large n, at the points P = P(i,k) of the window,
-W(P, P + S(1,−1−A))² ≥ (ASθ)²L′² + ASθ·n²(L′² − L²) − 4Aθ²S²D(D + |zm|). -/
-theorem thm_cn_iv_square (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T) (A S : ℕ) {n : ℕ}
-    (hnn : max n 1 = n ∧ (1 : ℝ) ≤ n ∧ A * S ≤ n ∧ n ^ 2 + 2 * n ≤ n ^ 2 * T ∧ n ^ 2 + 2 * n ≤ 2 * n ^ 2)
-    (b : Bool) {i k : ℕ} (hi : i < n ^ 2) (hk : k < n) :
-    (A * S * (1 / T : ℝ)) ^ 2 * (fanL d z n b (i + S) * fanL d z n b (i + S))
-      + A * S * (1 / T : ℝ) * ((n : ℝ) ^ 2 * (fanL d z n b (i + S) ^ 2 - fanL d z n b i ^ 2))
-      - 4 * A * (1 / T : ℝ) ^ 2 * S ^ 2 * D * (D + w z m) ≤
-      fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) * fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) := by
-  obtain ⟨e, hn1, hAS, hn2, hn3⟩ := hnn
-  have hT' : (0 : ℝ) < T := by exact_mod_cast (by omega : 0 < T)
-  have hD0 := fan_D_nonneg hd
-  have hB0 := fan_w_nonneg hd z m
-  have k0 : ((A * S : ℕ) : ℤ) ≤ (i : ℤ) + k + n := by
-    omega
-  have k1 : (i : ℤ) + k + n ≤ n ^ 2 * T := by
-    linarith
-  have g : _ → _ → |((max n 1 : ℕ) : ℝ) ^ 2 * (_ * (fanL d z n b (i + S) - fanL d z n b i))
-      + A * S * (1 / T) * fanL d z n b (i + S)| ≤ fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) :=
-    thm_cn_iv_step (hd n) (by omega) (max_one_pos n) b i k A S
-  rw [e] at g
-  have g := abs_le.1 (g k0 k1)
-  push_cast at g
-  set r : ℝ := 1 - (i + k + n) / (n ^ 2 * T) with hr
-  have hr0 : 0 ≤ r := by
-    rw [hr, sub_nonneg, div_le_one (by positivity)]
-    exact_mod_cast k1
-  have hr1 : 1 - r ≤ 2 * (1 / T) := by
-    rw [hr, sub_sub_cancel, div_le_iff₀ (by positivity)]
-    have k4 : (i : ℝ) + k + n ≤ 2 * n ^ 2 := by
-      have : i + k + n ≤ 2 * n ^ 2 := by omega
-      exact_mod_cast this
-    refine k4.trans (le_of_eq ?_)
-    field_simp
-  have hr2 : 0 ≤ 1 - r := by
-    rw [hr, sub_sub_cancel]
-    positivity
-  have E4 := sq_core hr0 hr2 hr1 (a := A * S * (1 / T)) (by positivity)
-    (show 0 ≤ 2 * (D + w z m) * (S * D) by positivity) (abs_le.1 (thm_cn_iv_bound hd n b i S)).2
-    (W := fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)))
-    (le_trans (le_of_eq (by ring)) g.2) (le_trans (le_of_eq (by ring)) (neg_le.1 g.1))
-  refine le_trans (le_of_eq ?_) E4
-  ring
-
-/-- The end of claim (iv), for ν: "n²(L′² − L²) telescopes along i to the mean SΓ, while … the mean of L′² is Λ₂": so
-ν(S(1,−1−A))² ≥ S²(A²θ²Λ₂ + AθΓ − 4Aθ²D(D + |zm|)) for every S. -/
-theorem thm_cn_iv_mean (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T) (A S : ℕ) :
-    ((A : ℝ) ^ 2 * ((1 / T : ℝ) ^ 2 * fanΛ₂ d z)
-      + A * (1 / T * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2)
-        - 4 * (1 / T : ℝ) ^ 2 * D * (D + w z m))) * S ^ 2 ≤
-      meanLength (fanW d T) (S • (1, -1 - (A : ℤ))) ^ 2 := by
-  have hT' : (0 : ℝ) < T := by exact_mod_cast (by omega : 0 < T)
-  have H := fanWs_lip hd (by omega : 0 < T)
-  have hLf := fanL_bd hd
-  have hX := fanL_sq_bd hd
-  have hXm := thm_cn_iv_telescope hd hT
-  set θ : ℝ := 1 / T with hθ
-  have hθ0 : 0 < θ := by positivity
-  show _ ≤ nm (df (fanWs d T) 0 (S • (1, -1 - (A : ℤ)))) ^ 2
-  rw [nm_sq (H.bd _ _)]
-  obtain ⟨hZb, hZm⟩ := mean_steps (F := fun n b i _ => fanL d z n b i ^ 2) hX S
-  have hsh := hLf.shift S 0
-  have h4 : mean ((fun n b i _ => fanL d z n b (i + S) : Fn) * (fun n b i _ => fanL d z n b (i + S) : Fn)) =
-      fanΛ₂ d z := mean_shift_left (hLf.mul hLf) S
-  have h3 : mean ((A * S * θ) ^ 2 • ((fun n b i _ => fanL d z n b (i + S) : Fn) *
-        (fun n b i _ => fanL d z n b (i + S) : Fn))
-      + ((A * S * θ) • (fun n b i k => (n : ℝ) ^ 2 * (fanL d z n b (i + S) ^ 2 - fanL d z n b i ^ 2) : Fn)
-      + (fun _ _ _ _ => -(4 * A * θ ^ 2 * S ^ 2 * D * (D + w z m)) : Fn))) ≤
-      mean (df (fanWs d T) 0 (S • (1, -1 - (A : ℤ))) * df (fanWs d T) 0 (S • (1, -1 - (A : ℤ)))) := by
-    apply mean_mono (((hsh.mul hsh).smul _).add ((hZb.smul _).add (Bd.const _)))
-      ((H.bd _ _).mul (H.bd _ _))
-    filter_upwards [eventually_large hT (A * S)] with n hnn b i hi k hk
-    have e0 : df (fanWs d T) 0 (S • (1, -1 - (A : ℤ))) n b i k =
-        fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) := by
-      simp only [df, add_zero, Prod.smul_mk, prod_add_mk]
-      congr 2
-      · simp
-      · simp only [nsmul_eq_mul]
-        push_cast
-        ring
-    simp only [Pi.add_apply, Pi.mul_apply, Pi.smul_apply, smul_eq_mul]
-    rw [e0]
-    linarith [thm_cn_iv_square hd hT A S hnn b hi hk]
-  rw [mean_add ((hsh.mul hsh).smul _) ((hZb.smul _).add (Bd.const _)),
-    mean_smul (hsh.mul hsh), mean_add (hZb.smul _) (Bd.const _), mean_smul hZb, mean_const,
-    hZm, h4] at h3
-  have h5 : (A * S * θ) * (S * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2)) ≤ (A * S * θ) *
-      (S * mean (fun n b i k => (n : ℝ) ^ 2 * (fanL d z n b (i + 1) ^ 2 - fanL d z n b i ^ 2))) := by
-    apply mul_le_mul_of_nonneg_left _ (by positivity)
-    exact mul_le_mul_of_nonneg_left hXm (Nat.cast_nonneg S)
-  refine le_trans ?_ h3
-  nlinarith
-
 /-- **Claim (iv)** of the proof of Theorem thm:cn: "N(1,−1−A)² ≥ A²θ²Λ₂ + AθΓ − O(Aθ²)", with
 Γ = |mz|² − ½|xz|² − ½|vz|² and with 4D(D + |zm|) for the constant in O, which depends on neither A nor θ. ("Divide by S²";
 "for lower bounds it is enough to prove them for ν(Sg)/S for every S".) -/
@@ -883,7 +740,101 @@ theorem thm_cn_iv (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ 
   have h1 : √Q ≤ meanNorm (fanW d T) (1, -1 - (A : ℤ)) := by
     refine le_meanNorm _ _ fun S _ => (abs_le_of_sq_le_sq' ?_ (meanLength_nonneg _ _)).2
     rw [mul_pow, Real.sq_sqrt hQ]
-    exact thm_cn_iv_mean hd hT A S
+    -- the end of claim (iv), for ν: "n²(L′² − L²) telescopes along i to the mean SΓ, while … the
+    -- mean of L′² is Λ₂": so ν(S(1,−1−A))² ≥ S²(A²θ²Λ₂ + AθΓ − 4Aθ²D(D + |zm|)) for every S
+    have hT' : (0 : ℝ) < T := by exact_mod_cast (by omega : 0 < T)
+    have H := fanWs_lip hd (by omega : 0 < T)
+    have hLf := fanL_bd hd
+    have hX := fanL_sq_bd hd
+    have hXm := thm_cn_iv_telescope hd hT
+    set θ : ℝ := 1 / T with hθ
+    have hθ0 : 0 < θ := by positivity
+    show _ ≤ nm (df (fanWs d T) 0 (S • (1, -1 - (A : ℤ)))) ^ 2
+    rw [nm_sq (H.bd _ _)]
+    obtain ⟨hZb, hZm⟩ := mean_steps (F := fun n b i _ => fanL d z n b i ^ 2) hX S
+    have hsh := hLf.shift S 0
+    have h4 : mean ((fun n b i _ => fanL d z n b (i + S) : Fn) *
+        (fun n b i _ => fanL d z n b (i + S) : Fn)) =
+        fanΛ₂ d z := mean_shift_left (hLf.mul hLf) S
+    have h3 : mean ((A * S * θ) ^ 2 • ((fun n b i _ => fanL d z n b (i + S) : Fn) *
+          (fun n b i _ => fanL d z n b (i + S) : Fn))
+        + ((A * S * θ) •
+          (fun n b i k => (n : ℝ) ^ 2 * (fanL d z n b (i + S) ^ 2 - fanL d z n b i ^ 2) : Fn)
+        + (fun _ _ _ _ => -(4 * A * θ ^ 2 * S ^ 2 * D * (D + w z m)) : Fn))) ≤
+        mean (df (fanWs d T) 0 (S • (1, -1 - (A : ℤ))) *
+          df (fanWs d T) 0 (S • (1, -1 - (A : ℤ)))) := by
+      apply mean_mono (((hsh.mul hsh).smul _).add ((hZb.smul _).add (Bd.const _)))
+        ((H.bd _ _).mul (H.bd _ _))
+      filter_upwards [eventually_large hT (A * S)] with n hnn b i hi k hk
+      have e0 : df (fanWs d T) 0 (S • (1, -1 - (A : ℤ))) n b i k =
+          fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) := by
+        simp only [df, add_zero, Prod.smul_mk, prod_add_mk]
+        congr 2
+        · simp
+        · simp only [nsmul_eq_mul]
+          push_cast
+          ring
+      simp only [Pi.add_apply, Pi.mul_apply, Pi.smul_apply, smul_eq_mul]
+      rw [e0]
+      -- The display of claim (iv): "Let L′ = L_{i+S}, L = L_i; for n ≥ AS the new j is not
+      -- negative. The distance from z gives W(P, P + S(1,−1−A)) ≥ |n²ρ(L′ − L) + ASθL′|."
+      -- Here P = P(i,k), j = i + k + n ≥ AS and ρ = 1 − jθ/n².
+      obtain ⟨e, hn1, hAS, hn2, hn3⟩ := hnn
+      have F := hd n
+      rw [e] at F
+      unfold fanWs fanW fanL
+      rw [e]
+      have k0 : ((A * S : ℕ) : ℤ) ≤ (i : ℤ) + k + n := by omega
+      have k1 : (i : ℤ) + k + n ≤ n ^ 2 * T := by linarith
+      have k2 : (0 : ℤ) ≤ (i + S) + (k - S - (A * S : ℕ)) + n := by linarith
+      have k3 : ((i : ℤ) + S) + (k - S - (A * S : ℕ)) + n ≤ n ^ 2 * T := by
+        linarith [Int.natCast_nonneg (A * S)]
+      have g1 := F.from_z b (i + S) (k - S - (A * S : ℕ)) i k k2 k3 (by positivity) k1
+      have g2 := F.from_z b i k (i + S) (k - S - (A * S : ℕ)) (by positivity) k1 k2 k3
+      rw [F.fanDist_price.symm] at g1
+      push_cast at g1 g2
+      have e1 : 1 - ((i : ℝ) + S + (k - S - A * S) + n) / (n ^ 2 * T) =
+          1 - (i + k + n) / (n ^ 2 * T) + A * S / (n ^ 2 * T) := by ring
+      have e2 : (n : ℝ) ^ 2 * (A * S / (n ^ 2 * T)) = A * S * θ := by rw [hθ]; field_simp
+      rw [e1] at g1 g2
+      -- "Square this, use 2L′(L′ − L) ≥ L′² − L², and note that … 1 − ρ ≤ 2θ … and
+      -- n²|L′² − L²| ≤ 2SD(D + |zm|)."
+      set r : ℝ := 1 - (i + k + n) / (n ^ 2 * T) with hr
+      have hr0 : 0 ≤ r := by
+        rw [hr, sub_nonneg, div_le_one (by positivity)]
+        exact_mod_cast k1
+      have hr1 : 1 - r ≤ 2 * θ := by
+        rw [hr, hθ, sub_sub_cancel, div_le_iff₀ (by positivity)]
+        have k4 : (i : ℝ) + k + n ≤ 2 * n ^ 2 := by
+          have : i + k + n ≤ 2 * n ^ 2 := by omega
+          exact_mod_cast this
+        refine k4.trans (le_of_eq ?_)
+        field_simp
+      have hr2 : 0 ≤ 1 - r := by
+        rw [hr, sub_sub_cancel]
+        positivity
+      have hb := (abs_le.1 (thm_cn_iv_bound hd n b i S)).2
+      unfold fanL at hb
+      rw [e] at hb
+      have hD0 := fan_D_nonneg hd
+      have hB0 := fan_w_nonneg hd z m
+      have E4 := sq_core hr0 hr2 hr1 (a := A * S * θ) (by positivity)
+        (show 0 ≤ 2 * (D + w z m) * (S * D) by positivity) hb
+        (le_trans (le_of_eq (by rw [← e2]; ring)) g1) (le_trans (le_of_eq (by rw [← e2]; ring)) g2)
+      refine le_trans (le_of_eq ?_) E4
+      ring
+    rw [mean_add ((hsh.mul hsh).smul _) ((hZb.smul _).add (Bd.const _)),
+      mean_smul (hsh.mul hsh), mean_add (hZb.smul _) (Bd.const _), mean_smul hZb, mean_const,
+      hZm, h4] at h3
+    have h5 : (A * S * θ) * (S * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2)) ≤
+        (A * S * θ) *
+          (S * mean fun n b i k =>
+            (n : ℝ) ^ 2 * (fanL d z n b (i + 1) ^ 2 - fanL d z n b i ^ 2)) := by
+      apply mul_le_mul_of_nonneg_left _ (by positivity)
+      exact mul_le_mul_of_nonneg_left hXm (Nat.cast_nonneg S)
+    rw [hQdef]
+    refine le_trans ?_ h3
+    linear_combination h5
   calc Q = √Q ^ 2 := (Real.sq_sqrt hQ).symm
     _ ≤ _ := pow_le_pow_left₀ (Real.sqrt_nonneg _) h1 2
 
