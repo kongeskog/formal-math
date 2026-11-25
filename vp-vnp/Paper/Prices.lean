@@ -33,12 +33,12 @@ theorem def_price_pseudometric (h : IsPrice K w) :
   · have h2 : (fun i j : Fin 1 => w (![a] i) (![a] j)) ∈ {d : Fin 1 → Fin 1 → ℝ | d 0 0 = 0} :=
       prices_induction (h 1 ![a]) (isClosed_eq (by fun_prop) continuous_const) fun φ c hc => by
         show c * φ.e 0 0 = 0
-        rw [lem_exponents_self, mul_zero]
+        rw [Spec.e_self, mul_zero]
     exact h2
   · have h2 : (fun i j : Fin 2 => w (![a, b] i) (![a, b] j)) ∈ {d : Fin 2 → Fin 2 → ℝ | d 0 1 = d 1 0} :=
       prices_induction (h 2 ![a, b]) (isClosed_eq (by fun_prop) (by fun_prop)) fun φ c hc => by
         show c * φ.e 0 1 = c * φ.e 1 0
-        rw [lem_exponents_symm]
+        rw [Spec.e_comm]
     exact h2
   · have h2 : (fun i j : Fin 3 => w (![a, b, c] i) (![a, b, c] j)) ∈
         {d : Fin 3 → Fin 3 → ℝ | d 0 2 ≤ d 0 1 + d 1 2} :=
@@ -50,11 +50,11 @@ theorem def_price_pseudometric (h : IsPrice K w) :
 
 /-- "Pull-backs … of prices are prices; for g : V → W one uses t ↦ φ(gt)." (The latter is Nc.Price.specCone_comp, which
 makes the two parts of Definition def:price consistent.) -/
-theorem def_price_pullback {Z : Type*} (h : IsPrice K w) (g : Z → Y) : IsPrice K fun a b => w (g a) (g b) :=
+theorem _root_.Nc.Price.IsPrice.comp {Z : Type*} (h : IsPrice K w) (g : Z → Y) : IsPrice K fun a b => w (g a) (g b) :=
   fun n f => h n fun i => g (f i)
 
 /-- "Nonnegative multiples … of prices are prices". -/
-theorem def_price_multiple (h : IsPrice K w) {c : ℝ} (hc : 0 ≤ c) : IsPrice K fun a b => c * w a b :=
+theorem _root_.Nc.Price.IsPrice.smul (h : IsPrice K w) {c : ℝ} (hc : 0 ≤ c) : IsPrice K fun a b => c * w a b :=
   fun n f => prices_smul (h n f) hc
 
 /-- The set of prices is closed under pointwise convergence. -/
@@ -68,7 +68,7 @@ theorem def_price_closed : IsClosed {w : Y → Y → ℝ | IsPrice K w} := by
     isClosed_closure.preimage (continuous_comp f)
 
 /-- "Pointwise limits of prices are prices". -/
-theorem def_price_limit {ι : Type*} {l : Filter ι} [l.NeBot] {d : ι → Y → Y → ℝ}
+theorem _root_.Nc.Price.isPrice_of_tendsto {ι : Type*} {l : Filter ι} [l.NeBot] {d : ι → Y → Y → ℝ}
     (h : ∀ a b, Tendsto (fun i => d i a b) l (nhds (w a b))) (hd : ∀ᶠ i in l, IsPrice K (d i)) : IsPrice K w := by
   refine def_price_closed.mem_of_tendsto ?_ hd
   rw [tendsto_pi_nhds]
@@ -77,7 +77,7 @@ theorem def_price_limit {ι : Type*} {l : Filter ι} [l.NeBot] {d : ι → Y →
   exact h a
 
 /-- "The prices below a given function form a compact set, by Tychonoff's theorem." -/
-theorem def_price_compact (C : Y → Y → ℝ) : IsCompact {w : Y → Y → ℝ | IsPrice K w ∧ ∀ a b, w a b ≤ C a b} := by
+theorem _root_.Nc.Price.isCompact_isPrice_le (C : Y → Y → ℝ) : IsCompact {w : Y → Y → ℝ | IsPrice K w ∧ ∀ a b, w a b ≤ C a b} := by
   have h1 : IsCompact {w : Y → Y → ℝ | ∀ a, w a ∈ {v : Y → ℝ | ∀ b, v b ∈ Set.Icc 0 (C a b)}} :=
     isCompact_pi_infinite fun a => isCompact_pi_infinite fun b => isCompact_Icc
   have h2 : IsClosed {w : Y → Y → ℝ | ∀ a b, w a b ≤ C a b} := by
@@ -108,19 +108,6 @@ theorem IsPrice.symm (h : IsPrice K w) (a b : Y) : w a b = w b a := (Paper.def_p
 
 theorem IsPrice.triangle (h : IsPrice K w) (a b c : Y) : w a c ≤ w a b + w b c :=
   (Paper.def_price_pseudometric h).2.2.2 a b c
-
-theorem IsPrice.comp {Z : Type*} (h : IsPrice K w) (g : Z → Y) : IsPrice K fun a b => w (g a) (g b) :=
-  Paper.def_price_pullback h g
-
-theorem IsPrice.smul (h : IsPrice K w) {c : ℝ} (hc : 0 ≤ c) : IsPrice K fun a b => c * w a b :=
-  Paper.def_price_multiple h hc
-
-theorem isPrice_of_tendsto {ι : Type*} {l : Filter ι} [l.NeBot] {d : ι → Y → Y → ℝ}
-    (h : ∀ a b, Filter.Tendsto (fun i => d i a b) l (nhds (w a b))) (hd : ∀ᶠ i in l, IsPrice K (d i)) : IsPrice K w :=
-  Paper.def_price_limit h hd
-
-theorem isCompact_isPrice_le (C : Y → Y → ℝ) : IsCompact {w : Y → Y → ℝ | IsPrice K w ∧ ∀ a b, w a b ≤ C a b} :=
-  Paper.def_price_compact C
 
 end Nc.Price
 
@@ -186,7 +173,7 @@ section Random
 /-- Proof of Proposition prop:random, the reduction to finite sets: "It is enough to find, for all finite Y₀ ⊆ Y and Q₀ ⊆ Q
 such that σ maps Q₀ into Y₀, a price on Y₀ ∪ Q₀ with the two properties: these prices form compact sets, so then there is
 one that works for all of them at once." Here Z is Y ∪ Q, the two properties are bounds A ≤ |oo′| ≤ B, and the compact
-sets are those of def_price_compact. -/
+sets are those of isCompact_isPrice_le. -/
 theorem prop_random_compact {Z : Type*} (A B : Z → Z → ℝ)
     (h : ∀ S : Finset Z, ∃ d : S → S → ℝ, IsPrice K d ∧ ∀ a b : S, A a b ≤ d a b ∧ d a b ≤ B a b) :
     ∃ w' : Z → Z → ℝ, IsPrice K w' ∧ ∀ a b, A a b ≤ w' a b ∧ w' a b ≤ B a b := by
@@ -203,7 +190,7 @@ theorem prop_random_compact {Z : Type*} (A B : Z → Z → ℝ)
   have key : ∀ S : Finset Z, ∃ v : S → S → ℝ, (IsPrice K v ∧ ∀ a b : S, v a b ≤ B a b) ∧
       ∀ a b : S, Tendsto (fun T => D T a b) U (nhds (v a b)) := by
     intro S
-    obtain ⟨v, hv, hlim⟩ := (def_price_compact (K := K) fun a b : S => B a b).ultrafilter_le_nhds
+    obtain ⟨v, hv, hlim⟩ := (isCompact_isPrice_le (K := K) fun a b : S => B a b).ultrafilter_le_nhds
       (U.map fun T (a b : S) => D T a b) (by
         rw [le_principal_iff, Ultrafilter.coe_map, Filter.mem_map]
         filter_upwards [hmem S] with T hT
@@ -213,7 +200,7 @@ theorem prop_random_compact {Z : Type*} (A B : Z → Z → ℝ)
         refine ⟨?_, fun a b => (hD hT a b).le.trans (hAB T _ _).2⟩
         show IsPrice K fun a b : S => D T a b
         rw [e]
-        exact def_price_pullback (hd T) fun a : S => (⟨a, hT a.2⟩ : T))
+        exact (hd T).comp fun a : S => (⟨a, hT a.2⟩ : T))
     have h1 : Tendsto (fun T (a b : S) => D T a b) U (nhds v) := hlim
     exact ⟨v, hv, fun a b => tendsto_pi_nhds.1 (tendsto_pi_nhds.1 h1 a) b⟩
   choose v hv hlim using key
@@ -235,7 +222,7 @@ theorem prop_random_compact {Z : Type*} (A B : Z → Z → ℝ)
 
 /-- Proof of Proposition prop:random, the finite case: "So let Y and Q be finite, and let σ take the values π_l with
 probabilities θ_l. By a limit we may assume w = s·d_φ, and then s = 1 by homogeneity." The prices that
-prop_random_spectral gives for approximations s·d_φ of w have a limit, since they lie in a compact set (def_price_compact). -/
+prop_random_spectral gives for approximations s·d_φ of w have a limit, since they lie in a compact set (isCompact_isPrice_le). -/
 theorem prop_random_limit {P Q : Type} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {w : P → P → ℝ}
     (hw : IsPrice K w) {m : ℕ} (θ : Fin m → ℝ) (hθ : ∀ l, 0 ≤ θ l) (hθ1 : ∑ l, θ l = 1) (σ : Fin m → Q → P) :
     ∃ w' : P ⊕ Q → P ⊕ Q → ℝ, IsPrice K w' ∧ (∀ p p', w' (Sum.inl p) (Sum.inl p') = w p p') ∧
@@ -249,7 +236,7 @@ theorem prop_random_limit {P Q : Type} [Fintype P] [DecidableEq P] [Fintype Q] [
   choose φ' h1 h2 using fun n => prop_random_spectral (φ n) θ hθ hθ1 σ
   let B : P ⊕ Q → P ⊕ Q → ℝ := fun a b => ∑ l, θ l * w (Sum.elim id (σ l) a) (Sum.elim id (σ l) b)
   let d : ℕ → P ⊕ Q → P ⊕ Q → ℝ := fun n a b => s n * (φ' n).e a b
-  have hd : ∀ n, IsPrice K (d n) := fun n => def_price_multiple (isPrice_spec (φ' n)) (hs n)
+  have hd : ∀ n, IsPrice K (d n) := fun n => (isPrice_spec (φ' n)).smul (hs n)
   have hdB : ∀ n a b, d n a b ≤ B a b + 1 / (n + 1) := by
     intro n a b
     calc s n * (φ' n).e a b
@@ -267,7 +254,7 @@ theorem prop_random_limit {P Q : Type} [Fintype P] [DecidableEq P] [Fintype Q] [
         simp only [mul_add]
         rw [Finset.sum_add_distrib, ← Finset.sum_mul, hθ1, one_mul]
   let U : Ultrafilter ℕ := Ultrafilter.of atTop
-  obtain ⟨w', ⟨hw', -⟩, hlim⟩ := (def_price_compact (K := K) fun a b => B a b + 1).ultrafilter_le_nhds (U.map d) (by
+  obtain ⟨w', ⟨hw', -⟩, hlim⟩ := (isCompact_isPrice_le (K := K) fun a b => B a b + 1).ultrafilter_le_nhds (U.map d) (by
     rw [le_principal_iff, Ultrafilter.coe_map, Filter.mem_map]
     exact univ_mem' fun n => ⟨hd n, fun a b => (hdB n a b).trans (by linarith [hle1 n])⟩)
   have hlim' : ∀ a b, Tendsto (fun n => d n a b) U (nhds (w' a b)) := by
@@ -368,7 +355,7 @@ theorem prop_random {Y Q : Type} {w : Y → Y → ℝ} (hw : IsPrice K w) {Ω : 
     Finset.univ.biUnion fun κ : T => Finset.univ.image fun l => π l κ
   have hR : ∀ l κ, π l κ ∈ R := fun l κ => Finset.mem_union_right _
     (Finset.mem_biUnion.2 ⟨κ, Finset.mem_univ κ, Finset.mem_image_of_mem _ (Finset.mem_univ l)⟩)
-  obtain ⟨v, hv, hv1, hv2⟩ := prop_random_limit (def_price_pullback hw (Subtype.val : R → Y)) θ hθ hθ1
+  obtain ⟨v, hv, hv1, hv2⟩ := prop_random_limit (hw.comp (Subtype.val : R → Y)) θ hθ hθ1
     fun l κ => (⟨π l κ, hR l κ⟩ : R)
   -- the points of S among those of Y₀ ∪ Q₀, and their places under a map Q₀ → Y
   let g : S → R ⊕ T := fun a => match a with
@@ -381,7 +368,7 @@ theorem prop_random {Y Q : Type} {w : Y → Y → ℝ} (hw : IsPrice K w) {Ω : 
     rintro l ⟨y | κ, ha⟩ <;> rfl
   have hσ : ∀ ω (a : S), Sum.elim id (fun κ => σ κ ω) a.1 = place (fun κ : T => σ κ ω) a := by
     rintro ω ⟨y | κ, ha⟩ <;> rfl
-  refine ⟨fun a b => v (g a) (g b), def_price_pullback hv g, fun a b => ⟨?_, ?_⟩⟩
+  refine ⟨fun a b => v (g a) (g b), hv.comp g, fun a b => ⟨?_, ?_⟩⟩
   · obtain ⟨y | κ, ha⟩ := a <;> obtain ⟨y' | κ', hb⟩ := b
     · exact (hv1 ⟨y, _⟩ ⟨y', _⟩).ge
     all_goals exact hv.nonneg _ _

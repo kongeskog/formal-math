@@ -305,14 +305,6 @@ theorem role_eq_codeTab {x : Fin E} {p : (M.kind x).Ro} {t : ℕ} {ids : (M.kind
       exact (if_neg h2).symm
   · exact (if_neg fun h => h1 fun ν => ((e1 ν).1 (h ν)).1).trans (if_neg h1).symm
 
-theorem new_mem_newUnits {x : Fin E} {o : M.N → Fin U1} {ν : M.N} {k : Fin U1} :
-    (Uid.new ν k : Uid A U0 M.N U1) ∈ newUnits M x o ↔ ν.1 = x ∧ k ≤ o ν := by
-  simp [newUnits]
-
-theorem init_not_mem_newUnits {x : Fin E} {o : M.N → Fin U1} {a b : Fin A} {k : Fin U0} :
-    (Uid.init a b k : Uid A U0 M.N U1) ∉ newUnits M x o := by
-  simp [newUnits]
-
 theorem holds_new {x : Fin E} {p : (M.kind x).Ro} {ν : (M.kind x).Cn}
     (hν : (M.kind x).c ν = p ∨ (M.kind x).d ν = p) (k : Fin U1) :
     Holds (hold0 M.np) (hold1 M.np) (M.part x p) (Uid.new ⟨x, ν⟩ k : Uid A U0 M.N U1) := by

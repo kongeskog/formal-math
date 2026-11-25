@@ -270,6 +270,14 @@ noncomputable def partyTab (P : Plan M U0 U1) (n : Fin A → Fin A → Fin (U0 +
     (init : (Uid A U0 M.N U1 → UW ub) → F) (a : Fin (A + A')) (y : Uid A U0 M.N U1 → UW ub) : F :=
   init y * ∏ r : M.R, if M.rp r = a then roleAt P n o r y else 1
 
+theorem new_mem_newUnits {x : Fin E} {o : M.N → Fin U1} {ν : M.N} {k : Fin U1} :
+    (Uid.new ν k : Uid A U0 M.N U1) ∈ newUnits M x o ↔ ν.1 = x ∧ k ≤ o ν := by
+  simp [newUnits]
+
+theorem init_not_mem_newUnits {x : Fin E} {o : M.N → Fin U1} {a b : Fin A} {k : Fin U0} :
+    (Uid.init a b k : Uid A U0 M.N U1) ∉ newUnits M x o := by
+  simp [newUnits]
+
 end Plans
 
 section Start

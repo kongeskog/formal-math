@@ -63,7 +63,7 @@ theorem prop_extend_cover (ι : I → I') {A : Ten K I} {κ : Type} [Fintype κ]
     have h3 : π ∘ ι = id := funext hπ
     have h4 := tensor_push_comp π ι (A.withVal fun x => v k (emb x))
     rw [h3] at h4
-    exact (h4.trans (tensor_push_id _)).2.trans h2
+    exact (h4.trans (Equi.push_id _)).2.trans h2
 
 /-- Proof of Proposition prop:extend: "So φ(A) ≤ ∑ φ(a_j) ≤ ∑ f(b_j)", for every cover (b_j) of ιA. -/
 theorem prop_extend_lower (ι : I → I') (π : L → I' → I) (hπ : ∀ l i, π l (ι i) = i) (θ : L → ℝ) (hθ : ∀ l, 0 ≤ θ l)
@@ -87,7 +87,7 @@ theorem prop_extend_upper (ι : I → I') (π : L → I' → I) (hπ : ∀ l i, 
     intro l
     have h := tensor_push_comp (π l) ι A
     rw [show π l ∘ ι = id from funext (hπ l)] at h
-    exact h.trans (tensor_push_id _)
+    exact h.trans (Equi.push_id _)
   have h1 : extendProduct π θ φ (Ten.push ι A) = ∏ l, φ.F A ^ θ l :=
     Finset.prod_congr rfl fun l _ => by rw [(def_spectral_congr φ).2 (retr l)]
   rw [h1]

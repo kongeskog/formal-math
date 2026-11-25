@@ -44,9 +44,6 @@ theorem tensor_push_comp (π : J → I) (ρ : L → J) (t : Ten K L) :
     Equi (Ten.push π (Ten.push ρ t)) (Ten.push (π ∘ ρ) t) :=
   Equi.push_push π ρ t
 
-/-- The push-forward along the identity does nothing. -/
-theorem tensor_push_id (t : Ten K I) : Equi (Ten.push id t) t := Equi.push_id t
-
 /-- "Push-forward … sends 1 to 1". -/
 theorem tensor_push_one (π : J → I) : Equi (Ten.push π (1 : Ten K J)) 1 := Equi.push_one π
 
@@ -107,14 +104,16 @@ theorem lem_exponents_power [Nonempty I] (φ : Spec K I) {A : Type} [Fintype A] 
         rw [(def_spectral_congr φ).2 ((Equi.unit_mul m n).push π), (def_spectral_congr φ).2 (tensor_push_mul _ _ _), φ.mul])
       (fun _ _ _ h => (def_spectral_congr φ).1 ((Restr.unit_mono h).push π)) _ hq⟩
 
-/-- The case of a wire: φ(⟨q⟩_uv) = q ^ d_φ(u,v). -/
-theorem lem_exponents_wire (φ : Spec K I) (u v : I) {q : ℕ} (hq : 1 ≤ q) :
-    φ.F (Ten.wire K q u v) = (q : ℝ) ^ φ.e u v :=
+/-- The case of a wire: φ(⟨n⟩_uv) = n ^ d_φ(u,v). Stated in the namespace Ov.Spec, so that the development cites it as
+`φ.wire_eq`; so are the facts about wires below. -/
+theorem _root_.Ov.Spec.wire_eq (φ : Spec K I) (u v : I) {n : ℕ} (hn : 1 ≤ n) :
+    φ.F (Ten.wire K n u v) = (n : ℝ) ^ φ.e u v :=
   have : Nonempty I := ⟨u⟩
-  (lem_exponents_power φ ![u, v]).2 q hq
+  (lem_exponents_power φ ![u, v]).2 n hn
 
-theorem lem_exponents_wire_two (φ : Spec K I) (u v : I) : φ.F (Ten.wire K 2 u v) = 2 ^ φ.e u v := by
-  have := lem_exponents_wire φ u v (q := 2) (by norm_num)
+/-- φ(⟨2⟩_uv) = 2 ^ d_φ(u,v). -/
+theorem _root_.Ov.Spec.wire_two (φ : Spec K I) (u v : I) : φ.F (Ten.wire K 2 u v) = 2 ^ φ.e u v := by
+  have := φ.wire_eq u v (n := 2) (by norm_num)
   exact_mod_cast this
 
 /-- Proof of Lemma lem:exponents: "A wire of dimension q is covered by q copies of 1, so d_φ ≤ 1." (The cover and its
@@ -123,12 +122,12 @@ theorem lem_exponents_unit_interval (φ : Spec K I) (u v : I) : 0 ≤ φ.e u v �
   have : Nonempty I := ⟨u⟩
   refine ⟨(lem_exponents_power φ ![u, v]).1, ?_⟩
   have h : φ.F (Ten.wire K 2 u v) ≤ (2 : ℕ) := φ.unit_le ![u, v] 2
-  rw [lem_exponents_wire_two] at h
+  rw [Spec.wire_two] at h
   have h2 : (2 : ℝ) ^ φ.e u v ≤ 2 ^ (1 : ℝ) := by simpa using h
   exact (Real.rpow_le_rpow_left_iff (by norm_num)).1 h2
 
 /-- "We put ⟨q⟩_uu = 1": a wire from u to u is a restriction of 1, so d_φ(u,u) = 0. -/
-theorem lem_exponents_self (φ : Spec K I) (u : I) : φ.e u u = 0 := by
+theorem _root_.Ov.Spec.e_self (φ : Spec K I) (u : I) : φ.e u u = 0 := by
   have : Nonempty I := ⟨u⟩
   have h : φ.F (Ten.wire K 2 u u) = 1 := by
     refine le_antisymm ?_ (φ.one_le_unit ![u, u] (by norm_num))
@@ -137,7 +136,7 @@ theorem lem_exponents_self (φ : Spec K I) (u : I) : φ.e u u = 0 := by
   rw [Spec.e, h, Real.logb_one]
 
 /-- A wire has no direction. -/
-theorem lem_exponents_symm (φ : Spec K I) (u v : I) : φ.e u v = φ.e v u := by
+theorem _root_.Ov.Spec.e_comm (φ : Spec K I) (u v : I) : φ.e u v = φ.e v u := by
   rw [Spec.e, Spec.e, (def_spectral_congr φ).2 (Equi.wire_comm 2 u v)]
 
 /-- Proof of Lemma lem:exponents: "Contracting the two indices at v shows that ⟨q⟩_uw is a restriction of ⟨q⟩_uv ⟨q⟩_vw". -/
@@ -148,7 +147,7 @@ theorem lem_exponents_contract (q : ℕ) (u v w : I) :
 /-- Proof of Lemma lem:exponents: "… this is the triangle inequality." -/
 theorem lem_exponents_triangle (φ : Spec K I) (u v w : I) : φ.e u w ≤ φ.e u v + φ.e v w := by
   have h := φ.le_mul (lem_exponents_contract (K := K) 2 u v w)
-  rw [lem_exponents_wire_two, lem_exponents_wire_two, lem_exponents_wire_two, ← Real.rpow_add (by norm_num)] at h
+  rw [Spec.wire_two, Spec.wire_two, Spec.wire_two, ← Real.rpow_add (by norm_num)] at h
   exact (Real.rpow_le_rpow_left_iff (by norm_num)).1 h
 
 end Paper
