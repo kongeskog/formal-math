@@ -31,41 +31,6 @@ def Generates (θ : List Bool → A) : Prop := (Function.support θ).Finite ∧ 
 theorem exists_generates (A : Type) [CommRing A] [Algebra.FiniteType ℤ A] : ∃ θ : List Bool → A, Generates θ :=
   Nc.Dl.exists_theta A
 
-/-- **Paper: Definition def:cut.** "A program G cuts (τ,s) into (τ′,s′) with P pieces in t steps if for every instance
-z with |z| ≤ s: all runs of G on z halt, and the accepting ones take at most t steps, have empty bills and output lists
-of at most P instances of size at most s′; and if z is τ-plain, then all these instances are τ′-plain and
-sum(z) = ∑ weight · ∏ sum(y)." -/
-theorem def_cut (θ : List Bool → A) (τ s τ' s' P t : ℕ) (G : Tree) :
-    CutD θ τ s τ' s' P t G ↔ ∀ z, z.size ≤ s →
-      Hl θ (Fm.ofTree G) z ∧
-      (∀ r ∈ evl θ (Fm.ofTree G) z, r.bill = [] ∧ r.cost ≤ t ∧ r.out.toList.length ≤ P ∧
-        ∀ y ∈ r.out.toList, y.size ≤ s') ∧
-      (Plain θ τ z → (∀ r ∈ evl θ (Fm.ofTree G) z, ∀ y ∈ r.out.toList, Plain θ τ' y) ∧
-        pv θ z = ((evl θ (Fm.ofTree G) z).map fun r => r.th * (r.out.toList.map (pv θ)).prod).sum) := by
-  constructor
-  · intro h z hz
-    obtain ⟨Q, hD, hQ, hv⟩ := h z hz
-    refine ⟨hD.hl, fun r hr => ?_, fun hp => ⟨fun r hr y hy => ?_, ?_⟩⟩
-    · obtain ⟨h1, h2, q, hq, h3⟩ := hD.evl.1 r hr
-      rw [← h3]
-      exact ⟨h1, h2, hQ q hq⟩
-    · obtain ⟨-, -, q, hq, h3⟩ := hD.evl.1 r hr
-      rw [← h3] at hy
-      exact (hv hp).1 q hq y hy
-    · rw [(hv hp).2, ← hD.evl.2 (pvs θ)]
-      rfl
-  · intro h z hz
-    obtain ⟨h1, h2, h3⟩ := h z hz
-    refine ⟨(evl θ (Fm.ofTree G) z).map fun r => (r.th, r.out), ⟨_, h1.ev, fun r hr => ⟨(h2 r hr).1, (h2 r hr).2.1,
-      _, List.mem_map.2 ⟨r, hr, rfl⟩, rfl⟩, fun φ => ?_⟩, fun q hq => ?_, fun hp => ⟨fun q hq => ?_, ?_⟩⟩
-    · simp [wsum, Function.comp_def]
-    · obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hq
-      exact (h2 r hr).2.2
-    · obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hq
-      exact (h3 hp).1 r hr
-    · rw [(h3 hp).2]
-      simp [wsum, pvs, Function.comp_def]
-
 /-- **Paper: Theorem thm:onecut, the evaluator.** "The sum of the evaluator on a script is the value of the piece", all
 its runs halt, within (#blocks · T + #bits of units + #instructions · v^O(1))(lg v)^O(1) steps: GROUP and κ are the
 evaluator and its step cost, GroupOK says halting, value and cost, GrpTimeOK bounds the cost by the bits of the piece. -/

@@ -9,8 +9,8 @@ import Mathlib
 # Two families of polynomials
 
 `mB y r n = [tⁿ] (1+t)^r/(1+yt)^(r+1)`, `mC y r n = [tⁿ] (1+yt)^r/(1+t)^(r+1)`.
-That these are the coefficients, the relation between the two families and the orthogonality relation are
-Paper.meixner_B, meixner_C, meixner_reciprocal and eq_orth (Paper/Identity.lean).
+The relation between the two families and the orthogonality relation are
+Paper.meixner_reciprocal and eq_orth (Paper/Identity.lean).
 -/
 
 namespace Nc.Cross

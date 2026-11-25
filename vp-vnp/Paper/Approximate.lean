@@ -11,8 +11,7 @@ import Nc.Rate.Circuit
 # The paper, appendix "Approximate computation"
 
 The exact end theorems, thm:allfields and cor:allclasses, are derived here from Theorem thm:approx.
-The theorems over ℝ of the introduction, thm:main, thm:simple and cor:classes, follow at the end
-from thm:allfields.
+Theorem thm:main of the introduction, over ℝ, follows at the end from thm:allfields.
 -/
 
 namespace Paper
@@ -24,21 +23,6 @@ universe u
 /- VP closure, like VP with approximating circuits: the definition of the frozen statement
 (`Statement.lean`), shared by the development. Its `Approximates` unfolds to `Nc.Approximates`. -/
 export Statement (VPBar)
-
-/-- **Paper: Definition def:approx.** "A circuit over k((ε)) approximates a polynomial f over the field k if its output
-is f + εg with all coefficients of g in k[[ε]]. The closure of VP is defined like VP with approximating circuits."
-Coefficientwise: no negative powers of ε, and the part of ε⁰ is f. -/
-theorem def_approx {F : Type u} {X : Type*} [Field F] (f : MvPolynomial X F) (s : ℕ) :
-    Approximates f s ↔ ∃ p : MvPolynomial X (LaurentSeries F), Computes p s ∧
-      ∀ d : X →₀ ℕ, (∀ i : ℤ, i < 0 → (coeff d p).coeff i = 0) ∧ (coeff d p).coeff 0 = coeff d f := by
-  constructor
-  · rintro ⟨p, hp, h⟩
-    exact ⟨p, hp, fun d => ⟨fun i hi => by rw [h d i hi.le, if_neg hi.ne], by rw [h d 0 le_rfl, if_pos rfl]⟩⟩
-  · rintro ⟨p, hp, h⟩
-    refine ⟨p, hp, fun d i hi => ?_⟩
-    rcases eq_or_lt_of_le hi with rfl | hlt
-    · rw [if_pos rfl, (h d).2]
-    · rw [if_neg hlt.ne, (h d).1 i hlt]
 
 theorem coeff_mul_T {R : Type} [CommRing R] (f : LaurentPolynomial R) (N i : ℤ) :
     (f * LaurentPolynomial.T N).coeff i = f.coeff (i - N) := by
@@ -329,7 +313,7 @@ theorem cor_allclasses (F : Type u) [Field F] : VP F ⊂ VNP F := by
   obtain ⟨m, hm1, hm2⟩ := exists_beyond_poly hc m₀ C
   exact hm2 ((hlow F m hm1 _).1 (hC m).2.2)
 
-/- Theorems thm:main and thm:simple and Corollary cor:classes, moved here from `Paper/Rate.lean`. -/
+/- Theorem thm:main, moved here from `Paper/Rate.lean`. -/
 
 /- Theorem thm:main is the PERM_m part of Theorem thm:allfields for the field ℝ, of characteristic
 p = 0 (so the hypothesis p ≠ 2 holds); genPerm_eq rewrites the permanent into the printed sum. -/
@@ -342,37 +326,5 @@ theorem thm_main : ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s 
   obtain ⟨c, hc, h⟩ := thm_allfields.{0}
   obtain ⟨m₀, hm⟩ := h 0 (Or.inl rfl)
   exact ⟨c, hc, m₀, fun m hm' s hs => (hm ℝ m hm' s).2 (by norm_num) (genPerm_eq ℝ m ▸ hs)⟩
-
-/- Theorem thm:simple follows from Theorem thm:main: a circuit with s ≤ m^C gates computing PERM_m
-would have m^(c(log m)^(1/3)) < s ≤ m^C, and m^C is eventually below that bound (pow_le_rate). -/
-
-/-- **Paper: Theorem thm:simple.** "For every C there is m₀ such that for all m ≥ m₀ no circuit over ℝ with at most m^C
-gates computes PERM_m." -/
-theorem thm_simple (C : ℕ) : ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s : ℕ, s ≤ m ^ C →
-    ¬ Computes (∑ σ : Equiv.Perm (Fin m), ∏ i, MvPolynomial.X (σ i, i) : MvPolynomial (Fin m × Fin m) ℝ) s := by
-  obtain ⟨c, hc, m₀, h⟩ := thm_main
-  obtain ⟨m₁, h₁⟩ := pow_le_rate hc C
-  exact ⟨m₀ + m₁, fun m hm s hs hcomp =>
-    (h m (by omega) s hcomp).not_ge ((Nat.cast_le.2 hs).trans (h₁ m (by omega)))⟩
-
-/- Corollary cor:classes keeps its own proof: its doc comment names Ryser's formula (perm_mem_VNP) as
-the reason the permanent is in VNP, so it is not replaced by `cor_allclasses ℝ`, whose witness is
-the Hamiltonian cycle polynomial. -/
-
-/-- **Paper: Corollary cor:classes.** "Over ℝ, VP is a proper subset of VNP." The witness is the permanent: it is in VNP
-by Ryser's formula and not in VP by Theorem thm:simple. -/
-theorem cor_classes : VP ℝ ⊂ VNP ℝ := by
-  refine ⟨vp_subset_vnp ℝ, fun h => ?_⟩
-  obtain ⟨C, hC⟩ := h (perm_mem_VNP ℝ)
-  obtain ⟨m₀, hlow⟩ := thm_simple (C + 1)
-  generalize hm : m₀ + C + 2 = m
-  refine hlow m (by omega) (m ^ C + C) ?_ ?_
-  · have h1 : 1 ≤ m ^ C := Nat.one_le_pow _ _ (by omega)
-    calc m ^ C + C ≤ m ^ C + m ^ C * C := Nat.add_le_add_left (Nat.le_mul_of_pos_left _ h1) _
-      _ = m ^ C * (C + 1) := by ring
-      _ ≤ m ^ C * m := Nat.mul_le_mul_left _ (by omega)
-      _ = m ^ (C + 1) := (pow_succ m C).symm
-  · rw [← genPerm_eq]
-    exact (hC m).2.2
 
 end Paper

@@ -340,50 +340,6 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
 /-- The integer of the test for good outcomes: "the test for good outcomes compare[s] integers, as C₀ is an integer". -/
 noncomputable def goodBound (C₁ : ℝ) (a₁ : ℕ) : ℕ := ⌊2 * C₁ * (a₁ : ℝ) ^ 2⌋₊
 
-/-- Without units from a node to itself every current unit joins two nodes: thin trees give the printed formula. -/
-theorem cutUnits_id_cur {R : Type} [CommRing R] {AA A' E N U1 : ℕ} {S : Sys R (AA + A') E} (P : Plan S N U1)
-    {n : Fin AA → Fin AA → Fin (N + 1)} (hn : ∀ a, n a a = 0) (o : S.N → Fin U1) :
-    cutUnits (hold0 S.np) (hold1 S.np) id (P.cur n o E) = P.cur n o E := by
-  unfold cutUnits
-  rw [filter_true_of_mem]
-  intro u hu he
-  have hseen := (Plan.mem_cur.1 hu).1
-  cases u with
-  | init a b k =>
-    have hk := Plan.init_mem_seenAt.1 hseen
-    have hab : a = b := Fin.castAdd_injective _ _ he
-    subst hab
-    rw [hn a] at hk
-    exact Nat.not_lt_zero _ hk
-  | new ν k => exact (S.kind ν.1).cd ν.2 (S.inj ν.1 he)
-
-/-- **Paper: the paragraph before Theorem thm:tree.** "An outcome is good if ‖o‖_* ≤ √C₁a₁t and o_e ≥ t for all e":
-at a law move the integer test of the trees of thm_tree implies this, and is equivalent to it when 2C₁a₁² is an
-integer, as it is for C₁ = 4C₀ with the integer C₀ of the laws. -/
-theorem thm_tree_good {R : Type} [CommRing R] {laws : List (G.Law R)} {AA N ℓ M b C a₁ : ℕ} {γ C₁ : ℝ}
-    (T : ThinTrees R laws AA N ℓ M b (goodBound C₁ a₁) C γ) (hC : 0 ≤ C₁) {n o x} (hlaw : T.isLaw x = true) :
-    let printed := √((b : ℝ) / 2 * ∑ ν : (T.sys.kind x).Cn, ((o ⟨x, ν⟩).val : ℝ) ^ 2) ≤ √C₁ * a₁ * T.plan.num n o x ∧
-      ∀ ν : (T.sys.kind x).Cn, T.plan.num n o x ≤ o ⟨x, ν⟩
-    (T.plan.good n o x → printed) ∧
-      ((∃ g : ℕ, 2 * C₁ * (a₁ : ℝ) ^ 2 = g) → printed → T.plan.good n o x) := by
-  intro printed
-  have h3 : 0 ≤ √C₁ * (a₁ : ℝ) * (T.plan.num n o x : ℝ) := by positivity
-  have e : printed ↔ (b : ℝ) * ∑ ν : (T.sys.kind x).Cn, ((o ⟨x, ν⟩).val : ℝ) ^ 2 ≤
-      2 * C₁ * (a₁ : ℝ) ^ 2 * (T.plan.num n o x : ℝ) ^ 2 ∧ ∀ ν : (T.sys.kind x).Cn, T.plan.num n o x ≤ o ⟨x, ν⟩ := by
-    refine and_congr_left fun _ => ?_
-    rw [Real.sqrt_le_left h3, mul_pow, mul_pow, Real.sq_sqrt hC]
-    constructor <;> intro h <;> linarith
-  rw [e, T.good_iff n o x, if_pos hlaw]
-  refine ⟨fun h => ⟨?_, h.2⟩, fun ⟨g, hg⟩ h => ⟨?_, h.2⟩⟩
-  · have h2 : (b : ℝ) * ∑ ν : (T.sys.kind x).Cn, ((o ⟨x, ν⟩).val : ℝ) ^ 2 ≤
-        goodBound C₁ a₁ * (T.plan.num n o x : ℝ) ^ 2 := by exact_mod_cast h.1
-    exact h2.trans (mul_le_mul_of_nonneg_right (Nat.floor_le (by positivity)) (sq_nonneg _))
-  · have h2 := h.1
-    rw [hg] at h2
-    have h4 : goodBound C₁ a₁ = g := by rw [goodBound, hg, Nat.floor_natCast]
-    calc b * ∑ ν : (T.sys.kind x).Cn, (o ⟨x, ν⟩).val ^ 2 ≤ g * T.plan.num n o x ^ 2 := by exact_mod_cast h2
-      _ = _ := by simp only [h4]
-
 section Build
 
 variable {F : Type} [CommRing F] {h b D J r m Uu AA A' N U1 : ℕ} {T : Tower h b D J r} (R : Routes T m Uu)
@@ -1228,19 +1184,6 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
       exact Or.inr (Or.inr (e1 j hj c))
   · exact fun y => Or.inr (Or.inr (f1.good (eE R FL y)))
 
-/-- **Paper: Theorem thm:tree, Start.** "Hence every edge gets at most n₀ = 4L(N+M²) units." -/
-theorem thm_tree_start_units {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ} (hr : 0 < r) (hb : 0 < b)
-    (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) (e : T.Ed 0) :
-    load R ch FL N n o (.edge 0 e) ≤ 4 * m * (N + Fintype.card (T.X 0) ^ 2) := by
-  refine (thm_tree_start hr hb e).trans ((Nat.mul_le_mul hUu le_rfl).trans ?_)
-  calc 2 * Fintype.card (T.X 0) * m * (N / Fintype.card (T.X 0) + 2 * AA) =
-      2 * m * (N / Fintype.card (T.X 0) * Fintype.card (T.X 0)) + 4 * m * (Fintype.card (T.X 0) * AA) := by ring
-    _ ≤ 2 * m * N + 4 * m * (Fintype.card (T.X 0) * Fintype.card (T.X 0)) := by
-        gcongr
-        exact Nat.div_mul_le_self _ _
-    _ ≤ 4 * m * N + 4 * m * (Fintype.card (T.X 0) * Fintype.card (T.X 0)) := by gcongr; omega
-    _ = _ := by ring
-
 end Lemmas
 
 section Towers
@@ -1618,7 +1561,7 @@ constant, or an arbitrary function of two earlier results, given by its table (a
 depend on the numbers of units, the outcomes or the tables." The tests are relays, and the laws are the fixed list, mapped to R. A move of num
 units uses num·ℓ layers, so (c) is stated as num summed over the law moves at a node against the units ever seen at it
 (seenAt). Units from a node to itself are also allowed: they stay, and their node sums over them (the printed formula is
-the case without them, cutUnits_id_cur). The operations of (d) are those of a straight-line program that may depend on M, N and ℓ. -/
+the case without them). The operations of (d) are those of a straight-line program that may depend on M, N and ℓ. -/
 theorem thm_tree {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :

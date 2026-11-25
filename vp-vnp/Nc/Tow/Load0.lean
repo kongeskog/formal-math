@@ -485,7 +485,7 @@ theorem batch_le (e : T.Ed 0) : (∑ a, ∑ c, ∑ γ, if a = c then 0 else
           _ ≤ _ := Finset.sum_le_sum_of_subset (subset_univ _)
 
 /-- **Paper: Theorem thm:tree, Start.** "Every edge gets at most n₀ = 4L(N+M²) units": every edge of X^(0) gets at
-most Uu (N/|X^(0)| + 2AA), where Uu ≤ 2|X^(0)|L bounds the routes through an edge (printed form: thm_tree_start_units). -/
+most Uu (N/|X^(0)| + 2AA), where Uu ≤ 2|X^(0)|L bounds the routes through an edge. -/
 theorem _root_.Paper.thm_tree_start (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
     Uu * (lhat / Fintype.card (T.X 0) + 2 * AA) := (load_start_le hr hb e).trans (batch_le e)
 

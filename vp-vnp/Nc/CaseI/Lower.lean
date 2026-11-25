@@ -5,16 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import Nc.CaseI.Fkl
 import Nc.CaseI.Geo
-import Nc.Price.Network
-import Nc.Price.Basic
 
 /-!
-# The complete network: ends, sums over the ends, and the numbers of the lower bound
+# The complete network: ends and sums over the ends
 -/
 
 namespace Nc.CaseI
 
-open Finset Nc.Price Ov
+open Finset
 
 variable {k : ℕ}
 
@@ -62,75 +60,6 @@ theorem sum_pairs_one : ∑ _e : Pr k, (1 : ℝ) = k * (k - 1) / 2 := by
     ring
   simp only [h2]
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-  ring
-
-/-- The numbers of the lower bound. -/
-theorem lower_numbers {k ℓ c N δ S1 S2 S3 lg : ℝ} (hk1 : 1 ≤ k) (hℓ0 : 0 ≤ ℓ) (hc : 0 ≤ c)
-    (hN : N = k * (k - 1) / 2) (hδ : δ = 1 / (150 * k)) (hlog : 0 ≤ lg) (hℓc : 100 * c ≤ ℓ)
-    (hw : N * (1 - δ) ≤ c * S1) (hh : c * S2 ≤ N - k / 12 + 2 * N * δ)
-    (hm : c * S3 ≤ 1 / (3 * √k) + δ) (h1 : ℓ * S1 ≤ k + ℓ * S2 + S3 * lg) :
-    ℓ * (k * √k) / 6 ≤ lg := by
-  have hk0 : 0 < k := by linarith
-  have hN0 : 0 ≤ N := by
-    have : (0 : ℝ) ≤ k - 1 := by linarith
-    rw [hN]
-    positivity
-  have hδ0 : 0 < δ := by rw [hδ]; positivity
-  have h3 : ℓ * (N * (1 - δ)) ≤ c * k + ℓ * (N - k / 12 + 2 * N * δ) + (1 / (3 * √k) + δ) * lg := by
-    have h2 := mul_le_mul_of_nonneg_left h1 hc
-    have a1 := mul_le_mul_of_nonneg_left hw hℓ0
-    have a2 := mul_le_mul_of_nonneg_left hh hℓ0
-    have a3 := mul_le_mul_of_nonneg_right hm hlog
-    have e1 : c * (ℓ * S1) = ℓ * (c * S1) := by ring
-    have e2 : c * (k + ℓ * S2 + S3 * lg) = c * k + ℓ * (c * S2) + c * S3 * lg := by ring
-    rw [e1, e2] at h2
-    linarith
-  have hNδ : 3 * N * δ ≤ k / 100 := by
-    have : N ≤ k * k / 2 := by rw [hN]; nlinarith
-    have h4 : 3 * N * δ ≤ 3 * (k * k / 2) * δ := by gcongr
-    refine h4.trans (le_of_eq ?_)
-    rw [hδ]
-    field_simp
-    norm_num
-  have hck : c * k ≤ ℓ * (k / 100) := by nlinarith
-  have h5 : ℓ * (k * (19 / 300)) ≤ (1 / (3 * √k) + δ) * lg := by
-    have h6 : ℓ * (3 * N * δ) ≤ ℓ * (k / 100) := mul_le_mul_of_nonneg_left hNδ hℓ0
-    have e3 : ℓ * (N * (1 - δ)) = ℓ * N - ℓ * (N * δ) := by ring
-    have e4 : ℓ * (N - k / 12 + 2 * N * δ) = ℓ * N - ℓ * k / 12 + 2 * (ℓ * (N * δ)) := by ring
-    have e5 : ℓ * (3 * N * δ) = 3 * (ℓ * (N * δ)) := by ring
-    rw [e3, e4] at h3
-    rw [e5] at h6
-    linarith
-  have hsq : √k * √k = k := Real.mul_self_sqrt hk0.le
-  have hsq1 : 1 ≤ √k := by
-    rw [Real.one_le_sqrt]
-    exact hk1
-  have hsq0 : 0 < √k := by linarith
-  have h7 : 1 / (3 * √k) + δ ≤ (17 / 50) / √k := by
-    have h8 : δ ≤ 1 / (150 * √k) := by
-      rw [hδ]
-      refine one_div_le_one_div_of_le (by positivity) ?_
-      nlinarith
-    have h9 : (1 : ℝ) / (3 * √k) + 1 / (150 * √k) = (17 / 50) / √k := by
-      field_simp
-      norm_num
-    linarith
-  have h10 : ℓ * (k * (19 / 300)) ≤ (17 / 50) / √k * lg :=
-    h5.trans (mul_le_mul_of_nonneg_right h7 hlog)
-  rw [div_mul_eq_mul_div, le_div_iff₀ hsq0] at h10
-  have h11 : (0 : ℝ) ≤ ℓ * (k * √k) := by positivity
-  have e6 : ℓ * (k * (19 / 300)) * √k = 19 / 300 * (ℓ * (k * √k)) := by ring
-  rw [e6] at h10
-  linarith
-
-/-- Sums over ends, with an error. -/
-theorem sum_pairs_add (G : Fin k → Fin k → ℝ) (δ : ℝ) :
-    ∑ e : Pr k, ((G e.1.1 e.1.2 + δ) + (G e.1.2 e.1.1 + δ)) =
-      (∑ a, ∑ b, if a = b then 0 else G a b) + 2 * ((k : ℝ) * (k - 1) / 2) * δ := by
-  have h1 : ∀ e : Pr k, ((G e.1.1 e.1.2 + δ) + (G e.1.2 e.1.1 + δ)) =
-      (G e.1.1 e.1.2 + G e.1.2 e.1.1) + 1 * (2 * δ) := fun e => by ring
-  rw [Finset.sum_congr rfl fun e _ => h1 e, Finset.sum_add_distrib, sum_pairs, ← Finset.sum_mul,
-    sum_pairs_one]
   ring
 
 end Nc.CaseI

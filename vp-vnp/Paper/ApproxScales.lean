@@ -11,8 +11,6 @@ import NS1.ApproxMain
 
 /-!
 # The paper, appendix "Approximate computation": no approximate accelerators
-
-The contracting case, Theorem thm:contracting, is derived here from its approximate form.
 -/
 
 set_option linter.unusedSectionVars false
@@ -23,23 +21,6 @@ open NS1
 open _root_.NS1.Tree LaurentPolynomial
 
 variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] [Algebra A E]
-
-/-- **Paper: the definition of an approximate accelerator.** "An approximate accelerator is defined as in Definition
-def:acc, with constants in R[ε,ε⁻¹] and values only required to lie in pv(z) + εR[ε]." As the values are in R[ε,ε⁻¹],
-this says that the difference has no coefficient at an exponent ≤ 0. -/
-theorem def_approx_acc (θ : List Bool → A) (R : Type) [CommRing R] [Algebra A R] (H v s : ℕ) :
-    HasAccA θ R H v s ↔ ∃ (K : KT R[T;T⁻¹]) (B : ℕ) (D : Tree),
-      (∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧
-        ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost ≤ v ^ (H - 16) ∧ ∀ p ∈ r.bill, K.InB B p) ∧
-      (∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z → ∀ i : ℤ, i ≤ 0 →
-        (((evl θ (Fm.ofTree D) z).map fun r => algebraMap A R[T;T⁻¹] r.th * (r.bill.map K.lk).prod).sum -
-          algebraMap A R[T;T⁻¹] (pv θ z)).coeff i = 0) ∧
-      K.nds ≤ s ∧ D.size ≤ s ∧ K.ht ≤ lg (max (v ^ H) s) ^ 2 ∧ B ≤ lg (max (v ^ H) s) ^ 3 := by
-  constructor
-  · rintro ⟨K, B, D, ⟨h1, h2⟩, h3, h4, h5, h6⟩
-    exact ⟨K, B, D, h1, fun z hz hp i hi => h2 z hz hp i (by omega), h3, h4, h5, h6⟩
-  · rintro ⟨K, B, D, h1, h2, h3, h4, h5, h6⟩
-    exact ⟨K, B, D, ⟨h1, fun z hz hp i hi => h2 z hz hp i (by omega)⟩, h3, h4, h5, h6⟩
 
 /-- The scales that are large enough. -/
 structure LargeScale (h cB U : ℕ) : Prop where
@@ -525,17 +506,5 @@ theorem _root_.Nc.Computes.approximates {F X : Type*} [Field F] {f : MvPolynomia
   ⟨MvPolynomial.map HahnSeries.C f, h.map _, fun d i hi => by
     rw [MvPolynomial.coeff_map, HahnSeries.C_apply, HahnSeries.coeff_single]
     congr⟩
-
-/- Theorem thm:contracting, moved here from `Paper/Scales.lean`: the exact case is a special case of
-the approximate one. -/
-/-- **Paper: Theorem thm:contracting.** "In the contracting case there are c > 0 and m₀ such that for m ≥ m₀ every
-circuit over k for PERM_m has more than 2^(c(log m)²/log log m) gates." -/
-theorem thm_contracting {K : Type} [Field K] (hK : Contracting K) (h2 : (2 : K) ≠ 0) :
-    ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, Nc.Computes (Nc.genPerm K m) s →
-      (2 : ℝ) ^ (c * Real.logb 2 m ^ 2 / Real.logb 2 (Real.logb 2 m)) < s := by
-  -- an exact circuit is an approximating one with no error, so the approximate bound applies
-  obtain ⟨C, M₁, h⟩ := contracting_approx_complete hK (gridComplete_perm h2)
-  exact quasi_of_exponents (P := fun M s => Nc.Computes (Nc.genPerm K M) s)
-    (fun _ _ _ hst hs => Nc.Computes.mono hs hst) fun M hM a ha hs => h M hM a ha hs.approximates
 
 end Paper

@@ -16,25 +16,6 @@ namespace Paper
 open Finset NS1
 open _root_.NS1.Tree
 
-/-- **Paper: Definition def:acc.** "An accelerator at scale v with Q constants from R and exponent bound B is a program
-D with two properties. On every instance z with |z| ≤ v^(H−32) all its runs halt, the accepting ones within v^(H−16) steps, and every name
-in their bills stands for a power κ_l^(2^i) with i < B. If moreover z is v^H-plain, its value, the sum over accepting
-runs of the weight times the named powers, is pv(z). The constants sit at the leaves of a binary trie with Q nodes, and
-their names are paths. It is of size s if Q and the size of D are at most s and, with L = lg(max(v^H, s)), the height of
-the trie is at most L² and B ≤ L³." -/
-theorem def_acc {A : Type} [CommRing A] (θ : List Bool → A) (R : Type) [CommRing R] [Algebra A R] (H v s : ℕ) :
-    HasAcc θ R H v s ↔ ∃ (K : KT R) (B : ℕ) (D : Tree),
-      (∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧
-        ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost ≤ v ^ (H - 16) ∧ ∀ p ∈ r.bill, K.InB B p) ∧
-      (∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z →
-        ((evl θ (Fm.ofTree D) z).map fun r => algebraMap A R r.th * (r.bill.map K.lk).prod).sum = algebraMap A R (pv θ z)) ∧
-      K.nds ≤ s ∧ D.size ≤ s ∧ K.ht ≤ lg (max (v ^ H) s) ^ 2 ∧ B ≤ lg (max (v ^ H) s) ^ 3 := by
-  constructor
-  · rintro ⟨K, B, D, ⟨h1, h2⟩, h3, h4, h5, h6⟩
-    exact ⟨K, B, D, h1, h2, h3, h4, h5, h6⟩
-  · rintro ⟨K, B, D, h1, h2, h3, h4, h5, h6⟩
-    exact ⟨K, B, D, ⟨h1, h2⟩, h3, h4, h5, h6⟩
-
 /-- If circuits with M^a gates are impossible whenever (lg M)^(Ca) ≤ M, then more than 2^(c(log M)²/log log M) gates
 are needed. -/
 theorem quasi_of_exponents {P : ℕ → ℕ → Prop} (hmono : ∀ M s t, s ≤ t → P M s → P M t) {C M₁ : ℕ}
@@ -120,23 +101,5 @@ theorem exists_scale (B₀ E n : ℕ) (hB : 0 < B₀) : ∃ C M₁ : ℕ, ∀ M,
   refine Nat.mul_le_mul_left E ?_
   calc 2 * B₀ * a + 1 ≤ (2 * B₀ + 1) * a + (2 * B₀ + 1) := by rw [add_mul]; omega
     _ = (2 * B₀ + 1) * (a + 1) := by ring
-
-/-- **Paper: "We keep A and H of Theorem thm:cut".** In the contracting case there are the ring A, its generators and
-H = 16 h₀ with the conclusion of Theorem thm:cut, and for them Proposition prop:next and Theorem thm:noacc hold. -/
-theorem scales_setting {K : Type} [Field K] (hK : Contracting K) :
-    ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A) (θ : List Bool → A) (h C₀ v₀ : ℕ),
-      Generates θ ∧ 17 ≤ h ∧ CutHyp θ (16 * h) C₀ v₀ ∧
-      (∀ k, ∃ C v₁ : ℕ, ∀ (R : Type) [CommRing R] [Algebra A R], ∀ v, v₁ ≤ v → ∀ α, 5 ≤ α → lg v ^ (C * α) ≤ v →
-        ∀ (K : KT R) (B : ℕ) (D : Tree),
-        IsAccT θ (16 * h) v (v ^ (16 * h - 16)) K B D → K.nds ≤ v ^ (h * α) → D.size ≤ v ^ (h * α) →
-        B ≤ (α * lg v) ^ k → K.ht ≤ (α * lg v) ^ k →
-        ∃ D', IsAccT θ (16 * h) (v ^ α) ((v ^ α) ^ (16 * h - 17)) K (B + 51 * h * α ^ 2 * lg v) D' ∧
-          D'.size ≤ (v ^ α) ^ (4 * h)) ∧
-      ∃ C v₁ : ℕ, ∀ v, v₁ ≤ v → ∀ a, lg v ^ (C * a) ≤ v → ∀ (R : Type) [CommRing R] [Nontrivial R] [Algebra A R],
-        ¬ HasAcc θ R (16 * h) v (v ^ a) := by
-  obtain ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut⟩ := exists_setting hK
-  exact ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut, fun k => prop_next hh hcut k, thm_noacc hh hcut⟩
-
--- Theorem thm:contracting is proved from its approximate form in `Paper/ApproxScales.lean`.
 
 end Paper

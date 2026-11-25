@@ -287,44 +287,4 @@ theorem lem_circuit_bound {c H v a : ℕ} (hc : c + H + 8 + 1 ≤ lg v) (h0 : c 
     calc lg v * (lg v * lg v ^ a) * lg v = lg v ^ (a + 3) := by ring
       _ ≤ lg v ^ ((H + 35) * a) := Nat.pow_le_pow_right (by omega) (by nlinarith)
 
-/-- **Paper: Lemma lem:circuit.** "There are constants B₀, C, v₀ such that for all integers a ≥ 0 and v ≥ v₀ with
-(lg v)^(Ca) ≤ v: if PERM_m has a circuit with at most v^a gates over a field R that is an A-algebra in which 2 ≠ 0, for
-some m ≥ v^B₀, then R has an accelerator of size v^(C(a+1)) at scale v." In this general form G is any family that is
-complete for grid sums, as the permanent (2 ≠ 0) and the Hamiltonian cycle polynomial are; see lem_circuit_perm. -/
-theorem lem_circuit (hθ : (Function.support θ).Finite) {H : ℕ} (hH : 32 ≤ H) (κ : ℕ) :
-    ∃ B₀ C v₀ : ℕ, 0 < B₀ ∧ ∀ (F : Type) [Field F] [Algebra A F] (G : ∀ S, MvPolynomial (Fin S × Fin S) F),
-      Nc.GridComplete F G κ → ∀ v, v₀ ≤ v → ∀ a, lg v ^ (C * a) ≤ v → ∀ m, v ^ B₀ ≤ m → Nc.Computes (G m) (v ^ a) →
-        HasAcc θ F H v (v ^ (C * (a + 1))) := by
-  obtain ⟨B₀, Z, hB₀, hproj⟩ := lem_circuit_universal hθ hH κ
-  obtain ⟨c, hc⟩ := lem_circuit_program H hH
-  obtain ⟨n₀, hn₀⟩ := poly_lg (c * (H + 7)) 1
-  refine ⟨B₀, H + 35, Z + n₀ + 2 ^ (c + H + 8) + 100, hB₀, fun F _ _ G hG v hv a hl m hm hs => ?_⟩
-  have hp := Nat.one_le_two_pow (n := c + H + 8)
-  have hlv : c + H + 8 + 1 ≤ lg v := le_lg_of_two_pow_le (by omega)
-  have hcv := lem_circuit_bound hlv (by simpa using hn₀ v (by omega)) hl
-  obtain ⟨Mat, hMat, hdeg, hev⟩ := hproj F G hG v m (by omega) hm
-  -- O(v^a) gates for Φ
-  have hgates : 5 * v ^ a ≤ v ^ (a + 5) := by
-    rw [pow_add, Nat.mul_comm]
-    exact Nat.mul_le_mul_left _ (le_trans (by omega : 5 ≤ v) (Nat.le_self_pow (by norm_num) v))
-  obtain ⟨K, D, hD, hn, hsz, hht⟩ := hc v (a + 5) (by omega) hcv A F θ (5 * v ^ a) (MvPolynomial.aeval Mat (G m)) hgates
-    (hs.aeval _ hMat)
-  have hle : v ^ (3 * (a + 5) + H + 20) ≤ v ^ ((H + 35) * (a + 1)) :=
-    Nat.pow_le_pow_right (by omega) (by nlinarith)
-  have hlg := lg_mono (max_le_max (le_refl (v ^ H)) hle)
-  refine ⟨K, 1, D, ⟨fun z hz => ⟨(hD z hz).1, (hD z hz).2.1⟩, fun z hz hpl => ?_⟩, hn.trans hle, hsz.trans hle,
-    (lem_circuit_names (by omega) hht).trans (Nat.pow_le_pow_left hlg 2), Nat.one_le_pow _ _ (Nat.succ_pos _)⟩
-  rw [(hD z hz).2.2, ← Finset.sum_subset (Finset.range_mono (Nat.succ_le_succ hdeg)), ← map_sum,
-    MvPolynomial.sum_homogeneousComponent, hev z hz hpl]
-  intro i _ hi
-  rw [Finset.mem_range] at hi
-  rw [MvPolynomial.homogeneousComponent_eq_zero _ _ (by omega), map_zero]
-
-/-- **Paper: Lemma lem:circuit, as printed**, for the permanent. -/
-theorem lem_circuit_perm (hθ : (Function.support θ).Finite) {H : ℕ} (hH : 32 ≤ H) :
-    ∃ B₀ C v₀ : ℕ, ∀ (F : Type) [Field F] [Algebra A F], (2 : F) ≠ 0 → ∀ v, v₀ ≤ v → ∀ a, lg v ^ (C * a) ≤ v →
-      ∀ m, v ^ B₀ ≤ m → Nc.Computes (Nc.genPerm F m) (v ^ a) → HasAcc θ F H v (v ^ (C * (a + 1))) := by
-  obtain ⟨B₀, C, v₀, -, h⟩ := lem_circuit hθ hH 3
-  exact ⟨B₀, C, v₀, fun F _ _ h2 => h F (Nc.genPerm F) (gridComplete_perm h2)⟩
-
 end Paper
