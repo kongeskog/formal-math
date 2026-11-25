@@ -247,9 +247,8 @@ theorem prop_random_limit {P Q : Type} [Fintype P] [DecidableEq P] [Fintype Q] [
         exact Finset.sum_congr rfl fun l _ => by ring
       _ ≤ ∑ l, θ l * (w (Sum.elim id (σ l) a) (Sum.elim id (σ l) b) + 1 / (n + 1)) := by
         refine Finset.sum_le_sum fun l _ => mul_le_mul_of_nonneg_left ?_ (hθ l)
-        have h3 := (abs_lt.1 (hφ n (Sum.elim id (σ l) a) (Sum.elim id (σ l) b))).1
-        simp only [id] at h3
-        linarith
+        -- the lower half of `abs_lt` for `hφ n` at the two relabelled points
+        grind
       _ = B a b + 1 / (n + 1) := by
         simp only [mul_add]
         rw [Finset.sum_add_distrib, ← Finset.sum_mul, hθ1, one_mul]
@@ -266,12 +265,7 @@ theorem prop_random_limit {P Q : Type} [Fintype P] [DecidableEq P] [Fintype Q] [
   refine ⟨w', hw', fun p p' => ?_, fun a b => ?_⟩
   · have h3 : Tendsto (fun n => d n (Sum.inl p) (Sum.inl p') - w p p') U (nhds 0) := by
       refine squeeze_zero_norm (fun n => ?_) hzero
-      have h4 := hφ n p p'
-      simp only [id] at h4
-      rw [Real.norm_eq_abs, abs_sub_comm]
-      show |w p p' - s n * (φ' n).e (Sum.inl p) (Sum.inl p')| ≤ _
-      rw [h1]
-      exact h4.le
+      simpa [d, abs_sub_comm, h1] using (hφ n p p').le
     have h4 := tendsto_nhds_unique h3 ((hlim' (Sum.inl p) (Sum.inl p')).sub_const (w p p'))
     linarith
   · exact le_of_tendsto_of_tendsto (hlim' a b) ((hzero.const_add (B a b)).trans (by rw [add_zero]))
@@ -421,25 +415,9 @@ theorem lem_hubs {A : Type} [Fintype A] [DecidableEq A] (π : A → I) (t : Ten 
     | Sum.inl a => if x a = l (some a) then 1 else 0
     | Sum.inr true => α (l none) fun a => l (some a)
     | Sum.inr false => β (l none) fun a => l (some a)
-  have key := Restr.of_edges π ξ t Λ src tgt tab (by
-    rintro (a | b) x x' l l' hx hl
-    · have h1 := hx a rfl
-      have h2 : l (some a) = l' (some a) := hl (some a) (Or.inl rfl)
-      show (if x a = l (some a) then (1 : K) else 0) = if x' a = l' (some a) then 1 else 0
-      rw [h1, h2]
-    · cases b
-      · have h1 : l none = l' none := hl none (Or.inr rfl)
-        show β (l none) _ = β (l' none) _
-        rw [h1]
-        refine hβ _ _ _ fun a ha => hl (some a) (Or.inr ?_)
-        show Sum.inr (decide (S a)) = _
-        simp [ha]
-      · have h1 : l none = l' none := hl none (Or.inl rfl)
-        show α (l none) _ = α (l' none) _
-        rw [h1]
-        refine hα _ _ _ fun a ha => hl (some a) (Or.inr ?_)
-        show Sum.inr (decide (S a)) = _
-        simp [ha]) (by
+  -- each table entry depends only on the variables its edge reads: `hx a rfl` and `hl` for
+  -- the indicator entries, `hl none` with `hα`, `hβ` for the two boolean ones
+  have key := Restr.of_edges π ξ t Λ src tgt tab (by grind) (by
     intro x
     have e1 : ∀ l : ∀ o, Λ o, ∏ v, tab v x l =
         (∏ a, if x a = l (some a) then (1 : K) else 0) *

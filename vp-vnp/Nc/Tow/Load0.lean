@@ -68,27 +68,19 @@ theorem bt_start (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) :
           · simp at h3
         · rw [if_neg hs, Nat.le_zero, card_eq_zero]
           refine filter_false_of_mem fun k _ h3 => ?_
-          rcases tgB_cases a' c' k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at h3
-          · simp at h3
-          · simp only [Tg.nxt.injEq, RM.start.injEq] at h3
-            exact hs (congrArg Fin.val h3.2.2.2).symm
-          · simp at h3
+          rcases tgB_cases a' c' k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at h3 <;>
+            -- in the `start` case `h3` makes `s.1 = 0`, against `hs`; the others are different
+            -- constructors
+            grind
       · rw [if_neg hac, Nat.le_zero, card_eq_zero]
         refine filter_false_of_mem fun k _ h3 => ?_
-        rcases tgB_cases a' c' k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at h3
-        · simp at h3
-        · simp only [Tg.nxt.injEq, RM.start.injEq] at h3
-          exact hac ⟨h3.1, h3.2.1⟩
-        · simp at h3
+        rcases tgB_cases a' c' k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at h3 <;>
+          -- in the `start` case `h3` gives `a' = a ∧ c' = c`, against `hac`; the others are
+          -- different constructors
+          grind
     refine (Finset.sum_le_sum fun a' _ => Finset.sum_le_sum fun c' _ => h1 a' c').trans ?_
-    rw [Finset.sum_eq_single a, Finset.sum_eq_single c]
-    · rw [if_pos ⟨rfl, rfl⟩, if_pos hv]
-    · intro c' _ hc'
-      rw [if_neg fun hh => hc' hh.2]
-    · intro hn; exact absurd (mem_univ _) hn
-    · intro a' _ ha'
-      exact Finset.sum_eq_zero fun c' _ => if_neg fun hh => ha' hh.1
-    · intro hn; exact absurd (mem_univ _) hn
+    -- the term at `(a, c)` is the bound by `hv`; every other term has a false condition
+    rw [Finset.sum_eq_single a, Finset.sum_eq_single c] <;> simp_all
   · rw [if_neg hv]
     exact Nat.zero_le _
 
@@ -101,12 +93,9 @@ theorem tgR_start {x : RM T m AA} {ν : Bool} {a c : Fin AA} {γ : T.X 0} {s : F
     cases ν
     · exact absurd hx (this _)
     · simp only [tgR] at hx
-      split_ifs at hx with hs
-      · simp only [Tg.nxt.injEq, RM.start.injEq] at hx
-        obtain ⟨h1, h2, h3, h4⟩ := hx
-        subst h1 h2 h3
-        exact ⟨rfl, s', rfl, (congrArg Fin.val h4).symm⟩
-      · exact absurd hx (this _)
+      -- in the `start` branch `hx` gives `x` and `s = s' + 1`; the other branch is excluded
+      -- by `this`
+      grind
   · simp [tgR] at hx
   · cases ν
     · fin_cases s' <;> simp [tgR] at hx
@@ -166,14 +155,10 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R
       omega
     refine (load_le_sum {(⟨.inl ⟨.start a c γ ⟨s, hs0⟩, hx0⟩, true⟩ : NM R FL)} hbt ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
+      -- `tgR_start` gives `ν = true`, `x = .start a c γ s'` and `s + 1 = s'.1 + 1`,
+      -- so `s' = ⟨s, hs0⟩`
       · obtain ⟨h2, s', h3, h4⟩ := tgR_start (ν := ν) hν
-        have h2 : ν = true := h2
-        subst h2
-        have h4 : s + 1 = s'.1 + 1 := h4
-        have h5 : s' = ⟨s, hs0⟩ := Fin.ext (by change s'.1 = s; omega)
-        subst h5
-        subst h3
-        exact mem_singleton_self _
+        grind
       · simp [tgM] at hν
     · rw [Finset.sum_singleton]
       exact (alv_le_num _ _).trans (ih hs0 hx0)
@@ -225,16 +210,9 @@ theorem steps_le {α : Type*} [DecidableEq α] (l : List α) (e : α) (L M : ℕ
         split_ifs <;> omega
     · rw [if_neg hc, Nat.le_zero, Nat.add_eq_zero_iff]
       constructor
-      · refine Finset.sum_eq_zero fun s _ => if_neg ?_
-        rintro ⟨h4, h5⟩
-        have : s + 1 = L' := by omega
-        rw [this] at h5
-        exact hc h5
-      · rw [if_neg]
-        rintro ⟨h4, h5⟩
-        have : L' = 0 := by omega
-        rw [this] at hc
-        exact hc h5
+      -- each condition forces `l[L']? = some e` (with `s + 1 = L'`, resp. `L' = 0`), against `hc`
+      · simp_all
+      · grind
 
 section
 
@@ -273,13 +251,10 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
         · rw [if_neg hc, Nat.mul_zero, Nat.le_zero, card_eq_zero]
           refine filter_false_of_mem fun k hk h3 => hc ?_
           have h4 := (mem_filter.1 hk).2
-          rcases tgB_cases a c k with h1 | ⟨hm, h1⟩ | ⟨e', h0, h1, h2, h5⟩ <;> rw [h1] at h4
-          · simp at h4
-          · simp at h4
-          · have h6 : e' = e := eq_of_heq (Tg.edge.inj h4).2
-            subst h6
-            rw [h3] at h0 h5
-            exact ⟨by omega, h0⟩
+          -- only the edge case is left, where `h4` gives `e' = e`, and `h3` with `h0`, `h5`
+          -- the two conditions
+          rcases tgB_cases a c k with h1 | ⟨hm, h1⟩ | ⟨e', h0, h1, h2, h5⟩ <;> rw [h1] at h4 <;>
+            grind
     · rw [if_neg hv]
       exact Nat.zero_le _
   -- relays

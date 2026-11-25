@@ -20,10 +20,8 @@ variable {h b D J : ℕ} {T : Tower h b D J} {j : ℕ}
 theorem step_ends (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) :
     s(T.e0 e, T.e1 e) = s(c, T.step e c) := by
   unfold step
-  by_cases h0 : T.e0 e = c
-  · rw [if_pos h0, h0]
-  · have h1 : T.e1 e = c := hc.resolve_left h0
-    rw [if_neg h0, h1, Sym2.eq_swap]
+  -- by cases on `T.e0 e = c`; otherwise `T.e1 e = c` by `hc`, and the pair is swapped
+  grind
 
 theorem step_ne (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) : c ≠ T.step e c := by
   intro heq
@@ -35,18 +33,14 @@ theorem step_ne (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) : c �
 theorem step_mem (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) :
     T.e0 e = T.step e c ∨ T.e1 e = T.step e c := by
   have h1 := step_ends e hc
-  rw [Sym2.eq_iff] at h1
-  rcases h1 with ⟨_, h3⟩ | ⟨h2, _⟩
-  · exact Or.inr h3
-  · exact Or.inl h2
+  -- `h1` by `Sym2.eq_iff`: the pair in either order
+  grind
 
 theorem step_step (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) : T.step e (T.step e c) = c := by
   have h1 := step_ends e hc
   have h2 := step_ends e (step_mem e hc)
-  rw [h1, Sym2.eq_iff] at h2
-  rcases h2 with ⟨h3, h4⟩ | ⟨h3, _⟩
-  · exact h4.symm.trans h3.symm
-  · exact h3.symm
+  -- `h2` rewritten with `h1`, by `Sym2.eq_iff`: the pair in either order
+  grind
 
 /-- The chamber after `s` steps. -/
 def nodeAt (c : T.X j) (l : List (T.Ed j)) (s : ℕ) : T.X j := (l.take s).foldl (fun c e => T.step e c) c

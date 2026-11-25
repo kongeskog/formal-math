@@ -50,14 +50,8 @@ theorem eval_letS {K : Type} [Field K] {Γ : Type} [DecidableEq Γ] {bt : Bool �
     simp
   · have hx : ∀ b : Bool, γ = bt b → ((∃ x, (w.map some ++ [none])[(p : ℕ)]? = some x ∧
         Option.map bt x = some γ) ↔ (w.map some ++ [none])[(p : ℕ)]? = some (some b)) := by
-      intro b hγ
-      constructor
-      · rintro ⟨x, h1, h2⟩
-        rw [Option.map_eq_some_iff] at h2
-        obtain ⟨y, rfl, h3⟩ := h2
-        rw [h1, hb (h3.trans hγ)]
-      · intro h
-        exact ⟨_, h, by rw [hγ]; rfl⟩
+      -- the entry `x` maps to `γ = bt b`, so it is `some b` because `bt` is injective (`hb`)
+      grind
     by_cases h1 : γ = bt true
     · simp only [letS, if_pos h1, eval_X, codeB]
       exact if_congr (hx true h1).symm rfl rfl

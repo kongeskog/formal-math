@@ -189,14 +189,7 @@ theorem seenAt_succ (x : Fin E) :
     exact (or_iff_left init_not_mem_newUnits).symm
   | new ν k =>
     rw [Plan.new_mem_seenAt, Plan.new_mem_seenAt, new_mem_newUnits, Fin.ext_iff]
-    constructor
-    · rintro ⟨h1, h2⟩
-      rcases Nat.lt_succ_iff_lt_or_eq.1 h1 with h | h
-      · exact Or.inl ⟨h, h2⟩
-      · exact Or.inr ⟨h, h2⟩
-    · rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
-      · exact ⟨Nat.lt_succ_of_lt h1, h2⟩
-      · exact ⟨by omega, h2⟩
+    omega
 
 /-- The units given in a move. -/
 def outSet (P : Plan M U0 U1) (n : Fin A → Fin A → Fin (U0 + 1)) (o : M.N → Fin U1) (x : Fin E) :
@@ -210,11 +203,8 @@ theorem cur_succ (hP : P.Ok cap) (x : Fin E) :
   ext id
   rw [Finset.mem_union, Finset.mem_sdiff, Plan.mem_cur, Plan.mem_cur, seenAt_succ, Finset.mem_union, mem_outSet]
   constructor
-  · rintro ⟨h1 | h1, h2⟩
-    · refine Or.inl ⟨⟨h1, fun z hz => h2 z (Nat.lt_succ_of_lt hz)⟩, ?_⟩
-      rintro ⟨e, he⟩
-      exact h2 ⟨x, e⟩ (Nat.lt_succ_self _) he
-    · exact Or.inr h1
+  -- from `h2` (no step before `x + 1` consumes `id`): no step before `x` does, nor any of `x`'s
+  · grind
   · rintro (⟨⟨h1, h2⟩, h3⟩ | h)
     · refine ⟨Or.inl h1, fun z hz hc => ?_⟩
       rcases Nat.lt_succ_iff_lt_or_eq.1 hz with h4 | h4
@@ -341,12 +331,9 @@ theorem _root_.Paper.thm_tree_moves {P : Plan M U0 U1} {cap : ℕ} (hP : P.Ok ca
     induction x with
     | zero =>
       intro _
+      -- `pre 0` asks `o ν = d` for every `ν`
       have e1 : pre 0 = {fun _ => d} := by
-        ext o
-        simp only [pre, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-        constructor
-        · exact fun h => funext fun ν => h ν (Nat.zero_le _)
-        · rintro rfl ν _; rfl
+        grind
       rw [e1, Finset.sum_singleton]
       have e2 : (Plan.seenAt n (fun _ : M.N => d) 0 : Finset (Uid A U0 M.N U1)) = seen0 n := by
         ext id; simp [Plan.mem_seenAt]
@@ -376,15 +363,8 @@ theorem _root_.Paper.thm_tree_moves {P : Plan M U0 U1} {cap : ℕ} (hP : P.Ok ca
               rw [h] at hν
               have : x ≤ x'.1 := hν
               omega)
-          constructor
-          · intro h
-            exact ⟨fun x' hx' => (hc x' hx').1 (h x' (Nat.lt_succ_of_lt hx')), h xE (Nat.lt_succ_self _)⟩
-          · rintro ⟨h1, h2⟩ x' hx'
-            rcases Nat.lt_succ_iff_lt_or_eq.1 hx' with h3 | h3
-            · exact (hc x' h3).2 (h1 x' h3)
-            · have : x' = xE := Fin.ext h3
-              rw [this]
-              exact h2
+          -- split `x'.1 < x + 1` into `x'.1 < x`, where `hc` applies, and `x' = xE`
+          grind
         by_cases hall : ∀ x' : Fin E, x'.1 < x → P.good n o x'
         swap
         · rw [if_neg hall]
@@ -484,10 +464,9 @@ theorem _root_.Paper.thm_tree_moves {P : Plan M U0 U1} {cap : ℕ} (hP : P.Ok ca
       · rintro ⟨o, oo⟩ _
         rfl
   rw [claim E le_rfl]
+  -- no `ν` has `E ≤ ν.1.1`
   have e1 : pre E = univ := by
-    ext o
-    simp only [pre, Finset.mem_filter, Finset.mem_univ, true_and, iff_true]
-    exact fun ν hν => absurd ν.1.2 (not_lt.2 hν)
+    grind
   rw [e1]
   refine Finset.sum_congr rfl fun o _ => if_congr ⟨fun h x => h x x.2, fun h x _ => h x⟩ ?_ rfl
   congr 1
