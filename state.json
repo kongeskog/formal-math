@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T07:07:43.710049692Z",
+  "updated_at": "2026-11-25T07:19:17.807465036Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -862,12 +862,12 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 20026,
+      "tokens": 20024,
       "loc": 1177
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 15977,
+      "tokens": 15955,
       "loc": 976
     },
     {
@@ -877,18 +877,18 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 12112,
+      "tokens": 12100,
       "loc": 751
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
-      "tokens": 11775,
-      "loc": 708
+      "tokens": 11735,
+      "loc": 706
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 9220,
-      "loc": 522
+      "tokens": 9178,
+      "loc": 519
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
@@ -902,8 +902,8 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
-      "tokens": 8542,
-      "loc": 641
+      "tokens": 8491,
+      "loc": 639
     },
     {
       "path": "vp-vnp/NS1/Lists.lean",
@@ -912,12 +912,12 @@
     },
     {
       "path": "vp-vnp/Paper/Gauges.lean",
-      "tokens": 7481,
+      "tokens": 7463,
       "loc": 476
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 7287,
+      "tokens": 7283,
       "loc": 459
     },
     {
@@ -932,7 +932,7 @@
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
-      "tokens": 6906,
+      "tokens": 6882,
       "loc": 390
     },
     {
@@ -957,7 +957,7 @@
     },
     {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
-      "tokens": 6499,
+      "tokens": 6485,
       "loc": 396
     },
     {
@@ -967,7 +967,7 @@
     },
     {
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
-      "tokens": 6071,
+      "tokens": 6063,
       "loc": 366
     },
     {
@@ -992,18 +992,18 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/Num0.lean",
-      "tokens": 5642,
-      "loc": 325
-    },
-    {
-      "path": "vp-vnp/Paper/Toolkit.lean",
-      "tokens": 5615,
-      "loc": 341
+      "tokens": 5635,
+      "loc": 324
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeScript.lean",
       "tokens": 5586,
       "loc": 362
+    },
+    {
+      "path": "vp-vnp/Paper/Toolkit.lean",
+      "tokens": 5539,
+      "loc": 340
     },
     {
       "path": "vp-vnp/Nc/Tower/Inst.lean",
