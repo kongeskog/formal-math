@@ -353,8 +353,10 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
       (Dt.ite_true (.hd (.hd (.tl (.id _)))) (by simp) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
         (.cons (.tl (.hd (.hd (.tl (.id _))))) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
           (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))) eb)))⟩
-    simp only [Tree.size]
-    nlinarith
+    have e : (60 * H + 41) * (a.size + b.size + 1 + 1 + 1) =
+        (60 * H + 41) * a.size + (60 * H + 41) * b.size + 3 * (60 * H + 41) := by ring
+    simp only [Tree.size, e]
+    omega
   | case4 x u v =>
     intro t t' ht h
     simp only [names, Bt.decAll, Option.bind_eq_some_iff, Option.some.injEq, exists_eq_right] at h
@@ -362,8 +364,12 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     have e : Dt θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) t'.enc k := by rwa [Fm.ofTree_code]
     refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (by simp) (Dt.ite_true (.tl (.hd (.tl (.id _)))) (by simp)
       (Dt.run (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _)))) (.tl (.tl (.id _))))) e))⟩
-    simp only [Tree.size]
-    nlinarith [Nat.mul_le_mul_left 60 ht, Tree.size_pos x, Tree.size_pos u, Tree.size_pos v]
+    have e : (60 * H + 41) * (x.size + (u.size + v.size + 1) + 1) =
+        (60 * H + 41) * x.size + (60 * H + 41) * (u.size + v.size) + 2 * (60 * H + 41) := by ring
+    have := Nat.mul_le_mul_left (60 * H + 41) (Tree.size_pos x)
+    have := Nat.mul_le_mul_left 60 ht
+    simp only [Tree.size, e]
+    omega
 
 /-- If the names of `o` do not fit into the budget `t`, `CK` rejects. -/
 theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →

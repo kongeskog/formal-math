@@ -113,7 +113,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     have s3 := size_gt red J B' K [] M (fun i _ => (hM i).le)
     rw [List.length_nil] at s3
     have s4 : g.code.size ≤ 2 * v ^ 2 := by
-      have := hnBX (44 * X) (by nlinarith)
+      have := hnBX (44 * X) (by rw [show 44 * X * X ^ 2 = 44 * X ^ 3 by ring]; omega)
       calc g.code.size ≤ nB * ((J + 1) * (4 * (0 + K.ht + M) + 400)) := s3
         _ ≤ nB * (X * (44 * X)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul hJX (by
             have := le_max_right B M
@@ -178,8 +178,14 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     intro r hr
     refine (hl r hr).1.trans ?_
     have m1 : ((4 * X + 48) * J + 80) * nB ≤ 2 * v ^ 2 := by
-      have := hnBX (18 * X) (by nlinarith)
-      calc ((4 * X + 48) * J + 80) * nB ≤ 18 * X * X * nB := Nat.mul_le_mul_right _ (by nlinarith)
+      have := hnBX (18 * X) (by rw [show 18 * X * X ^ 2 = 18 * X ^ 3 by ring]; omega)
+      have e8 : (4 * X + 48) * J + 80 ≤ 18 * X * X := by
+        have h1 : (4 * X + 48) * J ≤ (4 * X + 48) * X := Nat.mul_le_mul_left _ (by omega)
+        have h2 : (4 * X + 48) * X = 4 * (X * X) + 48 * X := by ring
+        have h3 : 10 * X ≤ X * X := Nat.mul_le_mul_right X hX10
+        have h4 : 18 * X * X = 18 * (X * X) := by ring
+        omega
+      calc ((4 * X + 48) * J + 80) * nB ≤ 18 * X * X * nB := Nat.mul_le_mul_right _ e8
         _ = nB * (18 * X * X) := by ring
         _ ≤ _ := this
     have m2 : v ^ 2 ≤ v ^ (16 * h - 16) := pow_le_pow hv1 (by omega)

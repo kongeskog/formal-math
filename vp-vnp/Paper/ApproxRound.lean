@@ -238,7 +238,9 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
       _ ≤ _ := Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by norm_num) (by omega))
   · -- time of the plain instances
     rw [← hnB]
-    have m1 : 60 * (K.ht + B + J + 1) + 42 + 2 ≤ u := by nlinarith
+    have m1 : 60 * (K.ht + B + J + 1) + 42 + 2 ≤ u := by
+      have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
+      omega
     have m2 : 40 * (nB * (J + 1)) ≤ u ^ (e + 8) := by
       calc 40 * (nB * (J + 1)) ≤ 40 * (nB * X) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
         _ = nB * (40 * X) := by ring
@@ -286,8 +288,13 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     have h3 : 2 * u ^ (h * α + 1) ≤ u ^ e' := by
       have := pbig (h * α + 1)
       exact le_trans (by omega : _ ≤ u ^ (h * α + 1 + 1)) (pow_le_pow hu1 (by omega))
-    have e8 : (4 * X + 48) * J + 80 ≤ 10 * X * X := by nlinarith
-    have h10 := hb (10 * X) (by nlinarith)
+    have e8 : (4 * X + 48) * J + 80 ≤ 10 * X * X := by
+      have h1 : (4 * X + 48) * J ≤ (4 * X + 48) * X := Nat.mul_le_mul_left _ (by omega)
+      have h2 : (4 * X + 48) * X = 4 * (X * X) + 48 * X := by ring
+      have h3 : 10 * X ≤ X * X := Nat.mul_le_mul_right X hX10
+      have h4 : 10 * X * X = 10 * (X * X) := by ring
+      omega
+    have h10 := hb (10 * X) (by rw [show 10 * X * X ^ 2 = 10 * X ^ 3 by ring]; omega)
     have m1 : 2 * (((4 * X + 48) * J + 80) * nB) ≤ 2 * u ^ e' ∧ 2 * (((4 * X + 48) * J + 80) * nB') ≤ 2 * u ^ e' ∧
         40 * (nB' * (J + 1)) ≤ u ^ e' := by
       have h40 := (hb 40 (by omega)).2
@@ -305,7 +312,8 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     have m3 : (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤ u ^ e' := by
       calc (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤ u * u ^ (e - 4) := by
             refine Nat.mul_le_mul ?_ hLP
-            nlinarith
+            have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
+            omega
         _ = u ^ (e - 4 + 1) := (pow_succ' u _).symm
         _ ≤ u ^ e' := pow_le_pow hu1 (by omega)
     have m4 : 200 ≤ u ^ e' := by
