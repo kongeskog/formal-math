@@ -670,7 +670,6 @@ theorem thm_poincare_far {h : ℕ} {Z : Type} [MetricSpace Z] [Cat.CN Z] (A : Is
       dist z ((A.W p n).P z) ^ 2 + dist z ((A.W p' n').P z) ^ 2 := by
   refine le_of_forall_pos_le_add fun ε hε => ?_
   set r := dist z ((A.W p n).P z) * dist z ((A.W p' n').P z) with hr
-  have hr0 : 0 ≤ r := mul_nonneg dist_nonneg dist_nonneg
   have hc : 0 < ε / (2 * r + 1) := by positivity
   set v := (A.W p' n').P ((A.W p n).P z) with hv
   have hv1 : (A.W p n).Fix v := windows_commute A hd hp' _ (IsoAct.P_fix _ z)
@@ -1103,12 +1102,5 @@ theorem thm_poincare {K : Type} [Field K] (hK : Contracting K) :
   simp only [h2] at h1
   rw [pow_two, ← div_div, ← Finset.sum_div, ← mul_div_assoc]
   exact div_le_div_of_nonneg_right h1 hb.le
-
-/-- The inequality of Theorem thm:poincare for the numbers u and C₀: for every l ≥ 2, h = lu, and every price on U_h,
-E_{g,k}|k,gk|² ≤ C₀ ∑_j E_k|k,x_jk|². -/
-def PoincareBound (K : Type) [Field K] (u : ℕ) (C₀ : ℝ) : Prop :=
-  ∀ l : ℕ, 2 ≤ l → ∀ w : U (l * u) → U (l * u) → ℝ, Nc.Price.IsPrice K w →
-    (∑ g, ∑ k, w k (g * k) ^ 2) / (Fintype.card (U (l * u)) : ℝ) ^ 2 ≤
-      C₀ * ∑ j, (∑ k, w k (x (l * u) j * k) ^ 2) / (Fintype.card (U (l * u)) : ℝ)
 
 end Paper

@@ -109,22 +109,6 @@ theorem held_node_le (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
   generalize NL R ch FL lhat (nn n) (oo R FL Pl o) P = NLv at a1 a2 a4
   have a6 : c1 * NLv ≤ c1 * (Fintype.card FL.Di * onN f f0 P) := Nat.mul_le_mul_left _ a4
   have a7 : (1 + Sm) * NLv ≤ (1 + Sm) * (Fintype.card FL.Di * onN f f0 P) := Nat.mul_le_mul_left _ a4
-  have e1 : (4 + (c1 + 1 + Sm) * Fintype.card FL.Di) * onN f f0 P = 4 * onN f f0 P +
-      c1 * (Fintype.card FL.Di * onN f f0 P) + (1 + Sm) * (Fintype.card FL.Di * onN f f0 P) := by ring
-  have e2 : isB ch P * (ℓf + 8 * m * lhat) = isB ch P * ℓf + 4 * (isB ch P * (2 * m * lhat)) := by ring
-  rw [e1, e2]
-  generalize (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR R ch FL Pl lhat n o r' else 0) = pv
-    at a2 ⊢
-  generalize heldN R FL Pl n o (Pl.pt P) = hv at a1 ⊢
-  generalize initN (A' := A') n (Pl.pt P) = iv at a1 a5
-  generalize chanN R FL Pl (Pl.pt P) = cv at a1 ⊢
-  generalize onN f f0 P = ov at a3 a6 a7 ⊢
-  generalize c1 * (Fintype.card FL.Di * ov) = x1 at a6 ⊢
-  generalize (1 + Sm) * (Fintype.card FL.Di * ov) = x2 at a7 ⊢
-  generalize c1 * NLv = x3 at a1 a6
-  generalize (1 + Sm) * NLv = x4 at a2 a7
-  generalize isB ch P * ℓf = x5 at a5 ⊢
-  generalize isB ch P * (2 * m * lhat) = x6 at a3 ⊢
-  omega
+  linarith
 
 end Nc.Tow

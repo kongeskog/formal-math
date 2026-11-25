@@ -94,8 +94,7 @@ theorem exists_col_aux (l : Len (U n)) (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + 
       · subst h
         simp; omega
       · rw [if_neg h, if_neg]
-        rintro ⟨h1, h2⟩
-        exact h (le_antisymm h2 (Fin.le_def.2 (by omega)))
+        omega
     · rw [mul_one, mat_one, Matrix.one_apply]
       rcases lt_trichotomy i a with h | h | h
       · rw [if_neg h.ne, hu2 i (by rw [Fin.lt_def] at h; omega)]
@@ -119,15 +118,12 @@ theorem exists_col_aux (l : Len (U n)) (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + 
       (Function.update u (lo j) 0) (by rw [Function.update_of_ne hloa.symm, hua])
       (fun i hi => by
         rw [Function.update_of_ne, hu1 i hi]
-        rintro rfl
-        rw [Fin.lt_def, hlo] at hi
         omega)
       (fun i hi => by
         by_cases h : i = lo j
         · rw [h, Function.update_self]
         · rw [Function.update_of_ne h]
           apply hu2
-          have : i.1 ≠ p := fun h2 => h (Fin.ext h2)
           omega)
     have hT : l.T p = l.T (p + 1) + l.val (x n j) := l.T_succ j
     have hx0 := l.nonneg (x n j)
@@ -138,13 +134,9 @@ theorem exists_col_aux (l : Len (U n)) (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + 
       · have h1 : lo j < i := by rw [Fin.lt_def, hlo]; omega
         rw [mat_lt c h1, Matrix.one_apply_ne h1.ne']
     have hrow : ∀ i : Fin n, (i.1 < p ∨ a ≤ i) → i ≠ lo j := by
-      rintro i hi rfl
-      rw [Fin.le_def, hlo] at hi
       omega
     have hrow' : ∀ i : Fin n, (i.1 < p ∨ a ≤ i) → (i.1 < p + 1 ∨ a ≤ i) := by
-      rintro i (h | h)
-      · left; omega
-      · right; exact h
+      omega
     have hd' : ∀ i k : Fin n, (i.1 < p ∨ a ≤ i) → mat (x n j * d) i k = (1 : Matrix _ _ F2) i k := by
       intro i k hi
       rw [x_mul_apply, if_neg (hrow i hi), add_zero, hd i k (hrow' i hi)]
@@ -160,9 +152,7 @@ theorem exists_col_aux (l : Len (U n)) (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + 
         have : i.1 ≠ p := fun h2 => h (Fin.ext h2)
         congr 1
         apply propext
-        constructor
-        · rintro ⟨h1, h2⟩; exact ⟨by omega, h2⟩
-        · rintro ⟨h1, h2⟩; exact ⟨by omega, h2⟩
+        omega
     have hld' : l.val (x n j * d) ≤ l.T p := by
       have := l.mul' (x n j) d
       linarith

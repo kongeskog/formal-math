@@ -816,7 +816,6 @@ theorem thm_cn_iv_square (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT :
       fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) * fanWs d T n b (i, k) (i + S, k - S - (A * S : ℕ)) := by
   obtain ⟨e, hn1, hAS, hn2, hn3⟩ := hnn
   have hT' : (0 : ℝ) < T := by exact_mod_cast (by omega : 0 < T)
-  have hn0 : (0 : ℝ) < n := by linarith
   have hD0 := fan_D_nonneg hd
   have hB0 := fan_w_nonneg hd z m
   have k0 : ((A * S : ℕ) : ℤ) ≤ (i : ℤ) + k + n := by
@@ -981,8 +980,6 @@ end Claims
 |zm|² ≤ ½|zx|² + ½|zv|² − D²." -/
 theorem thm_cn {Y : Type} {w : Y → Y → ℝ} (hw : IsPrice K w) (x v m z : Y) {D : ℝ} (h1 : w x m ≤ D) (h2 : w v m ≤ D)
     (h3 : w x v = 2 * D) : w z m ^ 2 ≤ 1 / 2 * w z x ^ 2 + 1 / 2 * w z v ^ 2 - D ^ 2 := by
-  have hD0 : 0 ≤ D := (hw.nonneg _ _).trans h1
-  have hB0 : 0 ≤ w z m := hw.nonneg _ _
   -- for θ = 1/T: divide by θ
   have key : ∀ T : ℕ, 2 ≤ T → w z m ^ 2 - (w z x ^ 2 + w z v ^ 2) / 2 + D ^ 2 ≤
       1 / T * (D ^ 2 + (D + w z m) ^ 2 + 4 * D * (D + w z m)) := by

@@ -69,9 +69,7 @@ theorem nds_coefK (J m : ℕ) (K : KT E[T;T⁻¹]) : (coefK J m K).nds ≤ K.nds
   | node l r ihl ihr =>
     simp only [coefK, KT.nds]
     have := Nat.one_le_two_pow (n := J + m + 1)
-    have : (l.nds + r.nds + 1) * 2 ^ (J + m + 1) = l.nds * 2 ^ (J + m + 1) + r.nds * 2 ^ (J + m + 1) + 2 ^ (J + m + 1) := by
-      ring
-    omega
+    linarith
 
 theorem ht_coefK (J m : ℕ) (K : KT E[T;T⁻¹]) : (coefK J m K).ht ≤ K.ht + J + m := by
   induction K with
@@ -123,8 +121,7 @@ theorem size_chT {n C : ℕ} {f : List Bool → Fm} (h : ∀ w : List Bool, w.le
     have h1 := ih (f := fun w => f (true :: w)) fun w hw => h _ (by simp [hw])
     have h2 := ih (f := fun w => f (false :: w)) fun w hw => h _ (by simp [hw])
     rw [chT, size_ite, size_guess, pow_succ]
-    have : 2 ^ n * 2 * (C + 31) = 2 ^ n * (C + 31) + 2 ^ n * (C + 31) := by ring
-    omega
+    linarith
 
 theorem size_xF (J m W : ℕ) (K : KT E[T;T⁻¹]) (pre : List Bool) :
     (xF J m W K pre).code.size ≤ K.nds * (2 ^ (J + m) * (4 * (pre.length + K.ht) + 8 * (J + m + W) + xcst + 31)) := by
@@ -169,8 +166,7 @@ theorem size_xF (J m W : ℕ) (K : KT E[T;T⁻¹]) (pre : List Bool) :
       rw [xcst_def]
       omega
     rw [← hP, KT.nds, xF, size_lett, size_cons]
-    have : (l.nds + r.nds + 1) * P = l.nds * P + r.nds * P + P := by ring
-    omega
+    linarith
 
 set_option maxHeartbeats 1000000 in
 theorem size_extF (P : Tree) (g : Fm) : (extF P g).code.size ≤ P.size + g.code.size + xcst := by

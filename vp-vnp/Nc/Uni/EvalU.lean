@@ -165,8 +165,7 @@ theorem toOp {S : A} {B : ℤ} {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .E)
       exact (hq.mono (heap_nx σ _ _ _ _)).mono a7)
   have h3 := sumTo_ruleA hσ hrec' .ec (by rw [hm]; rfl) (by rw [hm]; simp) (by simp) (by rw [hm]; rfl) rfl h2
   refine h3.mono ?_
-  have : (o.len : ℤ) ≤ 10 := by exact_mod_cast hl ▸ Nat.le_of_lt_succ c.2
-  linarith
+  omega
 
 theorem noOp {B : ℤ} {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .E) {o a : Tree}
     (hr : Rep σ.heap (σ.regs 1) (.cons o a)) (hl : 11 ≤ o.len) : Mach.SumTo (UM θ supp) σ 0 B := by
@@ -209,8 +208,7 @@ theorem readName (hθ : ∀ q, q ∉ supp → θ q = 0) {S : A} {B : ℤ} (w : T
     rw [hw] at h3
     simp only [Tree.path, List.append_nil]
     refine h3.mono ?_
-    have : (0 : ℤ) ≤ ((Lm supp - p.1.length : ℕ) : ℤ) := Int.natCast_nonneg _
-    linarith
+    omega
   | cons a b _ ih =>
     intro p σ hσ hm hr hk
     obtain ⟨pa, pb, s, hrec, ha, hb⟩ := hr
@@ -245,13 +243,7 @@ theorem readName (hθ : ∀ q, q ∉ supp → θ q = 0) {S : A} {B : ℤ} (w : T
         refine h3.mono ?_
         have h5 := length_pre hp
         simp only [List.length_append, List.length_singleton] at h5 ⊢
-        have h6 : ((Lm supp - p.1.length : ℕ) : ℤ) = ((Lm supp - (p.1.length + 1) : ℕ) : ℤ) + 1 := by
-          have : Lm supp - p.1.length = Lm supp - (p.1.length + 1) + 1 := by omega
-          rw [this]
-          push_cast
-          ring
-        rw [h6]
-        linarith
+        omega
       · have hz : θ (p.1 ++ bt :: b.path) = 0 := by rw [hsplit]; exact not_pre hp hθ _
         rw [hz, zero_mul]
         refine sumTo_stuck hσ1 hrec1 ?_ (by change Md.TB p ≠ .P; simp)

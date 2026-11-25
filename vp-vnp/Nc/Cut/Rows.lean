@@ -245,13 +245,7 @@ theorem length_joinSeg (X : Option S → List Γ) :
     (joinSeg X).length = ∑ s, (X s).length + (Fintype.card S + 1) := by
   have : ∀ l : List (Option S), (l.flatMap fun s => (X s).map some ++ [none]).length =
       (l.map fun s => (X s).length).sum + l.length := by
-    intro l
-    induction l with
-    | nil => simp
-    | cons s l ih =>
-      simp only [List.flatMap_cons, List.length_append, ih, List.length_map, List.length_nil,
-        List.map_cons, List.sum_cons, List.length_cons]
-      omega
+    simp
   rw [joinSeg, this, Finset.length_toList, Finset.card_univ, Fintype.card_option]
   congr 1
   exact Finset.sum_map_toList _ _

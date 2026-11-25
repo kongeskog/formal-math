@@ -224,7 +224,6 @@ theorem prop_crossing_class_size {κ : ℝ} (hκ : 0 < κ) (hup : ∀ E : ℕ, R
   have hupper : Real.log (states μ e).card ≤ κ * √(E : ℝ) :=
     (Real.log_le_log h0 (by exact_mod_cast hle)).trans (hup E)
   have hv := mul_le_mul_of_nonneg_left (sqrt_floor_le hp n) hκ.le
-  have hd : 0 ≤ δ * (κ * √(n : ℝ)) := by positivity
   refine ⟨μ, e, he, hpos, abs_le.2 ⟨?_, ?_⟩⟩
   · linarith
   · linarith
@@ -237,7 +236,6 @@ theorem prop_crossing_products {κ : ℝ} (hκ : 0 < κ) (hup : ∀ E : ℕ, Rea
     ∀ᶠ n : ℕ in atTop, ∀ M : ℕ, (M : ℝ) ≤ A * n →
       Real.log (((M + 1) * stateCount M : ℕ) : ℝ) ≤ (√(M : ℝ) / √(n : ℝ) + δ) * (κ * √n) := by
   filter_upwards [log_small hA (η := δ * κ) (by positivity), eventually_ge_atTop 1] with n hlog hn M hM
-  have hsn : 0 < √(n : ℝ) := Real.sqrt_pos.2 (by exact_mod_cast hn)
   have h2 : Real.log ((M : ℝ) + 1) ≤ δ * κ * √(n : ℝ) :=
     (Real.log_le_log (by positivity) (by linarith)).trans hlog
   have h4 : Real.log (((M + 1) * stateCount M : ℕ) : ℝ) = Real.log ((M : ℝ) + 1) + Real.log (stateCount M) := by
@@ -270,7 +268,6 @@ theorem prop_crossing_tensors (K : Type) [Field K] {p q : ℝ} (hp : 0 ≤ p) (h
       ((prop_crossing_products hc hup hA0 hδ).and
         ((log_small hA0 (η := δ * c) (by positivity)).and (eventually_ge_atTop 1)))).exists
   have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
-  have hsn : 0 < Real.sqrt n := Real.sqrt_pos.2 hn0
   obtain ⟨Ψ, hΨ, hL, hR⟩ := prop_identity μ ν e₁ e₂
   have hH : ((2 * (e₁ + e₂) : ℕ) : ℝ) ≤ A * n := by
     have h1 : ((e₁ : ℕ) : ℝ) ≤ (⌊p ^ 2 * n⌋₊ : ℕ) := by exact_mod_cast he₁
@@ -424,7 +421,6 @@ theorem prop_crossing_first {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) 
     have b3 : z.2 * (c * F.e 6 7) ≤ z.2 * d w w' + z.2 * η := lo 6 7 hz2
     have c1 : z.1 * η ≤ (ρ + 1) * η := mul_le_mul_of_nonneg_right q1 hη0.le
     have c2 : z.2 * η ≤ (ρ + 1) * η := mul_le_mul_of_nonneg_right q2 hη0.le
-    have hsum : 3 * (p * η) + 3 * (q * η) + (ρ + 1) * η = δ := by rw [← hηT, hT]; ring
     rw [← min_add_add_right]
     refine le_min ?_ ?_
     · have h4 := mul_le_mul_of_nonneg_left (h.trans (min_le_left _ _)) hc

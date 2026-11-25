@@ -150,26 +150,11 @@ theorem iSupIndep_two {B C : Submodule F2 (Fin m → F2)} : iSupIndep ![B, C] �
 theorem iSupIndep_three {B C D : Submodule F2 (Fin m → F2)} :
     iSupIndep ![B, C, D] ↔ Disjoint B (C ⊔ D) ∧ Disjoint C (B ⊔ D) ∧ Disjoint D (B ⊔ C) := by
   have e0 : (⨆ (j : Fin 3) (_ : j ≠ 0), ![B, C, D] j) = C ⊔ D := by
-    refine le_antisymm (iSup₂_le fun j hj => ?_) (sup_le (le_iSup₂_of_le 1 (by decide) le_rfl)
-      (le_iSup₂_of_le 2 (by decide) le_rfl))
-    fin_cases j
-    · exact absurd rfl hj
-    · exact le_sup_left
-    · exact le_sup_right
+    simp
   have e1 : (⨆ (j : Fin 3) (_ : j ≠ 1), ![B, C, D] j) = B ⊔ D := by
-    refine le_antisymm (iSup₂_le fun j hj => ?_) (sup_le (le_iSup₂_of_le 0 (by decide) le_rfl)
-      (le_iSup₂_of_le 2 (by decide) le_rfl))
-    fin_cases j
-    · exact le_sup_left
-    · exact absurd rfl hj
-    · exact le_sup_right
+    simp
   have e2 : (⨆ (j : Fin 3) (_ : j ≠ 2), ![B, C, D] j) = B ⊔ C := by
-    refine le_antisymm (iSup₂_le fun j hj => ?_) (sup_le (le_iSup₂_of_le 0 (by decide) le_rfl)
-      (le_iSup₂_of_le 1 (by decide) le_rfl))
-    fin_cases j
-    · exact le_sup_left
-    · exact le_sup_right
-    · exact absurd rfl hj
+    simp
   rw [iSupIndep_def, Fin.forall_fin_succ, Fin.forall_fin_succ, Fin.forall_fin_succ]
   constructor
   · rintro ⟨h0, h1, h2, -⟩

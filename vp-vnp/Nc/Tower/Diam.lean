@@ -56,12 +56,7 @@ theorem lay_single (i j : Fin h) (hij : i ≠ j) (htr : (Matrix.single i j (1 : 
     lay (n := n) (Matrix.single i j 1) htr = El i j hij (s (n + 2) ^ (n + 1)) := by
   refine Subtype.ext ?_
   rw [lay_val, layMat, El_val, transvection]
-  congr 1
-  ext a b
-  rw [Matrix.smul_apply, Matrix.map_apply, Matrix.single_apply, Matrix.single_apply, smul_eq_mul]
-  split_ifs
-  · rw [map_one, mul_one]
-  · rw [map_zero, mul_zero]
+  simp
 
 theorem trace_single_ne (i j : Fin h) (hij : i ≠ j) : (Matrix.single i j (1 : ZMod 2)).trace = 0 := by
   rw [Matrix.trace]
@@ -93,13 +88,7 @@ theorem lay_diag (i : Fin h) (hi : i ≠ 0) :
     ext a b
     rw [Matrix.smul_apply, Matrix.map_apply, Matrix.add_apply, Matrix.add_apply, Matrix.single_apply,
       Matrix.single_apply, Matrix.single_apply, Matrix.single_apply, smul_eq_mul, map_add, mul_add]
-    congr 1
-    · split_ifs
-      · rw [map_one, mul_one]
-      · rw [map_zero, mul_zero]
-    · split_ifs
-      · rw [map_one, mul_one]
-      · rw [map_zero, mul_zero]
+    simp
   rw [lay_val, hl]
   set a := Matrix.single (0 : Fin h) i σ with ha
   set b := Matrix.single i (0 : Fin h) (1 : R (n + 2)) with hb
@@ -160,9 +149,7 @@ theorem sum_layer (A : Matrix (Fin h) (Fin h) (ZMod 2)) (hA : A.trace = 0) :
     by_cases hij : i = j
     · subst hij
       rw [if_pos rfl, if_pos rfl, Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, mul_add]
-      congr 1
-      · split_ifs <;> simp
-      · split_ifs <;> simp
+      simp
     · rw [if_neg hij, if_neg hij, Matrix.single_apply, add_zero]
       split_ifs <;> simp
   rw [Finset.sum_congr rfl fun p _ => h1 p, Finset.sum_add_distrib, Finset.sum_ite_eq' univ (a, b), if_pos (mem_univ _)]

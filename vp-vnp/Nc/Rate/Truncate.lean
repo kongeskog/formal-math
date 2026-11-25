@@ -49,7 +49,7 @@ theorem exists_lift_steps (φ : A →+* R) {l : ℕ → MvPolynomial X R} {s : �
     (hc : ∀ k < s, ∀ c, l k = C c → c ∈ Set.range φ) :
     ∃ L : ℕ → MvPolynomial X A, (∀ k < s, IsStep L k) ∧ ∀ k < s, map φ (L k) = l k := by
   induction s with
-  | zero => exact ⟨fun _ => 0, fun k hk => absurd hk (Nat.not_lt_zero k), fun k hk => absurd hk (Nat.not_lt_zero k)⟩
+  | zero => simp
   | succ t ih =>
     obtain ⟨L, hL, hm⟩ := ih (fun k hk => hl k (by omega)) (fun k hk => hc k (by omega))
     have key : ∃ g : MvPolynomial X A, ((∃ i : X, g = MvPolynomial.X i) ∨ (∃ a : A, g = C a) ∨
@@ -192,7 +192,7 @@ theorem exists_truncated_steps {l : ℕ → MvPolynomial X (LaurentSeries F)} {s
   intro t
   induction t with
   | zero =>
-    exact fun _ _ _ => ⟨fun _ => 0, fun k hk => absurd hk (Nat.not_lt_zero k), fun k hk => absurd hk (Nat.not_lt_zero k)⟩
+    simp
   | succ t ih =>
     intro ht n hn
     obtain ⟨L, hL, hr⟩ := ih (by omega) (n + B) (by omega)
