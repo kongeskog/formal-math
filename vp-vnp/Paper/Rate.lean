@@ -6,14 +6,13 @@ SPDX-License-Identifier: Apache-2.0
 import Paper.ApproxScales
 import Paper.Flat
 import Paper.Convex
-import Paper.Ryser
 import Nc.CaseI.Hub
 
 /-!
 # The paper, section "The main theorem"
 
-The theorems over ℝ of the introduction (thm:main, thm:simple, cor:classes) are at the end of
-`Paper/Approximate.lean`, derived from Theorem thm:allfields.
+Theorem thm:main of the introduction, over ℝ, is at the end of `Paper/Approximate.lean`, derived
+from Theorem thm:allfields.
 -/
 
 namespace Paper
@@ -297,31 +296,6 @@ theorem fklTen_onEnds (K : Type) [Field K] (k ℓ : ℕ) (q : RPt k)
   have : IsEmpty {a // (Sum.inl : End k → RPt k) a = q} := ⟨fun a => hq (mem_image.2 ⟨a.1, mem_univ _, a.2⟩)⟩
   exact inferInstanceAs (Subsingleton (∀ a : {a // (Sum.inl : End k → RPt k) a = q}, (fklTen K k ℓ).ι a.1))
 
-/-- **Paper: Proposition prop:flat-rate.** "In the flat case, for k ≥ 2 and ℓ ≥ 100√k every circuit over k for f_{k,ℓ}
-has at least 2^(ℓk^(3/2)/16) gates." -/
-theorem prop_flat_rate {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk : 2 ≤ k) {ℓ s : ℕ}
-    (hℓ : 100 * √k ≤ (ℓ : ℝ)) (hcomp : Computes (fkl K k ℓ) s) :
-    (2 : ℝ) ^ ((ℓ : ℝ) * (k : ℝ) ^ (3 / 2 : ℝ) / 16) ≤ s := by
-  classical
-  have hs : 1 ≤ s := by
-    obtain ⟨l, -, a, ha, -⟩ := hcomp
-    omega
-  refine rate_pow hk hs (rate_of_someSetPays hK hk hℓ hs fun φ => ?_)
-  have := bal_nonempty hk
-  have : NeZero (Fintype.card (bal (univ : Finset (Fin k)))) := ⟨Fintype.card_ne_zero⟩
-  have : Nonempty (RPt k) := ⟨hubPt ∅ true⟩
-  -- the tensor of f is a sum of at most 2^k hub tensors
-  have hsum := prop_flat_lower_sum hk hcomp (Sum.inl : End k → RPt k) hubPt
-  rw [show ((fklTen K k ℓ).withVal fun z => cf univ (fkl K k ℓ) (tables z)) = fklTen K k ℓ from
-    congrArg _ (funext fun z => (fklTen_val K z).symm)] at hsum
-  exact someSetPays_of_few φ hs (lem_few φ _ _ (fklTen_onEnds K k ℓ) _ (hsum.reindex (balEnum k)))
-
-/-- **Paper: Proposition prop:flat-rate**, for f_{k,ℓ} with exactly the printed variables. -/
-theorem prop_flat_rate_printed {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk : 2 ≤ k) {ℓ s : ℕ}
-    (hℓ : 100 * √k ≤ (ℓ : ℝ)) (hcomp : Computes (fklExact K k ℓ) s) :
-    (2 : ℝ) ^ ((ℓ : ℝ) * (k : ℝ) ^ (3 / 2 : ℝ) / 16) ≤ s :=
-  prop_flat_rate hK hk hℓ (fklExact_computes.1 hcomp)
-
 /-- The largest cube with 200 r³ ≤ B. -/
 theorem exists_cube_root (B : ℕ) : ∃ r, 200 * r ^ 3 ≤ B ∧ B < 200 * (r + 1) ^ 3 := by
   classical
@@ -409,14 +383,6 @@ theorem rate_of_projection (κ : ℕ) : ∃ m₀ : ℕ, ∀ P : ℕ → ℕ → 
   rw [← Real.lt_logb_iff_rpow_lt (by norm_num) hs0, div_lt_iff₀ (by norm_num)]
   nlinarith
 
-/-- **Paper: Theorem thm:flat-rate.** "In the flat case there is m₀ such that for m ≥ m₀ every circuit over k for PERM_m
-has more than 2^((log m)^(4/3)/1600²) gates." -/
-theorem thm_flat_rate {K : Type} [Field K] (hK : Flat K) (h2 : (2 : K) ≠ 0) :
-    ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, Computes (genPerm K m) s →
-      (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
-  obtain ⟨m₀, h⟩ := rate_of_projection 3
-  exact ⟨m₀, h _ fun k ℓ m s hk hℓ hℓk hm hs => prop_flat_rate hK hk hℓk (lem_fkl_perm h2 hk hℓ hm hs)⟩
-
 /-- "(log m)²/log log m ≥ (log m)^(4/3) for large m", and indeed more than any multiple: the bound of the contracting
 case exceeds that of the flat case. -/
 theorem thm_main_calculation (C : ℝ) : ∃ m₀ : ℕ, ∀ m ≥ m₀,
@@ -451,9 +417,6 @@ theorem genPerm_eq.{u} (F : Type u) [Field F] (m : ℕ) :
     genPerm F m = ∑ σ : Equiv.Perm (Fin m), ∏ i, MvPolynomial.X (σ i, i) := by
   simp [genPerm, Matrix.permanent]
 
-/- Theorem thm:simple moved to the end of `Paper/Approximate.lean`, where it is derived from Theorem
-thm:main. -/
-
 /-- "VP is contained in VNP." -/
 theorem vp_subset_vnp.{u} (F : Type u) [CommSemiring F] : VP F ⊆ VNP F := by
   rintro p ⟨C, hC⟩
@@ -465,8 +428,6 @@ theorem vp_subset_vnp.{u} (F : Type u) [CommSemiring F] : VP F ⊆ VNP F := by
     simp
   · exact ((Fintype.sum_unique _).trans (bits_rename _ _)).symm
 
-/- Corollary cor:classes moved to the end of `Paper/Approximate.lean`, after Theorem thm:simple. -/
-
 /-- m^(c(log m)^(1/3)) = 2^(c(log m)^(4/3)). -/
 theorem thm_main_form {m : ℕ} (hm : 2 ≤ m) (c : ℝ) :
     (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) = (2 : ℝ) ^ (c * Real.logb 2 m ^ (4 / 3 : ℝ)) := by
@@ -476,35 +437,6 @@ theorem thm_main_form {m : ℕ} (hm : 2 ≤ m) (c : ℝ) :
   rw [show (4 / 3 : ℝ) = 1 + 1 / 3 by norm_num, Real.rpow_add hL, Real.rpow_one, mul_left_comm]
   congr 2
   rw [Real.rpow_logb (by norm_num) (by norm_num) hm0]
-
-/-- A power m^C is eventually below m^(c(log m)^(1/3)). -/
-theorem pow_le_rate {c : ℝ} (hc : 0 < c) (C : ℕ) :
-    ∃ m₀ : ℕ, ∀ m ≥ m₀, ((m ^ C : ℕ) : ℝ) ≤ (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) := by
-  obtain ⟨n, hn⟩ := exists_nat_ge ((C / c) ^ 3)
-  refine ⟨2 ^ n, fun m hm => ?_⟩
-  have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast Nat.one_le_two_pow.trans hm
-  have hL : (n : ℝ) ≤ Real.logb 2 m := by
-    rw [Real.le_logb_iff_rpow_le one_lt_two (by positivity), Real.rpow_natCast]
-    exact_mod_cast hm
-  have h2 := Real.rpow_le_rpow (by positivity) (hn.trans hL) (show (0 : ℝ) ≤ 1 / 3 by norm_num)
-  rw [← Real.rpow_natCast, ← Real.rpow_mul (by positivity),
-    show ((3 : ℕ) : ℝ) * (1 / 3) = 1 by norm_num, Real.rpow_one, div_le_iff₀ hc] at h2
-  rw [Nat.cast_pow, ← Real.rpow_natCast]
-  exact Real.rpow_le_rpow_of_exponent_le hm1 (by linarith)
-
-/- Theorem thm:flat-simple, moved here from `Paper/Flat.lean`: it is Theorem thm:flat-rate with the
-bound 2^((log m)^(4/3)/1600²) = m^((log m)^(1/3)/1600²) (thm_main_form), which eventually exceeds
-m^C (pow_le_rate). -/
-
-/-- **Paper: Theorem thm:flat-simple.** "In the flat case, for every C there is m₀ such that PERM_m has no circuit
-over k with m^C gates for m ≥ m₀." -/
-theorem thm_flat_simple {K : Type} [Field K] (hK : Flat K) (h2 : (2 : K) ≠ 0) (C : ℕ) :
-    ∃ m₀ : ℕ, ∀ m ≥ m₀, ¬ Computes (genPerm K m) (m ^ C) := by
-  obtain ⟨m₀, h⟩ := thm_flat_rate hK h2
-  obtain ⟨m₁, h₁⟩ := pow_le_rate (show (0 : ℝ) < 1 / 1600 ^ 2 by norm_num) C
-  refine ⟨m₀ + m₁ + 2, fun m hm hs => (h m (by omega) _ hs).not_ge ?_⟩
-  rw [← one_div_mul_eq_div, ← thm_main_form (by omega)]
-  exact h₁ m (by omega)
 
 /- Theorem thm:main moved to the end of `Paper/Approximate.lean`, where it is derived from Theorem
 thm:allfields. -/

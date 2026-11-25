@@ -3,7 +3,6 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import Ov.Core.Unit
 import Nc.Rate.Defs
 
 /-!
@@ -27,12 +26,6 @@ variable {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I]
 section Tensors
 
 variable {J L : Type} [Fintype J] [DecidableEq J] [Fintype L] [DecidableEq L]
-
-/-- "Tensors that are restrictions of each other are identified, so that the product is commutative, with unit the tensor
-1"; it is also associative. -/
-theorem tensor_mul_laws (s t u : Ten K I) :
-    Equi (s * t) (t * s) ∧ Equi (s * t * u) (s * (t * u)) ∧ Equi (1 * t) t ∧ Equi (t * 1) t :=
-  ⟨Equi.mul_comm s t, Equi.mul_assoc s t u, Equi.one_mul t, Equi.mul_one t⟩
 
 /-- "Every nonzero t has 1 as a restriction". -/
 theorem tensor_one_restr [Nonempty I] {t : Ten K I} (ht : ∃ x, t.val x ≠ 0) : Restr 1 t :=
@@ -65,20 +58,6 @@ theorem tensor_push_cover (π : J → I) :
   ⟨fun h => h.push π, fun h => h.push π⟩
 
 end Tensors
-
-/-- **Paper: Definition def:spectral.** "A spectral point on I is a function φ ≥ 0 on tensors with φ(1) = 1,
-φ(st) = φ(s)φ(t), and φ(s) ≤ ∑ φ(t_j) whenever s is covered by t_1, …, t_r." -/
-theorem def_spectral (φ : Ten K I → ℝ) :
-    (∃ F : Spec K I, F.F = φ) ↔ (∀ t, 0 ≤ φ t) ∧ φ 1 = 1 ∧ (∀ s t, φ (s * t) = φ s * φ t) ∧
-      ∀ (r : ℕ) (s : Ten K I) (t : Fin r → Ten K I), SumRestr s t → φ s ≤ ∑ j, φ (t j) := by
-  constructor
-  · rintro ⟨F, rfl⟩
-    exact ⟨F.nonneg, F.one, F.mul, fun r s t h => F.le_sum s t h⟩
-  · rintro ⟨h0, h1, h2, h3⟩
-    refine ⟨⟨φ, h0, h1, h2, fun {κ} _ s b h => ?_⟩, rfl⟩
-    classical
-    refine (h3 _ s (b ∘ (Fintype.equivFin κ).symm) (h.reindex (Fintype.equivFin κ).symm)).trans (le_of_eq ?_)
-    exact Fintype.sum_equiv (Fintype.equivFin κ).symm _ _ fun _ => rfl
 
 /-- The text after the definition: "So φ(t) ≥ 1 if t ≠ 0, and φ(0) = 0 (the empty sum)." -/
 theorem def_spectral_values [Nonempty I] (φ : Spec K I) (t : Ten K I) :
@@ -125,25 +104,6 @@ noncomputable def trivialPoint (K : Type) [Field K] (I : Type) [Fintype I] [Deci
           (fun k _ => by split_ifs <;> norm_num) (Finset.mem_univ k)
     · rw [if_neg hs]
       exact Finset.sum_nonneg fun k _ => by split_ifs <;> norm_num
-
-/-- The last example after Definition def:spectral: "φ^s is again a spectral point for 0 < s ≤ 1." -/
-noncomputable def powerPoint (φ : Spec K I) (s : ℝ) (h0 : 0 < s) (h1 : s ≤ 1) : Spec K I where
-  F t := φ.F t ^ s
-  nonneg t := Real.rpow_nonneg (φ.nonneg t) s
-  one := by rw [φ.one, Real.one_rpow]
-  mul a b := by rw [φ.mul, Real.mul_rpow (φ.nonneg a) (φ.nonneg b)]
-  le_sum {κ} _ a b h := by
-    classical
-    refine (Real.rpow_le_rpow (φ.nonneg a) (φ.le_sum a b h) h0.le).trans ?_
-    have key : ∀ S : Finset κ, (∑ k ∈ S, φ.F (b k)) ^ s ≤ ∑ k ∈ S, φ.F (b k) ^ s := by
-      intro S
-      induction S using Finset.induction_on with
-      | empty => simp [Real.zero_rpow h0.ne']
-      | insert k S hk ih =>
-        rw [Finset.sum_insert hk, Finset.sum_insert hk]
-        exact (Real.rpow_add_le_add_rpow (φ.nonneg _) (Finset.sum_nonneg fun _ _ => φ.nonneg _) h0.le h1).trans
-          (by gcongr)
-    exact key Finset.univ
 
 /-- Proof of Lemma lem:exponents: "The function q ↦ φ(⟨q⟩_P) is at least 1, multiplicative and monotone, hence a power of q."
 The unit tensor has a leg at π a for every a; the exponent is Nc.Price.hexp. -/

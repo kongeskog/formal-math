@@ -18,20 +18,6 @@ namespace Paper
 
 open Finset Filter Topology Cat
 
-/-- The paper's definition: "A complete metric space is CAT(0) if any two points x, v have a midpoint and (CN) holds
-for it." -/
-theorem cat0_iff (X : Type) [MetricSpace X] : Cat.CN X ↔ CompleteSpace X ∧ ∀ x v : X, ∃ m,
-    dist x m = dist x v / 2 ∧ dist m v = dist x v / 2 ∧
-      ∀ z, dist z m ^ 2 ≤ 1 / 2 * dist z x ^ 2 + 1 / 2 * dist z v ^ 2 - (dist x v / 2) ^ 2 := by
-  constructor
-  · intro h
-    refine ⟨h.toCompleteSpace, fun x v => ⟨Cat.mid x v, Cat.dist_mid_left x v, Cat.dist_mid_right x v, fun z => ?_⟩⟩
-    linarith [Cat.cn x v z]
-  · rintro ⟨hc, h⟩
-    refine { hc with exists_mid := fun x v => ?_ }
-    obtain ⟨m, -, -, hm⟩ := h x v
-    exact ⟨m, fun z => by linarith [hm z]⟩
-
 section Toolkit
 
 variable {Y : Type*} [MetricSpace Y] [CN Y]
@@ -265,8 +251,7 @@ theorem lem_toolkit_c_contract {ι : Type*} [Fintype ι] {w : ι → ℝ} (hw : 
 
 /-- **Paper: Lemma lem:toolkit (c).** "Points x₁, …, x_n, n ≥ 1, have a barycenter b, the minimizer of y ↦ ∑|yx_i|², with
 ∑|yx_i|² ≥ n|yb|² + ∑|bx_i|² for all y; if b′ is that of x′₁, …, x′_n, then n|bb′| ≤ ∑|x_ix′_i|." Here a barycenter is a
-point with the displayed inequality; by lem_toolkit_c_minimizer this is the same as being the minimizer, and there is exactly
-one. -/
+point with the displayed inequality. -/
 theorem lem_toolkit_c :
     (∀ (n : ℕ) (x : Fin n → Y), 0 < n → ∃ b, ∀ y,
       (n : ℝ) * dist y b ^ 2 + ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2) ∧
@@ -290,23 +275,6 @@ theorem lem_toolkit_c :
       simp only [one_mul, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
       linarith [h y]
     simpa using lem_toolkit_c_contract (fun _ => zero_le_one) (conv x b hb) (conv x' b' hb')
-
-/-- Part (c): the barycenter is "the minimizer of y ↦ ∑|yx_i|²". For n ≥ 1 there is exactly one minimizer, and a point is the
-minimizer if and only if it satisfies the inequality of (c), by which lem_toolkit_c describes the barycenter. -/
-theorem lem_toolkit_c_minimizer {n : ℕ} (hn : 0 < n) (x : Fin n → Y) :
-    (∃! b, ∀ y, ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2) ∧
-    ∀ b, (∀ y, (n : ℝ) * dist y b ^ 2 + ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2) ↔
-      ∀ y, ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2 := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
-  obtain ⟨b₀, h₀⟩ := lem_toolkit_c.1 n x hn
-  have hmin : ∀ b, (∀ y, (n : ℝ) * dist y b ^ 2 + ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2) →
-      ∀ y, ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2 := fun b h y => by
-    nlinarith [h y, sq_nonneg (dist y b)]
-  have huniq : ∀ b, (∀ y, ∑ i, dist b (x i) ^ 2 ≤ ∑ i, dist y (x i) ^ 2) → b = b₀ := fun b h => by
-    have h1 : (n : ℝ) * dist b b₀ ^ 2 ≤ 0 := by linarith [h₀ b, h b₀]
-    have h2 : dist b b₀ ^ 2 ≤ 0 := by nlinarith
-    exact dist_eq_zero.1 (pow_eq_zero_iff two_ne_zero |>.1 (le_antisymm h2 (sq_nonneg _)))
-  exact ⟨⟨b₀, hmin b₀ h₀, huniq⟩, fun b => ⟨hmin b, fun h => (huniq b h).symm ▸ h₀⟩⟩
 
 /-- **Paper: Lemma lem:toolkit (d).** "A nonempty closed convex F has nearest points Py, with |yq|² ≥ |yPy|² + |Py,q|² for
 q ∈ F." A set is convex if it contains the midpoints of its points. -/
@@ -458,7 +426,7 @@ are equal. (c) Points x₁, …, x_n, n ≥ 1, have a barycenter b, the minimize
 convex F has nearest points Py, with |yq|² ≥ |yPy|² + |Py,q|² for q ∈ F. (e) Finite L² products of copies of Y are CAT(0).
 (f) Flat rectangles: if |xy| = |uv| = δ, |xu| = |yv| = h and both diagonals have squared length δ² + h², and a ∈ [x,u],
 b ∈ [y,v] have |xa| = sh, |yb| = th, then |ab|² = δ² + h²(s−t)²." In (c) a barycenter is a point with the displayed
-inequality; by lem_toolkit_c_minimizer this is the same as being the minimizer, and there is exactly one. -/
+inequality. -/
 theorem lem_toolkit {Y : Type} [MetricSpace Y] [CN Y] :
     (∀ (x v : Y) (t : ℝ), 0 ≤ t → t ≤ 1 → ∃ γ : Y,
       (dist x γ = t * dist x v ∧ dist γ v = (1 - t) * dist x v) ∧

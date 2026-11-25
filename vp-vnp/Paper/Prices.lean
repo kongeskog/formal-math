@@ -18,22 +18,6 @@ open Ov Ov.Ten Nc.Price Finset Filter MeasureTheory
 
 variable {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I]
 
-/-- **Paper: Definition def:price.** "A price on a finite set V is a limit of multiples s·d_φ, s ≥ 0, φ a spectral
-point on V. A function on the pairs of an arbitrary set Y is a price if all its pull-backs to finite sets are prices." -/
-theorem def_price :
-    (∀ (V : Type) [Fintype V] [DecidableEq V] (d : V → V → ℝ), IsPrice K d ↔
-      ∀ δ : ℝ, 0 < δ → ∃ (φ : Spec K V) (s : ℝ), 0 ≤ s ∧ ∀ u v, |d u v - s * φ.e u v| < δ) ∧
-    ∀ (Y : Type) (w : Y → Y → ℝ), IsPrice K w ↔
-      ∀ (V : Type) [Fintype V] [DecidableEq V] (g : V → Y), IsPrice K fun u v => w (g u) (g v) := by
-  refine ⟨fun V _ _ d => ⟨fun h δ hδ => h.exists_spec id hδ, fun h => isPrice_of_mem ?_⟩,
-    fun Y w => ⟨fun h V _ _ g n f => h n fun i => g (f i), fun h n f => (h (Fin n) f).mem id⟩⟩
-  rw [Prices, Metric.mem_closure_iff]
-  intro δ hδ
-  obtain ⟨φ, s, hs, hd⟩ := h δ hδ
-  refine ⟨_, ⟨φ, s, hs, rfl⟩, (dist_pi_lt_iff hδ).2 fun u => (dist_pi_lt_iff hδ).2 fun v => ?_⟩
-  rw [Real.dist_eq]
-  exact hd u v
-
 section Facts
 
 variable {Y : Type*} {w : Y → Y → ℝ}
@@ -432,7 +416,7 @@ on I₂, and let n_p be its index sizes. For two further parties o₁, o₂ it i
 ∏_{p ∈ I₁} ⟨n_p⟩_{p o₁} · ⟨r⟩_{o₁ o₂} · ∏_{p ∈ I₂} ⟨n_p⟩_{p o₂}, and this remains true when o₁, o₂ are identified with given
 parties." In Lean the paper's I is A, its part I₁ is given by the predicate S, and α j, β j are the factors of the j-th
 product, functions of the indices in I₁ and in I₂. The map π places the parties of A among those of a set I that also
-contains o₁ and o₂, in any way; lem_hubs_further is the case of two further parties. -/
+contains o₁ and o₂, in any way. -/
 theorem lem_hubs {A : Type} [Fintype A] [DecidableEq A] (π : A → I) (t : Ten K A) (S : A → Prop) [DecidablePred S]
     {r : ℕ} (α β : Fin r → (∀ a, t.ι a) → K)
     (hα : ∀ j x x', (∀ a, S a → x a = x' a) → α j x = α j x')
@@ -503,20 +487,5 @@ theorem lem_hubs {A : Type} [Fintype A] [DecidableEq A] (π : A → I) (t : Ten 
   · show Restr (Ten.wire K (Fintype.card (Fin r)) o₁ o₂) _
     rw [Fintype.card_fin]
     exact Restr.refl _
-
-/-- Lemma lem:hubs as printed, "for two further parties o₁, o₂": the parties are I₁ ⊔ I₂ and the two hubs. -/
-theorem lem_hubs_further {I₁ I₂ : Type} [Fintype I₁] [DecidableEq I₁] [Fintype I₂] [DecidableEq I₂]
-    (t : Ten K (I₁ ⊕ I₂)) {r : ℕ} (α : Fin r → (∀ p, t.ι (Sum.inl p)) → K) (β : Fin r → (∀ p, t.ι (Sum.inr p)) → K)
-    (hs : ∀ x, t.val x = ∑ j, α j (fun p => x (Sum.inl p)) * β j fun p => x (Sum.inr p)) :
-    Restr (Ten.push (Sum.inl : I₁ ⊕ I₂ → (I₁ ⊕ I₂) ⊕ Bool) t)
-      (Ten.prod (fun p : I₁ => Ten.wire K (Fintype.card (t.ι (Sum.inl p))) (Sum.inl (Sum.inl p)) (Sum.inr true)) *
-        Ten.wire K r (Sum.inr true) (Sum.inr false) *
-        Ten.prod fun p : I₂ => Ten.wire K (Fintype.card (t.ι (Sum.inr p))) (Sum.inl (Sum.inr p)) (Sum.inr false)) := by
-  have key := lem_hubs (Sum.inl : I₁ ⊕ I₂ → (I₁ ⊕ I₂) ⊕ Bool) t (fun a => a.isLeft = true)
-    (fun j x => α j fun p => x (Sum.inl p)) (fun j x => β j fun p => x (Sum.inr p))
-    (fun j x x' h => congrArg (α j) (funext fun p => h (Sum.inl p) rfl))
-    (fun j x x' h => congrArg (β j) (funext fun p => h (Sum.inr p) (by simp))) hs (Sum.inr true) (Sum.inr false)
-  refine key.trans ((Restr.mul (Equi.prod_sum _).1 (Restr.refl _)).trans ?_)
-  exact ((Equi.mul_assoc _ _ _).trans (((Equi.refl _).mul (Equi.mul_comm _ _)).trans (Equi.mul_assoc _ _ _).symm)).1
 
 end Paper

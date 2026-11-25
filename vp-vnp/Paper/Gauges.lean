@@ -19,20 +19,6 @@ open Ov Ov.Ten Ov.Duality Ov.Duality.IsPre Nc.Price Finset
 
 variable {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I]
 
-/-- "A gauge on I is a function p ≥ 0 on tensors with p(1) = 1, p(st) ≤ p(s)p(t) and p(s) ≤ ∑ p(t_j) whenever s is covered by
-the t_j." -/
-theorem def_gauge (p : Ten K I → ℝ) :
-    (∃ P : PreSpec K I, P.p = p) ↔ (∀ t, 0 ≤ p t) ∧ p 1 = 1 ∧ (∀ s t, p (s * t) ≤ p s * p t) ∧
-      ∀ (r : ℕ) (s : Ten K I) (t : Fin r → Ten K I), SumRestr s t → p s ≤ ∑ j, p (t j) := by
-  constructor
-  · rintro ⟨P, rfl⟩
-    exact ⟨P.nonneg, P.one, P.mul_le, fun r s t h => P.le_sum s t h⟩
-  · rintro ⟨h0, h1, h2, h3⟩
-    refine ⟨⟨p, h0, h1, h2, fun {κ} _ s b h => ?_⟩, rfl⟩
-    classical
-    refine (h3 _ s (b ∘ (Fintype.equivFin κ).symm) (h.reindex (Fintype.equivFin κ).symm)).trans (le_of_eq ?_)
-    exact Fintype.sum_equiv (Fintype.equivFin κ).symm _ _ fun _ => rfl
-
 section Monoid
 
 /-! The proof of Proposition prop:gauge, for a commutative monoid M with a covering relation D (for us: the classes of
@@ -77,7 +63,7 @@ theorem prop_gauge_minimal {p₀ : M → ℝ} (h₀ : IsPre D p₀) :
 
 /-- Proof of Proposition prop:gauge, for r(t) = inf p(tⁿ)^(1/n): "If s is covered by t_1, …, t_l, then sⁿ is covered by their
 words of length n; grouping these … and bounding p(t_jᵃ) ≤ c_δ (r(t_j) + δ)ᵃ gives r(s) ≤ ∑ r(t_j)." In Lean r(t) is the infimum
-of the a > 0 with p(tⁿ) ≤ C·aⁿ for some C and all n (Ov.Duality.IsPre.rad; it is the printed number by prop_gauge_radius_eq),
+of the a > 0 with p(tⁿ) ≤ C·aⁿ for some C and all n (Ov.Duality.IsPre.rad),
 and the words are bounded by induction on n. -/
 theorem prop_gauge_radius_cover (h : IsPre D p) {κ : Type} [Fintype κ] (t : M) (b : κ → M) (hb : D.cov t b) :
     sInf (rad p t) ≤ ∑ k, sInf (rad p (b k)) := by
@@ -257,42 +243,6 @@ theorem prop_gauge_radius_root (h : IsPre D p) {t : M} {n : ℕ} (hn : 0 < n) {a
     _ ≤ (C * a ^ (m / n)) * (E ^ n * b ^ (m % n)) :=
       mul_le_mul (hC _) h4 (h.nonneg _) (by positivity)
     _ = _ := by ring
-
-/-- Proof of Proposition prop:gauge: "Let r(t) = inf_{n≥1} p(tⁿ)^(1/n)". The number r(t) of the Lean proof, the infimum of the
-a > 0 with p(tⁿ) ≤ C·aⁿ for some C and all n, is the printed one. (That r(t) + δ is such an a, Ov.Duality.IsPre.mem_rad_of_lt,
-is the printed bound p(tᵃ) ≤ c_δ (r(t) + δ)ᵃ, which the paper takes from Fekete's lemma.) -/
-theorem prop_gauge_radius_eq (h : IsPre D p) (t : M) :
-    sInf (rad p t) = ⨅ n : ℕ, p (t ^ (n + 1)) ^ (((n + 1 : ℕ) : ℝ)⁻¹) := by
-  have hbdd : BddBelow (Set.range fun n : ℕ => p (t ^ (n + 1)) ^ (((n + 1 : ℕ) : ℝ)⁻¹)) :=
-    ⟨0, by rintro _ ⟨n, rfl⟩; exact Real.rpow_nonneg (h.nonneg _) _⟩
-  refine le_antisymm (le_ciInf fun n => ?_) (le_csInf ⟨_, h.mem_rad t one_pos⟩ ?_)
-  · -- (p(tⁿ) + δ)^(1/n) is such an a, for every δ > 0
-    have h1 : ∀ δ : ℝ, 0 < δ → sInf (rad p t) ≤ (p (t ^ (n + 1)) + δ) ^ (((n + 1 : ℕ) : ℝ)⁻¹) := fun δ hδ =>
-      csInf_le (rad_bdd p t) (prop_gauge_radius_root h n.succ_pos (h.mem_rad _ hδ))
-    have h2 : Filter.Tendsto (fun δ : ℝ => (p (t ^ (n + 1)) + δ) ^ (((n + 1 : ℕ) : ℝ)⁻¹)) (nhdsWithin 0 (Set.Ioi 0))
-        (nhds (p (t ^ (n + 1)) ^ (((n + 1 : ℕ) : ℝ)⁻¹))) := by
-      have h3 : Continuous fun δ : ℝ => (p (t ^ (n + 1)) + δ) ^ (((n + 1 : ℕ) : ℝ)⁻¹) :=
-        (Real.continuous_rpow_const (by positivity)).comp (continuous_const.add continuous_id)
-      have h4 := h3.tendsto 0
-      rw [add_zero] at h4
-      exact h4.mono_left nhdsWithin_le_nhds
-    exact ge_of_tendsto h2 (Filter.eventually_of_mem self_mem_nhdsWithin fun δ hδ => h1 δ hδ)
-  · -- p(tⁿ)^(1/n) ≤ C^(1/n)·a, and C^(1/n) tends to 1
-    rintro a ⟨ha, C, hC⟩
-    have hC1 := h.rad_const_pos hC
-    have h1 : ∀ n : ℕ, ⨅ n : ℕ, p (t ^ (n + 1)) ^ (((n + 1 : ℕ) : ℝ)⁻¹) ≤ C ^ (((n + 1 : ℕ) : ℝ)⁻¹) * a := by
-      intro n
-      refine (ciInf_le hbdd n).trans ?_
-      calc p (t ^ (n + 1)) ^ (((n + 1 : ℕ) : ℝ)⁻¹) ≤ (C * a ^ (n + 1)) ^ (((n + 1 : ℕ) : ℝ)⁻¹) :=
-            Real.rpow_le_rpow (h.nonneg _) (hC _) (by positivity)
-        _ = C ^ (((n + 1 : ℕ) : ℝ)⁻¹) * a := by
-          rw [Real.mul_rpow (by linarith) (by positivity), Real.pow_rpow_inv_natCast ha.le n.succ_ne_zero]
-    have h2 : Filter.Tendsto (fun n : ℕ => C ^ (((n + 1 : ℕ) : ℝ)⁻¹) * a) Filter.atTop (nhds (C ^ (0 : ℝ) * a)) := by
-      refine Filter.Tendsto.mul_const a ?_
-      refine ((Real.continuous_const_rpow (by linarith : C ≠ 0)).tendsto 0).comp ?_
-      exact (tendsto_inv_atTop_nhds_zero_nat (𝕜 := ℝ)).comp (Filter.tendsto_add_atTop_nat 1)
-    rw [Real.rpow_zero, one_mul] at h2
-    exact ge_of_tendsto' h2 h1
 
 /-- Proof of Proposition prop:gauge: "r = p, that is, p(tⁿ) = p(t)ⁿ." -/
 theorem prop_gauge_radius_pow (h : IsPre D p) (hr : ∀ t, sInf (rad p t) = p t) (t : M) (n : ℕ) :

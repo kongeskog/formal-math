@@ -18,67 +18,9 @@ namespace Paper
 
 open Finset Matrix Nc.Cross
 
-/-- "Fix sizes μ, ν and energies e₁, e₂, and let Σ₁, Σ₂ be the sets of states with size and energy (μ, e₁), respectively (ν, e₂)":
-the set Nc.Cross.states μ e. -/
-theorem mem_stateClass {μ e : ℕ} (s : Finset ℕ × Finset ℕ) :
-    s ∈ states μ e ↔ s.1.card = μ ∧ s.2.card = μ ∧ ∑ i ∈ s.1, (2 * i + 1) + ∑ j ∈ s.2, (2 * j + 1) = e := by
-  rw [states, mem_filter]
-  exact ⟨fun h => h.2, fun h => ⟨mem_pairs.2 ⟨h.1.trans h.2.1.symm, h.2.2.le⟩, h⟩⟩
-
 section Orth
 
 variable {A : Type*} [CommRing A]
-
-/-- The coefficients of a power series times 1 + at. -/
-private theorem coeff_mk_mul_zero (f : ℕ → A) (a : A) :
-    PowerSeries.coeff 0 (PowerSeries.mk f * (1 + PowerSeries.C a * PowerSeries.X)) = f 0 := by
-  simp [mul_add, ← mul_assoc]
-
-private theorem coeff_mk_mul_succ (f : ℕ → A) (a : A) (n : ℕ) :
-    PowerSeries.coeff (n + 1) (PowerSeries.mk f * (1 + PowerSeries.C a * PowerSeries.X)) = f (n + 1) + f n * a := by
-  simp [mul_add, ← mul_assoc, PowerSeries.coeff_succ_mul_X]
-
-/-- "Let B(r,n) and C(r,n) be the coefficients of tⁿ in (1+t)^r/(1+yt)^(r+1) and (1+yt)^r/(1+t)^(r+1)." For B: the recursion
-that defines Nc.Cross.mB gives the coefficients of the first series. -/
-theorem meixner_B (y : A) (r : ℕ) :
-    PowerSeries.mk (mB y r) * (1 + PowerSeries.C y * PowerSeries.X) ^ (r + 1) = (1 + PowerSeries.X) ^ r := by
-  induction r with
-  | zero =>
-    rw [zero_add, pow_one, pow_zero]
-    ext n
-    cases n with
-    | zero => rw [coeff_mk_mul_zero, mB_zero]; simp
-    | succ n => rw [coeff_mk_mul_succ, mB_zero, mB_zero, PowerSeries.coeff_one, if_neg (Nat.succ_ne_zero n)]; ring
-  | succ r ih =>
-    have step : PowerSeries.mk (mB y (r + 1)) * (1 + PowerSeries.C y * PowerSeries.X) =
-        PowerSeries.mk (mB y r) * (1 + PowerSeries.C 1 * PowerSeries.X) := by
-      ext n
-      cases n with
-      | zero => rw [coeff_mk_mul_zero, coeff_mk_mul_zero, mB_zero_right, mB_zero_right]
-      | succ n => rw [coeff_mk_mul_succ, coeff_mk_mul_succ, mB_succ]; ring
-    rw [map_one, one_mul] at step
-    rw [pow_succ' _ (r + 1), ← mul_assoc, step, mul_right_comm, ih, pow_succ]
-
-/-- The same sentence for C: the recursion that defines Nc.Cross.mC gives the coefficients of (1+yt)^r/(1+t)^(r+1). -/
-theorem meixner_C (y : A) (r : ℕ) :
-    PowerSeries.mk (mC y r) * (1 + PowerSeries.X) ^ (r + 1) = (1 + PowerSeries.C y * PowerSeries.X) ^ r := by
-  have one : (1 + PowerSeries.X : PowerSeries A) = 1 + PowerSeries.C 1 * PowerSeries.X := by rw [map_one, one_mul]
-  induction r with
-  | zero =>
-    rw [zero_add, pow_one, pow_zero, one]
-    ext n
-    cases n with
-    | zero => rw [coeff_mk_mul_zero, mC_zero]; simp
-    | succ n => rw [coeff_mk_mul_succ, mC_zero, mC_zero, PowerSeries.coeff_one, if_neg (Nat.succ_ne_zero n)]; ring
-  | succ r ih =>
-    have step : PowerSeries.mk (mC y (r + 1)) * (1 + PowerSeries.X) =
-        PowerSeries.mk (mC y r) * (1 + PowerSeries.C y * PowerSeries.X) := by
-      rw [one]
-      ext n
-      cases n with
-      | zero => rw [coeff_mk_mul_zero, coeff_mk_mul_zero, mC_zero_right, mC_zero_right]
-      | succ n => rw [coeff_mk_mul_succ, coeff_mk_mul_succ, mC_succ]; ring
-    rw [pow_succ' _ (r + 1), ← mul_assoc, step, mul_right_comm, ih, pow_succ]
 
 /-- "They are polynomials in y, and yⁿ B(r,n)|_{1/y} = C(r,n)." Here z is an inverse of y. -/
 theorem meixner_reciprocal {y z : A} (h : y * z = 1) (r n : ℕ) : y ^ n * mB z r n = mC y r n := by
