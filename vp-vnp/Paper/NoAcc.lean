@@ -3,12 +3,16 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import Paper.Next
+import NS1.Main
 import NS1.Diag
 import NS1.Finite
 
 /-!
-# The paper, section "One scale is all scales": no small accelerators
+# The paper, section "One scale is all scales": the ingredients of Theorem thm:noacc
+
+The reduction to a finite field (`thm_noacc_finite_field`), the period of the squarings in a finite ring
+(`thm_noacc_periodic`) and the diagonal program (`thm_noacc_diagonal`). The theorem itself is proved in
+`Paper/ApproxScales`, where the approximate rounds carry the accelerator to a large scale.
 -/
 
 namespace Paper
@@ -218,173 +222,5 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     have := congrArg (· - val K.lk l) key
     simpa using this.symm
   exact one_ne_zero this
-
-/-- What the iteration keeps at a scale u: "programs with the two properties of an accelerator, with programs of size
-at most u^(4h₀), the same constants, and exponent bounds O(lg u)³". -/
-structure AllScales (θ : List Bool → A) (h : ℕ) (u : ℕ) (K : KT R) (B : ℕ) (D : Tree) : Prop where
-  acc : IsAccT θ (16 * h) u (u ^ (16 * h - 16)) K B D
-  nds : K.nds ≤ u
-  size : D.size ≤ u ^ (4 * h)
-  ht : K.ht ≤ 100000 * h ^ 3 * lg u ^ 3
-  B_le : B ≤ 100000 * h ^ 3 * lg u ^ 3
-
-set_option maxHeartbeats 2000000 in
-/-- **Paper: proof of Theorem thm:noacc, all scales.** "Proposition prop:next with α = max(5,a), and then again and
-again with α = 5, gives programs with the two properties of an accelerator at arbitrarily large scales v_i, with programs
-of size at most v_i^(4h₀), with the same constants and with exponent bounds O(lg v_i)³." -/
-theorem thm_noacc_all_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut : CutHyp θ (16 * h) C₀ v₀) :
-    ∃ C v₁ : ℕ, ∀ (R : Type) [CommRing R] [Algebra A R], ∀ v, v₁ ≤ v → ∀ a, lg v ^ (C * a) ≤ v →
-      ∀ (K : KT R) (B : ℕ) (D : Tree), IsAccT θ (16 * h) v (v ^ (16 * h - 16)) K B D → K.nds ≤ v ^ a → D.size ≤ v ^ a →
-      K.ht ≤ lg (max (v ^ (16 * h)) (v ^ a)) ^ 2 → B ≤ lg (max (v ^ (16 * h)) (v ^ a)) ^ 3 →
-      ∀ n, ∃ u B' D', n ≤ u ∧ AllScales θ h u K B' D' := by
-  obtain ⟨C, v₂, hnext⟩ := prop_next hh hcut 4
-  obtain ⟨n5, hn5⟩ := poly_lg 1 (C * 5)
-  refine ⟨C, v₂ + n5 + 2 ^ (100000 * h ^ 3) + 4, fun R _ _ v hv a ha K B D hD hKn hDs hKh hB => ?_⟩
-  have hp : 1 ≤ 2 ^ (100000 * h ^ 3) := Nat.one_le_two_pow
-  have hh3 : h ≤ h ^ 3 := Nat.le_self_pow (by norm_num) h
-  have hv4 : 4 ≤ v := by omega
-  have hv1 : 1 ≤ v := by omega
-  have hl2 := lg_ge_two hv4
-  have hlbig : 100000 * h ^ 3 + 1 ≤ lg v := le_lg_of_two_pow_le (by omega)
-  generalize hl : lg v = l
-  rw [hl] at ha hl2 hlbig
-  generalize hα : max 5 a = α
-  have hα5 : 5 ≤ α := hα ▸ le_max_left _ _
-  have haα : a ≤ α := hα ▸ le_max_right _ _
-  have hlog : l ^ (C * α) ≤ v := by
-    rcases le_total 5 a with h5 | h5
-    · rw [← hα, max_eq_right h5]
-      exact ha
-    · rw [← hα, max_eq_left h5]
-      simpa [← hl] using hn5 v (by omega)
-  generalize hP : h * α * l = P
-  have hVs : lg (max (v ^ (16 * h)) (v ^ a)) ≤ 16 * P := by
-    have hmax : max (v ^ (16 * h)) (v ^ a) ≤ v ^ (16 * h * α) := by
-      apply max_le
-      · exact pow_le_pow hv1 (Nat.le_mul_of_pos_right _ (by omega))
-      · exact pow_le_pow hv1 (haα.trans (Nat.le_mul_of_pos_left _ (by omega)))
-    refine (lg_mono hmax).trans ((lg_pow_le (Nat.mul_pos (by omega) (by omega))).trans (le_of_eq ?_))
-    rw [← hP, hl]
-    ring
-  have hPpos : 1 ≤ P := hP ▸ Nat.mul_pos (Nat.mul_pos (by omega) (by omega)) (by omega)
-  have hB3 : B ≤ 4096 * P ^ 3 := hB.trans ((Nat.pow_le_pow_left hVs 3).trans (le_of_eq (by ring)))
-  have hK3 : K.ht ≤ 256 * P ^ 3 := by
-    refine hKh.trans ((Nat.pow_le_pow_left hVs 2).trans ?_)
-    rw [mul_pow]
-    exact Nat.mul_le_mul le_rfl (Nat.pow_le_pow_right hPpos (by norm_num))
-  have hP4 : 4096 * P ^ 3 ≤ (α * l) ^ 4 := by
-    calc 4096 * P ^ 3 = 4096 * h ^ 3 * (α * l) ^ 3 := by rw [← hP]; ring
-      _ ≤ α * l * (α * l) ^ 3 := Nat.mul_le_mul_right _ (by
-          have : l ≤ α * l := Nat.le_mul_of_pos_left _ (by omega)
-          omega)
-      _ = (α * l) ^ 4 := by ring
-  have hah : a ≤ h * α := haα.trans (Nat.le_mul_of_pos_left _ (by omega))
-  obtain ⟨D₁, hD₁, hs₁⟩ := hnext R v (by omega) α hα5 (hl ▸ hlog) K B D hD (hKn.trans (pow_le_pow hv1 hah))
-    (hDs.trans (pow_le_pow hv1 hah)) (by rw [hl]; omega) (by rw [hl]; omega)
-  rw [hl] at hD₁
-  have hinc : 51 * h * α ^ 2 * l ≤ 51 * P ^ 3 := by
-    calc 51 * h * α ^ 2 * l ≤ 51 * (h * α * l) ^ 2 := by
-          have : h * α ^ 2 * l ≤ h * h * (α ^ 2 * (l * l)) := by
-            calc h * α ^ 2 * l = h * 1 * (α ^ 2 * (l * 1)) := by ring
-              _ ≤ _ := by gcongr <;> omega
-          calc 51 * h * α ^ 2 * l = 51 * (h * α ^ 2 * l) := by ring
-            _ ≤ 51 * (h * h * (α ^ 2 * (l * l))) := Nat.mul_le_mul_left _ this
-            _ = _ := by ring
-      _ ≤ 51 * P ^ 3 := hP ▸ Nat.mul_le_mul_left _ (Nat.pow_le_pow_right (hP ▸ hPpos) (by norm_num))
-  have hlgα : α * l ≤ 2 * lg (v ^ α) := by
-    have h1 := le_lg_pow (n := v) (k := α) (by omega)
-    have h2 : α * (l - 1) = α * l - α := by rw [Nat.mul_sub, Nat.mul_one]
-    have h3 : α * 2 ≤ α * l := Nat.mul_le_mul_left _ hl2
-    rw [hl] at h1
-    omega
-  have hcBP : 12500 * P ^ 3 ≤ 100000 * h ^ 3 * lg (v ^ α) ^ 3 := by
-    calc 12500 * P ^ 3 = 12500 * h ^ 3 * (α * l) ^ 3 := by rw [← hP]; ring
-      _ ≤ 12500 * h ^ 3 * (2 * lg (v ^ α)) ^ 3 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hlgα 3)
-      _ = _ := by ring
-  have hvα : v ≤ v ^ α := Nat.le_self_pow (by omega) v
-  have start : AllScales θ h (v ^ α) K (B + 51 * h * α ^ 2 * l) D₁ :=
-    ⟨hD₁.mono (pow_le_pow (by omega) (by omega)) le_rfl, hKn.trans (pow_le_pow hv1 haα), hs₁, by omega, by omega⟩
-  -- again and again with α = 5
-  have step : ∀ u B' D', v ≤ u → AllScales θ h u K B' D' → ∃ B'' D'', AllScales θ h (u ^ 5) K B'' D'' := by
-    intro u B' D' hu hI
-    have hu1 : 1 ≤ u := by omega
-    have hlu : lg v ≤ lg u := lg_mono hu
-    have hlu5 : 2 * lg u ≤ lg (u ^ 5) := by
-      have := le_lg_pow (n := u) (k := 5) (by omega)
-      omega
-    have hh5 := hI.ht
-    have hB5 := hI.B_le
-    generalize hL : lg u = L
-    rw [hL] at hlu hlu5 hh5 hB5
-    have h4 : 100000 * h ^ 3 * L ^ 3 ≤ (5 * L) ^ 4 := by
-      calc 100000 * h ^ 3 * L ^ 3 ≤ L * L ^ 3 := Nat.mul_le_mul_right _ (by omega)
-        _ ≤ _ := by rw [← pow_succ']; exact Nat.pow_le_pow_left (by omega) _
-    obtain ⟨D'', hD'', hs''⟩ := hnext R u (by omega) 5 le_rfl (by simpa [Nat.mul_comm] using hn5 u (by omega)) K B' D'
-      hI.acc (hI.nds.trans (Nat.le_self_pow (Nat.mul_ne_zero (by omega) (by norm_num)) u))
-      (hI.size.trans (pow_le_pow hu1 (by omega))) (by rw [hL]; omega) (by rw [hL]; omega)
-    rw [hL] at hD''
-    have h8 : 8 * (100000 * h ^ 3 * L ^ 3) ≤ 100000 * h ^ 3 * lg (u ^ 5) ^ 3 := by
-      calc 8 * (100000 * h ^ 3 * L ^ 3) = 100000 * h ^ 3 * (2 * L) ^ 3 := by ring
-        _ ≤ _ := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hlu5 3)
-    have h6 : 1275 * (h * L) ≤ 100000 * h ^ 3 * L ^ 3 := by
-      calc 1275 * (h * L) ≤ 100000 * (h ^ 3 * L ^ 3) :=
-            Nat.mul_le_mul (by norm_num) (Nat.mul_le_mul hh3 (Nat.le_self_pow (by norm_num) L))
-        _ = _ := by ring
-    have e5 : 51 * h * 5 ^ 2 * L = 1275 * (h * L) := by ring
-    exact ⟨_, D'', hD''.mono (pow_le_pow (Nat.one_le_pow _ _ (by omega)) (by omega)) le_rfl,
-      hI.nds.trans (Nat.le_self_pow (by norm_num) u), hs'', by omega, by omega⟩
-  intro n
-  suffices ∃ u B' D', n ≤ u ∧ v ≤ u ∧ AllScales θ h u K B' D' by
-    obtain ⟨u, B', D', h1, -, h2⟩ := this
-    exact ⟨u, B', D', h1, h2⟩
-  induction n with
-  | zero => exact ⟨_, _, _, Nat.zero_le _, hvα, start⟩
-  | succ n ih =>
-    obtain ⟨u, B', D', hn, hu, hI⟩ := ih
-    obtain ⟨B'', D'', hI'⟩ := step u B' D' hu hI
-    have : u * 4 ≤ u ^ 5 := by
-      calc u * 4 ≤ u * u ^ 4 := Nat.mul_le_mul_left _ ((show 4 ≤ u by omega).trans (Nat.le_self_pow (by norm_num) u))
-        _ = u ^ 5 := by ring
-    exact ⟨u ^ 5, B'', D'', by omega, hu.trans (Nat.le_self_pow (by norm_num) u), hI'⟩
-
-set_option maxHeartbeats 2000000 in
-/-- **Paper: Theorem thm:noacc.** "There are C and v₁ such that for all integers a ≥ 0 and v ≥ v₁ with (lg v)^(Ca) ≤ v no
-nonzero commutative A-algebra has an accelerator of size v^a at scale v." -/
-theorem thm_noacc {h : ℕ} (hh : 17 ≤ h) [Algebra.FiniteType ℤ A] {C₀ v₀ : ℕ} (hcut : CutHyp θ (16 * h) C₀ v₀) :
-    ∃ C v₁ : ℕ, ∀ v, v₁ ≤ v → ∀ a, lg v ^ (C * a) ≤ v → ∀ (R : Type) [CommRing R] [Nontrivial R] [Algebra A R],
-      ¬ HasAcc θ R (16 * h) v (v ^ a) := by
-  obtain ⟨C, v₁, hall⟩ := thm_noacc_all_scales hh hcut
-  obtain ⟨n9, hn9⟩ := poly_lg (1000 * (3 * (100000 * h ^ 3)) ^ 3) 9
-  refine ⟨C, v₁, fun v hv a ha R _ _ _ hacc => ?_⟩
-  obtain ⟨K, B, D, hD, hKn, hDs, hKh, hB⟩ := hacc
-  obtain ⟨E, _, _, _, K', hD', hn', hh'⟩ := thm_noacc_finite_field hD
-  obtain ⟨M, red, hM, hred⟩ := thm_noacc_periodic E
-  obtain ⟨u, B', D', hu, hI⟩ := hall E v hv a ha K' B D hD' (hn'.trans_le hKn) hDs (hh'.trans_le hKh) hB
-    (2 ^ (M + 2000 * h) + cst + n9)
-  generalize hcs : cst = cs
-  rw [hcs] at hu
-  have hp : 1 ≤ 2 ^ (M + 2000 * h) := Nat.one_le_two_pow
-  have hu1 : 1 ≤ u := by omega
-  have hl : M + 2000 * h + 1 ≤ lg u := le_lg_of_two_pow_le (by omega)
-  have hlt := lt_two_pow_lg u
-  have hsmall := hn9 u (by omega)
-  have a1 := hI.ht
-  have a2 := hI.B_le
-  generalize hL : lg u = L
-  rw [hL] at hl hlt hsmall a1 a2
-  refine thm_noacc_diagonal hh hI.acc (by omega) hI.nds hI.size hM hred (J := 16 * h * L)
-    (X := K'.ht + max B' M + 16 * h * L + 10) ?_ (by omega) (by omega) ?_
-  · rw [Nat.mul_comm (16 * h) L, pow_mul]
-    calc u ^ (16 * h - 15) ≤ u ^ (16 * h) := pow_le_pow hu1 (by omega)
-      _ < (2 ^ L) ^ (16 * h) := Nat.pow_lt_pow_left hlt (by omega)
-  · refine le_trans (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (m := 3 * (100000 * h ^ 3) * L ^ 3) ?_ 3)) (le_trans (le_of_eq ?_) hsmall)
-    · have h1 : 17 * (h * L) ≤ 100000 * (h ^ 3 * L ^ 3) :=
-        Nat.mul_le_mul (by norm_num) (Nat.mul_le_mul (Nat.le_self_pow (by norm_num) h) (Nat.le_self_pow (by norm_num) L))
-      have h2 : L ≤ h * L := Nat.le_mul_of_pos_left _ (by omega)
-      have e1 : 16 * h * L = 16 * (h * L) := by ring
-      have e2 : 3 * (100000 * h ^ 3) * L ^ 3 = 3 * (100000 * (h ^ 3 * L ^ 3)) := by ring
-      have e3 : 100000 * h ^ 3 * L ^ 3 = 100000 * (h ^ 3 * L ^ 3) := by ring
-      omega
-    · ring
 
 end Paper
