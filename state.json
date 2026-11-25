@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T19:43:48.569970993Z",
+  "updated_at": "2026-11-25T19:45:22.845215650Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 78,
     "rejected": 2,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
-    "ideas_open": 5
+    "ideas_open": 4
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 78,
-      "attempts": 81,
+      "attempts": 82,
       "saved": 85311
     }
   ],
@@ -202,9 +202,9 @@
     {
       "number": 112,
       "title": "Idea: restructure(Paper,Nc): delete statements that only hand a result on, and let the consumer call what they called",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
+      "claimed_by": "kongeskog",
       "lease_expires": null,
       "pr": 140,
       "result_delta": -2349,
@@ -926,6 +926,74 @@
       "reason": null,
       "technique": "shorten",
       "scope": "*"
+    },
+    {
+      "pr": 142,
+      "title": "restructure(Paper/Pieces): inline thm_tree into prop_pieces, its only user",
+      "author": "kongeskog",
+      "head_sha": "7d0db05e4ef4f27a03f0b7f80b8bd0553224202c",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T19:44:44Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 112,
+      "url": "https://github.com/kongeskog/formal-math/pull/142",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper/Pieces"
     }
   ],
   "top_files": [
