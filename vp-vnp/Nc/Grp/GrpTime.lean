@@ -223,7 +223,7 @@ theorem cost_role {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length
     exact length_filter_lt _ _
   rw [List.length_map, Finset.length_toList, Finset.card_univ] at h1 h2
   set sl := Fintype.card ((M.kind r.1).SlAt r.2)
-  set W := 330 * (ub + Lc + 1)
+  set W := 330 * (ub + Lc + 1) with hW
   set t := P.num n o r.1
   set cs := ∑ ν : (M.kind r.1).CnAt r.2, ((o ⟨r.1, ν.1⟩).1 + 1)
   have h6 : t * (ub + 1) ≤ t * W := Nat.mul_le_mul_left _ (by omega)
@@ -288,7 +288,7 @@ theorem cost_body {Lc X : ℕ} (hk : ∀ c, (key c).length ≤ Lc) (hd : ∀ c, 
     · rw [Finset.length_toList, Finset.card_univ]
       exact Nat.mul_le_mul hS hA
   rw [List.length_ofFn] at h1 h2 ⊢
-  set W := 330 * (ub + Lc + 1)
+  set W := 330 * (ub + Lc + 1) with hW
   have h6 := Nat.mul_le_mul_right W h3
   have h7 := Nat.mul_le_mul_right W h4
   have h8 : inN n p * W = (∑ b, (n p b).1) * W + (∑ b, (n b p).1) * W := by
@@ -394,7 +394,7 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
     have a2 : (bub.length + 1) * (ub + 1) ≤ (Lc + 1) * (T + ub + 2) := Nat.mul_le_mul (by omega) (by omega)
     calc _ ≤ (Lc + 1) * (T + ub + 2) + (Lc + 1) * (T + ub + 2) := Nat.add_le_add a1 a2
       _ = _ := by ring
-  set W := ub + Lc + 1
+  set W := ub + Lc + 1 with hW
   have hW1 : 1 ≤ W := by omega
   have b1 : ιb * (T + lh * (660 * W) + X * X + 401 * X + 1) ≤ ιb * T + 660 * (ιb * lh * W) + 403 * X ^ 3 := by
     have a1 : ιb * (X * X + 401 * X + 1) ≤ 403 * X ^ 3 := by
