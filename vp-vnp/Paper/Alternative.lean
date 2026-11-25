@@ -870,6 +870,7 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
     rw [h3]
     field_simp
   have h1 := (hY.comp fun v => F (g v)).smul (c := 2 * R) (by positivity)
+  -- `grind` rewrites the distance `dist (E a) (E b)` by `hdist` and closes with `h1`
   grind
 
 /-- **Paper: Theorem thm:alt.** "One of the two cases occurs." -/

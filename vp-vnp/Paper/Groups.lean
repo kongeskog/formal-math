@@ -762,7 +762,10 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
     have e2 : ∀ b : Fin L, ∑ a : Fin L, (if b.1 = a.1 + 1 then c * r b else 0) ≤ c * r b := by
       intro b
       by_cases hb : 1 ≤ b.1
+      -- `grind` closes the three goals left by `sum_eq_single`: the term at `a = b - 1`, the
+      -- vanishing of the terms at every other `a`, and the membership of `b - 1` in `univ`
       · rw [sum_eq_single (⟨b.1 - 1, by omega⟩ : Fin L)] <;> grind
+      -- `b = 0`: there is no `a` with `b = a + 1`, so every term is 0, and `0 ≤ c * r b`
       · simp_all
     have e3 : ∀ a b : Fin L, (if b.1 = a.1 + 1 then c * (r a + r b) else 0) =
         (if b.1 = a.1 + 1 then c * r a else 0) + if b.1 = a.1 + 1 then c * r b else 0 := by

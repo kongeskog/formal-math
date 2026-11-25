@@ -196,14 +196,17 @@ theorem prop_identity_exchange {x z : R} (h : x * z = 1) (sa : Wd μ) (sb : Wd �
     · entries
       linear_combination (x ^ (2 * sa.1 i + 1) * (x ^ 2 - 1)) * hC (sa.1 i) (sd.2 j)
     · entries
+      -- `hz` at the index where `sa.1 i = sc.2 j`; elsewhere both sides are 0
       grind
     · entries
+      -- rests on `hz`, `hB` and `h2`
       grind
   · rcases j with (j | j) | (j | j)
     · entries
       linear_combination (-(x ^ (2 * sa.2 j + 1) * (x ^ 2 - 1))) * hC (sa.2 j) (sd.1 i)
     · entries
     · entries
+      -- rests on `hz` and `hB`
       grind
     · entries
       by_cases h1 : sd.1 i = sb.2 j
@@ -212,14 +215,18 @@ theorem prop_identity_exchange {x z : R} (h : x * z = 1) (sa : Wd μ) (sb : Wd �
       · simp [h1, Ne.symm h1]
   · rcases j with (j | j) | (j | j)
     · entries
+      -- `hz` at the index where `sa.2 j = sc.1 i`; elsewhere both sides are 0
       grind
     · entries
+      -- rests on `hz` and `hB`
       grind
     · entries
     · entries
+      -- rests on `hC` and `h2`
       grind
   · rcases j with (j | j) | (j | j)
     · entries
+      -- rests on `hz`, `hB` and `h2`
       grind
     · entries
       by_cases h1 : sd.2 j = sb.1 i
@@ -227,6 +234,7 @@ theorem prop_identity_exchange {x z : R} (h : x * z = 1) (sa : Wd μ) (sb : Wd �
         linear_combination (x ^ (2 * sd.2 j + 1) * (x ^ 2 - 1)) * hz (sd.2 j)
       · simp [h1, Ne.symm h1]
     · entries
+      -- rests on `hC` and `h2`
       grind
     · entries
 
