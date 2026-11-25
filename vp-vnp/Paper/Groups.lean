@@ -430,8 +430,6 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
     have h1 := projection_var (A.W (p + (k + 1)) (3 * u - (k + 1)))
       ((hBfix k).sub A (by omega) (by omega) (by omega)) a
     rw [dist_comm ((A.W (p + (k + 1)) (3 * u - (k + 1))).P a) (B k)] at h1
-    show dist (B k) ((A.W (p + (k + 1)) (3 * u - (k + 1))).P a) ^ 2 ≤
-      dist a (B k) ^ 2 - dist a ((A.W (p + (k + 1)) (3 * u - (k + 1))).P a) ^ 2
     linarith
   have hφR : dist a (B u) ≤ R :=
     (projection_nearest (A.W (p + u) (3 * u - u)) a).1 _
@@ -733,9 +731,7 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
           if a.1 = b.1 + 1 then c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) else 0) := by
     intro z a b
     rcases lt_trichotomy a.1 b.1 with hab | hab | hab
-    · rw [if_neg (fun h => by rw [h] at hab; exact lt_irrefl _ hab),
-        if_neg (show ¬ a.1 = b.1 + 1 by omega), add_zero]
-      exact hpair z a b hab
+    · grind
     · have : a = b := Fin.ext hab
       subst this
       simp
@@ -766,21 +762,11 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
     have e2 : ∀ b : Fin L, ∑ a : Fin L, (if b.1 = a.1 + 1 then c * r b else 0) ≤ c * r b := by
       intro b
       by_cases hb : 1 ≤ b.1
-      · rw [sum_eq_single (⟨b.1 - 1, by omega⟩ : Fin L)]
-        · rw [if_pos (by simp only; omega)]
-        · intro a _ ha
-          rw [if_neg]
-          intro h1
-          apply ha
-          apply Fin.ext
-          simp only
-          omega
-        · simp
-      · rw [sum_eq_zero]
-        · exact mul_nonneg hc0.le (hr b)
-        · intro a _
-          rw [if_neg]
-          omega
+      -- `grind` closes the three goals left by `sum_eq_single`: the term at `a = b - 1`, the
+      -- vanishing of the terms at every other `a`, and the membership of `b - 1` in `univ`
+      · rw [sum_eq_single (⟨b.1 - 1, by omega⟩ : Fin L)] <;> grind
+      -- `b = 0`: there is no `a` with `b = a + 1`, so every term is 0, and `0 ≤ c * r b`
+      · simp_all
     have e3 : ∀ a b : Fin L, (if b.1 = a.1 + 1 then c * (r a + r b) else 0) =
         (if b.1 = a.1 + 1 then c * r a else 0) + if b.1 = a.1 + 1 then c * r b else 0 := by
       intro a b
