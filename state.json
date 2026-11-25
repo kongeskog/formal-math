@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:20:00.769606084Z",
+  "updated_at": "2026-11-25T04:21:41.964001617Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,33 +60,47 @@
     }
   },
   "current": {
-    "sha": "0ab72a6350c8825641300dbd93fc133bdd0c3aed",
-    "at": "2026-11-25T04:20:00.769606084Z",
+    "sha": "07e8bdb504860ac08e9b56a0b975ed5631864e9a",
+    "at": "2026-11-25T04:21:41.964001617Z",
     "metrics": {
-      "tokens": 854943,
-      "loc": 54696,
-      "decls": 4415,
+      "tokens": 854377,
+      "loc": 54665,
+      "decls": 4403,
       "files": 317,
-      "bytes": 3173857,
-      "build_seconds": 809
+      "bytes": 3171955,
+      "build_seconds": 534
     }
   },
   "counts": {
-    "merged": 66,
+    "merged": 67,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
-    "ideas_open": 3
+    "ideas_open": 4
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 66,
+      "merged": 67,
       "attempts": 70,
-      "saved": 73218
+      "saved": 73784
     }
   ],
   "ideas": [
+    {
+      "number": 124,
+      "title": "Idea: shorten(Paper/Toolkit,Paper/Alternative): prove the flat rectangle and the cube filling by first variation on a saturated diagonal",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T04:21:31Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/124",
+      "technique": "shorten",
+      "scope": "Paper/Toolkit,Paper/Alternative"
+    },
     {
       "number": 115,
       "title": "Idea: restructure(Nc/Tow): remove the parameters r and p that are always 1, and FlagLaws, which repeats VLaws",
@@ -108,8 +122,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T05:51:49Z",
-      "pr": 119,
-      "result_delta": -566,
+      "pr": 122,
+      "result_delta": -1132,
       "created_at": "2026-11-25T02:41:40Z",
       "url": "https://github.com/kongeskog/formal-math/issues/114",
       "technique": "merge",
@@ -118,10 +132,10 @@
     {
       "number": 113,
       "title": "Idea: restructure(Nc/Tape,Nc/Sort,Nc/Uni): rational series without the dimension that nothing reads",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T06:40:15Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 121,
       "result_delta": -2038,
       "created_at": "2026-11-25T02:41:39Z",
@@ -188,10 +202,10 @@
     {
       "number": 102,
       "title": "Idea: dead-code(*): delete everything the five final theorems do not reach",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T05:00:03Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 108,
       "result_delta": -16236,
       "created_at": "2026-11-25T01:57:18Z",
@@ -789,74 +803,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 122,
-      "title": "merge(*): one theorem for each remaining group of identical statements about wires, prices and units",
-      "author": "kongeskog",
-      "head_sha": "9fb0eaacc3e763685b4084f1397721408e1a1c20",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T04:01:51Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 114,
-      "url": "https://github.com/kongeskog/formal-math/pull/122",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "*"
-    },
     {
       "pr": 123,
       "title": "restructure(Paper/Tree, Paper/Tower): thm_tree over A; tree_towers calls the tower lemmas directly",
