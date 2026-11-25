@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T07:19:17.807465036Z",
+  "updated_at": "2026-11-25T07:23:41.372611647Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 74,
     "rejected": 2,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 2
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 74,
-      "attempts": 76,
+      "attempts": 77,
       "saved": 82273
     }
   ],
@@ -108,7 +108,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T09:53:19Z",
-      "pr": null,
+      "pr": 137,
       "result_delta": null,
       "created_at": "2026-11-25T06:40:53Z",
       "url": "https://github.com/kongeskog/formal-math/issues/134",
@@ -858,7 +858,76 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 137,
+      "title": "restructure(NS1/OneCut,Nc/Dl/Num0,Paper/Cuts): state the one cut without quotients of naturals",
+      "author": "kongeskog",
+      "head_sha": "cd4c5f922bbefaedbcb77be0623793897754bc88",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T07:22:42Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 134,
+      "url": "https://github.com/kongeskog/formal-math/pull/137",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "NS1/OneCut,Nc/Dl/Num0,Paper/Cuts"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
