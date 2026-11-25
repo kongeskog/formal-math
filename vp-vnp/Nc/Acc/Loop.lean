@@ -223,7 +223,8 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
           (Gives.quote (ofBits []) x)) (walkF_does m T []))
         simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_map, Function.comp_def, one_mul] at hq
         have h := KV.lett (κ := κ) (S := S) (G := leafB) (ω := fun o => κ ([false, true] ++ g ++ o.tl.tl.path ++ lc o.tl.hd
-          ++ [false]) * W E b (ws.map KT.val)) hq (d := (n + 1) * (400 * (M + m) + 2000) + 70 * (M + m) + 700) (by
+          ++ [false]) * W E b (ws.map KT.val)) hq
+          (d := (n + 1) * (400 * (M + m) + 2000) + 70 * (M + m) + 700) (by
             intro q hq
             rw [List.mem_map] at hq
             obtain ⟨p, hp, rfl⟩ := hq

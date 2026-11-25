@@ -29,7 +29,8 @@ value `ω` at the plain instances `zq z z q.1`, then the value of `diagF D g` is
 over the guesses of `q.2` times that value. -/
 theorem diagF_kv {κ : List Bool → R} {S : Set (List Bool)} {D z : Tree} {g : Fm}
     {cg tD : ℕ} {lg : List (Run A)}
-    {Q : List (Bt × R)} {ω : Tree → R} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q)
+    {Q : List (Bt × R)} {ω : Tree → R} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ
+        (· ∈ S) cg) lg Q)
     (hD : ∀ q ∈ Q, KV θ κ S (Fm.ofTree D) (zq z z q.1) (ω (zq z z q.1)) tD) :
     KV θ κ S (diagF D g) z (1 + (Q.map fun q => q.2 * ω (zq z z q.1)).sum) (2 * cg + tD + 30) := by
   have h1 := KV.gives (κ := κ) (S := S) (Gives.quote (θ := θ) .nil z) (by simp [names])

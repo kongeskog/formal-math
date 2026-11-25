@@ -9,9 +9,9 @@ import NS1.Eval
 # Constants are postponed
 
 A program names the constants it wants in its value, a tree of names (`names`). `WN` applied to
-(program, (argument, budgets)) has, as plain weighted sum, the sum of the weights of the runs whose values name the
-constants exactly as the given budgets prescribe. Summed over all budgets with the powers of the constants this is
-the value of the program.
+(program, (argument, budgets)) has, as plain weighted sum, the sum of the weights of the runs whose
+values name the constants exactly as the given budgets prescribe. Summed over all budgets with the
+powers of the constants this is the value of the program.
 -/
 
 set_option linter.unusedSectionVars false
@@ -350,8 +350,10 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     obtain ⟨t₁, h1, h2⟩ := h
     obtain ⟨ka, hka, da⟩ := iha ht h1
     obtain ⟨kb, hkb, db⟩ := ihb (by rw [(Bt.ht_nds_decAll h1).1]; exact ht) h2
-    have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by rwa [Fm.ofTree_code]
-    have eb : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) t'.enc kb := by rwa [Fm.ofTree_code]
+    have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by
+      rwa [Fm.ofTree_code]
+    have eb : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) t'.enc kb := by
+      rwa [Fm.ofTree_code]
     refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (by simp) (Dt.ite_false (.tl (.hd (.tl (.id _))))
       (Dt.ite_true (.hd (.hd (.tl (.id _)))) (by simp) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
         (.cons (.tl (.hd (.hd (.tl (.id _))))) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
@@ -364,8 +366,10 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     intro t t' ht h
     simp only [names, Bt.decAll, Option.bind_eq_some_iff, Option.some.injEq, exists_eq_right] at h
     obtain ⟨k, hk, d⟩ := DC_some (θ := θ) h
-    have e : Dt θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) t'.enc k := by rwa [Fm.ofTree_code]
-    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (by simp) (Dt.ite_true (.tl (.hd (.tl (.id _)))) (by simp)
+    have e : Dt θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) t'.enc k := by
+      rwa [Fm.ofTree_code]
+    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _)))
+        (by simp) (Dt.ite_true (.tl (.hd (.tl (.id _)))) (by simp)
       (Dt.run (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
           (.tl (.tl (.id _))))) e))⟩
     have e : (60 * H + 41) * (x.size + (u.size + v.size + 1) + 1) =
@@ -396,13 +400,15 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
           (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))))))
           (Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _)))))
               (.tl (.tl (.id _))))) ea))
-      have e2 := Ev.run' (Dt.hd (Dt.id (θ := θ) (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))) e1
+      have e2 := Ev.run' (Dt.hd (Dt.id (θ := θ)
+          (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))) e1
         (by simp)
       simpa using e2
     | some t₁ =>
       rw [h1, Option.bind_some] at h
       obtain ⟨ka, -, da⟩ := CK_some (θ := θ) (H := t.ht) a le_rfl h1
-      have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by rwa [Fm.ofTree_code]
+      have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by
+        rwa [Fm.ofTree_code]
       have eb : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) [] := by
         rw [Fm.ofTree_code]; exact ihb h
       exact Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.tl (.hd (.hd (.tl (.id _)))))
@@ -416,10 +422,10 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
       | some t' => simp [names, Bt.decAll, hd] at h
     have e : Ev θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) [] := by
       rw [Fm.ofTree_code]; exact DC_none h'
-    exact Ev.ite_true_nil (.hd (.tl (.id _))) (by simp) (Ev.ite_true_nil (.tl (.hd (.tl (.id _)))) (by simp)
+    exact Ev.ite_true_nil (.hd (.tl (.id _))) (by simp)
+      (Ev.ite_true_nil (.tl (.hd (.tl (.id _)))) (by simp)
       (Ev.run_nil (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
           (.tl (.tl (.id _))))) e))
-
 
 section Weights
 

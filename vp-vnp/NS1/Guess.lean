@@ -243,14 +243,16 @@ def gw (ν : ℕ → ℕ) (pre : List Bool) (b : ℕ) : ℕ → ℕ → Fm
 /-- The budgets of the powers of a constant. -/
 def gcomb (ν : ℕ → ℕ) (J : ℕ) (pre : List Bool) : ℕ → ℕ → Fm
   | _, 0 => .quote (.cons .nil .nil)
-  | b, n + 1 => zipF (.cons pairE (.quote .nil)) (zipF pairE (.quote (.cons .nil .nil)) (gw ν pre b 0 J))
+  | b, n + 1 => zipF (.cons pairE (.quote .nil)) (zipF pairE (.quote (.cons .nil .nil))
+      (gw ν pre b 0 J))
     (gcomb ν J pre (b + 1) n)
 
 /-- The budgets of all powers `2 ^ b`, `b < B`, of all constants. -/
 def gt (ν : ℕ → ℕ) (J B : ℕ) : KT R → List Bool → Fm
   | .none, _ => .quote (.cons .nil .nil)
   | .leaf _, pre => gcomb ν J pre 0 B
-  | .node l r, pre => zipF (.cons pairE (.quote .nil)) (gt ν J B l (pre ++ [false])) (gt ν J B r (pre ++ [true]))
+  | .node l r, pre => zipF (.cons pairE (.quote .nil)) (gt ν J B l (pre ++ [false])) (gt ν J B r
+      (pre ++ [true]))
 
 /-- A run whose value is (`o`, a tree of names) with weight 1; the constants named multiply to `v`,
 the names satisfy `P`, and cost plus size are at most `c`. -/
@@ -274,7 +276,8 @@ theorem size_hd_tl (t : Tree) : t.hd.size + t.tl.size ≤ t.size + 1 := by
 theorem zip_rel {α β : Type*} {E F G : Fm} {x : Tree} {lf lg : List (Run A)}
     {Qf : List α} {Qg : List β}
     {of : α → Tree} {og : β → Tree} {vf : α → R} {vg : β → R} {cf cg k : ℕ} {e : Tree → Tree → Tree}
-    (hf : Ev θ F x lf) (hg : Ev θ G x lg) (rf : List.Forall₂ (fun r a => RelT κ P cf r (of a) (vf a)) lf Qf)
+    (hf : Ev θ F x lf) (hg : Ev θ G x lg) (rf : List.Forall₂ (fun r a => RelT κ P cf r
+        (of a) (vf a)) lf Qf)
     (rg : List.Forall₂ (fun r b => RelT κ P cg r (og b) (vg b)) lg Qg)
     (hE : ∀ a ∈ Qf, ∀ b ∈ Qg, ∀ u w, u.hd = of a → w.hd = og b → ∃ k' ≤ k, Dt θ E (.cons u w)
         (e (of a) (og b)) k')
@@ -290,7 +293,8 @@ theorem zip_rel {α β : Type*} {E F G : Fm} {x : Tree} {lf lg : List (Run A)}
     (forall₂_flatMap rf fun s _ a hqa ha => by
       rw [List.forall₂_map_left_iff, List.forall₂_map_right_iff]
       exact (List.forall₂_iff_zip.2 ⟨rg.length_eq, fun {t b} htb =>
-        ⟨hqa, (List.of_mem_zip htb).2, s, t, rfl, ha, (List.forall₂_iff_zip.1 rg).2 htb⟩⟩)) (Q2 := fun p => [p])
+        ⟨hqa, (List.of_mem_zip htb).2, s, t, rfl, ha,
+            (List.forall₂_iff_zip.1 rg).2 htb⟩⟩)) (Q2 := fun p => [p])
     (R2 := fun r (p : α × β) => RelT κ P (cf + cg + k + 25) r (e (of p.1) (og p.2))
         (vf p.1 * vg p.2)) (by
       rintro r - p - ⟨hpa, hpb, s, t, rfl, ⟨a1, a2, a3, a4, a5⟩, ⟨b1, b2, b3, b4, b5⟩⟩
@@ -336,17 +340,20 @@ theorem gw_ev {pre : List Bool} {b L : ℕ} {c : R} (x : Tree) {n j : ℕ}
         * n + 4) r (ofBits w)
       ((c ^ 2 ^ (b + j)) ^ KT.val w)) l (KT.words n) := by
   induction n generalizing j with
-  | zero => exact ⟨_, .quote _ x, .cons ⟨rfl, rfl, by simp [Run.det, KT.val, names], by simp [Run.det, names],
+  | zero => exact ⟨_, .quote _ x, .cons ⟨rfl, rfl, by simp [Run.det, KT.val, names],
+      by simp [Run.det, names],
       by simp [Run.det, Tree.size]⟩ .nil⟩
   | succ n ih =>
     obtain ⟨l, e, hl⟩ := ih (j := j + 1) (fun i hi => h i (by omega))
     obtain ⟨hκ, hP, hL⟩ := h j (by omega)
     have hb : List.Forall₂ (fun r (a : Bool) => RelT κ P (4 * L + 16) r (bit a)
         (if a then c ^ 2 ^ (b + j) else 1))
-        [(.det 3 (.cons .nil .nil) : Run A), .det 7 (.cons one (.cons (ofBits (pre ++ KT.pw (ν (b + j)))) (.cons .nil .nil)))]
+        [(.det 3 (.cons .nil .nil) : Run A), .det 7
+            (.cons one (.cons (ofBits (pre ++ KT.pw (ν (b + j)))) (.cons .nil .nil)))]
         [false, true] := by
       have := size_ofBits (pre ++ KT.pw (ν (b + j)))
-      refine .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names], by simp [Run.det, Tree.size]⟩
+      refine .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names],
+          by simp [Run.det, Tree.size]⟩
         (.cons ⟨rfl, rfl, ?_, ?_, ?_⟩ .nil)
       · simp only [Run.det, tl_cons, names, path_ofBits, List.map_cons,
           List.map_nil, List.prod_cons,
@@ -354,14 +361,16 @@ theorem gw_ev {pre : List Bool} {b L : ℕ} {c : R} (x : Tree) {n j : ℕ}
       · simpa [Run.det, names, path_ofBits] using hP
       · simp only [Run.det, Tree.size, one]
         omega
-    obtain ⟨l', e', r'⟩ := zip_rel (gbit_ev _ x) e hb hl (fun _ _ _ _ u w hu hw => ⟨_, le_rfl,
-        hu ▸ hw ▸ pairE_dt u w⟩) fun _ _ _ _ => by simp [Tree.size]
+    obtain ⟨l', e', r'⟩ := zip_rel (gbit_ev _ x) e hb hl
+      (fun _ _ _ _ u w hu hw => ⟨_, le_rfl, hu ▸ hw ▸ pairE_dt u w⟩)
+      fun _ _ _ _ => by simp [Tree.size]
     refine ⟨l', e', ?_⟩
     have ew : KT.words (n + 1) = ([false, true].flatMap fun a => (KT.words n).map
         fun w => (a, w)).map
         fun p => p.1 :: p.2 := by simp [KT.words, Function.comp_def]
     rw [ew, List.forall₂_map_right_iff]
-    refine r'.imp fun r p hr => ⟨hr.1, by simpa [ofBits] using hr.2.1, ?_, hr.2.2.2.1, by nlinarith [hr.2.2.2.2]⟩
+    refine r'.imp fun r p hr =>
+      ⟨hr.1, by simpa [ofBits] using hr.2.1, ?_, hr.2.2.2.1, by nlinarith [hr.2.2.2.2]⟩
     rw [hr.2.2.1]
     rcases p with ⟨_ | _, w⟩ <;> simp [KT.val, pow_add, pow_mul]
 
@@ -369,7 +378,8 @@ theorem gcomb_ev {J L : ℕ} {pre : List Bool} {c : R} (x : Tree) {n b : ℕ}
     (h : ∀ i < b + n + J, κ (pre ++ KT.pw (ν i)) = c ^ 2 ^ i ∧ P (pre ++ KT.pw (ν i)) ∧
       (pre ++ KT.pw (ν i)).length ≤ L) :
     ∃ l, Ev θ (gcomb ν J pre b n) x l ∧
-      List.Forall₂ (RelG κ P (((4 * L + 48) * J + 80) * n + 4)) l ((KT.comb (c ^ 2 ^ b) n).budg J) := by
+      List.Forall₂ (RelG κ P (((4 * L + 48) * J + 80) * n + 4)) l ((KT.comb (c ^ 2 ^ b)
+          n).budg J) := by
   induction n generalizing b with
   | zero =>
     exact ⟨_, .quote _ x, .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names],
@@ -378,8 +388,10 @@ theorem gcomb_ev {J L : ℕ} {pre : List Bool} {c : R} (x : Tree) {n b : ℕ}
     obtain ⟨lg, eg, rg⟩ := ih (b := b + 1) (fun i hi => h i (by omega))
     obtain ⟨lw, ew, rw'⟩ := gw_ev (θ := θ) (κ := κ) (P := P) (ν := ν) (pre := pre) (b := b) (c := c) x (n := J) (j := 0)
       (fun i hi => h (b + i) (by omega))
-    have r0 : List.Forall₂ (fun r (_ : Unit) => RelT κ P 4 r .nil 1) [(.det 1 (.cons .nil .nil) : Run A)] [()] :=
-      .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names], by simp [Run.det, Tree.size]⟩ .nil
+    have r0 : List.Forall₂ (fun r (_ : Unit) => RelT κ P 4 r .nil 1)
+        [(.det 1 (.cons .nil .nil) : Run A)] [()] :=
+      .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names],
+        by simp [Run.det, Tree.size]⟩ .nil
     obtain ⟨lf, ef, rf⟩ := zip_rel (.quote _ x) ew r0 rw' (fun _ _ _ _ u w hu hw => ⟨_, le_rfl,
         hu ▸ hw ▸ pairE_dt u w⟩) fun _ _ _ _ => by simp [Tree.size]
     obtain ⟨l, e, r⟩ := zip_rel (e := fun a b => .cons (.cons a b) .nil) ef eg rf (rg.imp
@@ -405,7 +417,8 @@ theorem gt_ev {J B L : ℕ} (x : Tree) (K : KT R) (pre : List Bool)
     (h : ∀ p, K.Leaf p → ∀ i < B + J, κ (pre ++ (p ++ KT.pw (ν i))) = K.lk (p ++ KT.pw i) ∧
       P (pre ++ (p ++ KT.pw (ν i))) ∧ (pre ++ (p ++ KT.pw (ν i))).length ≤ L) :
     ∃ l, Ev θ (gt ν J B K pre) x l ∧
-      List.Forall₂ (RelG κ P (((4 * L + 48) * J + 80) * (K.expand B).nds)) l ((K.expand B).budg J) := by
+      List.Forall₂ (RelG κ P (((4 * L + 48) * J + 80) * (K.expand B).nds)) l
+          ((K.expand B).budg J) := by
   induction K generalizing pre with
   | none =>
     refine ⟨_, .quote _ x, .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names],
@@ -434,10 +447,12 @@ theorem gt_ev {J B L : ℕ} (x : Tree) (K : KT R) (pre : List Bool)
       have := h (true :: p) hp i hi
       simpa [KT.lk] using this)
     obtain ⟨l', e', r'⟩ := zip_rel (e := fun a b => .cons (.cons a b) .nil) el er rl rr
-      (fun _ _ _ _ u w hu hw => ⟨_, le_rfl, hu ▸ hw ▸ (pairE_dt u w).cons (Dt.quote .nil _)⟩) fun _ _ _ _ => by simp [Tree.size]
+      (fun _ _ _ _ u w hu hw => ⟨_, le_rfl, hu ▸ hw ▸ (pairE_dt u w).cons
+          (Dt.quote .nil _)⟩) fun _ _ _ _ => by simp [Tree.size]
     refine ⟨l', e', ?_⟩
     have eL : ((KT.node l r).expand B).budg J = (((l.expand B).budg J).flatMap fun a =>
-        ((r.expand B).budg J).map fun b => (a, b)).map fun p => (Bt.node p.1.1 p.2.1, p.1.2 * p.2.2) := by
+        ((r.expand B).budg J).map fun b => (a, b)).map
+          fun p => (Bt.node p.1.1 p.2.1, p.1.2 * p.2.2) := by
       simp [KT.expand, KT.budg, List.map_flatMap, Function.comp_def]
     rw [eL, List.forall₂_map_right_iff]
     refine r'.imp fun s p hs => ⟨hs.1, hs.2.1, hs.2.2.1, hs.2.2.2.1, hs.2.2.2.2.trans ?_⟩

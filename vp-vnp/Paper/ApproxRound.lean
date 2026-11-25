@@ -41,19 +41,23 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
   rw [← hf]
   obtain ⟨K2, hK2⟩ : ∃ K2, K2 = KT.node K (K'.map f) := ⟨_, rfl⟩
   rw [← hK2]
-  have hl : ∀ q, K.InB (B + J) q → K2.lk ([false] ++ q) = K.lk q ∧ K2.InB (max B B' + J) ([false] ++ q) ∧
+  have hl : ∀ q, K.InB (B + J) q → 
+      K2.lk ([false] ++ q) = K.lk q ∧ K2.InB (max B B' + J) ([false] ++ q) ∧
       ([false] ++ q).length ≤ L := by
     intro q hq
     subst hK2
     have h1 := hq.length_le
-    have h2 : ([false] ++ q).length ≤ L := by simp only [List.singleton_append, List.length_cons]; omega
+    have h2 : ([false] ++ q).length ≤ L := by
+      simp only [List.singleton_append, List.length_cons]; omega
     exact ⟨rfl, hq.mono (Nat.add_le_add_right (le_max_left _ _) _), h2⟩
-  have hr : ∀ q, K'.InB (B' + J) q → K2.lk ([true] ++ q) = f (K'.lk q) ∧ K2.InB (max B B' + J) ([true] ++ q) ∧
+  have hr : ∀ q, K'.InB (B' + J) q → 
+      K2.lk ([true] ++ q) = f (K'.lk q) ∧ K2.InB (max B B' + J) ([true] ++ q) ∧
       ([true] ++ q).length ≤ L := by
     intro q hq
     subst hK2
     have h1 := hq.length_le
-    have h2 : ([true] ++ q).length ≤ L := by simp only [List.singleton_append, List.length_cons]; omega
+    have h2 : ([true] ++ q).length ≤ L := by
+      simp only [List.singleton_append, List.length_cons]; omega
     exact ⟨KT.lk_map (f : E[T;T⁻¹] →+* E[T;T⁻¹]) K' q,
       (KT.inB_map f _ K' q).2 (hq.mono (Nat.add_le_add_right (le_max_right _ _) _)), h2⟩
   have hqs : ∀ q ∈ (K.expand B).budg J, q.1.ht ≤ K.ht + B + J + 1 ∧ q.1.nds ≤ (K.expand B).nds * (J + 1) := by
@@ -79,14 +83,16 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
             ((u ^ (H - 16) + 30) * Ln + 10) + 40 * ((K'.expand B').nds * (J + 1)) + 120) := by
     intro z hz q hq r hr'
     obtain ⟨a2, a3, a4⟩ := (hG.list _ (hsz z hz q hq)).2 r hr'
-    obtain ⟨l, e, e1, e2⟩ := LP_kv (θ := θ) (κ := K'.lk) (S := {m | K'.InB B' m}) (T := u ^ (H - 16))
+    obtain ⟨l, e, e1, e2⟩ := LP_kv (θ := θ) (κ := K'.lk)
+      (S := {m | K'.InB B' m}) (T := u ^ (H - 16))
       (ω := fun y => val K'.lk (evl θ (Fm.ofTree D) y)) r.out fun y hy => by
         obtain ⟨d1, d2⟩ := hD.run y (a4 y hy)
         exact ⟨_, d1.ev, d2, rfl⟩
     rw [hω]
     simp only
     rw [← e2]
-    refine rebill_kv f (by rw [Fm.ofTree_code]; exact e) (fun x hx => ⟨(e1 x hx).1.trans ?_, (e1 x hx).2⟩) hJ' hr
+    refine renamed_kv f (by rw [Fm.ofTree_code]; exact e)
+      (fun x hx => ⟨(e1 x hx).1.trans ?_, (e1 x hx).2⟩) hJ' hr
     have := Nat.mul_le_mul_left (u ^ (H - 16) + 30) (hLn _ a3)
     omega
   have key : ∀ z : Tree, z.size ≤ v ^ (H - 32) → KV θ K2.lk {m | K2.InB (max B B' + J) m}
@@ -248,6 +254,7 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
       _ ≤ _ := Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by norm_num) (by omega))
   · -- time of the plain instances
     rw [← hnB]
+    -- the factor of the plain instances is below u, as K.ht + B + J + 1 ≤ X ≤ X³ ≤ u
     have m1 : 60 * (K.ht + B + J + 1) + 42 + 2 ≤ u := by
       have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
       omega
@@ -298,6 +305,7 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
     have h3 : 2 * u ^ (h * α + 1) ≤ u ^ e' := by
       have := pbig (h * α + 1)
       exact le_trans (by omega : _ ≤ u ^ (h * α + 1 + 1)) (pow_le_pow hu1 (by omega))
+    -- with `J ≤ X` and `10 ≤ X`: (4X + 48)J + 80 ≤ 4X² + 48X + 80 ≤ 10X²
     have e8 : (4 * X + 48) * J + 80 ≤ 10 * X * X := by
       have h1 : (4 * X + 48) * J ≤ (4 * X + 48) * X := Nat.mul_le_mul_left _ (by omega)
       have h2 : (4 * X + 48) * X = 4 * (X * X) + 48 * X := by ring
@@ -511,7 +519,8 @@ theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D
           algebraMap A E (pv θ (zq D z q.1)))).sum t' := by
       intro z hz
       obtain ⟨hD1, hD2⟩ := hD.run z hz
-      obtain ⟨lx, ex, rx⟩ := xF_ev (θ := θ) (κ := K'.lk) (S := {p | K'.InB 1 p}) (L := K.ht + B + J + m + 1) z K₂ []
+      obtain ⟨lx, ex, rx⟩ := xF_ev (θ := θ) (κ := K'.lk)
+        (S := {p | K'.InB 1 p}) (L := K.ht + B + J + m + 1) z K₂ []
         fun p hp => by
           subst hK'
           have := hp.length_le
@@ -520,7 +529,8 @@ theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D
       rw [← hg] at ex
       refine (extF_kv (τ := (60 * (K.ht + B + J + 1) + 42) * t + 40 * (K₂.nds * (J + 1)) + 80) ex rx
           fun q hq => ⟨(zq_plain hD1.ev (fun r hr => (hD2 r hr).1)
-        ((bt_xL q hq).1.trans (by omega : K₂.ht + J + 1 ≤ K.ht + B + J + 1)) le_rfl).1.of_le ?_, length_xL q hq⟩).mono ?_
+        ((bt_xL q hq).1.trans (by omega : K₂.ht + J + 1 ≤ K.ht + B + J + 1)) le_rfl).1.of_le ?_,
+          length_xL q hq⟩).mono ?_
       · have := Nat.mul_le_mul_left 40 (bt_xL q hq).2
         omega
       · omega

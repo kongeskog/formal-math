@@ -95,7 +95,8 @@ def extF (P : Tree) (g : Fm) : Fm := guessF g (finF P)
 
 /-- **The value of the extraction.** -/
 theorem extF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {g : Fm} {cg τ W : ℕ}
-    {lg : List (Run A)} {Q : List (Bt × E × List Bool)} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelX κ S cg) lg Q)
+    {lg : List (Run A)} {Q : List (Bt × E × List Bool)} (hg : Ev θ g z lg) (rg : List.Forall₂
+        (RelX κ S cg) lg Q)
     (hP : ∀ q ∈ Q, Plain θ τ (zq P z q.1) ∧ q.2.2.length = W) :
     KV θ κ S (extF P g) z (Q.map fun q => q.2.1 * ((if KT.val q.2.2 = 0 then 1 else 0) *
       algebraMap A E (pv θ (zq P z q.1)))).sum (2 * cg + 40 * (W + 1) + τ + 60) := by
@@ -112,7 +113,8 @@ theorem extF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {g : F
 /-- The sizes of the fixed programs of the extraction. -/
 def xcst : ℕ := combF.code.size + 2 * AZ.code.size + UF.code.size + WN.code.size + 1000
 
-theorem xcst_def : xcst = combF.code.size + 2 * AZ.code.size + UF.code.size + WN.code.size + 1000 := rfl
+theorem xcst_def : xcst = combF.code.size + 2 * AZ.code.size + UF.code.size + WN.code.size + 1000 :=
+  rfl
 
 theorem size_chT {n C : ℕ} {f : List Bool → Fm} (h : ∀ w : List Bool, w.length = n → (f w).code.size ≤ C) :
     (chT n f).code.size + 31 ≤ 2 ^ n * (C + 31) := by

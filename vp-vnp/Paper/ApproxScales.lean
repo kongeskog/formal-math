@@ -209,7 +209,8 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
           Nat.mul_le_mul hnB2 (by omega)
         have s2 : nB * (J + 1) ≤ u ^ 2 * u := Nat.mul_le_mul hnB2 (by omega)
         have s3 : u ^ 2 * u = u ^ 3 := by ring
-        have s4 : 40 * (W + 1) + 140 ≤ u ^ 3 := (by omega : _ ≤ u).trans (Nat.le_self_pow (by norm_num) u)
+        have s4 : 40 * (W + 1) + 140 ≤ u ^ 3 :=
+          (by omega : _ ≤ u).trans (Nat.le_self_pow (by norm_num) u)
         have s5 : 2000 * u ^ 3 ≤ u ^ (3 + 1) := pbig 3
         have s6 : u ^ (3 + 1) ≤ u ^ (16 * h - 17) := pow_le_pow hu1 (by omega)
         omega

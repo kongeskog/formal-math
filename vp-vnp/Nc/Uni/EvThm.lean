@@ -171,6 +171,10 @@ theorem EvOK.id (x : Tree) : EvOK θ supp .id x [.det 1 x] := by
   rw [h13]
   exact hx.mono fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)
 
+/-- The machine fails on `fail`. A formula is `fail` when its opcode is 8, or 10, which no formula
+uses any more and which reads as `fail`, or larger than 10. The machine has a step for each of the
+opcodes up to 10, and stops at both 8 and 10, but through different rules of its table, so the two
+cases are proved apart; larger opcodes are not read as opcodes at all (`noOp`). -/
 theorem EvOK.fail (x : Tree) : EvOK θ supp .fail x [] := by
   intro σ hσ m Bd B h
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ

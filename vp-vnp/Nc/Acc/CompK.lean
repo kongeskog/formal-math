@@ -8,10 +8,10 @@ import NS1.Util
 /-!
 # Values of formulas with named constants
 
-`KV θ κ S F x w c`: all runs of the formula `F` at `x` stop; for the accepting ones the cost and the size of the value
-are at most `c` together, and their values name constants in `S`; with the constants `κ` the sum of their weights is
-`w`. At the end, a round of the approximate route (`stepA`) and the program `LP` that applies a program to all
-pieces.
+`KV θ κ S F x w c`: all runs of the formula `F` at `x` stop; for the accepting ones the cost and the
+size of the value are at most `c` together, and their values name constants in `S`; with the
+constants `κ` the sum of their weights is `w`. At the end, a round of the approximate route
+(`stepA`) and the program `LP` that applies a program to all pieces.
 -/
 
 set_option linter.unusedSectionVars false
@@ -222,7 +222,8 @@ theorem run {p y : Tree} {e : ℕ} (hF : Gives θ F x p c) (hG : Gives θ G x y 
     refine congrArg List.sum (List.map_congr_left fun s hs => ?_)
     rw [(e2 r hr).2, (f2 s hs).2, List.map_map, ← h.evl.2, val, ← List.sum_map_mul_left,
       ← List.sum_map_mul_left]
-    exact congrArg List.sum (List.map_congr_left fun t _ => by simp [wt, Run.seq, Run.tick, mul_assoc])
+    exact congrArg List.sum (List.map_congr_left
+        fun t _ => by simp [wt, Run.seq, Run.tick, mul_assoc])
 
 /-- A computation, then a value at each of its runs. -/
 theorem app_ev {p : Tree} {l : List (Run A)} {ω : Run A → R} (he : Ev θ F x l)
@@ -239,7 +240,8 @@ theorem app_ev {p : Tree} {l : List (Run A)} {ω : Run A → R} (he : Ev θ F x 
   · rw [val, sum_flatMap_map]
     refine congrArg List.sum (List.map_congr_left fun s hs => ?_)
     rw [← (hG s hs).evl.2, val, List.map_map, ← List.sum_map_mul_left]
-    exact congrArg List.sum (List.map_congr_left fun t _ => by simp [wt, Run.seq, Run.tick, Run.det, mul_assoc])
+    exact congrArg List.sum (List.map_congr_left
+        fun t _ => by simp [wt, Run.seq, Run.tick, Run.det, mul_assoc])
 
 end KV
 
@@ -258,7 +260,9 @@ theorem LP_kv {D : Tree} {T : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
         (.cons (LP D).code (.cons a ys))).tl (by simp)
       (KV.node (KV.run (Gives.quote D _) (Gives.id _).tl.hd (h a List.mem_cons_self))
         (KV.run (Gives.id _).hd (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl)
-          (by simp only [hd_cons, tl_cons, Fm.ofTree_code]; exact ih fun y hy => h y (List.mem_cons_of_mem _ hy))))
+          (by
+            simp only [hd_cons, tl_cons, Fm.ofTree_code]
+            exact ih fun y hy => h y (List.mem_cons_of_mem _ hy))))
     refine (e.mono ?_).congr (by simp [toList])
     simp only [toList, List.length_cons]
     nlinarith
@@ -281,7 +285,8 @@ theorem guess_kv {β : Type*} {g B : Fm} {z : Tree} {cg d : ℕ} {κ : List Bool
     KV θ κ S (guessF g B) z (Q.map fun q => v q * ω (o q)).sum (2 * cg + d + 13) := by
   have e1 := Ev.cons (Ev.id (θ := θ) z) hg
   simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil] at e1
-  have e2 := KV.app_ev (κ := κ) (S := S) (c := cg + 2) (d := cg + d + 9) (p := (node (.tl (.tl .id)) B).code)
+  have e2 := KV.app_ev (κ := κ) (S := S) (c := cg + 2) (d := cg + d + 9)
+    (p := (node (.tl (.tl .id)) B).code)
     (ω := fun u => ((names u.out.tl.tl).map κ).prod * ω u.out.tl.hd) e1 ?_ ?_
   · refine (e2.mono (by omega)).congr ?_
     simp only [List.map_map, Function.comp_def, Run.seq, Run.tick, Run.det, one_mul, tl_cons]
@@ -323,7 +328,8 @@ theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {κ : List Bool �
     (hG : ∀ q ∈ Q, Does θ (Fm.ofTree G) (zq p z q.1) (L (zq p z q.1)) tG)
     (hF : ∀ q ∈ Q, ∀ u ∈ L (zq p z q.1), KV θ κ S F (.cons c u.2) (ω u.2) tF) :
     KV θ κ S (stepA F c G p g) z (Q.map fun q =>
-      q.2 * ((L (zq p z q.1)).map fun u => algebraMap A R u.1 * ω u.2).sum).sum (2 * cg + tG + tF + 30) := by
+      q.2 * ((L (zq p z q.1)).map fun u => algebraMap A R u.1 * ω u.2).sum).sum
+          (2 * cg + tG + tF + 30) := by
   have hB : ∀ q ∈ Q, ∀ u : Tree, u.hd = q.1.enc → KV θ κ S (app F.code (.cons (.quote c)
       (app G (ZE (.quote p)))))
       (.cons z u) (((L (.cons WN.code (.cons p (.cons z q.1.enc)))).map

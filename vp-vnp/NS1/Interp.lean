@@ -8,8 +8,8 @@ import NS1.Budget
 /-!
 # Formulas that subtract from budgets and check them
 
-`DC` subtracts 1 from a budget at a name, `AZ` checks that all numbers of a budget are 0. With them `CK` and `WN`
-(`NS1/Postpone.lean`) check the names in the value of a program against a budget.
+`DC` subtracts 1 from a budget at a name, `AZ` checks that all numbers of a budget are 0. With them
+`CK` and `WN` (`NS1/Postpone.lean`) check the names in the value of a program against a budget.
 -/
 
 namespace NS1

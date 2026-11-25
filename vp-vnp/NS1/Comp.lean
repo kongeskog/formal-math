@@ -222,7 +222,8 @@ theorem run {p y : Tree} {R : List (A × Tree)} {e : ℕ} (hF : Gives θ F x p c
     (h : Does θ (Fm.ofTree p) y R e) : Does θ (.run F G) x R (c + d + e + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := hF.runs
   obtain ⟨l', f1, f2, f3⟩ := hG.runs
-  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [(e2 r hr).2, (f2 s hs).2]; exact h.hl, ?_, fun φ => ?_⟩
+  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [(e2 r hr).2, (f2 s hs).2]; exact h.hl, ?_,
+    fun φ => ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu

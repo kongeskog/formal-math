@@ -10,10 +10,10 @@ import Nc.Acc.CompK
 /-!
 # One round for approximate accelerators
 
-The budgets of the outer program are guessed and their constants named exactly. The constants of the inner
-program are rescaled by ε ↦ ε^r, with r above every exponent in the outer weights. To give the rescaled constants names
-of their own the round guesses budgets for all inner calls at once and runs the plain instance of the list program
-with these budgets (`rebF`).
+The budgets of the outer program are guessed and their constants named exactly. The constants of
+the inner program are rescaled by ε ↦ ε^r, with r above every exponent in the outer weights. To give
+the rescaled constants names of their own the round guesses budgets for all inner calls at once and
+runs the plain instance of the list program with these budgets (`rebF`).
 -/
 
 set_option linter.unusedSectionVars false
@@ -61,24 +61,29 @@ theorem UF_kv {y : Tree} {τ : ℕ} (hy : Plain θ τ y) : KV θ κ S UF y
 theorem rebF_kv {g : Fm} {P z : Tree} {cg τ : ℕ} {lg : List (Run A)}
     {Q : List (Bt × R)} (hg : Ev θ g z lg)
     (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q) (hP : ∀ q ∈ Q, Plain θ τ (zq P z q.1)) :
-    KV θ κ S (rebF g P) z (Q.map fun q => q.2 * algebraMap A R (pv θ (zq P z q.1))).sum (2 * cg + τ + 40) := by
-  refine (guess_kv (ω := fun e => algebraMap A R (pv θ (.cons WN.code (.cons P (.cons z e))))) (d := τ + 21) hg rg
+    KV θ κ S (rebF g P) z (Q.map fun q => q.2 * algebraMap A R (pv θ (zq P z q.1))).sum
+        (2 * cg + τ + 40) := by
+  refine (guess_kv (ω := fun e => algebraMap A R (pv θ (.cons WN.code (.cons P (.cons z e)))))
+      (d := τ + 21) hg rg
     fun q hq u hu => ?_).mono (by omega)
   have hZ : Gives θ (ZE (.quote P)) (.cons z u) (zq P z q.1) 10 := by
     simpa [zq, ZE, hu] using (Gives.quote (θ := θ) WN.code (.cons z u)).cons
       ((Gives.quote P _).cons ((Gives.id _).hd.cons (Gives.id _).tl.hd))
-  exact (KV.app_gives (d := τ + 9) hZ (by rw [Fm.ofTree_code]; exact UF_kv (hP q hq))).mono (by omega)
+  exact (KV.app_gives (d := τ + 9) hZ (by rw [Fm.ofTree_code]; exact UF_kv (hP q hq))).mono
+    (by omega)
 
 /-- **A program with renamed constants**: with the names `pre ++ p` for the images under `f` of its constants. -/
-theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {P z : Tree}
+theorem renamed_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {P z : Tree}
     {T L : ℕ} {l : List (Run A)}
-    (hP : Ev θ (Fm.ofTree P) z l) (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T ∧ ∀ p ∈ names r.out, K.InB B p)
+    (hP : Ev θ (Fm.ofTree P) z l) (hT : ∀ r ∈ l,
+        r.cost + r.out.size ≤ T ∧ ∀ p ∈ names r.out, K.InB B p)
     (hJ : T < 2 ^ J) (hS : ∀ p, K.InB (B + J) p → κ (pre ++ p) = f (K.lk p)
         ∧ pre ++ p ∈ S ∧ (pre ++ p).length ≤ L) :
     KV θ κ S (rebF (gt id J B K pre) P) z (f (val K.lk l))
       (2 * (((4 * L + 48) * J + 80) * (K.expand B).nds) + (60 * (K.ht + B + J + 1) + 42) * T +
         40 * ((K.expand B).nds * (J + 1)) + 120) := by
-  obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (J := J) (B := B) (L := L) (κ := κ) (P := (· ∈ S)) z (K.map f) pre
+  obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (J := J) (B := B) (L := L) (κ := κ)
+    (P := (· ∈ S)) z (K.map f) pre
     (fun p hp i hi => by
       have h1 : K.InB (B + J) (p ++ KT.pw i) := (KT.inB_map f _ K _).1 (hp.inB hi)
       obtain ⟨h2, h3, h4⟩ := hS _ h1
@@ -87,7 +92,8 @@ theorem rebill_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {
   have hn : ((K.map f).expand B).nds = (K.expand B).nds := nds_expand_map f B K
   rw [hn] at rg
   -- Lemma lem:postpone
-  obtain ⟨hsum, hze⟩ := Paper.lem_postpone P z hJ hP.hl (by rw [hP.evl]; exact fun r hr => (hT r hr).1)
+  obtain ⟨hsum, hze⟩ := Paper.lem_postpone P z hJ hP.hl
+    (by rw [hP.evl]; exact fun r hr => (hT r hr).1)
     ((K.map f).expand B) (K.map f).lk (by
       rw [hP.evl]
       exact fun r hr p hp => KT.lookup_expand ((KT.inB_map f _ K p).2 ((hT r hr).2 p hp)))
@@ -110,7 +116,8 @@ variable {E : Type} [CommRing E] [Algebra A E]
 /-- **Paper: the definition of an approximate accelerator.** The program `D`, with constants in E[ε,ε⁻¹], has values in pv z + ε E[ε], in `t`
 steps, on the instances of size `v ^ (H - 32)` of the universal plain sums of `v ^ H` steps. -/
 structure IsAccA (θ : List Bool → A) (H v t : ℕ) (K : KT E[T;T⁻¹]) (B : ℕ) (D : Tree) : Prop where
-  run : ∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧ ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost + r.out.size ≤ t ∧
+  run : ∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧ ∀ r ∈ evl θ (Fm.ofTree D) z,
+      r.cost + r.out.size ≤ t ∧
     ∀ p ∈ names r.out, K.InB B p
   val : ∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z →
     OrdGE 1 (val K.lk (evl θ (Fm.ofTree D) z) - algebraMap A E[T;T⁻¹] (pv θ z))
@@ -146,8 +153,8 @@ theorem UF_preA (θ : List Bool → A) (H v : ℕ) (B : ℕ) :
     exact ⟨by omega, by simp⟩
   · intro z _ hp
     rw [Fm.ofTree_code, (UF_ev hp.1.ev).evl,
-      show val KT.none.lk _ = algebraMap A E[T;T⁻¹] (pv θ z) by simp [val, wt, names, pv, pval, map_list_sum,
-        Function.comp_def], sub_self]
+      show val KT.none.lk _ = algebraMap A E[T;T⁻¹] (pv θ z) by
+        simp [val, wt, names, pv, pval, map_list_sum, Function.comp_def], sub_self]
     exact OrdGE.zero 1
 
 /-- The constants of `E` as constant Laurent polynomials. -/

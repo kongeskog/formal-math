@@ -170,16 +170,20 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
       y)) (tD := v ^ (16 * h - 16)) eg rg
     fun q hq => by
       obtain ⟨a1, a2⟩ := hD.run _ (hsz q hq)
-      exact ⟨_, a1.ev, fun r hr => ⟨(a2 r hr).1, fun n hn => ((a2 r hr).2 n hn).mono (le_max_left _ _)⟩, rfl⟩
+      exact ⟨_, a1.ev, fun r hr => ⟨(a2 r hr).1, fun n hn => ((a2 r hr).2 n hn).mono
+          (le_max_left _ _)⟩, rfl⟩
   obtain ⟨hl, hval⟩ := hkv.evl
-  have ep : Ev θ (Fm.ofTree p) p (evl θ (diagF D g) p) := by rw [hp, Fm.ofTree_code]; exact hkv.hl.ev
+  have ep : Ev θ (Fm.ofTree p) p (evl θ (diagF D g) p) := by
+    rw [hp, Fm.ofTree_code]; exact hkv.hl.ev
   set l := evl θ (diagF D g) p
   -- time
   have hT : ∀ r ∈ l, r.cost + r.out.size ≤ v ^ (16 * h - 15) := by
     intro r hr
     refine (hl r hr).1.trans ?_
+    -- the time of the guess: nB ((4X + 48)J + 80) ≤ nB · 18X² ≤ 2v²
     have m1 : ((4 * X + 48) * J + 80) * nB ≤ 2 * v ^ 2 := by
       have := hnBX (18 * X) (by rw [show 18 * X * X ^ 2 = 18 * X ^ 3 by ring]; omega)
+      -- with `J ≤ X` and `10 ≤ X`: (4X + 48)J + 80 ≤ 4X² + 48X + 80 ≤ 18X²
       have e8 : (4 * X + 48) * J + 80 ≤ 18 * X * X := by
         have h1 : (4 * X + 48) * J ≤ (4 * X + 48) * X := Nat.mul_le_mul_left _ (by omega)
         have h2 : (4 * X + 48) * X = 4 * (X * X) + 48 * X := by ring
@@ -206,6 +210,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
     obtain ⟨pl, -, -⟩ := hze q hq
     refine Plain.of_le pl ?_
     have hht := KT.ht_expand B' K
+    -- the factor of the plain instances is below v, as (K.expand B').ht + J + 1 ≤ X ≤ v
     have m1 : 60 * ((K.expand B').ht + J + 1) + 42 + 2 ≤ v := by omega
     have m3 : v ^ 2 ≤ v ^ (16 * h - 16) := pow_le_pow hv1 (by omega)
     have m4 := pbig (16 * h - 16)
@@ -219,7 +224,8 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
       exact pow_le_pow hv1 (by omega)
     rw [← hnB]
     calc (60 * ((K.expand B').ht + J + 1) + 42) * v ^ (16 * h - 15) + 40 * (nB * (J + 1)) + 80
-        ≤ (60 * ((K.expand B').ht + J + 1) + 42 + 2) * v ^ (16 * h - 15) := by rw [add_mul _ 2]; omega
+        ≤ (60 * ((K.expand B').ht + J + 1) + 42 + 2) * v ^ (16 * h - 15) := by
+          rw [add_mul _ 2]; omega
       _ ≤ v * v ^ (16 * h - 15) := Nat.mul_le_mul_right _ m1
       _ ≤ _ := m8
   -- 1 + its own value

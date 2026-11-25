@@ -49,7 +49,8 @@ def CutHyp (θ : List Bool → A) (H C₀ v₀ : ℕ) : Prop :=
 universal plain sums of `v ^ H` steps on instances of size `v ^ (H - 32)`; the cost and the size of
 the value of a run are at most `t` together, and the value names constants of `K`. -/
 structure IsAccT (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : Tree) : Prop where
-  run : ∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧ ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost + r.out.size ≤ t ∧
+  run : ∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧ ∀ r ∈ evl θ (Fm.ofTree D) z,
+      r.cost + r.out.size ≤ t ∧
     ∀ p ∈ names r.out, K.InB B p
   val : ∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z →
     val K.lk (evl θ (Fm.ofTree D) z) = algebraMap A R (pv θ z)
@@ -70,7 +71,9 @@ theorem UF_ev {z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree z.hd) z.tl l) 
   simp [Run.delay, Run.seq, Run.tick, Run.det]
   omega
 
-/-- The instances that arise from budgets are plain, and their sums are those of the runs that use up the budgets. -/
+/-- The instances that arise from budgets are plain, and their sums are those of the runs that use
+up the budgets. The time `(60 H + 42) T`: `WN_ev` gives `T` for the program, plus `(60 H + 41)` per
+unit of the size of its value (`CK_some`), and here the size is at most `T` too. -/
 theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ}
     (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T) {t : Bt} (ht : t.ht ≤ H) (hτ : (60 * H + 42)
         * T + 40 * t.nds + 80 ≤ τ) :
@@ -78,7 +81,8 @@ theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {
       pv θ (zq p z t) = (l.map fun r => if ok t (names r.out) = true then r.th else 0).sum ∧
       (evl θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl).map Run.th =
         (l.filter fun r => ok t (names r.out)).map Run.th := by
-  obtain ⟨l', e, h1, h2⟩ := WN_ev (T := T) (S := T) h (fun r hr => ⟨by have := hT r hr; omega, by have := hT r hr; omega⟩) ht
+  obtain ⟨l', e, h1, h2⟩ := WN_ev (T := T) (S := T) h (fun r hr =>
+      ⟨by have := hT r hr; omega, by have := hT r hr; omega⟩) ht
   have e' : Ev θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl l' := by
     show Ev θ (Fm.ofTree WN.code) _ l'
     rw [Fm.ofTree_code]
