@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T23:54:18.424357578Z",
+  "updated_at": "2026-11-25T23:55:09.080428737Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 83,
     "rejected": 4,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 4
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 83,
-      "attempts": 88,
+      "attempts": 89,
       "saved": 95100
     }
   ],
@@ -108,7 +108,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": null,
-      "pr": 149,
+      "pr": 150,
       "result_delta": null,
       "created_at": "2026-11-25T23:33:47Z",
       "url": "https://github.com/kongeskog/formal-math/issues/147",
@@ -122,7 +122,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T02:33:37Z",
-      "pr": null,
+      "pr": 149,
       "result_delta": null,
       "created_at": "2026-11-25T23:33:32Z",
       "url": "https://github.com/kongeskog/formal-math/issues/146",
@@ -962,20 +962,90 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
-      "idea": 147,
+      "idea": 146,
       "url": "https://github.com/kongeskog/formal-math/pull/149",
       "run_url": null,
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
-      "scope": "Nc/Tow",
-      "warnings": [
-        "touches files reserved by idea #146 (claimed by @kongeskog): `vp-vnp/Nc/Tow/Ever2.lean`, `vp-vnp/Nc/Tow/Flow.lean`, `vp-vnp/Nc/Tow/Ok.lean`; coordinate there or expect to merge main after it lands"
-      ]
+      "scope": "Nc/Tow"
+    },
+    {
+      "pr": 150,
+      "title": "restructure(Paper): flatten single-use clusters in Fan and Groups, simplify, re-cut",
+      "author": "kongeskog",
+      "head_sha": "23e6746ad67e914f2f8e2766d2bdabd08531dd61",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T23:54:24Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 147,
+      "url": "https://github.com/kongeskog/formal-math/pull/150",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper"
     }
   ],
   "top_files": [
