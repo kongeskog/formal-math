@@ -53,22 +53,7 @@ structure IsAccT (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : 
   val : ∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z →
     val K.lk (evl θ (Fm.ofTree D) z) = algebraMap A R (pv θ z)
 
-/-- The same, where runs have to stop only if the sum is plain. -/
-structure IsPre (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : Tree) : Prop where
-  run : ∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z → Hl θ (Fm.ofTree D) z ∧
-    ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost ≤ t ∧ ∀ p ∈ r.bill, K.InB B p
-  val : ∀ z, z.size ≤ v ^ (H - 32) → Plain θ (v ^ H) z →
-    val K.lk (evl θ (Fm.ofTree D) z) = algebraMap A R (pv θ z)
-
 variable {θ : List Bool → A}
-
-theorem IsAccT.pre {H v t : ℕ} {K : KT R} {B : ℕ} {D : Tree} (h : IsAccT θ H v t K B D) : IsPre θ H v t K B D :=
-  ⟨fun z hz _ => h.run z hz, h.val⟩
-
-theorem IsPre.mono {H v t t' : ℕ} {K : KT R} {B B' : ℕ} {D : Tree} (h : IsPre θ H v t K B D) (ht : t ≤ t')
-    (hB : B ≤ B') : IsPre θ H v t' K B' D :=
-  ⟨fun z hz hp => ⟨(h.run z hz hp).1, fun r hr => ⟨((h.run z hz hp).2 r hr).1.trans ht, fun p hp' =>
-    (((h.run z hz hp).2 r hr).2 p hp').mono hB⟩⟩, h.val⟩
 
 theorem IsAccT.mono {H v t t' : ℕ} {K : KT R} {B B' : ℕ} {D : Tree} (h : IsAccT θ H v t K B D) (ht : t ≤ t')
     (hB : B ≤ B') : IsAccT θ H v t' K B' D :=
@@ -136,29 +121,6 @@ theorem val_plain {κ : List Bool → R} {l : List (Run A)} (h : ∀ r ∈ l, r.
   congr 1
   refine List.map_congr_left fun r hr => ?_
   simp [wt, h r hr]
-
-/-- The universal program is a program for the universal plain sums. -/
-theorem UF_pre (θ : List Bool → A) (H v : ℕ) (K : KT R) (B : ℕ) : IsPre θ H v (v ^ H + 5) K B UF.code := by
-  constructor
-  · intro z _ hp
-    have e := UF_ev hp.1.ev
-    rw [Fm.ofTree_code]
-    refine ⟨e.hl, fun r hr => ?_⟩
-    rw [e.evl, List.mem_map] at hr
-    obtain ⟨s, hs, rfl⟩ := hr
-    obtain ⟨h1, h2⟩ := hp.2 s hs
-    refine ⟨?_, ?_⟩
-    · simp only [Run.delay]
-      omega
-    · simp [Run.delay, h1]
-  · intro z _ hp
-    have e := UF_ev hp.1.ev
-    rw [Fm.ofTree_code, e.evl, val_plain]
-    · congr 1
-      simp [pval, pv, Function.comp_def, Run.delay]
-    · intro r hr
-      obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
-      exact (hp.2 s hs).1
 
 /-- The instances that arise from budgets are plain, and their sums are those of the runs that use up the budgets. -/
 theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ} (hT : ∀ r ∈ l, r.cost ≤ T)

@@ -239,26 +239,6 @@ theorem stepA_ev {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {P : List Bool →
     exact sum_rel (c := fun q : Bt × R => q.2) (o := fun q : Bt × R => zq p z q.1)
       (rZ.imp fun r q hr => ⟨hr.1, hr.2.1⟩)
 
-/-- One round: guess budgets, multiply, form the plain instance, cut it with `G`, apply `D` to the pieces. -/
-def stepF (D G p : Tree) (g : Fm) : Fm :=
-  app (LP D).code (.cons (.quote (LP D).code) (app G (ZE (.quote p) g)))
-
--- `stepF D G p g` is by definition `stepA (LP D) (LP D).code G p g`,
--- so this is `stepA_ev` with `F := LP D`.
-theorem stepF_ev {D G p z : Tree} {g : Fm} {cg tG tD Ln : ℕ} {P : List Bool → Prop} {lg : List (Run A)}
-    {Q : List (Bt × R)} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ P cg) lg Q)
-    (hG : ∀ q ∈ Q, Hl θ (Fm.ofTree G) (zq p z q.1) ∧ ∀ r ∈ evl θ (Fm.ofTree G) (zq p z q.1), r.bill = [] ∧
-      r.cost ≤ tG ∧ r.out.toList.length ≤ Ln ∧ ∀ y ∈ r.out.toList, Hl θ (Fm.ofTree D) y ∧
-        ∀ r ∈ evl θ (Fm.ofTree D) y, r.cost ≤ tD ∧ ∀ n ∈ r.bill, P n) :
-    ∃ l, Ev θ (stepF D G p g) z l ∧
-      (∀ r ∈ l, r.cost ≤ cg + tG + (tD + 30) * Ln + 30 ∧ ∀ n ∈ r.bill, P n) ∧
-      val κ l = (Q.map fun q => q.2 * sumF κ (evl θ (Fm.ofTree G) (zq p z q.1)) fun o =>
-        (o.toList.map fun y => val κ (evl θ (Fm.ofTree D) y)).prod).sum :=
-  stepA_ev (F := LP D) (tF := (tD + 30) * Ln + 10) hg rg fun q hq => ⟨(hG q hq).1, fun r hr => by
-    obtain ⟨g1, g2, g3, g4⟩ := (hG q hq).2 r hr
-    obtain ⟨l, h1, h2, h3⟩ := LP_ev (κ := κ) r.out g4
-    exact ⟨g1, g2, l, h1, fun t ht => ⟨(h2 t ht).1.trans (by gcongr), (h2 t ht).2⟩, h3⟩⟩
-
 end Inst
 
 end NS1

@@ -219,6 +219,25 @@ theorem All.map {P : R → Prop} {Q : R' → Prop} {f : R → R'} (hPQ : ∀ c, 
   | leaf c => exact hPQ c h
   | node l r ihl ihr => exact ⟨ihl h.1, ihr h.2⟩
 
+/-- The constants of `K.map f` are values of `f`. -/
+theorem all_map_range (f : R → R') (K : KT R) : (K.map f).All (· ∈ Set.range f) := by
+  induction K with
+  | none => trivial
+  | leaf c => exact ⟨c, rfl⟩
+  | node l r ihl ihr => exact ⟨ihl, ihr⟩
+
+/-- A trie whose constants are values of `f` is the image under `f` of a trie. -/
+theorem exists_lift_all (f : R' → R) {K : KT R} (h : K.All (· ∈ Set.range f)) : ∃ K' : KT R', K'.map f = K := by
+  induction K with
+  | none => exact ⟨none, rfl⟩
+  | leaf c =>
+    obtain ⟨c', rfl⟩ := h
+    exact ⟨leaf c', rfl⟩
+  | node l r ihl ihr =>
+    obtain ⟨l', rfl⟩ := ihl h.1
+    obtain ⟨r', rfl⟩ := ihr h.2
+    exact ⟨node l' r', rfl⟩
+
 theorem All.expand {P Q : R → Prop} {B : ℕ} (hPQ : ∀ c, P c → ∀ b < B, Q (c ^ 2 ^ b)) {K : KT R} (h : K.All P) :
     (K.expand B).All Q := by
   induction K with
@@ -248,6 +267,11 @@ theorem exists_bound {P : ℕ → R → Prop} (hP : ∀ c, ∃ n, P n c) (hm : �
     exact ⟨max n m, hn.imp fun c => hm _ _ c (le_max_left _ _), hm'.imp fun c => hm _ _ c (le_max_right _ _)⟩
 
 end KT
+
+/-- Every property of constants that rescaling keeps passes from `K` to `K'`: so it is when the constants of `K'` are
+rescaled copies of those of `K`, as after the rounds of an approximate accelerator. -/
+def KT.Inherits (A : Type) [CommRing A] [Algebra A E] (K K' : KT E[T;T⁻¹]) : Prop :=
+  ∀ P : E[T;T⁻¹] → Prop, (∀ r c, P c → P (rescale A r c)) → K.All P → K'.All P
 
 theorem exists_span (P : E[T;T⁻¹]) : ∃ n, Span n P :=
   ⟨P.coeff.support.sup Int.natAbs, fun _ hi => Finset.le_sup (Finsupp.mem_support_iff.2 hi)⟩

@@ -10,7 +10,7 @@ import Nc.Acc.CompK
 /-!
 # One round for approximate accelerators
 
-The budgets of the outer program are guessed and multiplied exactly, as in an exact round. The constants of the inner
+The budgets of the outer program are guessed and multiplied exactly. The constants of the inner
 program are rescaled by ε ↦ ε^r, with r above every exponent in the outer weights. To give the rescaled constants names
 of their own the round guesses budgets for all inner calls at once and runs the list program inside the interpreter.
 -/
@@ -173,13 +173,60 @@ theorem IsAccA.mono {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B B' : ℕ} {D : Tree
   ⟨fun z hz => ⟨(h.run z hz).1, fun r hr => ⟨((h.run z hz).2 r hr).1.trans ht, fun p hp =>
     (((h.run z hz).2 r hr).2 p hp).mono hB⟩⟩, h.val⟩
 
-/-- The universal program needs no constants. -/
+/-- The universal program is a program for the universal plain sums; it needs no constants. -/
 theorem UF_preA (θ : List Bool → A) (H v : ℕ) (B : ℕ) :
     IsPreA (E := E) θ H v (v ^ H + 5) KT.none B UF.code := by
-  have h := UF_pre (A := A) (R := E[T;T⁻¹]) θ H v KT.none B
-  refine ⟨h.run, fun z hz hp => ?_⟩
-  rw [h.val z hz hp, sub_self]
+  constructor
+  · intro z _ hp
+    have e := UF_ev hp.1.ev
+    rw [Fm.ofTree_code]
+    refine ⟨e.hl, fun r hr => ?_⟩
+    rw [e.evl, List.mem_map] at hr
+    obtain ⟨s, hs, rfl⟩ := hr
+    obtain ⟨h1, h2⟩ := hp.2 s hs
+    refine ⟨?_, ?_⟩
+    · simp only [Run.delay]
+      omega
+    · simp [Run.delay, h1]
+  · intro z _ hp
+    have e := UF_ev hp.1.ev
+    rw [Fm.ofTree_code, e.evl, val_plain]
+    · rw [show pval ((evl θ (Fm.ofTree z.hd) z.tl).map (Run.delay 5)) = pv θ z by
+        simp [pval, pv, Function.comp_def, Run.delay], sub_self]
+      exact OrdGE.zero 1
+    · intro r hr
+      obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
+      exact (hp.2 s hs).1
+
+/-- The constants of `E` as constant Laurent polynomials. -/
+noncomputable def cstL : E →ₐ[A] E[T;T⁻¹] := IsScalarTower.toAlgHom A E E[T;T⁻¹]
+
+/-- An exact accelerator is an approximate one with constants in `E`. -/
+theorem IsAccT.toA {H v t : ℕ} {K : KT E} {B : ℕ} {D : Tree} (h : IsAccT θ H v t K B D) :
+    IsAccA θ H v t (K.map (cstL (A := A))) B D := by
+  have h' := h.map (cstL (A := A) (E := E))
+  refine ⟨h'.run, fun z hz hp => ?_⟩
+  rw [h'.val z hz hp, sub_self]
   exact OrdGE.zero 1
+
+/-- An approximate accelerator with constants in `E` is an exact one: its error is a constant without a term in ε⁰. -/
+theorem IsAccA.toT {H v t : ℕ} {K : KT E} {B : ℕ} {D : Tree}
+    (h : IsAccA θ H v t (K.map (cstL (A := A))) B D) : IsAccT θ H v t K B D := by
+  refine ⟨fun z hz => ⟨(h.run z hz).1, fun r hr => ⟨((h.run z hz).2 r hr).1, fun p hp =>
+    (KT.inB_map _ B K p).1 (((h.run z hz).2 r hr).2 p hp)⟩⟩, fun z hz hp => ?_⟩
+  have h0 := h.val z hz hp 0 (by norm_num)
+  rw [NS1.val_map, ← AlgHom.commutes (cstL (A := A) (E := E)), ← map_sub] at h0
+  have : (cstL (A := A) (E := E)) (NS1.val K.lk (evl θ (Fm.ofTree D) z) - algebraMap A E (pv θ z)) =
+      algebraMap E E[T;T⁻¹] (NS1.val K.lk (evl θ (Fm.ofTree D) z) - algebraMap A E (pv θ z)) := rfl
+  rw [this, coeff_algebraMap (A := E) (E := E), if_pos rfl] at h0
+  exact sub_eq_zero.1 (by simpa using h0)
+
+/-- Rescaling `ε ↦ ε ^ r` fixes the constants of `E`. -/
+theorem rescale_cstL (r : ℕ) (e : E) : rescale A r (cstL (A := A) e) = cstL (A := A) e := by
+  show rescale A r (algebraMap E E[T;T⁻¹] e) = algebraMap E E[T;T⁻¹] e
+  rw [AddMonoidAlgebra.coe_algebraMap, Function.comp_apply]
+  simp only [rescale, AddMonoidAlgebra.mapDomainAlgHom_apply, AddMonoidHom.coe_mulLeft]
+  rw [AddMonoidAlgebra.mapDomain_single, mul_zero]
 
 /-- The program of a round: outer budgets with the names that begin with 0, inner ones with those that begin with 1. -/
 def roundA {R : Type} (K : KT R) (B : ℕ) (K' : KT R) (B' J : ℕ) (D G p : Tree) : Fm :=
