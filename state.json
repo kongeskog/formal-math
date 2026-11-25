@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:02:05.992552739Z",
+  "updated_at": "2026-11-25T02:14:35.218764485Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,40 +60,40 @@
     }
   },
   "current": {
-    "sha": "74161dfed9ebd1e382cbf079540f8e3c2498b256",
-    "at": "2026-11-25T01:55:35.354008083Z",
+    "sha": "ddce58739bf7acc8df8f5a75df2b0b6398216891",
+    "at": "2026-11-25T02:14:35.218764485Z",
     "metrics": {
-      "tokens": 898445,
-      "loc": 57160,
+      "tokens": 896950,
+      "loc": 57066,
       "decls": 4564,
       "files": 321,
-      "bytes": 3337949,
-      "build_seconds": 234
+      "bytes": 3332976,
+      "build_seconds": 249
     }
   },
   "counts": {
-    "merged": 55,
+    "merged": 56,
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 1
+    "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 55,
-      "attempts": 58,
-      "saved": 29716
+      "merged": 56,
+      "attempts": 59,
+      "saved": 31211
     }
   ],
   "ideas": [
     {
       "number": 103,
       "title": "Idea: dead-code(Nc/Grp): drop the unused third clause of GroupOK and delete Nc/Grp/Facts.lean",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-25T05:14:44Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-25T01:57:20Z",
@@ -108,7 +108,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T05:00:03Z",
-      "pr": null,
+      "pr": 105,
       "result_delta": null,
       "created_at": "2026-11-25T01:57:18Z",
       "url": "https://github.com/kongeskog/formal-math/issues/102",
@@ -136,8 +136,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T03:01:18Z",
-      "pr": 99,
-      "result_delta": -615,
+      "pr": 101,
+      "result_delta": -2110,
       "created_at": "2026-11-24T23:55:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/97",
       "technique": "shorten",
@@ -706,13 +706,13 @@
   ],
   "open": [
     {
-      "pr": 101,
-      "title": "shorten(Nc/Tow): drop dead arithmetic haves and close bookkeeping tails early",
+      "pr": 105,
+      "title": "dead-code(*): delete what the final theorems do not reach, slice 1 (16 files, Paper/Ryser)",
       "author": "kongeskog",
-      "head_sha": "cc78cc53c8dcb06ef9c27d60684bee0aafa98f77",
+      "head_sha": "024a628164c7aad7d937d1c3c29aa79f0393d0cf",
       "base_sha": null,
       "status": "verifying",
-      "created_at": "2026-11-25T01:54:43Z",
+      "created_at": "2026-11-25T02:13:47Z",
       "decided_at": null,
       "metrics": null,
       "base_metrics": null,
@@ -761,17 +761,17 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
         }
       ],
-      "idea": 97,
-      "url": "https://github.com/kongeskog/formal-math/pull/101",
+      "idea": 102,
+      "url": "https://github.com/kongeskog/formal-math/pull/105",
       "run_url": null,
       "merge_sha": null,
       "reason": null,
-      "technique": "shorten",
-      "scope": "Nc/Tow"
+      "technique": "dead-code",
+      "scope": "*"
     }
   ],
   "top_files": [
