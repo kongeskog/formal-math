@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T23:40:57.720372088Z",
+  "updated_at": "2026-11-25T23:54:18.424357578Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 83,
     "rejected": 4,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
-    "ideas_open": 5
+    "ideas_open": 4
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 83,
-      "attempts": 87,
+      "attempts": 88,
       "saved": 95100
     }
   ],
@@ -104,11 +104,11 @@
     {
       "number": 147,
       "title": "Idea: restructure(Paper/Fan,Paper/Groups): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
+      "claimed_by": "kongeskog",
       "lease_expires": null,
-      "pr": null,
+      "pr": 149,
       "result_delta": null,
       "created_at": "2026-11-25T23:33:47Z",
       "url": "https://github.com/kongeskog/formal-math/issues/147",
@@ -900,7 +900,84 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 149,
+      "title": "restructure(Nc/Tow): flatten plan_ok and NR_le, simplify across the old lemma boundaries",
+      "author": "kongeskog",
+      "head_sha": "6d2baf9336e43cad7c85f8e45997d2d072e1aa24",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T23:53:36Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 147,
+      "url": "https://github.com/kongeskog/formal-math/pull/149",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/Tow",
+      "warnings": [
+        "touches files reserved by idea #146 (claimed by @kongeskog): `vp-vnp/Nc/Tow/Ever2.lean`, `vp-vnp/Nc/Tow/Flow.lean`, `vp-vnp/Nc/Tow/Ok.lean`; coordinate there or expect to merge main after it lands"
+      ]
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
