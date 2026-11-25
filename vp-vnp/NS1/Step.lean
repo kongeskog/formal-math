@@ -28,8 +28,6 @@ theorem wt_seq (r s : Run A) : wt κ (r.seq s) = wt κ r * wt κ s := by
 
 theorem wt_tick (r : Run A) (o : Tree) : wt κ (r.tick o) = wt κ r := rfl
 
-theorem wt_delay (k : ℕ) (r : Run A) : wt κ (r.delay k) = wt κ r := rfl
-
 theorem wt_det (k : ℕ) (o : Tree) : wt κ (Run.det k o : Run A) = 1 := by simp [wt, Run.det]
 
 /-- Sums over runs, with a function of the value. -/
@@ -139,7 +137,7 @@ theorem LP_ev {D : Tree} {T : ℕ} {P : List Bool → Prop} (ys : Tree) (h : ∀
     · rw [val_eq_sumF, sumF_delay, toList, List.map_cons, List.prod_cons, ← vr]
       simp only [sumF, mul_one]
       rw [sum_flatMap_map, List.map_map]
-      simp only [List.map_map, Function.comp_def, wt_tick, wt_seq, wt_delay]
+      simp only [List.map_map, Function.comp_def, wt_tick, wt_seq]
       simp only [List.sum_map_mul_left]
       rw [List.sum_map_mul_right]
       rfl

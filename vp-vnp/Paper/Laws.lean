@@ -16,17 +16,6 @@ namespace Paper
 open Finset Nc.Price Nc.Tow Nc.Vp Ov Ov.Ten
 open Nc.Tower (U x NN ee card_U sum_NN npair npair_sym x_mul_self x_ne_one)
 
-/-- **Paper: Definition def:law.** "A law on U_h over a commutative ring A consists of a finite family of pairs of
-distinct elements (its slots), counted by a load σ, a finite nonempty index set with an injective code by λ ≥ 1 bits, a
-load len_i on near pairs for every i, and for every i and every element g a table with values in A that depends on the
-bits at g, such that ∏_e [the σ_e bits agree at both ends of e] = ∑_i ∑_y ∏_g (table of (i,g))." In the project a law
-is an Nc.G.Law; this theorem lists what it carries. The two side conditions (nonempty, λ ≥ 1) are supplied by thm_laws. -/
-theorem def_law {A : Type} [CommRing A] (L : Nc.G.Law A) :
-    Function.Injective L.lab ∧ (∀ e, L.a e ≠ L.b e) ∧
-      ∀ X : L.Ro → L.Sl → Bool, (if ∀ e, X (L.a e) e = X (L.b e) e then (1 : A) else 0) =
-        ∑ i, ∑ y : ∀ ν, Fin (L.len i ν) → Bool, ∏ p, L.tab p i (fun e => X p e) (fun ν => y ν) :=
-  ⟨L.lab_inj, L.ab, L.law⟩
-
 /-- "Since the near pairs connect U_h, indices that agree along channels agree everywhere." -/
 theorem indices_agree {h : ℕ} [NeZero h] {I : Type} (f : U h → I) (hf : ∀ ν : NN h, f (cNear ν) = f (dNear ν))
     (p q : U h) : f p = f q := by

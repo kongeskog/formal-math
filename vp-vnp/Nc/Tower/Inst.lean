@@ -409,7 +409,7 @@ theorem fibre_edges {j : ℕ} (h2 : 2 ≤ h) (hj : j < JJ h n) (d : EE h n h2 (j
     exact Subtype.ext (Prod.ext h1 hee)
 
 /-- **Paper: Proposition prop:tower(b).** "Exactly b of them onto each": b cosets over each, a coset being given by its
-one element in VV (prop_tower_representatives). -/
+one element in VV (`vert`). -/
 theorem _root_.Paper.prop_tower_cosets_over {j : ℕ} {i : Fin h} (hj : j < JJ h n) (v : VV h n (j + 1) i) :
     (univ.filter fun w : VV h n j i => prV w = v).card = 2 ^ ee h := by
   rw [← Paper.prop_tower_fibre hj v.1]
@@ -417,13 +417,6 @@ theorem _root_.Paper.prop_tower_cosets_over {j : ℕ} {i : Fin h} (hj : j < JJ h
     (fun w _ w' _ e => Subtype.ext e) (fun c hc => ⟨⟨c, ?_⟩, mem_filter.2 ⟨mem_univ _, Subtype.ext (mem_filter.1 hc).2⟩, rfl⟩)
   rw [← cor_pr, (mem_filter.1 hc).2]
   exact v.2
-
-/-- **Paper: Proposition prop:tower(a).** "We call its orbits i-cosets": every i-coset has one element in VV. -/
-theorem _root_.Paper.prop_tower_representatives {j : ℕ} (i : Fin h) (c : XX h n j) :
-    ∃! v : VV h n j i, ∃ u : U h, (th i u : G h n) • v.1 = c := by
-  refine ⟨vert i c, ⟨cor i c, th_vert i c⟩, ?_⟩
-  rintro v ⟨u, rfl⟩
-  rw [vert_th, vert_of]
 
 /-- Hosts. -/
 theorem exists_host (j : ℕ) (i : Fin h) : ∃ f : VV h n j i → XX h n (j + 1), j < JJ h n →

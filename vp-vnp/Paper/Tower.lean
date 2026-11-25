@@ -21,7 +21,7 @@ to one, such that (a) for every i the X_k, k ≠ i, generate a copy of U_h (in o
 always lie in different i-cosets, and π maps every i-coset
 bijectively onto one, exactly b of them onto each; (c) |X^(J)| ≤ const, and |G_n| has
 bounded quotients; (d) every element of G_n is a word of at most O(n+1)^7 letters X_k." An i-coset of stage j is an orbit of th i; VV are
-the chambers with coordinate 1, one in each coset (Paper.prop_tower_representatives), so their fibres count the cosets over a coset. -/
+the chambers with coordinate 1, one in each coset, so their fibres count the cosets over a coset. -/
 theorem prop_tower (h : ℕ) [NeZero h] (h3 : 3 ≤ h) :
     ∃ C : ℕ, ∀ n : ℕ,
       Fintype.card (XX h n 0) = Nat.card (Nc.Tower.G h n) ∧

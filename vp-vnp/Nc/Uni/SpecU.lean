@@ -42,9 +42,6 @@ def blocks (a : Γ) (ws : List (List Γ)) : List Γ := ws.flatMap fun w => w ++ 
 theorem blocks_cons (a : Γ) (w : List Γ) (ws : List (List Γ)) : blocks a (w :: ws) = w ++ a :: blocks a ws := by
   simp [blocks]
 
-theorem blocks_append (a : Γ) (ws ws' : List (List Γ)) : blocks a (ws ++ ws') = blocks a ws ++ blocks a ws' := by
-  simp [blocks]
-
 theorem blocks_inj {a : Γ} {ws ws' : List (List Γ)} (h : ∀ w ∈ ws, a ∉ w) (h' : ∀ w ∈ ws', a ∉ w)
     (e : blocks a ws = blocks a ws') : ws = ws' := by
   induction ws generalizing ws' with

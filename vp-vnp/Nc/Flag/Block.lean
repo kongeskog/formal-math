@@ -155,9 +155,6 @@ theorem blk_injective : Function.Injective (blk : U a × Matrix (Fin a) (Fin b) 
   · rw [← k2 s, ← k2 t, h]
   · rw [← k3 s, ← k3 t, h]
 
-theorem two_mul_tri (n : ℕ) : 2 * (n * (n - 1) / 2) = n * (n - 1) :=
-  Nat.mul_div_cancel' (Nat.even_mul_pred_self n).two_dvd
-
 theorem tri_add (a b : ℕ) : (a + b) * (a + b - 1) / 2 = a * (a - 1) / 2 + a * b + b * (b - 1) / 2 := by
   induction b with
   | zero => simp

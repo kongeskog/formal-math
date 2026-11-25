@@ -72,12 +72,4 @@ theorem gridComplete_hc (F : Type) [Field F] : GridComplete F (genHC F) 40 := by
     rw [h]
     exact isAffine_of_mem (hW n x r)
 
-/-- "With HC in place of PERM, the corollary on clause sums holds in every characteristic." -/
-theorem cor_clauses_hc {F : Type} [Field F] {ι V K : Type} [Fintype V] [DecidableEq V] [Fintype K] [DecidableEq K]
-    (lits : K → List (V × Bool)) (hne : ∀ κ, lits κ ≠ []) (hocc : ∀ b, ∃ κ, ∃ l ∈ lits κ, l.1 = b)
-    (wt : K → MvPolynomial ι F) (hwt : ∀ κ, (∃ i, wt κ = X i) ∨ ∃ a, wt κ = C a) {S : ℕ}
-    (hS : 40 * ∑ κ, (lits κ).length ≤ S) :
-    ∃ M : Fin S × Fin S → MvPolynomial ι F, (∀ q, IsAffine (M q)) ∧ aeval M (genHC F S) = clauseSum lits wt :=
-  clauses_of_complete (gridComplete_hc F) lits hne hocc wt hwt hS
-
 end Paper

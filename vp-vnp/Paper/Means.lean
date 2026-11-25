@@ -24,13 +24,6 @@ variable {K : Type} [Field K]
 noncomputable def meanLength (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ × ℤ) → ℝ) (g : ℤ × ℤ) : ℝ :=
   Cat.len (fun n b P P' => W n (b, P) (b, P')) g
 
-/-- ν(g) is the square root of the limit along a fixed ultrafilter of the means of W(P, P+g)² over both sheets of the
-n-th window. -/
-theorem meanLength_eq (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ × ℤ) → ℝ) (g : ℤ × ℤ) :
-    meanLength W g = √(limUnder (hyperfilter ℕ : Filter ℕ) fun n => (∑ b : Bool, ∑ i ∈ range (n ^ 2),
-      ∑ j ∈ range n, W n (b, ((i : ℤ), (j : ℤ))) (b, ((i : ℤ), (j : ℤ)) + g) ^ 2) / (2 * n ^ 3)) := by
-  simp only [meanLength, Cat.len, Cat.nm, Cat.mean, Cat.avg, Cat.df, Pi.mul_apply, add_zero, pow_two]
-
 /-- The paper's N(g) = inf ν(Sg)/S over integers S ≥ 1. -/
 noncomputable def meanNorm (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ × ℤ) → ℝ) (g : ℤ × ℤ) : ℝ :=
   sInf {r : ℝ | ∃ S : ℕ, 0 < S ∧ r = meanLength W (S • g) / S}
