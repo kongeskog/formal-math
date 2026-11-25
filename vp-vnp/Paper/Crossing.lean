@@ -116,9 +116,8 @@ theorem prop_crossing_some {J : Type} [Fintype J] (Ψ : J → α → β → α �
   have h1 := prop_crossing_cover F Ψ hΨ x y v u
   have hJ : Nonempty J := by
     by_contra hne
-    rw [not_nonempty_iff] at hne
-    rw [Finset.univ_eq_empty, Finset.sum_empty] at h1
-    exact absurd h1 (not_le.2 (mul_pos (Real.rpow_pos_of_pos hα _) (Real.rpow_pos_of_pos hβ _)))
+    -- with `J` empty the sum in `h1` is 0, against the positive bound from `hα`, `hβ`
+    simp_all
   obtain ⟨j, -, hj⟩ := Finset.exists_max_image (Finset.univ : Finset J)
     (fun j => F.F (Ten.push ![x, y, v, u] (four (Ψ j)))) Finset.univ_nonempty
   refine ⟨j, h1.trans ?_⟩

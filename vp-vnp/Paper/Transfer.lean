@@ -25,8 +25,8 @@ theorem lem_transfer_approx (p : ℕ) [CharP F p] [CharP KK p] (q : MvPolynomial
         (coeff d P).coeff 0 = coeff d (MvPolynomial.map (Int.castRingHom KK) q) := by
   suffices main : ∃ P : MvPolynomial X (LaurentPolynomial KK), Computes P s ∧ ∀ (d : X →₀ ℕ) (i : ℤ), i ≤ 0 →
       (coeff d P).coeff i = if i = 0 then coeff d (MvPolynomial.map (Int.castRingHom KK) q) else 0 by
-    obtain ⟨P, hP, hc⟩ := main
-    exact ⟨P, hP, fun d => ⟨fun i hi => by rw [hc d i hi.le, if_neg hi.ne], by rw [hc d 0 le_rfl, if_pos rfl]⟩⟩
+    -- `main` at `i < 0` and at `i = 0`
+    grind
   obtain ⟨T, _, _, ⟨f⟩, ⟨g⟩⟩ := exists_common_ring F KK p
   obtain ⟨P₀, hP₀, hc₀⟩ := h.exists_laurentPolynomial
   obtain ⟨l, hl, k, hk, e⟩ := Computes.map (AddMonoidAlgebra.mapRingHom ℤ f) hP₀
