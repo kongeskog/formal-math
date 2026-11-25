@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:40:35.934845549Z",
+  "updated_at": "2026-11-25T02:41:41.086223133Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 1,
     "contributors": 1,
-    "ideas_open": 0
+    "ideas_open": 5
   },
   "leaderboard": [
     {
@@ -87,6 +87,76 @@
     }
   ],
   "ideas": [
+    {
+      "number": 114,
+      "title": "Idea: merge(*): one theorem for each group of theorems with identical statements",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T02:41:40Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/114",
+      "technique": "merge",
+      "scope": "*"
+    },
+    {
+      "number": 113,
+      "title": "Idea: restructure(Nc/Tape,Nc/Sort,Nc/Uni): rational series without the dimension that nothing reads",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T02:41:39Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/113",
+      "technique": "restructure",
+      "scope": "Nc/Tape,Nc/Sort,Nc/Uni"
+    },
+    {
+      "number": 112,
+      "title": "Idea: restructure(Paper,Nc): delete statements that only hand a result on, and let the consumer call what they called",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T02:41:37Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/112",
+      "technique": "restructure",
+      "scope": "Paper,Nc"
+    },
+    {
+      "number": 111,
+      "title": "Idea: restructure(Solution,Paper): prove the needed rate directly and derive the final theorems from the approximate one",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T02:41:35Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/111",
+      "technique": "restructure",
+      "scope": "Solution,Paper"
+    },
+    {
+      "number": 110,
+      "title": "Idea: restructure(Paper/Tree): state the tree theorem over A as it is used and delete Paper/Tower.lean",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T02:41:34Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/110",
+      "technique": "restructure",
+      "scope": "Paper/Tree"
+    },
     {
       "number": 103,
       "title": "Idea: dead-code(Nc/Grp): drop the unused third clause of GroupOK and delete Nc/Grp/Facts.lean",
@@ -861,11 +931,6 @@
       "loc": 473
     },
     {
-      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
-      "tokens": 6956,
-      "loc": 399
-    },
-    {
       "path": "vp-vnp/Paper/Prices.lean",
       "tokens": 6921,
       "loc": 401
@@ -876,9 +941,14 @@
       "loc": 415
     },
     {
+      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
+      "tokens": 6851,
+      "loc": 394
+    },
+    {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
-      "tokens": 6564,
-      "loc": 398
+      "tokens": 6499,
+      "loc": 396
     },
     {
       "path": "vp-vnp/Paper/Toolkit.lean",
@@ -897,8 +967,8 @@
     },
     {
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
-      "tokens": 6142,
-      "loc": 369
+      "tokens": 6071,
+      "loc": 366
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
