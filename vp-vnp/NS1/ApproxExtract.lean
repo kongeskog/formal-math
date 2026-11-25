@@ -338,14 +338,14 @@ theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : 
           (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))) x)
           (Dt.cons (Dt.quote (ofBits (pre ++ (w ++ [false]))) x) (Dt.quote (.cons .nil .nil) x))
         refine ⟨_, e, .cons ⟨rfl, rfl, ?_, ?_, ?_⟩ .nil⟩
-        · obtain ⟨h1, -, -⟩ := h (w ++ [false]) (KT.inB_full _ hw)
+        · obtain ⟨h1, -, -⟩ := h (w ++ [false]) (KT.lk_full _ hw).2
           simp only [Run.det, tl_cons, names, path_ofBits, List.map_cons,
               List.map_nil, List.prod_cons,
             List.prod_nil, mul_one]
           rw [h1]
-          exact KT.lk_full _ hw
-        · simpa [Run.det, names, path_ofBits] using (h (w ++ [false]) (KT.inB_full _ hw)).2.1
-        · have h3 := (h (w ++ [false]) (KT.inB_full _ hw)).2.2
+          exact (KT.lk_full _ hw).1
+        · simpa [Run.det, names, path_ofBits] using (h (w ++ [false]) (KT.lk_full _ hw).2).2.1
+        · have h3 := (h (w ++ [false]) (KT.lk_full _ hw).2).2.2
           have s1 := size_ofBits (pre ++ (w ++ [false]))
           have s2 := size_ofBits (w.take J)
           have s3 := size_ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J))))

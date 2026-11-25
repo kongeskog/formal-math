@@ -187,9 +187,10 @@ theorem accK_k {g l r : List Bool} (hg : g.length = M) (hl : l.length = M) (hr :
   have h : (g ++ l ++ r).length = M + M + M := by
     simp only [List.length_append, hg, hl, hr]
   rw [e]
-  refine ⟨?_, KT.inB_full _ h⟩
-  have h1 := KT.lk_full (fun w => k (KT.val (w.take M)) (KT.val ((w.drop M).take M)) (KT.val (w.drop (M + M)))) h
-  refine h1.trans ?_
+  obtain ⟨h1, h2⟩ :=
+    KT.lk_full (fun w => k (KT.val (w.take M)) (KT.val ((w.drop M).take M))
+      (KT.val (w.drop (M + M)))) h
+  refine ⟨h1.trans ?_, h2⟩
   have e1 : (g ++ l ++ r).take M = g := by rw [List.append_assoc, List.take_left' hg]
   have e2 : ((g ++ l ++ r).drop M).take M = l := by
     rw [List.append_assoc, List.drop_left' hg, List.take_left' hl]
@@ -204,9 +205,10 @@ theorem accK_l {g p c : List Bool} (hg : g.length = M) (hp : p.length = m) (hc :
   have h : (g ++ p ++ c).length = M + m + 2 := by
     simp only [List.length_append, hg, hp, hc]
   rw [e]
-  refine ⟨?_, KT.inB_full _ h⟩
-  have h1 := KT.lk_full (fun w => lamK (lam (KT.val (w.take M))) (KT.val ((w.drop M).take m)) (decL (w.drop (M + m)))) h
-  refine h1.trans ?_
+  obtain ⟨h1, h2⟩ :=
+    KT.lk_full (fun w => lamK (lam (KT.val (w.take M))) (KT.val ((w.drop M).take m))
+      (decL (w.drop (M + m)))) h
+  refine ⟨h1.trans ?_, h2⟩
   have e1 : (g ++ p ++ c).take M = g := by rw [List.append_assoc, List.take_left' hg]
   have e2 : ((g ++ p ++ c).drop M).take m = p := by
     rw [List.append_assoc, List.drop_left' hg, List.take_left' hp]
