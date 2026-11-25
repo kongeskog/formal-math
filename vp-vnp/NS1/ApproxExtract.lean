@@ -30,7 +30,8 @@ def chT : ℕ → (List Bool → Fm) → Fm
   | 0, f => f []
   | n + 1, f => .ite .guess (chT n fun w => f (true :: w)) (chT n fun w => f (false :: w))
 
-/-- A run that gives budgets and the digits of a counter, and names constants whose product is a coefficient. -/
+/-- A run that gives budgets and the digits of a counter, and names constants whose product is a
+coefficient. -/
 def RelX (κ : List Bool → E) (S : Set (List Bool)) (c : ℕ) (r : Run A) (q : Bt × E × List Bool) : Prop :=
   RelT κ (· ∈ S) c r (.cons q.1.enc (ofBits q.2.2)) q.2.1
 
@@ -179,8 +180,8 @@ noncomputable def xL (J m W : ℕ) : KT E[T;T⁻¹] → List (Bt × E × List Bo
   | .node l r => (xL J m W l).flatMap fun p => (xL J m W r).map fun q =>
       (.node p.1 q.1, p.2.1 * q.2.1, addc false p.2.2 q.2.2)
 
-/-- Pair the budgets and add the counters. The argument is ((data, names), (data, names)) where the data are
-(budgets, counter). -/
+/-- Pair the budgets and add the counters. The argument is ((data, names), (data, names)) where the
+data are (budgets, counter). -/
 def combF : Fm := .cons (.cons (.cons (.hd (.hd (.hd .id))) (.hd (.hd (.tl .id)))) (.quote .nil))
   (.run (.quote AD.code) (.cons (.quote AD.code) (.cons (.quote .nil)
     (.cons (.tl (.hd (.hd .id))) (.tl (.hd (.tl .id)))))))

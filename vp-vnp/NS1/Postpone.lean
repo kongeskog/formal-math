@@ -295,8 +295,8 @@ theorem sum_budg (J : ℕ) (K : KT R) (b : List (List Bool)) (hb : b.length < 2 
       refine List.map_congr_left fun q _ => ?_
       by_cases h3 : ok p.1 (part false b) = true <;> by_cases h4 : ok q.1 (part true b) = true <;> simp [h3, h4]
 
-/-- The names in a tree of names: `nil` and `(nil, nil)` have none, `(x, (_, _))` is the name `x.path`, and
-`((a, b), nil)` has the names of `a` and then those of `b`. -/
+/-- The names in a tree of names: `nil` and `(nil, nil)` have none, `(x, (_, _))` is the name
+`x.path`, and `((a, b), nil)` has the names of `a` and then those of `b`. -/
 def names : Tree → List (List Bool)
   | .nil => []
   | .cons .nil .nil => []
@@ -315,7 +315,8 @@ def leaf (F : Fm) : Fm := .cons F (.quote (.cons .nil .nil))
 /-- A tree of names with the names of `F` and then those of `G`. -/
 def node (F G : Fm) : Fm := .cons (.cons F G) (.quote .nil)
 
-/-- Subtract 1 in a budget at all names of a tree of names; the argument is (this program, (the tree, the budget)). -/
+/-- Subtract 1 in a budget at all names of a tree of names; the argument is (this program, (the
+tree, the budget)). -/
 def CK : Fm :=
   .ite (.hd (.tl .id))
     (.ite (.tl (.hd (.tl .id)))
@@ -326,7 +327,8 @@ def CK : Fm :=
         (.tl (.tl .id))))
     (.tl (.tl .id))
 
-/-- If the names of `o` use up a part of the budget `t`, `CK` gives what is left, within `(60 H + 41) |o|` steps. -/
+/-- If the names of `o` use up a part of the budget `t`, `CK` gives what is left, within `(60 H +
+41) |o|` steps. -/
 theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll (names o) t = some t' →
     ∃ k ≤ (60 * H + 41) * o.size, Dt θ CK (.cons CK.code (.cons o t.enc)) t'.enc k := by
   induction o using names.induct with
@@ -417,7 +419,8 @@ section Weights
 
 variable [Algebra A R]
 
-/-- The weight of a run, if the named constants are `κ`: its weight times the constants its value names. -/
+/-- The weight of a run, if the named constants are `κ`: its weight times the constants its value
+names. -/
 def wt (κ : List Bool → R) (r : Run A) : R := algebraMap A R r.th * ((names r.out).map κ).prod
 
 /-- The value of a list of runs. -/
@@ -448,7 +451,8 @@ theorem mem_simN {t : Bt} {l : List (Run A)} {q : Run A × Bt} (h : q ∈ simN t
     subst hq
     exact ⟨hr, hd⟩
 
-/-- The weights of the runs of `simN` with a used up budget are those of the runs that `ok` accepts. -/
+/-- The weights of the runs of `simN` with a used up budget are those of the runs that `ok` accepts.
+-/
 theorem map_simN (t : Bt) (l : List (Run A)) :
     ((simN t l).flatMap fun q => if q.2.zero then [q] else []).map (fun q => q.1.th) =
       (l.filter fun r => ok t (names r.out)).map Run.th := by

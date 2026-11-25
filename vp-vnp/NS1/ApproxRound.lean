@@ -42,7 +42,8 @@ theorem nds_expand_map {R' : Type} [CommRing R'] (f : R → R') (B : ℕ) (K : K
   | leaf c => simp only [KT.map, KT.expand, KT.nds_comb]
   | node l r ihl ihr => simp only [KT.map, KT.expand, KT.nds, ihl, ihr]
 
-/-- Guess budgets with `g`; run the plain instance of the program `P` on the argument with these budgets. -/
+/-- Guess budgets with `g`; run the plain instance of the program `P` on the argument with these
+budgets. -/
 def rebF (g : Fm) (P : Tree) : Fm := guessF g (app UF.code (ZE (.quote P)))
 
 /-- The universal program on a plain instance: its value is the plain sum. -/

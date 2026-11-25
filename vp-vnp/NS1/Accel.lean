@@ -22,7 +22,8 @@ variable {A : Type} [CommRing A] {R : Type} [CommRing R] [Algebra A R]
 /-- The number of binary digits. -/
 def lg (n : ℕ) : ℕ := Nat.log 2 n + 1
 
-/-- The program `z.hd` at the argument `z.tl`: all runs stop, the accepting ones within `T` steps. -/
+/-- The program `z.hd` at the argument `z.tl`: all runs stop, the accepting ones within `T` steps.
+-/
 def Plain (θ : List Bool → A) (T : ℕ) (z : Tree) : Prop :=
   Hl θ (Fm.ofTree z.hd) z.tl ∧ ∀ r ∈ evl θ (Fm.ofTree z.hd) z.tl, r.cost ≤ T
 
@@ -44,9 +45,9 @@ def CutHyp (θ : List Bool → A) (H C₀ v₀ : ℕ) : Prop :=
   ∀ v, v₀ ≤ v → ∀ α τ s, lg v ^ (C₀ * α) ≤ v → v ^ H ≤ τ → τ ≤ v ^ (H * α) → s * v ^ 48 ≤ τ →
     ∃ G, CutProg θ H v τ s G
 
-/-- The program `D`, with the constants `K` and their powers `2 ^ b`, `b < B`, has the values of all universal plain
-sums of `v ^ H` steps on instances of size `v ^ (H - 32)`; the cost and the size of the value of a run are at most
-`t` together, and the value names constants of `K`. -/
+/-- The program `D`, with the constants `K` and their powers `2 ^ b`, `b < B`, has the values of all
+universal plain sums of `v ^ H` steps on instances of size `v ^ (H - 32)`; the cost and the size of
+the value of a run are at most `t` together, and the value names constants of `K`. -/
 structure IsAccT (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : Tree) : Prop where
   run : ∀ z, z.size ≤ v ^ (H - 32) → Hl θ (Fm.ofTree D) z ∧ ∀ r ∈ evl θ (Fm.ofTree D) z, r.cost + r.out.size ≤ t ∧
     ∀ p ∈ names r.out, K.InB B p
@@ -55,8 +56,8 @@ structure IsAccT (θ : List Bool → A) (H v t : ℕ) (K : KT R) (B : ℕ) (D : 
 
 variable {θ : List Bool → A}
 
-/-- The universal program: it runs the program `z.hd` at `z.tl`, and its value is empty, so that it names no
-constants. -/
+/-- The universal program: it runs the program `z.hd` at `z.tl`, and its value is empty, so that it
+names no constants. -/
 def UF : Fm := .tl (.cons (.run (.hd .id) (.tl .id)) (.quote .nil))
 
 theorem UF_ev {z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree z.hd) z.tl l) :

@@ -223,8 +223,8 @@ end KT
 
 section Formulas
 
-/-- Run `F` and `G`, whose values are pairs (data, tree of names); the value is (`E` of the two data, the names of
-both). `E` reads the data at `.hd (.hd .id)` and `.hd (.tl .id)`. -/
+/-- Run `F` and `G`, whose values are pairs (data, tree of names); the value is (`E` of the two
+data, the names of both). `E` reads the data at `.hd (.hd .id)` and `.hd (.tl .id)`. -/
 def zipF (E F G : Fm) : Fm := lett (.cons F G) (.cons E (node (.tl (.hd .id)) (.tl (.tl .id))))
 
 /-- Pair the data. -/
@@ -234,8 +234,8 @@ def pairE : Fm := .cons (.hd (.hd .id)) (.hd (.tl .id))
 def gbit (p : List Bool) : Fm :=
   .ite .guess (.cons (.quote one) (leaf (.quote (ofBits p)))) (.quote (.cons .nil .nil))
 
-/-- Guess the digits of a number; name the powers of a constant. `ν i` is the exponent in the name that is
-used for the power `2 ^ i`. -/
+/-- Guess the digits of a number; name the powers of a constant. `ν i` is the exponent in the name
+that is used for the power `2 ^ i`. -/
 def gw (ν : ℕ → ℕ) (pre : List Bool) (b : ℕ) : ℕ → ℕ → Fm
   | _, 0 => .quote (.cons .nil .nil)
   | j, n + 1 => zipF pairE (gbit (pre ++ KT.pw (ν (b + j)))) (gw ν pre b (j + 1) n)
@@ -252,8 +252,8 @@ def gt (ν : ℕ → ℕ) (J B : ℕ) : KT R → List Bool → Fm
   | .leaf _, pre => gcomb ν J pre 0 B
   | .node l r, pre => zipF (.cons pairE (.quote .nil)) (gt ν J B l (pre ++ [false])) (gt ν J B r (pre ++ [true]))
 
-/-- A run whose value is (`o`, a tree of names) with weight 1; the constants named multiply to `v`, the names
-satisfy `P`, and cost plus size are at most `c`. -/
+/-- A run whose value is (`o`, a tree of names) with weight 1; the constants named multiply to `v`,
+the names satisfy `P`, and cost plus size are at most `c`. -/
 def RelT (κ : List Bool → R) (P : List Bool → Prop) (c : ℕ) (r : Run A) (o : Tree) (v : R) : Prop :=
   r.th = 1 ∧ r.out.hd = o ∧ ((names r.out.tl).map κ).prod = v ∧ (∀ p ∈ names r.out.tl, P p) ∧
     r.cost + r.out.size ≤ c
@@ -384,8 +384,8 @@ theorem gcomb_ev {J L : ℕ} {pre : List Bool} {c : R} (x : Tree) {n b : ℕ}
     have := hs.2.2.2.2
     nlinarith
 
-/-- Runs of `gt` = budgets. The hypothesis: the names that are used name the right powers, and are not longer than
-`L`. -/
+/-- Runs of `gt` = budgets. The hypothesis: the names that are used name the right powers, and are
+not longer than `L`. -/
 theorem gt_ev {J B L : ℕ} (x : Tree) (K : KT R) (pre : List Bool)
     (h : ∀ p, K.Leaf p → ∀ i < B + J, κ (pre ++ (p ++ KT.pw (ν i))) = K.lk (p ++ KT.pw i) ∧
       P (pre ++ (p ++ KT.pw (ν i))) ∧ (pre ++ (p ++ KT.pw (ν i))).length ≤ L) :

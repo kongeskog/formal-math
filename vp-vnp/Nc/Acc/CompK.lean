@@ -27,7 +27,8 @@ variable {A : Type} [CommRing A] {θ : List Bool → A} {R : Type} [CommRing R] 
 def KV (θ : List Bool → A) (κ : List Bool → R) (S : Set (List Bool)) (F : Fm) (x : Tree) (w : R) (c : ℕ) : Prop :=
   ∃ l, Ev θ F x l ∧ (∀ r ∈ l, r.cost + r.out.size ≤ c ∧ ∀ p ∈ names r.out, p ∈ S) ∧ val κ l = w
 
-/-- The weight of a run after another one whose value it keeps: the first weight times the second. -/
+/-- The weight of a run after another one whose value it keeps: the first weight times the second.
+-/
 theorem wt_seq (κ : List Bool → R) (r s : Run A) : wt κ ((r.seq s).tick s.out) = algebraMap A R r.th * wt κ s := by
   simp [wt, Run.seq, Run.tick, mul_assoc]
 
@@ -255,11 +256,13 @@ theorem LP_kv {D : Tree} {T : ℕ} {κ : List Bool → R} {S : Set (List Bool)} 
 /-- Form the plain instance; the argument is (`z`, (budgets, names)) and `fp` gives the program. -/
 def ZE (fp : Fm) : Fm := .cons (.quote WN.code) (.cons fp (.cons (.hd .id) (.hd (.tl .id))))
 
-/-- Guess with `g`, apply `B` to (argument, guess), and join the names of the guess with those of the value. -/
+/-- Guess with `g`, apply `B` to (argument, guess), and join the names of the guess with those of
+the value. -/
 def guessF (g B : Fm) : Fm := lett (.cons .id g) (node (.tl (.tl .id)) B)
 
-/-- If `g` guesses the data `o q` with names whose constants multiply to `v q`, and `B` has the value `ω (o q)` at
-(argument, guess), then the value of `guessF g B` is the sum over the guesses of `v q * ω (o q)`. -/
+/-- If `g` guesses the data `o q` with names whose constants multiply to `v q`, and `B` has the
+value `ω (o q)` at (argument, guess), then the value of `guessF g B` is the sum over the guesses of
+`v q * ω (o q)`. -/
 theorem guess_kv {β : Type*} {g B : Fm} {z : Tree} {cg d : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
     {lg : List (Run A)} {Q : List β} {o : β → Tree} {v : β → R} {ω : Tree → R} (hg : Ev θ g z lg)
     (rg : List.Forall₂ (fun r q => RelT κ (· ∈ S) cg r (o q) (v q)) lg Q)
@@ -293,13 +296,14 @@ theorem guess_kv {β : Type*} {g B : Fm} {z : Tree} {cg d : ℕ} {κ : List Bool
       omega
     · simp [Run.seq, Run.tick, Run.det, h2]
 
-/-- A round: guess budgets and names with `g`, form the plain instance of `p`, cut it with `G`, apply `F` to
-(`c`, pieces), and join the names that `g` guessed with those of the value. -/
+/-- A round: guess budgets and names with `g`, form the plain instance of `p`, cut it with `G`,
+apply `F` to (`c`, pieces), and join the names that `g` guessed with those of the value. -/
 def stepA (F : Fm) (c G p : Tree) (g : Fm) : Fm := guessF g (app F.code (.cons (.quote c) (app G (ZE (.quote p)))))
 
-/-- **A round.** If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2`, `G` cuts the
-instance of the budgets `q.1` into the pieces `L`, and `F` has the value `ω` at every piece, then the value of the
-round is the sum over the guesses of `q.2` times the weighted sum of `ω` over the pieces. -/
+/-- **A round.** If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2`, `G`
+cuts the instance of the budgets `q.1` into the pieces `L`, and `F` has the value `ω` at every
+piece, then the value of the round is the sum over the guesses of `q.2` times the weighted sum of
+`ω` over the pieces. -/
 theorem stepA_kv {F g : Fm} {c G p z : Tree} {cg tG tF : ℕ} {κ : List Bool → R} {S : Set (List Bool)}
     {lg : List (Run A)} {Q : List (Bt × R)} {L : Tree → List (A × Tree)} {ω : Tree → R}
     (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q)

@@ -24,9 +24,9 @@ variable {A : Type} [CommRing A] {θ : List Bool → A} {R : Type} [CommRing R] 
 /-- 1 + the value of the argument applied to itself. -/
 def diagF (D : Tree) (g : Fm) : Fm := .ite .guess (.quote .nil) (guessF g (app D (ZE (.hd .id))))
 
-/-- If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2` and `D` has the value `ω` at the
-plain instances `zq z z q.1`, then the value of `diagF D g` is `1` plus the sum over the guesses of `q.2` times that
-value. -/
+/-- If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2` and `D` has the
+value `ω` at the plain instances `zq z z q.1`, then the value of `diagF D g` is `1` plus the sum
+over the guesses of `q.2` times that value. -/
 theorem diagF_kv {κ : List Bool → R} {S : Set (List Bool)} {D z : Tree} {g : Fm} {cg tD : ℕ} {lg : List (Run A)}
     {Q : List (Bt × R)} {ω : Tree → R} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q)
     (hD : ∀ q ∈ Q, KV θ κ S (Fm.ofTree D) (zq z z q.1) (ω (zq z z q.1)) tD) :
