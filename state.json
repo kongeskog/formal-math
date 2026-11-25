@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:00:08.266374028Z",
+  "updated_at": "2026-11-25T02:01:08.843646580Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -709,7 +709,7 @@
       "pr": 101,
       "title": "shorten(Nc/Tow): drop dead arithmetic haves and close bookkeeping tails early",
       "author": "kongeskog",
-      "head_sha": "9b60d7936a0b8b27c98553a8c55fbee0dbede969",
+      "head_sha": "cc78cc53c8dcb06ef9c27d60684bee0aafa98f77",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-25T01:54:43Z",
