@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T23:56:24.495032786Z",
+  "updated_at": "2026-11-25T23:57:11.145998117Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 2,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 5
   },
   "leaderboard": [
     {
@@ -87,6 +87,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 151,
+      "title": "Idea: restructure(Paper): flatten single-use clusters in ApproxRound, Laws, Approximate, Gauges; simplify; re-cut",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-25T23:56:45Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/151",
+      "technique": "restructure",
+      "scope": "Paper"
+    },
     {
       "number": 148,
       "title": "Idea: shorten(Nc/Uni,NS1): local simp sets for repeated simp arguments, default proofs for side conditions",
