@@ -3,13 +3,13 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import Nc.Grp.Facts
+import Nc.Grp.Group
 
 /-!
 # The program GROUP: the theorem
 
 For a fixed automaton and a fixed list of roles of laws there is one formula GROUP. Its plain sum at the script of a group
-is the value of the group; accepting runs exist only if the numbers of units are bounded.
+is the value of the group.
 -/
 
 set_option linter.unusedSectionVars false
@@ -40,13 +40,7 @@ def GroupOK {A : Type} [CommRing A] (θ : List Bool → A) {Γ S Q : Type} [Fint
     Plain θ (κ * grpT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))
       (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) ∧
     pv θ (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) =
-      G.grpVal mu (Grp.bval bT) cb P q x ρ n o grp g b ∧
-    (evl θ GROUP (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b)) ≠ [] →
-      (∀ p, grp (Fin.castAdd A' p) = g → ∑ b, ((n p b : ℕ) + n b p) ≤
-        2 * ((Grp.bval bT + (K + K) * (Fintype.card S + 1)) * c / Grp.bval bub + (K + K))) ∧
-      ∀ r : M.R, grp (M.rp r) = g → ∃ ι : Fin (P.num n o r.1 * Grp.bval bub) → (M.kind r.1).I,
-        ∀ ν : (M.kind r.1).CnAt r.2,
-          (o ⟨r.1, ν.1⟩ : ℕ) = (∑ k, ((M.kind r.1).lam + (M.kind r.1).len (ι k) ν.1)) / Grp.bval bub)
+      G.grpVal mu (Grp.bval bT) cb P q x ρ n o grp g b
 
 end Nc.Dl
 
@@ -70,16 +64,9 @@ theorem exists_group (mu : Letter S Unit Γ → Matrix Q Q A) (cb : Option Γ �
   have h2 := wsum_script (cb := cb) (kinds := kinds) (tg := tg) hkey hub hP hmu hx hρ hkind htab' (q := q) (o := o) (n := n)
     (grp := grp) (g := g) b
   obtain ⟨p1, p2⟩ := h1.plain
-  refine ⟨p1, ?_, fun hacc => ?_⟩
-  · rw [p2, ← h2, wsum, List.map_map]
-    congr 1
-    exact List.map_congr_left fun z _ => by simp
-  · have hne : scriptSem (S := S) θ mu cb kinds (bval bT) (bval bub)
-        (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b) .nil ≠ [] := by
-      obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ hacc
-      obtain ⟨-, -, z, hz, -⟩ := h1.evl.1 r hr
-      obtain ⟨z', hz', -⟩ := List.mem_map.1 hz
-      exact List.ne_nil_of_mem hz'
-    exact ⟨fun p hp => count_of_accept hub hx hρ hne hp, fun r hr => outcome_of_accept hub hkind hne hr⟩
+  refine ⟨p1, ?_⟩
+  rw [p2, ← h2, wsum, List.map_map]
+  congr 1
+  exact List.map_congr_left fun z _ => by simp
 
 end Nc.Grp

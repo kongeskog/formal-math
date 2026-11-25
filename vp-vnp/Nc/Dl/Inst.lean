@@ -159,7 +159,7 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
       have := hρ s p
       rw [if_neg (by simp [hf])] at this
       exact this.2
-    obtain ⟨h1, h2, h3⟩ := hGR P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key C.dkey tg bT bub b hC.inj hub hP hx hρ'
+    obtain ⟨h1, h2⟩ := hGR P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key C.dkey tg bT bub b hC.inj hub hP hx hρ'
       hkind
     refine ⟨?_, ?_, h2⟩
     · have hsz := size_scriptT (qn := qn) (cb := cb) (P := P) (q := q) (x := parts ℓ (wordG b0 b1 z)) (ρ := ρ) (n := n)
