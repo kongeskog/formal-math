@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:59:16.358653317Z",
+  "updated_at": "2026-11-25T03:00:26.581826172Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -913,8 +913,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
       "idea": 104,
