@@ -1,7 +1,9 @@
 {
   "claims": {},
   "comments_seen_until": "2026-11-25T19:54:08Z",
-  "dispatched": {},
+  "dispatched": {
+    "143@0d1f8509aa644f773ee215af031f96d469d27aaf": "2026-11-25T20:21:40.027805134Z"
+  },
   "lines": {},
   "line_bases": {},
   "alerts": [

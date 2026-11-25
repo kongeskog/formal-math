@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T20:20:32.327037511Z",
+  "updated_at": "2026-11-25T20:21:40.027805134Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -863,28 +863,14 @@
       "pr": 143,
       "title": "restructure(NS1,Nc/Acc,Paper): programs return the names of their constants, and the interpreter with budgets goes",
       "author": "kongeskog",
-      "head_sha": "675ed8e21c5b46db3894fc052acc307685b8f2c0",
-      "base_sha": "c09569a6ced7e22a454622ff34a33ca85d525a13",
-      "status": "stale",
+      "head_sha": "0d1f8509aa644f773ee215af031f96d469d27aaf",
+      "base_sha": null,
+      "status": "verifying",
       "created_at": "2026-11-25T19:45:54Z",
       "decided_at": null,
-      "metrics": {
-        "tokens": 837290,
-        "loc": 53491,
-        "decls": 4354,
-        "files": 314,
-        "bytes": 3113784,
-        "build_seconds": 475
-      },
-      "base_metrics": {
-        "tokens": 842850,
-        "loc": 54038,
-        "decls": 4383,
-        "files": 315,
-        "bytes": 3133893,
-        "build_seconds": null
-      },
-      "delta": -5560,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
       "gates": [
         {
           "key": "format",
@@ -892,47 +878,39 @@
           "status": "pass"
         },
         {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "34 files changed"
+          "status": "pending"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 842850 → 837290 (-5560)"
+          "status": "pending"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; will be re-verified once approved"
+          "status": "pending"
         },
         {
           "key": "review",
@@ -943,7 +921,7 @@
       ],
       "idea": 133,
       "url": "https://github.com/kongeskog/formal-math/pull/143",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45688419181",
+      "run_url": null,
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
