@@ -1,18 +1,9 @@
 {
   "claims": {},
   "comments_seen_until": "2026-11-25T19:54:08Z",
-  "dispatched": {
-    "144@afd6ccd181805c63a47fac0a21b57bd0b3da5fd0@c21a538eb1986f0d49972d78e3fda80dee1c8ccb@141@9878856abbe1f9f0d99090fc5ed10d1664b88e9c+142@b97faa91c0abec979607e7e5409809451721a489": "2026-11-25T19:54:16.330048446Z"
-  },
-  "lines": {
-    "144@afd6ccd181805c63a47fac0a21b57bd0b3da5fd0": [
-      "141@9878856abbe1f9f0d99090fc5ed10d1664b88e9c",
-      "142@b97faa91c0abec979607e7e5409809451721a489"
-    ]
-  },
-  "line_bases": {
-    "144@afd6ccd181805c63a47fac0a21b57bd0b3da5fd0": "c09569a6ced7e22a454622ff34a33ca85d525a13"
-  },
+  "dispatched": {},
+  "lines": {},
+  "line_bases": {},
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],

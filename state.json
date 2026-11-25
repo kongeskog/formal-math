@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T20:15:53.111598477Z",
+  "updated_at": "2026-11-25T20:20:32.327037511Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -993,7 +993,7 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
-      "tokens": 8491,
+      "tokens": 8460,
       "loc": 639
     },
     {
@@ -1023,13 +1023,13 @@
     },
     {
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
-      "tokens": 6814,
-      "loc": 392
+      "tokens": 6568,
+      "loc": 368
     },
     {
       "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 6619,
-      "loc": 394
+      "tokens": 6557,
+      "loc": 390
     },
     {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
