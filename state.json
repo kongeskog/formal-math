@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:38:50.977504622Z",
+  "updated_at": "2026-11-25T02:40:35.934845549Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,40 +60,40 @@
     }
   },
   "current": {
-    "sha": "3611dabfaa730a1deb9dcef437e02dafefb3e7dc",
-    "at": "2026-11-25T02:38:50.977504622Z",
+    "sha": "5704f77738804355d3346999cda5be5d58772e67",
+    "at": "2026-11-25T02:40:35.934845549Z",
     "metrics": {
-      "tokens": 877385,
-      "loc": 55937,
+      "tokens": 876743,
+      "loc": 55897,
       "decls": 4484,
       "files": 319,
-      "bytes": 3255188,
-      "build_seconds": 432
+      "bytes": 3252869,
+      "build_seconds": 601
     }
   },
   "counts": {
-    "merged": 58,
+    "merged": 59,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 58,
+      "merged": 59,
       "attempts": 62,
-      "saved": 50776
+      "saved": 51418
     }
   ],
   "ideas": [
     {
       "number": 103,
       "title": "Idea: dead-code(Nc/Grp): drop the unused third clause of GroupOK and delete Nc/Grp/Facts.lean",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T05:14:44Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 106,
       "result_delta": -4712,
       "created_at": "2026-11-25T01:57:20Z",
@@ -136,8 +136,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T03:01:18Z",
-      "pr": 101,
-      "result_delta": -2110,
+      "pr": 107,
+      "result_delta": -2752,
       "created_at": "2026-11-24T23:55:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/97",
       "technique": "shorten",
@@ -705,96 +705,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 107,
-      "title": "shorten(Nc/Grp,Nc/Flag): close bookkeeping tails early and drop unused haves",
-      "author": "kongeskog",
-      "head_sha": "e76cf60369139189927b0af2a35f575bab3bd593",
-      "base_sha": "ddce58739bf7acc8df8f5a75df2b0b6398216891",
-      "status": "stale",
-      "created_at": "2026-11-25T02:17:37Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 896308,
-        "loc": 57026,
-        "decls": 4564,
-        "files": 321,
-        "bytes": 3330657,
-        "build_seconds": 479
-      },
-      "base_metrics": {
-        "tokens": 896950,
-        "loc": 57066,
-        "decls": 4564,
-        "files": 321,
-        "bytes": 3332976,
-        "build_seconds": null
-      },
-      "delta": -642,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "16 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 896950 → 896308 (-642)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 97,
-      "url": "https://github.com/kongeskog/formal-math/pull/107",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45531904846",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Nc/Grp,Nc/Flag"
-    },
     {
       "pr": 108,
       "title": "dead-code(*): remove 12 declarations the final theorems do not reach",
