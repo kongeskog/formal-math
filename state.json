@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T07:30:17.920313057Z",
+  "updated_at": "2026-11-25T07:31:20.232380248Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 74,
     "rejected": 2,
-    "open": 1,
+    "open": 2,
     "contributors": 1,
-    "ideas_open": 1
+    "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 74,
-      "attempts": 77,
+      "attempts": 78,
       "saved": 82273
     }
   ],
@@ -90,10 +90,10 @@
     {
       "number": 135,
       "title": "Idea: restructure(Paper/Alternative): the flat hypothesis for points of the cube only",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T10:29:45Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-25T06:40:54Z",
@@ -926,6 +926,74 @@
       "reason": null,
       "technique": "restructure",
       "scope": "NS1/OneCut,Nc/Dl/Num0,Paper/Cuts"
+    },
+    {
+      "pr": 138,
+      "title": "shorten(*): close 24 tactic tails in Paper, Nc/CaseI, Nc/Tow, Nc/Cut and five other files",
+      "author": "kongeskog",
+      "head_sha": "f673390cb97c42e6370e80cd10a22d6238c950c9",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T07:30:58Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 131,
+      "url": "https://github.com/kongeskog/formal-math/pull/138",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "*"
     }
   ],
   "top_files": [
