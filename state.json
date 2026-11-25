@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T00:26:14.305415299Z",
+  "updated_at": "2026-11-25T00:27:56.379302934Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "9789e025ea612638292160d1462bf614b0245b0e",
-    "at": "2026-11-25T00:15:11.592489382Z",
+    "sha": "4a3ae16cd97738d97a775a71ee5fb9b8cf3a0983",
+    "at": "2026-11-25T00:27:56.379302934Z",
     "metrics": {
-      "tokens": 899060,
-      "loc": 57181,
+      "tokens": 898445,
+      "loc": 57160,
       "decls": 4564,
       "files": 321,
-      "bytes": 3339473,
-      "build_seconds": 327
+      "bytes": 3337949,
+      "build_seconds": 234
     }
   },
   "counts": {
-    "merged": 54,
+    "merged": 55,
     "rejected": 2,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 54,
+      "merged": 55,
       "attempts": 57,
-      "saved": 29101
+      "saved": 29716
     }
   ],
   "ideas": [
@@ -95,7 +95,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T03:01:18Z",
       "pr": 99,
-      "result_delta": null,
+      "result_delta": -615,
       "created_at": "2026-11-24T23:55:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/97",
       "technique": "shorten",
@@ -662,76 +662,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 99,
-      "title": "shorten(*): close arithmetic bookkeeping tails with linarith or omega (slice A of #97)",
-      "author": "kongeskog",
-      "head_sha": "f93df003f0ebd7e39e1bb64637f9dc77674074b6",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T00:12:15Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 97,
-      "url": "https://github.com/kongeskog/formal-math/pull/99",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "*"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
