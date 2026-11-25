@@ -112,8 +112,7 @@ theorem prop_approx_acc_step {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (hC : �
       _ ≤ _ := Nat.mul_le_mul_left _ hlg3
   have hlin : 2000 * h * l + 2000 * (h * l) ≤ 2000 * h * lg (u ^ 5) := by
     have := Nat.mul_le_mul_left (2000 * h) (show 2 * l ≤ lg (u ^ 5) by omega)
-    have e : 2000 * h * (2 * l) = 4000 * (h * l) := by ring
-    omega
+    linarith
   have hu5 : u ≤ u ^ 5 := Nat.le_self_pow (by norm_num) u
   have h17 : IsAccA θ (16 * h) (u ^ 5) ((u ^ 5) ^ (16 * h - 17)) K' (B + (2 * 5 + 1) * J) D' := by
     refine hD'.mono ?_ le_rfl
@@ -273,8 +272,7 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
     have e : (4400 * h + 6) * (l - 1) = 4400 * (h * (l - 1)) + 6 * (l - 1) := by ring
     rw [hl, e]
     have : h * l ≤ h * (2 * (l - 1)) := Nat.mul_le_mul_left _ (by omega)
-    have e' : h * (2 * (l - 1)) = 2 * (h * (l - 1)) := by ring
-    omega
+    linarith
   refine ⟨K', 1, D', hacc, hn6, hs6, ?_, ?_⟩
   · rw [hY, pow_two]
     calc K'.ht ≤ K.ht + B + J + m := hh'
