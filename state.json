@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T06:49:35.729342603Z",
+  "updated_at": "2026-11-25T06:51:48.147710181Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 2,
     "contributors": 1,
-    "ideas_open": 4
+    "ideas_open": 3
   },
   "leaderboard": [
     {
@@ -118,10 +118,10 @@
     {
       "number": 133,
       "title": "Idea: restructure(NS1,Nc/Acc): programs return the names of their constants, and the interpreter with budgets goes",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-25T09:51:12Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-25T06:40:51Z",
@@ -863,7 +863,7 @@
       "pr": 132,
       "title": "shorten(Paper): close 23 tactic tails in Fan, Groups, Identity, Alternative",
       "author": "kongeskog",
-      "head_sha": "e13fcdd4dc5d58389fa6df2062165226751d4c27",
+      "head_sha": "7f3a6bba22c6e807bbb42c9506161818e182794b",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-25T06:40:18Z",
@@ -915,8 +915,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "fail",
-          "detail": "Changes requested by kongeskog"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 131,
