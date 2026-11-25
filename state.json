@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:02:25.571678767Z",
+  "updated_at": "2026-11-25T04:03:18.216532681Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 64,
     "rejected": 2,
-    "open": 3,
+    "open": 4,
     "contributors": 1,
     "ideas_open": 3
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 64,
-      "attempts": 69,
+      "attempts": 70,
       "saved": 69548
     }
   ],
@@ -164,7 +164,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T06:40:37Z",
-      "pr": null,
+      "pr": 123,
       "result_delta": null,
       "created_at": "2026-11-25T02:41:34Z",
       "url": "https://github.com/kongeskog/formal-math/issues/110",
@@ -981,8 +981,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 114,
@@ -992,6 +992,75 @@
       "reason": null,
       "technique": "merge",
       "scope": "*"
+    },
+    {
+      "pr": 123,
+      "title": "restructure(Paper/Tree, Paper/Tower): thm_tree over A; tree_towers calls the tower lemmas directly",
+      "author": "kongeskog",
+      "head_sha": "3aab577c15ab4b3de5f8c9deea22fd9a3a349a14",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T04:02:52Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "fail",
+          "detail": "The title must be `<technique>(<scope>): <summary>` where technique is one of `dead-code`, `library`, `merge`, `generalize`, `shorten`, `restructure`; scope is the file or folder under the project directory without `.lean` (for example `Paper/Tree`), or `*` for many; and the summary is 10 to 90 characters. Edit the pull request; no new push is needed."
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 110,
+      "url": "https://github.com/kongeskog/formal-math/pull/123",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": null,
+      "scope": null
     }
   ],
   "top_files": [
