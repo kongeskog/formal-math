@@ -69,8 +69,8 @@ theorem EvOK.hd {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
   · change Rep _ (σ1.regs 3) x
     rw [h13]
     exact hx.mono hh2
-  · intro r hr hb
-    obtain ⟨k1, k2⟩ := h (r.tick r.out.hd) (List.mem_map.2 ⟨r, hr, rfl⟩) hb
+  · intro r hr
+    obtain ⟨k1, k2⟩ := h (r.tick r.out.hd) (List.mem_map.2 ⟨r, hr, rfl⟩)
     rw [cost_tick] at k2
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by linarith⟩
     have hfr : ((.HD, ![σ3.regs 2, σ1.regs 4, σ1.regs 0, σ1.regs 0]) : Rec Kd) ∈ σ3.heap := by
@@ -102,8 +102,8 @@ theorem EvOK.tl {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
   · change Rep _ (σ1.regs 3) x
     rw [h13]
     exact hx.mono hh2
-  · intro r hr hb
-    obtain ⟨k1, k2⟩ := h (r.tick r.out.tl) (List.mem_map.2 ⟨r, hr, rfl⟩) hb
+  · intro r hr
+    obtain ⟨k1, k2⟩ := h (r.tick r.out.tl) (List.mem_map.2 ⟨r, hr, rfl⟩)
     rw [cost_tick] at k2
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by linarith⟩
     have hfr : ((.TL, ![σ3.regs 2, σ1.regs 4, σ1.regs 0, σ1.regs 0]) : Rec Kd) ∈ σ3.heap := by
@@ -142,7 +142,7 @@ theorem EvOK.cons {a b : Fm} {x : Tree} {la lb : List (Run A)} (iha : EvOK θ su
   · change Rep _ (σ2.regs 2) x
     rw [hr2]
     exact hx.mono hh2
-  · intro r hr hb
+  · intro r hr
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by linarith⟩
     have hfr : ((.CO1, ![σ3.regs 2, q, σ2.regs 2, σ2.regs 3]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
@@ -159,9 +159,9 @@ theorem EvOK.cons {a b : Fm} {x : Tree} {la lb : List (Run A)} (iha : EvOK θ su
     · change Rep σ4.heap (σ2.regs 2) x
       rw [hr2]
       exact hx.mono hh4
-    · intro s' hs' hb'
+    · intro s' hs'
       obtain ⟨k1, k2⟩ := h ((r.seq s').tick (.cons r.out s'.out))
-        (List.mem_flatMap.2 ⟨r, hr, List.mem_map.2 ⟨s', hs', rfl⟩⟩) (by simp [Run.tick, Run.seq, hb, hb'])
+        (List.mem_flatMap.2 ⟨r, hr, List.mem_map.2 ⟨s', hs', rfl⟩⟩)
       rw [cost_tick, cost_seq] at k2
       refine ⟨fun σ5 v' ok5 hm5 h51 h52 hh5 hi5 hv' => ?_, by linarith⟩
       have hfr' : ((.CO2, ![σ5.regs 2, σ3.regs 1, σ2.regs 3, σ3.regs 0]) : Rec Kd) ∈ σ5.heap := by
@@ -200,7 +200,7 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
   · change Rep _ (σ2.regs 2) x
     rw [hr2]
     exact hx.mono hh2
-  · intro r hr hb
+  · intro r hr
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by linarith⟩
     have hfr : ((.IT, ![σ3.regs 2, q, σ2.regs 2, σ2.regs 3]) : Rec Kd) ∈ σ3.heap := by
       rw [h32]
@@ -216,12 +216,12 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
       rw [inpA _ _ (by simp) (by simp), hi3, inpA _ _ (by simp) (by simp), inpA _ _ (by simp) (by simp), hi1]
     obtain ⟨y1, y2, y3, hrec4, -, -⟩ := hv4.load ok4
     have hrec4' : ((kb (decide (r.out ≠ .nil)), ![σ4.regs 1, y1, y2, y3]) : Rec Kd) ∈ σ4.heap := hrec4
-    have hks : ∀ s' ∈ L r, s'.bill = [] → KS θ supp .R σ.heap (σ.regs 3) σ.inp s'.out (m ((r.seq s').tick s'.out))
+    have hks : ∀ s' ∈ L r, KS θ supp .R σ.heap (σ.regs 3) σ.inp s'.out (m ((r.seq s').tick s'.out))
         (Bd ((r.seq s').tick s'.out)) ∧ Cc supp * s'.cost + Bd ((r.seq s').tick s'.out) ≤
           B - Cc supp * r.cost - Cc supp := by
-      intro s' hs' hb'
+      intro s' hs'
       obtain ⟨k1, k2⟩ := h ((r.seq s').tick s'.out)
-        (List.mem_flatMap.2 ⟨r, hr, List.mem_map.2 ⟨s', hs', rfl⟩⟩) (by simp [Run.tick, Run.seq, hb, hb'])
+        (List.mem_flatMap.2 ⟨r, hr, List.mem_map.2 ⟨s', hs', rfl⟩⟩)
       rw [cost_tick, cost_seq] at k2
       exact ⟨k1, by linarith⟩
     by_cases ho : r.out = .nil
@@ -243,8 +243,8 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
       · change Rep _ (σ2.regs 2) x
         rw [hr2]
         exact hx.mono hh6
-      · intro s' hs' hb'
-        obtain ⟨k1, k2⟩ := hks s' hs' hb'
+      · intro s' hs'
+        obtain ⟨k1, k2⟩ := hks s' hs'
         refine ⟨?_, k2⟩
         have e1 : (nx θ σ5 (.inl (.i2 bu)) z1 z2 z3).regs 3 = σ.regs 3 := hr3
         have e2 : (nx θ σ5 (.inl (.i2 bu)) z1 z2 z3).inp = σ.inp := by
@@ -269,8 +269,8 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
       · change Rep _ (σ2.regs 2) x
         rw [hr2]
         exact hx.mono hh6
-      · intro s' hs' hb'
-        obtain ⟨k1, k2⟩ := hks s' hs' hb'
+      · intro s' hs'
+        obtain ⟨k1, k2⟩ := hks s' hs'
         refine ⟨?_, k2⟩
         have e1 : (nx θ σ5 (.inl (.i1 bu)) z1 z2 z3).regs 3 = σ.regs 3 := hr3
         have e2 : (nx θ σ5 (.inl (.i1 bu)) z1 z2 z3).inp = σ.inp := by

@@ -39,14 +39,8 @@ theorem exists_theta (A : Type) [CommRing A] [Algebra.FiniteType ℤ A] :
   · refine ((Set.finite_lt_nat gens.length).image fun k => List.replicate k true).subset ?_
     intro p hp
     rw [Function.mem_support] at hp
-    by_cases h : p = List.replicate p.length true
-    · refine ⟨p.length, ?_, h.symm⟩
-      show p.length < gens.length
-      by_contra hlt
-      apply hp
-      simp only [θ]
-      rw [if_pos h, List.getD_eq_default _ _ (not_lt.1 hlt)]
-    · exact absurd (if_neg h) hp
+    -- `θ p ≠ 0` (`hp`) forces `p = List.replicate p.length true` with `p.length < gens.length`
+    grind
   · refine WE.exists_of_adjoin (p₀ := []) ?_ ?_
     · have := hθ 0
       simpa [gens] using this

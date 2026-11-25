@@ -180,7 +180,7 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
       have e2 := Nat.mul_le_mul_right (4 * Grp.bval bub) hcut
       simp only [Tree.size]
       omega
-    · exact ⟨h1.1, fun r hr => ⟨(h1.2 r hr).1,
-        (h1.2 r hr).2.trans (Nat.mul_le_mul_left κ (htB q _ ρ n o b g hx hn ho))⟩⟩
+    · exact ⟨h1.1, fun r hr => (h1.2 r hr).trans
+        (Nat.mul_le_mul_left κ (htB q _ ρ n o b g hx hn ho))⟩
 
 end Nc.Dl

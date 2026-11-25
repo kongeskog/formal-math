@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
 import NS1.Scale
+import Nc.Acc.CompK
 
 /-!
 # The diagonal, over a finite ring
@@ -21,65 +22,27 @@ open _root_.NS1.Tree
 variable {A : Type} [CommRing A] {θ : List Bool → A} {R : Type} [CommRing R] [Algebra A R]
 
 /-- 1 + the value of the argument applied to itself. -/
-def diagF (D : Tree) (g : Fm) : Fm := .ite .guess (.quote .nil) (app D (ZE .id g))
+def diagF (D : Tree) (g : Fm) : Fm := .ite .guess (.quote .nil) (guessF g (app D (ZE (.hd .id))))
 
-theorem diagF_ev {κ : List Bool → R} {D z : Tree} {g : Fm} {cg tD : ℕ} {P : List Bool → Prop} {lg : List (Run A)}
-    {Q : List (Bt × R)} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ P cg) lg Q)
-    (hD : ∀ q ∈ Q, Hl θ (Fm.ofTree D) (zq z z q.1) ∧ ∀ r ∈ evl θ (Fm.ofTree D) (zq z z q.1), r.cost ≤ tD ∧
-      ∀ n ∈ r.bill, P n) :
-    ∃ l, Ev θ (diagF D g) z l ∧ (∀ r ∈ l, r.cost ≤ cg + tD + 30 ∧ ∀ n ∈ r.bill, P n) ∧
-      val κ l = 1 + (Q.map fun q => q.2 * val κ (evl θ (Fm.ofTree D) (zq z z q.1))).sum := by
-  obtain ⟨lZ, eZ, rZ⟩ := ZE_ev (Dt.id z) hg rg
-  have hZ : ∀ s ∈ lZ, ∃ q ∈ Q, wt κ s = q.2 ∧ s.out = zq z z q.1 ∧ (∀ n ∈ s.bill, P n) ∧ s.cost ≤ cg + 1 + 5 :=
-    fun s hs => forall₂_exists rZ hs
-  have eD := Ev.app (p := D) eZ fun s hs => by
-    obtain ⟨q, hq, -, h, -⟩ := hZ s hs
-    rw [h]
-    exact (hD q hq).1
-  set lD := lZ.flatMap fun s => (evl θ (Fm.ofTree D) s.out).map fun t => ((Run.det 1 D).seq s).seq t |>.tick t.out
-    with hlD
-  have e := Ev.ite (b := .quote .nil) (c := app D (ZE .id g)) (L := fun r => if r.out = .nil then lD else [.det 1 .nil])
-    (Ev.guess (θ := θ) z) (fun r _ h => by rw [if_neg h]; exact .quote .nil z) (fun r _ h => by rw [if_pos h]; exact eD)
-  have hl : ([.det 1 .nil, .det 1 Tree.one] : List (Run A)).flatMap (fun r =>
-      (if r.out = .nil then lD else [.det 1 .nil]).map fun s => (r.seq s).tick s.out) =
-      (lD.map fun s => ((Run.det 1 .nil).seq s).tick s.out) ++ [((Run.det 1 Tree.one).seq (.det 1 .nil)).tick .nil] := by
-    simp [Run.det, Tree.one]
-  rw [hl] at e
-  refine ⟨_, e, ?_, ?_⟩
-  · intro r hr
-    rw [List.mem_append] at hr
-    rcases hr with hr | hr
-    · rw [List.mem_map] at hr
-      obtain ⟨u, hu, rfl⟩ := hr
-      obtain ⟨s, hs, t, ht, h1, h2, -, -⟩ := mem_app hu
-      obtain ⟨q, hq, -, h4, h5, h6⟩ := hZ s hs
-      rw [h4] at ht
-      obtain ⟨c1, p1⟩ := (hD q hq).2 t ht
-      refine ⟨?_, ?_⟩
-      · simp only [Run.seq, Run.tick, Run.det] at h1 ⊢
-        omega
-      · intro n hn
-        simp only [Run.seq, Run.tick, Run.det, List.nil_append] at hn
-        rw [h2, List.mem_append] at hn
-        rcases hn with hn | hn
-        · exact h5 n hn
-        · exact p1 n hn
-    · simp only [List.mem_singleton] at hr
-      subst hr
-      refine ⟨?_, ?_⟩
-      · simp only [Run.seq, Run.tick, Run.det]
-        omega
-      · simp [Run.seq, Run.tick, Run.det]
-  · have s1 : val κ (lD.map fun s => ((Run.det 1 .nil).seq s).tick s.out) = val κ lD := by
-      simp [val, Function.comp_def, wt_tick, wt_seq, wt_det]
-    have s2 : val κ lD = (Q.map fun q => q.2 * val κ (evl θ (Fm.ofTree D) (zq z z q.1))).sum := by
-      rw [val_eq_sumF, hlD, sumF_app]
-      simp only [val_eq_sumF]
-      exact sum_rel (c := fun q : Bt × R => q.2) (o := fun q : Bt × R => zq z z q.1)
-        (rZ.imp fun r q hr => ⟨hr.1, hr.2.1⟩)
-    rw [← s2, ← s1]
-    simp only [val, List.map_append, List.sum_append, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      wt_tick, wt_seq, wt_det, mul_one, add_zero]
-    ring
+/-- If `g` guesses the budgets `q.1` with names whose constants multiply to `q.2` and `D` has the
+value `ω` at the plain instances `zq z z q.1`, then the value of `diagF D g` is `1` plus the sum
+over the guesses of `q.2` times that value. -/
+theorem diagF_kv {κ : List Bool → R} {S : Set (List Bool)} {D z : Tree} {g : Fm}
+    {cg tD : ℕ} {lg : List (Run A)}
+    {Q : List (Bt × R)} {ω : Tree → R} (hg : Ev θ g z lg) (rg : List.Forall₂ (RelG κ
+        (· ∈ S) cg) lg Q)
+    (hD : ∀ q ∈ Q, KV θ κ S (Fm.ofTree D) (zq z z q.1) (ω (zq z z q.1)) tD) :
+    KV θ κ S (diagF D g) z (1 + (Q.map fun q => q.2 * ω (zq z z q.1)).sum) (2 * cg + tD + 30) := by
+  have h1 := KV.gives (κ := κ) (S := S) (Gives.quote (θ := θ) .nil z) (by simp [names])
+  have h2 := guess_kv (B := app D (ZE (.hd .id))) (ω :=
+      fun e => ω (.cons WN.code (.cons z (.cons z e)))) hg rg
+    fun q hq u hu => by
+      have hZ : Gives θ (ZE (.hd .id)) (.cons z u) (zq z z q.1) 11 := by
+        simpa [zq, ZE, hu] using (Gives.quote (θ := θ) WN.code (.cons z u)).cons
+          ((Gives.id _).hd.cons ((Gives.id _).hd.cons (Gives.id _).tl.hd))
+      exact KV.app_gives hZ (hD q hq)
+  refine ((KV.either h1 h2).mono ?_).congr (by simp [names, zq])
+  simp only [Tree.size]
+  omega
 
 end NS1

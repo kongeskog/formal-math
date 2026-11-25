@@ -102,11 +102,13 @@ def nameK : Fm := .cons (.quote .nil) (.cons (.quote .nil) (appF topF (appF (.hd
   (appF (.tl (.tl .id)) (.quote (ofBits [false]))))))
 
 /-- An input is read. -/
-def leafB : Fm := .cons (.mul nameL) (.run (.hd (.hd .id)) (.cons (.hd (.hd .id)) (.cons (.hd (.tl (.hd .id)))
+def leafB : Fm := node (leaf nameL) (.run (.hd (.hd .id))
+    (.cons (.hd (.hd .id)) (.cons (.hd (.tl (.hd .id)))
   (.cons (.tl (.hd (.tl (.tl (.hd .id))))) (.tl (.tl (.tl (.hd .id))))))))
 
 /-- A product gate. -/
-def intB : Fm := .cons (.mul nameK) (.run (.hd (.hd .id)) (.cons (.hd (.hd .id)) (.cons (.tl (.hd (.tl (.hd .id))))
+def intB : Fm := node (leaf nameK) (.run (.hd (.hd .id))
+    (.cons (.hd (.hd .id)) (.cons (.tl (.hd (.tl (.hd .id))))
   (.cons (.cons (.hd (.tl .id)) (.cons (.tl (.tl .id)) (.tl (.hd (.tl (.tl (.hd .id)))))))
     (.tl (.tl (.tl (.hd .id))))))))
 
@@ -189,12 +191,16 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
   | zero =>
     have hws0 : ws = [] := List.length_eq_zero_iff.1 (by omega)
     subst hws0
-    refine (KV.ite_false (Gives.id _).tl.tl.hd (KV.of_gives (Gives.quote .nil _))).mono ?_ |>.congr (W_nil E b).symm
+    refine (KV.ite_false (Gives.id _).tl.tl.hd (KV.gives (Gives.quote .nil _)
+        (by simp [names]))).mono ?_ |>.congr (W_nil E b).symm
+    simp only [Tree.size]
     omega
   | succ n ih =>
     cases ws with
     | nil =>
-      refine (KV.ite_false (Gives.id _).tl.tl.hd (KV.of_gives (Gives.quote .nil _))).mono ?_ |>.congr (W_nil E b).symm
+      refine (KV.ite_false (Gives.id _).tl.tl.hd (KV.gives (Gives.quote .nil _)
+          (by simp [names]))).mono ?_ |>.congr (W_nil E b).symm
+      simp only [Tree.size]
       nlinarith
     | cons g ws =>
       have hg : g.length = M := hws g List.mem_cons_self
@@ -217,13 +223,15 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
           (Gives.quote (ofBits []) x)) (walkF_does m T []))
         simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_map, Function.comp_def, one_mul] at hq
         have h := KV.lett (κ := κ) (S := S) (G := leafB) (ω := fun o => κ ([false, true] ++ g ++ o.tl.tl.path ++ lc o.tl.hd
-          ++ [false]) * W E b (ws.map KT.val)) hq (d := (n + 1) * (400 * (M + m) + 2000) + 62 * (M + m) + 600) (by
+          ++ [false]) * W E b (ws.map KT.val)) hq
+          (d := (n + 1) * (400 * (M + m) + 2000) + 70 * (M + m) + 700) (by
             intro q hq
             rw [List.mem_map] at hq
             obtain ⟨p, hp, rfl⟩ := hq
             have hpm := length_of_mem_wd hp
             simp only [tl_cons, hd_cons, path_ofBits]
-            have m1 := KV.mul (κ := κ) (S := S) (nameL_gives (θ := θ) (self := (loopF M m).code) (b := num b) (T := T)
+            have m1 := KV.leaf (κ := κ) (S := S) (nameL_gives (θ := θ) (self := (loopF M m).code)
+                (b := num b) (T := T)
               (g := g) (ws := ws) (acc := p.reverse) (hT p hpm)) (by
                 rw [path_ofBits]
                 exact hS g p.reverse _ hg (by simpa using hpm) (hlc p hpm))
@@ -234,7 +242,10 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
                 (Gives.id _).hd.tl.tl.tl))) (by
                 rw [Fm.ofTree_code]
                 exact ih b ws (by omega) hws')
-            refine (KV.cons m1 r1).mono ?_
+            have hs := size_ofBits ([false, true] ++ g ++ p.reverse ++ lc (look p T) ++ [false])
+            simp only [List.length_append, List.length_reverse, List.length_cons,
+                List.length_nil, hlc p hpm] at hs
+            refine (KV.node m1 r1).mono ?_
             simp only [List.length_reverse]
             omega)
         refine (h.mono (by omega)).congr ?_
@@ -253,7 +264,7 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
             List.flatMap_map, List.map_flatMap] at hq
           have h := KV.lett (κ := κ) (S := S) (G := intB) (ω := fun o => κ ([false, false] ++ g ++ o.tl.hd.path ++ o.tl.tl.path
             ++ [false]) * W E b (KT.val o.tl.hd.path :: KT.val o.tl.tl.path :: ws.map KT.val)) hq
-            (d := (n + 1) * (400 * (M + m) + 2000) + 62 * (3 * M) + 600) (by
+            (d := (n + 1) * (400 * (M + m) + 2000) + 70 * (3 * M) + 700) (by
               intro q hq
               rw [List.mem_flatMap] at hq
               obtain ⟨l, hl, hq⟩ := hq
@@ -261,7 +272,8 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
               have hlm := length_of_mem_wd hl
               have hrm := length_of_mem_wd hr
               simp only [tl_cons, hd_cons, path_ofBits]
-              have m1 := KV.mul (κ := κ) (S := S) (nameK_gives (θ := θ) (self := (loopF M m).code) (b := num (b + 1)) (T := T)
+              have m1 := KV.leaf (κ := κ) (S := S) (nameK_gives (θ := θ) (self := (loopF M m).code)
+                  (b := num (b + 1)) (T := T)
                 (g := g) (ws := ws) (l := l) (r := r)) (by
                   rw [path_ofBits]
                   exact (hk g l r hg hlm hrm).2)
@@ -279,7 +291,9 @@ theorem loopF_kv {M m : ℕ} {T : Tree} {κ : List Bool → R} {S : Set (List Bo
                     · exact hlm
                     · exact hrm
                     · exact hws' w hw))
-              refine (KV.cons m1 r1).mono ?_
+              have hs := size_ofBits ([false, false] ++ g ++ l ++ r ++ [false])
+              simp only [List.length_append, List.length_cons, List.length_nil] at hs
+              refine (KV.node m1 r1).mono ?_
               omega)
           refine ((KV.ite_true (H := .fail) (Gives.id _).tl.hd (by rw [hx]; simp [num]) h).mono ?_).congr ?_
           · omega

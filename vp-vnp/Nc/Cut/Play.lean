@@ -69,14 +69,8 @@ theorem sum_contents_union (h0 h1 : U → A) (e : W) (Seen New : Finset U) (hd :
   · intro y hy
     simp only [Contents, Common, Finset.mem_filter, Finset.mem_product, Finset.mem_univ, true_and,
       Finset.mem_union] at hy ⊢
-    refine ⟨fun a id hn => ?_, fun id hn => by simp [hn]⟩
-    by_cases h : id ∈ New
-    · simp [h]
-    · simp only [h, if_false]
-      apply hy.1
-      rintro ⟨h1 | h1, h2⟩
-      · exact hn ⟨h1, h2⟩
-      · exact h h1
+    -- first component by cases on `id ∈ New`, outside `New` by `hy.1`; the second by `hn`
+    grind
   · rintro ⟨y, z⟩ hp
     simp only [Contents, Common, Finset.mem_filter, Finset.mem_product, Finset.mem_univ, true_and,
       Finset.mem_union] at hp ⊢

@@ -260,11 +260,9 @@ theorem dstepsF_does (n : List Bool) (sts : List DStep) {wf : Fm} {x W : Tree} {
       rw [← path_ofBits a, h, path_ofBits]
     intro st st' h
     cases st <;> cases st' <;> simp only [DStep.tree, Tree.cons.injEq, num] at h <;>
-      simp only [reduceCtorEq, false_and, and_false, true_and] at h
-    · rw [hob _ _ h.1, h.2]
-    · rw [hob _ _ h.1, hob _ _ h.2.1, hob _ _ h.2.2.1, h.2.2.2]
-    · rw [hob _ _ h.1, hob _ _ h.2]
-    · rw [hob _ _ h]
+      simp only [reduceCtorEq, false_and, and_false, true_and] at h <;>
+      -- in each case `hob` turns the equal bit-trees in `h` into equal fields
+      grind
   have hF' : ∀ (st : DStep) W, F st.tree W = f st W := by
     intro st W
     obtain ⟨st', h1, h2⟩ := hF st
@@ -460,11 +458,8 @@ theorem tmsF_gives {wf : Fm} {x W : Tree} {cw c : ℕ} {ts : List Tm} (hw : Give
   classical
   let g : Tree → Tree := fun y => if h : ∃ t ∈ ts, t.tree = y then h.choose.expand (gets W) else .nil
   have hg : ∀ y ∈ ts.map Tm.tree, ∃ t ∈ ts, t.tree = y ∧ g y = t.expand (gets W) := by
-    intro y hy
-    rw [List.mem_map] at hy
-    obtain ⟨t, ht, rfl⟩ := hy
-    have h : ∃ t' ∈ ts, t'.tree = t.tree := ⟨t, ht, rfl⟩
-    exact ⟨h.choose, h.choose_spec.1, h.choose_spec.2, dif_pos h⟩
+    -- `y = t.tree` for some `t ∈ ts`; take the chosen witness of the `dif` in `g`
+    grind
   have hall : ∀ t ∈ ts, g t.tree = t.expand (gets W) := by
     intro t ht
     obtain ⟨t', ht', h1, h2⟩ := hg t.tree (List.mem_map.2 ⟨t, ht, rfl⟩)
@@ -475,11 +470,9 @@ theorem tmsF_gives {wf : Fm} {x W : Tree} {cw c : ℕ} {ts : List Tm} (hw : Give
     -- both are the value of the program at the same tree
     have h3 := e1.evl.2 fun o => if o = t.expand (gets W) then 1 else 0
     have h4 := e2.evl.2 fun o => if o = t.expand (gets W) then 1 else 0
-    rw [h3] at h4
-    simp only [wsum_cons, wsum_nil, if_true, mul_one, add_zero, one_mul] at h4
-    by_contra hne
-    rw [if_neg hne] at h4
-    exact one_ne_zero h4
+    -- `h3`, `h4` give the same sum as the weight of the indicator of `t.expand (gets W)` at
+    -- `t.expand (gets W)` and at `t'.expand (gets W)`, so the second is `1` too
+    simp_all
   have := mapF_gives (step := tmF (.tl .id) (.hd .id)) (g := g) (d := fun _ => c + 20) (xs := ts.map Tm.tree) hw
     (Gives.quote (θ := θ) (listT (ts.map Tm.tree)) x) (by
       intro y hy

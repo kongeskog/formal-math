@@ -8,10 +8,11 @@ import Mathlib
 /-!
 # Sum machines
 
-Data are binary trees. A program is a formula of a small functional language; it is applied to a tree. A formula may
-guess a bit, reject, multiply the weight of the run by a fixed constant `θ` of the ring `A` (named by a list of
-bits), or by a constant that is *only named* (`mul`); the names are kept in the *bill* of the run. `run a b` applies
-the program that is the value of `a` to the value of `b`. Every step costs 1.
+Data are binary trees. A program is a formula of a small functional language; it is applied to a
+tree. A formula may guess a bit, reject, or multiply the weight of the run by a fixed constant `θ`
+of the ring `A` (named by a list of bits). `run a b` applies the program that is the value of `a` to
+the value of `b`. Every step costs 1. The other constants a program wants are named in its value,
+as a tree of names (`names` and `WN` in `NS1/Postpone.lean`).
 
 `Ev θ F x l`: all runs of the formula `F` at the tree `x` stop, and `l` is the list of the accepting runs.
 -/
@@ -139,8 +140,6 @@ inductive Fm where
   | fail
   /-- multiply the weight by the constant of `A` that is named by the value of `a` -/
   | theta (a : Fm)
-  /-- multiply the weight by the constant that is named by the value of `a` -/
-  | mul (a : Fm)
 
 namespace Fm
 
@@ -156,7 +155,6 @@ def code : Fm → Tree
   | guess => .cons (num 7) .nil
   | fail => .cons (num 8) .nil
   | theta a => .cons (num 9) a.code
-  | mul a => .cons (num 10) a.code
 
 /-- Every tree is read as a formula. -/
 def ofTree : Tree → Fm
@@ -173,7 +171,6 @@ def ofTree : Tree → Fm
     | 7 => guess
     | 8 => fail
     | 9 => theta (ofTree a)
-    | 10 => mul (ofTree a)
     | _ => fail
   termination_by x => x.size
   decreasing_by
@@ -197,33 +194,30 @@ theorem ofTree_code (F : Fm) : ofTree F.code = F := by
   | guess => rw [code, ofTree]; simp
   | fail => rw [code, ofTree]; simp
   | theta a ih => rw [code, ofTree]; simp [ih]
-  | mul a ih => rw [code, ofTree]; simp [ih]
 
 end Fm
 
 variable {A : Type} [CommRing A]
 
-/-- An accepting run: its cost, its weight, the names of the constants it wants, its value. -/
+/-- An accepting run: its cost, its weight, its value. -/
 structure Run (A : Type) where
   /-- number of steps -/
   cost : ℕ
   /-- weight -/
   th : A
-  /-- names of constants that the run multiplies by -/
-  bill : List (List Bool)
   /-- value -/
   out : Tree
 
 namespace Run
 
 /-- One run after the other. -/
-def seq (r s : Run A) : Run A := ⟨r.cost + s.cost, r.th * s.th, r.bill ++ s.bill, s.out⟩
+def seq (r s : Run A) : Run A := ⟨r.cost + s.cost, r.th * s.th, s.out⟩
 
 /-- One more step, with value `o`. -/
-def tick (r : Run A) (o : Tree) : Run A := ⟨r.cost + 1, r.th, r.bill, o⟩
+def tick (r : Run A) (o : Tree) : Run A := ⟨r.cost + 1, r.th, o⟩
 
 /-- A run without guesses and weights. -/
-def det (k : ℕ) (o : Tree) : Run A := ⟨k, 1, [], o⟩
+def det (k : ℕ) (o : Tree) : Run A := ⟨k, 1, o⟩
 
 end Run
 
@@ -244,9 +238,7 @@ inductive Ev (θ : List Bool → A) : Fm → Tree → List (Run A) → Prop
   | guess (x : Tree) : Ev θ .guess x [.det 1 .nil, .det 1 Tree.one]
   | fail (x : Tree) : Ev θ .fail x []
   | theta {a : Fm} {x : Tree} {l : List (Run A)} : Ev θ a x l →
-      Ev θ (.theta a) x (l.map fun r => ⟨r.cost + 1, r.th * θ r.out.path, r.bill, .nil⟩)
-  | mul {a : Fm} {x : Tree} {l : List (Run A)} : Ev θ a x l →
-      Ev θ (.mul a) x (l.map fun r => ⟨r.cost + 1, r.th, r.bill ++ [r.out.path], .nil⟩)
+      Ev θ (.theta a) x (l.map fun r => ⟨r.cost + 1, r.th * θ r.out.path, .nil⟩)
 
 variable {θ : List Bool → A}
 
@@ -276,7 +268,6 @@ theorem Ev.unique {F : Fm} {x : Tree} {l l' : List (Run A)} (h : Ev θ F x l) (h
   | guess x => cases h'; rfl
   | fail x => cases h'; rfl
   | theta _ ih => cases h' with | theta h => rw [ih h]
-  | mul _ ih => cases h' with | mul h => rw [ih h]
 
 variable (θ) in
 /-- All runs stop. -/
@@ -316,7 +307,7 @@ theorem Dt.quote (c x : Tree) : Dt θ (.quote c) x c 1 := Ev.quote c x
 theorem Dt.id (x : Tree) : Dt θ .id x x 1 := Ev.id x
 
 /-- Weights and costs of runs after a step without guesses. -/
-def Run.delay (k : ℕ) (r : Run A) : Run A := ⟨k + r.cost, r.th, r.bill, r.out⟩
+def Run.delay (k : ℕ) (r : Run A) : Run A := ⟨k + r.cost, r.th, r.out⟩
 
 section
 
@@ -375,7 +366,8 @@ def lett (e body : Fm) : Fm := .run (.quote body.code) e
 
 theorem Ev.lett {e body : Fm} {x : Tree} {le : List (Run A)} (he : Ev θ e x le)
     (h : ∀ s ∈ le, Hl θ body s.out) : Ev θ (lett e body) x
-      (le.flatMap fun s => (NS1.evl θ body s.out).map fun t => ⟨s.cost + t.cost + 2, s.th * t.th, s.bill ++ t.bill, t.out⟩) := by
+      (le.flatMap fun s => (NS1.evl θ body s.out).map fun t => ⟨s.cost + t.cost + 2,
+          s.th * t.th, t.out⟩) := by
   have := Ev.run' (Dt.quote (θ := θ) body.code x) he (fun r hr s hs => by
     simp only [List.mem_singleton] at hr
     subst hr
@@ -388,7 +380,7 @@ theorem Ev.lett {e body : Fm} {x : Tree} {le : List (Run A)} (he : Ev θ e x le)
   refine List.flatMap_congr fun s _ => ?_
   simp only [Run.det, Fm.ofTree_code]
   refine List.map_congr_left fun r _ => ?_
-  simp only [Run.seq, Run.tick, one_mul, List.nil_append, Run.mk.injEq, and_true]
+  simp only [Run.seq, Run.tick, one_mul, Run.mk.injEq, and_true]
   omega
 
 end NS1

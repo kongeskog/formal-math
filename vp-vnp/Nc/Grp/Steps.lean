@@ -85,13 +85,8 @@ theorem sum_eq_exec (l : List (WStep F Ce W)) (hl : Seq l) (G : (Ce → W) → F
       rw [List.map_cons, List.prod_cons, phi, mul_assoc, sum_mul]
       refine sum_congr rfl fun ω hω => ?_
       obtain ⟨e1, e2⟩ := hr ω hω y σ hy'
-      have e3 : (∀ c ∈ s.wr, y c = s.v ω y c) ↔ ∀ c ∈ s.wr, y c = s.v ω σ c := by
-        constructor
-        · intro h c hc
-          rw [← e2 c hc, h c hc]
-        · intro h c hc
-          rw [e2 c hc, h c hc]
-      simp only [e3, e1, ite_mul, zero_mul]
+      -- the weight `e1`, and the written values agree on `s.wr` by `e2`
+      grind
     rw [sum_congr rfl h1, sum_comm, exec]
     refine sum_congr rfl fun ω _ => ?_
     rw [← ih hl, mul_sum, ← sum_filter, filter_filter]

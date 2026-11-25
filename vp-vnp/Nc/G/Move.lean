@@ -56,7 +56,8 @@ theorem uwList_inj {ids : List (Uid A U0 N U1)} {y y' : Uid A U0 N U1 → UW ub}
     intro i hi
     rcases List.mem_cons.1 hi with rfl | hi
     · exact uwBits_inj (h _ List.mem_cons_self) (h' _ List.mem_cons_self) e1
-    · exact ih (fun i hi => h i (List.mem_cons_of_mem _ hi)) (fun i hi => h' i (List.mem_cons_of_mem _ hi)) e2 i hi
+    -- `ih` with `h`, `h'` restricted to the tail, at `e2`
+    · grind
 
 /-- Two copies of a slot agree if the units do. -/
 theorem slotBits_eq_iff {t : ℕ} {ids : List (Uid A U0 N U1)} {y y' : Uid A U0 N U1 → UW ub}
@@ -217,9 +218,8 @@ theorem sum_outTab (hub : 0 < ub) {m B : ℕ} (hm : L.Le m) (hB : B * (m + L.lam
         exact Fin.ext (by simpa using this.symm)
       · rintro rfl p ν
         rfl
-    by_cases h : o = fun ν => (⟨cnt i ν, hlt i ν⟩ : Fin U1)
-    · rw [if_pos h, if_pos (key.2 h)]
-    · rw [if_neg h, if_neg fun h' => h (key.1 h')]
+    -- the two conditions agree by `key`
+    grind
   simp only [e2]
   have swap : (∑ o : L.Cn → Fin U1, ∑ i : Fin B → L.I,
       ∑ g : (ν : L.Cn) → (k : Fin B) → Fin (L.len (i k) ν) → Bool,
@@ -228,10 +228,6 @@ theorem sum_outTab (hub : 0 < ub) {m B : ℕ} (hm : L.Le m) (hB : B * (m + L.lam
       ∑ i : Fin B → L.I, ∑ g : (ν : L.Cn) → (k : Fin B) → Fin (L.len (i k) ν) → Bool,
         ∏ p, ∏ k, L.tab p (i k) (fun e => X p k e) (fun ν => g ν k) := by
     rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun g _ => ?_
-    rw [Finset.sum_ite_eq']
     simp
   rw [swap, ← L.pow B X]
 
@@ -246,9 +242,8 @@ theorem sum_codeTab_zero (hub : 0 < ub) {m B : ℕ} (hm : L.Le m) (hB : B * (m +
     have hSl : IsEmpty L.Sl := ⟨fun e => hRo.elim (L.a e)⟩
     have hI : IsEmpty (Fin B → L.I) := ⟨fun i => h ⟨i, fun ν => hCn.elim ν⟩⟩
     have := L.pow B X
-    rw [if_pos fun e => hSl.elim e, Fintype.sum_empty] at this
-    have h0 : ∀ a : F, a = 0 := fun a => by rw [← mul_one a, this, mul_zero]
-    exact h0 _
+    -- with `L.Sl` empty (`hSl`) `this` says `1 = 0` in `F`
+    simp_all
   rw [contract (fun ν => chCode_injective hub hm hB ν) (L.conn_pow B) (outTab L ub X o)]
   refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun g _ => ?_
   by_contra hne
@@ -379,12 +374,8 @@ theorem move_outcome (oo : (M.kind x).Cn → Fin U1) :
     have hoo : (fun ν => upd M o x oo ⟨x, ν⟩) = oo := funext fun ν => upd_self o x oo ν
     rw [role_eq_codeTab (X := X), hoo]
     · exact codeTab_congr _ _ _ fun ν hν => funext fun k => key z hz _ _ _ (holds_new hν k)
-    · intro e id hid
-      rw [hext z p e.1 id hid]
-      obtain ⟨e, he⟩ := e
-      rcases he with he | he
-      · rw [← he]; exact (hne e id hid).1
-      · rw [← he]; exact (hne e id hid).2
+    -- `hext` reduces to `y`, and `hne` gives both ends of the slot
+    · grind
     · intro k e
       rw [hX]
       simp only

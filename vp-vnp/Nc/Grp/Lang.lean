@@ -116,7 +116,7 @@ theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Do
   obtain ⟨l', f1, f2, f3⟩ := hH
   have hout : ∀ r ∈ l, r.out = .nil := by
     intro r hr
-    obtain ⟨-, -, q, hq, h⟩ := e2 r hr
+    obtain ⟨-, q, hq, h⟩ := e2 r hr
     rw [List.mem_singleton] at hq
     subst hq
     exact h.symm
@@ -124,9 +124,9 @@ theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Do
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, rfl⟩ := hu
-    obtain ⟨a1, a2, -⟩ := e2 r hr
-    obtain ⟨b1, b2, q, hq, b3⟩ := f2 s hs
-    refine ⟨by simp [Run.seq, Run.tick, a1, b1], ?_, (a * q.1, q.2), List.mem_map.2 ⟨q, hq, rfl⟩, b3⟩
+    obtain ⟨a2, -⟩ := e2 r hr
+    obtain ⟨b2, q, hq, b3⟩ := f2 s hs
+    refine ⟨?_, (a * q.1, q.2), List.mem_map.2 ⟨q, hq, rfl⟩, b3⟩
     simp only [Run.seq, Run.tick]
     omega
   · rw [sum_flatMap_map]
