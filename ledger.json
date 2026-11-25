@@ -13,10 +13,12 @@
       "at": "2026-11-25T01:37:09Z"
     }
   },
-  "comments_seen_until": "2026-11-25T01:43:37Z",
+  "comments_seen_until": "2026-11-25T01:57:47Z",
   "dispatched": {},
   "lines": {},
   "line_bases": {},
   "alerts": [],
-  "format_notified": []
+  "format_notified": [
+    104
+  ]
 }
