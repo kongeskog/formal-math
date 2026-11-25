@@ -215,6 +215,8 @@ theorem MX.total {x : XP P} {bits : List Bool} (hx : MX x bits) :
     Finset.sum_congr rfl fun b _ => e8 b, Finset.sum_congr rfl fun k _ => e9 k]
   simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
   unfold tU
-  linarith
+  have e10 : ∀ a b c d e f g h' : ℕ, a + b + c + d + e + f + g + h' = a + b + c + d + e + (f + g + h') := by
+    intros; omega
+  rw [e10, e6]
 
 end Nc.Uni

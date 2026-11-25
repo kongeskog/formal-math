@@ -83,7 +83,14 @@ theorem sum_perm_eq [DecidableEq C] (w : C → C → R) :
   rw [← Finset.sum_filter]
   symm
   refine Finset.sum_bij' (i := fun f hf => Equiv.ofBijective f (Finset.mem_filter.1 hf).2)
-    (j := fun σ _ => (σ : C → C)) ?_ ?_ ?_ ?_ ?_ <;> simp
+    (j := fun σ _ => (σ : C → C)) ?_ ?_ ?_ ?_ ?_
+  · simp
+  · intro σ _
+    simp only [mem_filter, mem_univ, true_and]
+    exact σ.bijective
+  · intros; rfl
+  · intros; ext; rfl
+  · intros; rfl
 
 /-- The permanent is a coefficient. -/
 theorem permanent_eq_coeff [DecidableEq C] (M : Matrix C C R) :
