@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:18:30.806531031Z",
+  "updated_at": "2026-11-25T03:19:49.339972025Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "564b09bbb18df59483c753b7fcb718b955d6f8f8",
-    "at": "2026-11-25T03:02:39.216331931Z",
+    "sha": "3b6bddf8e4ac30a5c229609cfdaa8dcf85085b96",
+    "at": "2026-11-25T03:19:49.339972025Z",
     "metrics": {
-      "tokens": 873808,
-      "loc": 55759,
-      "decls": 4474,
+      "tokens": 872425,
+      "loc": 55697,
+      "decls": 4462,
       "files": 318,
-      "bytes": 3241318,
-      "build_seconds": 240
+      "bytes": 3234616,
+      "build_seconds": 407
     }
   },
   "counts": {
-    "merged": 60,
+    "merged": 61,
     "rejected": 3,
-    "open": 3,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 60,
+      "merged": 61,
       "attempts": 66,
-      "saved": 54353
+      "saved": 55736
     }
   ],
   "ideas": [
@@ -192,8 +192,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T05:00:03Z",
-      "pr": 105,
-      "result_delta": -14853,
+      "pr": 108,
+      "result_delta": -16236,
       "created_at": "2026-11-25T01:57:18Z",
       "url": "https://github.com/kongeskog/formal-math/issues/102",
       "technique": "dead-code",
@@ -790,96 +790,6 @@
   ],
   "open": [
     {
-      "pr": 108,
-      "title": "dead-code(*): remove 12 declarations the final theorems do not reach",
-      "author": "kongeskog",
-      "head_sha": "b5733de67cddf179136fa2c22e48e93d14c2e76e",
-      "base_sha": "ddce58739bf7acc8df8f5a75df2b0b6398216891",
-      "status": "stale",
-      "created_at": "2026-11-25T02:27:56Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 895567,
-        "loc": 57004,
-        "decls": 4552,
-        "files": 321,
-        "bytes": 3326274,
-        "build_seconds": 425
-      },
-      "base_metrics": {
-        "tokens": 896950,
-        "loc": 57066,
-        "decls": 4564,
-        "files": 321,
-        "bytes": 3332976,
-        "build_seconds": null
-      },
-      "delta": -1383,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "12 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 896950 → 895567 (-1383)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 102,
-      "url": "https://github.com/kongeskog/formal-math/pull/108",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45533134641",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "dead-code",
-      "scope": "*"
-    },
-    {
       "pr": 117,
       "title": "restructure(Paper): prove thm_noacc through the approximate rounds, delete the exact round",
       "author": "kongeskog",
@@ -952,7 +862,7 @@
           "key": "fresh",
           "label": "Verified on current main",
           "status": "pending",
-          "detail": "Passed on today's main; merges after the changes queued ahead of it (#108)"
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
