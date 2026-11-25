@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T19:40:07.475474460Z",
+  "updated_at": "2026-11-25T19:42:46.041764992Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -863,7 +863,7 @@
       "pr": 141,
       "title": "shorten(*): close 47 tactic tails with grind or simp_all in 18 files of Nc, NS1 and Paper",
       "author": "kongeskog",
-      "head_sha": "bce0689cefe9fec7b4c754e3c98dd069cbde9337",
+      "head_sha": "9878856abbe1f9f0d99090fc5ed10d1664b88e9c",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-25T19:39:15Z",
@@ -915,8 +915,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
       "idea": 131,
