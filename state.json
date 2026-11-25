@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:48:28.312473258Z",
+  "updated_at": "2026-11-25T04:53:57.593844087Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -966,7 +966,7 @@
       "pr": 127,
       "title": "shorten(*): last sweep of #97, slice 2: dead haves and early stops in 16 files",
       "author": "kongeskog",
-      "head_sha": "e49dedff77dab2a85279468cb3bbd6201a1fdb45",
+      "head_sha": "8c7973f5d780a6f715bc2fd535cde2a17ad1fa44",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-25T04:47:19Z",
