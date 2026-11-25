@@ -1285,7 +1285,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       have : V ≤ V ^ 9 := Nat.le_self_pow (by norm_num) V
       omega
 
-/-- **Paper: Theorem thm:tree.** "There is a constant C with the following property. Let M ≥ 2, let ℓ, N ≥ 1, and let a
+/- **Paper: Theorem thm:tree.** "There is a constant C with the following property. Let M ≥ 2, let ℓ, N ≥ 1, and let a
 network over A have at most M nodes, no unit from a node to itself, and at most N units at each node. Its
 value is the sum, over a set of choices o (sequences of good outcomes), of values of networks with the following
 properties. Put Λ = (lg M)^C, where lg M = ⌊log M⌋+1, and γ = 1/log b. (a) The nodes form a rooted tree of depth at most
@@ -1304,29 +1304,9 @@ The structure ThinTrees states only what the proof of Proposition prop:pieces us
 the total of the units over all nodes in (b) (it bounds the total of the loads instead), the count of layers in (c), or
 the form of the test for good outcomes; what a node ever holds (seenAt) is bounded against the loads (copies_le). Units
 from a node to itself are also allowed: they stay, and their node sums over them (the printed formula is the case
-without them). The operations of (d) are those of a straight-line program that may depend on M, N and ℓ. -/
-theorem thm_tree {A : Type} [CommRing A] {h : ℕ} [NeZero h]
-    (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
-    (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
-    ∃ C : ℕ, ∀ (M AA N ℓ : ℕ), 2 ≤ M → AA ≤ M → 1 ≤ N → 1 ≤ ℓ →
-      Nonempty (ThinTrees A ((univ : Finset VL.Di).toList.map VL.L) AA N ℓ M
-        (2 ^ ee h) C (1 / Real.logb 2 ((2 ^ ee h : ℕ) : ℝ))) := by
-  have he : 2 ≤ ee h := by
-    unfold Nc.Tower.ee
-    have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
-    omega
-  have htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ) := by
-    have : (4 : ℝ) ≤ ((2 ^ ee h : ℕ) : ℝ) := by
-      exact_mod_cast Nat.pow_le_pow_right (show 0 < 2 by norm_num) he
-    linarith
-  obtain ⟨c, hc⟩ := tree_towers VL h3 (by linarith) htwo
-  refine ⟨cTree c, fun M AA N ℓ hM hAA hN hℓ => ?_⟩
-  obtain ⟨J, m, Uu, T, Rt, FL, hC, hX1, hX2, hm1, hm2, hUu⟩ := hc M (by omega)
-  have e : Real.logb 2 ((2 ^ ee h : ℕ) : ℝ) = (ee h : ℝ) := by
-    push_cast
-    rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num), mul_one]
-  rw [e]
-  exact exists_thinTrees Rt FL hC le_rfl hm1 hm2 hUu hM hX1 hX2 hAA hN hℓ
+without them). The operations of (d) are those of a straight-line program that may depend on M, N and ℓ.
+It is applied in the proof of Proposition prop:pieces, as `tree_towers` (the towers for at least M nodes) followed by
+`exists_thinTrees` (the thin trees from one tower), with γ = 1/e(h) = 1/log b. -/
 
 end Thm
 

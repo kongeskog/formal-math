@@ -632,7 +632,7 @@ hold and the zeros in slots. What a table does is given by the units and the num
 because the kind of each role is one of the fixed list of roles of the relay and the laws. A step is one binary
 operation on numbers below v^C, in a program that may depend on v, T and k. The proof applies Lemma lem:runnet
 (Nc.G.start for the value, Nc.Dl.init_count for the units of a node), then Theorem
-thm:tree, and calls the nodes heavy as printed. -/
+thm:tree (`tree_towers` and `exists_thinTrees`), and calls the nodes heavy as printed. -/
 theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
     ∃ a e : ℕ, 300 ≤ e ∧ ∀ (Γ S Q : Type) [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q]
@@ -641,11 +641,16 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
         ∀ T k, v ^ a ≤ T → 2 ≤ k → k ≤ v ^ 64 →
           Nonempty (PieceCut (kindList A ((univ : Finset VL.Di).toList.map VL.L)) mu v K T k C) := by
   classical
-  obtain ⟨C₀, htree⟩ := thm_tree VL h3 hgain
-  have hq : 0 < ee h := by
+  have he : 2 ≤ ee h := by
     unfold Nc.Tower.ee
     have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
     omega
+  have htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ) := by
+    have : (4 : ℝ) ≤ ((2 ^ ee h : ℕ) : ℝ) := by
+      exact_mod_cast Nat.pow_le_pow_right (show 0 < 2 by norm_num) he
+    linarith
+  obtain ⟨ct, htow⟩ := tree_towers VL h3 (by linarith) htwo
+  generalize hC₀ : cTree ct = C₀
   generalize he : 300 * ee h + 64 = e
   generalize ha' : (e + 2) * (C₀ + 2) + 300 = a'
   refine ⟨a' + e + 3, e, by omega, fun Γ S Q _ _ _ _ _ _ mu => ?_⟩
@@ -677,20 +682,17 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   obtain ⟨b1, b2, b3, b4, b5, b6, b7⟩ := pieces_numbers (σ := σ) hc0 (by omega) hv (by omega) hMv ha'.le hT
     hub hload
   have hload1 : 1 ≤ load := (Nat.le_add_left 1 _).trans b7
-  obtain ⟨TT⟩ := htree (K + K) (K + K) load ub (by omega) le_rfl hload1 b1
+  obtain ⟨J, m, Uu, Tw, Rt, FL, hct, hX1, hX2, hm1, hm2, hUu⟩ := htow (K + K) (by omega)
+  obtain ⟨TT⟩ := exists_thinTrees Rt FL hct hC₀.le hm1 hm2 hUu (by omega) hX1 hX2 le_rfl hload1 b1
   have hk64 : k ≤ v ^ 300 := hk'.trans (vp (by norm_num))
   have hkM : k ≤ 4 * (K + K) := by
     have : v ^ 64 ≤ K := hK ▸ vp (by omega)
     omega
-  have hγ : (1 / Real.logb 2 ((2 ^ ee h : ℕ) : ℝ)) = 1 / (ee h : ℝ) := by
-    push_cast
-    rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num), mul_one]
   have hnode : ∀ X : ℕ, (X : ℝ) ≤ (lg (K + K) ^ C₀ : ℕ) *
-      ((K + K : ℕ) : ℝ) ^ (1 - 1 / Real.logb 2 ((2 ^ ee h : ℕ) : ℝ)) * (load + ((K + K : ℕ) : ℝ) ^ 2) →
+      ((K + K : ℕ) : ℝ) ^ (1 - 1 / (ee h : ℝ)) * (load + ((K + K : ℕ) : ℝ) ^ 2) →
       X * v ^ 300 ≤ yhat load (K + K) C₀ := by
     intro X hX
-    rw [hγ] at hX
-    refine pieces_gain hq (by omega) ?_ (R := load + (K + K) ^ 2) (by push_cast at hX ⊢; exact hX)
+    refine pieces_gain (q := ee h) (by omega) (by omega) ?_ (R := load + (K + K) ^ 2) (by push_cast at hX ⊢; exact hX)
     rw [← pow_mul]
     exact (vp (show 300 * ee h ≤ e by omega)).trans (by omega)
   -- bits
