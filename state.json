@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:28:44.941248878Z",
+  "updated_at": "2026-11-25T02:30:08.358925612Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "ddce58739bf7acc8df8f5a75df2b0b6398216891",
-    "at": "2026-11-25T02:14:35.218764485Z",
+    "sha": "8c6fcb7715a4c402440df6a4ecad367dd4c94dda",
+    "at": "2026-11-25T02:30:08.358925612Z",
     "metrics": {
-      "tokens": 896950,
-      "loc": 57066,
-      "decls": 4564,
-      "files": 321,
-      "bytes": 3332976,
-      "build_seconds": 249
+      "tokens": 882097,
+      "loc": 56227,
+      "decls": 4504,
+      "files": 320,
+      "bytes": 3271650,
+      "build_seconds": 333
     }
   },
   "counts": {
-    "merged": 56,
+    "merged": 57,
     "rejected": 2,
-    "open": 4,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 56,
+      "merged": 57,
       "attempts": 62,
-      "saved": 31211
+      "saved": 46064
     }
   ],
   "ideas": [
@@ -109,7 +109,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T05:00:03Z",
       "pr": 105,
-      "result_delta": null,
+      "result_delta": -14853,
       "created_at": "2026-11-25T01:57:18Z",
       "url": "https://github.com/kongeskog/formal-math/issues/102",
       "technique": "dead-code",
@@ -705,74 +705,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 105,
-      "title": "dead-code(*): delete what the final theorems do not reach, slice 1 (16 files, Paper/Ryser)",
-      "author": "kongeskog",
-      "head_sha": "024a628164c7aad7d937d1c3c29aa79f0393d0cf",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T02:13:47Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 102,
-      "url": "https://github.com/kongeskog/formal-math/pull/105",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "dead-code",
-      "scope": "*"
-    },
     {
       "pr": 106,
       "title": "dead-code(Nc/Grp): drop the unused accepting-run clause of GroupOK and Facts.lean",
