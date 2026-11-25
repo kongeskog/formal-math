@@ -105,7 +105,6 @@ theorem capN_capB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T
   refine Nat.add_le_add_left (Nat.ceil_le.2 ?_) _
   push_cast
   have hb : (b : ℝ) ≤ c := by exact_mod_cast hC.b_le
-  have hc0 : (0 : ℝ) ≤ c := Nat.cast_nonneg _
   calc 3 * (b : ℝ) * kbar FL Uu AA lh ≤ 3 * c * kbar FL Uu AA lh := by gcongr
     _ ≤ _ := by gcongr
 
@@ -124,9 +123,6 @@ theorem YhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 
       nlinarith
     exact h2.trans (by exact_mod_cast hC.h_le)
   have hi := hC.inv
-  have hi0 : 0 ≤ 1 / (1 - ρ) := by positivity
-  have hc0 : (0 : ℝ) ≤ c := Nat.cast_nonneg _
-  have hs0 := Real.sqrt_nonneg (h : ℝ)
   calc 2 * √(h : ℝ) * kbar FL Uu AA lh / (1 - ρ) = 2 * √(h : ℝ) * kbar FL Uu AA lh * (1 / (1 - ρ)) := by ring
     _ ≤ 2 * c * kbar FL Uu AA lh * (1 / (1 - ρ)) := by gcongr
     _ ≤ 2 * c * (kapB c m (Fintype.card (T.X 0)) lh : ℕ) * (1 / (1 - ρ)) := by gcongr
@@ -141,7 +137,6 @@ theorem BhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 
   have hh : (h : ℝ) ≤ c := by exact_mod_cast hC.h_le
   have h3 : (2 * (h : ℝ)) ^ q * kbar FL Uu AA lh ^ q ≤
       (2 * (c : ℝ)) ^ q * ((kapB c m (Fintype.card (T.X 0)) lh : ℕ) : ℝ) ^ q := by
-    have hh0 : (0 : ℝ) ≤ h := Nat.cast_nonneg _
     gcongr
   have h4 := h2.trans h3
   rw [← mul_pow] at h4
@@ -210,8 +205,7 @@ theorem depth_le {J X c K : ℕ} (hJ : 2 ^ J ≤ X) (hX : X ≤ c * (2 * K)) : J
       _ = _ := (pow_add _ _ _).symm
   have h4 : J < 2 * c + lg K := (Nat.pow_lt_pow_iff_right (by norm_num)).1 h3
   have h5 : 2 * c ≤ 2 * c * lg K := Nat.le_mul_of_pos_right _ hl
-  have e : (2 * c + 1) * lg K = 2 * c * lg K + lg K := by ring
-  omega
+  linarith
 
 theorem m_le {c m J K : ℕ} (hm : m ≤ c * (J + 1) ^ 7) (hJ : J + 1 ≤ (2 * c + 1) * lg K) : m ≤ c * ((2 * c + 1) ^ 7 * lg K ^ 7) := by
   refine hm.trans (Nat.mul_le_mul_left _ ?_)

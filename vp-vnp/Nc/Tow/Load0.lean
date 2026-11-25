@@ -186,9 +186,7 @@ theorem card_filter_getElem {α : Type*} [DecidableEq α] (l : List α) (e : α)
   | nil => simp
   | cons a l ih =>
     rw [List.length_cons, List.count_cons, ← ih, card_filter, card_filter, Finset.sum_range_succ']
-    simp only [List.getElem?_cons_succ, List.getElem?_cons_zero, Option.some.injEq]
-    congr 1
-    by_cases h1 : a = e <;> simp [h1]
+    simp
 
 /-- The steps of a path on an edge. -/
 theorem steps_le {α : Type*} [DecidableEq α] (l : List α) (e : α) (L M : ℕ) (hL : 0 < L) (hLl : L ≤ l.length) :
@@ -221,11 +219,7 @@ theorem steps_le {α : Type*} [DecidableEq α] (l : List α) (e : α) (L M : ℕ
       · rw [if_neg (by omega : ¬ (L' + 1 ≤ 1 ∧ l[0]? = some e)), add_zero]
         have h3 : ∀ s ∈ range M, (if s + 2 = L' + 1 ∧ l[s + 1]? = some e then 1 else 0) ≤ if s = L' - 1 then 1 else 0 := by
           intro s _
-          split_ifs with h4 h5 h5
-          · exact le_rfl
-          · omega
-          · exact Nat.zero_le _
-          · exact le_rfl
+          split_ifs <;> omega
         refine (Finset.sum_le_sum h3).trans ?_
         rw [Finset.sum_ite_eq']
         split_ifs <;> omega
@@ -328,8 +322,7 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
               have h4 : s.1 + 2 = R.pl (ch a) (ch c) γ := by
                 obtain ⟨-, h5⟩ := hx
                 have h6 := (R.pl_le (ch a) (ch c) γ).trans (R.length_path _ _ _)
-                by_contra h7
-                exact hs ⟨by omega, by omega⟩
+                omega
               rw [if_pos (⟨hx, rfl, h4, hedge _ hν⟩ : ∃ hx : okR T R ch (.start a c γ s),
                 (⟨.inl ⟨.start a c γ s, _⟩, true⟩ : NM R FL) = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
                 (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e)]

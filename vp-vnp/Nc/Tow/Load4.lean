@@ -54,16 +54,12 @@ theorem card_at (hj : j ≤ J) (c : T.X j) : (univ.filter fun e : T.Ed j => T.e0
 theorem sum_sq_eq (hr : 0 < r) (hX : 0 < Fintype.card (T.X j)) (n : T.Ed j → ℕ) :
     ∑ e, (n e : ℝ) ^ 2 = 2 / (r * Fintype.card (T.X j)) * T.kap n ^ 2 := by
   rw [kap_sq]
-  have h1 : (0 : ℝ) < r := by exact_mod_cast hr
-  have h2 : (0 : ℝ) < Fintype.card (T.X j) := by exact_mod_cast hX
   field_simp
 
 /-- Units at a chamber. -/
 theorem bet_le (hj : j ≤ J) (hr : 0 < r) (n : T.Ed j → ℕ) (c : T.X j) :
     (T.bet n c : ℝ) ≤ √(2 * h / Fintype.card (T.X j)) * T.kap n := by
   have hX : 0 < Fintype.card (T.X j) := Fintype.card_pos_iff.2 ⟨c⟩
-  have hXR : (0 : ℝ) < Fintype.card (T.X j) := by exact_mod_cast hX
-  have hrR : (0 : ℝ) < r := by exact_mod_cast hr
   have e1 : (T.bet n c : ℝ) = ∑ e ∈ univ.filter (fun e : T.Ed j => T.e0 e = c ∨ T.e1 e = c), (n e : ℝ) := by
     unfold bet
     rw [Finset.sum_filter]
@@ -115,8 +111,6 @@ theorem sum_bet_le (hj : j ≤ J) (hr : 0 < r) (n : T.Ed j → ℕ) :
     have : IsEmpty (T.Ed j) := Fintype.card_eq_zero_iff.1 h2
     rw [Finset.univ_eq_empty, Finset.sum_empty]
     exact mul_nonneg (Real.sqrt_nonneg _) (kap_nonneg n)
-  have hXR : (0 : ℝ) < Fintype.card (T.X j) := by exact_mod_cast hX
-  have hrR : (0 : ℝ) < r := by exact_mod_cast hr
   have h0 : 0 ≤ √h * T.kap n := mul_nonneg (Real.sqrt_nonneg _) (kap_nonneg n)
   refine (abs_le_of_sq_le_sq' ?_ h0).2
   rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg h)]
@@ -230,9 +224,7 @@ include hr hb hh hbD hρ hρ1 hρD in
 theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
     (T.bet (lds R ch FL lhat n o j) c : ℝ) ≤ bhat FL Uu AA lhat ρ := by
   have hX : 0 < Fintype.card (T.X j.1) := Fintype.card_pos_iff.2 ⟨c⟩
-  have hXR : (0 : ℝ) < Fintype.card (T.X j.1) := by exact_mod_cast hX
   have hDpos : 0 < D := by omega
-  have hDR : (0 : ℝ) < D := by exact_mod_cast hDpos
   have hjJ : j.1 ≤ J := Nat.le_of_lt_succ j.2
   have h1 := T.bet_le hjJ hr (lds R ch FL lhat n o j) c
   have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb hh hbD hρ hρ1 hρD j

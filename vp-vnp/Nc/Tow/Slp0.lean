@@ -78,9 +78,7 @@ theorem sum_step {s a : ℕ} (hs : s ≤ Y) : s * (Y ^ a + 1) + 1 ≤ Y ^ (a + 2
     exact Nat.le_mul_of_pos_right Y (by omega)
   have h5 := h.pos
   have h6 : s * (Y ^ a + 1) ≤ Y * (Y ^ a + 1) := Nat.mul_le_mul_right _ hs
-  have e1 : Y * (Y ^ a + 1) = Y ^ (a + 1) + Y := by ring
-  rw [e1] at h6
-  omega
+  linarith
 
 end Alph
 
@@ -235,9 +233,7 @@ theorem SY.add (hA : Alph D Y) {p c : ℕ} (h : SY inp Y p c H) {κ : Type*} [Fi
     calc Fintype.card κ * Y ^ a ≤ Y ^ e * Y ^ a := Nat.mul_le_mul_right _ hκ
       _ = Y ^ (a + e) := by rw [← pow_add, add_comm]
       _ ≤ Y ^ 12 := Nat.pow_le_pow_right hA.pos hae
-  have e2 : (c + 1) * Y ^ 12 = c * Y ^ 12 + Y ^ 12 := by ring
-  rw [e2]
-  omega
+  linarith
 
 theorem SY.le (hA : Alph D Y) {p c c' : ℕ} (h : SY inp Y p c H) (hc : c ≤ c') : SY inp Y p c' H :=
   SlpN.le hA.zero_lt (Nat.add_le_add_left (Nat.mul_le_mul_right _ hc) _) h

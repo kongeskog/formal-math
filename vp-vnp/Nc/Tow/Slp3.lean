@@ -86,7 +86,6 @@ theorem py_fits {s : Inp → ℕ} {a : ℕ} (hm : ∀ τ, (fun x => L x τ) ∈ 
   simp
 
 theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv T FL) : CY Dd H Y 8 fun x => tmin FL (L x) l := by
-  have hY := hA.pos
   have h1 : ∀ s ∈ range Y, PY Dd H Y 6 fun x => ¬ ∃ d, Fits FL (L x) (withD FL l d) s := by
     intro s hs
     refine PY.not hA (PY.exists_univ hA hB.di fun d => ?_)
@@ -141,20 +140,12 @@ theorem cy_numF (hm : ∀ τ, (fun x => L x τ) ∈ H) (hi : ∀ j i, ind (fun x
   · refine (CY.ite hA (py_actR hA hB hi y.1) (CY.base (hm (inpR T y.1)) hY) (CY.const 0 hA.zero_lt)
       (fun x => hA.lt_of_le ((hL x _).trans hB.w)) fun _ => hA.zero_lt).congr fun x => ?_
     unfold numF
-    by_cases ha : ActR (L x) y.1
-    · rw [if_pos ha]
-      exact (if_pos ha).symm
-    · rw [if_neg ha]
-      exact (if_neg ha).symm
+    rfl
   · refine (CY.ite hA (PY.base (hp l) hY) (CY.base (ht l) hY) (CY.const 0 hA.zero_lt)
       (fun x => hA.lt_of_le (lt_of_lt_of_le (tmin_lt hb (fun τ => hL x τ) l) hB.tt).le) fun _ => hA.zero_lt).congr
       fun x => ?_
     unfold numF
-    by_cases ha : Pick FL (L x) l
-    · rw [if_pos ha]
-      exact (if_pos ha).symm
-    · rw [if_neg ha]
-      exact (if_neg ha).symm
+    rfl
 
 /-- What is computed from loads. -/
 structure Chosen (L : Inp → Tg T m AA → ℕ) (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T)

@@ -27,7 +27,6 @@ theorem isMin_unique {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h
 
 theorem pick_unique {L : Tg T m AA → ℕ} {l : LMv T FL} {d : FL.Di} (h1 : Pick FL L l) (h2 : Pick FL L (withD FL l d)) :
     l.2.2.2 = d := by
-  have e : tmin FL L (withD FL l d) = tmin FL L l := rfl
   rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di l.2.2.2) with hlt | heq | hlt
   · exact absurd h2.1 (h1.2 d hlt)
   · exact ((Fintype.equivFin FL.Di).injective heq).symm
@@ -403,9 +402,7 @@ theorem plan_ok (hr : 0 < r) (hb : 0 < b) {cap : ℕ}
     obtain ⟨-, h2⟩ := consM_al hu
     have h3 := holds_eq (u := u) (by rw [h2]; exact inpZ_ne_done _)
     rw [h2, ← zp_hold, Sym2.eq_iff] at h3
-    rcases h3 with h3 | h3
-    · exact Or.inl h3
-    · exact Or.inr ⟨h3.2, h3.1⟩
+    exact h3.imp id And.symm
   disj n o x e e' hee := by
     rw [disjoint_left]
     intro u hu hu'
