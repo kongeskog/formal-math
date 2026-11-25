@@ -43,28 +43,6 @@ def Contracting (K : Type) [Field K] : Prop :=
   ∃ (μ : ℕ) (s : ℝ), 2 ≤ μ ∧ 1 ≤ s ∧ s ^ 2 < μ ∧
     ∀ w : Mt μ → Mt μ → ℝ, IsPrice K w → distAtRank w μ ≤ s * distAtRank w 1
 
-/-- **Paper: Definition def:cases.** "We are in the flat case if all finite subsets of all Euclidean spaces, with their
-metrics, are prices. We are in the contracting case if there are an integer μ ≥ 2 and a real s with 1 ≤ s, s² < μ, such
-that D(μ) ≤ sD(1) for all prices on Mat_μ(F₂)." Here D(r)² is "the mean of |a, a+W|² over all matrices a and all matrices
-W of rank r". -/
-theorem def_cases (K : Type) [Field K] :
-    (Flat K ↔ ∀ (n : ℕ) (S : Finset (EuclideanSpace ℝ (Fin n))), IsPrice K fun x y : S => dist x y) ∧
-    (Contracting K ↔ ∃ (μ : ℕ) (s : ℝ), 2 ≤ μ ∧ 1 ≤ s ∧ s ^ 2 < μ ∧ ∀ w : Mt μ → Mt μ → ℝ, IsPrice K w →
-      √((∑ a : Mt μ, ∑ W : Mt μ with W.rank = μ, w a (a + W) ^ 2) /
-          ((Fintype.card (Mt μ) : ℝ) * #{W : Mt μ | W.rank = μ})) ≤
-        s * √((∑ a : Mt μ, ∑ W : Mt μ with W.rank = 1, w a (a + W) ^ 2) /
-          ((Fintype.card (Mt μ) : ℝ) * #{W : Mt μ | W.rank = 1}))) := by
-  classical
-  refine ⟨⟨fun h n S => h n S fun x => (x : EuclideanSpace ℝ (Fin n)), fun h k V _ E => ?_⟩, Iff.rfl⟩
-  have : Fintype V := Fintype.ofFinite V
-  exact (h k (univ.image E)).comp fun v => (⟨E v, mem_image_of_mem E (mem_univ v)⟩ : univ.image E)
-
-/-- "We call W₁, W₂, … transversal if both their column spaces and their row spaces are independent": this is the
-definition `Nc.Flag.Transversal`, unfolded here. -/
-theorem def_transversal {ι : Type} (W : ι → Mt μ) :
-    Transversal W ↔ iSupIndep (fun k => Submodule.span F2 (Set.range (W k).col)) ∧
-      iSupIndep fun k => Submodule.span F2 (Set.range (W k).row) := Iff.rfl
-
 /-- Two matrices are transversal if and only if, after multiplication by invertible matrices p and q, they are diagonal
 matrices with entries 0 and 1 and with disjoint supports. -/
 theorem transversal_pair {W W' : Mt μ} : Transversal ![W, W'] ↔

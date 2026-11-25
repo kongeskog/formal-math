@@ -48,12 +48,6 @@ theorem flatten_ofFn_single {k : ℕ} (i : Fin k) (w : Fin k → List Γ) (h : �
   rw [h1]
   exact flatMap_ite_eq _ (List.nodup_finRange k) i (List.mem_finRange i) w
 
-theorem flatten_ofFn_nil {k : ℕ} (w : Fin k → List Γ) (h : ∀ j, w j = []) : (List.ofFn w).flatten = [] := by
-  rw [List.flatten_eq_nil_iff]
-  intro l hl
-  obtain ⟨j, rfl⟩ := List.mem_ofFn.1 hl
-  exact h j
-
 end Codes
 
 variable {F : Type*} [CommRing F] {Z Γ : Type*} [Fintype Z] [DecidableEq Z] [Fintype Γ] [DecidableEq Γ]

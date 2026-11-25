@@ -16,11 +16,6 @@ open Finset Filter Nc.Cross
 /-- The number P(E) of states of energy at most E. -/
 def stateCount (E : ℕ) : ℕ := (pairs E).card
 
-/-- "A state is a pair (I, J) of finite subsets of ℕ = {0, 1, …} with |I| = |J|; this number is its size, and its energy is
-∑_{i∈I} (2i+1) + ∑_{j∈J} (2j+1)." The theorem says which pairs are counted by P(E): the states of energy at most E. -/
-theorem mem_states {E : ℕ} (s : Finset ℕ × Finset ℕ) :
-    s ∈ pairs E ↔ s.1.card = s.2.card ∧ ∑ i ∈ s.1, (2 * i + 1) + ∑ j ∈ s.2, (2 * j + 1) ≤ E := mem_pairs
-
 /-- Proof of Lemma lem:count: "Interleave k states: put ki+r into I for i ∈ I_r, and kj+k−1−r into J for j ∈ J_r. This is
 injective and multiplies the total energy by k, so P(k²E) ≥ P(E)^k." -/
 theorem lem_count_interleave (k E : ℕ) : stateCount E ^ k ≤ stateCount (k ^ 2 * E) := by
