@@ -40,10 +40,8 @@ theorem mem_steps18 (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] {σ : List Boo
     swap
     · rfl
     refine Finset.sum_eq_zero fun ρ _ => Finset.sum_eq_zero fun n _ => Finset.sum_eq_zero fun o _ => ?_
-    split_ifs with h5 h6
-    · exact absurd ⟨q, ρ, n, o, st q ρ n o, h5.2.1, h5.2.2, hf q ρ n o, h6.symm⟩ hno
-    · rfl
-    · rfl
+    -- both conditions together give the witness that `hno` excludes (`hf`, `h5.2`, `h6`)
+    grind
   rw [hR] at h
   have hpos : (0 : ℤ) < ((execAll m (steps18 C tab qn i e hU0 hU1) (byPath C.nm (S0 pt))).map
       fun σ' => if σ' = σ then (1 : ℤ) else 0).sum := by

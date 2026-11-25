@@ -51,9 +51,7 @@ theorem val_bitsN (L n : ℕ) (hn : n < 2 ^ L) : KT.val (bitsN L n) = n := by
       funext i
       simp [Nat.testBit_succ]
     rw [e, KT.val, ih (n / 2) (by rw [pow_succ] at hn; omega), Nat.testBit_zero]
-    have := Nat.div_add_mod n 2
-    rcases Nat.mod_two_eq_zero_or_one n with h | h
-    · simp [h]; omega
-    · simp [h]; omega
+    -- `n = 2 * (n / 2) + n % 2`, by cases on `n % 2`
+    grind
 
 end Nc.Dl

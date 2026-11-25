@@ -54,13 +54,9 @@ def relay : Law F where
       funext g
       rw [Fin.prod_univ_three]
       simp only [relTab, Fin.isValue, dite_true, one_ne_zero, dite_false]
-      have h20 : ¬ (2 : Fin 3) = 0 := by decide
-      have h21 : ¬ (2 : Fin 3) = 1 := by decide
-      simp only [h20, h21, dite_false]
-      have key : ∀ x y u v : Bool, ((if x = u then (1 : F) else 0) * (if u = v then 1 else 0) *
-          if v = y then 1 else 0) = if u = x ∧ v = x ∧ x = y then 1 else 0 := by
-        simp
-      exact key _ _ _ _
+      -- `2 ≠ 0`, `2 ≠ 1` in `Fin 3`, then a product of three indicators is the indicator
+      -- of the conjunction
+      grind
     rw [show (∑ g : ∀ _ : Bool, Fin 1 → Bool, ∏ p : Fin 3, relTab F p (fun e => X p e) fun ν => g ν) =
       ∑ g : ∀ _ : Bool, Fin 1 → Bool, if g false 0 = X 0 () ∧ g true 0 = X 0 () ∧ X 0 () = X 2 () then (1 : F) else 0 from
         congrArg (fun f => ∑ g, f g) e]
@@ -78,9 +74,8 @@ def relay : Law F where
         · exact h1
         · exact h2
       · intro hn; exact absurd (mem_univ _) hn
-    · rw [if_neg fun hh => h (hh ()), Finset.sum_eq_zero]
-      intro g _
-      rw [if_neg fun hh => h hh.2.2]
+    -- every condition contains `X 0 () = X 2 ()`, false by `h`
+    · simp_all
   conn _ _ _ _ := rfl
 
 end Relay
@@ -132,9 +127,7 @@ theorem exists_mono_equiv {κ : Type} [Fintype κ] (time : κ → ℕ) :
   have hm : Monotone ((time ∘ e0) ∘ σ) := Tuple.monotone_sort _
   by_contra hn
   have h1 := hm (not_lt.1 hn)
-  simp only [Function.comp_apply] at h1
-  have h2 : ∀ z, e0 (σ ((σ.trans e0).symm z)) = z := fun z => (σ.trans e0).apply_symm_apply z
-  rw [h2, h2] at h1
-  omega
+  -- `h1`, with `(σ.trans e0).apply_symm_apply` on both sides, contradicts `hxy`
+  grind
 
 end Nc.Tow
