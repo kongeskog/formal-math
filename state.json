@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:59:55.387712801Z",
+  "updated_at": "2026-11-25T05:11:05.704460887Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -230,10 +230,10 @@
     {
       "number": 97,
       "title": "Idea: shorten(*): end a tactic block with the specific closing tactic that already proves it",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T07:22:43Z",
+      "lease_expires": null,
       "pr": 126,
       "result_delta": -4291,
       "created_at": "2026-11-24T23:55:13Z",
@@ -805,7 +805,7 @@
   "open": [
     {
       "pr": 123,
-      "title": "restructure(Paper/Tree, Paper/Tower): thm_tree over A; tree_towers calls the tower lemmas directly",
+      "title": "restructure(Paper/Tree,Paper/Tower): thm_tree over A; tree_towers calls the tower lemmas directly",
       "author": "kongeskog",
       "head_sha": "3aab577c15ab4b3de5f8c9deea22fd9a3a349a14",
       "base_sha": "2069ab298f69e1ba474398602885fc25c49497a2",
@@ -833,8 +833,7 @@
         {
           "key": "format",
           "label": "Standard title and description",
-          "status": "fail",
-          "detail": "The title must be `<technique>(<scope>): <summary>` where technique is one of `dead-code`, `library`, `merge`, `generalize`, `shorten`, `restructure`; scope is the file or folder under the project directory without `.lean` (for example `Paper/Tree`), or `*` for many; and the summary is 10 to 90 characters. Edit the pull request; no new push is needed."
+          "status": "pass"
         },
         {
           "key": "quota",
@@ -877,7 +876,7 @@
           "key": "fresh",
           "label": "Verified on current main",
           "status": "pending",
-          "detail": "Main moved; will be re-verified once approved"
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -891,21 +890,35 @@
       "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45544085829",
       "merge_sha": null,
       "reason": null,
-      "technique": null,
-      "scope": null
+      "technique": "restructure",
+      "scope": "Paper/Tree,Paper/Tower"
     },
     {
       "pr": 127,
       "title": "shorten(*): last sweep of #97, slice 2: dead haves and early stops in 16 files",
       "author": "kongeskog",
       "head_sha": "8c7973f5d780a6f715bc2fd535cde2a17ad1fa44",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "07e8bdb504860ac08e9b56a0b975ed5631864e9a",
+      "status": "stale",
       "created_at": "2026-11-25T04:47:19Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 853742,
+        "loc": 54610,
+        "decls": 4403,
+        "files": 317,
+        "bytes": 3169470,
+        "build_seconds": 473
+      },
+      "base_metrics": {
+        "tokens": 854377,
+        "loc": 54665,
+        "decls": 4403,
+        "files": 317,
+        "bytes": 3171955,
+        "build_seconds": null
+      },
+      "delta": -635,
       "gates": [
         {
           "key": "format",
@@ -913,39 +926,47 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "14 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 854377 → 853742 (-635)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -956,7 +977,7 @@
       ],
       "idea": 97,
       "url": "https://github.com/kongeskog/formal-math/pull/127",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45549819368",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
@@ -971,13 +992,13 @@
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 16289,
-      "loc": 998
+      "tokens": 16150,
+      "loc": 993
     },
     {
       "path": "vp-vnp/Paper/Fan.lean",
-      "tokens": 15588,
-      "loc": 854
+      "tokens": 15548,
+      "loc": 851
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
@@ -1036,8 +1057,8 @@
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
-      "tokens": 6997,
-      "loc": 394
+      "tokens": 6906,
+      "loc": 390
     },
     {
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
@@ -1090,14 +1111,14 @@
       "loc": 406
     },
     {
-      "path": "vp-vnp/Nc/Dl/Num0.lean",
-      "tokens": 5707,
-      "loc": 327
-    },
-    {
       "path": "vp-vnp/NS1/OneCut.lean",
       "tokens": 5648,
       "loc": 303
+    },
+    {
+      "path": "vp-vnp/Nc/Dl/Num0.lean",
+      "tokens": 5642,
+      "loc": 325
     },
     {
       "path": "vp-vnp/Paper/Toolkit.lean",
