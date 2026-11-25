@@ -522,15 +522,6 @@ theorem prop_approx_acc [Algebra.FiniteType ℤ A] {h : ℕ} (hh : 17 ≤ h)
   refine hexact u (by omega) a₀ ?_ E hex
   simpa using hn4 u (by omega)
 
-/-- Proposition prop:approx-acc for "A and H of Theorem thm:cut", in the contracting case. -/
-theorem prop_approx_acc_setting {K : Type} [Field K] (hK : Contracting K) :
-    ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A) (θ : List Bool → A) (h C₀ v₀ : ℕ),
-      Generates θ ∧ 17 ≤ h ∧ CutHyp θ (16 * h) C₀ v₀ ∧
-      ∃ C v₁ : ℕ, ∀ v, v₁ ≤ v → ∀ a, lg v ^ (C * a) ≤ v → ∀ (R : Type) [CommRing R] [Nontrivial R] [Algebra A R],
-        ¬ HasAccA θ R (16 * h) v (v ^ a) := by
-  obtain ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut⟩ := exists_setting hK
-  exact ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut, prop_approx_acc hh hcut⟩
-
 open Nc.Acc in
 /-- **Paper: proof of Theorem thm:approx, Lemma lem:circuit for approximating circuits.** "The proofs of Lemmas lem:lowdeg
 and lem:circuit work over this ring and give approximate accelerators: the output Φ + εg may have a large degree, but the
@@ -564,7 +555,10 @@ theorem lem_circuit_approx (hθ : (Function.support θ).Finite) {H : ℕ} (hH : 
 theorem contracting_approx_complete {K : Type} [Field K] (hK : Contracting K)
     {G : ∀ S, MvPolynomial (Fin S × Fin S) K} {κ : ℕ} (hG : Nc.GridComplete K G κ) :
     ∃ C M₁ : ℕ, ∀ M ≥ M₁, ∀ a : ℕ, lg M ^ (C * a) ≤ M → ¬ Nc.Approximates (G M) (M ^ a) := by
-  obtain ⟨A, hA, θ, h, C₀, v₀, hθ, hh, -, C₂, v₂, hno⟩ := prop_approx_acc_setting hK
+  obtain ⟨h', hne, h3, A, hA, VL, hgain⟩ := exists_laws hK
+  obtain ⟨θ, hθ⟩ := exists_generates A
+  obtain ⟨h, C₀, v₀, hh, hcut⟩ := thm_cut hθ VL h3 hgain
+  obtain ⟨C₂, v₂, hno⟩ := prop_approx_acc hh hcut
   obtain ⟨B₀, C₁, v₁, hB₀, hacc⟩ := lem_circuit_approx hθ.1 (H := 16 * h) (by omega) κ
   obtain ⟨C, M₁, hscale⟩ := exists_scale B₀ ((C₂ + 1) * C₁) (v₁ + v₂ + 4) hB₀
   refine ⟨C, M₁, fun M hM a ha happ => ?_⟩

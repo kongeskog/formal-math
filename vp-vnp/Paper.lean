@@ -12,7 +12,6 @@ import Paper.Flat
 import Paper.Groups
 import Paper.Laws
 import Paper.Universal
-import Paper.Runnet
 import Paper.Heavy
 import Paper.HeavyProg
 import Paper.Pieces
