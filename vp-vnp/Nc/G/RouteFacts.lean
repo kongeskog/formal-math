@@ -36,17 +36,18 @@ theorem init_not_mem_newUnitsR {x : Fin E} {a b : Fin A} {k : Fin U0} :
     (Uid.init a b k : Uid A U0 M.N U1) ∉ newUnits M x o := by
   simp [newUnits]
 
-theorem init_mem_seen0R {a b : Fin A} {k : Fin U0} :
-    (Uid.init a b k : Uid A U0 M.N U1) ∈ seen0 n ↔ k.1 < (n a b).1 := by
+theorem init_mem_seen0 {N : Type} [Fintype N] [DecidableEq N] {a b : Fin A} {k : Fin U0} :
+    (Uid.init a b k : Uid A U0 N U1) ∈ seen0 n ↔ k.1 < (n a b).1 := by
   simp [seen0]
 
-theorem new_not_mem_seen0R {ν : M.N} {k : Fin U1} : (Uid.new ν k : Uid A U0 M.N U1) ∉ seen0 n := by
+theorem new_not_mem_seen0 {N : Type} [Fintype N] [DecidableEq N] {ν : N} {k : Fin U1} :
+    (Uid.new ν k : Uid A U0 N U1) ∉ seen0 n := by
   simp [seen0]
 
-theorem mem_seenAt_init {x : ℕ} {a b : Fin A} {k : Fin U0} :
+theorem Plan.init_mem_seenAt {x : ℕ} {a b : Fin A} {k : Fin U0} :
     (Uid.init a b k : Uid A U0 M.N U1) ∈ Plan.seenAt n o x ↔ k.1 < (n a b).1 := by
   unfold Plan.seenAt
-  rw [Finset.mem_union, init_mem_seen0R]
+  rw [Finset.mem_union, init_mem_seen0]
   constructor
   · rintro (h | h)
     · exact h
@@ -54,13 +55,13 @@ theorem mem_seenAt_init {x : ℕ} {a b : Fin A} {k : Fin U0} :
       exact absurd h init_not_mem_newUnitsR
   · exact Or.inl
 
-theorem mem_seenAt_new {x : ℕ} {ν : M.N} {k : Fin U1} :
+theorem Plan.new_mem_seenAt {x : ℕ} {ν : M.N} {k : Fin U1} :
     (Uid.new ν k : Uid A U0 M.N U1) ∈ Plan.seenAt n o x ↔ ν.1.1 < x ∧ k ≤ o ν := by
   unfold Plan.seenAt
   rw [Finset.mem_union]
   constructor
   · rintro (h | h)
-    · exact absurd h new_not_mem_seen0R
+    · exact absurd h new_not_mem_seen0
     · obtain ⟨x', hx', h⟩ := Finset.mem_biUnion.1 h
       obtain ⟨rfl, h2⟩ := mem_newUnits_new.1 h
       exact ⟨(Finset.mem_filter.1 hx').2, h2⟩
@@ -69,11 +70,12 @@ theorem mem_seenAt_new {x : ℕ} {ν : M.N} {k : Fin U1} :
     simpa using h1
 
 /-- The units seen in the end. -/
-theorem mem_seen_iff {id : Uid A U0 M.N U1} : id ∈ Plan.seenAt n o E ↔ unum id < ucnt n o id := by
+theorem Plan.mem_seenAt_end {id : Uid A U0 M.N U1} :
+    id ∈ Plan.seenAt n o E ↔ unum id < ucnt n o id := by
   cases id with
-  | init a b k => rw [mem_seenAt_init]; rfl
+  | init a b k => rw [Plan.init_mem_seenAt]; rfl
   | new ν k =>
-    rw [mem_seenAt_new]
+    rw [Plan.new_mem_seenAt]
     constructor
     · rintro ⟨-, h⟩
       exact Nat.lt_succ_of_le h

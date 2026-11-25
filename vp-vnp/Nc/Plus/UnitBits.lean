@@ -17,4 +17,7 @@ def uwBits {ub : ℕ} : UW ub → List Bool
   | none => []
   | some w => List.ofFn w
 
+theorem length_uwBits_le {ub : ℕ} (w : UW ub) : (uwBits w).length ≤ ub := by
+  cases w <;> simp [uwBits]
+
 end Nc

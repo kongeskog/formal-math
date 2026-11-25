@@ -31,20 +31,11 @@ theorem prod_path {K : ℕ} (M : Fin K → Matrix Q Q F) (a b : Q) :
       if q 0 = a ∧ q (Fin.last K) = b then ∏ k, M k (q k.castSucc) (q k.succ) else 0 := by
   simpa [List.map_ofFn] using prod_ofFn_apply M K id a b
 
-theorem emit_append (o₁ o₂ : List (Letter S J Γ)) (z : Ch S J) : emit (o₁ ++ o₂) z = emit o₁ z ++ emit o₂ z := by
-  simp [emit, List.reduceOption_append, proj_append]
-
 theorem emit_flatten {K : ℕ} (o : Fin K → List (Letter S J Γ)) (z : Ch S J) :
     emit (List.ofFn o).flatten z = cat fun k => emit (o k) z := by
   induction K with
   | zero => simp [emit, cat]
   | succ K ih => rw [List.ofFn_succ, List.flatten_cons, emit_append, ih, cat_succ]
-
-theorem length_emit_le (o : List (Letter S J Γ)) (z : Ch S J) : (emit o z).length ≤ o.length := by
-  have h1 := sum_length_proj o.reduceOption
-  have h2 := List.reduceOption_length_le o
-  exact (Finset.single_le_sum (f := fun z => (proj o.reduceOption z).length) (fun _ _ => Nat.zero_le _)
-    (Finset.mem_univ z)).trans (h1.le.trans h2)
 
 /-- The weight of the blocks of `T` steps from `q` to `q'` that emit `v`. -/
 noncomputable def blockW (mu : Letter S J Γ → Matrix Q Q F) (T : ℕ) (q q' : Q) (v : Ch S J → List Γ) : F :=

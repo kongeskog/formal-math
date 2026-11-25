@@ -40,7 +40,7 @@ theorem emit_rename (φ : J ≃ J') (o : List (Letter S J Γ)) (z : Ch S J) :
   induction o with
   | nil => rfl
   | cons a o ih =>
-    rw [List.map_cons, ← List.singleton_append, emit_appendR, ih, ← List.singleton_append (l := o), emit_appendR]
+    rw [List.map_cons, ← List.singleton_append, emit_append, ih, ← List.singleton_append (l := o), emit_append]
     congr 1
     rcases a with _ | ⟨z', γ⟩
     · rfl

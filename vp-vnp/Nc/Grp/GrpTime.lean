@@ -169,16 +169,13 @@ theorem length_endIns (b : G.Uid (K + K) U0 M.N U1 → UW ub) : (endIns P n o gr
   · intro id _ id' _ e
     exact (Prod.ext_iff.1 e).2
 
-theorem length_uwBits' {ub : ℕ} (w : UW ub) : (uwBits w).length ≤ ub := by
-  cases w <;> simp [uwBits]
-
 theorem cost_endIns {T Lc : ℕ} (hk : ∀ c, (key c).length ≤ Lc) (b : G.Uid (K + K) U0 M.N U1 → UW ub) :
     ((endIns P n o grp g key b).map (insCost T ub)).sum ≤ evG n o grp g * (2 * (ub + Lc + 1)) := by
   refine (sum_le_length_mul _ _ (2 * (ub + Lc + 1)) ?_).trans (Nat.mul_le_mul_right _ (length_endIns b))
   intro i hi
   unfold endIns at hi
   obtain ⟨id, -, hid⟩ := List.mem_filterMap.1 hi
-  have hb := length_uwBits' (b id)
+  have hb := length_uwBits_le (b id)
   have h0 := hk (G.hold0 M.np id, id)
   have h1 := hk (G.hold1 M.np id, id)
   split_ifs at hid <;> simp only [Option.some.injEq] at hid <;> subst hid <;> simp only [insCost] <;> omega

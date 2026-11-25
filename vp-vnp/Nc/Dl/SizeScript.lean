@@ -240,11 +240,6 @@ noncomputable def cutAt (P : G.Plan M U0 U1) (n : Fin (K + K) → Fin (K + K) �
   univ.filter fun id => id ∈ P.cur n o E ∧ grp (G.hold0 M.np id) ≠ grp (G.hold1 M.np id) ∧
     (grp (G.hold0 M.np id) = g ∨ grp (G.hold1 M.np id) = g)
 
-theorem length_uwBits_le (w : UW ub) : (uwBits w).length ≤ ub := by
-  cases w with
-  | none => exact Nat.zero_le _
-  | some v => simp [uwBits]
-
 theorem size_endIns (hU : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X) (hkey : ∀ a, (key a).length ≤ Lc)
     (b : G.Uid (K + K) U0 M.N U1 → UW ub) :
     (((endIns P n o grp g key b).map Ins.tree).map fun t => t.size + 1).sum ≤

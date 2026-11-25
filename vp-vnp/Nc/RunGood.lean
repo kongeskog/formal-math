@@ -93,7 +93,7 @@ variable {i e : Q} {u : Fin n → List Γ} {o : Fin t → Letter S (Fin n) Γ} {
 theorem emit_take_succ (o : Fin t → Letter S (Fin n) Γ) (z : Ch S (Fin n)) (τ : Fin t) :
     (emit ((List.ofFn o).take (τ + 1)) z).length =
       (emit ((List.ofFn o).take τ) z).length + (emit [o τ] z).length := by
-  rw [List.take_add_one, emit_appendR, List.length_append]
+  rw [List.take_add_one, emit_append, List.length_append]
   simp
 
 /-- The first place of a channel in a run. -/
@@ -156,8 +156,8 @@ theorem Good.matched (hM : t < M) (h : Good i e (code N u) o q P c) : Matched (L
     intro p
     by_cases hp : p < M
     · rw [← h.contents s false ⟨p, hp⟩, ← h.contents s true ⟨p, hp⟩]
-    · have h1 := emit_length_le (List.ofFn o) (.tp s false)
-      have h2 := emit_length_le (List.ofFn o) (.tp s true)
+    · have h1 := length_emit_le (List.ofFn o) (.tp s false)
+      have h2 := length_emit_le (List.ofFn o) (.tp s true)
       rw [List.length_ofFn] at h1 h2
       rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by omega)]
   · have : u = fun j => emit (List.ofFn o) (.inp j) := by
@@ -196,7 +196,7 @@ variable {i e : Q} {u : Fin n → List Γ} {o : Fin t → Letter S (Fin n) Γ} {
 
 theorem emit_take_le (o : Fin t → Letter S (Fin n) Γ) (z : Ch S (Fin n)) (τ : ℕ) :
     (emit ((List.ofFn o).take τ) z).length ≤ (emit (List.ofFn o) z).length := by
-  conv_rhs => rw [← List.take_append_drop τ (List.ofFn o), emit_appendR, List.length_append]
+  conv_rhs => rw [← List.take_append_drop τ (List.ofFn o), emit_append, List.length_append]
   omega
 
 theorem place_lt (hM : N + t < M) (hN : (wordOf (List.ofFn u)).length ≤ N)
@@ -204,7 +204,7 @@ theorem place_lt (hM : N + t < M) (hN : (wordOf (List.ofFn u)).length ≤ N)
     place0 o z + (emit ((List.ofFn o).take τ) z).length < M := by
   have h1 := emit_take_le o z τ
   rcases z with ⟨s, b⟩ | j
-  · have h2 := emit_length_le (List.ofFn o) (.tp s b)
+  · have h2 := length_emit_le (List.ofFn o) (.tp s b)
     rw [List.length_ofFn] at h2
     simp only [place0]
     omega
