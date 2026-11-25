@@ -28,28 +28,24 @@ theorem def_price_pseudometric (h : IsPrice K w) :
   refine ⟨fun a b => ?_, fun a => ?_, fun a b => ?_, fun a b c => ?_⟩
   · have h2 : (fun i j : Fin 2 => w (![a, b] i) (![a, b] j)) ∈ {d : Fin 2 → Fin 2 → ℝ | 0 ≤ d 0 1} :=
       prices_induction (h 2 ![a, b]) (isClosed_le continuous_const (by fun_prop)) fun φ c hc => by
-        obtain ⟨-, -, -, -, -, -, hI, -⟩ := lem_exponents φ
-        exact mul_nonneg hc (hI 0 1).1
+        exact mul_nonneg hc (lem_exponents_unit_interval φ 0 1).1
     exact h2
   · have h2 : (fun i j : Fin 1 => w (![a] i) (![a] j)) ∈ {d : Fin 1 → Fin 1 → ℝ | d 0 0 = 0} :=
       prices_induction (h 1 ![a]) (isClosed_eq (by fun_prop) continuous_const) fun φ c hc => by
-        obtain ⟨-, -, -, h0, -⟩ := lem_exponents φ
         show c * φ.e 0 0 = 0
-        rw [h0, mul_zero]
+        rw [lem_exponents_self, mul_zero]
     exact h2
   · have h2 : (fun i j : Fin 2 => w (![a, b] i) (![a, b] j)) ∈ {d : Fin 2 → Fin 2 → ℝ | d 0 1 = d 1 0} :=
       prices_induction (h 2 ![a, b]) (isClosed_eq (by fun_prop) (by fun_prop)) fun φ c hc => by
-        obtain ⟨-, -, -, -, hs, -⟩ := lem_exponents φ
         show c * φ.e 0 1 = c * φ.e 1 0
-        rw [hs]
+        rw [lem_exponents_symm]
     exact h2
   · have h2 : (fun i j : Fin 3 => w (![a, b, c] i) (![a, b, c] j)) ∈
         {d : Fin 3 → Fin 3 → ℝ | d 0 2 ≤ d 0 1 + d 1 2} :=
       prices_induction (h 3 ![a, b, c]) (isClosed_le (by fun_prop) (by fun_prop)) fun φ c hc => by
-        obtain ⟨-, -, -, -, -, ht, -⟩ := lem_exponents φ
         show c * φ.e 0 2 ≤ c * φ.e 0 1 + c * φ.e 1 2
         rw [← mul_add]
-        exact mul_le_mul_of_nonneg_left (ht _ _ _) hc
+        exact mul_le_mul_of_nonneg_left (lem_exponents_triangle φ _ _ _) hc
     exact h2
 
 /-- "Pull-backs … of prices are prices; for g : V → W one uses t ↦ φ(gt)." (The latter is Nc.Price.specCone_comp, which

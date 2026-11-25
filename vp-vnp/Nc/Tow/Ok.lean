@@ -403,14 +403,6 @@ theorem plan_ok (hr : 0 < r) (hb : 0 < b) {cap : ℕ}
     have h3 := holds_eq (u := u) (by rw [h2]; exact inpZ_ne_done _)
     rw [h2, ← zp_hold, Sym2.eq_iff] at h3
     exact h3.imp id And.symm
-  disj n o x e e' hee := by
-    rw [disjoint_left]
-    intro u hu hu'
-    have hu : u ∈ consM R FL Pl lhat n o (eZ R FL Pl ⟨x, e⟩) := hu
-    have hu' : u ∈ consM R FL Pl lhat n o (eZ R FL Pl ⟨x, e'⟩) := hu'
-    have h1 := (eZ R FL Pl).injective (consM_unique hu hu')
-    rw [Sigma.mk.injEq] at h1
-    exact hee (eq_of_heq h1.2)
   card n o z := card_consM (eZ R FL Pl z)
   cap n o x := hcap n o _
 

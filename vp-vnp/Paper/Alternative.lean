@@ -224,10 +224,10 @@ theorem meanSq_le (hw : IsPrice K w) {r : ℕ} (hr : r ≤ μ) : meanSq w r ≤ 
 
 /-- "Every distance is at most a constant, depending on μ, times D(1)." -/
 theorem thm_alt_bounded (K : Type) [Field K] (μ : ℕ) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ w : Mt μ → Mt μ → ℝ, IsPrice K w → ∀ a b, w a b ≤ C * distAtRank w 1 := by
+    ∃ C : ℝ, ∀ w : Mt μ → Mt μ → ℝ, IsPrice K w → ∀ a b, w a b ≤ C * distAtRank w 1 := by
   set c : ℝ := (Fintype.card (Mt μ) : ℝ) * ((univ : Finset (Mt μ)).filter (fun W => W.rank = 1)).card with hc
   have hc0 : 0 ≤ c := by positivity
-  refine ⟨μ * √c, by positivity, fun w hw a b => ?_⟩
+  refine ⟨μ * √c, fun w hw a b => ?_⟩
   have hD : 0 ≤ distAtRank w 1 := Real.sqrt_nonneg _
   have hstep : ∀ (e R : Mt μ), R.rank = 1 → w e (e + R) ≤ √c * distAtRank w 1 := by
     intro e R hR
@@ -280,7 +280,7 @@ a constant, depending on μ, times D(1), so we may scale to D(1) = 1 and, by com
 D(1) = 1 and D(μ)² = μ." -/
 theorem thm_alt_extremal (hK : ¬ Contracting K) (hμ : 2 ≤ μ) : ∃ w : Mt μ → Mt μ → ℝ, Extremal K w := by
   have hμ2 : (2 : ℝ) ≤ μ := by exact_mod_cast hμ
-  obtain ⟨C, hC0, hC⟩ := thm_alt_bounded K μ
+  obtain ⟨C, hC⟩ := thm_alt_bounded K μ
   have hstep : ∀ n : ℕ, ∃ w : Mt μ → Mt μ → ℝ, (IsPrice K w ∧ ∀ a b, w a b ≤ C) ∧
       meanSq w 1 = 1 ∧ (μ : ℝ) - 1 / ((n : ℝ) + 1) ≤ meanSq w μ := by
     intro n
@@ -706,11 +706,12 @@ theorem cubePts_update {k : ℕ} (hk : k < μ) {x : Fin μ → ℝ} (hx : x ∈ 
     omega
 
 /-- "Fill it one coordinate at a time: Lemma lem:toolkit (f), applied to opposite edges in the new direction, shows that
-the map stays isometric." A map F that is isometric on the points whose coordinates from k on are 0 or 1 has an extension F'
-that is isometric on the points whose coordinates from k + 1 on are 0 or 1. -/
+the map stays isometric." A map F that is isometric on the points whose coordinates from k on are 0 or 1 gives a map F'
+(an extension of F; only its isometry is stated) that is isometric on the points whose coordinates from k + 1 on are 0
+or 1. -/
 theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
     (hF : ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k, dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2) :
-    ∃ F' : (Fin μ → ℝ) → Y, (∀ x ∈ cubePts μ k, F' x = F x) ∧ ∀ x ∈ cubePts μ (k + 1), ∀ y ∈ cubePts μ (k + 1),
+    ∃ F' : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ (k + 1), ∀ y ∈ cubePts μ (k + 1),
       dist (F' x) (F' y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
   set c : Fin μ := ⟨k, hk⟩ with hc
   -- the point at z_c on the edge in the new direction, by Lemma lem:toolkit (a)
@@ -725,13 +726,7 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
       exact ⟨γ, fun _ => h⟩
     · exact ⟨F z, fun h => absurd h hz⟩
   choose F' hF' using hγ
-  refine ⟨F', fun x hx => ?_, fun x hx y hy => ?_⟩
-  · obtain ⟨e1, e2⟩ := hF' x (hx c).1
-    rcases (hx c).2 le_rfl with h0 | h1
-    · rw [h0, zero_mul, dist_eq_zero] at e1
-      rw [← e1, ← h0, Function.update_eq_self]
-    · rw [h1, sub_self, zero_mul, dist_eq_zero] at e2
-      rw [e2, ← h1, Function.update_eq_self]
+  refine ⟨F', fun x hx y hy => ?_⟩
   have hsum : ∀ (x y : Fin μ → ℝ) (s t : ℝ), ∑ i, (Function.update x c s i -
       Function.update y c t i) ^ 2 = (s - t) ^ 2 + ∑ i ∈ univ.erase c, (x i - y i) ^ 2 := by
     intro x y s t
@@ -772,20 +767,20 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
   rw [h, d4, d1, ← add_sum_erase univ _ (mem_univ c), ← hE]
   ring
 
-/-- "Fill it one coordinate at a time": if points f(S) of a CAT(0) space have the distances of the vertices of the cube, then the map that sends the
-vertex with the coordinates 1 on S and 0 elsewhere to f(S) extends to an isometric map F of the solid cube [0,1]^μ. -/
+/-- "Fill it one coordinate at a time": if points f(S) of a CAT(0) space have the distances of the vertices of the cube, then
+there is an isometric map F of the solid cube [0,1]^μ into the space (it extends the map that sends the vertex with the
+coordinates 1 on S and 0 elsewhere to f(S); only its isometry is stated). -/
 theorem thm_alt_cube (f : Finset (Fin μ) → Y) (hf : ∀ S T, dist (f S) (f T) ^ 2 = (symmDiff S T).card) :
-    ∃ F : (Fin μ → ℝ) → Y, (∀ S : Finset (Fin μ), F (fun i => if i ∈ S then 1 else 0) = f S) ∧
-      ∀ x y : Fin μ → ℝ, (∀ i, 0 ≤ x i ∧ x i ≤ 1) →
+    ∃ F : (Fin μ → ℝ) → Y, ∀ x y : Fin μ → ℝ, (∀ i, 0 ≤ x i ∧ x i ≤ 1) →
         (∀ i, 0 ≤ y i ∧ y i ≤ 1) → dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
   classical
-  have key : ∀ k ≤ μ, ∃ F : (Fin μ → ℝ) → Y, (∀ x ∈ cubePts μ 0, F x = f (univ.filter fun i => x i = 1)) ∧
-      ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k, dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
+  have key : ∀ k ≤ μ, ∃ F : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k,
+      dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
     intro k
     induction k with
     | zero =>
       intro _
-      refine ⟨fun x => f (univ.filter fun i => x i = 1), fun _ _ => rfl, fun x hx y hy => ?_⟩
+      refine ⟨fun x => f (univ.filter fun i => x i = 1), fun x hx y hy => ?_⟩
       rw [hf, card_eq_sum_ones, Nat.cast_sum, ← sum_filter_add_sum_filter_not univ
         (fun i => i ∈ symmDiff (univ.filter fun i => x i = 1) (univ.filter fun i => y i = 1))
         (fun i => (x i - y i) ^ 2)]
@@ -800,15 +795,10 @@ theorem thm_alt_cube (f : Finset (Fin μ) → Y) (hf : ∀ S T, dist (f S) (f T)
           <;> simp [h1, h2] at hi ⊢
     | succ k ih =>
       intro hk
-      obtain ⟨F, hF0, hF⟩ := ih (by omega)
-      obtain ⟨F', hF'0, hF'⟩ := thm_alt_fill (by omega) F hF
-      exact ⟨F', fun x hx => (hF'0 x fun i => ⟨(hx i).1, fun _ => (hx i).2 (Nat.zero_le _)⟩).trans (hF0 x hx), hF'⟩
-  obtain ⟨F, hF0, hF⟩ := key μ le_rfl
-  refine ⟨F, fun S => ?_, fun x y hx hy => hF x (fun i => ⟨hx i, fun h => ?_⟩) y (fun i => ⟨hy i, fun h => ?_⟩)⟩
-  · rw [hF0 _ fun i => by by_cases hi : i ∈ S <;> simp [hi]]
-    congr 1
-    ext i
-    by_cases hi : i ∈ S <;> simp [hi]
+      obtain ⟨F, hF⟩ := ih (by omega)
+      exact thm_alt_fill (by omega) F hF
+  obtain ⟨F, hF⟩ := key μ le_rfl
+  refine ⟨F, fun x y hx hy => hF x (fun i => ⟨hx i, fun h => ?_⟩) y (fun i => ⟨hy i, fun h => ?_⟩)⟩
   · exact absurd i.2 (by omega)
   · exact absurd i.2 (by omega)
 
@@ -833,7 +823,7 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
     (E : V → EuclideanSpace ℝ (Fin k)) : IsPrice K fun a b => dist (E a) (E b) := by
   obtain ⟨w, hw, hrk⟩ := thm_alt_rank_price hK hμ
   obtain ⟨Y, _, _, f, hY, hf⟩ := prop_space hw
-  obtain ⟨F, -, hF⟩ := thm_alt_cube (fun S => f (dg S))
+  obtain ⟨F, hF⟩ := thm_alt_cube (fun S => f (dg S))
     (fun S T => by rw [hf]; exact thm_alt_vertices hrk S T)
   obtain ⟨R, hR0, hR⟩ : ∃ R : ℝ, 0 < R ∧ ∀ v i, |E v i| ≤ R := by
     cases nonempty_fintype V

@@ -249,7 +249,6 @@ structure Ok (cap : ℕ) : Prop where
   hold : ∀ n o z, ∀ id ∈ P.cons n o z,
     (hold0 M.np id = M.zp z false ∧ hold1 M.np id = M.zp z true) ∨
     (hold1 M.np id = M.zp z false ∧ hold0 M.np id = M.zp z true)
-  disj : ∀ n o (x : Fin E) e e', e ≠ e' → Disjoint (P.cons n o ⟨x, e⟩) (P.cons n o ⟨x, e'⟩)
   card : ∀ n o z, (P.cons n o z).card ≤ P.num n o z.1
   cap : ∀ n o x, P.num n o x ≤ cap
 

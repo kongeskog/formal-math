@@ -433,19 +433,16 @@ theorem prop_crossing_first {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) 
       linarith
   exact ⟨z.1, z.2, h1, h2, h3, le_min_iff.1 h⟩
 
-/-- **Paper: Proposition prop:crossing.** "Let x, v, y, u, o, o′, w, w′ be points of a price and p, q ≥ 0. There are r, l ≥ 0 with
-r² + l² ≤ 2(p² + q²) such that p|xv| + q|yu| is at most each of p|xo| + q|yo| + p|vo′| + q|uo′| + r|oo′|, p|xw| + q|uw| + q|yw′| + p|vw′| + l|ww′|.
-In particular, for every τ > 0," the inequality (eq:Q) holds. The first statement is prop_crossing_first; for the second,
-"add the two bounds and use rλ ≤ (τ/2)r² + λ²/(2τ)". -/
-theorem prop_crossing {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w w' : Y)
-    {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) :
-    (∃ r l : ℝ, 0 ≤ r ∧ 0 ≤ l ∧ r ^ 2 + l ^ 2 ≤ 2 * (p ^ 2 + q ^ 2) ∧
-      p * d x v + q * d y u ≤ p * d x o + q * d y o + p * d v o' + q * d u o' + r * d o o' ∧
-      p * d x v + q * d y u ≤ p * d x w + q * d u w + q * d y w' + p * d v w' + l * d w w') ∧
-    ∀ τ : ℝ, 0 < τ → 2 * (p * d x v + q * d y u) ≤
+/-- **Paper: display eq:Q**, the second statement of Proposition prop:crossing. "Let x, v, y, u, o, o′, w, w′ be points of
+a price and p, q ≥ 0. There are r, l ≥ 0 with r² + l² ≤ 2(p² + q²) such that p|xv| + q|yu| is at most each of
+p|xo| + q|yo| + p|vo′| + q|uo′| + r|oo′|, p|xw| + q|uw| + q|yw′| + p|vw′| + l|ww′|. In particular, for every τ > 0,
+2(p|xv| + q|yu|) ≤ p(|xo| + |vo′| + |xw| + |vw′|) + q(|yo| + |uo′| + |uw| + |yw′|) + τ(p² + q²) + (|oo′|² + |ww′|²)/(2τ)."
+The first statement is prop_crossing_first; for this one, "add the two bounds and use rλ ≤ (τ/2)r² + λ²/(2τ)". -/
+theorem eq_Q {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w w' : Y)
+    {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) (τ : ℝ) (hτ : 0 < τ) :
+    2 * (p * d x v + q * d y u) ≤
       p * (d x o + d v o' + d x w + d v w') + q * (d y o + d u o' + d u w + d y w') +
         τ * (p ^ 2 + q ^ 2) + (d o o' ^ 2 + d w w' ^ 2) / (2 * τ) := by
-  refine ⟨prop_crossing_first hd x v y u o o' w w' hp hq, fun τ hτ => ?_⟩
   obtain ⟨r, l, hr, hl, hrl, h1, h2⟩ := prop_crossing_first hd x v y u o o' w w' hp hq
   have am : ∀ a b : ℝ, a * b ≤ τ / 2 * a ^ 2 + b ^ 2 / (2 * τ) := by
     intro a b
@@ -459,14 +456,5 @@ theorem prop_crossing {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y
     mul_le_mul_of_nonneg_left hrl (by positivity)
   rw [add_div]
   nlinarith
-
-/-- **Paper: display eq:Q.** "In particular, for every τ > 0, 2(p|xv| + q|yu|) ≤ p(|xo| + |vo′| + |xw| + |vw′|) +
-q(|yo| + |uo′| + |uw| + |yw′|) + τ(p² + q²) + (|oo′|² + |ww′|²)/(2τ)." This is the second statement of Proposition prop:crossing. -/
-theorem eq_Q {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w w' : Y)
-    {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) (τ : ℝ) (hτ : 0 < τ) :
-    2 * (p * d x v + q * d y u) ≤
-      p * (d x o + d v o' + d x w + d v w') + q * (d y o + d u o' + d u w + d y w') +
-        τ * (p ^ 2 + q ^ 2) + (d o o' ^ 2 + d w w' ^ 2) / (2 * τ) :=
-  (prop_crossing hd x v y u o o' w w' hp hq).2 τ hτ
 
 end Paper

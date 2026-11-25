@@ -535,7 +535,7 @@ theorem cutHyp_of_laws {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [N
 theorem exists_setting {K : Type} [Field K] (hK : Contracting K) :
     ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A) (θ : List Bool → A) (h C₀ v₀ : ℕ),
       Generates θ ∧ 17 ≤ h ∧ CutHyp θ (16 * h) C₀ v₀ := by
-  obtain ⟨h', hne, h3, A, hA, VL, hgain, -⟩ := exists_laws hK
+  obtain ⟨h', hne, h3, A, hA, VL, hgain⟩ := exists_laws hK
   obtain ⟨θ, hθ⟩ := exists_generates A
   obtain ⟨h, C₀, v₀, hh, hcut⟩ := cutHyp_of_laws hθ VL h3 hgain
   exact ⟨A, hA, θ, h, C₀, v₀, hθ, hh, hcut⟩

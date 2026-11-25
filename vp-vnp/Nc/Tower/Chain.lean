@@ -20,11 +20,6 @@ noncomputable def Ker (h n : ℕ) [NeZero h] : Subgroup (G h n) := (evG : G h n 
 
 theorem mem_Ker {g : G h n} : g ∈ Ker h n ↔ evG g = 1 := Iff.rfl
 
-/-- **Paper: Section sec:tower.** "Let K_n be the kernel of s ↦ 0; it is a 2-group of order 2^((h²−1)n)." -/
-theorem _root_.Paper.prop_tower_kernel (h n : ℕ) [NeZero h] :
-    IsPGroup 2 (Ker h n) ∧ Nat.card (Ker h n) = 2 ^ ((h ^ 2 - 1) * n) :=
-  ⟨IsPGroup.of_card card_ker_evG, card_ker_evG⟩
-
 /-- The exponent of the number b of chambers at a vertex: b = 2^e. -/
 def ee (h : ℕ) : ℕ := h * (h - 1) / 2
 
@@ -38,7 +33,7 @@ theorem exists_chain (h n : ℕ) [NeZero h] : ∃ Γ : ℕ → Subgroup (G h n),
       ∃ H' : Subgroup (Ker h n), Nat.card H' = 2 ^ (ee h * (j + 1)) ∧ H ≤ H' := by
     intro j H hH hj
     refine Sylow.exists_subgroup_card_pow_prime_le 2 ?_ H hH (Nat.mul_le_mul_left _ (Nat.le_succ j))
-    rw [(Paper.prop_tower_kernel h n).2]
+    rw [Ker, card_ker_evG]
     refine pow_dvd_pow 2 ?_
     calc ee h * (j + 1) ≤ ee h * JJ h n := Nat.mul_le_mul_left _ hj
       _ ≤ _ := Nat.mul_div_le _ _

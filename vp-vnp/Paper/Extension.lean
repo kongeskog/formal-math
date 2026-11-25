@@ -36,7 +36,7 @@ theorem prop_extend_product (π : L → I' → I) (θ : L → ℝ) (hθ : ∀ l,
     refine Finset.prod_congr rfl fun l _ => ?_
     rw [(def_spectral_congr φ).2 (tensor_push_mul _ s t), φ.mul, Real.mul_rpow (φ.nonneg _) (φ.nonneg _)]
   · exact Finset.prod_le_prod (fun l _ => Real.rpow_nonneg (φ.nonneg _) _) fun l _ =>
-      Real.rpow_le_rpow (φ.nonneg _) ((def_spectral_congr φ).1 ((tensor_push_cover _).2 h)) (hθ l)
+      Real.rpow_le_rpow (φ.nonneg _) ((def_spectral_congr φ).1 (h.push _)) (hθ l)
 
 /-- Proof of Proposition prop:extend: "Suppose that ιA = ∑ s_j, each s_j a restriction of b_j. As ιA has trivial index sets
 outside ι(I), so has every s_j; so s_j = ιa_j with ∑ a_j = A. Push-forwards preserve restrictions, so a_j = π_l s_j is a
@@ -59,7 +59,7 @@ theorem prop_extend_cover (ι : I → I') {A : Ten K I} {κ : Type} [Fintype κ]
       funext q j
       obtain ⟨j, rfl⟩ := j
       rfl
-    have h2 := (tensor_push_cover π).2 (h1.trans (hr k))
+    have h2 := (h1.trans (hr k)).push π
     have h3 : π ∘ ι = id := funext hπ
     have h4 := tensor_push_comp π ι (A.withVal fun x => v k (emb x))
     rw [h3] at h4
