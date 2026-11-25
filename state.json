@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T20:47:40.886281291Z",
+  "updated_at": "2026-11-25T20:55:03.312381103Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 82,
     "rejected": 4,
-    "open": 0,
+    "open": 1,
     "contributors": 1,
-    "ideas_open": 5
+    "ideas_open": 3
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 82,
-      "attempts": 86,
+      "attempts": 87,
       "saved": 94393
     }
   ],
@@ -118,7 +118,7 @@
     {
       "number": 133,
       "title": "Idea: restructure(NS1,Nc/Acc): programs return the names of their constants, and the interpreter with budgets goes",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -202,9 +202,9 @@
     {
       "number": 112,
       "title": "Idea: restructure(Paper,Nc): delete statements that only hand a result on, and let the consumer call what they called",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
+      "claimed_by": "kongeskog",
       "lease_expires": null,
       "pr": 142,
       "result_delta": -2649,
@@ -858,7 +858,76 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 145,
+      "title": "restructure(Paper/Circuit,Nc/Acc): inline lem_lowdeg into lem_circuit_program and merge KT.lk_full with KT.inB_full",
+      "author": "kongeskog",
+      "head_sha": "c8ec85473ce0dbc5d1f25a5b87d1beb3f4713cfd",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T20:53:57Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 112,
+      "url": "https://github.com/kongeskog/formal-math/pull/145",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper/Circuit,Nc/Acc"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
@@ -887,8 +956,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 9178,
-      "loc": 519
+      "tokens": 9713,
+      "loc": 568
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
@@ -897,8 +966,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 9030,
-      "loc": 526
+      "tokens": 9116,
+      "loc": 530
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
@@ -907,7 +976,7 @@
     },
     {
       "path": "vp-vnp/NS1/Lists.lean",
-      "tokens": 7489,
+      "tokens": 7465,
       "loc": 475
     },
     {
@@ -941,6 +1010,11 @@
       "loc": 390
     },
     {
+      "path": "vp-vnp/NS1/Postpone.lean",
+      "tokens": 6489,
+      "loc": 504
+    },
+    {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
       "tokens": 6485,
       "loc": 396
@@ -949,6 +1023,11 @@
       "path": "vp-vnp/Nc/G/Move.lean",
       "tokens": 6460,
       "loc": 395
+    },
+    {
+      "path": "vp-vnp/NS1/Guess.lean",
+      "tokens": 6442,
+      "loc": 441
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
@@ -999,16 +1078,6 @@
       "path": "vp-vnp/Nc/Dl/Num0.lean",
       "tokens": 5486,
       "loc": 311
-    },
-    {
-      "path": "vp-vnp/Nc/Tow/Load0.lean",
-      "tokens": 5475,
-      "loc": 417
-    },
-    {
-      "path": "vp-vnp/Nc/Tow/Load.lean",
-      "tokens": 5395,
-      "loc": 312
     }
   ]
 }
