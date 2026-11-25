@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T08:19:36.659414823Z",
+  "updated_at": "2026-11-25T08:26:42.147479028Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "a9a00efbe8f10c9f76f1fe0e9880bc3fce2c12b7",
-    "at": "2026-11-25T08:16:31.055575873Z",
+    "sha": "c09569a6ced7e22a454622ff34a33ca85d525a13",
+    "at": "2026-11-25T08:26:42.147479028Z",
     "metrics": {
-      "tokens": 843651,
-      "loc": 54063,
-      "decls": 4385,
+      "tokens": 842850,
+      "loc": 54038,
+      "decls": 4383,
       "files": 315,
-      "bytes": 3136613,
-      "build_seconds": 721
+      "bytes": 3133893,
+      "build_seconds": 768
     }
   },
   "counts": {
-    "merged": 77,
+    "merged": 78,
     "rejected": 2,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 77,
+      "merged": 78,
       "attempts": 80,
-      "saved": 84510
+      "saved": 85311
     }
   ],
   "ideas": [
@@ -206,8 +206,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T08:39:23Z",
-      "pr": 128,
-      "result_delta": -1548,
+      "pr": 140,
+      "result_delta": -2349,
       "created_at": "2026-11-25T02:41:37Z",
       "url": "https://github.com/kongeskog/formal-math/issues/112",
       "technique": "restructure",
@@ -858,98 +858,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 140,
-      "title": "restructure(Paper/Laws,Nc/G/Start): inline the wrappers thm_laws and sum_pos into their only users",
-      "author": "kongeskog",
-      "head_sha": "e559604d2df66ef1f6b54d4a6b419400fcdf3a83",
-      "base_sha": "062d6dfd7b407fdc59326050f2a89b6d8285278f",
-      "status": "stale",
-      "created_at": "2026-11-25T08:00:33Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 843158,
-        "loc": 54053,
-        "decls": 4383,
-        "files": 315,
-        "bytes": 3134908,
-        "build_seconds": 577
-      },
-      "base_metrics": {
-        "tokens": 843959,
-        "loc": 54078,
-        "decls": 4385,
-        "files": 315,
-        "bytes": 3137628,
-        "build_seconds": null
-      },
-      "delta": -801,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "3 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 843959 → 843158 (-801)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 112,
-      "url": "https://github.com/kongeskog/formal-math/pull/140",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45572598325",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper/Laws,Nc/G/Start"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
