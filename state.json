@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:21:57.719018584Z",
+  "updated_at": "2026-11-25T03:25:20.170570104Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "3b6bddf8e4ac30a5c229609cfdaa8dcf85085b96",
-    "at": "2026-11-25T03:19:49.339972025Z",
+    "sha": "b576da7961163ae69fc17856471032e61439d2c6",
+    "at": "2026-11-25T03:25:20.170570104Z",
     "metrics": {
-      "tokens": 872425,
-      "loc": 55697,
-      "decls": 4462,
-      "files": 318,
-      "bytes": 3234616,
-      "build_seconds": 407
+      "tokens": 865198,
+      "loc": 55274,
+      "decls": 4458,
+      "files": 317,
+      "bytes": 3211415,
+      "build_seconds": 638
     }
   },
   "counts": {
-    "merged": 61,
+    "merged": 62,
     "rejected": 3,
-    "open": 3,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 61,
+      "merged": 62,
       "attempts": 67,
-      "saved": 55736
+      "saved": 62963
     }
   ],
   "ideas": [
@@ -789,96 +789,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 117,
-      "title": "restructure(Paper): prove thm_noacc through the approximate rounds, delete the exact round",
-      "author": "kongeskog",
-      "head_sha": "027f849718afda006a081f488f06df0a22a4cb09",
-      "base_sha": "564b09bbb18df59483c753b7fcb718b955d6f8f8",
-      "status": "stale",
-      "created_at": "2026-11-25T02:58:20Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 866581,
-        "loc": 55336,
-        "decls": 4470,
-        "files": 317,
-        "bytes": 3218117,
-        "build_seconds": 348
-      },
-      "base_metrics": {
-        "tokens": 873808,
-        "loc": 55759,
-        "decls": 4474,
-        "files": 318,
-        "bytes": 3241318,
-        "build_seconds": null
-      },
-      "delta": -7227,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "9 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 873808 → 866581 (-7227)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 104,
-      "url": "https://github.com/kongeskog/formal-math/pull/117",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45537361308",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    },
     {
       "pr": 118,
       "title": "dead-code(*): drop unused fields of ThinTrees and PieceCut and unused clauses of lemmas",
