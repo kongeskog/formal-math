@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T03:04:42.580200339Z",
+  "updated_at": "2026-11-25T03:09:16.457178366Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 60,
     "rejected": 3,
-    "open": 2,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 6
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 60,
-      "attempts": 65,
+      "attempts": 66,
       "saved": 54353
     }
   ],
@@ -206,7 +206,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T04:37:09Z",
-      "pr": null,
+      "pr": 118,
       "result_delta": null,
       "created_at": "2026-11-25T01:32:58Z",
       "url": "https://github.com/kongeskog/formal-math/issues/100",
@@ -946,6 +946,74 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Paper"
+    },
+    {
+      "pr": 118,
+      "title": "dead-code(*): drop unused fields of ThinTrees and PieceCut and unused clauses of lemmas",
+      "author": "kongeskog",
+      "head_sha": "d6e01dd467bb77e4bc6e83e165d0daa33298dfc4",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T03:08:36Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 100,
+      "url": "https://github.com/kongeskog/formal-math/pull/118",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "dead-code",
+      "scope": "*"
     }
   ],
   "top_files": [
