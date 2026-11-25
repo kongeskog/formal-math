@@ -223,11 +223,4 @@ theorem few (F : Spec K I) [Nonempty I] [Nonempty κ] (π : A → I) (t : Ten K 
         rw [mul_pow, pow_add]
         ring
 
-/-- An exact sum of restrictions is a sum up to ε with denominators 1. -/
-theorem BSum.of_sumRestr {t : Ten K I} {b : κ → Ten K I} (h : SumRestr t b) : BSum 0 t b := by
-  obtain ⟨L, hL⟩ := h
-  refine ⟨fun k p a c => C (L k p a c), fun x i hi => ?_⟩
-  obtain rfl : i = 0 := Nat.le_zero.1 hi
-  simp [hL x, app, Polynomial.coeff_zero_prod]
-
 end Nc.Price

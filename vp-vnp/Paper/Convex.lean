@@ -16,17 +16,6 @@ namespace Paper
 
 open Finset Nc Nc.Price Nc.CaseI Ov
 
-/-- **Paper: Lemma lem:few.** "Let P ⊆ V, let t be a tensor on P and T_1, …, T_J tensors on V, and suppose that
-t = ∑_j ⟨f_j|T_j⟩, where each f_j consists of one functional at every party outside P. Then φ(t) ≤ J^g(P) max_j φ(T_j)
-for every spectral point on V." (A tensor on P is one on V with legs of size at most one outside P.) -/
-theorem lem_few {K : Type} [Field K] {V : Type} [Fintype V] [DecidableEq V] [Nonempty V] (φ : Spec K V) (P : Finset V)
-    (t : Ten K V) (ht : ∀ q, q ∉ P → Subsingleton (t.ι q)) {J : ℕ} [NeZero J] (T : Fin J → Ten K V)
-    (h : Ten.SumRestr t T) :
-    φ.F t ≤ (J : ℝ) ^ hexp φ (Subtype.val : P → V) * univ.sup' univ_nonempty fun j => φ.F (T j) := by
-  have := few φ (Subtype.val : P → V) t (fun q hq => ht q fun hmem => hq ⟨⟨q, hmem⟩, rfl⟩) (BSum.of_sumRestr h)
-    (M := univ.sup' univ_nonempty fun j => φ.F (T j)) (fun j => Finset.le_sup' (fun j => φ.F (T j)) (mem_univ j))
-  rwa [Fintype.card_fin] at this
-
 section Steps
 
 /-! The steps of the proof of Lemma lem:convex: the new parties are placed at random by Proposition prop:extend, and
