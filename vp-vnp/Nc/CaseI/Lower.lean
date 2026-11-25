@@ -38,11 +38,8 @@ theorem sum_pairs (G : Fin k → Fin k → ℝ) :
       ∑ e : Fin k × Fin k, if e.2 < e.1 then G e.1 e.2 else 0 :=
     Fintype.sum_equiv (Equiv.prodComm _ _) _ _ fun e => rfl
   rw [h2, ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun e _ => ?_
-  rcases lt_trichotomy e.1 e.2 with h | h | h
-  · rw [if_pos h, if_neg (not_lt.2 h.le), if_neg h.ne, add_zero]
-  · rw [if_neg (not_lt.2 h.ge), if_neg (not_lt.2 h.le), if_pos h, add_zero]
-  · rw [if_neg (not_lt.2 h.le), if_pos h, if_neg h.ne', zero_add]
+  -- term by term, by the trichotomy of `e.1` and `e.2`: at most one `if` is true
+  grind
 
 theorem sum_pairs_one : ∑ _e : Pr k, (1 : ℝ) = k * (k - 1) / 2 := by
   have h := sum_pairs (k := k) fun _ _ => 1 / 2

@@ -295,7 +295,7 @@ theorem fixed_closed_convex (A : IsoAct G Z) :
 theorem projection_var (A : IsoAct G Z) {q : Z} (hq : A.Fix q) (z : Z) :
     dist z (A.P z) ^ 2 + dist (A.P z) q ^ 2 ≤ dist z q ^ 2 := by
   obtain ⟨hcl, hconv, hP⟩ := fixed_closed_convex A
-  obtain ⟨P₀, hP₀, -, hvar⟩ := lem_toolkit_d {y | A.Fix y} hcl ⟨_, hP z⟩ hconv z
+  obtain ⟨P₀, hP₀, hvar⟩ := lem_toolkit_d {y | A.Fix y} hcl ⟨_, hP z⟩ hconv z
   have h1 := hvar _ (hP z)
   have h2 := A.P_spec z P₀
   have e1 : ∀ g, dist (A.P z) (A.act g z) = dist z (A.P z) := fun g => by
@@ -416,7 +416,7 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
     (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) {a : Z} (ha : (A.W p (2 * u)).Fix a) :
     (1 - ζ) * dist a ((A.W p (3 * u)).P a) ≤ dist a ((A.W (p + u) (2 * u)).P a) := by
   set R := dist a ((A.W p (3 * u)).P a) with hR
-  set B : ℕ → Z := fun k => (A.W (p + k) (3 * u - k)).P a with hB
+  set B : ℕ → Z := fun k => (A.W (p + k) (3 * u - k)).P a
   have hBfix : ∀ k, (A.W (p + k) (3 * u - k)).Fix (B k) := fun k => IsoAct.P_fix _ a
   have hBu : B u = (A.W (p + u) (2 * u)).P a := by
     show (A.W (p + u) (3 * u - u)).P a = _
@@ -430,8 +430,6 @@ theorem lem_tele (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z,
     have h1 := projection_var (A.W (p + (k + 1)) (3 * u - (k + 1)))
       ((hBfix k).sub A (by omega) (by omega) (by omega)) a
     rw [dist_comm ((A.W (p + (k + 1)) (3 * u - (k + 1))).P a) (B k)] at h1
-    show dist (B k) ((A.W (p + (k + 1)) (3 * u - (k + 1))).P a) ^ 2 ≤
-      dist a (B k) ^ 2 - dist a ((A.W (p + (k + 1)) (3 * u - (k + 1))).P a) ^ 2
     linarith
   have hφR : dist a (B u) ≤ R :=
     (projection_nearest (A.W (p + u) (3 * u - u)) a).1 _
@@ -646,8 +644,8 @@ theorem lem_angle {μ : ℕ} {s : ℝ} {h : ℕ} {Z : Type} [MetricSpace Z] [Cat
     dist ((A.W p (2 * u)).P z) ((A.W (p + u) (2 * u)).P z) ^ 2 ≤
       dist z ((A.W p (2 * u)).P z) ^ 2 + dist z ((A.W (p + u) (2 * u)).P z) ^ 2 +
         2 * c * (dist z ((A.W p (2 * u)).P z) * dist z ((A.W (p + u) (2 * u)).P z)) := by
-  set a := (A.W p (2 * u)).P z with ha
-  set v := (A.W p (3 * u)).P a with hv
+  set a := (A.W p (2 * u)).P z
+  set v := (A.W p (3 * u)).P a
   have hvf : (A.W p (3 * u)).Fix v := IsoAct.P_fix _ a
   have hv1 : (A.W p (2 * u)).Fix v := hvf.sub A le_rfl (by omega) hp
   refine lem_angle_projections _ _ hc z v hv1 (hvf.sub A (by omega) (by omega) hp) fun q σ hσ0 hσ1 q1 q2 => ?_
@@ -704,7 +702,7 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
     (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc0 : 0 < c) (z : Z) :
     ∑ a : Fin L, ∑ b : Fin L, dist ((A.W (a.1 * u) (2 * u)).P z) ((A.W (b.1 * u) (2 * u)).P z) ^ 2 ≤
       2 * ((L : ℝ) - (1 - 2 * c)) * windowSum A u L z := by
-  set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z with hQ
+  set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z
   show ∑ a, ∑ b, dist (Q a z) (Q b z) ^ 2 ≤ _
   have hwin := window_le hh
   have hpair : ∀ (z : Z) (a b : Fin L), a.1 < b.1 → dist (Q a z) (Q b z) ^ 2 ≤
@@ -733,9 +731,7 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
           if a.1 = b.1 + 1 then c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) else 0) := by
     intro z a b
     rcases lt_trichotomy a.1 b.1 with hab | hab | hab
-    · rw [if_neg (fun h => by rw [h] at hab; exact lt_irrefl _ hab),
-        if_neg (show ¬ a.1 = b.1 + 1 by omega), add_zero]
-      exact hpair z a b hab
+    · grind
     · have : a = b := Fin.ext hab
       subst this
       simp
@@ -766,21 +762,11 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
     have e2 : ∀ b : Fin L, ∑ a : Fin L, (if b.1 = a.1 + 1 then c * r b else 0) ≤ c * r b := by
       intro b
       by_cases hb : 1 ≤ b.1
-      · rw [sum_eq_single (⟨b.1 - 1, by omega⟩ : Fin L)]
-        · rw [if_pos (by simp only; omega)]
-        · intro a _ ha
-          rw [if_neg]
-          intro h1
-          apply ha
-          apply Fin.ext
-          simp only
-          omega
-        · simp
-      · rw [sum_eq_zero]
-        · exact mul_nonneg hc0.le (hr b)
-        · intro a _
-          rw [if_neg]
-          omega
+      -- `grind` closes the three goals left by `sum_eq_single`: the term at `a = b - 1`, the
+      -- vanishing of the terms at every other `a`, and the membership of `b - 1` in `univ`
+      · rw [sum_eq_single (⟨b.1 - 1, by omega⟩ : Fin L)] <;> grind
+      -- `b = 0`: there is no `a` with `b = a + 1`, so every term is 0, and `0 ≤ c * r b`
+      · simp_all
     have e3 : ∀ a b : Fin L, (if b.1 = a.1 + 1 then c * (r a + r b) else 0) =
         (if b.1 = a.1 + 1 then c * r a else 0) + if b.1 = a.1 + 1 then c * r b else 0 := by
       intro a b
@@ -793,7 +779,7 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
     have e5 := sum_le_sum fun b (_ : b ∈ univ) => e2 b
     rw [← mul_sum] at e4 e5
     linarith
-  set r : Fin L → ℝ := fun a => dist z (Q a z) ^ 2 with hr
+  set r : Fin L → ℝ := fun a => dist z (Q a z) ^ 2
   have hr0 : ∀ a, 0 ≤ r a := fun a => sq_nonneg _
   have h1 : ∑ a : Fin L, ∑ b : Fin L, (if a = b then (0 : ℝ) else r a + r b) =
       2 * ((L : ℝ) - 1) * ∑ a, r a := by
@@ -833,7 +819,7 @@ theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA
     (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc0 : 0 < c) (z : Z) :
     ∃ b, windowSum A u L b ≤ (1 - (1 - 2 * c) / L) * windowSum A u L z ∧
       (L : ℝ) * dist z b ^ 2 ≤ windowSum A u L z - windowSum A u L b := by
-  set Q : Fin L → Z := fun a => (A.W (a.1 * u) (2 * u)).P z with hQ
+  set Q : Fin L → Z := fun a => (A.W (a.1 * u) (2 * u)).P z
   have hLr : (0 : ℝ) < L := by exact_mod_cast hL
   obtain ⟨b, hb⟩ := lem_toolkit_c.1 L Q hL
   have h1 : 2 * ((L : ℝ) * ∑ i, dist b (Q i) ^ 2) ≤ ∑ i, ∑ j, dist (Q i) (Q j) ^ 2 := by
@@ -866,7 +852,7 @@ theorem thm_poincare_limit (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (h
   choose b hb1 hb2 using thm_poincare_step A hμ hs hsm hA hu hL hh hζ hC hζ1 hcζ hc0
   set F := windowSum A u L with hF
   have hF0 : ∀ z, 0 ≤ F z := windowSum_nonneg A u L
-  set δ := 1 - 2 * c with hδ
+  set δ := 1 - 2 * c
   have hδ0 : 0 < δ := by linarith
   have hLr : (1 : ℝ) ≤ L := by exact_mod_cast hL
   have hq0 : 0 ≤ 1 - δ / L := by
@@ -978,9 +964,9 @@ F(z) by 2C(2u) ∑_j e_j(z)²." -/
 theorem thm_poincare_windows (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hsm : s ^ 2 < μ) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
     (hu : 2 ≤ u) (hh : (L + 1) * u = h) (z : Z) :
     windowSum A u L z ≤ 2 * windowConst μ s (2 * u) * ∑ j ∈ range (h - 1), A.e j z ^ 2 := by
-  set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z with hQ
-  set F : Z → ℝ := windowSum A u L with hF
-  set C₂ := windowConst μ s (2 * u) with hC₂d
+  set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z
+  set F : Z → ℝ := windowSum A u L
+  set C₂ := windowConst μ s (2 * u)
   have hwin := window_le hh
   have h1 : ∀ a : Fin L, dist z (Q a z) ^ 2 ≤ C₂ * ∑ j ∈ range (h - 1),
       if a.1 * u ≤ j ∧ j + 1 < a.1 * u + 2 * u then A.e j z ^ 2 else 0 := by

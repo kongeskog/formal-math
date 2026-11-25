@@ -82,7 +82,7 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
         rw [allSteps_eq, execAll_append, List.mem_flatMap]
         rw [hnub] at hσ hσ'
         exact ⟨σ, hσ, hσ'⟩
-      obtain ⟨q, ρ, n, o, b, st, h1, h2, h3, h4, h5, hfin, rfl⟩ := mem_execAll C tab qn i e hU0 hU1 hK hmem
+      obtain ⟨q, ρ, n, o, b, st, h2, h3, h4, h5, hfin, rfl⟩ := mem_execAll C tab qn i e hU0 hU1 hK hmem
       exact cost_instTm hfin hnm hdc hS hK2 hId hU0X hSl hCn hR g
   have := dealF_does (θ := θ) (lT cb b0) (lT cb b1) ((List.finRange K).map fun κ => C.nm (.part κ)) nl nub
     (steps18 C tab qn i e hU0 hU1) (steps9 C) ((List.finRange mm).map (instTm C tab tg bT bub gt d1 gp)) z (Ln := Lc)

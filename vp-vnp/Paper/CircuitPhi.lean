@@ -146,7 +146,7 @@ theorem card_clauses {a b c d p i : Type} [Fintype a] [Fintype b] [Fintype c] [F
       (Fintype.card d + Fintype.card p * Fintype.card p) + Fintype.card i := by
   simp only [Fintype.card_sum, Fintype.card_prod]
 
-theorem literal_bound {B N I E R₁ R₂ R₃ D IE : ℕ} (hB : 1 ≤ B) (hN : N ≤ B) (hE : E ≤ 9 * B ^ 3) (h1 : R₁ ≤ 4 * B ^ 5)
+theorem literal_bound {B I E R₁ R₂ R₃ D IE : ℕ} (hB : 1 ≤ B) (hE : E ≤ 9 * B ^ 3) (h1 : R₁ ≤ 4 * B ^ 5)
     (h2 : R₂ ≤ 25 * B ^ 5) (hD : D ≤ 6 * B ^ 2) (h3 : R₃ ≤ 2 * B ^ 3) (hI : I ≤ B * B) (hIE : IE = I + E + 3) :
     (R₁ + R₂ + R₃ + (D + E * E) + I) * IE ≤ 1600 * B ^ 9 := by
   have p := fun k (hk : k ≤ 6) => Nat.pow_le_pow_right (show 0 < B from hB) hk
@@ -267,7 +267,7 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
     refine (Finset.sum_le_card_nsmul _ _ IE fun κ _ => hlen κ).trans ?_
     rw [smul_eq_mul, Finset.card_univ]
     rw [card_clauses]
-    exact literal_bound hB (by omega) cE cS cH cD cV cI hIE
+    exact literal_bound hB cE cS cH cD cV cI hIE
   · rw [hphi]
     refine totalDegree_mnExt f fun b hb => ?_
     rw [← hf, fdSum_valid] at hb

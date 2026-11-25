@@ -334,7 +334,6 @@ theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 
         _ ≤ _ := s4
     have sg := s3 K B [false] hK (by simp) (by omega)
     have sg' := s3 K' B' [true] hK' (by simp) (by omega)
-    have s5 : 2 * D.size ≤ 2 * u ^ (h * α) := Nat.mul_le_mul_left _ hDs
     have s6 : 2 * sW + sU + 2000 ≤ 3 * u ^ (16 * h) := by
       have : u ^ 1 ≤ u ^ (16 * h) := pow_le_pow hu1 (by omega)
       rw [pow_one] at this
@@ -423,7 +422,6 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
       have g2 : K.ht + K'.ht + max (B' + n * J) B' + J + 1 ≤ X := by omega
       have g3 : α * (16 * h - 32) + 40 ≤ 16 * h * α + 1 - 8 * (n + 1) := by omega
       have g4 : 16 * h * α + 1 - 8 * (n + 1) + 9 ≤ 16 * h * (2 * α) := by omega
-      have hn2 : n ≤ 2 * α + 1 := hn'
       have hres := prop_approx_acc_round_num hh hα hC hcst hD hK' hDs (B := B' + n * J)
         (M := Γ ^ n) (e := 16 * h * α + 1 - 8 * (n + 1)) hp8
         ((hk1.trans (hnds n hn')).trans hK) hk3 (Nat.one_le_pow _ _ hΓ1) (hps.trans (size_rounds hh hα hu4 (by omega)))

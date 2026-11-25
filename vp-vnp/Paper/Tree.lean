@@ -462,7 +462,7 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     rw [Nat.zero_mul, Nat.add_zero]
     exact hS
   have hb0 : Base (nX nI) (oX oI : Inp → NM R FL → ℕ) H := ⟨hn, fun ν => ho _⟩
-  obtain ⟨H1, s1, u1, f1⟩ := after_stage hA hB hR hb hS0 hb0
+  obtain ⟨H1, s1, f1⟩ := after_stage hA hB hR hb hS0 hb0
   obtain ⟨H2, s2, u2, f2⟩ := units_stage hA hB hB2 s1 f1
   obtain ⟨H3, s3, u3, f3⟩ := host_stage hh (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
     (fun j i => u2 (f1.isMin j i))
@@ -505,9 +505,8 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
         rw [Equiv.symm_apply_apply, eq] at this
         simp only [ndPar, nd, parN, dif_pos (show j + 1 ≤ J by omega)] at this
         exact absurd this (Option.some_ne_none _)
-      rw [show (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
-        fun _ => False from funext fun x => eq_false (this x)]
-      exact hconst _
+      -- `this` makes the predicate `False` for every `x`; `hconst` closes it
+      simp_all
     · by_cases hij : i = j + 1
       · subst hij
         refine Or.inl ?_
@@ -526,9 +525,8 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
           have h1 := congrArg ndStage this
           rw [ndStage_par hh _ nd_ne_none] at h1
           exact hij h1.symm
-        rw [show (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
-          fun _ => False from funext fun x => eq_false (this x)]
-        exact hconst _
+        -- `this` makes the predicate `False` for every `x`; `hconst` closes it
+        simp_all
   · have e2 : (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
         fun _ => Pl.pt none = q := by
       funext x
@@ -947,10 +945,8 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
   · intro p q
     have key := par_computed (R := R) (FL := FL) (Pl := Pl) (U0' := N) (H := H') (n' := fun x => x.1) (o' := fun x => x.2)
       hH.h_pos g1 p q
-    rcases key with h | h | h
-    · exact Or.inr (Or.inr h)
-    · exact Or.inr (Or.inl h)
-    · exact Or.inl h
+    -- the three cases of `key`, reordered
+    grind
   · exact fun u => Or.inr (Or.inr (f1.cur u))
   · exact fun z u => Or.inr (Or.inr (f1.cons (eZ R FL Pl z) u))
   · exact fun y => Or.inr (Or.inr (f1.num (eE R FL y)))
