@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T05:33:43.469400060Z",
+  "updated_at": "2026-11-25T05:40:04.299751780Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 2,
     "open": 0,
     "contributors": 1,
-    "ideas_open": 3
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -104,10 +104,10 @@
     {
       "number": 115,
       "title": "Idea: restructure(Nc/Tow): remove the parameters r and p that are always 1, and FlagLaws, which repeats VLaws",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-25T08:39:27Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-25T02:41:42Z",
@@ -146,10 +146,10 @@
     {
       "number": 112,
       "title": "Idea: restructure(Paper,Nc): delete statements that only hand a result on, and let the consumer call what they called",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-25T08:39:23Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-25T02:41:37Z",
@@ -174,10 +174,10 @@
     {
       "number": 110,
       "title": "Idea: restructure(Paper/Tree): state the tree theorem over A as it is used and delete Paper/Tower.lean",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-25T06:40:37Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 123,
       "result_delta": -1503,
       "created_at": "2026-11-25T02:41:34Z",
@@ -806,8 +806,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 20598,
-      "loc": 1243
+      "tokens": 20127,
+      "loc": 1179
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -821,13 +821,13 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 12099,
-      "loc": 747
+      "tokens": 12080,
+      "loc": 745
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
-      "tokens": 11931,
-      "loc": 718
+      "tokens": 11892,
+      "loc": 716
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
@@ -851,8 +851,8 @@
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 8094,
-      "loc": 493
+      "tokens": 7990,
+      "loc": 486
     },
     {
       "path": "vp-vnp/NS1/Lists.lean",
@@ -865,14 +865,14 @@
       "loc": 476
     },
     {
-      "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 7306,
-      "loc": 418
-    },
-    {
       "path": "vp-vnp/NS1/DSteps.lean",
       "tokens": 7194,
       "loc": 425
+    },
+    {
+      "path": "vp-vnp/Paper/Laws.lean",
+      "tokens": 7162,
+      "loc": 412
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
@@ -945,14 +945,14 @@
       "loc": 341
     },
     {
-      "path": "vp-vnp/Nc/Tower/Inst.lean",
-      "tokens": 5603,
-      "loc": 343
-    },
-    {
       "path": "vp-vnp/Nc/Dl/SizeScript.lean",
       "tokens": 5586,
       "loc": 362
+    },
+    {
+      "path": "vp-vnp/Nc/Tower/Inst.lean",
+      "tokens": 5536,
+      "loc": 339
     }
   ]
 }
