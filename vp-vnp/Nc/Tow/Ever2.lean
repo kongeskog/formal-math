@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r}
+variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J}
   {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
@@ -38,7 +38,7 @@ theorem sum_alv_le {κ : Type*} (τ : Tg T m AA) (s : Finset κ) (f : κ → NM 
 
 section
 
-variable (hr : 0 < r) (hb : 0 < b)
+variable (hb : 0 < b)
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
   (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
 
@@ -53,7 +53,7 @@ theorem alv_relay (x : {x : RM T m AA // okR T R ch x}) (ν : Bool) :
 theorem ok_mid2 (j : Fin J) (e : T.Ed j) : okR T R ch (.mid j e 2) :=
   ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
 
-include hr hb
+include hb
 
 theorem nR_mid3 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 3) ≤ nR R ch FL lhat n o (.mid j e 2) := by
   classical
@@ -75,7 +75,7 @@ theorem nR_mid3 (j : Fin J) (e : T.Ed j) : nR R ch FL lhat n o (.mid j e 3) ≤ 
         exact mem_singleton_self _
       · simp [tgM] at hν
     · rw [Finset.sum_singleton]
-      exact alv_le_num hr hb _ _
+      exact alv_le_num _ _
   · exact Nat.zero_le _
 
 include hg
@@ -167,10 +167,10 @@ open Classical in
 noncomputable def NR0 (P : Nd T) : ℕ := ∑ a, ∑ c, ∑ γ, ∑ s, ∑ q : Fin 3,
   if tri T R ch (.start a c γ s) q = P then nR R ch FL lhat n o (.start a c γ s) else 0
 
-variable (hh : 0 < h) (hr : 0 < r) (hb : 0 < b)
+variable (hh : 0 < h) (hb : 0 < b)
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
   (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
-include hh hr hb hg
+include hh hb hg
 
 open Classical in
 /-- Relays of the stages, by the levels of the nodes. -/
@@ -251,7 +251,7 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
       have hs : ∀ s, nR R ch FL lhat n o (.mid j e s) ≤ Lf j e ∧ (T.ty e ≠ imin hh Lf j →
           nR R ch FL lhat n o (.mid j e s) = 0) := by
         intro s
-        have h2 := nR_mid (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hh hr hb j e s
+        have h2 := nR_mid (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hh hb j e s
         constructor
         · refine h2.trans ?_
           split_ifs
@@ -260,8 +260,8 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
         · intro hne
           rw [if_neg hne] at h2
           omega
-      have h3 := nR_mid3 (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hr hb j e
-      have h4 := nR_mid1 hr hb hg j e
+      have h3 := nR_mid3 (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) hb j e
+      have h4 := nR_mid1 hb hg j e
       -- the chambers on the next level
       have hH : ∀ s (c : T.X j), (if nd T (j + 1) j.2 (hst T (T.ty e) c) = P then nR R ch FL lhat n o (.mid j e s) else 0) ≤
           if nd T (j + 1) j.2 (hostj hh Lf c) = P then Lf j e else 0 := by
@@ -334,7 +334,7 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
       rw [← Finset.sum_add_distrib]
       refine Finset.sum_le_sum fun x _ => ?_
       split_ifs
-      · exact sum_mid2 hr hb hg j x
+      · exact sum_mid2 hb hg j x
       · exact le_rfl
     rw [e0, e1, e2, e3, h3]
     omega

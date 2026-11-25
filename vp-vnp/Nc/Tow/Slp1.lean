@@ -17,7 +17,7 @@ namespace Nc.Tow
 
 open Finset Nc.G Unc
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J r}
+variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J}
 
 variable (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T)
 
@@ -106,8 +106,8 @@ theorem tmin_lt (hb : 0 < b) {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R
   set w := Wb R ch FL U0 U1 with hw
   set s := Fintype.card (Sym2 T.Fl) with hs
   have h1 := tmin_le hb L l (n' := fun _ => w) fun q => hL _
-  have hN : T.NN2 (fun _ => w) ≤ ((b * s * w : ℕ) : ℝ) ^ 2 := by
-    unfold Tower.NN2
+  have hN : vN2 b (fun _ : Sym2 T.Fl => w) ≤ ((b * s * w : ℕ) : ℝ) ^ 2 := by
+    unfold vN2
     have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast hb
     have e1 : (∑ q : Sym2 T.Fl, if q.IsDiag then (0 : ℝ) else ((w : ℕ) : ℝ) ^ 2) ≤ s * (w : ℝ) ^ 2 := by
       refine (Finset.sum_le_card_nsmul _ _ ((w : ℝ) ^ 2) fun q _ => ?_).trans (by simp [hs])
@@ -127,7 +127,7 @@ theorem tmin_lt (hb : 0 < b) {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R
       _ ≤ (b : ℝ) ^ 2 * ((s : ℝ) ^ 2 * (w : ℝ) ^ 2) := by
           refine mul_le_mul e2 (mul_le_mul_of_nonneg_right e4 (by positivity)) (by positivity) (by positivity)
       _ = _ := by push_cast; ring
-  have h2 : √(T.NN2 fun _ => w) ≤ ((b * s * w : ℕ) : ℝ) := by
+  have h2 : √(vN2 b fun _ : Sym2 T.Fl => w) ≤ ((b * s * w : ℕ) : ℝ) := by
     rw [show ((b * s * w : ℕ) : ℝ) = √(((b * s * w : ℕ) : ℝ) ^ 2) from (Real.sqrt_sq (Nat.cast_nonneg _)).symm]
     exact Real.sqrt_le_sqrt hN
   have ha : (1 : ℝ) ≤ FL.a₁ := by exact_mod_cast FL.a₁_pos

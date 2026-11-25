@@ -15,12 +15,12 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
 /-- The number of units of a batch. -/
-noncomputable def Bt (T : Tower h b D J r) (ch : Fin AA ↪ T.X 0) (lhat : ℕ) (n : Fin AA → Fin AA → ℕ) (a c : Fin AA)
+noncomputable def Bt (T : Tower h b D J) (ch : Fin AA ↪ T.X 0) (lhat : ℕ) (n : Fin AA → Fin AA → ℕ) (a c : Fin AA)
     (γ : T.X 0) : ℕ :=
   if Valid lhat n then ((range (n a c)).filter fun k => gam T ch a k = γ).card else 0
 
@@ -122,8 +122,8 @@ theorem tgR_start {x : RM T m AA} {ν : Bool} {a c : Fin AA} {γ : T.X 0} {s : F
 
 section
 
-variable (hr : 0 < r) (hb : 0 < b)
-include hr hb
+variable (hb : 0 < b)
+include hb
 
 theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R ch (.start a c γ s)) :
     num R ch FL lhat n o (.inl ⟨.start a c γ s, hx⟩) ≤ Bt T ch lhat n a c γ := by
@@ -176,7 +176,7 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R
         exact mem_singleton_self _
       · simp [tgM] at hν
     · rw [Finset.sum_singleton]
-      exact (alv_le_num hr hb _ _).trans (ih hs0 hx0)
+      exact (alv_le_num _ _).trans (ih hs0 hx0)
 
 end
 
@@ -238,8 +238,8 @@ theorem steps_le {α : Type*} [DecidableEq α] (l : List α) (e : α) (L M : ℕ
 
 section
 
-variable (hr : 0 < r) (hb : 0 < b)
-include hr hb
+variable (hb : 0 < b)
+include hb
 
 /-- The load of an edge after the start. -/
 theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
@@ -297,9 +297,9 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
       split_ifs with hν
       · rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
         · change tgR T R ch x ν = .edge 0 e at hν
-          have hnum := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) hr hb ⟨x, hx⟩ ν
+          have hnum := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) ⟨x, hx⟩ ν
           rcases x with ⟨a, c, γ, s⟩ | ⟨j', i', e'⟩ | ⟨j', e', s'⟩ | e'
-          · have hB := hnum.trans (num_start_le hr hb a c γ s hx)
+          · have hB := hnum.trans (num_start_le hb a c γ s hx)
             refine le_trans ?_ (Finset.single_le_sum (f := fun a => ∑ c, ∑ γ, ∑ s : Fin (2 * m), _)
               (fun _ _ => Nat.zero_le _) (mem_univ a))
             refine le_trans ?_ (Finset.single_le_sum (f := fun c => ∑ γ, ∑ s : Fin (2 * m), _)
@@ -404,7 +404,7 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
     rw [Nat.add_comm]
     exact this
 
-omit hr hb in
+omit hb in
 /-- The batches on an edge. -/
 theorem batch_le (e : T.Ed 0) : (∑ a, ∑ c, ∑ γ, if a = c then 0 else
     Bt T ch lhat n a c γ * (R.path (ch a) (ch c) γ).count e) ≤ Uu * (lhat / Fintype.card (T.X 0) + 2 * AA) := by
@@ -487,7 +487,7 @@ theorem batch_le (e : T.Ed 0) : (∑ a, ∑ c, ∑ γ, if a = c then 0 else
 /-- **Paper: Theorem thm:tree, Start.** "Every edge gets at most n₀ = 4L(N+M²) units": every edge of X^(0) gets at
 most Uu (N/|X^(0)| + 2AA), where Uu ≤ 2|X^(0)|L bounds the routes through an edge. -/
 theorem _root_.Paper.thm_tree_start (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
-    Uu * (lhat / Fintype.card (T.X 0) + 2 * AA) := (load_start_le hr hb e).trans (batch_le e)
+    Uu * (lhat / Fintype.card (T.X 0) + 2 * AA) := (load_start_le hb e).trans (batch_le e)
 
 end
 

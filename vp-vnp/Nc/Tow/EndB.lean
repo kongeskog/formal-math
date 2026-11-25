@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ}
 
 /-- The parent of a chamber, as a node. -/
@@ -29,7 +29,7 @@ def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
   | .fin e, β => some ⟨Fin.last J, if β then T.e1 e else T.e0 e⟩
   | _, _ => none
 
-variable (hr : 0 < r) (hb : 0 < b) (hh : 0 < h)
+variable (hb : 0 < b) (hh : 0 < h)
 theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i e)) (hne : num R ch FL lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
     i = imin hh (lev (load R ch FL lhat n o)) j.1 := by
   classical
@@ -38,12 +38,12 @@ theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i 
   · exact (isMin_iff hh _ j.castSucc i).1 ha
   · exact absurd rfl hne
 
-include hr hb hh
+include hb hh
 
 theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s))
     (hne : num R ch FL lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
     T.ty e = imin hh (lev (load R ch FL lhat n o)) j.1 := by
-  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hr hb j e s hx
+  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
   have h2 := (num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0).2
   by_contra hcon
   have h3 : ¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) := fun hm => hcon ((isMin_iff hh _ j.castSucc _).1 hm)
@@ -90,7 +90,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
         rw [h1]
       change s(nd T (j + 1) j.2 (hst T i (T.e0 e)), nd T j j.2.le (T.e1 e)) = _
       rw [h2, Sym2.eq_swap]
-  · have hi := num_mid hr hb hh j e s hx hne
+  · have hi := num_mid hb hh j e s hx hne
     have hjJ := j.2
     have hpar : ∀ c : T.X j.1, parN hh (lev (load R ch FL lhat n o)) j.1 c = nd T (j + 1) j.2 (hst T (T.ty e) c) := by
       intro c
@@ -131,7 +131,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       change s(none, nd T J le_rfl (T.e1 e)) = _
       rw [Sym2.eq_swap]
 
-omit hr hb hh in
+omit hb hh in
 /-- A sum over at most one element. -/
 theorem sum_le_one {κ : Type*} (s : Finset κ) (f : κ → ℕ) (B : ℕ) (h1 : ∀ x ∈ s, ∀ y ∈ s, x = y) (h2 : ∀ x ∈ s, f x ≤ B) :
     ∑ x ∈ s, f x ≤ B :=
@@ -183,11 +183,11 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
   · rw [num_inn hh j i e hx hn, num_inn hh j i' e hx' hn']
   · exfalso
     have a1 := num_inn hh j i e hx hn
-    have a2 := num_mid hr hb hh j e s' hx' hn'
+    have a2 := num_mid hb hh j e s' hx' hn'
     exact hx (a2.trans a1.symm)
   · exfalso
     have a1 := num_inn hh j i' e hx' hn'
-    have a2 := num_mid hr hb hh j e s hx hn
+    have a2 := num_mid hb hh j e s hx hn
     exact hx' (a2.trans a1.symm)
   · rw [mm s s' hx hx' hd hd']
 
@@ -199,13 +199,13 @@ theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : F
   have hnz : ∀ (x : {x : RM T m AA // okR T R ch x}), alv R ch FL lhat n o (⟨.inl x, β⟩ : NM R FL) ≠ 0 →
       num R ch FL lhat n o (.inl x) ≠ 0 := by
     intro x hx
-    have := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) hr hb x β
+    have := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) x β
     omega
   refine sum_le_one _ _ _ ?_ ?_
   · intro ν hν ν' hν'
     obtain ⟨-, h0, ⟨x, hx⟩, rfl, h2, h3⟩ := mem_filter.1 hν
     obtain ⟨-, h0', ⟨x', hx'⟩, rfl, h2', h3'⟩ := mem_filter.1 hν'
-    have : x = x' := ofEd_unique hr hb hh hx hx' h3 h3' h2 h2' (hnz _ h0) (hnz _ h0')
+    have : x = x' := ofEd_unique hb hh hx hx' h3 h3' h2 h2' (hnz _ h0) (hnz _ h0')
     subst this
     rfl
   · intro ν hν
@@ -213,10 +213,10 @@ theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : F
     rcases h3 with ⟨i, h3⟩ | ⟨s, h3⟩
     · simp only at h3
       subst h3
-      exact (alv_le_num hr hb _ _).trans (num_inl _)
+      exact (alv_le_num _ _).trans (num_inl _)
     · simp only at h3
       subst h3
-      exact (alv_mid_le hr hb j e s hx β).1
+      exact (alv_mid_le hb j e s hx β).1
 
 open Classical in
 /-- The alive units between a chamber of a level before the last and its parent. -/
@@ -269,10 +269,10 @@ theorem sum_child_lt (j : Fin J) (c : T.X j) : (∑ ν : NM R FL, if IsCh R ch F
   by_cases h0 : T.e0 e = c
   · have h1 : ¬ T.e1 e = c := fun hcon => hne (h0.trans hcon.symm)
     rw [if_pos h0, if_neg h1, if_pos (Or.inl h0)]
-    exact sum_edge_end hr hb hh j e false
+    exact sum_edge_end hb hh j e false
   · by_cases h1 : T.e1 e = c
     · rw [if_neg h0, if_pos h1, if_pos (Or.inr h1), Nat.zero_add]
-      exact sum_edge_end hr hb hh j e true
+      exact sum_edge_end hb hh j e true
     · rw [if_neg h0, if_neg h1]
       exact Nat.zero_le _
 
@@ -286,7 +286,7 @@ theorem sum_child_last (c : T.X J) : (∑ ν : NM R FL, if IsCh R ch FL ν ⟨Fi
     intro e β
     simp only [C]
     rw [Finset.sum_singleton]
-    exact (alv_le_num hr hb _ _).trans (num_inl _)
+    exact (alv_le_num _ _).trans (num_inl _)
   have hall : ∀ ν : NM R FL, (if IsCh R ch FL ν ⟨Fin.last J, c⟩ then alv R ch FL lhat n o ν else 0) ≤
       if ν ∈ ((univ.filter fun e : T.Ed J => T.e0 e = c).biUnion fun e => C e false) ∪
         ((univ.filter fun e : T.Ed J => T.e1 e = c).biUnion fun e => C e true) then alv R ch FL lhat n o ν else 0 := by
@@ -339,8 +339,8 @@ theorem sum_child (j : ℕ) (hj : j ≤ J) (c : T.X j) : (∑ ν : NM R FL,
     rw [dif_pos (Nat.lt_succ_of_le hj)]
   rw [e1]
   rcases hj.lt_or_eq with h1 | h1
-  · exact sum_child_lt hr hb hh ⟨j, h1⟩ c
+  · exact sum_child_lt hb hh ⟨j, h1⟩ c
   · subst h1
-    exact sum_child_last hr hb hh c
+    exact sum_child_last hb hh c
 
 end Nc.Tow

@@ -18,7 +18,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ} {T : Tower h b D J r} (R : Routes T m Uu)
+variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} (R : Routes T m Uu)
   (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T) (lhat : ℕ) (n : Fin AA → Fin AA → ℕ)
   (o : NM R FL (ch := ch) → ℕ)
 
@@ -37,7 +37,7 @@ noncomputable def bt (τ : Tg T m AA) : ℕ :=
 
 /-- The outcome of a law move is good for `t` units. -/
 def GoodL (l : LMv T FL) (t : ℕ) : Prop :=
-  r * b * ∑ ν : (FL.L l.2.2.2).Cn, (o ⟨Sum.inr l, ν⟩) ^ 2 ≤ FL.G₁ * t ^ 2
+  b * ∑ ν : (FL.L l.2.2.2).Cn, (o ⟨Sum.inr l, ν⟩) ^ 2 ≤ FL.G₁ * t ^ 2
 
 instance (l : LMv T FL) (t : ℕ) : Decidable (GoodL R ch FL o l t) := by unfold GoodL; infer_instance
 
@@ -147,17 +147,17 @@ theorem alvN_le (ν : NM R FL (ch := ch)) (t : ℕ) : alvN R ch FL o ν t ≤ o 
     · exact le_rfl
     · exact min_le_left _ _
 
-theorem alvN_zero (hr : 0 < r) (hb : 0 < b) (ν : NM R FL (ch := ch)) : alvN R ch FL o ν 0 = 0 := by
+theorem alvN_zero (hb : 0 < b) (ν : NM R FL (ch := ch)) : alvN R ch FL o ν 0 = 0 := by
   rcases ν with ⟨x | l, ν⟩
   · rw [alvN_inl]
     split_ifs <;> rfl
   · rw [alvN_inr]
     split_ifs with h
     · unfold GoodL at h
-      have h1 : r * b * ∑ ν : (FL.L l.2.2.2).Cn, (o ⟨Sum.inr l, ν⟩) ^ 2 = 0 := by simpa using h
+      have h1 : b * ∑ ν : (FL.L l.2.2.2).Cn, (o ⟨Sum.inr l, ν⟩) ^ 2 = 0 := by simpa using h
       have h2 : ∑ ν : (FL.L l.2.2.2).Cn, (o ⟨Sum.inr l, ν⟩) ^ 2 = 0 := by
         rcases Nat.mul_eq_zero.1 h1 with h3 | h3
-        · have := Nat.mul_pos hr hb; omega
+        · omega
         · exact h3
       have h3 := (Finset.sum_eq_zero_iff.1 h2) ν (mem_univ _)
       exact pow_eq_zero_iff (by norm_num) |>.1 h3
@@ -351,7 +351,7 @@ theorem alvN_congr {ν : NM R FL (ch := ch)} (hν : ∀ c, o ⟨ν.1, c⟩ = o' 
     rw [alvN_inr, alvN_inr, hν]
     exact if_congr hg rfl rfl
 
-theorem ld_congr (hr : 0 < r) (hb : 0 < b) {N : Mv T R ch FL → ℕ}
+theorem ld_congr (hb : 0 < b) {N : Mv T R ch FL → ℕ}
     (hN : ∀ mv, N mv ≠ 0 → ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) (τ : Tg T m AA) :
     ld R ch FL lhat n o N τ = ld R ch FL lhat n o' N τ := by
   unfold ld
@@ -359,11 +359,11 @@ theorem ld_congr (hr : 0 < r) (hb : 0 < b) {N : Mv T R ch FL → ℕ}
   refine Finset.sum_congr rfl fun ν _ => ?_
   split_ifs
   · by_cases h0 : N ν.1 = 0
-    · rw [h0, alvN_zero hr hb, alvN_zero hr hb]
+    · rw [h0, alvN_zero hb, alvN_zero hb]
     · exact alvN_congr (hN ν.1 h0) _
   · rfl
 
-theorem numS_congr (hr : 0 < r) (hb : 0 < b) {t : ℕ} (ho : ∀ mv : Mv T R ch FL, timeM R ch FL mv < t → ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) :
+theorem numS_congr (hb : 0 < b) {t : ℕ} (ho : ∀ mv : Mv T R ch FL, timeM R ch FL mv < t → ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) :
     numS R ch FL lhat n o t = numS R ch FL lhat n o' t := by
   induction t with
   | zero => funext mv; rfl
@@ -372,37 +372,37 @@ theorem numS_congr (hr : 0 < r) (hb : 0 < b) {t : ℕ} (ho : ∀ mv : Mv T R ch 
     funext mv
     rw [numS, numS, ← ih']
     split_ifs with h1
-    · refine numF_congr fun τ _ => ld_congr hr hb ?_ τ
+    · refine numF_congr fun τ _ => ld_congr hb ?_ τ
       intro mv' hmv'
       refine ho mv' ?_
       by_contra hcon
       exact hmv' (numS_zero_of_le (by omega))
     · rfl
 
-theorem num_congr (hr : 0 < r) (hb : 0 < b) {mv : Mv T R ch FL}
+theorem num_congr (hb : 0 < b) {mv : Mv T R ch FL}
     (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
     num R ch FL lhat n o mv = num R ch FL lhat n o' mv := by
-  rw [num, num, numS_stable (timeM_lt mv), numS_stable (timeM_lt mv), numS_congr hr hb ho]
-  refine numF_congr fun τ _ => ld_congr hr hb ?_ τ
+  rw [num, num, numS_stable (timeM_lt mv), numS_stable (timeM_lt mv), numS_congr hb ho]
+  refine numF_congr fun τ _ => ld_congr hb ?_ τ
   intro mv' hmv'
   refine ho mv' ?_
   by_contra hcon
   exact hmv' (numS_zero_of_le (by omega))
 
-theorem load_congr (hr : 0 < r) (hb : 0 < b) {τ : Tg T m AA} {t : ℕ} (hτ : tgTime τ ≤ t)
+theorem load_congr (hb : 0 < b) {τ : Tg T m AA} {t : ℕ} (hτ : tgTime τ ≤ t)
     (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
     load R ch FL lhat n o τ = load R ch FL lhat n o' τ := by
-  rw [← ld_numS hτ, ← ld_numS hτ, numS_congr hr hb ho]
-  refine ld_congr hr hb ?_ τ
+  rw [← ld_numS hτ, ← ld_numS hτ, numS_congr hb ho]
+  refine ld_congr hb ?_ τ
   intro mv' hmv'
   refine ho mv' ?_
   by_contra hcon
   exact hmv' (numS_zero_of_le (by omega))
 
-theorem good_congr (hr : 0 < r) (hb : 0 < b) {mv : Mv T R ch FL}
+theorem good_congr (hb : 0 < b) {mv : Mv T R ch FL}
     (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩)
     (ho' : ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) : GoodMv R ch FL lhat n o mv ↔ GoodMv R ch FL lhat n o' mv := by
-  have hnum := num_congr (lhat := lhat) (n := n) hr hb ho
+  have hnum := num_congr (lhat := lhat) (n := n) hb ho
   rcases mv with x | l
   · rw [goodMv_inl, goodMv_inl, hnum]
     exact forall_congr' fun ν => by rw [ho' ν]

@@ -19,32 +19,32 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J r m Uu AA : ℕ}
+variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ}
 
 /-- Nodes of the tree: the chambers of all levels, and the root. -/
-abbrev Nd (T : Tower h b D J r) := Option (Σ j : Fin (J + 1), T.X j)
+abbrev Nd (T : Tower h b D J) := Option (Σ j : Fin (J + 1), T.X j)
 
 /-- The node of a chamber. -/
-def nd (T : Tower h b D J r) (j : ℕ) (hj : j ≤ J) (c : T.X j) : Nd T := some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩
+def nd (T : Tower h b D J) (j : ℕ) (hj : j ≤ J) (c : T.X j) : Nd T := some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩
 
-theorem nd_inj {T : Tower h b D J r} {j : ℕ} {hj hj' : j ≤ J} {c c' : T.X j} :
+theorem nd_inj {T : Tower h b D J} {j : ℕ} {hj hj' : j ≤ J} {c c' : T.X j} :
     nd T j hj c = nd T j hj' c' ↔ c = c' := by
   unfold nd
   rw [Option.some_inj, Sigma.mk.injEq]
   simp
 
-theorem nd_ne {T : Tower h b D J r} {j j' : ℕ} (hjj : j ≠ j') {hj : j ≤ J} {hj' : j' ≤ J} {c : T.X j} {c' : T.X j'} :
+theorem nd_ne {T : Tower h b D J} {j j' : ℕ} (hjj : j ≠ j') {hj : j ≤ J} {hj' : j' ≤ J} {c : T.X j} {c' : T.X j'} :
     nd T j hj c ≠ nd T j' hj' c' := by
   unfold nd
   rw [Ne, Option.some_inj, Sigma.mk.injEq]
   rintro ⟨h1, -⟩
   exact hjj (congrArg Fin.val h1)
 
-theorem nd_ne_none {T : Tower h b D J r} {j : ℕ} {hj : j ≤ J} {c : T.X j} : nd T j hj c ≠ none := by
+theorem nd_ne_none {T : Tower h b D J} {j : ℕ} {hj : j ≤ J} {c : T.X j} : nd T j hj c ≠ none := by
   unfold nd; exact Option.some_ne_none _
 
 /-- Names of relays. -/
-inductive RM (T : Tower h b D J r) (m AA : ℕ) where
+inductive RM (T : Tower h b D J) (m AA : ℕ) where
   /-- step `s` of the path of a batch -/
   | start (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m))
   /-- an edge inside a vertex of type `i` -/
@@ -56,7 +56,7 @@ inductive RM (T : Tower h b D J r) (m AA : ℕ) where
   deriving Fintype
 
 /-- Targets. -/
-inductive Tg (T : Tower h b D J r) (m AA : ℕ) where
+inductive Tg (T : Tower h b D J) (m AA : ℕ) where
   /-- a node and its parent -/
   | done
   /-- an edge of stage `j` -/
@@ -67,11 +67,11 @@ inductive Tg (T : Tower h b D J r) (m AA : ℕ) where
   | seg (j : Fin J) (i : Fin h) (ω : T.V (j + 1) i) (q : Sym2 T.Fl)
   deriving Fintype
 
-noncomputable instance (T : Tower h b D J r) (m AA : ℕ) : DecidableEq (Tg T m AA) := Classical.decEq _
+noncomputable instance (T : Tower h b D J) (m AA : ℕ) : DecidableEq (Tg T m AA) := Classical.decEq _
 
 section
 
-variable (T : Tower h b D J r) (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0)
+variable (T : Tower h b D J) (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0)
 
 /-- The host of an end of an edge. -/
 abbrev hst {j : ℕ} (i : Fin h) (c : T.X j) : T.X (j + 1) := T.host i (T.vx i c)
@@ -250,14 +250,14 @@ noncomputable def tgM (FL : FlagLaws F T) : (mv : Mv T R ch FL) → (kindM R ch 
 end
 
 /-- Where the nodes are among the parties. -/
-structure Place (T : Tower h b D J r) (ch : Fin AA ↪ T.X 0) (A' : ℕ) where
+structure Place (T : Tower h b D J) (ch : Fin AA ↪ T.X 0) (A' : ℕ) where
   /-- the party of a node -/
   pt : Nd T ≃ Fin (AA + A')
   pt_base : ∀ a, pt (nd T 0 (Nat.zero_le _) (ch a)) = Fin.castAdd A' a
 
 section Sys
 
-variable {T : Tower h b D J r} (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) {A' : ℕ}
+variable {T : Tower h b D J} (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) {A' : ℕ}
   (Pl : Place T ch A')
 
 /-- The order of the moves. -/

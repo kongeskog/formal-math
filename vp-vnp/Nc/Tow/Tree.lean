@@ -28,7 +28,7 @@ theorem im_unique {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) {i : Fin h} (h1 : �
   · exact heq
   · exact absurd h3 (h2 _ hlt)
 
-variable {h b D J r m AA : ℕ} {T : Tower h b D J r} (hh : 0 < h) (ch : Fin AA ↪ T.X 0)
+variable {h b D J m AA : ℕ} {T : Tower h b D J} (hh : 0 < h) (ch : Fin AA ↪ T.X 0)
 
 /-- Loads by levels. -/
 def lev (L : Tg T m AA → ℕ) (j : ℕ) : T.Ed j → ℕ := fun e => if hj : j < J + 1 then L (.edge ⟨j, hj⟩ e) else 0

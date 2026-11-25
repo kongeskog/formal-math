@@ -64,7 +64,7 @@ standing hypothesis "Fix the ring A and the laws". The proof takes the automaton
 the formula and the bounds of the pieces from Proposition prop:pieces, and puts the evaluator and the program G on
 them. -/
 theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero h]
-    (VL : VLaws A (cNear (h := h)) (dNear (h := h)) 1 (2 ^ ee h)) (h3 : 3 ≤ h)
+    (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
     ∃ a₀ C v₀ : ℕ, ∀ v, v₀ ≤ v → ∀ τ s k, v ^ a₀ ≤ τ → 4 * lg τ ≤ lg v ^ 2 → s ≤ τ → 2 ≤ k → k ≤ v ^ 64 →
       ∃ G : Tree, G.size ≤ v ^ a₀ ∧ CutD θ τ s (τ * lg v ^ C / k) ((s / k + τ / v ^ 256) * lg v ^ C)
@@ -422,7 +422,7 @@ whenever v ≥ v₀ and (lg v)^(C₀α) ≤ v. For v^H ≤ τ ≤ v^(Hα) and sv
 into (v^H, v^(H−32)) with at most τv²/v^H pieces in at most τ/v^24 steps." The proof composes the cuts of Theorem
 thm:onecut. -/
 theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h']
-    (VL : VLaws A (cNear (h := h')) (dNear (h := h')) 1 (2 ^ ee h')) (h3 : 3 ≤ h')
+    (VL : VLaws A (cNear (h := h')) (dNear (h := h')) (2 ^ ee h')) (h3 : 3 ≤ h')
     (hgain : 1 + 8 * VL.C₁ ≤ (h' : ℝ) / 4) :
     ∃ H C₀ v₀ : ℕ, 272 ≤ H ∧ 16 ∣ H ∧ ∀ v, v₀ ≤ v → ∀ α τ s, lg v ^ (C₀ * α) ≤ v → v ^ H ≤ τ → τ ≤ v ^ (H * α) →
       s * v ^ 48 ≤ τ → ∃ G : Tree, G.size ≤ v ^ H ∧
@@ -516,7 +516,7 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
 
 /-- What the next section starts from, in the form NS1.CutHyp: the conclusion of Theorem thm:cut multiplied out. -/
 theorem cutHyp_of_laws {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h']
-    (VL : VLaws A (cNear (h := h')) (dNear (h := h')) 1 (2 ^ ee h')) (h3 : 3 ≤ h')
+    (VL : VLaws A (cNear (h := h')) (dNear (h := h')) (2 ^ ee h')) (h3 : 3 ≤ h')
     (hgain : 1 + 8 * VL.C₁ ≤ (h' : ℝ) / 4) : ∃ h C₀ v₀ : ℕ, 17 ≤ h ∧ CutHyp θ (16 * h) C₀ v₀ := by
   obtain ⟨H, C₀, v₀, hH, ⟨h, rfl⟩, hcut⟩ := thm_cut hθ VL h3 hgain
   refine ⟨h, C₀, v₀ + 1, by omega, fun v hv α τ s hl h1 h2 h4 => ?_⟩
