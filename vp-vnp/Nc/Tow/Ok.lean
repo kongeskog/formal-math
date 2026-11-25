@@ -25,99 +25,20 @@ theorem isMin_unique {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h
   · exact heq
   · exact absurd h2.1 (h1.2 i' hlt)
 
-theorem pick_unique {L : Tg T m AA → ℕ} {l : LMv T FL} {d : FL.Di} (h1 : Pick FL L l) (h2 : Pick FL L (withD FL l d)) :
-    l.2.2.2 = d := by
-  rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di l.2.2.2) with hlt | heq | hlt
-  · exact absurd h2.1 (h1.2 d hlt)
-  · exact ((Fintype.equivFin FL.Di).injective heq).symm
-  · exact absurd h1.1 (h2.2 l.2.2.2 hlt)
-
 /-- Active relays are determined by their targets. -/
 theorem inpR_unique {L : Tg T m AA → ℕ} {x x' : RM T m AA} (hx : okR T R ch x) (hx' : okR T R ch x')
     (ha : ActR L x) (ha' : ActR L x') (he : inpR T x = inpR T x') : x = x' := by
-  rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e <;>
-    rcases x' with ⟨a', c', γ', s'⟩ | ⟨j', i', e'⟩ | ⟨j', e', s'⟩ | e'
-  · simpa [inpR] using he
-  · simp [inpR] at he
-  · rw [inpR_mid] at he
-    split_ifs at he <;> simp [inpR] at he
-  · simp [inpR] at he
-  · simp [inpR] at he
-  · simp only [inpR, Tg.edge.injEq] at he
-    obtain ⟨h1, h2⟩ := he
-    have hj : j = j' := Fin.castSucc_injective _ h1
-    subst hj
-    have := eq_of_heq h2
-    subst this
-    rw [isMin_unique ha ha']
-  · rw [inpR_mid] at he
-    split_ifs at he with hs
-    · simp only [inpR, Tg.edge.injEq] at he
-      obtain ⟨h1, h2⟩ := he
-      have hj : j = j' := Fin.castSucc_injective _ h1
-      subst hj
-      have := eq_of_heq h2
-      subst this
-      exact absurd (isMin_unique (ha' hs) ha) hx
-    · simp [inpR] at he
-  · simp only [inpR, Tg.edge.injEq] at he
-    exact absurd he.1 (Fin.castSucc_lt_last j).ne
-  · rw [inpR_mid] at he
-    split_ifs at he <;> simp [inpR] at he
-  · rw [inpR_mid] at he
-    split_ifs at he with hs
-    · simp only [inpR, Tg.edge.injEq] at he
-      obtain ⟨h1, h2⟩ := he
-      have hj : j = j' := Fin.castSucc_injective _ h1
-      subst hj
-      have := eq_of_heq h2
-      subst this
-      exact absurd (isMin_unique (ha hs) ha') hx'
-    · simp [inpR] at he
-  · rw [inpR_mid, inpR_mid] at he
-    split_ifs at he with hs hs' hs'
-    · simp only [Tg.edge.injEq] at he
-      obtain ⟨h1, h2⟩ := he
-      have hj : j = j' := Fin.castSucc_injective _ h1
-      subst hj
-      have := eq_of_heq h2
-      subst this
-      rw [hs, hs']
-    · simpa using he
-  · rw [inpR_mid] at he
-    split_ifs at he with hs
-    · simp only [inpR, Tg.edge.injEq] at he
-      exact absurd he.1 (Fin.castSucc_lt_last j).ne
-    · simp [inpR] at he
-  · simp [inpR] at he
-  · simp only [inpR, Tg.edge.injEq] at he
-    exact absurd he.1.symm (Fin.castSucc_lt_last j').ne
-  · rw [inpR_mid] at he
-    split_ifs at he with hs
-    · simp only [inpR, Tg.edge.injEq] at he
-      exact absurd he.1.symm (Fin.castSucc_lt_last j').ne
-    · simp [inpR] at he
-  · simpa [inpR] using he
+  -- equal targets are edges of one stage, or one relay: the active type of an edge is unique
+  -- (`isMin_unique`), `okR` excludes it for `inn`, and the last stage is not an earlier one
+  rcases x with _ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e <;>
+    rcases x' with _ | ⟨j', i', e'⟩ | ⟨j', e', s'⟩ | e' <;>
+    simp only [inpR, ActR, okR] at * <;> (try split_ifs at he) <;> simp at he <;>
+    grind [isMin_unique, Fin.castSucc_lt_last]
 
-theorem inpR_ne_seg {x : RM T m AA} {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} :
-    inpR T x ≠ .seg j i ω q := by
-  rcases x with ⟨a, c, γ, s⟩ | ⟨j', i', e⟩ | ⟨j', e, s⟩ | e
-  · simp [inpR]
-  · simp [inpR]
-  · rw [inpR_mid]
-    split_ifs <;> simp
-  · simp [inpR]
-
-theorem inpR_ne_done {x : RM T m AA} : inpR T x ≠ .done := by
-  rcases x with ⟨a, c, γ, s⟩ | ⟨j', i', e⟩ | ⟨j', e, s⟩ | e
-  · simp [inpR]
-  · simp [inpR]
-  · rw [inpR_mid]
-    split_ifs <;> simp
-  · simp [inpR]
-
-theorem su_inj {d : FL.Di} {e e' : (FL.L d).Sl} (hp : pr FL d e = pr FL d e') (hs : su FL d e = su FL d e') : e = e' :=
-  rk_inj (fun a b hab => (Fintype.equivFin (FL.L d).Sl).injective (Fin.ext hab)) (mem_univ _) (mem_univ _) hp hs
+/-- A relay gives its units at an edge or at a relay, never at an end segment or at the root. -/
+theorem inpR_ne {x : RM T m AA} : inpR T x ≠ .done ∧ ∀ j i ω q, inpR T x ≠ .seg j i ω q := by
+  cases x <;> simp [inpR]
+  split_ifs <;> simp
 
 section Plan
 
@@ -137,16 +58,6 @@ theorem consM_al {z : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u ∈ con
   · have := ((consM_inr l e u).1 hu).2
     exact ⟨this.1, this.2.1⟩
 
-theorem inpZ_ne_done (z : ZM R FL (ch := ch)) : inpZ z ≠ .done := by
-  rcases z with ⟨x | l, e⟩
-  · exact inpR_ne_done
-  · simp [inpZ]
-
-theorem inpZ_time (z : ZM R FL (ch := ch)) : tgTime (inpZ z) ≤ timeM R ch FL z.1 := by
-  rcases z with ⟨x | l, e⟩
-  · exact inp_time x.1
-  · exact le_rfl
-
 /-- A unit is given at one slot at most. -/
 theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u ∈ consM R FL Pl lhat n o z)
     (hu' : u ∈ consM R FL Pl lhat n o z') : z = z' := by
@@ -158,10 +69,10 @@ theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u 
     rfl
   · obtain ⟨-, -, h2⟩ := (consM_inl x e u).1 hu
     obtain ⟨-, -, h2', -⟩ := (consM_inr l' e' u).1 hu'
-    exact absurd (h2.symm.trans h2') inpR_ne_seg
+    exact absurd (h2.symm.trans h2') (inpR_ne.2 _ _ _ _)
   · obtain ⟨-, -, h2, -⟩ := (consM_inr l e u).1 hu
     obtain ⟨-, -, h2'⟩ := (consM_inl x' e' u).1 hu'
-    exact absurd (h2'.symm.trans h2) inpR_ne_seg
+    exact absurd (h2'.symm.trans h2) (inpR_ne.2 _ _ _ _)
   · obtain ⟨h1, -, h2, h3, h4⟩ := (consM_inr l e u).1 hu
     obtain ⟨h1', -, h2', h3', h4'⟩ := (consM_inr l' e' u).1 hu'
     obtain ⟨j, i, ω, d⟩ := l
@@ -173,18 +84,20 @@ theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u 
     subst hi
     have := eq_of_heq hω
     subst this
-    have hd : d = d' := pick_unique (l := ⟨j, i, ω, d⟩) h1 h1'
+    -- the direction is the first one that fits, for both slots
+    have hd : d = d' := by
+      rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di d') with
+        hlt | heq | hlt
+      · exact absurd h1.1 (h1'.2 d hlt)
+      · exact (Fintype.equivFin FL.Di).injective heq
+      · exact absurd h1'.1 (h1.2 d' hlt)
     subst hd
-    simp only at h3 h4 h3' h4' hq
-    have hs : su FL d e = su FL d e' := by
-      set t := num R ch FL lhat (nn n) (oo R FL Pl o) (.inr ⟨j, i, ω, d⟩)
-      rcases lt_trichotomy (su FL d e) (su FL d e') with hlt | heq | hlt
-      · have : (su FL d e + 1) * t ≤ su FL d e' * t := Nat.mul_le_mul_right t hlt
-        omega
-      · exact heq
-      · have : (su FL d e' + 1) * t ≤ su FL d e * t := Nat.mul_le_mul_right t hlt
-        omega
-    have hee : e = e' := su_inj hq hs
+    -- the slot is the rank of the unit divided by the number of units
+    have hs : su FL d e = su FL d e' :=
+      (Nat.div_eq_of_lt_le h3 h4).symm.trans (Nat.div_eq_of_lt_le h3' h4')
+    have hee : e = e' :=
+      rk_inj (fun a b hab => (Fintype.equivFin (FL.L d).Sl).injective (Fin.ext hab)) (mem_univ _)
+        (mem_univ _) hq hs
     subst hee
     rfl
 
@@ -204,204 +117,146 @@ theorem card_consM (z : ZM R FL (ch := ch)) :
       rw [Nat.add_mul, Nat.one_mul, Nat.add_sub_cancel_left]
     · simp
 
-theorem time_lt_of_tg {ν : NM R FL (ch := ch)} {z : ZM R FL (ch := ch)} (hν : tgM R ch FL ν.1 ν.2 = inpZ z) :
-    timeM R ch FL ν.1 < timeM R ch FL z.1 := by
-  have h1 := tg_time ν
-  rw [hν] at h1
-  exact lt_of_lt_of_le h1 (inpZ_time z)
-
-theorem lt_of_time {x y : Fin (Fintype.card (Mv T R ch FL))}
-    (hxy : timeM R ch FL (eE R FL x) < timeM R ch FL (eE R FL y)) : x < y := by
-  have := eE_lt R FL hxy
-  rwa [Equiv.symm_apply_apply, Equiv.symm_apply_apply] at this
-
-/-- The holders of a unit. -/
-theorem holds_eq {u : Un R FL Pl U0 U1} (hd : tgU R FL Pl u ≠ .done) :
-    s(hold0 (sys R FL Pl).np u, hold1 (sys R FL Pl).np u) = (hT R ch (tgU R FL Pl u)).map Pl.pt := by
-  cases u with
-  | init a c k =>
-    have h1 := hB_eq (ch := ch) (R := R) hd
-    change _ = (hT R ch (tgB T R ch a c k)).map Pl.pt
-    rw [← h1, hB, Sym2.map_mk]
-    simp only [Pl.pt_base]
-    rfl
-  | new ν k =>
-    have h1 := hN_eq (eN R FL Pl ν) hd
-    change _ = (hT R ch (tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2)).map Pl.pt
-    rw [← h1, hN, Sym2.map_mk]
-    rfl
-
-/-- The ends of a slot. -/
-theorem zp_hold (z : (sys R FL Pl).Z) :
-    s((sys R FL Pl).zp z false, (sys R FL Pl).zp z true) = (hT R ch (inpZ (eZ R FL Pl z))).map Pl.pt := by
-  rw [zp_eq, zp_eq]
-  generalize eZ R FL Pl z = w
-  rcases w with ⟨⟨x, hx⟩ | l, e⟩
-  · change s(Pl.pt (tri T R ch x 0), Pl.pt (tri T R ch x 2)) = (hT R ch (inpR T x)).map Pl.pt
-    have h1 : hT R ch (inpR T x) = s(tri T R ch x 0, tri T R ch x 2) := by
-      rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e
-      · rfl
-      · rfl
-      · rw [inpR_mid]
-        split_ifs with hs
-        · subst hs; rfl
-        · rfl
-      · rfl
-    rw [h1, Sym2.map_mk]
-  · change s(Pl.pt (nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
-      Pl.pt (nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
-    simp only [inpZ, hT, pr, Sym2.map_mk]
+theorem lt_of_time {mv : Mv T R ch FL} {x : Fin (Fintype.card (Mv T R ch FL))}
+    (h : timeM R ch FL mv < timeM R ch FL (eE R FL x)) : (eE R FL).symm mv < x := by
+  simpa using eE_lt R FL h
 
 section Causal
 
 variable {o' : (sys R FL Pl).N → Fin U1} {t : ℕ}
 
-theorem alU_congr (hb : 0 < b) (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t →
-    ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) {u : Un R FL Pl U0 U1} (hu : tgTime (tgU R FL Pl u) ≤ t) :
-    AlU R FL Pl lhat n o u ↔ AlU R FL Pl lhat n o' u := by
-  cases u with
-  | init a c k => exact Iff.rfl
-  | new ν k =>
-    have h1 : timeM R ch FL (eN R FL Pl ν).1 < t := lt_of_lt_of_le (tg_time (eN R FL Pl ν)) hu
-    have h2 : alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) =
-        alv R ch FL lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν) := by
-      unfold alv
-      rw [num_congr hb fun mv' hmv' c => hag mv' (hmv'.trans h1) c]
-      exact alvN_congr (fun c => hag _ h1 c) _
-    change k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ↔
-      k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν)
-    rw [h2]
-
-theorem consM_congr_inl (hb : 0 < b) (x : {x : RM T m AA // okR T R ch x}) (e : (kindM R ch FL (.inl x)).Sl)
-    (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL (.inl x) →
-      ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) (u : Un R FL Pl U0 U1) :
-    u ∈ consM R FL Pl lhat n o ⟨.inl x, e⟩ ↔ u ∈ consM R FL Pl lhat n o' ⟨.inl x, e⟩ := by
-  rw [consM_inl, consM_inl]
-  have h1 : ActR (load R ch FL lhat (nn n) (oo R FL Pl o)) x.1 ↔ ActR (load R ch FL lhat (nn n) (oo R FL Pl o')) x.1 :=
-    actR_congr fun τ hτ => load_congr hb hτ hag
-  rw [h1]
-  refine and_congr_right fun _ => ?_
-  have h2 : tgU R FL Pl u = inpR T x.1 → (AlU R FL Pl lhat n o u ↔ AlU R FL Pl lhat n o' u) := by
-    intro hu
-    refine alU_congr hb hag ?_
-    rw [hu]
-    exact inp_time x.1
-  constructor
-  · rintro ⟨h3, h4⟩
-    exact ⟨(h2 h4).1 h3, h4⟩
-  · rintro ⟨h3, h4⟩
-    exact ⟨(h2 h4).2 h3, h4⟩
-
-theorem consM_congr_inr (hb : 0 < b) (l : LMv T FL) (e : (kindM R ch FL (.inr l)).Sl)
-    (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL (.inr l) →
-      ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) (u : Un R FL Pl U0 U1) :
-    u ∈ consM R FL Pl lhat n o ⟨.inr l, e⟩ ↔ u ∈ consM R FL Pl lhat n o' ⟨.inr l, e⟩ := by
-  have hpk : Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o)) l ↔ Pick FL (load R ch FL lhat (nn n) (oo R FL Pl o')) l :=
-    pick_congr fun q => load_congr hb (le_refl _) hag
-  have hnum : num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) = num R ch FL lhat (nn n) (oo R FL Pl o') (.inr l) :=
-    num_congr hb hag
-  have hal : ∀ v : Un R FL Pl U0 U1, tgU R FL Pl v = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) →
-      (AlU R FL Pl lhat n o v ↔ AlU R FL Pl lhat n o' v) := by
-    intro v hv
-    refine alU_congr hb hag ?_
-    rw [hv]
-    exact le_refl _
-  have hrk : tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) →
-      rkU R FL Pl lhat n o u = rkU R FL Pl lhat n o' u := by
-    intro hu
-    unfold rkU
-    exact rk_congr fun v hv => mem_Al.trans ((hal v (hv.trans hu)).trans mem_Al.symm)
-  rw [consM_inr, consM_inr, hpk, hnum]
-  refine and_congr_right fun _ => ?_
-  constructor
-  · rintro ⟨h1, h2, h3⟩
-    rw [hrk h2] at h3
-    exact ⟨(hal u h2).1 h1, h2, h3⟩
-  · rintro ⟨h1, h2, h3⟩
-    rw [← hrk h2] at h3
-    exact ⟨(hal u h2).2 h1, h2, h3⟩
-
+/-- The units given at a slot depend only on the outcomes of earlier moves. -/
 theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
     (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL z.1 →
       ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) :
     (consM R FL Pl lhat n o z : Finset (Un R FL Pl U0 U1)) = consM R FL Pl lhat n o' z := by
+  -- whether a unit that is due by then is allowed
+  have hal {u : Un R FL Pl U0 U1} (hu : tgTime (tgU R FL Pl u) ≤ timeM R ch FL z.1) :
+      AlU R FL Pl lhat n o u ↔ AlU R FL Pl lhat n o' u := by
+    cases u with
+    | init a c k => exact Iff.rfl
+    | new ν k =>
+      have h1 : timeM R ch FL (eN R FL Pl ν).1 < timeM R ch FL z.1 :=
+        (tg_time (eN R FL Pl ν)).trans_le hu
+      change k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ↔
+        k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν)
+      unfold alv
+      rw [num_congr hb fun mv' hmv' c => hag mv' (hmv'.trans h1) c,
+        alvN_congr (fun c => hag _ h1 c)]
   ext u
   rcases z with ⟨x | l, e⟩
-  · exact consM_congr_inl hb x e hag u
-  · exact consM_congr_inr hb l e hag u
+  · rw [consM_inl, consM_inl, actR_congr fun τ hτ => load_congr hb hτ hag]
+    exact and_congr_right fun _ => and_congr_left fun h => hal (h ▸ inp_time x.1)
+  · have hrk (hu : tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e)) :
+        rkU R FL Pl lhat n o u = rkU R FL Pl lhat n o' u := by
+      unfold rkU
+      exact rk_congr fun v hv =>
+        mem_Al.trans ((hal ((hv.trans hu).symm ▸ le_rfl)).trans mem_Al.symm)
+    rw [consM_inr, consM_inr, pick_congr fun q => load_congr hb le_rfl hag, num_congr hb hag]
+    refine and_congr_right fun _ => ⟨fun ⟨h1, h2, h3⟩ => ?_, fun ⟨h1, h2, h3⟩ => ?_⟩
+    · rw [hrk h2] at h3
+      exact ⟨(hal (h2 ▸ le_rfl)).1 h1, h2, h3⟩
+    · rw [← hrk h2] at h3
+      exact ⟨(hal (h2 ▸ le_rfl)).2 h1, h2, h3⟩
 
-theorem agree_of (ho : ∀ ν : (sys R FL Pl).N, timeM R ch FL (eE R FL ν.1) < t → o ν = o' ν) :
-    ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t → ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩ := by
-  intro mv' hmv' c
+/-- The outcomes of the channels of a move agree if they agree on the channels of its index. -/
+theorem oo_congr {P : Fin (Fintype.card (Mv T R ch FL)) → Prop}
+    (ho : ∀ ν : (sys R FL Pl).N, P ν.1 → o ν = o' ν) {mv : Mv T R ch FL} (h : P ((eE R FL).symm mv))
+    (c) : oo R FL Pl o ⟨mv, c⟩ = oo R FL Pl o' ⟨mv, c⟩ := by
   unfold oo
   rw [ho]
-  have h1 : (eN R FL Pl ((eN R FL Pl).symm ⟨mv', c⟩)).1 = mv' := by rw [Equiv.apply_symm_apply]
-  rw [eN_fst] at h1
-  rw [h1]
-  exact hmv'
+  convert h
+  rw [Equiv.eq_symm_apply, ← eN_fst, Equiv.apply_symm_apply]
 
 end Causal
-
-/-- Units that are given are current. -/
-theorem consM_cur {z : (sys R FL Pl).Z} {u : Un R FL Pl U0 U1} (hu : u ∈ consM R FL Pl lhat n o (eZ R FL Pl z)) :
-    u ∈ (plan R FL Pl lhat U0 U1).cur n o z.1 := by
-  obtain ⟨h1, h2⟩ := consM_al hu
-  rw [Plan.cur, mem_sdiff]
-  constructor
-  · unfold Plan.seenAt
-    rw [mem_union, mem_biUnion]
-    cases u with
-    | init a c k =>
-      left
-      simp only [seen0, mem_filter, mem_univ, true_and, decide_eq_true_eq]
-      exact h1.2
-    | new ν k =>
-      right
-      refine ⟨ν.1, mem_filter.2 ⟨mem_univ _, ?_⟩, ?_⟩
-      · have h3 := time_lt_of_tg (ν := eN R FL Pl ν) (z := eZ R FL Pl z) h2
-        rw [eN_fst, eZ_fst] at h3
-        exact lt_of_time h3
-      · simp only [newUnits, mem_filter, mem_univ, true_and, decide_eq_true_eq]
-        have h3 : k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) := h1
-        have h4 : alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≤ (o ν).1 := by
-          refine (alvN_le _ _).trans ?_
-          unfold oo
-          rw [Equiv.symm_apply_apply]
-        rw [Fin.le_def]
-        omega
-  · intro hmem
-    unfold Plan.used at hmem
-    obtain ⟨z', hz', hu'⟩ := mem_biUnion.1 hmem
-    have hlt := (mem_filter.1 hz').2
-    have hu' : u ∈ consM R FL Pl lhat n o (eZ R FL Pl z') := hu'
-    have hzz := (eZ R FL Pl).injective (consM_unique hu hu')
-    rw [hzz] at hlt
-    exact lt_irrefl _ hlt
 
 /-- **The plan obeys the rules.** -/
 theorem plan_ok (hb : 0 < b) {cap : ℕ}
     (hcap : ∀ (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) mv,
       num R ch FL lhat (nn n) (oo R FL Pl o) mv ≤ cap) : (plan R FL Pl lhat U0 U1).Ok cap where
-  causal n o o' z ho := by
-    refine consM_congr hb (eZ R FL Pl z) (agree_of fun ν hν => ho ν ?_)
-    rw [eZ_fst] at hν
-    exact lt_of_time hν
-  causal' n o o' x ho := by
-    refine num_congr hb (agree_of fun ν hν => ho ν ?_)
-    exact lt_of_time hν
-  causal'' n o o' x ho := by
-    refine good_congr hb (agree_of fun ν hν => ho ν (lt_of_time hν).le) fun c => ?_
-    unfold oo
-    rw [ho]
-    have h1 : (eN R FL Pl ((eN R FL Pl).symm ⟨eE R FL x, c⟩)).1 = eE R FL x := by rw [Equiv.apply_symm_apply]
-    rw [eN_fst] at h1
-    exact ((eE R FL).injective h1).le
-  sub n o z u hu := consM_cur hu
+  causal n o o' z ho := consM_congr hb _ fun mv h => oo_congr (P := (· < z.1)) ho (lt_of_time h)
+  causal' n o o' x ho := num_congr hb fun mv h => oo_congr (P := (· < x)) ho (lt_of_time h)
+  causal'' n o o' x ho :=
+    good_congr hb (fun mv h => oo_congr (P := (· < x)) (fun ν h' => ho ν h'.le) (lt_of_time h))
+      (oo_congr (P := (· ≤ x)) ho (by simp))
+  sub n o z u hu := by
+    -- units that are given are current: seen before the move, and not given at an earlier slot
+    obtain ⟨h1, h2⟩ := consM_al hu
+    rw [Plan.cur, mem_sdiff]
+    constructor
+    · unfold Plan.seenAt
+      rw [mem_union, mem_biUnion]
+      cases u with
+      | init a c k =>
+        left
+        simp only [seen0, mem_filter, mem_univ, true_and, decide_eq_true_eq]
+        exact h1.2
+      | new ν k =>
+        right
+        refine ⟨ν.1, mem_filter.2 ⟨mem_univ _, ?_⟩, ?_⟩
+        · have h4 : tgTime (inpZ (eZ R FL Pl z)) ≤ timeM R ch FL (eZ R FL Pl z).1 := by
+            rcases eZ R FL Pl z with ⟨x | l, e⟩
+            · exact inp_time x.1
+            · exact le_rfl
+          have h5 := (tg_time (eN R FL Pl ν)).trans_le ((congrArg tgTime h2).le.trans h4)
+          simpa [eN_fst] using lt_of_time h5
+        · simp only [newUnits, mem_filter, mem_univ, true_and, decide_eq_true_eq]
+          have h3 : k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) := h1
+          have h4 : alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≤ (o ν).1 := by
+            refine (alvN_le _ _).trans ?_
+            unfold oo
+            rw [Equiv.symm_apply_apply]
+          rw [Fin.le_def]
+          omega
+    · intro hmem
+      obtain ⟨z', hz', hu'⟩ := mem_biUnion.1 hmem
+      have hlt := (mem_filter.1 hz').2
+      have hu' : u ∈ consM R FL Pl lhat n o (eZ R FL Pl z') := hu'
+      rw [(eZ R FL Pl).injective (consM_unique hu hu')] at hlt
+      exact lt_irrefl _ hlt
   hold n o z u hu := by
+    -- both pairs are the ends of the target of the unit, put in place
     have hu : u ∈ consM R FL Pl lhat n o (eZ R FL Pl z) := hu
     obtain ⟨-, h2⟩ := consM_al hu
-    have h3 := holds_eq (u := u) (by rw [h2]; exact inpZ_ne_done _)
-    rw [h2, ← zp_hold, Sym2.eq_iff] at h3
+    have hd : tgU R FL Pl u ≠ .done := by
+      rw [h2]
+      rcases eZ R FL Pl z with ⟨x | l, e⟩
+      · exact inpR_ne.1
+      · simp [inpZ]
+    have h3 : s(hold0 (sys R FL Pl).np u, hold1 (sys R FL Pl).np u) =
+        (hT R ch (tgU R FL Pl u)).map Pl.pt := by
+      cases u with
+      | init a c k =>
+        change _ = (hT R ch (tgB T R ch a c k)).map Pl.pt
+        rw [← hB_eq (ch := ch) (R := R) hd, hB, Sym2.map_mk]
+        simp only [Pl.pt_base]
+        rfl
+      | new ν k =>
+        change _ = (hT R ch (tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2)).map Pl.pt
+        rw [← hN_eq (eN R FL Pl ν) hd, hN, Sym2.map_mk]
+        rfl
+    have h4 : s((sys R FL Pl).zp z false, (sys R FL Pl).zp z true) =
+        (hT R ch (tgU R FL Pl u)).map Pl.pt := by
+      rw [h2, zp_eq, zp_eq]
+      generalize eZ R FL Pl z = w
+      rcases w with ⟨⟨x, hx⟩ | l, e⟩
+      · change s(Pl.pt (tri T R ch x 0), Pl.pt (tri T R ch x 2)) = (hT R ch (inpR T x)).map Pl.pt
+        have h1 : hT R ch (inpR T x) = s(tri T R ch x 0, tri T R ch x 2) := by
+          rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e
+          · rfl
+          · rfl
+          · rw [inpR_mid]
+            split_ifs with hs
+            · subst hs; rfl
+            · rfl
+          · rfl
+        rw [h1, Sym2.map_mk]
+      · change s(Pl.pt (nd T (l.1 + 1) l.1.2
+            (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
+          Pl.pt (nd T (l.1 + 1) l.1.2
+            (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
+        simp only [inpZ, hT, pr, Sym2.map_mk]
+    rw [← h4, Sym2.eq_iff] at h3
     exact h3.imp id And.symm
   card n o z := card_consM (eZ R FL Pl z)
   cap n o x := hcap n o _

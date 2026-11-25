@@ -404,15 +404,9 @@ theorem good_congr (hb : 0 < b) {mv : Mv T R ch FL}
     (ho' : ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) : GoodMv R ch FL lhat n o mv ↔ GoodMv R ch FL lhat n o' mv := by
   have hnum := num_congr (lhat := lhat) (n := n) hb ho
   rcases mv with x | l
-  · rw [goodMv_inl, goodMv_inl, hnum]
-    exact forall_congr' fun ν => by rw [ho' ν]
-  · rw [goodMv_inr, goodMv_inr, hnum]
-    have hg : GoodL R ch FL o l (num R ch FL lhat n o' (.inr l)) ↔ GoodL R ch FL o' l (num R ch FL lhat n o' (.inr l)) := by
-      unfold GoodL
-      have : ∀ c : (FL.L l.2.2.2).Cn, o ⟨.inr l, c⟩ = o' ⟨.inr l, c⟩ := ho'
-      rw [Finset.sum_congr rfl fun c _ => by rw [this c]]
-    rw [hg]
-    exact and_congr_right fun _ => forall_congr' fun ν => by rw [ho' ν]
+  · simp only [goodMv_inl, hnum, ho']
+  · have ho'' : ∀ c : (FL.L l.2.2.2).Cn, o ⟨.inr l, c⟩ = o' ⟨.inr l, c⟩ := ho'
+    simp only [goodMv_inr, GoodL, hnum, ho', ho'']
 
 end Causal
 
