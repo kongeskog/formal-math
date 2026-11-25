@@ -684,6 +684,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   have hload1 : 1 ≤ load := (Nat.le_add_left 1 _).trans b7
   obtain ⟨J, m, Uu, Tw, Rt, FL, hct, hX1, hX2, hm1, hm2, hUu⟩ := htow (K + K) (by omega)
   obtain ⟨TT⟩ := exists_thinTrees Rt FL hct hC₀.le hm1 hm2 hUu (by omega) hX1 hX2 le_rfl hload1 b1
+  clear htow Rt FL hct hX1 hX2 hm1 hm2 hUu htwo Tw
   have hk64 : k ≤ v ^ 300 := hk'.trans (vp (by norm_num))
   have hkM : k ≤ 4 * (K + K) := by
     have : v ^ 64 ≤ K := hK ▸ vp (by omega)
