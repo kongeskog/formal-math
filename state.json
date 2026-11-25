@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T08:16:31.055575873Z",
+  "updated_at": "2026-11-25T08:17:31.343771886Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -961,7 +961,7 @@
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
-      "tokens": 9123,
+      "tokens": 9117,
       "loc": 546
     },
     {
@@ -1006,7 +1006,7 @@
     },
     {
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
-      "tokens": 6820,
+      "tokens": 6814,
       "loc": 392
     },
     {
@@ -1061,7 +1061,7 @@
     },
     {
       "path": "vp-vnp/Paper/Toolkit.lean",
-      "tokens": 5539,
+      "tokens": 5537,
       "loc": 340
     },
     {
