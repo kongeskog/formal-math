@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T07:06:44.791992149Z",
+  "updated_at": "2026-11-25T07:07:43.710049692Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "942246f349160eb031fe929233a665e2f6dec154",
-    "at": "2026-11-25T07:04:52.706735705Z",
+    "sha": "07ecdfb205163050f01e76fa09ff02a89107274e",
+    "at": "2026-11-25T07:07:43.710049692Z",
     "metrics": {
-      "tokens": 846302,
-      "loc": 54219,
+      "tokens": 845888,
+      "loc": 54210,
       "decls": 4386,
       "files": 315,
-      "bytes": 3143598,
-      "build_seconds": 244
+      "bytes": 3142248,
+      "build_seconds": 343
     }
   },
   "counts": {
-    "merged": 73,
+    "merged": 74,
     "rejected": 2,
-    "open": 1,
+    "open": 0,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 73,
+      "merged": 74,
       "attempts": 76,
-      "saved": 81859
+      "saved": 82273
     }
   ],
   "ideas": [
@@ -137,7 +137,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T09:03:26Z",
       "pr": 136,
-      "result_delta": null,
+      "result_delta": -414,
       "created_at": "2026-11-25T06:01:31Z",
       "url": "https://github.com/kongeskog/formal-math/issues/130",
       "technique": "dead-code",
@@ -858,98 +858,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 136,
-      "title": "dead-code(*): drop unused conjuncts, hypotheses, a field and bound names",
-      "author": "kongeskog",
-      "head_sha": "d901f7aefde2e6eec1e55d6d812032c8adc341b8",
-      "base_sha": "5f8def713012f22949531de6337c60b48cb70da9",
-      "status": "stale",
-      "created_at": "2026-11-25T06:48:50Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 847346,
-        "loc": 54279,
-        "decls": 4386,
-        "files": 315,
-        "bytes": 3145290,
-        "build_seconds": 482
-      },
-      "base_metrics": {
-        "tokens": 847760,
-        "loc": 54288,
-        "decls": 4386,
-        "files": 315,
-        "bytes": 3146640,
-        "build_seconds": null
-      },
-      "delta": -414,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "19 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 847760 → 847346 (-414)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 130,
-      "url": "https://github.com/kongeskog/formal-math/pull/136",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45563388219",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "dead-code",
-      "scope": "*"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
