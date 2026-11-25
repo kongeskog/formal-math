@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T02:16:46.272726764Z",
+  "updated_at": "2026-11-25T02:17:39.804515703Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 56,
     "rejected": 2,
-    "open": 1,
+    "open": 3,
     "contributors": 1,
     "ideas_open": 0
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 56,
-      "attempts": 59,
+      "attempts": 61,
       "saved": 31211
     }
   ],
@@ -94,7 +94,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T05:14:44Z",
-      "pr": null,
+      "pr": 106,
       "result_delta": null,
       "created_at": "2026-11-25T01:57:20Z",
       "url": "https://github.com/kongeskog/formal-math/issues/103",
@@ -772,6 +772,142 @@
       "reason": null,
       "technique": "dead-code",
       "scope": "*"
+    },
+    {
+      "pr": 106,
+      "title": "dead-code(Nc/Grp): drop the unused accepting-run clause of GroupOK and Facts.lean",
+      "author": "kongeskog",
+      "head_sha": "1d0b841494984d6540ff0e78e47e2c8e82539073",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T02:16:54Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 103,
+      "url": "https://github.com/kongeskog/formal-math/pull/106",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "dead-code",
+      "scope": "Nc/Grp"
+    },
+    {
+      "pr": 107,
+      "title": "shorten(Nc/Grp,Nc/Flag): close bookkeeping tails early and drop unused haves",
+      "author": "kongeskog",
+      "head_sha": "e76cf60369139189927b0af2a35f575bab3bd593",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-25T02:17:37Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 97,
+      "url": "https://github.com/kongeskog/formal-math/pull/107",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Grp,Nc/Flag"
     }
   ],
   "top_files": [
