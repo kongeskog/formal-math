@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T04:16:24.620517467Z",
+  "updated_at": "2026-11-25T04:20:00.769606084Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "a98ae2fc324ab5ba624e7e62f3abfa8dcc484de9",
-    "at": "2026-11-25T04:10:16.829268738Z",
+    "sha": "0ab72a6350c8825641300dbd93fc133bdd0c3aed",
+    "at": "2026-11-25T04:20:00.769606084Z",
     "metrics": {
-      "tokens": 856981,
-      "loc": 54799,
-      "decls": 4428,
+      "tokens": 854943,
+      "loc": 54696,
+      "decls": 4415,
       "files": 317,
-      "bytes": 3180314,
-      "build_seconds": 605
+      "bytes": 3173857,
+      "build_seconds": 809
     }
   },
   "counts": {
-    "merged": 65,
+    "merged": 66,
     "rejected": 2,
-    "open": 3,
+    "open": 2,
     "contributors": 1,
     "ideas_open": 3
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 65,
+      "merged": 66,
       "attempts": 70,
-      "saved": 71180
+      "saved": 73218
     }
   ],
   "ideas": [
@@ -123,7 +123,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T06:40:15Z",
       "pr": 121,
-      "result_delta": null,
+      "result_delta": -2038,
       "created_at": "2026-11-25T02:41:39Z",
       "url": "https://github.com/kongeskog/formal-math/issues/113",
       "technique": "restructure",
@@ -789,96 +789,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 121,
-      "title": "restructure(Nc): rational series and runs without the dimension bound",
-      "author": "kongeskog",
-      "head_sha": "c8b3c6b5e15b9c6df83172d0613aa1d371fee5d4",
-      "base_sha": "2069ab298f69e1ba474398602885fc25c49497a2",
-      "status": "stale",
-      "created_at": "2026-11-25T03:52:32Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 856575,
-        "loc": 54782,
-        "decls": 4425,
-        "files": 317,
-        "bytes": 3181524,
-        "build_seconds": 802
-      },
-      "base_metrics": {
-        "tokens": 858613,
-        "loc": 54885,
-        "decls": 4438,
-        "files": 317,
-        "bytes": 3187981,
-        "build_seconds": null
-      },
-      "delta": -2038,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "12 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 858613 → 856575 (-2038)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 113,
-      "url": "https://github.com/kongeskog/formal-math/pull/121",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45542949717",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc"
-    },
     {
       "pr": 122,
       "title": "merge(*): one theorem for each remaining group of identical statements about wires, prices and units",
