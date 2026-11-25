@@ -455,11 +455,11 @@ theorem length_steps18 : (steps18 C tab qn i e hU0 hU1).length ≤ 11 * X ^ 2 :=
     rw [pow_two]
     exact Nat.mul_le_mul H.hK2 H.hK2
   have l2 : (univ : Finset (Option S × Fin (K + K))).toList.length = Fintype.card (Option S) * (K + K) := by
-    rw [Finset.length_toList, Finset.card_univ, Fintype.card_prod, Fintype.card_fin]
+    simp
   have l3 : (univ : Finset (Fin (K + K) × Fin (K + K))).toList.length = (K + K) * (K + K) := by
-    rw [Finset.length_toList, Finset.card_univ, Fintype.card_prod, Fintype.card_fin]
+    simp
   have l7 : (univ : Finset (Ix7 M U0 U1)).toList.length = E + (E + 1 + Fintype.card (G.Uid (K + K) U0 M.N U1)) := by
-    rw [Finset.length_toList, Finset.card_univ, Fintype.card_sum, Fintype.card_sum, Fintype.card_option, Fintype.card_fin]
+    simp
   simp only [steps18, steps1, steps2, steps3, steps4, steps5, steps6, steps7, steps8, List.length_append, List.length_map,
     l2, l3, l7, List.length_finRange]
   simp only [Finset.length_toList, Finset.card_univ, Fintype.card_fin, Fintype.card_option] at hSK ⊢

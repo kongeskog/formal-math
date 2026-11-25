@@ -21,11 +21,8 @@ theorem indices_agree {h : ℕ} [NeZero h] {I : Type} (f : U h → I) (hf : ∀ 
     (p q : U h) : f p = f q := by
   refine Nc.Flag.const_of_x f (fun l k => ?_) p q
   have h1 := npair_sym l k
-  have h2 := hf (npair l k)
-  rw [Sym2.eq_iff] at h1
-  rcases h1 with ⟨e1, e2⟩ | ⟨e1, e2⟩
-  · exact (congrArg f e2).trans (h2.symm.trans (congrArg f e1.symm))
-  · exact (congrArg f e2).trans (h2.trans (congrArg f e1.symm))
+  -- `h1` names the two ends of `npair l k` in one order or the other; `hf (npair l k)` links them
+  grind
 
 /-- The opening of the section: "Replacing C₀ by an integer that is at least 2C₀+1, Theorem thm:poincare reads: the mean
 of |e|² over all pairs is at most C₀ times 2/b times the sum of |e|² over near pairs, for every price", where h is a
