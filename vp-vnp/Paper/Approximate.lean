@@ -11,6 +11,8 @@ import Nc.Rate.Circuit
 # The paper, appendix "Approximate computation"
 
 The exact end theorems, thm:allfields and cor:allclasses, are derived here from Theorem thm:approx.
+The theorems over ℝ of the introduction, thm:main, thm:simple and cor:classes, follow at the end
+from thm:allfields.
 -/
 
 namespace Paper
@@ -326,5 +328,51 @@ theorem cor_allclasses (F : Type u) [Field F] : VP F ⊂ VNP F := by
   obtain ⟨m₀, hlow⟩ := hall p (CharP.char_is_prime_or_zero F p).symm
   obtain ⟨m, hm1, hm2⟩ := exists_beyond_poly hc m₀ C
   exact hm2 ((hlow F m hm1 _).1 (hC m).2.2)
+
+/- Theorems thm:main and thm:simple and Corollary cor:classes, moved here from `Paper/Rate.lean`. -/
+
+/- Theorem thm:main is the PERM_m part of Theorem thm:allfields for the field ℝ, of characteristic
+p = 0 (so the hypothesis p ≠ 2 holds); genPerm_eq rewrites the permanent into the printed sum. -/
+
+/-- **Paper: Theorem thm:main.** "There are c > 0 and m₀ such that for all m ≥ m₀ every circuit over ℝ that computes
+PERM_m has more than m^(c(log m)^(1/3)) gates." -/
+theorem thm_main : ∃ c : ℝ, 0 < c ∧ ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s : ℕ,
+    Computes (∑ σ : Equiv.Perm (Fin m), ∏ i, MvPolynomial.X (σ i, i) : MvPolynomial (Fin m × Fin m) ℝ) s →
+      (m : ℝ) ^ (c * Real.logb 2 m ^ (1 / 3 : ℝ)) < s := by
+  obtain ⟨c, hc, h⟩ := thm_allfields.{0}
+  obtain ⟨m₀, hm⟩ := h 0 (Or.inl rfl)
+  exact ⟨c, hc, m₀, fun m hm' s hs => (hm ℝ m hm' s).2 (by norm_num) (genPerm_eq ℝ m ▸ hs)⟩
+
+/- Theorem thm:simple follows from Theorem thm:main: a circuit with s ≤ m^C gates computing PERM_m
+would have m^(c(log m)^(1/3)) < s ≤ m^C, and m^C is eventually below that bound (pow_le_rate). -/
+
+/-- **Paper: Theorem thm:simple.** "For every C there is m₀ such that for all m ≥ m₀ no circuit over ℝ with at most m^C
+gates computes PERM_m." -/
+theorem thm_simple (C : ℕ) : ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s : ℕ, s ≤ m ^ C →
+    ¬ Computes (∑ σ : Equiv.Perm (Fin m), ∏ i, MvPolynomial.X (σ i, i) : MvPolynomial (Fin m × Fin m) ℝ) s := by
+  obtain ⟨c, hc, m₀, h⟩ := thm_main
+  obtain ⟨m₁, h₁⟩ := pow_le_rate hc C
+  exact ⟨m₀ + m₁, fun m hm s hs hcomp =>
+    (h m (by omega) s hcomp).not_ge ((Nat.cast_le.2 hs).trans (h₁ m (by omega)))⟩
+
+/- Corollary cor:classes keeps its own proof: its doc comment names Ryser's formula (perm_mem_VNP) as
+the reason the permanent is in VNP, so it is not replaced by `cor_allclasses ℝ`, whose witness is
+the Hamiltonian cycle polynomial. -/
+
+/-- **Paper: Corollary cor:classes.** "Over ℝ, VP is a proper subset of VNP." The witness is the permanent: it is in VNP
+by Ryser's formula and not in VP by Theorem thm:simple. -/
+theorem cor_classes : VP ℝ ⊂ VNP ℝ := by
+  refine ⟨vp_subset_vnp ℝ, fun h => ?_⟩
+  obtain ⟨C, hC⟩ := h (perm_mem_VNP ℝ)
+  obtain ⟨m₀, hlow⟩ := thm_simple (C + 1)
+  generalize hm : m₀ + C + 2 = m
+  refine hlow m (by omega) (m ^ C + C) ?_ ?_
+  · have h1 : 1 ≤ m ^ C := Nat.one_le_pow _ _ (by omega)
+    calc m ^ C + C ≤ m ^ C + m ^ C * C := Nat.add_le_add_left (Nat.le_mul_of_pos_left _ h1) _
+      _ = m ^ C * (C + 1) := by ring
+      _ ≤ m ^ C * m := Nat.mul_le_mul_left _ (by omega)
+      _ = m ^ (C + 1) := (pow_succ m C).symm
+  · rw [← genPerm_eq]
+    exact (hC m).2.2
 
 end Paper
