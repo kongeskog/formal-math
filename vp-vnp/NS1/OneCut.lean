@@ -21,15 +21,12 @@ open _root_.NS1.Tree
 
 variable {A : Type} [CommRing A] {θ : List Bool → A}
 
-theorem Plain.mono {τ τ' : ℕ} {z : Tree} (h : Plain θ τ z) (hτ : τ ≤ τ') : Plain θ τ' z :=
-  ⟨h.1, fun r hr => ⟨(h.2 r hr).1, (h.2 r hr).2.trans hτ⟩⟩
-
 theorem CutD.mono {τ s τ' s' P t τ'' s'' P' t' : ℕ} {G : Tree} (h : CutD θ τ s τ' s' P t G) (h1 : τ' ≤ τ'')
     (h2 : s' ≤ s'') (h3 : P ≤ P') (h4 : t ≤ t') : CutD θ τ s τ'' s'' P' t' G := by
   intro z hz
   obtain ⟨Q, hD, hQ, hv⟩ := h z hz
   exact ⟨Q, hD.mono h4, fun q hq => ⟨(hQ q hq).1.trans h3, fun y hy => ((hQ q hq).2 y hy).trans h2⟩, fun hp =>
-    ⟨fun q hq y hy => ((hv hp).1 q hq y hy).mono h1, (hv hp).2⟩⟩
+    ⟨fun q hq y hy => ((hv hp).1 q hq y hy).of_le h1, (hv hp).2⟩⟩
 
 section Iterate
 

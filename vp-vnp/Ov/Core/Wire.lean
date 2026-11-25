@@ -9,7 +9,8 @@ import Paper.Tensors
 # The values of a spectral point at wires
 
 The parts of Lemma lem:exponents (`Paper/Tensors.lean`) in the form in which the development cites them, and what follows
-at once for tensors whose legs are moved.
+at once for tensors whose legs are moved. The values at wires themselves (`wire_eq`, `wire_two`, `e_self`, `e_comm`) are
+stated in `Paper/Tensors.lean`, in this namespace.
 -/
 
 set_option linter.unusedSectionVars false
@@ -30,13 +31,6 @@ theorem unit_eq [Nonempty I] (π : J → I) {n : ℕ} (hn : 1 ≤ n) :
     F.F (Ten.push π (unit K J n)) = (n : ℝ) ^ Real.logb 2 (F.F (Ten.push π (unit K J 2))) :=
   (Paper.lem_exponents_power F π).2 n hn
 
-/-- φ(⟨n⟩_pq) = n^(d_φ(p,q)). -/
-theorem wire_eq (p q : I) {n : ℕ} (hn : 1 ≤ n) : F.F (wire K n p q) = (n : ℝ) ^ F.e p q :=
-  Paper.lem_exponents_wire F p q hn
-
-/-- φ(⟨2⟩_pq) = 2^(d_φ(p,q)). -/
-theorem wire_two (p q : I) : F.F (wire K 2 p q) = 2 ^ F.e p q := Paper.lem_exponents_wire_two F p q
-
 /-- φ(⟨n⟩_pq) ≤ n^(d_φ(p,q)), also for n = 0. -/
 theorem wire_le (p q : I) (n : ℕ) : F.F (wire K n p q) ≤ (n : ℝ) ^ F.e p q := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
@@ -49,12 +43,6 @@ theorem e_nonneg (p q : I) : 0 ≤ F.e p q := (Paper.lem_exponents_unit_interval
 
 /-- Distances are at most 1. -/
 theorem e_le_one (p q : I) : F.e p q ≤ 1 := (Paper.lem_exponents_unit_interval F p q).2
-
-/-- The distance from a party to itself is 0. -/
-theorem e_self (p : I) : F.e p p = 0 := Paper.lem_exponents_self F p
-
-/-- Distances are symmetric. -/
-theorem e_comm (p q : I) : F.e p q = F.e q p := Paper.lem_exponents_symm F p q
 
 /-- A tensor with all its legs at one party costs at most 1. -/
 theorem push_const_le (q : I) (t : Ten K J) : F.F (Ten.push (fun _ => q) t) ≤ 1 := by
