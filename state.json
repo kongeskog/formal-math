@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-25T08:05:36.027172622Z",
+  "updated_at": "2026-11-25T08:16:31.055575873Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "062d6dfd7b407fdc59326050f2a89b6d8285278f",
-    "at": "2026-11-25T07:59:12.695904483Z",
+    "sha": "a9a00efbe8f10c9f76f1fe0e9880bc3fce2c12b7",
+    "at": "2026-11-25T08:16:31.055575873Z",
     "metrics": {
-      "tokens": 843959,
-      "loc": 54078,
+      "tokens": 843651,
+      "loc": 54063,
       "decls": 4385,
       "files": 315,
-      "bytes": 3137628,
-      "build_seconds": 409
+      "bytes": 3136613,
+      "build_seconds": 721
     }
   },
   "counts": {
-    "merged": 76,
+    "merged": 77,
     "rejected": 2,
-    "open": 2,
+    "open": 1,
     "contributors": 1,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 76,
+      "merged": 77,
       "attempts": 80,
-      "saved": 84202
+      "saved": 84510
     }
   ],
   "ideas": [
@@ -136,8 +136,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-25T09:03:26Z",
-      "pr": 136,
-      "result_delta": -414,
+      "pr": 139,
+      "result_delta": -722,
       "created_at": "2026-11-25T06:01:31Z",
       "url": "https://github.com/kongeskog/formal-math/issues/130",
       "technique": "dead-code",
@@ -859,96 +859,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 139,
-      "title": "shorten(*): leftovers of #130 and #97: unused set names and haves, a closed iff, a conjunct",
-      "author": "kongeskog",
-      "head_sha": "00434c693dc88cbe7b215749df88db153ddf59c8",
-      "base_sha": "2c389b9f5b42eeab1234bea440fab04ec3788861",
-      "status": "stale",
-      "created_at": "2026-11-25T07:50:34Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 844989,
-        "loc": 54143,
-        "decls": 4385,
-        "files": 315,
-        "bytes": 3138905,
-        "build_seconds": 350
-      },
-      "base_metrics": {
-        "tokens": 845297,
-        "loc": 54158,
-        "decls": 4385,
-        "files": 315,
-        "bytes": 3139920,
-        "build_seconds": null
-      },
-      "delta": -308,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "19 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 845297 → 844989 (-308)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 130,
-      "url": "https://github.com/kongeskog/formal-math/pull/139",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45571306523",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "*"
-    },
     {
       "pr": 140,
       "title": "restructure(Paper/Laws,Nc/G/Start): inline the wrappers thm_laws and sum_pos into their only users",
