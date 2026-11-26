@@ -134,35 +134,24 @@ theorem length_i0 (l : List Unit) : (i0 l).length = l.length + 1 := by simp [i0]
 
 theorem bv_i0 (l : List Unit) : bv (i0 l) = 0 := bv_false _
 
+/-- A column of `L` rows is the binary word of length `L` of its value. -/
+theorem cw_bin {L : ℕ} {w : List (Fin 9 → Bool)} (hl : w.length = L) (i : Fin 9) :
+    cw w i = bin L (bv (cw w i)) := by
+  have := bin_bv (cw w i)
+  rw [cw, List.length_map, hl] at this
+  exact this.symm
+
 theorem alc_eq {L : ℕ} {s : P.Rl × List (Fin 9 → Bool)} (hl : s.2.length = L) :
     alc P s.1 s.2 = unb L (Mach.al (nst s)).2 := by
-  have key : ∀ i, cw s.2 i = bin L (bv (cw s.2 i)) := by
-    intro i
-    have := bin_bv (cw s.2 i)
-    rw [cw, List.length_map, hl] at this
-    exact this.symm
   refine cols_ext fun j => ?_
   rw [unb_proj, alc, List.map_map]
-  fin_cases j
-  · exact key 8
-  · exact key _
-  · exact key _
-  · exact key _
+  fin_cases j <;> exact cw_bin hl _
 
 theorem ldc_eq {L : ℕ} {s : P.Rl × List (Fin 9 → Bool)} (hl : s.2.length = L) :
     ldc P s.1 s.2 = unb L (Mach.ld (nst s)).2 := by
-  have key : ∀ i, cw s.2 i = bin L (bv (cw s.2 i)) := by
-    intro i
-    have := bin_bv (cw s.2 i)
-    rw [cw, List.length_map, hl] at this
-    exact this.symm
   refine cols_ext fun j => ?_
   rw [unb_proj, ldc, List.map_map]
-  fin_cases j
-  · exact key _
-  · exact key 5
-  · exact key 6
-  · exact key 7
+  fin_cases j <;> exact cw_bin hl _
 
 section Facts
 
