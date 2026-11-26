@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T01:42:06.102079842Z",
+  "updated_at": "2026-11-26T01:43:32.752037103Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "82eb95537f1ddb4a7b0e402105cec2e3ea627f7a",
-    "at": "2026-11-26T01:21:21.830811808Z",
+    "sha": "ed95d63b12cf026ba604cd9a45276036013d0749",
+    "at": "2026-11-26T01:43:32.752037103Z",
     "metrics": {
-      "tokens": 822766,
-      "loc": 52875,
+      "tokens": 822393,
+      "loc": 52840,
       "decls": 4317,
       "files": 314,
-      "bytes": 3078582,
-      "build_seconds": 486
+      "bytes": 3077513,
+      "build_seconds": 439
     }
   },
   "counts": {
-    "merged": 93,
+    "merged": 94,
     "rejected": 4,
-    "open": 2,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 6
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 92,
+      "merged": 93,
       "attempts": 98,
-      "saved": 104903
+      "saved": 105276
     },
     {
       "login": "yidakra",
@@ -115,7 +115,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T03:56:50Z",
       "pr": 166,
-      "result_delta": null,
+      "result_delta": -373,
       "created_at": "2026-11-26T00:56:49Z",
       "url": "https://github.com/kongeskog/formal-math/issues/164",
       "technique": "shorten",
@@ -1005,79 +1005,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 166,
-      "title": "shorten(Paper): one side condition in thm_onecut, one stage fact in par_computed, shorter chains",
-      "author": "kongeskog",
-      "head_sha": "027735e6cbf9ddc558f8e19aaa404ab787016121",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-26T01:21:16Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 164,
-      "url": "https://github.com/kongeskog/formal-math/pull/166",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Paper"
-    },
     {
       "pr": 167,
       "title": "restructure(Paper): fold single-use lemmas in Alternative, UniversalSteps; drop heartbeat overrides",
