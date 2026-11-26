@@ -375,41 +375,29 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
   have h0 : (bT.length + 1) * (T + 1) + (bub.length + 1) * (ub + 1) ≤ 2 * (Lc + 1) * (T + ub + 2) := by
     have a1 : (bT.length + 1) * (T + 1) ≤ (Lc + 1) * (T + ub + 2) := Nat.mul_le_mul (by omega) (by omega)
     have a2 : (bub.length + 1) * (ub + 1) ≤ (Lc + 1) * (T + ub + 2) := Nat.mul_le_mul (by omega) (by omega)
-    calc _ ≤ (Lc + 1) * (T + ub + 2) + (Lc + 1) * (T + ub + 2) := Nat.add_le_add a1 a2
-      _ = _ := by ring
+    linarith
   set W := ub + Lc + 1
   have hW1 : 1 ≤ W := by omega
   have b1 : ιb * (T + lh * (660 * W) + X * X + 401 * X + 1) ≤ ιb * T + 660 * (ιb * lh * W) + 403 * X ^ 3 := by
+    have : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
     have a1 : ιb * (X * X + 401 * X + 1) ≤ 403 * X ^ 3 := by
-      calc ιb * (X * X + 401 * X + 1) ≤ X * (X * X + 401 * (X * X) + X * X) := by
-            refine Nat.mul_le_mul hιX ?_
-            have : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
-            omega
-        _ = 403 * X ^ 3 := by ring
-    calc ιb * (T + lh * (660 * W) + X * X + 401 * X + 1) = ιb * T + 660 * (ιb * lh * W) + ιb * (X * X + 401 * X + 1) := by
-          ring
-      _ ≤ _ := by omega
+      grw [hιX, show X * X + 401 * X + 1 ≤ 403 * (X * X) by linarith]; ring_nf; rfl
+    linarith
   have b2 : ιb * (1 + lh) ≤ X ^ 3 + ιb * lh * W := by
     have a1 : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
     have a3 : ιb * lh ≤ ιb * lh * W := Nat.le_mul_of_pos_right _ hW1
-    calc ιb * (1 + lh) = ιb + ιb * lh := by ring
-      _ ≤ _ := by omega
+    linarith
   have b3 : (p + e) * (330 * W) + X * (400 * X + 1) ≤ 330 * (pd * W) + 330 * (ev * W) + 401 * X ^ 3 := by
     have a1 : X * (400 * X + 1) ≤ 401 * X ^ 3 := by
       have : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
-      have h2 : X * X ≤ X ^ 3 := by
-        calc X * X ≤ X * X * X := Nat.le_mul_of_pos_right _ hX
-          _ = X ^ 3 := by ring
-      calc X * (400 * X + 1) = 400 * (X * X) + X := by ring
-        _ ≤ _ := by omega
+      have h2 : X * X ≤ X ^ 3 := by nlinarith
+      linarith
     have a3 : p * W ≤ pd * W := Nat.mul_le_mul_right _ hpd
     have a4 : e * W ≤ ev * W := Nat.mul_le_mul_right _ hev
-    calc (p + e) * (330 * W) + X * (400 * X + 1) = 330 * (p * W) + 330 * (e * W) + X * (400 * X + 1) := by ring
-      _ ≤ _ := by omega
+    linarith
   have b4 : e * (2 * W) ≤ 2 * (ev * W) := by
     have a4 : e * W ≤ ev * W := Nat.mul_le_mul_right _ hev
-    calc e * (2 * W) = 2 * (e * W) := by ring
-      _ ≤ _ := by omega
+    linarith
   have b5 : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
   have b6 : e ≤ ev * W := hev.trans (Nat.le_mul_of_pos_right _ hW1)
   have hfin : (ev + pd + ιb * lh) * (1000 * W) =
