@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T03:04:31.697098034Z",
+  "updated_at": "2026-11-26T03:07:46.307289508Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1049,30 +1049,16 @@
   "open": [
     {
       "pr": 174,
-      "title": "restructure(*): inline eight single-use lemmas whose arguments are all fixed by the caller",
+      "title": "restructure(*): inline seven single-use lemmas whose arguments are all fixed by the caller",
       "author": "kongeskog",
-      "head_sha": "43f5aca886e1c296517f0267d9a067740796fb27",
-      "base_sha": "409515862899b8b7fe81f65bc43ac144b57f1ea0",
-      "status": "conflict",
+      "head_sha": "99db6f5b541c87f0fa0d986975fc4a6697d59fb9",
+      "base_sha": null,
+      "status": "verifying",
       "created_at": "2026-11-26T02:45:34Z",
       "decided_at": null,
-      "metrics": {
-        "tokens": 820531,
-        "loc": 52782,
-        "decls": 4304,
-        "files": 314,
-        "bytes": 3072234,
-        "build_seconds": 365
-      },
-      "base_metrics": {
-        "tokens": 821567,
-        "loc": 52819,
-        "decls": 4312,
-        "files": 314,
-        "bytes": 3075226,
-        "build_seconds": null
-      },
-      "delta": -1036,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
       "gates": [
         {
           "key": "format",
@@ -1080,52 +1066,44 @@
           "status": "pass"
         },
         {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "11 files changed"
+          "status": "pending"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "no_increase",
           "label": "No more long lines or exceptions",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 821567 → 820531 (-1036)"
+          "status": "pending"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "fail",
-          "detail": "Conflicts with main; merge main into your branch and push"
+          "status": "pending"
         },
         {
           "key": "review",
@@ -1136,7 +1114,7 @@
       ],
       "idea": 170,
       "url": "https://github.com/kongeskog/formal-math/pull/174",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45744545794",
+      "run_url": null,
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
