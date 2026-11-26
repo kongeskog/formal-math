@@ -76,21 +76,15 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
     obtain ⟨G, s', t, hG, hcut, hs', ht⟩ := hc τ s k (v ^ H) ((pmono hH).trans hτ) hlτ (hsτ hs hcv) hk0
       hk2 (hk1.trans_le (Nat.mul_le_mul_left _ (Nat.le_succ _)))
     refine ⟨G, _, t, s', hcut, ?_, ?_, ?_, hG⟩
-    · calc k * Λ * v ^ H = k * v ^ H * Λ := by ring
-        _ ≤ (τ * Λ + v ^ H) * Λ := Nat.mul_le_mul_right _ hk3
-        _ ≤ (τ * Λ + τ * Λ) * Λ := Nat.mul_le_mul_right _ (Nat.add_le_add_left (hτ.trans (Nat.le_mul_of_pos_right _ hΛ1)) _)
-        _ = τ * (2 * Λ ^ 2) := by ring
-        _ ≤ τ * (4 * Λ ^ 2) := Nat.mul_le_mul_left _ (by omega)
+    · grw [mul_right_comm, hk3, hτ]
+      linarith only [Nat.mul_le_mul_left (τ * Λ) hΛ1, Nat.zero_le (τ * Λ ^ 2)]
     · refine Nat.le_of_mul_le_mul_right (c := v ^ 208) ?_ (ppos 208)
       calc t * v ^ 48 * v ^ 208 ≤ (s * v ^ 48 * v ^ 208 + τ * k) * Λ := by
             rw [Nat.mul_assoc, ← h208, Nat.mul_assoc s, ← h208]; exact ht
-        _ ≤ (c * τ * v ^ 208 + c * τ * v ^ 208) * Λ := Nat.mul_le_mul_right _
-            (Nat.add_le_add (Nat.mul_le_mul_right _ hs) (Nat.mul_le_mul (Nat.le_mul_of_pos_left _ hc1) hk208))
-        _ = c * τ * v ^ 208 * (2 * Λ) := by ring
-        _ ≤ c * τ * v ^ 208 * (100 * Λ ^ 3) := Nat.mul_le_mul_left _ (by
-            have := Nat.le_self_pow (by norm_num : 3 ≠ 0) Λ
-            omega)
-        _ = c * τ * (100 * Λ ^ 3) * v ^ 208 := by ring
+        _ ≤ (c * τ * v ^ 208 + c * τ * v ^ 208) * Λ := by
+          gcongr; exact Nat.le_mul_of_pos_left _ hc1
+        _ = c * τ * (2 * Λ) * v ^ 208 := by ring
+        _ ≤ _ := by grw [← Nat.le_self_pow (show 3 ≠ 0 by norm_num) Λ]; gcongr; omega
     · refine Nat.le_of_mul_le_mul_right (c := k * v ^ 208) ?_ (by positivity)
       calc s' * v ^ 48 * (k * v ^ 208) = s' * k * v ^ 256 := by rw [h208]; ring
         _ ≤ (s * v ^ 48 * v ^ 208 + τ * k) * Λ := by rw [Nat.mul_assoc s, ← h208]; exact hs'
