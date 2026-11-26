@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:57:00.969220333Z",
+  "updated_at": "2026-11-26T01:02:07.421790341Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1068,28 +1068,14 @@
       "pr": 163,
       "title": "merge(Nc/Dl,Nc/Tow): one uniqueness lemma, expand_endTm inside its caller, mem_cons skeletons",
       "author": "kongeskog",
-      "head_sha": "696d269b43fc0b5900421267c6c442c69ef8a083",
-      "base_sha": "0caf161477b13fff4d8845a10b731ea84c6da227",
-      "status": "needs_fix",
+      "head_sha": "33c3af6c29353b8caa52e0a9716df6f19bec6605",
+      "base_sha": null,
+      "status": "verifying",
       "created_at": "2026-11-26T00:55:18Z",
       "decided_at": null,
-      "metrics": {
-        "tokens": 828045,
-        "loc": 53025,
-        "decls": 4331,
-        "files": 314,
-        "bytes": 3092081,
-        "build_seconds": null
-      },
-      "base_metrics": {
-        "tokens": 825448,
-        "loc": 53027,
-        "decls": 4326,
-        "files": 314,
-        "bytes": 3086653,
-        "build_seconds": null
-      },
-      "delta": 2597,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
       "gates": [
         {
           "key": "format",
@@ -1097,54 +1083,44 @@
           "status": "pass"
         },
         {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "28 files changed"
+          "status": "pending"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pass"
+          "status": "pending"
         },
         {
           "key": "no_increase",
           "label": "No more long lines or exceptions",
-          "status": "fail",
-          "detail": "lines longer than 100 characters rose from 4657 to 4709 (vp-vnp/NS1/Accel.lean:30, vp-vnp/NS1/Accel.lean:33, vp-vnp/NS1/ApproxAdd.lean:11 and 2 more)"
+          "status": "pending"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "fail",
-          "detail": "tokens went from 825448 to 828045; it must drop by at least 300"
+          "status": "pending"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "skip",
-          "detail": "Not run because a static gate failed"
+          "status": "pending"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "skip",
-          "detail": "Not run because a static gate failed"
+          "status": "pending"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "skip"
+          "status": "pending"
         },
         {
           "key": "review",
@@ -1155,13 +1131,12 @@
       ],
       "idea": 160,
       "url": "https://github.com/kongeskog/formal-math/pull/163",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45732163532",
+      "run_url": null,
       "merge_sha": null,
-      "reason": "No more long lines or exceptions: lines longer than 100 characters rose from 4657 to 4709 (vp-vnp/NS1/Accel.lean:30, vp-vnp/NS1/Accel.lean:33, vp-vnp/NS1/ApproxAdd.lean:11 and 2 more) · Score improves: tokens went from 825448 to 828045; it must drop by at least 300",
+      "reason": null,
       "technique": "merge",
       "scope": "Nc/Dl,Nc/Tow",
       "warnings": [
-        "touches files reserved by idea #148 (claimed by @kongeskog): `vp-vnp/NS1/DSteps.lean`, `vp-vnp/NS1/Guess.lean`, `vp-vnp/NS1/Interp.lean`, `vp-vnp/NS1/Postpone.lean`, `vp-vnp/Nc/Uni/CmpU.lean` and 6 more; coordinate there or expect to merge main after it lands",
         "touches files reserved by idea #146 (claimed by @kongeskog): `vp-vnp/Nc/Tow/Flow.lean`, `vp-vnp/Nc/Tow/Load3.lean`, `vp-vnp/Nc/Tow/Ok.lean`, `vp-vnp/Nc/Tow/Tree.lean`; coordinate there or expect to merge main after it lands"
       ]
     }
