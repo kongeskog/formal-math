@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T02:59:49.617019923Z",
+  "updated_at": "2026-11-26T03:01:46.740917630Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "f7f9c617717f1a3975106c2e584184c78bf22657",
-    "at": "2026-11-26T02:50:48.991580344Z",
+    "sha": "87503feecfcdf7807d7e202219297d1a2e4adf58",
+    "at": "2026-11-26T03:01:46.740917630Z",
     "metrics": {
-      "tokens": 821153,
-      "loc": 52798,
+      "tokens": 820400,
+      "loc": 52755,
       "decls": 4308,
       "files": 314,
-      "bytes": 3073915,
-      "build_seconds": 286
+      "bytes": 3071121,
+      "build_seconds": 409
     }
   },
   "counts": {
-    "merged": 97,
+    "merged": 98,
     "rejected": 4,
-    "open": 2,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 14
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 95,
+      "merged": 96,
       "attempts": 101,
-      "saved": 106102
+      "saved": 106855
     },
     {
       "login": "yidakra",
@@ -101,7 +101,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T05:24:37Z",
       "pr": 173,
-      "result_delta": null,
+      "result_delta": -753,
       "created_at": "2026-11-26T02:24:36Z",
       "url": "https://github.com/kongeskog/formal-math/issues/171",
       "technique": "dead-code",
@@ -1048,21 +1048,21 @@
   ],
   "open": [
     {
-      "pr": 173,
-      "title": "dead-code(*): remove facts that are proved and never used, judged by compiling",
+      "pr": 174,
+      "title": "restructure(*): inline eight single-use lemmas whose arguments are all fixed by the caller",
       "author": "kongeskog",
-      "head_sha": "42fc6a9be6257dca61c00b330fd8fadb427c05cf",
+      "head_sha": "43f5aca886e1c296517f0267d9a067740796fb27",
       "base_sha": "409515862899b8b7fe81f65bc43ac144b57f1ea0",
-      "status": "stale",
-      "created_at": "2026-11-26T02:39:23Z",
+      "status": "conflict",
+      "created_at": "2026-11-26T02:45:34Z",
       "decided_at": null,
       "metrics": {
-        "tokens": 820814,
-        "loc": 52776,
-        "decls": 4312,
+        "tokens": 820531,
+        "loc": 52782,
+        "decls": 4304,
         "files": 314,
-        "bytes": 3072432,
-        "build_seconds": 655
+        "bytes": 3072234,
+        "build_seconds": 365
       },
       "base_metrics": {
         "tokens": 821567,
@@ -1072,7 +1072,7 @@
         "bytes": 3075226,
         "build_seconds": null
       },
-      "delta": -753,
+      "delta": -1036,
       "gates": [
         {
           "key": "format",
@@ -1093,7 +1093,7 @@
           "key": "scope",
           "label": "Changes stay in scope",
           "status": "pass",
-          "detail": "18 files changed"
+          "detail": "11 files changed"
         },
         {
           "key": "deny",
@@ -1109,7 +1109,7 @@
           "key": "improves",
           "label": "Score improves",
           "status": "pass",
-          "detail": "tokens 821567 → 820814 (-753)"
+          "detail": "tokens 821567 → 820531 (-1036)"
         },
         {
           "key": "compiles",
@@ -1119,45 +1119,6 @@
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 171,
-      "url": "https://github.com/kongeskog/formal-math/pull/173",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45743873144",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "dead-code",
-      "scope": "*"
-    },
-    {
-      "pr": 174,
-      "title": "restructure(*): inline eight single-use lemmas whose arguments are all fixed by the caller",
-      "author": "kongeskog",
-      "head_sha": "43f5aca886e1c296517f0267d9a067740796fb27",
-      "base_sha": null,
-      "status": "conflict",
-      "created_at": "2026-11-26T02:45:34Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
           "status": "pass"
         },
         {
@@ -1175,7 +1136,7 @@
       ],
       "idea": 170,
       "url": "https://github.com/kongeskog/formal-math/pull/174",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45744545794",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
