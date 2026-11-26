@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T01:55:19.484613605Z",
+  "updated_at": "2026-11-26T01:56:38.415113999Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "ed95d63b12cf026ba604cd9a45276036013d0749",
-    "at": "2026-11-26T01:43:32.752037103Z",
+    "sha": "004f2b6f04638f0141182c3db51a0c2f932dec16",
+    "at": "2026-11-26T01:56:38.415113999Z",
     "metrics": {
-      "tokens": 822393,
-      "loc": 52840,
-      "decls": 4317,
+      "tokens": 821995,
+      "loc": 52824,
+      "decls": 4315,
       "files": 314,
-      "bytes": 3077513,
-      "build_seconds": 439
+      "bytes": 3075981,
+      "build_seconds": 231
     }
   },
   "counts": {
-    "merged": 94,
+    "merged": 95,
     "rejected": 4,
-    "open": 1,
+    "open": 0,
     "contributors": 2,
-    "ideas_open": 6
+    "ideas_open": 8
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 93,
+      "merged": 94,
       "attempts": 98,
-      "saved": 105276
+      "saved": 105674
     },
     {
       "login": "yidakra",
@@ -94,14 +94,28 @@
   ],
   "ideas": [
     {
+      "number": 168,
+      "title": "Idea: restructure(Paper): inline step-shaped single-use lemmas in Lengths, Curvature, Groups",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-26T01:56:19Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/168",
+      "technique": "restructure",
+      "scope": "Paper"
+    },
+    {
       "number": 165,
       "title": "Idea: restructure(Paper): fold single-use lemmas in Alternative, UniversalSteps; drop unneeded heartbeat overrides",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
+      "claimed_by": null,
       "lease_expires": null,
       "pr": 167,
-      "result_delta": null,
+      "result_delta": -398,
       "created_at": "2026-11-26T01:06:18Z",
       "url": "https://github.com/kongeskog/formal-math/issues/165",
       "technique": "restructure",
@@ -1004,103 +1018,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 167,
-      "title": "restructure(Paper): fold single-use lemmas in Alternative, UniversalSteps; drop heartbeat overrides",
-      "author": "kongeskog",
-      "head_sha": "f1b77574c3efd61f613d2d07e5b7c1ffb312566c",
-      "base_sha": "82eb95537f1ddb4a7b0e402105cec2e3ea627f7a",
-      "status": "stale",
-      "created_at": "2026-11-26T01:39:22Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 822368,
-        "loc": 52859,
-        "decls": 4315,
-        "files": 314,
-        "bytes": 3077050,
-        "build_seconds": 210
-      },
-      "base_metrics": {
-        "tokens": 822766,
-        "loc": 52875,
-        "decls": 4317,
-        "files": 314,
-        "bytes": 3078582,
-        "build_seconds": null
-      },
-      "delta": -398,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "8 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 822766 → 822368 (-398)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 165,
-      "url": "https://github.com/kongeskog/formal-math/pull/167",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45737217708",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
