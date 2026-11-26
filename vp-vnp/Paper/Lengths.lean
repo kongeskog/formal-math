@@ -100,21 +100,6 @@ theorem lengths_of_maps {K : Type} [Field K] {μ : ℕ} {s : ℝ} (hμ : 1 ≤ �
   rw [e, e, ← mul_div_assoc]
   exact div_le_div_of_nonneg_right ((sum_le_sum fun k _ => h3 k).trans_eq (mul_sum _ _ _).symm) hc.le
 
-/-- The proof of Lemma lem:growth: "Compose τ with Z ↦ α(Z ⊗ 1_i)α′ … and average: D(μi) ≤ sD(i) if μi ≤ k." -/
-theorem lem_growth_digit {G : Type} [Group G] (l : Len G) {μ : ℕ} {s : ℝ} (hμ : 1 ≤ μ) (hs : 0 ≤ s)
-    (hl : Contr l μ s) {k : ℕ} (τ : Mt k → G) (hτ : ∀ M N, τ (M + N) = τ M * τ N) {i : ℕ} (hi : μ * i ≤ k) :
-    √(rankMean (fun W => l.val (τ W)) (μ * i)) ≤ s * √(rankMean (fun W => l.val (τ W)) i) := by
-  set f : Mt k → ℝ := fun W => l.val (τ W)
-  have hg : (0 : ℝ) < (Fintype.card (GLM (Fin k)) : ℝ) ^ 2 := by positivity
-  obtain ⟨S, -, hS⟩ := exists_subset_card_eq (s := (univ : Finset (Fin k))) (n := μ * i) (by simpa using hi)
-  let e : Fin μ × Fin i ↪ Fin k := (finProdFinEquiv.trans (Fintype.equivOfCardEq (α := Fin (μ * i))
-    (β := {j // j ∈ S}) (by simp [hS]))).toEmbedding.trans (Function.Embedding.subtype _)
-  have h := (good_of_contr l hl τ hτ).digit i e ⟨0, hμ⟩
-  rw [DM_eq_rankMean, DM_eq_rankMean, card_map, card_map, card_univ, card_product, card_singleton, card_univ,
-    Fintype.card_prod, Fintype.card_fin, Fintype.card_fin, one_mul, mul_left_comm] at h
-  rw [← Real.sqrt_sq hs, ← Real.sqrt_mul (sq_nonneg s)]
-  exact Real.sqrt_le_sqrt (le_of_mul_le_mul_left h hg)
-
 /-- The proof of Lemma lem:growth: "By Minkowski's inequality D(i+i′) ≤ D(i) + D(i′)." -/
 theorem lem_growth_minkowski {G : Type} [Group G] (l : Len G) {k : ℕ} (τ : Mt k → G)
     (hτ : ∀ M N, τ (M + N) = τ M * τ N) {i i' : ℕ} (hi : i + i' ≤ k) :
@@ -171,8 +156,21 @@ theorem lem_growth {G : Type} [Group G] (l : Len G) {μ : ℕ} {s : ℝ} (hμ : 
       have h1 : D r ≤ D (μ * (r / μ)) + D (r % μ) := by
         have := lem_growth_minkowski l τ hτ (i := μ * (r / μ)) (i' := r % μ) (by rw [Nat.div_add_mod]; exact hr)
         rwa [Nat.div_add_mod] at this
-      have h2 : D (μ * (r / μ)) ≤ s * D (r / μ) :=
-        lem_growth_digit l (by omega) (by linarith) hl τ hτ ((Nat.mul_div_le r μ).trans hr)
+      -- "Compose τ with Z ↦ α(Z ⊗ 1_i)α′ … and average: D(μi) ≤ sD(i) if μi ≤ k."
+      have h2 : D (μ * (r / μ)) ≤ s * D (r / μ) := by
+        have hg : (0 : ℝ) < (Fintype.card (GLM (Fin k)) : ℝ) ^ 2 := by positivity
+        obtain ⟨S, -, hS⟩ := exists_subset_card_eq (s := (univ : Finset (Fin k))) (n := μ * (r / μ))
+          (by simpa using (Nat.mul_div_le r μ).trans hr)
+        let e : Fin μ × Fin (r / μ) ↪ Fin k := (finProdFinEquiv.trans (Fintype.equivOfCardEq
+          (α := Fin (μ * (r / μ))) (β := {j // j ∈ S}) (by simp [hS]))).toEmbedding.trans
+          (Function.Embedding.subtype _)
+        have h := (good_of_contr l hl τ hτ).digit (r / μ) e ⟨0, by omega⟩
+        rw [DM_eq_rankMean, DM_eq_rankMean, card_map, card_map, card_univ, card_product,
+          card_singleton, card_univ, Fintype.card_prod, Fintype.card_fin, Fintype.card_fin, one_mul,
+          mul_left_comm] at h
+        simp only [hD]
+        rw [← Real.sqrt_sq (show 0 ≤ s by linarith), ← Real.sqrt_mul (sq_nonneg s)]
+        exact Real.sqrt_le_sqrt (le_of_mul_le_mul_left h hg)
       have h3 := mul_le_mul_of_nonneg_left (ih _ hq (by omega)) (show 0 ≤ s by linarith)
       have hmR : ((r % μ : ℕ) : ℝ) ≤ μ := by exact_mod_cast hm
       have h4 : D (r % μ) ≤ μ * D 1 :=
