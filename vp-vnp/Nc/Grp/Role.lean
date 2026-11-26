@@ -75,15 +75,8 @@ theorem foldL_stream (es : List (List Bool)) (acc : List Bool) :
     rw [foldL]
     by_cases he : ct e ≠ []
     · rw [if_pos he, bindW_single, ih]
-      by_cases hes : ∀ k ∈ es, ct k ≠ []
-      · rw [if_pos hes, if_pos (by
-          intro k hk
-          rcases List.mem_cons.1 hk with rfl | hk
-          · exact he
-          · exact hes k hk)]
-        simp
-      · rw [if_neg hes, if_neg fun h => hes fun k hk => h k (List.mem_cons_of_mem _ hk)]
-    · rw [if_neg he, if_neg fun h => he (h e List.mem_cons_self)]
+      simp [he]
+    · rw [if_neg he, if_neg fun h => he (h _ List.mem_cons_self)]
       rfl
 
 theorem streamF_does (hct : ∀ k, tget k t = ofBits (ct k)) (hlen : ∀ k, (ct k).length ≤ ub)
@@ -131,14 +124,9 @@ theorem foldL_streams (slots : List (List (List Bool))) (acc : List (List Bool))
     rw [foldL]
     by_cases he : ∀ k ∈ es, ct k ≠ []
     · rw [if_pos he, bindW_single, ih]
-      by_cases hes : ∀ es ∈ slots, ∀ k ∈ es, ct k ≠ []
-      · rw [if_pos hes, if_pos (by
-          intro es' h'
-          rcases List.mem_cons.1 h' with rfl | h'
-          · exact he
-          · exact hes es' h')]
-        simp
-      · rw [if_neg hes, if_neg fun h => hes fun es' h' => h es' (List.mem_cons_of_mem _ h')]
+      exact if_congr
+        ⟨fun h => List.forall_mem_cons.2 ⟨he, h⟩, fun h => (List.forall_mem_cons.1 h).2⟩
+        (by simp) rfl
     · rw [if_neg he, if_neg fun h => he (h es List.mem_cons_self)]
       rfl
 
