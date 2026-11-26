@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:33:11.692472713Z",
+  "updated_at": "2026-11-26T00:34:41.037931913Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1290,13 +1290,13 @@
           "key": "fresh",
           "label": "Verified on current main",
           "status": "pending",
-          "detail": "Main moved; will be re-verified once approved"
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 153,
@@ -1368,8 +1368,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "fail",
-          "detail": "Changes requested by kongeskog"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 158,
