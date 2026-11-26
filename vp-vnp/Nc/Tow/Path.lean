@@ -23,23 +23,10 @@ theorem step_ends (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) :
   -- by cases on `T.e0 e = c`; otherwise `T.e1 e = c` by `hc`, and the pair is swapped
   grind
 
-theorem step_ne (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) : c ≠ T.step e c := by
-  intro heq
-  have h1 := step_ends e hc
-  rw [← heq, Sym2.eq_iff] at h1
-  have := T.e_ne e
-  rcases h1 with ⟨h2, h3⟩ | ⟨h2, h3⟩ <;> exact this (h2.trans h3.symm)
-
 theorem step_mem (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) :
     T.e0 e = T.step e c ∨ T.e1 e = T.step e c := by
   have h1 := step_ends e hc
   -- `h1` by `Sym2.eq_iff`: the pair in either order
-  grind
-
-theorem step_step (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) : T.step e (T.step e c) = c := by
-  have h1 := step_ends e hc
-  have h2 := step_ends e (step_mem e hc)
-  -- `h2` rewritten with `h1`, by `Sym2.eq_iff`: the pair in either order
   grind
 
 /-- The chamber after `s` steps. -/
@@ -86,7 +73,11 @@ theorem walk_reverse {c c' : T.X j} {l : List (T.Ed j)} (h1 : T.Walk c l c') : T
   | cons e l ih =>
     rw [List.reverse_cons]
     refine walk_append (ih h1.2) ⟨step_mem e h1.1, ?_⟩
-    exact step_step e h1.1
+    have h2 := step_ends e h1.1
+    have h3 := step_ends e (step_mem e h1.1)
+    -- the goal is the equation `T.step e (T.step e c) = c` (a `Walk` along no edge);
+    -- `h3` rewritten with `h2`, by `Sym2.eq_iff`: the pair in either order
+    grind [Walk]
 
 end Tower
 
@@ -143,7 +134,11 @@ theorem exists_edge (c c' γ : T.X 0) {s : ℕ} (hs : s < R.pl c c' γ) :
   · obtain ⟨h1, h2⟩ := Tower.walk_step (R.path_walk c c' γ) (List.getElem?_eq_getElem hlt)
     unfold pn
     rw [h2]
-    exact Tower.step_ne _ h1
+    -- a step along an edge leaves the chamber, since the ends of an edge differ
+    intro heq
+    have h3 := Tower.step_ends _ h1
+    rw [← heq, Sym2.eq_iff] at h3
+    rcases h3 with ⟨h4, h5⟩ | ⟨h4, h5⟩ <;> exact T.e_ne _ (h4.trans h5.symm)
 
 end Routes
 

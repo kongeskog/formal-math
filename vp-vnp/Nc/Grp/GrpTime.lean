@@ -167,17 +167,6 @@ theorem length_endIns (b : G.Uid (K + K) U0 M.N U1 → UW ub) : (endIns P n o gr
   · intro id _ id' _ e
     exact (Prod.ext_iff.1 e).2
 
-theorem cost_endIns {T Lc : ℕ} (hk : ∀ c, (key c).length ≤ Lc) (b : G.Uid (K + K) U0 M.N U1 → UW ub) :
-    ((endIns P n o grp g key b).map (insCost T ub)).sum ≤ evG n o grp g * (2 * (ub + Lc + 1)) := by
-  refine (sum_le_length_mul _ _ (2 * (ub + Lc + 1)) ?_).trans (Nat.mul_le_mul_right _ (length_endIns b))
-  intro i hi
-  unfold endIns at hi
-  obtain ⟨id, -, hid⟩ := List.mem_filterMap.1 hi
-  have hb := length_uwBits_le (b id)
-  have h0 := hk (G.hold0 M.np id, id)
-  have h1 := hk (G.hold1 M.np id, id)
-  split_ifs at hid <;> simp only [Option.some.injEq] at hid <;> subst hid <;> simp only [insCost] <;> omega
-
 theorem cost_role {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length ≤ Lc) (r : M.R)
     (hsl : Fintype.card ((M.kind r.1).SlAt r.2) ≤ X) (hcn : Fintype.card ((M.kind r.1).CnAt r.2) ≤ X) :
     insCost T ub (roleIns P n o key tg r) ≤
@@ -223,24 +212,6 @@ theorem cost_role {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length
   have h7 := Nat.mul_le_mul_right W h3
   have h8 := Nat.mul_le_mul_right W h4
   linarith
-
-theorem cost_roles {cap T Lc X : ℕ} (hP : P.Ok cap) (hk : ∀ c, (key c).length ≤ Lc)
-    (hsl : ∀ r : M.R, Fintype.card ((M.kind r.1).SlAt r.2) ≤ X) (hcn : ∀ r : M.R, Fintype.card ((M.kind r.1).CnAt r.2) ≤ X)
-    (hR : Fintype.card M.R ≤ X) :
-    (((roleList grp g M).map (roleIns P n o key tg)).map (insCost T ub)).sum ≤
-      (pdG P n o grp g + evG n o grp g) * (330 * (ub + Lc + 1)) + X * (400 * X + 1) := by
-  have hnd : (roleList grp g M).Nodup := pairwise_roleList.imp fun h => h.1
-  have hfin : (roleList grp g M).toFinset = univ.filter fun r : M.R => grp (M.rp r) = g := by
-    ext r
-    simp [mem_roleList]
-  rw [List.map_map, ← List.sum_toFinset _ hnd, hfin]
-  calc _ ≤ ∑ r ∈ univ.filter (fun r : M.R => grp (M.rp r) = g), ((((1 + Fintype.card ((M.kind r.1).SlAt r.2)) * P.num n o r.1 +
-        ∑ ν : (M.kind r.1).CnAt r.2, ((o ⟨r.1, ν.1⟩).1 + 1)) * (330 * (ub + Lc + 1))) + (400 * X + 1)) :=
-        Finset.sum_le_sum fun r _ => (cost_role hP hk r (hsl r) (hcn r)).trans (le_of_eq (Nat.add_assoc _ _ _))
-    _ ≤ _ := by
-        rw [Finset.sum_add_distrib, ← Finset.sum_mul, Finset.sum_add_distrib, Finset.sum_const, smul_eq_mul]
-        refine Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.add_le_add le_rfl sum_cn_le)) (Nat.mul_le_mul_right _ ?_)
-        exact (Finset.card_filter_le _ _).trans (by rw [Finset.card_univ]; exact hR)
 
 theorem cost_body {Lc X : ℕ} (hk : ∀ c, (key c).length ≤ Lc) (hd : ∀ c, (dkey c).length ≤ Lc)
     (hS : Fintype.card (Option S) ≤ X) (hA : K + K ≤ X) (p : Fin (K + K)) :
@@ -356,11 +327,40 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
     have h1 := (cost_base (qn := qn) (cb := cb) (q := q) (ρ := ρ) (n := n) (ub := ub) (X := X) (T := T) hx hk hd hS hA p).2
     have h2 : inN n p ≤ lh := hlh p (mem_baseList.1 hp)
     omega
-  have c2 := cost_roles (ub := ub) (T := T) (X := X) (o := o) (n := n) (tg := tg) (grp := grp) (g := g) hP hk hsl hcn hR
+  have c2 : (((roleList grp g M).map (roleIns P n o key tg)).map (insCost T ub)).sum ≤
+      (pdG P n o grp g + evG n o grp g) * (330 * (ub + Lc + 1)) + X * (400 * X + 1) := by
+    have hnd : (roleList grp g M).Nodup := pairwise_roleList.imp fun h => h.1
+    have hfin : (roleList grp g M).toFinset = univ.filter fun r : M.R => grp (M.rp r) = g := by
+      ext r
+      simp [mem_roleList]
+    rw [List.map_map, ← List.sum_toFinset _ hnd, hfin]
+    calc _ ≤ ∑ r ∈ univ.filter (fun r : M.R => grp (M.rp r) = g),
+          ((((1 + Fintype.card ((M.kind r.1).SlAt r.2)) * P.num n o r.1 +
+            ∑ ν : (M.kind r.1).CnAt r.2, ((o ⟨r.1, ν.1⟩).1 + 1)) * (330 * (ub + Lc + 1))) +
+            (400 * X + 1)) :=
+          Finset.sum_le_sum fun r _ =>
+            (cost_role hP hk r (hsl r) (hcn r)).trans (le_of_eq (Nat.add_assoc _ _ _))
+      _ ≤ _ := by
+          rw [Finset.sum_add_distrib, ← Finset.sum_mul, Finset.sum_add_distrib, Finset.sum_const,
+            smul_eq_mul]
+          refine Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.add_le_add le_rfl sum_cn_le))
+            (Nat.mul_le_mul_right _ ?_)
+          exact (Finset.card_filter_le _ _).trans (by rw [Finset.card_univ]; exact hR)
   have l2 : ((roleList grp g M).map (roleIns P n o key tg)).length ≤ X := by
     rw [List.length_map]
     exact length_roleList_le.trans hR
-  have c3 := cost_endIns (P := P) (n := n) (o := o) (grp := grp) (g := g) (T := T) hk b
+  have c3 : ((endIns P n o grp g key b).map (insCost T ub)).sum ≤
+      evG n o grp g * (2 * (ub + Lc + 1)) := by
+    refine (sum_le_length_mul _ _ (2 * (ub + Lc + 1)) ?_).trans
+      (Nat.mul_le_mul_right _ (length_endIns b))
+    intro i hi
+    unfold endIns at hi
+    obtain ⟨id, -, hid⟩ := List.mem_filterMap.1 hi
+    have hb := length_uwBits_le (b id)
+    have h0 := hk (G.hold0 M.np id, id)
+    have h1 := hk (G.hold1 M.np id, id)
+    split_ifs at hid <;> simp only [Option.some.injEq] at hid <;> subst hid <;>
+      simp only [insCost] <;> omega
   have l3 := length_endIns (P := P) (n := n) (o := o) (grp := grp) (g := g) (key := key) b
   unfold script
   rw [List.map_append, List.sum_append, List.map_append, List.sum_append, List.length_append, List.length_append]

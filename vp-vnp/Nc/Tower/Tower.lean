@@ -163,15 +163,6 @@ theorem smul_bijective (c : XX h n 0) : Function.Bijective fun g : G h n => g �
 noncomputable def rte (h2 : 2 ≤ h) (w : G h n → List (Fin h)) (c c' : XX h n 0) : List (EE h n h2 0) :=
   path h2 (w ((Equiv.ofBijective _ (smul_bijective c)).symm c')).reverse c
 
-theorem rte_walk (h2 : 2 ≤ h) (w : G h n → List (Fin h)) (hw : ∀ g, ((w g).map (gen h2)).prod = g) (c c' : XX h n 0) :
-    (tower h n h2).Walk c (rte h2 w c c') c' := by
-  have h1 := walk_path h2 (w ((Equiv.ofBijective _ (smul_bijective c)).symm c')).reverse c
-  rw [List.reverse_reverse, hw] at h1
-  have h3 : ((Equiv.ofBijective _ (smul_bijective c)).symm c' : G h n) • c = c' :=
-    (Equiv.ofBijective _ (smul_bijective c)).apply_symm_apply c'
-  rw [h3] at h1
-  exact h1
-
 theorem rte_length (h2 : 2 ≤ h) (w : G h n → List (Fin h)) {m : ℕ} (hw : ∀ g, (w g).length ≤ m) (c c' : XX h n 0) :
     (rte h2 w c c').length ≤ m := by
   rw [rte, length_path, List.length_reverse]
@@ -198,7 +189,13 @@ theorem exists_routes (h2 : 2 ≤ h) {m : ℕ} (hm : ∀ g : G h n, WL h2 g m) :
     Nonempty (Nc.Tow.Routes (tower h n h2) m (2 * (Fintype.card (XX h n 0) * m))) := by
   choose w hw1 hw2 using hm
   exact ⟨{ rt := rte h2 w
-           walk := rte_walk h2 w hw2
+           walk := fun (c c' : XX h n 0) => by
+             have h1 :=
+               walk_path h2 (w ((Equiv.ofBijective _ (smul_bijective c)).symm c')).reverse c
+             rw [List.reverse_reverse, hw2] at h1
+             have h3 : ((Equiv.ofBijective _ (smul_bijective c)).symm c' : G h n) • c = c' :=
+               (Equiv.ofBijective _ (smul_bijective c)).apply_symm_apply c'
+             rwa [h3] at h1
            len := rte_length h2 w hw1
            use := rte_use h2 w hw1 }⟩
 

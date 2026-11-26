@@ -179,33 +179,8 @@ theorem flatMap_single' {α β : Type*} (l : List α) (f : α → β) : (l.flatM
 
 theorem flatMap_nil' {α β : Type*} (l : List α) : (l.flatMap fun _ => ([] : List β)) = [] := by simp
 
--- The pieces of a step's record, unfolded by `emSt_eq` and `st1_ne`.
+-- The pieces of a step's record, unfolded by `st1_ne` and `runs_st`.
 attribute [local simp] st0 st1 st2 emSt
-
-theorem emSt_eq (x : P.Rl × List (Fin 9 → Bool)) (z : Zc K) :
-    st0 P x.1 z ++ (x.2.flatMap (fun v => st1 P x.1 v z) ++ st2 z) = emSt P x z := by
-  obtain ⟨r, w⟩ := x
-  match z with
-  | .tp (.rg i) s =>
-    simp only [st0, st1, st2, emSt, flatMap_single', rgw, bw, List.nil_append, cw]
-    cases s <;> simp [List.map_map, Function.comp_def]
-  | .tp .md s => simp
-  | .tp .cp s => simp
-  | .tp .fr s =>
-    cases s
-    · simp
-    · simp [flatMap_single', bw, cw, List.map_map, Function.comp_def]
-  | .tp .lk s =>
-    cases s
-    · simp [flatMap_single', rec'_eq, ldc, List.map_map, Function.comp_def]
-    · simp
-  | .tp .ls s =>
-    cases s
-    · simp [flatMap_single', rec'_eq, alc, List.map_map, Function.comp_def]
-    · simp
-  | .tp (.bk b) s => simp
-  | .tp (.cm k) s => simp
-  | .inp j => simp
 
 theorem st1_ne (r : P.Rl) (v : Fin 9 → Bool) : ∃ z, st1 P r v z ≠ [] := ⟨tp .fr true, by simp⟩
 
@@ -217,7 +192,29 @@ theorem runs_st : Runs (emSt P : P.Rl × List (Fin 9 → Bool) → Zc K → List
   refine h.congr ⟨fun x => ⟨x.1, ((), x.2, ())⟩, fun y => (y.1, y.2.2.1), fun x => rfl, fun y => rfl⟩ (fun x z => ?_)
     fun x => ?_
   · simp only [Equiv.coe_fn_mk]
-    exact emSt_eq P x z
+    -- the three pieces of a step's record make up `emSt`, tape by tape
+    obtain ⟨r, w⟩ := x
+    match z with
+    | .tp (.rg i) s =>
+      simp only [st0, st1, st2, emSt, flatMap_single', rgw, bw, List.nil_append, cw]
+      cases s <;> simp [List.map_map, Function.comp_def]
+    | .tp .md s => simp
+    | .tp .cp s => simp
+    | .tp .fr s =>
+      cases s
+      · simp
+      · simp [flatMap_single', bw, cw, List.map_map, Function.comp_def]
+    | .tp .lk s =>
+      cases s
+      · simp [flatMap_single', rec'_eq, ldc, List.map_map, Function.comp_def]
+      · simp
+    | .tp .ls s =>
+      cases s
+      · simp [flatMap_single', rec'_eq, alc, List.map_map, Function.comp_def]
+      · simp
+    | .tp (.bk b) s => simp
+    | .tp (.cm k) s => simp
+    | .inp j => simp
   · simp
 
 end Steps

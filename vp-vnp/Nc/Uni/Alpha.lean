@@ -70,12 +70,6 @@ def ol : Option (Bl K) → Sy M K
 theorem ol_inj : Function.Injective (ol : Option (Bl K) → Sy M K) := by
   rintro (_ | (a | a)) (_ | (b | b)) h <;> simp [ol, be] at h <;> simp [h]
 
-theorem ol_ne_dot (o : Option (Bl K)) : (ol o : Sy M K) ≠ .dot := by
-  rcases o with _ | (a | a) <;> simp [ol, be]
-
-theorem ol_ne_bar (o : Option (Bl K)) : (ol o : Sy M K) ≠ .bar := by
-  rcases o with _ | (a | a) <;> simp [ol, be]
-
 /-- Tapes: registers, modes, counter, fresh addresses, lookups, the list, buckets, copies. -/
 inductive Tp (K : Type) where
   | rg (i : Fin 5)

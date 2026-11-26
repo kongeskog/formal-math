@@ -146,14 +146,6 @@ theorem decL_lc (o : Option (Option Bool)) : decL (lc ((o.map ltr).getD .nil)) =
 theorem length_lc (o : Option (Option Bool)) : (lc ((o.map ltr).getD .nil)).length = 2 := by
   rcases o with _ | _ | _ | _ <;> rfl
 
-theorem ltr_cases (o : Option (Option Bool)) :
-    (o.map ltr).getD .nil = .nil ∨ ∃ w : List Bool, w.length = 2 ∧ (o.map ltr).getD .nil = ofBits w := by
-  rcases o with _ | _ | _ | _
-  · exact Or.inl rfl
-  · exact Or.inr ⟨[false, true], rfl, rfl⟩
-  · exact Or.inr ⟨[true, false], rfl, rfl⟩
-  · exact Or.inr ⟨[true, true], rfl, rfl⟩
-
 /-- The one-hot code of a word, with one letter `none` at the end. -/
 def codeB (R : Type) [CommRing R] (N : ℕ) (w : List Bool) : Fin N × Option Bool → R :=
   fun q => if (w.map some ++ [none])[(q.1 : ℕ)]? = some q.2 then 1 else 0
@@ -163,12 +155,6 @@ def lamK {N : ℕ} (lam : Fin N × Option Bool → R) (i : ℕ) (o : Option (Opt
   match o with
   | none => 0
   | some γ => if h : i < N then lam (⟨i, h⟩, γ) else 0
-
-theorem lamK_ge {N : ℕ} (lam : Fin N × Option Bool → R) {i : ℕ} (h : ¬ i < N) (o : Option (Option Bool)) :
-    lamK lam i o = 0 := by
-  cases o with
-  | none => rfl
-  | some γ => exact dif_neg h
 
 /-- The constants of an accelerator. -/
 def accK (M m N : ℕ) (γ : R) (k : ℕ → ℕ → ℕ → R) (lam : ℕ → Fin N × Option Bool → R) : KT R :=
@@ -253,7 +239,9 @@ theorem accF_kv {M m N d s : ℕ} {p : MvPolynomial (Fin N × Option Bool) R} (h
       ∃ c : List Bool, c.length = 2 ∧ look p (pairTree m z) = ofBits c := by
     intro p hp
     rw [look_pairTree hzm hp]
-    exact ltr_cases _
+    rcases ((tbits z).map some ++ [none])[KT.val p.reverse]? with _ | _ | _ | _
+    exacts [.inl rfl, .inr ⟨[false, true], rfl, rfl⟩, .inr ⟨[true, false], rfl, rfl⟩,
+      .inr ⟨[true, true], rfl, rfl⟩]
   have ha : ∀ g : List Bool, g.length = M →
       ((wd m).map fun p => K.lk ([false, true] ++ g ++ p.reverse ++ lc (look p (pairTree m z)) ++ [false])).sum =
         ∑ i, lam (KT.val g) i * codeB R N (tbits z) i := by
@@ -278,7 +266,8 @@ theorem accF_kv {M m N d s : ℕ} {p : MvPolynomial (Fin N × Option Bool) R} (h
           rw [if_neg hne.symm, mul_zero]
         · simp
     · intro i _ hi
-      exact lamK_ge _ (by simpa using hi) _
+      rcases ((tbits z).map some ++ [none])[i]? with _ | γ
+      exacts [rfl, dif_neg (by simpa using hi)]
   have hloop := loopF_kv (θ := θ) (M := M) (m := m) (T := pairTree m z) (κ := K.lk) (S := {q | K.InB 1 q})
     (E := fun g => ser (codeB R N (tbits z)) (P g)) (a := fun g => ∑ i, lam g i * codeB R N (tbits z) i) (k := k)
     (hE (codeB R N (tbits z)))

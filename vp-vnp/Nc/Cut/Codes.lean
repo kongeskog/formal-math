@@ -49,28 +49,25 @@ theorem length_sideString {B : ℕ} (len : I → ℕ) (i : Fin B → I) (g : ∀
 
 variable {lab}
 
-theorem sideString_inj (hlab : Function.Injective lab) {B : ℕ} (len : I → ℕ) {i i' : Fin B → I}
-    {g : ∀ k, Fin (len (i k)) → Bool} {g' : ∀ k, Fin (len (i' k)) → Bool}
-    (h : sideString lab len i g = sideString lab len i' g') : ∀ k, i k = i' k ∧ HEq (g k) (g' k) := by
-  induction B with
-  | zero => exact fun k => k.elim0
-  | succ B ih =>
-    rw [sideString_succ, sideString_succ] at h
-    obtain ⟨h1, h2⟩ := List.append_inj h (by simp)
-    have e0 : i 0 = i' 0 := hlab (List.ofFn_injective h1)
-    obtain ⟨h3, h4⟩ := List.append_inj h2 (by simp [e0])
-    have key : ∀ (a a' : I) (_ : a = a') (f : Fin (len a) → Bool) (f' : Fin (len a') → Bool),
-        List.ofFn f = List.ofFn f' → HEq f f' := by
-      rintro a _ rfl f f' hf
-      exact heq_of_eq (List.ofFn_injective hf)
-    intro k
-    refine Fin.cases ⟨e0, key _ _ e0 _ _ h3⟩ (fun k => ih h4 k) k
-
 theorem sideString_injective (hlab : Function.Injective lab) {B : ℕ} (len : I → ℕ) :
     Function.Injective fun p : Σ i : Fin B → I, ∀ k, Fin (len (i k)) → Bool =>
       sideString lab len p.1 p.2 := by
   rintro ⟨i, g⟩ ⟨i', g'⟩ h
-  have h := sideString_inj hlab len h
+  have h : ∀ k, i k = i' k ∧ HEq (g k) (g' k) := by
+    beta_reduce at h
+    induction B with
+    | zero => exact fun k => k.elim0
+    | succ B ih =>
+      rw [sideString_succ, sideString_succ] at h
+      obtain ⟨h1, h2⟩ := List.append_inj h (by simp)
+      have e0 : i 0 = i' 0 := hlab (List.ofFn_injective h1)
+      obtain ⟨h3, h4⟩ := List.append_inj h2 (by simp [e0])
+      have key : ∀ (a a' : I) (_ : a = a') (f : Fin (len a) → Bool) (f' : Fin (len a') → Bool),
+          List.ofFn f = List.ofFn f' → HEq f f' := by
+        rintro a _ rfl f f' hf
+        exact heq_of_eq (List.ofFn_injective hf)
+      intro k
+      refine Fin.cases ⟨e0, key _ _ e0 _ _ h3⟩ (fun k => ih _ _ _ _ h4 k) k
   have e : i = i' := funext fun k => (h k).1
   subst e
   have : g = g' := funext fun k => eq_of_heq (h k).2

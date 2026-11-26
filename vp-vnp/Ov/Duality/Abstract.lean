@@ -134,13 +134,6 @@ def rad (p : M → ℝ) (t : M) : Set ℝ := {a | 0 < a ∧ ∃ C : ℝ, ∀ m :
 theorem rad_const_pos (h : IsPre D p) {t : M} {a C : ℝ} (hC : ∀ m : ℕ, p (t ^ m) ≤ C * a ^ m) :
     1 ≤ C := by simpa [h.one] using hC 0
 
-theorem rad_mono (h : IsPre D p) {t : M} {a b : ℝ} (ha : a ∈ rad p t) (hab : a ≤ b) :
-    b ∈ rad p t := by
-  obtain ⟨ha0, C, hC⟩ := ha
-  have hC1 := h.rad_const_pos hC
-  refine ⟨ha0.trans_le hab, C, fun m => (hC m).trans ?_⟩
-  gcongr
-
 theorem rad_bdd (p : M → ℝ) (t : M) : BddBelow (rad p t) := ⟨0, fun _ ha => ha.1.le⟩
 
 theorem mem_rad (h : IsPre D p) (t : M) {δ : ℝ} (hδ : 0 < δ) : p t + δ ∈ rad p t :=
@@ -150,8 +143,11 @@ theorem mem_rad (h : IsPre D p) (t : M) {δ : ℝ} (hδ : 0 < δ) : p t + δ ∈
 
 theorem mem_rad_of_lt (h : IsPre D p) {t : M} {a : ℝ} (ha : sInf (rad p t) < a) :
     a ∈ rad p t := by
-  obtain ⟨b, hb, hba⟩ := exists_lt_of_csInf_lt ⟨_, h.mem_rad t one_pos⟩ ha
-  exact h.rad_mono hb hba.le
+  obtain ⟨b, ⟨hb0, C, hC⟩, hba⟩ := exists_lt_of_csInf_lt ⟨_, h.mem_rad t one_pos⟩ ha
+  have hC1 := h.rad_const_pos hC
+  -- `rad p t` is closed upwards: the bound for `b` gives the bound for `a`
+  refine ⟨hb0.trans hba, C, fun m => (hC m).trans ?_⟩
+  gcongr
 
 /-- The bound for a product of powers, by the bounds for the powers. -/
 theorem prod_bound (h : IsPre D p) (S : Finset M) (a C : M → ℝ)

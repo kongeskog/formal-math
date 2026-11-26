@@ -83,11 +83,6 @@ theorem add_tail (r₁ : Rep F Ω Q₁) (r₂ : Rep F Ω Q₂) (o : List Ω) :
     simp only [tail, ih]
     simp [add, Matrix.fromBlocks_mulVec]
 
-theorem add_series (r₁ : Rep F Ω Q₁) (r₂ : Rep F Ω Q₂) (o : List Ω) :
-    (r₁.add r₂).series o = r₁.series o + r₂.series o := by
-  rw [series, add_tail]
-  simp [series, add]
-
 /-- Product of two series. -/
 def mul (r₁ : Rep F Ω Q₁) (r₂ : Rep F Ω Q₂) : Rep F Ω (Q₁ ⊕ Q₂) where
   lam := Sum.elim r₁.lam ((r₁.lam ⬝ᵥ r₁.gam) • r₂.lam)
@@ -111,16 +106,6 @@ theorem mul_tail (r₁ : Rep F Ω Q₁) (r₂ : Rep F Ω Q₂) (o : List Ω) :
       simp [tail, Matrix.mulVec_smul]
     · ext i
       simp [tail, series, Matrix.vecMulVec_mulVec, mul_comm]
-
-theorem mul_series (r₁ : Rep F Ω Q₁) (r₂ : Rep F Ω Q₂) (o : List Ω) :
-    (r₁.mul r₂).series o = Series.mul r₁.series r₂.series o := by
-  rw [series, mul_tail, Series.mul, Finset.sum_range_succ']
-  have e : (r₁.mul r₂).lam = Sum.elim r₁.lam ((r₁.lam ⬝ᵥ r₁.gam) • r₂.lam) := rfl
-  rw [e, elim_dot, dotProduct_sum]
-  congr 1
-  · refine Finset.sum_congr rfl fun k _ => ?_
-    simp [series, mul_comm]
-  · simp [series, tail]
 
 /-- Star of a series (over non-empty factors). -/
 def star (r : Rep F Ω Q) : Rep F Ω (Unit ⊕ Q) where
@@ -166,12 +151,6 @@ theorem star_tail (r : Rep F Ω Q) (o : List Ω) :
       congr 1
       ext q
       simp [Matrix.mulVec, dotProduct, mul_comm]
-
-theorem star_series (r : Rep F Ω Q) (o : List Ω) : r.star.series o = Series.kstar r.series o := by
-  rw [series, star_tail]
-  have e : r.star.lam = Sum.elim (1 : Unit → F) (0 : Q → F) := rfl
-  rw [e, elim_dot]
-  simp [dotProduct]
 
 end Rep
 

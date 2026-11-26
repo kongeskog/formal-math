@@ -69,36 +69,26 @@ end Blocks
 
 variable {A : Type*} [CommRing A] {M K : Type} [Fintype M] [DecidableEq M] [Fintype K] [DecidableEq K]
 
-theorem rw'_inj {f f' : Bool} {w w' : List (Option (Bl K))} {u v : List (Sy M K)}
-    (h : rw' f w ++ u = rw' f' w' ++ v) : f = f' ∧ w = w' ∧ u = v := by
-  simp only [rw', List.cons_append, List.cons.injEq, Sy.flag.injEq, List.append_assoc] at h
-  obtain ⟨rfl, h⟩ := h
-  have hd : ∀ w : List (Option (Bl K)), (Sy.dot : Sy M K) ∉ w.map ol := by
-    intro w hw
-    obtain ⟨o, -, ho⟩ := List.mem_map.1 hw
-    exact ol_ne_dot o ho
-  obtain ⟨h1, h2⟩ := cut_inj (hd w) (hd w') h
-  exact ⟨rfl, List.map_injective_iff.2 ol_inj h1, h2⟩
-
 /-- Lists of records. -/
 def encW (l : List (Bool × List (Option (Bl K)))) : List (Sy M K) := l.flatMap fun r => rw' r.1 r.2
 
 theorem encW_inj : Function.Injective (encW : List (Bool × List (Option (Bl K))) → List (Sy M K)) := by
   refine flatMap_inj (fun r => by simp [rw']) ?_
   rintro ⟨f, w⟩ ⟨f', w'⟩ u v h
-  obtain ⟨rfl, rfl, -⟩ := rw'_inj h
-  rfl
-
-theorem bar_rw' (f : Bool) (w : List (Option (Bl K))) : (Sy.bar : Sy M K) ∉ rw' f w := by
-  simp only [rw', List.mem_cons, List.mem_append, List.mem_map, List.not_mem_nil, or_false, not_or]
-  refine ⟨by simp, ?_, by simp⟩
-  rintro ⟨o, -, ho⟩
-  exact ol_ne_bar o ho
+  -- a record is cut off by its dot, which is no letter of its contents
+  simp only [rw', List.cons_append, List.cons.injEq, Sy.flag.injEq, List.append_assoc] at h
+  obtain ⟨rfl, h⟩ := h
+  have hd : ∀ w : List (Option (Bl K)), (Sy.dot : Sy M K) ∉ w.map ol := by
+    intro w hw
+    obtain ⟨_ | (a | a), -, ho⟩ := List.mem_map.1 hw <;> simp [ol, be] at ho
+  rw [List.map_injective_iff.2 ol_inj (cut_inj (hd w) (hd w') h).1]
 
 theorem bar_encW (l : List (Bool × List (Option (Bl K)))) : (Sy.bar : Sy M K) ∉ encW l := by
   rw [encW, List.mem_flatMap]
   rintro ⟨r, -, h⟩
-  exact bar_rw' _ _ h
+  -- the bar is neither the flag nor the dot of a record, so it would be a letter of its contents
+  obtain ⟨_ | (a | a), -, ho⟩ : ∃ o ∈ r.2, (ol o : Sy M K) = .bar := by simpa [rw'] using h
+  all_goals simp [ol, be] at ho
 
 /-- What a pass of the distribution reads. -/
 def dIn (d : List (Dr K)) : List (Bool × List (Option (Bl K))) := d.map fun d => (d.1, some d.2.1 :: d.2.2)

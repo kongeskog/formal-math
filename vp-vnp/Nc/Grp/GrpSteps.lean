@@ -153,14 +153,6 @@ theorem pairwise_allRoles : (allRoles M).Pairwise fun r r' => r ≠ r' ∧ r.1 �
 theorem pairwise_roleList : (roleList grp g M).Pairwise fun r r' => r ≠ r' ∧ r.1 ≤ r'.1 :=
   pairwise_allRoles.filter _
 
-/-- A cell of a new unit is written by a role. -/
-theorem exists_role {a : Fin (K + K + A')} {ν : M.N} {k : Fin U1}
-    (h : Holds (G.hold0 M.np) (G.hold1 M.np) a (G.Uid.new ν k : G.Uid (K + K) U0 M.N U1)) :
-    ∃ d, a = M.rp (M.nr ν d) := by
-  rcases h with h | h
-  · exact ⟨false, h⟩
-  · exact ⟨true, h⟩
-
 theorem role_eq_of_rp {x : Fin E} {p p' : (M.kind x).Ro} (h : M.rp ⟨x, p⟩ = M.rp ⟨x, p'⟩) : p = p' :=
   M.inj x h
 
@@ -214,7 +206,10 @@ theorem wrs_steps : WStep.wrs (steps mu T cb P q x ρ n o grp g ub) = dom n o gr
       exact ⟨_, List.mem_append_left _ (List.mem_map.2 ⟨p, mem_baseList.2 h1, rfl⟩),
         mem_filter.2 ⟨hc, rfl, rfl⟩⟩
     | new ν k =>
-      obtain ⟨d, rfl⟩ := exists_role h3
+      -- A cell of a new unit is written by a role.
+      obtain ⟨d, rfl⟩ : ∃ d, a = M.rp (M.nr ν d) := by
+        rcases h3 with h3 | h3
+        exacts [⟨false, h3⟩, ⟨true, h3⟩]
       refine ⟨_, List.mem_append_right _ (List.mem_map.2 ⟨M.nr ν d, mem_roleList.2 h1, rfl⟩), ?_⟩
       exact mem_filter.2 ⟨hc, rfl, by simp [isNewOf, Sys.nr]⟩
 
