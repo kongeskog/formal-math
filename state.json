@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T01:03:25.539587350Z",
+  "updated_at": "2026-11-26T01:06:55.809907422Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 2,
     "contributors": 2,
-    "ideas_open": 5
+    "ideas_open": 6
   },
   "leaderboard": [
     {
@@ -93,6 +93,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 165,
+      "title": "Idea: restructure(Paper): fold single-use lemmas in Alternative, UniversalSteps; drop unneeded heartbeat overrides",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-26T01:06:18Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/165",
+      "technique": "restructure",
+      "scope": "Paper"
+    },
     {
       "number": 164,
       "title": "Idea: shorten(Paper/Cuts,Paper/Pieces,Paper/Tree): repeated facts and skeletons inside the longest proofs",
