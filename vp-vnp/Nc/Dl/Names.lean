@@ -187,19 +187,10 @@ theorem foldl_upds {own : ν → Option ι} {o : ι → List (ν × Tree)} {v : 
       rw [upds, List.foldl_cons]
       rw [upds] at h1
       rw [h1]
-      by_cases hx : ∃ a ∈ l, a.1 = x
-      · rw [if_pos hx, if_pos]
-        obtain ⟨a, ha, h⟩ := hx
-        exact ⟨a, List.mem_cons_of_mem _ ha, h⟩
-      · rw [if_neg hx]
-        by_cases hb : b.1 = x
-        · rw [if_pos ⟨b, List.mem_cons_self, hb⟩, ← hb, Function.update_self]
-          exact hl b List.mem_cons_self
-        · rw [if_neg, Function.update_of_ne (Ne.symm hb)]
-          rintro ⟨a, ha, h⟩
-          rcases List.mem_cons.1 ha with rfl | ha
-          · exact hb h
-          · exact hx ⟨a, ha, h⟩
+      by_cases hb : b.1 = x
+      · subst hb
+        simp [hl b List.mem_cons_self]
+      · simp [hb, Function.update_of_ne (Ne.symm hb)]
   induction s generalizing st with
   | nil =>
     funext x

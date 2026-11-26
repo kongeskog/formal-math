@@ -233,10 +233,7 @@ theorem flatMap_sep_inj {σ : Type} (l : List σ) {X X' : σ → List Γ}
   | cons s l ih =>
     simp only [List.flatMap_cons, List.append_assoc, List.singleton_append] at h
     obtain ⟨e1, e2⟩ := sep _ _ _ _ h
-    intro s' hs'
-    rcases List.mem_cons.1 hs' with rfl | hs'
-    · exact e1
-    · exact ih e2 s' hs'
+    exact List.forall_mem_cons.2 ⟨e1, ih e2⟩
 
 theorem joinSeg_inj {X X' : Option S → List Γ} (h : joinSeg X = joinSeg X') : X = X' :=
   funext fun s => flatMap_sep_inj _ h s (Finset.mem_toList.2 (Finset.mem_univ s))

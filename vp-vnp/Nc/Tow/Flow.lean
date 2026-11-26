@@ -58,6 +58,19 @@ def sqs (L : Tg T m AA → ℕ) (j : Fin (J + 1)) (i : Fin h) : ℕ :=
 def IsMin (L : Tg T m AA → ℕ) (j : Fin (J + 1)) (i : Fin h) : Prop :=
   (∀ i', sqs L j i ≤ sqs L j i') ∧ ∀ i' < i, ¬ ∀ i'', sqs L j i' ≤ sqs L j i''
 
+/-- The first index with the smallest value is unique (`IsMin` is the case `f = sqs L j`). -/
+theorem firstMin_eq {h : ℕ} {f : Fin h → ℕ} {i i' : Fin h}
+    (h1 : (∀ k, f i ≤ f k) ∧ ∀ k < i, ¬ ∀ k', f k ≤ f k')
+    (h2 : (∀ k, f i' ≤ f k) ∧ ∀ k < i', ¬ ∀ k', f k ≤ f k') : i = i' := by
+  rcases lt_trichotomy i i' with hlt | heq | hlt
+  · exact absurd h1.1 (h2.2 i hlt)
+  · exact heq
+  · exact absurd h2.1 (h1.2 i' hlt)
+
+/-- The chosen type is unique. -/
+theorem isMin_eq {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h1 : IsMin L j i)
+    (h2 : IsMin L j i') : i = i' := firstMin_eq h1 h2
+
 /-- The relay is active. -/
 def ActR (L : Tg T m AA → ℕ) : RM T m AA → Prop
   | .inn j i _ => IsMin L j.castSucc i
@@ -84,6 +97,15 @@ noncomputable def tmin (L : Tg T m AA → ℕ) (l : LMv T FL) : ℕ := sInf {t |
 def Pick (L : Tg T m AA → ℕ) (l : LMv T FL) : Prop :=
   Fits FL L l (tmin FL L l) ∧ ∀ d, (Fintype.equivFin FL.Di d) < (Fintype.equivFin FL.Di l.2.2.2) →
     ¬ Fits FL L (withD FL l d) (tmin FL L l)
+
+/-- The chosen kind of law is unique. -/
+theorem pick_eq {L : Tg T m AA → ℕ} {l : LMv T FL} {d : FL.Di} (h1 : Pick FL L l)
+    (h2 : Pick FL L (withD FL l d)) : l.2.2.2 = d := by
+  rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di l.2.2.2) with
+      hlt | heq | hlt
+  · exact absurd h2.1 (h1.2 d hlt)
+  · exact ((Fintype.equivFin FL.Di).injective heq).symm
+  · exact absurd h1.1 (h2.2 l.2.2.2 hlt)
 
 open Classical in
 /-- The number of units of a move, from the loads. -/

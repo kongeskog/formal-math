@@ -18,22 +18,15 @@ open Finset Nc.G
 variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
-theorem isMin_unique {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h1 : IsMin L j i) (h2 : IsMin L j i') :
-    i = i' := by
-  rcases lt_trichotomy i i' with hlt | heq | hlt
-  · exact absurd h1.1 (h2.2 i hlt)
-  · exact heq
-  · exact absurd h2.1 (h1.2 i' hlt)
-
 /-- Active relays are determined by their targets. -/
 theorem inpR_unique {L : Tg T m AA → ℕ} {x x' : RM T m AA} (hx : okR T R ch x) (hx' : okR T R ch x')
     (ha : ActR L x) (ha' : ActR L x') (he : inpR T x = inpR T x') : x = x' := by
   -- equal targets are edges of one stage, or one relay: the active type of an edge is unique
-  -- (`isMin_unique`), `okR` excludes it for `inn`, and the last stage is not an earlier one
+  -- (`isMin_eq`), `okR` excludes it for `inn`, and the last stage is not an earlier one
   rcases x with _ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e <;>
     rcases x' with _ | ⟨j', i', e'⟩ | ⟨j', e', s'⟩ | e' <;>
     simp only [inpR, ActR, okR] at * <;> (try split_ifs at he) <;> simp at he <;>
-    grind [isMin_unique, Fin.castSucc_lt_last]
+    grind [isMin_eq, Fin.castSucc_lt_last]
 
 /-- A relay gives its units at an edge or at a relay, never at an end segment or at the root. -/
 theorem inpR_ne {x : RM T m AA} : inpR T x ≠ .done ∧ ∀ j i ω q, inpR T x ≠ .seg j i ω q := by
@@ -86,12 +79,7 @@ theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u 
     have := eq_of_heq hω
     subst this
     -- the direction is the first one that fits, for both slots
-    have hd : d = d' := by
-      rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di d') with
-        hlt | heq | hlt
-      · exact absurd h1.1 (h1'.2 d hlt)
-      · exact (Fintype.equivFin FL.Di).injective heq
-      · exact absurd h1'.1 (h1.2 d' hlt)
+    have hd : d = d' := pick_eq _ (l := ⟨j, i, ω, d⟩) h1 h1'
     subst hd
     -- the slot is the rank of the unit divided by the number of units
     have hs : su FL d e = su FL d e' :=
