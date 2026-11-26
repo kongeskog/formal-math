@@ -377,34 +377,32 @@ theorem thm_duality_gauge {C : M} {A : B → M} {η : ℝ} (hη : 0 < η)
       (Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ j))⟩, le_rfl⟩
   · exact keeps_sInf hne h0 hη fun t w ⟨k, hk⟩ => ⟨k + 1, hk.mul_gen hη β⟩
 
-/-- Proof of Theorem thm:duality: "So p(1) < 1, and 1 has a certificate of some level k and weight below 1. Then k ≥ 1, and
-every term has v_j ≠ 0, as it would weigh 1 otherwise: this is a cover of C^k by terms in which at least one C was
-exchanged." (The certificate of level k₀ is raised to the level k = k₀ + 1.) -/
-theorem thm_duality_exchange {C : M} {A : B → M} {η : ℝ} (hη : 0 < η) {k₀ : ℕ} {W : ℝ}
-    (h : Cert D C A η 1 k₀ W) (hW1 : W < 1) :
-    ∃ (κ : Type) (_ : Fintype κ) (u : κ → ℕ) (v : κ → B → ℕ), (∀ j, u j + ∑ β, v j β = k₀ + 1) ∧
-      (∀ j, u j < k₀ + 1) ∧ D.cov (C ^ (k₀ + 1)) (fun j => C ^ u j * mon A (v j)) ∧
-      ∑ j, η ^ (∑ β, v j β) ≤ 1 := by
+/-- Proof of Theorem thm:duality: "So p(1) < 1, and 1 has a certificate of some level k and weight
+below 1. Then k ≥ 1, and every term has v_j ≠ 0, as it would weigh 1 otherwise: this is a cover of
+C^k by terms in which at least one C was exchanged. In C^N replace C^k by this cover as long as
+some term contains it. The total weight never increases, so it stays at most 1, and each final
+term has fewer than k factors C." (The certificate of level k₀ is raised to the level k = k₀ + 1.)
+-/
+theorem thm_duality_replace {C : M} {A : B → M} {η : ℝ} (hη : 0 < η) {k₀ : ℕ} {W : ℝ}
+    (h : Cert D C A η 1 k₀ W) (hW1 : W < 1) (N : ℕ) :
+    ∃ (κ' : Type) (_ : Fintype κ') (u' : κ' → ℕ) (v' : κ' → B → ℕ),
+      (∀ j, u' j < k₀ + 1) ∧ (∀ j, u' j + ∑ β, v' j β = N) ∧
+      D.cov (C ^ N) (fun j => C ^ u' j * mon A (v' j)) ∧ ∑ j, η ^ (∑ β, v' j β) ≤ 1 := by
   obtain ⟨κ, _, u, v, hu, hc, hW⟩ := h.raise hη (Nat.le_succ k₀)
   rw [one_mul] at hc
   have hlt : ∑ j, η ^ (∑ β, v j β) < 1 := hW.trans_lt hW1
-  refine ⟨κ, inferInstance, u, v, hu, fun j => ?_, hc, hlt.le⟩
-  by_contra hge
-  have h1 := hu j
-  have h2 : ∑ β, v j β = 0 := by omega
-  have h3 := Finset.single_le_sum (f := fun j => η ^ (∑ β, v j β))
-    (fun j _ => by positivity) (Finset.mem_univ j)
-  simp only [h2, pow_zero] at h3
-  linarith
-
-/-- Proof of Theorem thm:duality: "In C^N replace C^k by this cover as long as some term contains it. The total weight never
-increases, so it stays at most 1, and each final term has fewer than k factors C." -/
-theorem thm_duality_replace {C : M} {A : B → M} {η : ℝ} (hη : 0 < η) {k : ℕ} {κ : Type} [Fintype κ] {u : κ → ℕ}
-    {v : κ → B → ℕ} (hu : ∀ j, u j + ∑ β, v j β = k) (huk : ∀ j, u j < k)
-    (hc : D.cov (C ^ k) (fun j => C ^ u j * mon A (v j))) (hw : ∑ j, η ^ (∑ β, v j β) ≤ 1) (N : ℕ) :
-    ∃ (κ' : Type) (_ : Fintype κ') (u' : κ' → ℕ) (v' : κ' → B → ℕ),
-      (∀ j, u' j < k) ∧ (∀ j, u' j + ∑ β, v' j β = N) ∧
-      D.cov (C ^ N) (fun j => C ^ u' j * mon A (v' j)) ∧ ∑ j, η ^ (∑ β, v' j β) ≤ 1 := by
+  have hw := hlt.le
+  have huk : ∀ j, u j < k₀ + 1 := fun j => by
+    by_contra hge
+    have h1 := hu j
+    have h2 : ∑ β, v j β = 0 := by omega
+    have h3 := Finset.single_le_sum (f := fun j => η ^ (∑ β, v j β))
+      (fun j _ => by positivity) (Finset.mem_univ j)
+    simp only [h2, pow_zero] at h3
+    linarith
+  rw [Nat.succ_eq_add_one] at hu hc
+  generalize k₀ + 1 = k at hu huk hc ⊢
+  clear hlt hW h
   induction N using Nat.strong_induction_on with
   | _ N ih =>
     rcases lt_or_ge N k with hN | hN
@@ -465,8 +463,7 @@ theorem thm_duality_cover {C : M} {A : B → M} {η : ℝ} (hη : 0 < η) (hη1 
       (Fintype.card κ : ℝ) ≤ ((c : ℝ) + 1) ^ (k₀ + 1) * (η⁻¹) ^ N ∧ (∀ j, ∑ β, v j β = N) ∧
       D.cov (C ^ N) (fun j => mon A (v j)) := by
   classical
-  obtain ⟨κ, _, u, v, hu, huk, hc, hw⟩ := thm_duality_exchange hη h hW1
-  obtain ⟨κ', _, u', v', hu', hs', hc', hw'⟩ := thm_duality_replace hη hu huk hc hw N
+  obtain ⟨κ', _, u', v', hu', hs', hc', hw'⟩ := thm_duality_replace hη h hW1 N
   choose μ i hμ hcov using fun j : κ' => thm_duality_copies hcA (u' j)
   set E : ℝ := ((c : ℝ) + 1) ^ (k₀ + 1)
   refine ⟨Σ j, μ j, inferInstance, fun x β => v' x.1 β + if β = β₀ then u' x.1 else 0,

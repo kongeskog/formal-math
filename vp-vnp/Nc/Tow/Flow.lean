@@ -67,6 +67,7 @@ theorem firstMin_eq {h : ℕ} {f : Fin h → ℕ} {i i' : Fin h}
   · exact heq
   · exact absurd h2.1 (h1.2 i' hlt)
 
+/-- The chosen type is unique. -/
 theorem isMin_eq {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h1 : IsMin L j i)
     (h2 : IsMin L j i') : i = i' := firstMin_eq h1 h2
 

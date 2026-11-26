@@ -712,13 +712,11 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
   set c : Fin μ := ⟨k, hk⟩
   -- the point at z_c on the edge in the new direction, by Lemma lem:toolkit (a)
   have hγ : ∀ z : Fin μ → ℝ, ∃ γ : Y, 0 ≤ z c ∧ z c ≤ 1 →
-      dist (F (Function.update z c 0)) γ =
-        z c * dist (F (Function.update z c 0)) (F (Function.update z c 1)) ∧
-      dist γ (F (Function.update z c 1)) =
-        (1 - z c) * dist (F (Function.update z c 0)) (F (Function.update z c 1)) := by
+      Cat.IsPt (F (Function.update z c 0)) (F (Function.update z c 1)) (z c) γ := by
     intro z
     by_cases hz : 0 ≤ z c ∧ z c ≤ 1
-    · obtain ⟨γ, h, -⟩ := lem_toolkit_a (F (Function.update z c 0)) (F (Function.update z c 1)) (z c) hz.1 hz.2
+    · obtain ⟨γ, h⟩ :=
+        lem_toolkit_a_isPt (F (Function.update z c 0)) (F (Function.update z c 1)) hz.1 hz.2
       exact ⟨γ, fun _ => h⟩
     · exact ⟨F z, fun h => absurd h hz⟩
   choose F' hF' using hγ
@@ -751,15 +749,14 @@ theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
   have d5 : dist (F (Function.update x c 0)) (F (Function.update y c 1)) ^ 2 = 1 + E := by
     rw [hD hx hy 0 1 (Or.inl rfl) (Or.inr rfl)]
     simp [hE]
-  have d6 : dist (F (Function.update y c 0)) (F (Function.update x c 1)) ^ 2 = 1 + E := by
-    rw [dist_comm, hD hx hy 1 0 (Or.inr rfl) (Or.inl rfl)]
+  have d6 : dist (F (Function.update x c 1)) (F (Function.update y c 0)) ^ 2 = 1 + E := by
+    rw [hD hx hy 1 0 (Or.inr rfl) (Or.inl rfl)]
     simp [hE]
-  have h := lem_toolkit_f (F (Function.update x c 0)) (F (Function.update y c 0)) (F (Function.update x c 1))
-    (F (Function.update y c 1)) (F' x) (F' y) _ _ (x c) (y c) rfl
-    ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d3.trans d4.symm)) rfl
+  have h := lem_toolkit_f_isPt rfl
     ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d2.trans d1.symm))
-    (by rw [d5, d4, d1]; ring) (by rw [d6, d4, d1]; ring) (hx c).1.1 (hx c).1.2 (hy c).1.1 (hy c).1.2
-    (hF' x (hx c).1).1 (hF' x (hx c).1).2 (hF' y (hy c).1).1 (hF' y (hy c).1).2
+    ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d3.trans d4.symm)) rfl
+    (by linarith) (by linarith)
+    (hx c).1.1 (hx c).1.2 (hy c).1.1 (hy c).1.2 (hF' x (hx c).1) (hF' y (hy c).1)
   rw [h, d4, d1, ← add_sum_erase univ _ (mem_univ c), ← hE]
   ring
 
