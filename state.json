@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T06:19:28.852539236Z",
+  "updated_at": "2026-11-26T06:33:44.519459793Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "08eb7494700ae835adeff1d4cfe456613dce30a0",
-    "at": "2026-11-26T03:55:19.456467657Z",
+    "sha": "7e1249311b12810839a1350d65113f3e50fca63f",
+    "at": "2026-11-26T06:33:44.519459793Z",
     "metrics": {
-      "tokens": 819561,
-      "loc": 52727,
-      "decls": 4301,
+      "tokens": 817959,
+      "loc": 52645,
+      "decls": 4275,
       "files": 314,
-      "bytes": 3068829,
-      "build_seconds": 571
+      "bytes": 3064788,
+      "build_seconds": 425
     }
   },
   "counts": {
-    "merged": 99,
+    "merged": 100,
     "rejected": 4,
-    "open": 1,
+    "open": 0,
     "contributors": 2,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 97,
+      "merged": 98,
       "attempts": 102,
-      "saved": 107694
+      "saved": 109296
     },
     {
       "login": "yidakra",
@@ -129,7 +129,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T08:50:39Z",
       "pr": 178,
-      "result_delta": null,
+      "result_delta": -1602,
       "created_at": "2026-11-26T04:02:38Z",
       "url": "https://github.com/kongeskog/formal-math/issues/175",
       "technique": "restructure",
@@ -1088,81 +1088,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 178,
-      "title": "restructure(*): inline 26 small single-use lemmas at their one call",
-      "author": "kongeskog",
-      "head_sha": "e28e777fd0c6f533525302e1758d716e89c6154c",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-26T06:09:53Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 175,
-      "url": "https://github.com/kongeskog/formal-math/pull/178",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "*"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
