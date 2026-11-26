@@ -432,14 +432,14 @@ theorem move_zero (hub : 0 < ub) {m : ℕ} (hm : (M.kind x).Le m)
   · have hCn : IsEmpty (M.kind x).Cn := ⟨fun ν => hRo.elim ((M.kind x).c ν)⟩
     have hSl : IsEmpty (M.kind x).Sl := ⟨fun e => hRo.elim ((M.kind x).a e)⟩
     have := (M.kind x).pow (t * ub) fun _ _ e => hSl.elim e
-    -- with `(M.kind x).Sl` empty (`hSl`) `this` says `1 = 0` in `F`
+    -- with no roles, channels or slots the sum is the number of `i` (as in `this`): zero by `hoo`
     simp_all
   rw [contract (fun ν => chCode_injective hub hm hB ν) ((M.kind x).conn_pow _)]
   refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun g _ => ?_
-  by_contra hne
+  by_contra hprod
   refine hoo ⟨i, fun ν => ?_⟩
   have h1 : outTab _ ub _ oo ((M.kind x).c ν) i (fun ν => g ν) ≠ 0 := fun h0 =>
-    hne (Finset.prod_eq_zero (Finset.mem_univ ((M.kind x).c ν)) h0)
+    hprod (Finset.prod_eq_zero (Finset.mem_univ ((M.kind x).c ν)) h0)
   rw [outTab] at h1
   split_ifs at h1 with h2
   swap
