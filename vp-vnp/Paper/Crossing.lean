@@ -105,25 +105,6 @@ theorem prop_crossing_cover {J : Type} [Fintype J] (Ψ : J → α → β → α 
       (fun j z => Ψ j (z 0) (z 1) (z 2) (z 3)) fun z => (hΨ (z 0) (z 1) (z 2) (z 3)).symm
   exact F.le_sum _ _ (h.push ![x, y, v, u])
 
-/-- Proof of Proposition prop:crossing: "so some N has ln φ(Ψ_N) ≥ (p|xv| + q|yu| − o(1))κ√n₀". Before logarithms: some φ(Ψ_N) is
-at least the value of the two wires divided by the number Θ+1 of the tensors. -/
-theorem prop_crossing_some {J : Type} [Fintype J] (Ψ : J → α → β → α → β → K)
-    (hΨ : ∀ a b c d, ∑ j, Ψ j a b c d = if a = c ∧ b = d then 1 else 0) (x y v u : I) :
-    ∃ j, (Fintype.card α : ℝ) ^ F.e x v * (Fintype.card β : ℝ) ^ F.e y u ≤
-      Fintype.card J * F.F (Ten.push ![x, y, v, u] (four (Ψ j))) := by
-  have hα : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos
-  have hβ : (0 : ℝ) < Fintype.card β := by exact_mod_cast Fintype.card_pos
-  have h1 := prop_crossing_cover F Ψ hΨ x y v u
-  have hJ : Nonempty J := by
-    by_contra hne
-    -- with `J` empty the sum in `h1` is 0, against the positive bound from `hα`, `hβ`
-    simp_all
-  obtain ⟨j, -, hj⟩ := Finset.exists_max_image (Finset.univ : Finset J)
-    (fun j => F.F (Ten.push ![x, y, v, u] (four (Ψ j)))) Finset.univ_nonempty
-  refine ⟨j, h1.trans ?_⟩
-  rw [← nsmul_eq_mul, ← Finset.card_univ, ← Finset.sum_const]
-  exact Finset.sum_le_sum fun i hi => hj i hi
-
 /-- Proof of Proposition prop:crossing: "Lemma lem:hubs, with the hubs o, o′ for (c) and w, w′ for (b), bounds φ(Ψ_N) in both ways."
 So for the N of the step before, in logarithms: ln|α|·|xv| + ln|β|·|yu| is at most ln(Θ+1) plus each of the two bounds through the
 hubs, where Ψ_N is a sum of R_N products as in (c) and of L_N products as in (b). -/
@@ -140,10 +121,16 @@ theorem prop_crossing_term {J : Type} [Fintype J] (Ψ : J → α → β → α �
           Real.log (Fintype.card β) * (F.e u w + F.e y w') + Real.log (L j) * F.e w w') := by
   have hα : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos
   have hβ : (0 : ℝ) < Fintype.card β := by exact_mod_cast Fintype.card_pos
-  obtain ⟨j, hj⟩ := prop_crossing_some F Ψ hΨ x y v u
-  have hJ0 : (0 : ℝ) < Fintype.card J := by
-    have : Nonempty J := ⟨j⟩
-    exact_mod_cast Fintype.card_pos
+  -- "so some N has ln φ(Ψ_N) ≥ (p|xv| + q|yu| − o(1))κ√n₀": before logarithms, some φ(Ψ_N) is at
+  -- least the value of the two wires divided by the number Θ+1 of the tensors
+  have h1 := prop_crossing_cover F Ψ hΨ x y v u
+  have hJ : Nonempty J := by
+    by_contra hne
+    -- with `J` empty the sum in `h1` is 0, against the positive bound from `hα`, `hβ`
+    simp_all
+  have hJ0 : (0 : ℝ) < Fintype.card J := by exact_mod_cast Fintype.card_pos
+  obtain ⟨j, -, hj⟩ := Finset.exists_max_image (Finset.univ : Finset J)
+    (fun j => F.F (Ten.push ![x, y, v, u] (four (Ψ j)))) Finset.univ_nonempty
   refine ⟨j, ?_⟩
   have hexp : ∀ (s s' : ℝ) (n : ℕ) (e : ℝ), (Fintype.card α : ℝ) ^ s * (Fintype.card β : ℝ) ^ s' * (n : ℝ) ^ e ≤
       Real.exp (Real.log (Fintype.card α) * s + Real.log (Fintype.card β) * s' + Real.log n * e) := by
@@ -154,7 +141,8 @@ theorem prop_crossing_term {J : Type} [Fintype J] (Ψ : J → α → β → α �
   have hb := (prop_crossing_hubs_b F (hL j) x y v u w w').trans (hexp _ _ _ _)
   have hm := le_min hc hb
   rw [← Real.exp_monotone.map_min] at hm
-  have h2 := hj.trans (mul_le_mul_of_nonneg_left hm hJ0.le)
+  have h2 := (h1.trans ((Finset.sum_le_card_nsmul _ _ _ hj).trans_eq (by
+    rw [nsmul_eq_mul, Finset.card_univ]))).trans (mul_le_mul_of_nonneg_left hm hJ0.le)
   rw [Real.rpow_def_of_pos hα, Real.rpow_def_of_pos hβ, ← Real.exp_add] at h2
   nth_rewrite 1 [← Real.exp_log hJ0] at h2
   rw [← Real.exp_add, Real.exp_le_exp] at h2
