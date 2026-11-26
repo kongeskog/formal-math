@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:09:42.449484908Z",
+  "updated_at": "2026-11-26T00:11:22.764235318Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 83,
     "rejected": 4,
-    "open": 3,
+    "open": 5,
     "contributors": 1,
-    "ideas_open": 5
+    "ideas_open": 4
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 83,
-      "attempts": 90,
+      "attempts": 92,
       "saved": 95100
     }
   ],
@@ -104,11 +104,11 @@
     {
       "number": 151,
       "title": "Idea: restructure(Paper): flatten single-use clusters in ApproxRound, Laws, Approximate, Gauges; simplify; re-cut",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
+      "claimed_by": "kongeskog",
       "lease_expires": null,
-      "pr": null,
+      "pr": 155,
       "result_delta": null,
       "created_at": "2026-11-25T23:56:45Z",
       "url": "https://github.com/kongeskog/formal-math/issues/151",
@@ -122,7 +122,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T02:35:17Z",
-      "pr": null,
+      "pr": 154,
       "result_delta": null,
       "created_at": "2026-11-25T23:35:12Z",
       "url": "https://github.com/kongeskog/formal-math/issues/148",
@@ -1169,6 +1169,152 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Nc/Tow"
+    },
+    {
+      "pr": 154,
+      "title": "shorten(*): local simp sets and default side-condition proofs in Nc/Uni and NS1",
+      "author": "kongeskog",
+      "head_sha": "710be4edf4fa38597cbcd96c1b802eed66cfc175",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-26T00:10:32Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 148,
+      "url": "https://github.com/kongeskog/formal-math/pull/154",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "*"
+    },
+    {
+      "pr": 155,
+      "title": "restructure(Paper): inline four single-use lemmas in Laws, Approximate, Gauges, simplify",
+      "author": "kongeskog",
+      "head_sha": "465c35b7c644477807af285e8b34590967ea7c83",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-26T00:10:39Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 151,
+      "url": "https://github.com/kongeskog/formal-math/pull/155",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper"
     }
   ],
   "top_files": [
