@@ -612,143 +612,6 @@ theorem window_le {u L : ℕ} (hh : (L + 1) * u = h) (a : Fin L) : a.1 * u + 2 *
   calc a.1 * u + 2 * u = (a.1 + 2) * u := by ring
     _ ≤ (L + 1) * u := Nat.mul_le_mul_right u (by omega)
 
-/-- The proof of Theorem thm:poincare: "For neighbours Lemma lem:angle allows c(r_i²+r_{i′}²) more", so
-∑_{i,i′} |Q_iz Q_{i′}z|² ≤ 2(L−1+2c)F(z). -/
-theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
-    {ζ c : ℝ} (hu : 2 ≤ u) (hh : (L + 1) * u = h) (hζ : 0 ≤ ζ)
-    (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) (hζ1 : ζ ≤ 1)
-    (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc0 : 0 < c) (z : Z) :
-    ∑ a : Fin L, ∑ b : Fin L, dist ((A.W (a.1 * u) (2 * u)).P z) ((A.W (b.1 * u) (2 * u)).P z) ^ 2 ≤
-      2 * ((L : ℝ) - (1 - 2 * c)) * windowSum A u L z := by
-  set Q : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z
-  show ∑ a, ∑ b, dist (Q a z) (Q b z) ^ 2 ≤ _
-  have hwin := window_le hh
-  have hpair : ∀ (z : Z) (a b : Fin L), a.1 < b.1 → dist (Q a z) (Q b z) ^ 2 ≤
-      dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2 +
-        if b.1 = a.1 + 1 then c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) else 0 := by
-    intro z a b hab
-    split_ifs with hb
-    · have h3 : a.1 * u + 3 * u ≤ h := by
-        have := hwin b
-        rw [hb] at this
-        nlinarith
-      -- Lemma lem:angle: "Let u, p, ζ be as in Lemma lem:tele, 0 ≤ ζ ≤ 1, and 1−c² ≤ (1−ζ)², c > 0.
-      -- If a, a′ are the projections of z for [p,p+2u) and [p+u,p+3u), then
-      -- |aa′|² ≤ |za|² + |za′|² + 2c|za||za′|."
-      have h1 : dist (Q a z) (Q b z) ^ 2 ≤ dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2 +
-          2 * c * (dist z (Q a z) * dist z (Q b z)) := by
-        simp only [Q, show b.1 * u = a.1 * u + u by rw [hb]; ring]
-        generalize a.1 * u = p at h3 ⊢
-        set y := (A.W p (2 * u)).P z
-        set v := (A.W p (3 * u)).P y
-        have hvf : (A.W p (3 * u)).Fix v := IsoAct.P_fix _ y
-        have hv1 : (A.W p (2 * u)).Fix v := hvf.sub A le_rfl (by omega) h3
-        refine lem_angle_projections _ _ hc0 z v hv1 (hvf.sub A (by omega) (by omega) h3)
-          fun q σ hσ0 hσ1 q1 q2 => ?_
-        have hqf : (A.W p (2 * u)).Fix q := segment_fixed _ hσ0.le hσ1 hv1 (IsoAct.P_fix _ z) q1 q2
-        have hqv : (A.W p (3 * u)).P q = v := projection_segment _ q1 q2
-        have h1 := lem_tele A hμ hs hA hu h3 hζ hC hqf
-        rw [hqv] at h1
-        rw [dist_comm v q]
-        calc (1 - c ^ 2) * dist q v ^ 2 ≤ ((1 - ζ) * dist q v) ^ 2 := by
-              rw [mul_pow]
-              exact mul_le_mul_of_nonneg_right hcζ (sq_nonneg _)
-          _ ≤ _ := pow_le_pow_left₀ (mul_nonneg (by linarith) dist_nonneg) h1 2
-      have h2 : 2 * c * (dist z (Q a z) * dist z (Q b z)) ≤
-          c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) := by
-        nlinarith [sq_nonneg (dist z (Q a z) - dist z (Q b z))]
-      exact h1.trans (by linarith)
-    · have h3 : a.1 * u + 2 * u ≤ b.1 * u := by
-        calc a.1 * u + 2 * u = (a.1 + 2) * u := by ring
-          _ ≤ b.1 * u := Nat.mul_le_mul_right u (by omega)
-      rw [add_zero]
-      exact thm_poincare_far A h3 (hwin b) z
-  have hpair2 : ∀ (z : Z) (a b : Fin L), dist (Q a z) (Q b z) ^ 2 ≤
-      (if a = b then 0 else dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) +
-        ((if b.1 = a.1 + 1 then c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) else 0) +
-          if a.1 = b.1 + 1 then c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) else 0) := by
-    intro z a b
-    rcases lt_trichotomy a.1 b.1 with hab | hab | hab
-    · grind
-    · have : a = b := Fin.ext hab
-      subst this
-      simp
-    · rw [if_neg (fun h => by rw [h] at hab; exact lt_irrefl _ hab),
-        if_neg (show ¬ b.1 = a.1 + 1 by omega), zero_add, dist_comm]
-      have := hpair z b a hab
-      rw [add_comm (dist z (Q b z) ^ 2)] at this
-      exact this
-  have hnb : ∀ (r : Fin L → ℝ) (_ : ∀ a, 0 ≤ r a), ∑ a : Fin L, ∑ b : Fin L,
-      (if b.1 = a.1 + 1 then c * (r a + r b) else 0) ≤ 2 * c * ∑ a, r a := by
-    intro r hr
-    have e1 : ∀ a : Fin L, ∑ b : Fin L, (if b.1 = a.1 + 1 then c * r a else 0) ≤ c * r a := by
-      intro a
-      by_cases ha : a.1 + 1 < L
-      · rw [sum_eq_single (⟨a.1 + 1, ha⟩ : Fin L)]
-        · simp
-        · intro b _ hb
-          rw [if_neg]
-          intro h1
-          exact hb (Fin.ext h1)
-        · simp
-      · rw [sum_eq_zero]
-        · exact mul_nonneg hc0.le (hr a)
-        · intro b _
-          rw [if_neg]
-          have := b.2
-          omega
-    have e2 : ∀ b : Fin L, ∑ a : Fin L, (if b.1 = a.1 + 1 then c * r b else 0) ≤ c * r b := by
-      intro b
-      by_cases hb : 1 ≤ b.1
-      -- `grind` closes the three goals left by `sum_eq_single`: the term at `a = b - 1`, the
-      -- vanishing of the terms at every other `a`, and the membership of `b - 1` in `univ`
-      · rw [sum_eq_single (⟨b.1 - 1, by omega⟩ : Fin L)] <;> grind
-      -- `b = 0`: there is no `a` with `b = a + 1`, so every term is 0, and `0 ≤ c * r b`
-      · simp_all
-    have e3 : ∀ a b : Fin L, (if b.1 = a.1 + 1 then c * (r a + r b) else 0) =
-        (if b.1 = a.1 + 1 then c * r a else 0) + if b.1 = a.1 + 1 then c * r b else 0 := by
-      intro a b
-      split_ifs
-      · ring
-      · simp
-    simp only [e3, sum_add_distrib]
-    rw [sum_comm (f := fun a b : Fin L => if b.1 = a.1 + 1 then c * r b else 0)]
-    have e4 := sum_le_sum fun a (_ : a ∈ univ) => e1 a
-    have e5 := sum_le_sum fun b (_ : b ∈ univ) => e2 b
-    rw [← mul_sum] at e4 e5
-    linarith
-  set r : Fin L → ℝ := fun a => dist z (Q a z) ^ 2
-  have hr0 : ∀ a, 0 ≤ r a := fun a => sq_nonneg _
-  have h1 : ∑ a : Fin L, ∑ b : Fin L, (if a = b then (0 : ℝ) else r a + r b) =
-      2 * ((L : ℝ) - 1) * ∑ a, r a := by
-    have e1 : ∀ a b : Fin L, (if a = b then (0 : ℝ) else r a + r b) =
-        (r a + r b) - if a = b then 2 * r a else 0 := by
-      intro a b
-      split_ifs with hab
-      · rw [hab]; ring
-      · ring
-    simp only [e1, sum_sub_distrib, sum_add_distrib, sum_const, card_univ, Fintype.card_fin,
-      nsmul_eq_mul, sum_ite_eq, mem_univ, if_true, ← mul_sum]
-    ring
-  have h2 := hnb r hr0
-  have h3 : ∑ a : Fin L, ∑ b : Fin L, (if a.1 = b.1 + 1 then c * (r a + r b) else 0) ≤
-      2 * c * ∑ a, r a := by
-    rw [sum_comm]
-    refine le_trans (le_of_eq ?_) h2
-    refine sum_congr rfl fun a _ => sum_congr rfl fun b _ => ?_
-    rw [add_comm (r b)]
-  calc ∑ a, ∑ b, dist (Q a z) (Q b z) ^ 2 ≤ _ :=
-        sum_le_sum fun a _ => sum_le_sum fun b _ => hpair2 z a b
-    _ = ∑ a : Fin L, ∑ b : Fin L, (if a = b then (0 : ℝ) else r a + r b) +
-        (∑ a : Fin L, ∑ b : Fin L, (if b.1 = a.1 + 1 then c * (r a + r b) else 0) +
-          ∑ a : Fin L, ∑ b : Fin L, (if a.1 = b.1 + 1 then c * (r a + r b) else 0)) := by
-        simp only [sum_add_distrib]
-        rfl
-    _ ≤ _ := by
-        rw [h1]
-        show _ ≤ 2 * ((L : ℝ) - (1 - 2 * c)) * ∑ a, r a
-        linarith
-
 /-- The proof of Theorem thm:poincare: for the barycenter b of the points Q_iz, "F(b) ≤ ∑_i|b Q_iz|² ≤ (1 − (1−2c)/L)F(z)
 and L|zb|² ≤ F(z) − F(b)", by Lemma lem:toolkit(c). -/
 theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u L : ℕ}
@@ -765,10 +628,145 @@ theorem thm_poincare_step (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.
     rw [sum_add_distrib, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, ← mul_sum,
       sum_congr rfl fun i _ => congrArg (· ^ 2) (dist_comm (Q i) b)]
     ring
-  have h2 := h1.trans (thm_poincare_pairs A hμ hs hA hu hh hζ hC hζ1 hcζ hc0 z)
+  -- "For neighbours Lemma lem:angle allows c(r_i²+r_{i′}²) more", so
+  -- ∑_{i,i′} |Q_iz Q_{i′}z|² ≤ 2(L−1+2c)F(z)
+  have hpairs :
+      ∑ i, ∑ j, dist (Q i) (Q j) ^ 2 ≤ 2 * ((L : ℝ) - (1 - 2 * c)) * windowSum A u L z := by
+    clear h1 hb
+    set Qz : Fin L → Z → Z := fun a z => (A.W (a.1 * u) (2 * u)).P z
+    show ∑ a, ∑ b, dist (Qz a z) (Qz b z) ^ 2 ≤ _
+    have hwin := window_le hh
+    have hpair : ∀ (z : Z) (a b : Fin L), a.1 < b.1 → dist (Qz a z) (Qz b z) ^ 2 ≤
+        dist z (Qz a z) ^ 2 + dist z (Qz b z) ^ 2 +
+          if b.1 = a.1 + 1 then c * (dist z (Qz a z) ^ 2 + dist z (Qz b z) ^ 2) else 0 := by
+      intro z a b hab
+      split_ifs with hb
+      · have h3 : a.1 * u + 3 * u ≤ h := by
+          have := hwin b
+          rw [hb] at this
+          nlinarith
+        -- Lemma lem:angle: "Let u, p, ζ be as in Lemma lem:tele, 0 ≤ ζ ≤ 1, and
+        -- 1−c² ≤ (1−ζ)², c > 0. If a, a′ are the projections of z for [p,p+2u) and
+        -- [p+u,p+3u), then |aa′|² ≤ |za|² + |za′|² + 2c|za||za′|."
+        have h1 : dist (Qz a z) (Qz b z) ^ 2 ≤ dist z (Qz a z) ^ 2 + dist z (Qz b z) ^ 2 +
+            2 * c * (dist z (Qz a z) * dist z (Qz b z)) := by
+          simp only [Qz, show b.1 * u = a.1 * u + u by rw [hb]; ring]
+          generalize a.1 * u = p at h3 ⊢
+          set y := (A.W p (2 * u)).P z
+          set v := (A.W p (3 * u)).P y
+          have hvf : (A.W p (3 * u)).Fix v := IsoAct.P_fix _ y
+          have hv1 : (A.W p (2 * u)).Fix v := hvf.sub A le_rfl (by omega) h3
+          refine lem_angle_projections _ _ hc0 z v hv1 (hvf.sub A (by omega) (by omega) h3)
+            fun q σ hσ0 hσ1 q1 q2 => ?_
+          have hqf : (A.W p (2 * u)).Fix q :=
+            segment_fixed _ hσ0.le hσ1 hv1 (IsoAct.P_fix _ z) q1 q2
+          have hqv : (A.W p (3 * u)).P q = v := projection_segment _ q1 q2
+          have h1 := lem_tele A hμ hs hA hu h3 hζ hC hqf
+          rw [hqv] at h1
+          rw [dist_comm v q]
+          calc (1 - c ^ 2) * dist q v ^ 2 ≤ ((1 - ζ) * dist q v) ^ 2 := by
+                rw [mul_pow]
+                exact mul_le_mul_of_nonneg_right hcζ (sq_nonneg _)
+            _ ≤ _ := pow_le_pow_left₀ (mul_nonneg (by linarith) dist_nonneg) h1 2
+        have h2 : 2 * c * (dist z (Qz a z) * dist z (Qz b z)) ≤
+            c * (dist z (Qz a z) ^ 2 + dist z (Qz b z) ^ 2) := by
+          nlinarith [sq_nonneg (dist z (Qz a z) - dist z (Qz b z))]
+        exact h1.trans (by linarith)
+      · have h3 : a.1 * u + 2 * u ≤ b.1 * u := by
+          calc a.1 * u + 2 * u = (a.1 + 2) * u := by ring
+            _ ≤ b.1 * u := Nat.mul_le_mul_right u (by omega)
+        rw [add_zero]
+        exact thm_poincare_far A h3 (hwin b) z
+    have hpair2 : ∀ (z : Z) (a b : Fin L), dist (Qz a z) (Qz b z) ^ 2 ≤
+        (if a = b then 0 else dist z (Qz a z) ^ 2 + dist z (Qz b z) ^ 2) +
+          ((if b.1 = a.1 + 1 then c * (dist z (Qz a z) ^ 2 + dist z (Qz b z) ^ 2) else 0) +
+            if a.1 = b.1 + 1 then c * (dist z (Qz a z) ^ 2 + dist z (Qz b z) ^ 2) else 0) := by
+      intro z a b
+      rcases lt_trichotomy a.1 b.1 with hab | hab | hab
+      · grind
+      · have : a = b := Fin.ext hab
+        subst this
+        simp
+      · rw [if_neg (fun h => by rw [h] at hab; exact lt_irrefl _ hab),
+          if_neg (show ¬ b.1 = a.1 + 1 by omega), zero_add, dist_comm]
+        have := hpair z b a hab
+        rw [add_comm (dist z (Qz b z) ^ 2)] at this
+        exact this
+    have hnb : ∀ (r : Fin L → ℝ) (_ : ∀ a, 0 ≤ r a), ∑ a : Fin L, ∑ b : Fin L,
+        (if b.1 = a.1 + 1 then c * (r a + r b) else 0) ≤ 2 * c * ∑ a, r a := by
+      intro r hr
+      have e1 : ∀ a : Fin L, ∑ b : Fin L, (if b.1 = a.1 + 1 then c * r a else 0) ≤ c * r a := by
+        intro a
+        by_cases ha : a.1 + 1 < L
+        · rw [sum_eq_single (⟨a.1 + 1, ha⟩ : Fin L)]
+          · simp
+          · intro b _ hb
+            rw [if_neg]
+            intro h1
+            exact hb (Fin.ext h1)
+          · simp
+        · rw [sum_eq_zero]
+          · exact mul_nonneg hc0.le (hr a)
+          · intro b _
+            rw [if_neg]
+            have := b.2
+            omega
+      have e2 : ∀ b : Fin L, ∑ a : Fin L, (if b.1 = a.1 + 1 then c * r b else 0) ≤ c * r b := by
+        intro b
+        by_cases hb : 1 ≤ b.1
+        -- `grind` closes the three goals left by `sum_eq_single`: the term at `a = b - 1`, the
+        -- vanishing of the terms at every other `a`, and the membership of `b - 1` in `univ`
+        · rw [sum_eq_single (⟨b.1 - 1, by omega⟩ : Fin L)] <;> grind
+        -- `b = 0`: there is no `a` with `b = a + 1`, so every term is 0, and `0 ≤ c * r b`
+        · simp_all
+      have e3 : ∀ a b : Fin L, (if b.1 = a.1 + 1 then c * (r a + r b) else 0) =
+          (if b.1 = a.1 + 1 then c * r a else 0) + if b.1 = a.1 + 1 then c * r b else 0 := by
+        intro a b
+        split_ifs
+        · ring
+        · simp
+      simp only [e3, sum_add_distrib]
+      rw [sum_comm (f := fun a b : Fin L => if b.1 = a.1 + 1 then c * r b else 0)]
+      have e4 := sum_le_sum fun a (_ : a ∈ univ) => e1 a
+      have e5 := sum_le_sum fun b (_ : b ∈ univ) => e2 b
+      rw [← mul_sum] at e4 e5
+      linarith
+    set r : Fin L → ℝ := fun a => dist z (Qz a z) ^ 2
+    have hr0 : ∀ a, 0 ≤ r a := fun a => sq_nonneg _
+    have h1 : ∑ a : Fin L, ∑ b : Fin L, (if a = b then (0 : ℝ) else r a + r b) =
+        2 * ((L : ℝ) - 1) * ∑ a, r a := by
+      have e1 : ∀ a b : Fin L, (if a = b then (0 : ℝ) else r a + r b) =
+          (r a + r b) - if a = b then 2 * r a else 0 := by
+        intro a b
+        split_ifs with hab
+        · rw [hab]; ring
+        · ring
+      simp only [e1, sum_sub_distrib, sum_add_distrib, sum_const, card_univ, Fintype.card_fin,
+        nsmul_eq_mul, sum_ite_eq, mem_univ, if_true, ← mul_sum]
+      ring
+    have h2 := hnb r hr0
+    have h3 : ∑ a : Fin L, ∑ b : Fin L, (if a.1 = b.1 + 1 then c * (r a + r b) else 0) ≤
+        2 * c * ∑ a, r a := by
+      rw [sum_comm]
+      refine le_trans (le_of_eq ?_) h2
+      refine sum_congr rfl fun a _ => sum_congr rfl fun b _ => ?_
+      rw [add_comm (r b)]
+    calc ∑ a, ∑ b, dist (Qz a z) (Qz b z) ^ 2 ≤ _ :=
+          sum_le_sum fun a _ => sum_le_sum fun b _ => hpair2 z a b
+      _ = ∑ a : Fin L, ∑ b : Fin L, (if a = b then (0 : ℝ) else r a + r b) +
+          (∑ a : Fin L, ∑ b : Fin L, (if b.1 = a.1 + 1 then c * (r a + r b) else 0) +
+            ∑ a : Fin L, ∑ b : Fin L, (if a.1 = b.1 + 1 then c * (r a + r b) else 0)) := by
+          simp only [sum_add_distrib]
+          rfl
+      _ ≤ _ := by
+          rw [h1]
+          show _ ≤ 2 * ((L : ℝ) - (1 - 2 * c)) * ∑ a, r a
+          linarith
+  have h2 := h1.trans hpairs
   have h3 : ∑ i, dist b (Q i) ^ 2 ≤ (1 - (1 - 2 * c) / L) * windowSum A u L z := by
     refine le_of_mul_le_mul_left ?_ hLr
-    have e : (L : ℝ) * ((1 - (1 - 2 * c) / L) * windowSum A u L z) = (L - (1 - 2 * c)) * windowSum A u L z := by
+    have e : (L : ℝ) * ((1 - (1 - 2 * c) / L) * windowSum A u L z) =
+        (L - (1 - 2 * c)) * windowSum A u L z := by
       field_simp
     rw [e]
     linarith
