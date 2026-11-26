@@ -96,12 +96,7 @@ theorem lem_circuit_universal (hθ : (Function.support θ).Finite) {H : ℕ} (hH
       have a3 : v ^ (H + 2) = v ^ (H + 1) * v := pow_succ _ _
       have a4 : v ^ (H + 1) * 4 ≤ v ^ (H + 1) * v := Nat.mul_le_mul_left _ (by omega)
       omega
-    calc κ * ∑ k, (lits k).length ≤ κ * (1600 * (v ^ (H + 2)) ^ 9) :=
-          Nat.mul_le_mul_left _ (hlit.trans (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left e1 9)))
-      _ = 1600 * κ * v ^ (9 * (H + 2)) := by rw [← pow_mul, Nat.mul_comm (H + 2) 9]; ring
-      _ ≤ v * v ^ (9 * (H + 2)) := Nat.mul_le_mul_right _ (by omega)
-      _ = v ^ (9 * (H + 2) + 1) := (pow_succ' _ _).symm
-      _ ≤ m := hm
+    grw [hlit, e1, ← hm, ← pow_mul, mul_comm 9, pow_succ', ← mul_assoc, show κ * 1600 ≤ v by omega]
   obtain ⟨Mat, hMat, he⟩ := clauses_of_complete hG lits hne hocc wt hwt hsize
   have e0 : aeval (fun q => aeval (letS F bt n) (Mat q)) (G m) = aeval (letS F bt n) (aeval Mat (G m)) :=
     (comp_aeval_apply Mat (aeval (letS F bt n)) (G m)).symm
@@ -123,11 +118,8 @@ theorem lem_circuit_universal (hθ : (Function.support θ).Finite) {H : ℕ} (hH
       refine (lg_mono (h1.trans ?_)).trans (lg_pow_le (by omega))
       rw [pow_succ']
       exact Nat.mul_le_mul_right _ (by omega)
-    calc C * (z.size + v ^ H) * lg (z.size + v ^ H) ^ 2 ≤ C * (2 * v ^ H) * ((H + 1) * lg v) ^ 2 :=
-          Nat.mul_le_mul (Nat.mul_le_mul_left _ h1) (Nat.pow_le_pow_left h2 2)
-      _ = v ^ H * (2 * C * (H + 1) ^ 2 * lg v ^ 2) := by ring
-      _ ≤ v ^ H * v := Nat.mul_le_mul_left _ (hn₀ v (by omega))
-      _ = t := by rw [ht, pow_succ]
+    grw [h2, h1, ht, pow_succ v H]
+    linarith [Nat.mul_le_mul_left (v ^ H) (hn₀ v (by omega))]
 
 open Nc.Acc in
 /-- **Paper: proof of Lemma lem:circuit, the program.** "Lemma lem:lowdeg turns it into a program
@@ -196,14 +188,9 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
       have h2 : 2 * v ^ (H - 24) * v = 2 * (v ^ (H - 24) * v) := by ring
       omega
     have e10 : 7 * v ≤ v ^ 8 := by
-      calc 7 * v ≤ v * v := Nat.mul_le_mul_right _ (by omega)
-        _ = v ^ 2 := (pow_two v).symm
-        _ ≤ v ^ 8 := Nat.pow_le_pow_right hv1 (by norm_num)
-    calc d * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100
-        ≤ 2 * v ^ (H - 24) * v + 3 * v ^ (H - 24) * v + 2 * v ^ (H - 24) * v := by linarith
-      _ = v ^ (H - 24) * (7 * v) := by ring
-      _ ≤ v ^ (H - 24) * v ^ 8 := Nat.mul_le_mul_left _ e10
-      _ = v ^ (H - 16) := e4
+      grw [show 7 ≤ v by omega, ← Nat.pow_le_pow_right hv1 (show 2 ≤ 8 by norm_num), sq]
+    rw [← e4]
+    linarith [Nat.mul_le_mul_left (v ^ (H - 24)) e10]
   refine ⟨K, (accF M m d out).code, fun z hz => ?_, ?_, ?_, ?_⟩
   · have h := hkv A θ z (lt_of_le_of_lt hz hN1)
     rw [Fm.ofTree_code]
@@ -228,21 +215,16 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
       rw [h3, pow_succ]
       omega
     have h3 : 2 ^ (3 * M + 1) ≤ 16 * v ^ (3 * a + H + 3) := by
-      calc 2 ^ (3 * M + 1) = 2 * (2 ^ M) ^ 3 := by rw [pow_succ, mul_comm 3 M, pow_mul]; ring
-        _ ≤ 2 * (2 * v ^ (a + 1)) ^ 3 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 3)
-        _ = 16 * v ^ (3 * a + 3) := by rw [mul_pow, ← pow_mul]; ring
-        _ ≤ 16 * v ^ (3 * a + H + 3) := Nat.mul_le_mul_left _ (Nat.pow_le_pow_right hv1 (by omega))
+      grw [pow_succ, mul_comm 3 M, pow_mul, h1]
+      linarith [pow_mul v (a + 1) 3, Nat.pow_le_pow_right hv1 (show (a + 1) * 3 ≤ 3 * a + H + 3 by omega)]
     have h4 : 2 ^ (M + m + 3) ≤ 32 * v ^ (3 * a + H + 3) := by
-      calc 2 ^ (M + m + 3) = 8 * (2 ^ M * 2 ^ m) := by rw [pow_add, pow_add]; ring
-        _ ≤ 8 * (2 * v ^ (a + 1) * (2 * v ^ H)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul h1 h2)
-        _ = 32 * v ^ (a + 1 + H) := by rw [pow_add v (a + 1) H]; ring
-        _ ≤ 32 * v ^ (3 * a + H + 3) := Nat.mul_le_mul_left _ (Nat.pow_le_pow_right hv1 (by omega))
+      grw [pow_add, pow_add, h1, h2]
+      linarith [pow_add v (a + 1) H, Nat.pow_le_pow_right hv1 (show a + 1 + H ≤ 3 * a + H + 3 by omega)]
     have h5 : 1 ≤ v ^ (3 * a + H + 3) := Nat.one_le_pow _ _ hv1
-    calc K.nds ≤ 2 ^ (3 * M + 1) + 2 ^ (M + m + 3) + 3 := hnds
-      _ ≤ 100 * v ^ (3 * a + H + 3) := by omega
-      _ ≤ v * v ^ (3 * a + H + 3) := Nat.mul_le_mul_right _ hv100
-      _ = v ^ (3 * a + H + 4) := by ring
-      _ ≤ v ^ (3 * a + H + 20) := Nat.pow_le_pow_right hv1 (by omega)
+    grw [hnds, ← Nat.pow_le_pow_right hv1 (show 3 * a + H + 3 + 1 ≤ 3 * a + H + 20 by omega),
+      pow_succ v]
+    have := Nat.mul_le_mul_left (v ^ (3 * a + H + 3)) hv100
+    omega
   · -- the size of the program
     have h2 : c * (M + m + 1) ≤ v := by
       refine le_trans (Nat.mul_le_mul_left c hMm) (le_trans ?_ hlv)
@@ -250,11 +232,10 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
       rw [this]
       exact Nat.le_add_right _ _
     have h4 : v ≤ v ^ H := Nat.le_self_pow (by omega) v
-    calc (accF M m d out).code.size ≤ c * (M + m + 1) + 2 * d := hc M m d out hout
-      _ ≤ 100 * v ^ H := by omega
-      _ ≤ v * v ^ H := Nat.mul_le_mul_right _ hv100
-      _ = v ^ (H + 1) := by ring
-      _ ≤ v ^ (3 * a + H + 20) := Nat.pow_le_pow_right hv1 (by omega)
+    grw [hc M m d out hout, ← Nat.pow_le_pow_right hv1 (show H + 1 ≤ 3 * a + H + 20 by omega),
+      pow_succ v]
+    have := Nat.mul_le_mul_left (v ^ H) hv100
+    omega
   · -- the length of names
     refine hht.trans ?_
     rw [← hl]
