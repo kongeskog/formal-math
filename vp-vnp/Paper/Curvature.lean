@@ -91,73 +91,6 @@ theorem prop_space_midpoints (hw : IsPrice K w) : ∃ d : Term V → Term V → 
     simp only [e1, e2, hDs]
     exact h
 
-/-- "Midpoints of Cauchy sequences are Cauchy by (CN) itself": if a n → x and b n → v, and m n satisfies (CN) for a n and b n,
-then (m n) is a Cauchy sequence. -/
-theorem prop_space_cauchy {X : Type*} [MetricSpace X] {a b m : ℕ → X} {x v : X} (ha : Tendsto a atTop (𝓝 x))
-    (hb : Tendsto b atTop (𝓝 v))
-    (hm : ∀ n z, dist z (m n) ^ 2 ≤ (dist z (a n) ^ 2 + dist z (b n) ^ 2) / 2 - dist (a n) (b n) ^ 2 / 4) :
-    CauchySeq m := by
-  have hR : Tendsto (fun n => dist (a n) (b n)) atTop (𝓝 (dist x v)) := ha.dist hb
-  have hmid : ∀ n, dist (a n) (m n) ≤ dist (a n) (b n) / 2 ∧
-      dist (b n) (m n) ≤ dist (a n) (b n) / 2 := by
-    intro n
-    have h1 := hm n (a n)
-    have h2 := hm n (b n)
-    rw [dist_self] at h1 h2
-    rw [dist_comm (b n) (a n)] at h2
-    constructor
-    · apply abs_le_of_sq_le_sq' _ (by positivity) |>.2
-      nlinarith
-    · apply abs_le_of_sq_le_sq' _ (by positivity) |>.2
-      nlinarith
-  rw [Metric.cauchySeq_iff]
-  intro ε hε
-  set R := dist x v + 1
-  set δ := min 1 (ε ^ 2 / (2 * (2 * R + 4)))
-  obtain ⟨N₁, hN₁⟩ := Metric.cauchySeq_iff.1 ha.cauchySeq (δ / 2) (by positivity)
-  obtain ⟨N₂, hN₂⟩ := Metric.cauchySeq_iff.1 hb.cauchySeq (δ / 2) (by positivity)
-  obtain ⟨N₃, hN₃⟩ := eventually_atTop.1 (hR.eventually (gt_mem_nhds (show dist x v < R by linarith)))
-  refine ⟨max N₁ (max N₂ N₃), fun l hl k hk => ?_⟩
-  have l1 := (le_max_left _ _).trans hl
-  have l2 := ((le_max_left _ _).trans (le_max_right _ _)).trans hl
-  have k1 := (le_max_left _ _).trans hk
-  have k2 := ((le_max_left _ _).trans (le_max_right _ _)).trans hk
-  have k3 := ((le_max_right _ _).trans (le_max_right _ _)).trans hk
-  have e1 := hN₁ l l1 k k1
-  have e2 := hN₂ l l2 k k2
-  have e3 := hN₃ k k3
-  set e := dist (a l) (a k) + dist (b l) (b k)
-  have he0 : 0 ≤ e := by positivity
-  have hed : e < δ := by linarith
-  have d1 : dist (m l) (a k) ≤ dist (a k) (b k) / 2 + 2 * e := by
-    have t1 := dist_triangle (m l) (a l) (a k)
-    have t2 := dist_triangle4 (a l) (a k) (b k) (b l)
-    rw [dist_comm (m l) (a l)] at t1
-    rw [dist_comm (b k) (b l)] at t2
-    have := (hmid l).1
-    have := dist_nonneg (x := b l) (y := b k)
-    linarith
-  have d2 : dist (m l) (b k) ≤ dist (a k) (b k) / 2 + 2 * e := by
-    have t1 := dist_triangle (m l) (b l) (b k)
-    have t2 := dist_triangle4 (a l) (a k) (b k) (b l)
-    rw [dist_comm (m l) (b l)] at t1
-    rw [dist_comm (b k) (b l)] at t2
-    have := (hmid l).2
-    have := dist_nonneg (x := a l) (y := a k)
-    linarith
-  have d3 := hm k (m l)
-  have d4 := pow_le_pow_left₀ dist_nonneg d1 2
-  have d5 := pow_le_pow_left₀ dist_nonneg d2 2
-  have d6 : dist (m l) (m k) ^ 2 ≤ (2 * R + 4) * e := by
-    have e4 : e ≤ 1 := hed.le.trans (min_le_left _ _)
-    nlinarith
-  have d7 : (2 * R + 4) * e < ε ^ 2 := by
-    have e4 : e < ε ^ 2 / (2 * (2 * R + 4)) := hed.trans_le (min_le_right _ _)
-    rw [lt_div_iff₀ (by positivity)] at e4
-    have : 0 < ε ^ 2 := by positivity
-    nlinarith
-  exact lt_of_pow_lt_pow_left₀ 2 hε.le (d6.trans_lt d7)
-
 /-- "The completion satisfies (CN)": a complete metric space is CAT(0) if any two points x, v of a dense subset S have a
 point m for which (CN) holds at all z in S. -/
 theorem prop_space_completion {X : Type*} [MetricSpace X] [CompleteSpace X] {S : Set X} (hS : Dense S)
@@ -176,7 +109,73 @@ theorem prop_space_completion {X : Type*} [MetricSpace X] [CompleteSpace X] {S :
   obtain ⟨a, haS, ha⟩ := mem_closure_iff_seq_limit.1 (hS x)
   obtain ⟨b, hbS, hb⟩ := mem_closure_iff_seq_limit.1 (hS v)
   choose m hm using fun n => h' (a n) (haS n) (b n) (hbS n)
-  obtain ⟨p, hp⟩ := cauchySeq_tendsto_of_complete (prop_space_cauchy ha hb hm)
+  -- "Midpoints of Cauchy sequences are Cauchy by (CN) itself"
+  have hcau : CauchySeq m := by
+    have hR : Tendsto (fun n => dist (a n) (b n)) atTop (𝓝 (dist x v)) := ha.dist hb
+    have hmid : ∀ n, dist (a n) (m n) ≤ dist (a n) (b n) / 2 ∧
+        dist (b n) (m n) ≤ dist (a n) (b n) / 2 := by
+      intro n
+      have h1 := hm n (a n)
+      have h2 := hm n (b n)
+      rw [dist_self] at h1 h2
+      rw [dist_comm (b n) (a n)] at h2
+      constructor
+      · apply abs_le_of_sq_le_sq' _ (by positivity) |>.2
+        nlinarith
+      · apply abs_le_of_sq_le_sq' _ (by positivity) |>.2
+        nlinarith
+    rw [Metric.cauchySeq_iff]
+    intro ε hε
+    set R := dist x v + 1
+    have hR0 : 0 < R := by positivity
+    set δ := min 1 (ε ^ 2 / (2 * (2 * R + 4)))
+    have hδ0 : 0 < δ := by positivity
+    obtain ⟨N₁, hN₁⟩ := Metric.cauchySeq_iff.1 ha.cauchySeq (δ / 2) (by positivity)
+    obtain ⟨N₂, hN₂⟩ := Metric.cauchySeq_iff.1 hb.cauchySeq (δ / 2) (by positivity)
+    obtain ⟨N₃, hN₃⟩ :=
+      eventually_atTop.1 (hR.eventually (gt_mem_nhds (show dist x v < R by linarith)))
+    refine ⟨max N₁ (max N₂ N₃), fun l hl k hk => ?_⟩
+    have l1 := (le_max_left _ _).trans hl
+    have l2 := ((le_max_left _ _).trans (le_max_right _ _)).trans hl
+    have k1 := (le_max_left _ _).trans hk
+    have k2 := ((le_max_left _ _).trans (le_max_right _ _)).trans hk
+    have k3 := ((le_max_right _ _).trans (le_max_right _ _)).trans hk
+    have e1 := hN₁ l l1 k k1
+    have e2 := hN₂ l l2 k k2
+    have e3 := hN₃ k k3
+    set e := dist (a l) (a k) + dist (b l) (b k)
+    have he0 : 0 ≤ e := by positivity
+    have hed : e < δ := by linarith
+    have d1 : dist (m l) (a k) ≤ dist (a k) (b k) / 2 + 2 * e := by
+      have t1 := dist_triangle (m l) (a l) (a k)
+      have t2 := dist_triangle4 (a l) (a k) (b k) (b l)
+      rw [dist_comm (m l) (a l)] at t1
+      rw [dist_comm (b k) (b l)] at t2
+      have := (hmid l).1
+      have := dist_nonneg (x := b l) (y := b k)
+      linarith
+    have d2 : dist (m l) (b k) ≤ dist (a k) (b k) / 2 + 2 * e := by
+      have t1 := dist_triangle (m l) (b l) (b k)
+      have t2 := dist_triangle4 (a l) (a k) (b k) (b l)
+      rw [dist_comm (m l) (b l)] at t1
+      rw [dist_comm (b k) (b l)] at t2
+      have := (hmid l).2
+      have := dist_nonneg (x := a l) (y := a k)
+      linarith
+    have d3 := hm k (m l)
+    have d4 := pow_le_pow_left₀ dist_nonneg d1 2
+    have d5 := pow_le_pow_left₀ dist_nonneg d2 2
+    have d6 : dist (m l) (m k) ^ 2 ≤ (2 * R + 4) * e := by
+      have e4 : e ≤ 1 := hed.le.trans (min_le_left _ _)
+      have e5 : dist (a k) (b k) * e ≤ R * e := mul_le_mul_of_nonneg_right e3.le he0
+      nlinarith
+    have d7 : (2 * R + 4) * e < ε ^ 2 := by
+      have e4 : e < ε ^ 2 / (2 * (2 * R + 4)) := hed.trans_le (min_le_right _ _)
+      rw [lt_div_iff₀ (by positivity)] at e4
+      have : 0 < ε ^ 2 := by positivity
+      nlinarith
+    exact lt_of_pow_lt_pow_left₀ 2 hε.le (d6.trans_lt d7)
+  obtain ⟨p, hp⟩ := cauchySeq_tendsto_of_complete hcau
   refine ⟨p, fun z => ?_⟩
   have hl : Tendsto (fun n => dist z (m n) ^ 2) atTop (𝓝 (dist z p ^ 2)) :=
     (tendsto_const_nhds.dist hp).pow 2
