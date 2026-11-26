@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:40:38.344143041Z",
+  "updated_at": "2026-11-26T00:42:23.234974607Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -93,6 +93,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 160,
+      "title": "Idea: merge(Nc/Dl,Nc/Tow): one lemma for repeated uniqueness and list skeletons, single-caller lemmas that re-prove the caller's facts",
+      "status": "claimed",
+      "author": "kongeskog",
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-26T03:41:47Z",
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-26T00:41:46Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/160",
+      "technique": null,
+      "scope": null
+    },
     {
       "number": 158,
       "title": "Idea: restructure(Paper): flatten single-use clusters in Identity, Crossing, Prices; simplify; re-cut",
