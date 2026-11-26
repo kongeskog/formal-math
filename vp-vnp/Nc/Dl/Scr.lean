@@ -218,52 +218,6 @@ theorem expand_roleTm {d1 : Tree} (hd1 : ∀ d : Fin D, C.dt d = d1 ↔ d.1 = 1)
         simp [hc, hd]
     rw [chT, hp]
 
-theorem expand_endTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D, C.dt d = d1 ↔ d.1 = 1)
-    (hgt : ∀ (d : Fin D) g, C.dt d = gt g ↔ d.1 = g.1)
-    (hb : ∀ id ∈ P.cur n o E, grp n o (G.hold0 M.np id) ≠ grp n o (G.hold1 M.np id) → b id ≠ none) (g : Fin mm)
-    (id : G.Uid (K + K) U0 M.N U1) : ((endTm C tab gt d1 g id).expand (byPath C.nm st)).toList =
-      (if id ∈ P.cur n o E then
-        ((if grp n o (G.hold0 M.np id) = g then
-          if grp n o (G.hold1 M.np id) = g then some (Grp.Ins.both (C.key (G.hold0 M.np id, id)) (C.key (G.hold1 M.np id, id)))
-          else some (.one (C.key (G.hold0 M.np id, id)) (uwBits (b id)))
-        else if grp n o (G.hold1 M.np id) = g then some (.one (C.key (G.hold1 M.np id, id)) (uwBits (b id)))
-        else none).map Grp.Ins.tree).toList else []) := by
-  classical
-  have hslp : ∀ k, byPath C.nm st (C.nm (.slp k)) = C.dt (tab.fn k (n, o)) := fun k => by
-    rw [byPath_nm C.nm_inj, h.slp]
-  have hg : ∀ p, (C.dt (tab.fn (tab.kgrp p) (n, o)) = gt g ↔ grp n o p = g) := by
-    intro p
-    rw [hgt, tab.hgrp]
-    exact Fin.ext_iff.symm
-  have hone : ∀ k, b id ≠ none → (oneTm C k id).expand (byPath C.nm st) = listT [(Grp.Ins.one k (uwBits (b id))).tree] := by
-    intro k hbn
-    obtain ⟨v, hv⟩ := Option.ne_none_iff_exists'.1 hbn
-    simp only [oneTm, expand_listTm, List.map_cons, List.map_nil, Tm.expand, expand_gN, h.cont id v hv, Grp.Ins.tree, hv,
-      uwBits]
-  rw [endTm, expand_ifTm, hslp]
-  have hcur : C.dt (tab.fn (tab.kcur id) (n, o)) = d1 ↔ id ∈ P.cur n o E := by
-    rw [hd1, tab.hcur]
-    split_ifs with hc <;> simp [hc]
-  by_cases hc : id ∈ P.cur n o E
-  swap
-  · rw [if_neg fun h' => hc (hcur.1 h'), if_neg hc]
-  rw [if_pos (hcur.2 hc), if_pos hc]
-  simp only [Tm.expand, hslp]
-  by_cases h0 : grp n o (G.hold0 M.np id) = g
-  · rw [if_pos ((hg _).2 h0), if_pos h0]
-    by_cases h1 : grp n o (G.hold1 M.np id) = g
-    · rw [if_pos ((hg _).2 h1), if_pos h1]
-      rfl
-    · rw [if_neg fun h' => h1 ((hg _).1 h'), if_neg h1, hone _ (hb id hc fun h' => h1 (h' ▸ h0))]
-      simp
-  · rw [if_neg fun h' => h0 ((hg _).1 h'), if_neg h0]
-    rw [expand_ifTm, hslp]
-    by_cases h1 : grp n o (G.hold1 M.np id) = g
-    · rw [if_pos ((hg _).2 h1), if_pos h1, hone _ (hb id hc fun h' => h0 (h'.trans h1))]
-      simp
-    · rw [if_neg fun h' => h1 ((hg _).1 h'), if_neg h1]
-      rfl
-
 /-- **The script of a group.** -/
 theorem expand_scriptTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D, C.dt d = d1 ↔ d.1 = 1)
     (hgt : ∀ (d : Fin D) g, C.dt d = gt g ↔ d.1 = g.1)
@@ -278,6 +232,47 @@ theorem expand_scriptTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D,
     intro p
     rw [hgt, tab.hgrp]
     exact Fin.ext_iff.symm
+  -- the instructions at the end, unit by unit
+  have hend : ∀ id : G.Uid (K + K) U0 M.N U1,
+      ((endTm C tab gt d1 g id).expand (byPath C.nm st)).toList =
+        (if id ∈ P.cur n o E then
+          ((if grp n o (G.hold0 M.np id) = g then
+            if grp n o (G.hold1 M.np id) = g then
+              some (Grp.Ins.both (C.key (G.hold0 M.np id, id)) (C.key (G.hold1 M.np id, id)))
+            else some (.one (C.key (G.hold0 M.np id, id)) (uwBits (b id)))
+          else if grp n o (G.hold1 M.np id) = g then
+            some (.one (C.key (G.hold1 M.np id, id)) (uwBits (b id)))
+          else none).map Grp.Ins.tree).toList else []) := by
+    intro id
+    have hone : ∀ k, b id ≠ none →
+        (oneTm C k id).expand (byPath C.nm st) = listT [(Grp.Ins.one k (uwBits (b id))).tree] := by
+      intro k hbn
+      obtain ⟨v, hv⟩ := Option.ne_none_iff_exists'.1 hbn
+      simp only [oneTm, expand_listTm, List.map_cons, List.map_nil, Tm.expand, expand_gN,
+        h.cont id v hv, Grp.Ins.tree, hv, uwBits]
+    rw [endTm, expand_ifTm, hslp]
+    have hcur : C.dt (tab.fn (tab.kcur id) (n, o)) = d1 ↔ id ∈ P.cur n o E := by
+      rw [hd1, tab.hcur]
+      split_ifs with hc <;> simp [hc]
+    by_cases hc : id ∈ P.cur n o E
+    swap
+    · rw [if_neg fun h' => hc (hcur.1 h'), if_neg hc]
+    rw [if_pos (hcur.2 hc), if_pos hc]
+    simp only [Tm.expand, hslp]
+    by_cases h0 : grp n o (G.hold0 M.np id) = g
+    · rw [if_pos ((hg _).2 h0), if_pos h0]
+      by_cases h1 : grp n o (G.hold1 M.np id) = g
+      · rw [if_pos ((hg _).2 h1), if_pos h1]
+        rfl
+      · rw [if_neg fun h' => h1 ((hg _).1 h'), if_neg h1, hone _ (hb id hc fun h' => h1 (h' ▸ h0))]
+        simp
+    · rw [if_neg fun h' => h0 ((hg _).1 h'), if_neg h0]
+      rw [expand_ifTm, hslp]
+      by_cases h1 : grp n o (G.hold1 M.np id) = g
+      · rw [if_pos ((hg _).2 h1), if_pos h1, hone _ (hb id hc fun h' => h0 (h'.trans h1))]
+        simp
+      · rw [if_neg fun h' => h1 ((hg _).1 h'), if_neg h1]
+        rfl
   rw [scriptTm, Tm.expand, Tm.expand, Grp.scriptT, expand_catTm]
   congr 2
   rw [Grp.script, List.flatMap_append, List.flatMap_append, List.map_append, List.map_append, List.flatMap_map,
@@ -301,7 +296,7 @@ theorem expand_scriptTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D,
       simp only [e]
       rw [flatMap_if, flatMap_single, Grp.roleList, List.map_map]
       rfl
-  · simp only [expand_endTm h hd1 hgt hb]
+  · simp only [hend]
     rw [Grp.endIns]
     generalize G.allIds (K + K) U0 M.N U1 = l
     induction l with
@@ -311,9 +306,11 @@ theorem expand_scriptTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D,
       by_cases hc : id ∈ P.cur n o E
       · simp only [hc, if_true, List.filter_cons_of_pos, decide_true, List.filterMap_cons]
         cases (if grp n o (G.hold0 M.np id) = g then
-          if grp n o (G.hold1 M.np id) = g then some (Grp.Ins.both (C.key (G.hold0 M.np id, id)) (C.key (G.hold1 M.np id, id)))
+          if grp n o (G.hold1 M.np id) = g then
+            some (Grp.Ins.both (C.key (G.hold0 M.np id, id)) (C.key (G.hold1 M.np id, id)))
           else some (.one (C.key (G.hold0 M.np id, id)) (uwBits (b id)))
-        else if grp n o (G.hold1 M.np id) = g then some (.one (C.key (G.hold1 M.np id, id)) (uwBits (b id)))
+        else if grp n o (G.hold1 M.np id) = g then
+          some (.one (C.key (G.hold1 M.np id, id)) (uwBits (b id)))
         else none) <;> simp
       · simp [hc]
 
