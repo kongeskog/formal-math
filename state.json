@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:50:40.272032254Z",
+  "updated_at": "2026-11-26T00:53:52.545659199Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1171,7 +1171,7 @@
       "pr": 162,
       "title": "restructure(Paper): merge round_num into next in ApproxRound and lem_angle into pairs",
       "author": "kongeskog",
-      "head_sha": "e521ba90f45ad9149c17785a4e6e8be04b199cec",
+      "head_sha": "b88d3bf2d33dc5714727f9c7794bf92d87cb5180",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-26T00:47:35Z",
