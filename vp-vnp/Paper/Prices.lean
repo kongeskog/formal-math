@@ -14,7 +14,7 @@ The subsection "Prices". The definitions are in Nc/Price/Basic.lean.
 
 namespace Paper
 
-open Ov Ov.Ten Nc.Price Finset Filter MeasureTheory
+open Ov Ov.Ten Nc.Price Finset Filter
 
 variable {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I]
 
@@ -113,7 +113,7 @@ end Nc.Price
 
 namespace Paper
 
-open Ov Ov.Ten Nc.Price Finset Filter MeasureTheory
+open Ov Ov.Ten Nc.Price Finset Filter
 
 variable {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I]
 
@@ -276,8 +276,8 @@ end Random
 /-- **Paper: Proposition prop:random**, for a random map with finitely many values. "Let w be a
 price on Y, let Q be a set disjoint from Y, and let σ be a random map Y ∪ Q → Y that is the identity
 on Y, each σ(o) having finitely many values. Then a price on Y ∪ Q extends w and satisfies |oo′| ≤ E
-|σ(o)σ(o′)| for all o, o′." Here σ takes the values σ_l with probabilities θ_l (the uses of the
-proposition need no other random maps). -/
+|σ(o)σ(o′)| for all o, o′." The paper states this for a general random map; only the case of
+finitely many values σ_l with probabilities θ_l is proved here, which is the only case used. -/
 theorem prop_random_finite {Y Q : Type} {w : Y → Y → ℝ} (hw : IsPrice K w) {Λ : Type} [Fintype Λ]
     (θ : Λ → ℝ) (hθ : ∀ l, 0 ≤ θ l) (hθ1 : ∑ l, θ l = 1) (σ : Λ → Q → Y) :
     ∃ w' : Y ⊕ Q → Y ⊕ Q → ℝ, IsPrice K w' ∧ (∀ y y', w' (Sum.inl y) (Sum.inl y') = w y y') ∧
@@ -294,7 +294,7 @@ theorem prop_random_finite {Y Q : Type} {w : Y → Y → ℝ} (hw : IsPrice K w)
     simpa [E, ← Finset.sum_mul, hθ1] using (h (Sum.inl y) (Sum.inl y')).2
   intro S
   -- Q₀: the new points of S; Y₀: the old points of S and all values of σ on Q₀; the values numbered
-  -- by Fin m
+  -- by `Fin (Fintype.card Λ)` through `e`
   let T : Finset Q := S.preimage Sum.inr Sum.inr_injective.injOn
   let e := Fintype.equivFin Λ
   let π : Fin (Fintype.card Λ) → T → Y := fun l κ => σ (e.symm l) κ
