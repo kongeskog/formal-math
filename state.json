@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:36:01.440522735Z",
+  "updated_at": "2026-11-26T00:39:09.315808425Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "adbb2b713ca42c29dd99e5c956175929d3540531",
-    "at": "2026-11-26T00:22:58.074332285Z",
+    "sha": "00ae72f7787fd01941dd4ee4226eeacb077f392e",
+    "at": "2026-11-26T00:39:09.315808425Z",
     "metrics": {
-      "tokens": 828416,
-      "loc": 53053,
+      "tokens": 826962,
+      "loc": 53076,
       "decls": 4332,
       "files": 314,
-      "bytes": 3093351,
-      "build_seconds": 291
+      "bytes": 3091047,
+      "build_seconds": 417
     }
   },
   "counts": {
-    "merged": 86,
+    "merged": 87,
     "rejected": 4,
-    "open": 5,
+    "open": 4,
     "contributors": 2,
     "ideas_open": 4
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 86,
+      "merged": 87,
       "attempts": 94,
-      "saved": 99745
+      "saved": 101199
     },
     {
       "login": "yidakra",
@@ -143,7 +143,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T02:35:17Z",
       "pr": 154,
-      "result_delta": null,
+      "result_delta": -1454,
       "created_at": "2026-11-25T23:35:12Z",
       "url": "https://github.com/kongeskog/formal-math/issues/148",
       "technique": "shorten",
@@ -949,79 +949,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 154,
-      "title": "shorten(*): local simp sets and default side-condition proofs in Nc/Uni and NS1",
-      "author": "kongeskog",
-      "head_sha": "daeca1c8356c761226d6aa8ddad00883af242dc7",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-26T00:10:32Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 148,
-      "url": "https://github.com/kongeskog/formal-math/pull/154",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "*"
-    },
     {
       "pr": 155,
       "title": "restructure(Paper): inline four single-use lemmas in Laws, Approximate, Gauges, simplify",
