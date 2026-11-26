@@ -9,10 +9,18 @@
       "at": "2026-11-25T23:35:17Z"
     }
   },
-  "comments_seen_until": "2026-11-25T23:56:50Z",
-  "dispatched": {},
-  "lines": {},
-  "line_bases": {},
+  "comments_seen_until": "2026-11-26T00:05:45Z",
+  "dispatched": {
+    "152@08bb23be3d070fbea1bd7d98f119fd33c583b0b3@68eddb54284012aff5482c6bad3dbe92618acc76@150@23e6746ad67e914f2f8e2766d2bdabd08531dd61": "2026-11-26T00:06:04.718041962Z"
+  },
+  "lines": {
+    "152@08bb23be3d070fbea1bd7d98f119fd33c583b0b3": [
+      "150@23e6746ad67e914f2f8e2766d2bdabd08531dd61"
+    ]
+  },
+  "line_bases": {
+    "152@08bb23be3d070fbea1bd7d98f119fd33c583b0b3": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c"
+  },
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],
