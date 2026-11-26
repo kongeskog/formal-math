@@ -500,7 +500,8 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
   by_cases hjJ : j < J
   · -- the parent of a node of stage `j` is of stage `j + 1`
     have hoff : ndStage (Pl.pt.symm q) ≠ j + 1 →
-        ∀ x, ¬ (Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) :=
+        ∀ x, ¬ (Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+          (nd T j hj c)) = q) :=
       fun hq x hx => hq (by rw [← hx, Equiv.symm_apply_apply, ndStage_par hh _ nd_ne_none]; rfl)
     rcases nd_cases (Pl.pt.symm q) with eq | ⟨i, hi, c', eq⟩
     · have := hoff (by rw [eq]; simp only [ndStage]; omega)

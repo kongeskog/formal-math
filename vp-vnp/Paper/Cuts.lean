@@ -183,7 +183,8 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     (cvX 2 Cp (by omega) (by omega))
   have h3K : 3 * K ≤ v * K := Nat.mul_le_mul_right _ (by omega)
   have hK2 : K + K + 1 ≤ X :=
-    (by omega : K + K + 1 ≤ v * K).trans ((Nat.mul_le_mul_left _ hKe).trans (cvX v _ le_rfl (by omega)))
+    (by omega : K + K + 1 ≤ v * K).trans
+      ((Nat.mul_le_mul_left _ hKe).trans (cvX v _ le_rfl (by omega)))
   have hcId : Fintype.card (Nc.G.Uid (K + K) pc.U0 pc.sys.N pc.U1) ≤ X := by
     refine Nc.Dl.card_uid_le.trans ?_
     have g1 : (K + K) * (K + K) * pc.U0 ≤ v ^ (b₁ - 1) := by
@@ -424,7 +425,10 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
   have hL2 : Λ ^ 2 ≤ Λ ^ 3 := Nat.pow_le_pow_right hΛ1 (by norm_num)
   have hlτ : 4 * lg τ ≤ lg v ^ 2 := by
     have h6 : lg τ ≤ 16 * h * α * lg v := (lg_mono hτα).trans (lg_pow_le (Nat.mul_pos (by omega) hα))
-    have h7 : 4 * (16 * h * α) ≤ lg v := le_trans (by nlinarith) (le_lg_of_lg_pow_le (by omega) hlog)
+    -- `4 * 16 h ≤ (3 C + 4) (32 h + 2)`, times `α`
+    have h7 : 4 * (16 * h * α) ≤ lg v :=
+      le_trans (by nlinarith) (le_lg_of_lg_pow_le (by omega) hlog)
+    -- `4 lg τ ≤ 4 (16 h α) lg v` by `h6`, and `4 (16 h α) ≤ lg v`
     nlinarith [Nat.mul_le_mul_right (lg v) h7]
   have hat : OneCutAt θ v a₀ Λ := (hv₀ v (by omega)).mono (by
     rw [← hΛ]
