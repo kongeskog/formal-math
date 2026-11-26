@@ -31,6 +31,14 @@ theorem exists_im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : ∃ i, (∀ i', f
 theorem exists_isMin (hh : 0 < h) (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : ∃ i, IsMin L j i :=
   exists_im hh (sqs L j)
 
+/-- The chosen type is unique. -/
+theorem isMin_eq {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h1 : IsMin L j i)
+    (h2 : IsMin L j i') : i = i' := by
+  rcases lt_trichotomy i i' with hlt | heq | hlt
+  · exact absurd h1.1 (h2.2 i hlt)
+  · exact heq
+  · exact absurd h2.1 (h1.2 i' hlt)
+
 /-- The chosen type has a small part of the loads. -/
 theorem isMin_le {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i : Fin h} (hi : IsMin L j i) :
     (h : ℝ) * ∑ e ∈ univ.filter (fun e : T.Ed j => T.ty e = i), (L (.edge j e) : ℝ) ^ 2 ≤
@@ -66,15 +74,6 @@ theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv T FL) : ∃ t d, Fits FL L 
   have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
   obtain ⟨t, ht⟩ := exists_nat_ge (√(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) / FL.a₁)
   obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) t (by
-    rw [div_le_iff₀ ha] at ht
-    linarith)
-  exact ⟨t, d, hd⟩
-
-theorem exists_fits_seg (L : Tg T m AA → ℕ) (j : Fin J) (i : Fin h) (ω : T.V (j + 1) i) :
-    ∃ t d, Fits FL L (⟨j, i, ω, d⟩ : LMv T FL) t := by
-  have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
-  obtain ⟨t, ht⟩ := exists_nat_ge (√(vN2 b fun q => L (.seg j i ω q)) / FL.a₁)
-  obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg j i ω q)) t (by
     rw [div_le_iff₀ ha] at ht
     linarith)
   exact ⟨t, d, hd⟩
@@ -179,12 +178,7 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o) 
       rw [h3, he'] at h4
       refine hne (alv_inr_zero hb (Or.inl fun hcon => ?_) ν)
       have : IsMin (load R ch FL lhat n o) j'.castSucc i' := hcon
-      have h5 : i = i' := by
-        rcases lt_trichotomy i i' with hlt | heq | hlt
-        · exact absurd hi.1 (this.2 i hlt)
-        · exact heq
-        · exact absurd this.1 (hi.2 i' hlt)
-      exact h4 h5
+      exact h4 (isMin_eq hi this)
   · refine Finset.sum_image_le_of_nonneg ?_ |>.trans ?_
     · intro _ _; exact Nat.zero_le _
     · exact Finset.sum_le_sum fun e _ => (alv_mid_le hb j e 2 (hx2 e) false).1
@@ -231,11 +225,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       obtain ⟨e, h1, h2, h3⟩ := tgR_edge_succ (x := x) (ν := ν') hν
       subst h1
       refine hne ((alv_mid_le hb j e 2 hx ν').2 fun hcon => ?_)
-      have h4 : T.ty e = i := by
-        rcases lt_trichotomy i (T.ty e) with hlt | heq | hlt
-        · exact absurd hi.1 (hcon.2 i hlt)
-        · exact heq.symm
-        · exact absurd hcon.1 (hi.2 _ hlt)
+      have h4 : T.ty e = i := isMin_eq hcon hi
       have h5 := ((T.nr j.2 i).symm (ω, ν)).2
       rw [← h3, T.π_ty j.2, h4] at h5
       exact h5 rfl
@@ -247,12 +237,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       have hmin : IsMin (load R ch FL lhat n o) j'.castSucc i' := by
         by_contra hcon
         exact hne (alv_inr_zero hb (Or.inl hcon) ν')
-      have hii : i' = i := by
-        rcases lt_trichotomy i i' with hlt | heq | hlt
-        · exact absurd hi.1 (hmin.2 i hlt)
-        · exact heq.symm
-        · exact absurd hmin.1 (hi.2 _ hlt)
-      subst hii
+      obtain rfl : i' = i := isMin_eq hmin hi
       have h4 : (T.nr j'.2 i').symm (ω', FL.cn d' ν') = (T.nr j'.2 i').symm (ω, ν) := Subtype.ext h3
       have h5 := (T.nr j'.2 i').symm.injective h4
       simp only [Prod.mk.injEq] at h5
@@ -281,14 +266,7 @@ theorem _root_.Paper.thm_tree_kappa (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} 
         √FL.C₁ * FL.a₁ / b * Fintype.card (T.X (j + 1)) := by
   classical
   obtain ⟨i, hi⟩ := exists_isMin hh (load R ch FL lhat n o) j.castSucc
-  have hd0 : ∃ d0 : FL.Di, True := by
-    by_contra hcon
-    push Not at hcon
-    have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
-    obtain ⟨t, ht⟩ := exists_nat_ge (√(vN2 b fun _ : Sym2 T.Fl => 0) / FL.a₁)
-    obtain ⟨d, -⟩ := FL.L1 (fun _ => 0) t (by rw [div_le_iff₀ ha] at ht; linarith)
-    exact hcon d
-  obtain ⟨d0, -⟩ := hd0
+  obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
   refine Tower.load_step j.2 hb hbD FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
     (fun ω => tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)) ?_ ?_
   · exact isMin_le hi
@@ -296,24 +274,21 @@ theorem _root_.Paper.thm_tree_kappa (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} 
     exact mid_load_le hb j hi e' he'
   · intro ω
     obtain ⟨d, hd⟩ := exists_pick (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)
-    have hd : Pick FL (load R ch FL lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) := hd
-    have h1 := alive_sq (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hb (⟨j, i, ω, d⟩ : LMv T FL)
-    have h2 := num_inr_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) (⟨j, i, ω, d⟩ : LMv T FL)
-    have h3 : num R ch FL lhat n o (.inr (⟨j, i, ω, d⟩ : LMv T FL)) ≤ tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) := h2
-    set t := tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) with ht
     have h4 : ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1)) ^ 2 ≤
         ∑ ν : (FL.L d).Cn, (alv R ch FL lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R FL (ch := ch))) ^ 2 := by
       rw [← Equiv.sum_comp (FL.cn d)]
       refine Finset.sum_le_sum fun ν _ => Nat.pow_le_pow_left ?_ 2
       have := other_load_le hb j hi ω d hd (FL.cn d ν)
       rwa [Equiv.symm_apply_apply] at this
-    have h5 : b * ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1)) ^ 2 ≤ FL.G₁ * t ^ 2 :=
-      (Nat.mul_le_mul_left _ h4).trans (h1.trans (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h3 2)))
-    have h6 : b * ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
-        FL.G₁ * (t : ℝ) ^ 2 := by exact_mod_cast h5
-    have h7 : (FL.G₁ : ℝ) * (t : ℝ) ^ 2 ≤ 2 * FL.C₁ * (FL.a₁ : ℝ) ^ 2 * (t : ℝ) ^ 2 :=
-      mul_le_mul_of_nonneg_right FL.G₁_le (sq_nonneg _)
-    linarith
+    -- the squares are bounded by the length of the laws, `G₁ ≤ 2 C₁ a₁²`, and `num ≤ tmin`
+    have h5 := (Nat.mul_le_mul_left b h4).trans ((alive_sq hb _).trans
+      (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv T FL)) 2)))
+    have h6 : (b : ℝ) * ∑ ν : T.Nr,
+          (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
+        FL.G₁ * (tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ) ^ 2 := by
+      exact_mod_cast h5
+    linarith [mul_le_mul_of_nonneg_right FL.G₁_le
+      (sq_nonneg (tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ))]
   · intro ω
     exact tmin_le hb _ _ fun q => seg_le hb j i ω q
 
