@@ -701,34 +701,21 @@ theorem cubePts_update {k : ℕ} (hk : k < μ) {x : Fin μ → ℝ} (hx : x ∈ 
     have : i.1 ≠ k := fun h2 => hi (Fin.ext h2)
     omega
 
-end Cube
-
-theorem dg_sub_dg (S T : Finset (Fin μ)) : (dg S - dg T : Mt μ) = dg (symmDiff S T) := by
-  ext i j
-  simp only [dg, Matrix.sub_apply, Matrix.diagonal_apply, mem_symmDiff]
-  grind
-
-/-- "The diagonal 0/1 matrices now form the vertices of a Euclidean cube [0,1]^μ in a price space." -/
-theorem thm_alt_vertices (hrk : ∀ a a' : Mt μ, w a a' ^ 2 = (a - a').rank) (S T : Finset (Fin μ)) :
-    w (dg S) (dg T) ^ 2 = (symmDiff S T).card := by
-  rw [hrk, dg_sub_dg, rank_dg]
-
-/-- "Every finite Euclidean configuration of dimension at most μ is, up to translation and scale, a subset of the cube,
-hence a price." -/
-theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk : k ≤ μ) (V : Type) [Finite V]
-    (E : V → EuclideanSpace ℝ (Fin k)) : IsPrice K fun a b => dist (E a) (E b) := by
-  obtain ⟨w, hw, hrk⟩ := thm_alt_rank_price hK hμ
-  obtain ⟨Y, _, _, f, hY, hf⟩ := prop_space hw
-  -- "Fill it one coordinate at a time": an isometric map F of the solid cube [0,1]^μ, here built on the points whose
-  -- coordinates from k on are 0 or 1, by induction on k
+/-- "Fill it one coordinate at a time": if points f(S) of a CAT(0) space have the distances of the vertices of the cube, then
+there is an isometric map F of the solid cube [0,1]^μ into the space (it extends the map that sends the vertex with the
+coordinates 1 on S and 0 elsewhere to f(S); only its isometry is stated). -/
+theorem thm_alt_cube (f : Finset (Fin μ) → Y) (hf : ∀ S T, dist (f S) (f T) ^ 2 = (symmDiff S T).card) :
+    ∃ F : (Fin μ → ℝ) → Y, ∀ x y : Fin μ → ℝ, (∀ i, 0 ≤ x i ∧ x i ≤ 1) →
+        (∀ i, 0 ≤ y i ∧ y i ≤ 1) → dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
+  classical
   have key : ∀ k ≤ μ, ∃ F : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k,
       dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
     intro k
     induction k with
     | zero =>
       intro _
-      refine ⟨fun x => f (dg (univ.filter fun i => x i = 1)), fun x hx y hy => ?_⟩
-      rw [hf, thm_alt_vertices hrk, card_eq_sum_ones, Nat.cast_sum, ← sum_filter_add_sum_filter_not univ
+      refine ⟨fun x => f (univ.filter fun i => x i = 1), fun x hx y hy => ?_⟩
+      rw [hf, card_eq_sum_ones, Nat.cast_sum, ← sum_filter_add_sum_filter_not univ
         (fun i => i ∈ symmDiff (univ.filter fun i => x i = 1) (univ.filter fun i => y i = 1))
         (fun i => (x i - y i) ^ 2)]
       rw [sum_eq_zero (s := univ.filter fun i => ¬ _), add_zero, filter_mem_eq_inter, univ_inter]
@@ -797,6 +784,30 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
       rw [h, d4, d1, ← add_sum_erase univ _ (mem_univ c), ← hE]
       ring
   obtain ⟨F, hF⟩ := key μ le_rfl
+  refine ⟨F, fun x y hx hy => hF x (fun i => ⟨hx i, fun h => ?_⟩) y (fun i => ⟨hy i, fun h => ?_⟩)⟩
+  · exact absurd i.2 (by omega)
+  · exact absurd i.2 (by omega)
+
+end Cube
+
+theorem dg_sub_dg (S T : Finset (Fin μ)) : (dg S - dg T : Mt μ) = dg (symmDiff S T) := by
+  ext i j
+  simp only [dg, Matrix.sub_apply, Matrix.diagonal_apply, mem_symmDiff]
+  grind
+
+/-- "The diagonal 0/1 matrices now form the vertices of a Euclidean cube [0,1]^μ in a price space." -/
+theorem thm_alt_vertices (hrk : ∀ a a' : Mt μ, w a a' ^ 2 = (a - a').rank) (S T : Finset (Fin μ)) :
+    w (dg S) (dg T) ^ 2 = (symmDiff S T).card := by
+  rw [hrk, dg_sub_dg, rank_dg]
+
+/-- "Every finite Euclidean configuration of dimension at most μ is, up to translation and scale, a subset of the cube,
+hence a price." -/
+theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk : k ≤ μ) (V : Type) [Finite V]
+    (E : V → EuclideanSpace ℝ (Fin k)) : IsPrice K fun a b => dist (E a) (E b) := by
+  obtain ⟨w, hw, hrk⟩ := thm_alt_rank_price hK hμ
+  obtain ⟨Y, _, _, f, hY, hf⟩ := prop_space hw
+  obtain ⟨F, hF⟩ := thm_alt_cube (fun S => f (dg S))
+    (fun S T => by rw [hf]; exact thm_alt_vertices hrk S T)
   obtain ⟨R, hR0, hR⟩ : ∃ R : ℝ, 0 < R ∧ ∀ v i, |E v i| ≤ R := by
     cases nonempty_fintype V
     refine ⟨1 + ∑ v, ∑ i, |E v i|, ?_, fun v i => ?_⟩
@@ -819,8 +830,7 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
     · exact ⟨le_rfl, zero_le_one⟩
   have hdist : ∀ u v, dist (E u) (E v) = 2 * R * dist (F (g u)) (F (g v)) := by
     intro u v
-    have h1 := hF (g u) (fun i => ⟨hg u i, fun h => absurd i.2 (by omega)⟩) (g v)
-      (fun i => ⟨hg v i, fun h => absurd i.2 (by omega)⟩)
+    have h1 := hF (g u) (g v) (hg u) (hg v)
     have h2 : ∑ i, (g u i - g v i) ^ 2 = (1 / (2 * R)) ^ 2 * dist (E u) (E v) ^ 2 := by
       rw [EuclideanSpace.dist_eq, Real.sq_sqrt (sum_nonneg fun _ _ => sq_nonneg _), mul_sum]
       have h3 : ∀ i : Fin μ, (g u i - g v i) ^ 2 = if hi : i.1 < k then
