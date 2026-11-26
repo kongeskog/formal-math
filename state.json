@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T02:19:30.902917629Z",
+  "updated_at": "2026-11-26T02:25:11.110002866Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -93,6 +93,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 171,
+      "title": "Idea: dead-code(*): facts that are proved and never used, judged by compiling",
+      "status": "claimed",
+      "author": "kongeskog",
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-26T05:24:37Z",
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-26T02:24:36Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/171",
+      "technique": "dead-code",
+      "scope": "*"
+    },
     {
       "number": 170,
       "title": "Idea: restructure(*): inline single-use lemmas called with arguments all fixed by the caller",
