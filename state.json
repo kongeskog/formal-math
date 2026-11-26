@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T06:14:26.261392054Z",
+  "updated_at": "2026-11-26T06:18:14.760076385Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1093,7 +1093,7 @@
       "pr": 178,
       "title": "restructure(*): inline 26 small single-use lemmas at their one call",
       "author": "kongeskog",
-      "head_sha": "01744871f8233c7f5096f2ce454c700dfaae2203",
+      "head_sha": "e28e777fd0c6f533525302e1758d716e89c6154c",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-26T06:09:53Z",
