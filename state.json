@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:49:07.295557536Z",
+  "updated_at": "2026-11-26T00:50:40.272032254Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1264,8 +1264,8 @@
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
-      "tokens": 11735,
-      "loc": 706
+      "tokens": 11578,
+      "loc": 703
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
@@ -1373,11 +1373,6 @@
       "loc": 362
     },
     {
-      "path": "vp-vnp/Paper/Toolkit.lean",
-      "tokens": 5537,
-      "loc": 340
-    },
-    {
       "path": "vp-vnp/Nc/Tower/Inst.lean",
       "tokens": 5532,
       "loc": 339
@@ -1391,6 +1386,11 @@
       "path": "vp-vnp/Nc/Tow/Load0.lean",
       "tokens": 5475,
       "loc": 417
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Ever2.lean",
+      "tokens": 5456,
+      "loc": 324
     }
   ]
 }
