@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:47:48.848543877Z",
+  "updated_at": "2026-11-26T00:49:07.295557536Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,21 +60,21 @@
     }
   },
   "current": {
-    "sha": "d5cc697c4456f4e54f5ac1222371a29c6471ae84",
-    "at": "2026-11-26T00:45:03.554953360Z",
+    "sha": "0caf161477b13fff4d8845a10b731ea84c6da227",
+    "at": "2026-11-26T00:49:07.295557536Z",
     "metrics": {
-      "tokens": 825940,
-      "loc": 53044,
-      "decls": 4328,
+      "tokens": 825448,
+      "loc": 53027,
+      "decls": 4326,
       "files": 314,
-      "bytes": 3088092,
-      "build_seconds": 676
+      "bytes": 3086653,
+      "build_seconds": 590
     }
   },
   "counts": {
-    "merged": 88,
+    "merged": 89,
     "rejected": 4,
-    "open": 4,
+    "open": 3,
     "contributors": 2,
     "ideas_open": 5
   },
@@ -87,9 +87,9 @@
     },
     {
       "login": "yidakra",
-      "merged": 0,
+      "merged": 1,
       "attempts": 1,
-      "saved": 0
+      "saved": 492
     }
   ],
   "ideas": [
@@ -324,8 +324,8 @@
       "author": "kongeskog",
       "claimed_by": "yidakra",
       "lease_expires": "2026-11-26T03:12:06Z",
-      "pr": 145,
-      "result_delta": -3356,
+      "pr": 156,
+      "result_delta": -3848,
       "created_at": "2026-11-25T02:41:37Z",
       "url": "https://github.com/kongeskog/formal-math/issues/112",
       "technique": "restructure",
@@ -978,101 +978,6 @@
   ],
   "open": [
     {
-      "pr": 156,
-      "title": "restructure(Paper/Toolkit,Paper/Alternative): thm_alt_fill calls lem_toolkit_f_isPt directly",
-      "author": "yidakra",
-      "head_sha": "2c7f5416b15fdf5ff2761e90be2dc086552770e2",
-      "base_sha": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c",
-      "status": "stale",
-      "created_at": "2026-11-26T00:12:10Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 832569,
-        "loc": 53315,
-        "decls": 4349,
-        "files": 314,
-        "bytes": 3104636,
-        "build_seconds": 285
-      },
-      "base_metrics": {
-        "tokens": 833061,
-        "loc": 53332,
-        "decls": 4351,
-        "files": 314,
-        "bytes": 3106075,
-        "build_seconds": null
-      },
-      "delta": -492,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 833061 → 832569 (-492)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog"
-        }
-      ],
-      "idea": 112,
-      "url": "https://github.com/kongeskog/formal-math/pull/156",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45727032442",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper/Toolkit,Paper/Alternative"
-    },
-    {
       "pr": 157,
       "title": "shorten(Nc/Grp): list folds by one simp step, a uniform bound by a sum",
       "author": "kongeskog",
@@ -1323,8 +1228,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
       "idea": 161,
