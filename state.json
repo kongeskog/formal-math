@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:21:24.223177847Z",
+  "updated_at": "2026-11-26T00:22:58.074332285Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "0d2a5047d59a97c9da7ca949f7f211b39f6e5834",
-    "at": "2026-11-26T00:21:24.223177847Z",
+    "sha": "adbb2b713ca42c29dd99e5c956175929d3540531",
+    "at": "2026-11-26T00:22:58.074332285Z",
     "metrics": {
-      "tokens": 828873,
-      "loc": 53080,
+      "tokens": 828416,
+      "loc": 53053,
       "decls": 4332,
       "files": 314,
-      "bytes": 3094748,
-      "build_seconds": 250
+      "bytes": 3093351,
+      "build_seconds": 291
     }
   },
   "counts": {
-    "merged": 85,
+    "merged": 86,
     "rejected": 4,
-    "open": 5,
+    "open": 4,
     "contributors": 2,
-    "ideas_open": 4
+    "ideas_open": 5
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 85,
+      "merged": 86,
       "attempts": 93,
-      "saved": 99288
+      "saved": 99745
     },
     {
       "login": "yidakra",
@@ -93,6 +93,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 158,
+      "title": "Idea: restructure(Paper): flatten single-use clusters in Identity, Crossing, Prices; simplify; re-cut",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-26T00:22:56Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/158",
+      "technique": "restructure",
+      "scope": "Paper"
+    },
     {
       "number": 153,
       "title": "Idea: restructure(Nc/Grp): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
@@ -156,8 +170,8 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T02:33:37Z",
-      "pr": 149,
-      "result_delta": -2515,
+      "pr": 152,
+      "result_delta": -2972,
       "created_at": "2026-11-25T23:33:32Z",
       "url": "https://github.com/kongeskog/formal-math/issues/146",
       "technique": "restructure",
@@ -936,101 +950,6 @@
   ],
   "open": [
     {
-      "pr": 152,
-      "title": "restructure(Nc/Tow): flatten thm_tree_kappa, one uniqueness lemma for the chosen type",
-      "author": "kongeskog",
-      "head_sha": "08bb23be3d070fbea1bd7d98f119fd33c583b0b3",
-      "base_sha": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c",
-      "status": "stale",
-      "created_at": "2026-11-26T00:04:16Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 832604,
-        "loc": 53305,
-        "decls": 4351,
-        "files": 314,
-        "bytes": 3104678,
-        "build_seconds": 178
-      },
-      "base_metrics": {
-        "tokens": 833061,
-        "loc": 53332,
-        "decls": 4351,
-        "files": 314,
-        "bytes": 3106075,
-        "build_seconds": null
-      },
-      "delta": -457,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 833061 → 832604 (-457)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 146,
-      "url": "https://github.com/kongeskog/formal-math/pull/152",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45726048119",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/Tow"
-    },
-    {
       "pr": 154,
       "title": "shorten(*): local simp sets and default side-condition proofs in Nc/Uni and NS1",
       "author": "kongeskog",
@@ -1091,8 +1010,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "fail",
-          "detail": "Changes requested by kongeskog"
+          "status": "pass",
+          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
         }
       ],
       "idea": 148,
@@ -1331,13 +1250,13 @@
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 15955,
-      "loc": 976
+      "tokens": 15613,
+      "loc": 967
     },
     {
       "path": "vp-vnp/Paper/Fan.lean",
-      "tokens": 15090,
-      "loc": 822
+      "tokens": 13759,
+      "loc": 778
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
@@ -1435,11 +1354,6 @@
       "loc": 420
     },
     {
-      "path": "vp-vnp/Nc/Tow/Ever2.lean",
-      "tokens": 6150,
-      "loc": 377
-    },
-    {
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
       "tokens": 6063,
       "loc": 366
@@ -1473,6 +1387,11 @@
       "path": "vp-vnp/Nc/Dl/Num0.lean",
       "tokens": 5486,
       "loc": 311
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Load0.lean",
+      "tokens": 5475,
+      "loc": 417
     }
   ]
 }
