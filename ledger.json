@@ -1,6 +1,11 @@
 {
-  "claims": {},
-  "comments_seen_until": "2026-11-26T07:29:31Z",
+  "claims": {
+    "177": {
+      "login": "yidakra",
+      "at": "2026-11-26T08:20:35Z"
+    }
+  },
+  "comments_seen_until": "2026-11-26T08:20:35Z",
   "dispatched": {},
   "lines": {},
   "line_bases": {},
