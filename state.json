@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:06:04.718041962Z",
+  "updated_at": "2026-11-26T00:07:10.617855331Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -919,7 +919,7 @@
       "pr": 149,
       "title": "restructure(Nc/Tow): flatten plan_ok and NR_le, simplify across the old lemma boundaries",
       "author": "kongeskog",
-      "head_sha": "6d2baf9336e43cad7c85f8e45997d2d072e1aa24",
+      "head_sha": "6f8f1fbb3b913ea8fcf2b1bd48ab73f9f44e0704",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-25T23:53:36Z",
