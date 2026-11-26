@@ -216,10 +216,12 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
       omega
     have h3 : 2 ^ (3 * M + 1) ≤ 16 * v ^ (3 * a + H + 3) := by
       grw [pow_succ, mul_comm 3 M, pow_mul, h1]
-      linarith [pow_mul v (a + 1) 3, Nat.pow_le_pow_right hv1 (show (a + 1) * 3 ≤ 3 * a + H + 3 by omega)]
+      linarith [pow_mul v (a + 1) 3,
+        Nat.pow_le_pow_right hv1 (show (a + 1) * 3 ≤ 3 * a + H + 3 by omega)]
     have h4 : 2 ^ (M + m + 3) ≤ 32 * v ^ (3 * a + H + 3) := by
       grw [pow_add, pow_add, h1, h2]
-      linarith [pow_add v (a + 1) H, Nat.pow_le_pow_right hv1 (show a + 1 + H ≤ 3 * a + H + 3 by omega)]
+      linarith [pow_add v (a + 1) H,
+        Nat.pow_le_pow_right hv1 (show a + 1 + H ≤ 3 * a + H + 3 by omega)]
     have h5 : 1 ≤ v ^ (3 * a + H + 3) := Nat.one_le_pow _ _ hv1
     grw [hnds, ← Nat.pow_le_pow_right hv1 (show 3 * a + H + 3 + 1 ≤ 3 * a + H + 20 by omega),
       pow_succ v]
