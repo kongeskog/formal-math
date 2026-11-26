@@ -254,11 +254,13 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
       have g2 : K.ht + K'.ht + max (B' + n * J) B' + J + 1 ≤ X := by omega
       have g3 : α * (16 * h - 32) + 40 ≤ 16 * h * α + 1 - 8 * (n + 1) := by omega
       have g4 : 16 * h * α + 1 - 8 * (n + 1) + 9 ≤ 16 * h * (2 * α) := by omega
-      -- one round with numbers
+      -- Paper: proof of Proposition prop:approx-acc, one round with numbers
       obtain ⟨r, p', hr, hp', hps'⟩ : ∃ r p', r ≤ 2 ^ (3 * X) * Γ ^ n ∧
           IsAccA θ (16 * h) (u ^ α) (u ^ (16 * h * α + 1 - 8 * (n + 1)))
             (.node K (K'.map (rescale A r))) (max (B' + n * J) B' + J) p' ∧
           p'.size ≤ p.size + (u ^ (h * α + 2) + u ^ (16 * h + 1)) := by
+        -- the step's facts under the names the round uses; the rest are no longer used and are
+        -- cleared because they slow `omega`
         replace hp := hp8
         replace hK := (hk1.trans (hnds n hn')).trans hK
         replace hps := hps.trans (size_rounds hh hα hu4 (by omega))
