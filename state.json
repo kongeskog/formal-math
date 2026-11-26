@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:45:03.554953360Z",
+  "updated_at": "2026-11-26T00:46:34.688963218Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1280,8 +1280,8 @@
     },
     {
       "path": "vp-vnp/Paper/Gauges.lean",
-      "tokens": 7463,
-      "loc": 476
+      "tokens": 7226,
+      "loc": 473
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
@@ -1302,11 +1302,6 @@
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
       "tokens": 6568,
       "loc": 368
-    },
-    {
-      "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 6557,
-      "loc": 390
     },
     {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
@@ -1342,6 +1337,11 @@
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
       "tokens": 6063,
       "loc": 366
+    },
+    {
+      "path": "vp-vnp/Paper/Laws.lean",
+      "tokens": 6054,
+      "loc": 374
     },
     {
       "path": "vp-vnp/Paper/Rate.lean",
