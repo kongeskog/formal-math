@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T01:43:32.752037103Z",
+  "updated_at": "2026-11-26T01:44:46.021612604Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1082,8 +1082,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 19497,
-      "loc": 1148
+      "tokens": 19430,
+      "loc": 1142
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -1136,14 +1136,14 @@
       "loc": 473
     },
     {
-      "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 7199,
-      "loc": 458
-    },
-    {
       "path": "vp-vnp/NS1/DSteps.lean",
       "tokens": 6912,
       "loc": 418
+    },
+    {
+      "path": "vp-vnp/Paper/Cuts.lean",
+      "tokens": 6893,
+      "loc": 429
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
