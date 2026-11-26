@@ -31,14 +31,7 @@ theorem putsL_eq {ub : ℕ} (hub : 0 < ub) (P : List (List (List Bool) × List B
     rw [List.map_cons, List.map_cons, putsL, List.headD_cons, List.tail_cons, putL_eq hub]
     by_cases hp : ucount ub p.2 = p.1.length
     · rw [if_pos hp, List.flatMap_cons, List.flatMap_nil, List.append_nil, ih]
-      by_cases hP : ∀ p ∈ P, ucount ub p.2 = p.1.length
-      · rw [if_pos hP, if_pos (by
-          intro p' hp'
-          rcases List.mem_cons.1 hp' with rfl | hp'
-          · exact hp
-          · exact hP p' hp')]
-        rfl
-      · rw [if_neg hP, if_neg fun h => hP fun p' hp' => h p' (List.mem_cons_of_mem _ hp')]
+      exact if_congr (by simp [hp]) rfl rfl
     · rw [if_neg hp, if_neg fun h => hp (h p List.mem_cons_self)]
       rfl
 
@@ -132,15 +125,6 @@ theorem wsum_boths {ι : Type} (T ub : ℕ) (ks : List ι) (f g : ι → List Bo
   | nil => simp [wsum_script_nil]
   | cons k ks ih =>
     rw [List.map_cons, wsum_script_cons, insSem]
-    by_cases h : tget (f k) t = tget (g k) t
-    · rw [if_pos h, wsum_single, ih]
-      by_cases h' : ∀ k ∈ ks, tget (f k) t = tget (g k) t
-      · rw [if_pos h', if_pos (by
-          intro k' hk'
-          rcases List.mem_cons.1 hk' with rfl | hk'
-          · exact h
-          · exact h' k' hk')]
-      · rw [if_neg h', if_neg fun h1 => h' fun k' hk' => h1 k' (List.mem_cons_of_mem _ hk')]
-    · rw [if_neg h, wsum_nil, if_neg fun h1 => h (h1 k List.mem_cons_self)]
+    by_cases h : tget (f k) t = tget (g k) t <;> simp [h, wsum_nil, ih]
 
 end Nc.Grp

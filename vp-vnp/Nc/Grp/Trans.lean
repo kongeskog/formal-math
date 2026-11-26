@@ -306,17 +306,12 @@ theorem mem_foldL_induct {β ε : Type} {f : ε → β → List (A × β)} {Inv 
 theorem exists_runL_length (tab : Fin nC → (Fin nI → Bool) → List (Opt nC nO Λ)) : ∃ κ, ∀ (k : ℕ)
     (s : TSt nC nI nO Λ), (∀ j, s.2.2 j = []) → ∀ q ∈ runL θ tab k s, ∀ j, (q.2.2.2 j).length ≤ κ * k := by
   obtain ⟨κ, hκ⟩ : ∃ κ, ∀ z : Fin nC × (Fin nI → Bool), ∀ o ∈ tab z.1 z.2, ∀ j, (o.push j).length ≤ κ := by
-    refine exists_uniform (fun z k k' h h' o ho j => (h' o ho j).trans h) fun z => ?_
-    induction tab z.1 z.2 with
-    | nil => exact ⟨0, by simp⟩
-    | cons o os ih =>
-      obtain ⟨k, hk⟩ := ih
-      obtain ⟨k', hk'⟩ : ∃ k', ∀ j, (o.push j).length ≤ k' :=
-        exists_uniform (fun j k k' h h' => h'.trans h) fun j => ⟨_, le_rfl⟩
-      refine ⟨max k k', fun o' ho' j => ?_⟩
-      rcases List.mem_cons.1 ho' with rfl | ho'
-      · exact (hk' j).trans (le_max_right _ _)
-      · exact (hk o' ho' j).trans (le_max_left _ _)
+    -- the sum of all the lengths at `z` bounds each of them
+    refine exists_uniform (fun z k k' h h' o ho j => (h' o ho j).trans h) fun z =>
+      ⟨((tab z.1 z.2).map fun o => ∑ j, (o.push j).length).sum, fun o ho j => ?_⟩
+    exact (Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ j)).trans
+      (List.le_sum_of_mem
+        (List.mem_map_of_mem (f := fun o : Opt nC nO Λ => ∑ j, (o.push j).length) ho))
   refine ⟨κ, fun k s hs q hq j => ?_⟩
   have := mem_foldL_induct (f := fun (_ : Unit) s => stepL θ tab s) (xs := List.replicate k ())
     (Inv := fun m s => ∀ j, (s.2.2 j).length ≤ κ * m) (m := 0) (fun x _ s m hm q hq j => by
