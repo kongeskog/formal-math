@@ -50,6 +50,10 @@ theorem Xpow {a b : ℕ} (hab : a ≤ b) : X ^ a ≤ X ^ b := Nat.pow_le_pow_rig
 
 theorem mpow {a b : ℕ} (hab : a ≤ b) : m ^ a ≤ m ^ b := Nat.pow_le_pow_right h.m_pos hab
 
+/-- A constant up to 10000 is at most one more factor m. -/
+theorem mc (t a b c : ℕ) (hc : c ≤ 10000) (hab : a < b) : t * m ^ a * c ≤ t * m ^ b := by
+  grw [hc, h.m_ge, ← h.mpow hab, pow_succ, mul_assoc]
+
 /-- Small things are small. -/
 theorem X6 : X ^ 6 * m ^ 20 * v ^ 256 ≤ τ :=
   (Nat.mul_le_mul_left _ (Nat.pow_le_pow_right h.v_pos (by norm_num))).trans h.small
@@ -72,84 +76,31 @@ theorem bdub : bd * ub * v ^ 256 ≤ τ := by
 theorem time {κ : ℕ} (hκ : κ ≤ m) : κ * (2 * (Lc + 1) * (T + ub + 2) + ιb * T + 1000 * (ev + ιb * lh) * (ub + Lc + 1) +
     X ^ 4 * 1000 * (Lc + 1)) * k ≤ τ * m ^ 10 := by
   have hm := h.m_pos
-  have hk := h.k_pos
+  have hm4 := h.m_ge
   have hXk : ∀ a b, a ≤ 5 → b ≤ 20 → X ^ a * m ^ b * k ≤ τ := by
     intro a b ha hb
-    calc X ^ a * m ^ b * k ≤ X ^ a * m ^ b * X := Nat.mul_le_mul_left _ (h.kK.trans h.K_X)
-      _ = X ^ (a + 1) * m ^ b := by rw [pow_succ]; ring
-      _ ≤ X ^ 6 * m ^ 20 := h.Xm_le (by omega) hb
-      _ ≤ τ := h.X6t
-  have hTk : T * k ≤ τ * m := by
-    calc T * k ≤ T * K := Nat.mul_le_mul_left _ h.kK
-      _ = K * T := Nat.mul_comm _ _
-      _ ≤ τ * m := h.KT
-  have A1 : 2 * (Lc + 1) * (T + ub + 2) * k ≤ τ * m ^ 3 := by
-    have e1 : k ≤ τ := by
-      have := hXk 0 0 (by norm_num) (by norm_num)
-      simpa using this
-    calc 2 * (Lc + 1) * (T + ub + 2) * k ≤ 2 * m * (T + (T + 1) + 2) * k :=
-          Nat.mul_le_mul_right _ (Nat.mul_le_mul (Nat.mul_le_mul_left _ h.Lc_le) (by have := h.ub_le; omega))
-      _ = 2 * m * (2 * (T * k) + 3 * k) := by ring
-      _ ≤ 2 * m * (2 * (τ * m) + 3 * (τ * m)) := Nat.mul_le_mul_left _ (Nat.add_le_add (Nat.mul_le_mul_left _ hTk)
-          (Nat.mul_le_mul_left _ (e1.trans (Nat.le_mul_of_pos_right _ hm))))
-      _ = τ * m ^ 2 * 10 := by ring
-      _ ≤ τ * m ^ 2 * m := Nat.mul_le_mul_left _ (le_trans (by norm_num) h.m_ge)
-      _ = τ * m ^ 3 := by ring
-  have A2 : ιb * T * k ≤ τ * m ^ 3 := by
-    calc ιb * T * k = ιb * k * T := by ring
-      _ ≤ m * K * T := Nat.mul_le_mul_right _ h.ιb_le
-      _ = m * (K * T) := by ring
-      _ ≤ m * (τ * m) := Nat.mul_le_mul_left _ h.KT
-      _ = τ * m ^ 2 := by ring
-      _ ≤ τ * m ^ 3 := Nat.mul_le_mul_left _ (h.mpow (by norm_num))
-  have hu : ub + m ≤ ub * (m * 2) := by
-    have h1 : ub ≤ ub * m := Nat.le_mul_of_pos_right _ hm
-    have h2 : m ≤ ub * m := Nat.le_mul_of_pos_left _ h.ub_pos
-    have e : ub * (m * 2) = ub * m + ub * m := by ring
-    omega
-  have hev : ev * k * (ub + m) ≤ τ * m ^ 6 := by
-    calc ev * k * (ub + m) ≤ ev * k * (ub * (m * 2)) := Nat.mul_le_mul_left _ hu
-      _ = ev * ub * k * (m * 2) := by ring
-      _ ≤ τ * m ^ 2 * (m * m) := Nat.mul_le_mul h.ev_le (Nat.mul_le_mul_left _ (le_trans (by norm_num) h.m_ge))
-      _ = τ * m ^ 4 := by ring
-      _ ≤ τ * m ^ 6 := Nat.mul_le_mul_left _ (h.mpow (by norm_num))
-  have hιb : ιb * lh * k * (ub + m) ≤ τ * m ^ 6 := by
-    calc ιb * lh * k * (ub + m) ≤ ιb * lh * k * (ub * (m * 2)) := Nat.mul_le_mul_left _ hu
-      _ = ιb * k * (lh * ub) * (m * 2) := by ring
-      _ ≤ m * K * (m * T) * (m * m) :=
-          Nat.mul_le_mul (Nat.mul_le_mul h.ιb_le h.lhub) (Nat.mul_le_mul_left _ (le_trans (by norm_num) h.m_ge))
-      _ = m ^ 4 * (K * T) := by ring
-      _ ≤ m ^ 4 * (τ * m) := Nat.mul_le_mul_left _ h.KT
-      _ = τ * m ^ 5 := by ring
-      _ ≤ τ * m ^ 6 := Nat.mul_le_mul_left _ (h.mpow (by norm_num))
+    grw [h.kK, h.K_X, ← h.X6t, ← h.Xm_le (show a + 1 ≤ 6 by omega) hb, pow_succ]
+    ring_nf; rfl
+  have hTk : T * k ≤ τ * m := by grw [h.kK, mul_comm T, h.KT]
+  have hmk : m * k ≤ τ := by simpa using hXk 0 1 (by norm_num) (by norm_num)
+  have A1 : 2 * (Lc + 1) * (T + ub + 2) * k ≤ τ * m ^ 7 := by
+    grw [h.Lc_le, h.ub_le, ← h.mc τ 2 7 10 (by norm_num) (by norm_num)]
+    linarith [Nat.mul_le_mul_left m hTk, Nat.le_mul_of_pos_right τ (Nat.pow_pos hm (n := 2))]
+  have A2 : ιb * T * k ≤ τ * m ^ 7 := by
+    grw [mul_right_comm, h.ιb_le, mul_assoc, h.KT, ← h.mpow (show 2 ≤ 7 by norm_num)]
+    ring_nf; rfl
   have A3 : 1000 * (ev + ιb * lh) * (ub + Lc + 1) * k ≤ τ * m ^ 7 := by
-    have hL := h.Lc_le
-    calc 1000 * (ev + ιb * lh) * (ub + Lc + 1) * k ≤ 1000 * (ev + ιb * lh) * (ub + m) * k :=
-          Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ (by omega))
-      _ = 1000 * (ev * k * (ub + m) + ιb * lh * k * (ub + m)) := by ring
-      _ ≤ 1000 * (τ * m ^ 6 + τ * m ^ 6) := Nat.mul_le_mul_left _ (Nat.add_le_add hev hιb)
-      _ = τ * m ^ 6 * 2000 := by ring
-      _ ≤ τ * m ^ 6 * m := Nat.mul_le_mul_left _ (le_trans (by norm_num) h.m_ge)
-      _ = τ * m ^ 7 := by ring
+    have hu : ub + Lc + 1 ≤ ub * (m * 2) := by nlinarith [h.ub_pos, h.Lc_le]
+    have e1 : ev * ub * k * m ≤ τ * m ^ 4 := by
+      grw [h.ev_le, ← h.mpow (show 3 ≤ 4 by norm_num)]; ring_nf; rfl
+    have e2 : ιb * k * (lh * ub) * m ≤ τ * m ^ 4 := by
+      grw [h.ιb_le, h.lhub, show m * K * (m * T) * m = m ^ 3 * (K * T) by ring, h.KT]; ring_nf; rfl
+    grw [hu]
+    linarith [h.mc τ 4 7 4000 (by norm_num) (by norm_num)]
   have A4 : X ^ 4 * 1000 * (Lc + 1) * k ≤ τ := by
-    calc X ^ 4 * 1000 * (Lc + 1) * k ≤ X ^ 4 * m * m * k :=
-          Nat.mul_le_mul_right _ (Nat.mul_le_mul (Nat.mul_le_mul_left _ (le_trans (by norm_num) h.m_ge)) h.Lc_le)
-      _ = X ^ 4 * m ^ 2 * k := by ring
-      _ ≤ τ := hXk 4 2 (by norm_num) (by norm_num)
-  calc κ * (2 * (Lc + 1) * (T + ub + 2) + ιb * T + 1000 * (ev + ιb * lh) * (ub + Lc + 1) + X ^ 4 * 1000 * (Lc + 1)) * k
-      = κ * (2 * (Lc + 1) * (T + ub + 2) * k + ιb * T * k + 1000 * (ev + ιb * lh) * (ub + Lc + 1) * k +
-        X ^ 4 * 1000 * (Lc + 1) * k) := by ring
-    _ ≤ m * (τ * m ^ 3 + τ * m ^ 3 + τ * m ^ 7 + τ) := Nat.mul_le_mul hκ
-        (Nat.add_le_add (Nat.add_le_add (Nat.add_le_add A1 A2) A3) A4)
-    _ ≤ m * (τ * m ^ 7 + τ * m ^ 7 + τ * m ^ 7 + τ * m ^ 7) := by
-        refine Nat.mul_le_mul_left _ ?_
-        have e1 : τ * m ^ 3 ≤ τ * m ^ 7 := Nat.mul_le_mul_left _ (h.mpow (by norm_num))
-        have e2 : τ ≤ τ * m ^ 7 := Nat.le_mul_of_pos_right _ (Nat.pow_pos hm)
-        omega
-    _ = τ * m ^ 8 * 4 := by ring
-    _ ≤ τ * m ^ 8 * m := Nat.mul_le_mul_left _ (le_trans (by norm_num) h.m_ge)
-    _ = τ * m ^ 9 := by ring
-    _ ≤ τ * m ^ 10 := Nat.mul_le_mul_left _ (h.mpow (by norm_num))
+    grw [h.Lc_le, (by omega : 1000 ≤ m), ← hXk 4 2 (by norm_num) (by norm_num)]; ring_nf; rfl
+  grw [mul_assoc, add_mul, add_mul, add_mul, A1, A2, A3, A4, hκ]
+  linarith [h.mc τ 8 10 4 (by norm_num) (by norm_num), Nat.le_mul_of_pos_right (τ * m) (Nat.pow_pos hm (n := 7))]
 
 /-- **Size of the pieces.** -/
 theorem size : (X + 1 + (200 * X ^ 3 * Lc + ιb * ℓ * (4 * c + 2) + bd * (4 * ub))) * k * v ^ 256 ≤
