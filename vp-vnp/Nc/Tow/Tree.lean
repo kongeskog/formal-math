@@ -20,14 +20,6 @@ open Finset
 /-- The first index with the smallest value. -/
 noncomputable def im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : Fin h := (exists_im hh f).choose
 
-theorem im_unique {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) {i : Fin h} (h1 : ∀ i', f i ≤ f i')
-    (h2 : ∀ i' < i, ¬ ∀ i'', f i' ≤ f i'') : i = im hh f := by
-  obtain ⟨h3, h4⟩ := (exists_im hh f).choose_spec
-  rcases lt_trichotomy i (im hh f) with hlt | heq | hlt
-  · exact absurd h1 (h4 i hlt)
-  · exact heq
-  · exact absurd h3 (h2 _ hlt)
-
 variable {h b D J m AA : ℕ} {T : Tower h b D J} (hh : 0 < h) (ch : Fin AA ↪ T.X 0)
 
 /-- Loads by levels. -/
@@ -48,7 +40,7 @@ theorem isMin_iff (L : Tg T m AA → ℕ) (j : Fin (J + 1)) (i : Fin h) : IsMin 
   rw [e1]
   constructor
   · rintro ⟨h1, h2⟩
-    exact im_unique hh _ h1 h2
+    exact firstMin_eq ⟨h1, h2⟩ (exists_im hh _).choose_spec
   · rintro rfl
     exact (exists_im hh (sqs L j)).choose_spec
 

@@ -163,9 +163,6 @@ theorem runs_rk (zs : Finset (Zc K)) (hz : zs.Nonempty) :
 /-- Emissions of a round. -/
 def emRd (d : RdG (List (Bl K))) : Zc K → List (Sy M K) := fun z => on {cP} (rk d.snd) z ++ on {cQ} (rk d.fst) z
 
--- What `on` means and what a read emits: the tape cases of the proofs below.
-attribute [local simp] on emRd rk_eq
-
 theorem runs_rdG : Runs (emRd : RdG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := (runs_rk (A := A) (M := M) (K := K) {cQ} ⟨cQ, by simp⟩).mul
     (((Runs.const (Z := Zc K) (on {cP} [(Sy.flag false : Sy M K)])).mul
@@ -183,14 +180,14 @@ theorem runs_rdG : Runs (emRd : RdG (List (Bl K)) → Zc K → List (Sy M K)) (f
   · rcases y with ⟨a, b⟩ | ⟨a, b⟩
     · simp only [Equiv.coe_fn_mk, Sum.map_inl, Sum.elim_inl, emRd, RdG.fst, RdG.snd, rk_eq]
       by_cases hz : z = cP
-      · subst hz; simp
-      · simp [hz]
+      · subst hz; simp [on]
+      · simp [on, hz]
     · simp only [Equiv.coe_fn_mk, Sum.map_inr, Sum.elim_inr, emRd, RdG.fst, RdG.snd, rk_eq]
       by_cases hz : z = cP
-      · subst hz; simp
+      · subst hz; simp [on]
       · by_cases hz' : z = cQ
-        · subst hz'; simp
-        · simp [hz, hz']
+        · subst hz'; simp [on]
+        · simp [on, hz, hz']
   · rcases y with ⟨a, b⟩ | ⟨a, b⟩ <;> simp
 
 /-- Emissions of the comparison. -/
@@ -198,7 +195,7 @@ def emCm (y : XG (List (Bl K))) : Zc K → List (Sy M K) := fun z =>
   on {cP} ((PlG y).flatMap rk) z ++ on {cQ} ((QlG y).flatMap rk) z
 
 theorem runs_cm : Runs (emCm : XG (List (Bl K)) → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
-  have hk := (runs_rdG (A := A) (M := M) (K := K)).kstar fun d => ⟨cP, by simp⟩
+  have hk := (runs_rdG (A := A) (M := M) (K := K)).kstar fun d => ⟨cP, by simp [emRd, on, rk_eq]⟩
   have h := (((Runs.const (Z := Zc K) (on {cP} [(Sy.flag false : Sy M K)])).mul
     (Runs.wordstar {cP} ⟨cP, by simp⟩ (be : Bl K → Sy M K))).mul
     (Runs.const (on {cP} [(Sy.dot : Sy M K)]))).mul
@@ -209,11 +206,11 @@ theorem runs_cm : Runs (emCm : XG (List (Bl K)) → Zc K → List (Sy M K)) (fun
     simp only [Equiv.coe_fn_mk, emCm, PlG, QlG]
     by_cases hz : z = cP
     · subst hz
-      simp [List.flatMap_map]
+      simp [on, emRd, rk_eq, List.flatMap_map]
     · by_cases hz' : z = cQ
       · subst hz'
-        simp [List.flatMap_map]
-      · simp [hz, hz']
+        simp [on, emRd, rk_eq, List.flatMap_map]
+      · simp [on, emRd, hz, hz']
   · simp
 
 end Nc.Uni

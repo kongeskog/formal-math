@@ -148,6 +148,13 @@ theorem lem_toolkit_a_isPt (x v : Y) {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) : �
   obtain ⟨γ, -, -, h⟩ := lem_toolkit_a x v t h0 h1
   exact ⟨γ, h⟩
 
+/-- A point with the distances of part (a) satisfies its inequality. -/
+theorem lem_toolkit_a_of_dist {x v c : Y} {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) (e1 : dist x c = t * dist x v)
+    (e2 : dist c v = (1 - t) * dist x v) : IsPt x v t c := by
+  obtain ⟨γ, -, hu, h⟩ := lem_toolkit_a x v t h0 h1
+  rw [hu c e1 e2]
+  exact h
+
 /-- The first step of the proof of part (b): for the point q at s on [p,p′], insert (a) twice into
 t(1−t)|xv|² ≤ (1−t)|xq|² + t|qv|². -/
 theorem lem_toolkit_b_box (x v p p' : Y) {s t : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
@@ -380,10 +387,7 @@ theorem lem_toolkit_f_parallelogram {x u v y a b : Y} {h δ s t : ℝ} (hp : dis
   rw [h2, h3] at h1
   linarith
 
-/-- **Paper: Lemma lem:toolkit (f).** "Flat rectangles: if |xy| = |uv| = δ, |xu| = |yv| = h and both
-diagonals have squared length δ² + h², and a ∈ [x,u], b ∈ [y,v] have |xa| = sh, |yb| = th, then
-|ab|² = δ² + h²(s−t)²." Here a and b are given by the inequality of (a) (Cat.IsPt), and the
-diagonals are only bounded below. -/
+/-- Part (f), with a ∈ [x,u] and b ∈ [y,v] given by the inequality of (a) (Cat.IsPt), and with lower bounds for the diagonals. -/
 theorem lem_toolkit_f_isPt {x u v y a b : Y} {h δ s t : ℝ} (hp : dist x u = h) (hp' : dist y v = h)
     (hq : dist u v = δ) (hq' : dist x y = δ)
     (hd : h ^ 2 + δ ^ 2 ≤ dist x v ^ 2) (hd' : h ^ 2 + δ ^ 2 ≤ dist u y ^ 2)
@@ -397,6 +401,18 @@ theorem lem_toolkit_f_isPt {x u v y a b : Y} {h δ s t : ℝ} (hp : dist x u = h
   have h9 : dist u y ^ 2 = h ^ 2 + δ ^ 2 := by linarith
   rw [hab, h8, h9]
   ring
+
+/-- **Paper: Lemma lem:toolkit (f).** "Flat rectangles: if |xy| = |uv| = δ, |xu| = |yv| = h and both diagonals have squared
+length δ² + h², and a ∈ [x,u], b ∈ [y,v] have |xa| = sh, |yb| = th, then |ab|² = δ² + h²(s−t)²." -/
+theorem lem_toolkit_f (x y u v a b : Y) (δ h s t : ℝ) (hxy : dist x y = δ) (huv : dist u v = δ) (hxu : dist x u = h)
+    (hyv : dist y v = h) (d1 : dist x v ^ 2 = δ ^ 2 + h ^ 2) (d2 : dist y u ^ 2 = δ ^ 2 + h ^ 2) (hs0 : 0 ≤ s)
+    (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (a1 : dist x a = s * dist x u) (a2 : dist a u = (1 - s) * dist x u)
+    (b1 : dist y b = t * dist y v) (b2 : dist b v = (1 - t) * dist y v) :
+    dist a b ^ 2 = δ ^ 2 + h ^ 2 * (s - t) ^ 2 := by
+  have := lem_toolkit_f_isPt hxu hyv huv hxy
+    (by linarith) (by rw [dist_comm u y]; linarith) hs0 hs1 ht0 ht1 (lem_toolkit_a_of_dist hs0 hs1 a1 a2)
+    (lem_toolkit_a_of_dist ht0 ht1 b1 b2)
+  linarith
 
 end Toolkit
 

@@ -24,6 +24,72 @@ theorem indices_agree {h : ℕ} [NeZero h] {I : Type} (f : U h → I) (hf : ∀ 
   -- `h1` names the two ends of `npair l k` in one order or the other; `hf (npair l k)` links them
   grind
 
+/-- The opening of the section: "Replacing C₀ by an integer that is at least 2C₀+1, Theorem thm:poincare reads: the mean
+of |e|² over all pairs is at most C₀ times 2/b times the sum of |e|² over near pairs, for every price", where h is a
+multiple of u with h ≥ 2u and b = |U_h|. C is the constant of the theorem and C₀ the integer. -/
+theorem thm_laws_poincare {K : Type} [Field K] (hK : Contracting K) :
+    ∃ u : ℕ, 2 ≤ u ∧ ∃ (C : ℝ) (C₀ : ℕ), 0 ≤ C ∧ 2 * C + 1 ≤ (C₀ : ℝ) ∧
+      ∀ (h : ℕ) [NeZero h], u ∣ h → 2 * u ≤ h → ∀ w : U h → U h → ℝ, IsPrice K w →
+        (∑ p, ∑ q, w p q ^ 2) / ((Fintype.card (U h) : ℝ) * ((Fintype.card (U h) : ℝ) - 1)) ≤
+          (C₀ : ℝ) * (2 / (Fintype.card (U h) : ℝ) * ∑ ν : NN h, w (cNear ν) (dNear ν) ^ 2) := by
+  obtain ⟨u, hu, C, hC, hP⟩ := thm_poincare hK
+  obtain ⟨C₀, hC₀⟩ := exists_nat_ge (2 * C + 1)
+  refine ⟨u, hu, C, C₀, hC, hC₀, fun h _ hdvd hle w hw => ?_⟩
+  obtain ⟨l, rfl⟩ := dvd_iff_exists_eq_mul_left.1 hdvd
+  have h1 := hP l (Nat.le_of_mul_le_mul_right hle (by omega)) w hw
+  set b : ℝ := (Fintype.card (U (l * u)) : ℝ) with hb
+  have hb2 : (2 : ℝ) ≤ b := by
+    have : 2 ≤ Fintype.card (U (l * u)) :=
+      Fintype.one_lt_card_iff.2 ⟨x (l * u) ⟨0, by omega⟩, 1, x_ne_one _⟩
+    rw [hb]
+    exact_mod_cast this
+  have h2 : ∑ g, ∑ k, w k (g * k) ^ 2 = ∑ p, ∑ q, w p q ^ 2 := by
+    rw [Finset.sum_comm]
+    exact sum_congr rfl fun k _ => Equiv.sum_comp (Equiv.mulRight k) fun q => w k q ^ 2
+  have h3 : ∑ j, ∑ k, w k (x (l * u) j * k) ^ 2 = 2 * ∑ ν : NN (l * u), w (cNear ν) (dNear ν) ^ 2 := by
+    rw [sum_NN (fun j k => w k (x (l * u) j * k) ^ 2) (fun j k => by
+      rw [← mul_assoc, x_mul_self, one_mul, hw.symm]), two_mul]
+  rw [h2, ← Finset.sum_div, h3] at h1
+  generalize hP' : ∑ ν : NN (l * u), w (cNear ν) (dNear ν) ^ 2 = P at h1
+  generalize hQ : ∑ p, ∑ q, w p q ^ 2 = Q at h1
+  have hP0 : 0 ≤ P := by rw [← hP']; exact sum_nonneg fun _ _ => sq_nonneg _
+  rw [div_le_iff₀ (by positivity : (0 : ℝ) < b ^ 2)] at h1
+  rw [div_le_iff₀ (mul_pos (by linarith) (by linarith))]
+  have e1 : C * (2 * P / b) * b ^ 2 = C * b * (2 * P) := by field_simp
+  have e2 : (C₀ : ℝ) * (2 / b * P) * (b * (b - 1)) = (C₀ : ℝ) * (b - 1) * (2 * P) := by field_simp
+  rw [e1] at h1
+  rw [e2]
+  refine h1.trans (mul_le_mul_of_nonneg_right ?_ (by linarith))
+  calc C * b ≤ (2 * C + 1) * (b - 1) := by nlinarith
+    _ ≤ (C₀ : ℝ) * (b - 1) := mul_le_mul_of_nonneg_right hC₀ (by linarith)
+
+/-- The proof of Theorem thm:laws: "For every price the Cauchy–Schwarz inequality, twice, and the Poincaré inequality
+give ∑_e σ_e|e| ≤ max_β ∑_{near e} β_e|e|", over rounded loads β = ⌈y⌉ with ‖y‖_* ≤ √C₀·‖σ‖. Here the two norms are
+those of the weights α and β, and the quadratic inequality between them is the hypothesis. -/
+theorem thm_laws_loads {E N : Type} [Fintype E] [Fintype N] (α : E → ℝ) (hα : ∀ e, 0 < α e) (β : N → ℝ)
+    (hβ : ∀ ν, 0 < β ν) {C : ℝ} (hC : 0 < C) (w : E → ℝ) (w' : N → ℝ) (hw' : ∀ ν, 0 ≤ w' ν)
+    (h : ∑ e, α e * w e ^ 2 ≤ C * ∑ ν, β ν * w' ν ^ 2) (σ : E → ℕ) {R : ℝ} (hR : 0 < R)
+    (hσ : nrm α (fun e => (σ e : ℝ)) ≤ R) :
+    ∃ ld : N → ℕ, nrm β (fun ν => (ld ν : ℝ)) ≤ √C * R + nrm β (fun _ => 1) ∧
+      ∑ e, (σ e : ℝ) * w e ≤ ∑ ν, (ld ν : ℝ) * w' ν := by
+  have hsc : 0 < √C := Real.sqrt_pos.2 hC
+  have e : ∀ n : N → ℝ, nrm β n = √C * nrm (fun ν => C * β ν) n := by
+    intro n
+    rw [nrm, nrm, ← Real.sqrt_mul hC.le, Finset.mul_sum]
+    congr 1
+    refine sum_congr rfl fun ν _ => ?_
+    have := (hβ ν).ne'
+    field_simp
+  set Z := nrm (fun ν => C * β ν) (fun _ : N => (1 : ℝ)) with hZ
+  have hZ0 : 0 ≤ Z := nrm_nonneg _ _
+  obtain ⟨ld, h1, h2⟩ := exists_load α hα (fun ν => C * β ν) (fun ν => mul_pos hC (hβ ν)) w w' hw'
+    (h.trans (le_of_eq (by simp only [Finset.mul_sum, mul_assoc]))) σ hR.le
+    (η := Z / R) (by positivity) hσ 1 (by rw [Nat.cast_one, one_mul, div_mul_cancel₀ _ hR.ne'])
+  refine ⟨ld, ?_, by simpa using h2⟩
+  rw [e, e, ← mul_add]
+  refine mul_le_mul_of_nonneg_left (h1.trans (le_of_eq ?_)) hsc.le
+  rw [Nat.cast_one, mul_one, add_mul, one_mul, div_mul_cancel₀ _ hR.ne']
+
 /-- The proof of Theorem thm:laws: "φ(W^σ) = 2^(∑ σ_e d_φ(e)), and d_φ is a price; so φ(W^σ) ≤ max φ(W^β). So duality
 (Theorem thm:duality) covers W^(qσ) by at most 2^(εq) tensors W^β, with sums β of q elements of the given loads, for
 every large q." The cover is given as an identity between functions of bits. -/
@@ -166,27 +232,11 @@ theorem thm_laws_over_field {K : Type} [Field K] {h : ℕ} [NeZero h] (h2 : 2 �
   have hmax : ∀ t : Loads α ((a : ℝ) + Z₁), ∀ w : U h → U h → ℝ, IsPrice K w →
       ∃ ld : Loads β (c * ((a : ℝ) + Z₁) + Z₂),
         ∑ e, (t.1 e : ℝ) * w (ea e) (eb e) ≤ ∑ ν, (ld.1 ν : ℝ) * w (cNear ν) (dNear ν) := by
-    -- "For every price the Cauchy–Schwarz inequality, twice, and the Poincaré inequality give
-    -- ∑_e σ_e|e| ≤ max_β ∑_{near e} β_e|e|", over rounded loads β = ⌈y⌉ with ‖y‖_* ≤ √C₀·‖σ‖
     intro t w hw
-    have hC : (0 : ℝ) < C₀ := by exact_mod_cast hC₀
-    have e : ∀ n : NN h → ℝ, nrm β n = c * nrm (fun ν => C₀ * β ν) n := by
-      intro n
-      rw [nrm, nrm, hc, ← Real.sqrt_mul hC.le, Finset.mul_sum]
-      congr 1
-      refine sum_congr rfl fun ν _ => ?_
-      have := (hβ ν).ne'
-      field_simp
-    have hZ0 : 0 ≤ nrm (fun ν => (C₀ : ℝ) * β ν) (fun _ => 1) := nrm_nonneg _ _
-    obtain ⟨ld, h1, h2⟩ := exists_load α hα (fun ν => C₀ * β ν) (fun ν => mul_pos hC (hβ ν))
-      (fun e => w (ea e) (eb e)) (fun ν => w (cNear ν) (dNear ν)) (fun ν => hw.nonneg _ _)
-      ((hquad w hw).trans (le_of_eq (by simp only [Finset.mul_sum, mul_assoc]))) t.1 (by linarith)
-      (η := nrm (fun ν => (C₀ : ℝ) * β ν) (fun _ => 1) / (a + Z₁)) (by positivity) t.2 1
-      (by rw [Nat.cast_one, one_mul, div_mul_cancel₀ _ (by linarith)])
-    refine ⟨⟨ld, ?_⟩, by simpa using h2⟩
-    rw [hZ₂, e, e, ← mul_add]
-    refine mul_le_mul_of_nonneg_left (h1.trans (le_of_eq ?_)) (by linarith)
-    rw [Nat.cast_one, mul_one, add_mul, one_mul, div_mul_cancel₀ _ (by linarith)]
+    obtain ⟨ld, h1, h2⟩ := thm_laws_loads α hα β hβ (C := (C₀ : ℝ)) (by exact_mod_cast hC₀)
+      (fun e => w (ea e) (eb e)) (fun ν => w (cNear ν) (dNear ν)) (fun ν => hw.nonneg _ _) (hquad w hw)
+      t.1 (R := (a : ℝ) + Z₁) (by linarith) t.2
+    exact ⟨⟨ld, h1⟩, h2⟩
   -- ε small, then q large, one q for all loads
   obtain ⟨ε, hε, hεZ⟩ : ∃ ε : ℝ, 0 < ε ∧ ε * Z₂ ≤ (a : ℝ) / 4 := by
     refine ⟨(a : ℝ) / (4 * (Z₂ + 1)), by positivity, ?_⟩
@@ -348,8 +398,7 @@ theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
     ∃ (h : ℕ) (_ : NeZero h), 3 ≤ h ∧ ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A)
       (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)), 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4 := by
   classical
-  obtain ⟨u, hu, C, hC, hP⟩ := thm_poincare hK
-  obtain ⟨C₀, hC₀⟩ := exists_nat_ge (2 * C + 1)
+  obtain ⟨u, hu, C, C₀, hC, hC₀, hpairs⟩ := thm_laws_poincare hK
   -- h is a multiple of u with h ≥ 2u, h ≥ 3 and 1 + 8C₁ ≤ h/4, where C₁ = 4C₀
   set h := (4 * (1 + 8 * (4 * C₀)) + 3) * u
   have hl : 4 * (1 + 8 * (4 * C₀)) + 3 ≤ h := Nat.le_mul_of_pos_right _ (by omega)
@@ -360,38 +409,7 @@ theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
   have hne : NeZero h := ⟨by omega⟩
   have hC₀1 : 1 ≤ C₀ := by exact_mod_cast (by linarith : (1 : ℝ) ≤ C₀)
   obtain ⟨a₁, Di, fD, L, ro, cn, ha₁, hends, hlam, ha, hb⟩ :=
-    thm_laws_over_field (h := h) (by omega) hC₀1 fun w hw => by
-      -- The opening of the section: "Replacing C₀ by an integer that is at least 2C₀+1, Theorem
-      -- thm:poincare reads: the mean of |e|² over all pairs is at most C₀ times 2/b times the sum
-      -- of |e|² over near pairs, for every price", where b = |U_h|. C is the constant of the
-      -- theorem and C₀ the integer.
-      have h1 := hP _ (by omega) w hw
-      set b : ℝ := (Fintype.card (U h) : ℝ) with hb
-      have hb2 : (2 : ℝ) ≤ b := by
-        have : 2 ≤ Fintype.card (U h) :=
-          Fintype.one_lt_card_iff.2 ⟨x h ⟨0, by omega⟩, 1, x_ne_one _⟩
-        rw [hb]
-        exact_mod_cast this
-      have h2 : ∑ g, ∑ k, w k (g * k) ^ 2 = ∑ p, ∑ q, w p q ^ 2 := by
-        rw [Finset.sum_comm]
-        exact sum_congr rfl fun k _ => Equiv.sum_comp (Equiv.mulRight k) fun q => w k q ^ 2
-      have h3 : ∑ j, ∑ k, w k (x h j * k) ^ 2 = 2 * ∑ ν : NN h, w (cNear ν) (dNear ν) ^ 2 := by
-        rw [sum_NN (fun j k => w k (x h j * k) ^ 2) (fun j k => by
-          rw [← mul_assoc, x_mul_self, one_mul, hw.symm]), two_mul]
-      rw [h2, ← Finset.sum_div, h3] at h1
-      generalize hP' : ∑ ν : NN h, w (cNear ν) (dNear ν) ^ 2 = P at h1
-      generalize hQ : ∑ p, ∑ q, w p q ^ 2 = Q at h1
-      have hP0 : 0 ≤ P := by rw [← hP']; exact sum_nonneg fun _ _ => sq_nonneg _
-      rw [div_le_iff₀ (by positivity : (0 : ℝ) < b ^ 2)] at h1
-      rw [div_le_iff₀ (mul_pos (by linarith) (by linarith))]
-      have e1 : C * (2 * P / b) * b ^ 2 = C * b * (2 * P) := by field_simp
-      have e2 : (C₀ : ℝ) * (2 / b * P) * (b * (b - 1)) = (C₀ : ℝ) * (b - 1) * (2 * P) := by
-        field_simp
-      rw [e1] at h1
-      rw [e2]
-      refine h1.trans (mul_le_mul_of_nonneg_right ?_ (by linarith))
-      calc C * b ≤ (2 * C + 1) * (b - 1) := by nlinarith
-        _ ≤ (C₀ : ℝ) * (b - 1) := mul_le_mul_of_nonneg_right hC₀ (by linarith)
+    thm_laws_over_field (by omega) hC₀1 (hpairs h (dvd_mul_left _ _) (Nat.mul_le_mul_right u (by omega)))
   obtain ⟨A, hA, hmem⟩ := thm_laws_ring L
   have hcard : Fintype.card (U h) = 2 ^ ee h := card_U h
   have hL2 : ∀ d i, 2 ^ ee h * ∑ ν, ((L d).lam + (L d).len i ν) ^ 2 ≤ 8 * C₀ * a₁ ^ 2 := fun d i => by

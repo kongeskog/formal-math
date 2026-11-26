@@ -85,7 +85,7 @@ theorem EvOK.hd {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
     refine (k1 (nx θ (nx θ σ3 (.inl .rhd) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)) (.inl (.h b)) p q s) p
       (ok4.nx _ _ _ _) rfl rfl h14 (fun _ hc => heap_nx _ _ _ _ _ (heap_nx _ _ _ _ _ (hh3 (hh2 hc)))) ?_
       (hp.mono (heap_nx _ _ _ _ _))).mono (by linarith)
-    rw [inpA, inpA, hi3, inpA, hi1]
+    rw [inpA _ _ (by simp) (by simp), inpA _ _ (by simp) (by simp), hi3, inpA _ _ (by simp) (by simp), hi1]
 
 theorem EvOK.tl {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l) :
     EvOK θ supp (.tl a) x (l.map fun r => r.tick r.out.tl) := by
@@ -118,7 +118,7 @@ theorem EvOK.tl {a : Fm} {x : Tree} {l : List (Run A)} (ih : EvOK θ supp a x l)
     refine (k1 (nx θ (nx θ σ3 (.inl .rtl) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)) (.inl (.t b)) p q s) q
       (ok4.nx _ _ _ _) rfl rfl h14 (fun _ hc => heap_nx _ _ _ _ _ (heap_nx _ _ _ _ _ (hh3 (hh2 hc)))) ?_
       (hq.mono (heap_nx _ _ _ _ _))).mono (by linarith)
-    rw [inpA, inpA, hi3, inpA, hi1]
+    rw [inpA _ _ (by simp) (by simp), inpA _ _ (by simp) (by simp), hi3, inpA _ _ (by simp) (by simp), hi1]
 
 theorem EvOK.cons {a b : Fm} {x : Tree} {la lb : List (Run A)} (iha : EvOK θ supp a x la) (ihb : EvOK θ supp b x lb) :
     EvOK θ supp (.cons a b) x (la.flatMap fun r => lb.map fun s => (r.seq s).tick (.cons r.out s.out)) := by
@@ -171,8 +171,8 @@ theorem EvOK.cons {a b : Fm} {x : Tree} {la lb : List (Run A)} (iha : EvOK θ su
       subst h51
       refine (k1 _ (σ5.n + 1) (ok5.nx _ _ _ _) rfl rfl hr3 (fun _ hc => heap_nx _ _ _ _ _ (hh5 (hh4 hc))) ?_ ?_).mono
         (by linarith)
-      · rw [inpA, hi5, inpA, hi3, inpA,
-          inpA, hi1]
+      · rw [inpA _ _ (by simp) (by simp), hi5, inpA _ _ (by simp) (by simp), hi3, inpA _ _ (by simp) (by simp),
+          inpA _ _ (by simp) (by simp), hi1]
       · refine ⟨σ3.regs 1, σ5.regs 1, σ5.regs 0, new_nx (θ := θ) σ5 (.inl .rco2) (σ3.regs 1) (σ2.regs 3) (σ3.regs 0), ?_, ?_⟩
         · exact ((hv.mono (heap_nx _ _ _ _ _)).mono hh5).mono (heap_nx _ _ _ _ _)
         · exact hv'.mono (heap_nx _ _ _ _ _)
@@ -213,7 +213,7 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
     have hh4 : σ.heap ⊆ σ4.heap := fun _ hc => heap_nx _ _ _ _ _ (hh3 (hh2 hc))
     have hq4 : Rep σ4.heap q a'.tl := ((hq.mono (heap_nx _ _ _ _ _)).mono hh3).mono (heap_nx _ _ _ _ _)
     have hi4 : σ4.inp = σ.inp := by
-      rw [inpA, hi3, inpA, inpA, hi1]
+      rw [inpA _ _ (by simp) (by simp), hi3, inpA _ _ (by simp) (by simp), inpA _ _ (by simp) (by simp), hi1]
     obtain ⟨y1, y2, y3, hrec4, -, -⟩ := hv4.load ok4
     have hrec4' : ((kb (decide (r.out ≠ .nil)), ![σ4.regs 1, y1, y2, y3]) : Rec Kd) ∈ σ4.heap := hrec4
     have hks : ∀ s' ∈ L r, KS θ supp .R σ.heap (σ.regs 3) σ.inp s'.out (m ((r.seq s').tick s'.out))
@@ -248,7 +248,7 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
         refine ⟨?_, k2⟩
         have e1 : (nx θ σ5 (.inl (.i2 bu)) z1 z2 z3).regs 3 = σ.regs 3 := hr3
         have e2 : (nx θ σ5 (.inl (.i2 bu)) z1 z2 z3).inp = σ.inp := by
-          rw [inpA, inpA, hi4]
+          rw [inpA _ _ (by simp) (by simp), inpA _ _ (by simp) (by simp), hi4]
         rw [e1, e2]
         exact k1.heap hh6
     · have hkb : kb (decide (r.out ≠ .nil)) = .C := by simp [kb, ho]
@@ -274,7 +274,7 @@ theorem EvOK.ite {a b c : Fm} {x : Tree} {la : List (Run A)} {L : Run A → List
         refine ⟨?_, k2⟩
         have e1 : (nx θ σ5 (.inl (.i1 bu)) z1 z2 z3).regs 3 = σ.regs 3 := hr3
         have e2 : (nx θ σ5 (.inl (.i1 bu)) z1 z2 z3).inp = σ.inp := by
-          rw [inpA, inpA, hi4]
+          rw [inpA _ _ (by simp) (by simp), inpA _ _ (by simp) (by simp), hi4]
         rw [e1, e2]
         exact k1.heap hh6
 

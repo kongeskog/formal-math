@@ -100,8 +100,8 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
         refine ⟨?_, by linarith⟩
         have e1 : (nx θ σ5 (.inl .rru2) (σ3.regs 1) (σ2.regs 3) (σ3.regs 0)).regs 3 = σ.regs 3 := hr3
         have e2 : (nx θ σ5 (.inl .rru2) (σ3.regs 1) (σ2.regs 3) (σ3.regs 0)).inp = σ.inp := by
-          rw [inpA, hi5, inpA, hi3, inpA,
-            inpA, hi1]
+          rw [inpA _ _ (by simp) (by simp), hi5, inpA _ _ (by simp) (by simp), hi3, inpA _ _ (by simp) (by simp),
+            inpA _ _ (by simp) (by simp), hi1]
         rw [e1, e2]
         exact k1.heap hh6
 
@@ -134,9 +134,9 @@ theorem EvOK.guess (x : Tree) : EvOK θ supp .guess x [.det 1 .nil, .det 1 Tree.
     change Md.D 7 ≠ .Z
     simp
   have g0 := hk0 (nx θ σ1 (.inl (.d7 false)) 0 0 0) 0 (ok1.nx _ _ _ _) rfl ok1.r0 h14
-    (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA).trans hi1) rfl
+    (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA σ1 _ (by simp) (by simp) _ _ _).trans hi1) rfl
   have g1 := hk1 (nx θ σ1 (.inl (.d7 true)) 0 0 0) (σ1.n + 1) (ok1.nx _ _ _ _) rfl rfl h14
-    (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA).trans hi1)
+    (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA σ1 _ (by simp) (by simp) _ _ _).trans hi1)
     ⟨σ1.regs 0, σ1.regs 0, σ1.regs 0, new_nx (θ := θ) σ1 (.inl (.d7 true)) 0 0 0, ok1.r0, ok1.r0⟩
   have hfire : ∀ st' : (UM θ supp).Step, Mach.Fire σ1 st' ↔ st' = (.inl (.d7 false), envOf σ1 0 0 0) ∨
       st' = (.inl (.d7 true), envOf σ1 0 0 0) := by
@@ -217,7 +217,7 @@ theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l
       · have e1 : (nx θ σ3 (.inr (.inl ⟨(), hp⟩)) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)).regs 2 = σ.regs 3 := h14
         have e2 : (nx θ σ3 (.inr (.inl ⟨(), hp⟩)) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)).inp = σ.inp := by
           have e3 : (nx θ σ3 (.inr (.inl ⟨(), hp⟩)) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)).inp = σ3.inp := rfl
-          rw [e3, hi3, inpA, hi1]
+          rw [e3, hi3, inpA _ _ (by simp) (by simp), hi1]
         rw [e1, e2]
         exact k1.heap fun _ hc => heap_nx _ _ _ _ _ (hh3 (hh2 hc))
     · have hz : θ r.out.path = 0 := by

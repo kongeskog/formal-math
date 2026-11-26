@@ -144,6 +144,24 @@ theorem hubTen_series {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I
   exact congrArg₂ (· * ·) (Finset.prod_congr rfl fun a _ => wire_series (2 ^ ℓ) (π a) (hubOf hub S a) fun p => (y p).1 a)
     (wire_series L (hub S true) (hub S false) fun p => (y p).2)
 
+/-- The hub decomposition over the Laurent series: the coefficient of an entry is a sum over the balanced sets of the
+hub tensors over k, with functionals in k((ε)). -/
+theorem hubs_series {K : Type} [Field K] {k ℓ s : ℕ} (hk : 2 ≤ k)
+    {Q : MvPolynomial (Fin k × Ix k ℓ) (LaurentSeries K)} (hQ : Computes Q s) (π : End k → RPt k) :
+    ∃ M : ∀ (j : Fin (Fintype.card (bal (univ : Finset (Fin k))))) (p : RPt k),
+        (Ten.push π (fklTen K k ℓ)).ι p → (hubTen K ℓ s π hubPt (balEnum k j).1).ι p → LaurentSeries K,
+      ∀ x : ∀ p, (Ten.push π (fklTen K k ℓ)).ι p, cf univ Q (tables fun a => x (π a) ⟨a, rfl⟩) =
+        ∑ j, ∑ y : ∀ p, (hubTen K ℓ s π hubPt (balEnum k j).1).ι p,
+          (∏ p, M j p (x p) (y p)) * HahnSeries.C ((hubTen K ℓ s π hubPt (balEnum k j).1).val y) := by
+  obtain ⟨M, hM⟩ := (prop_flat_lower_sum hk hQ π hubPt).reindex (balEnum k)
+  refine ⟨fun j p a b => M j p a b, fun x => ?_⟩
+  have h1 := hM x
+  refine Eq.trans ?_ (h1.trans (Finset.sum_congr rfl fun j _ => ?_))
+  · rfl
+  refine Fintype.sum_equiv (Equiv.refl _) _ _ fun y => ?_
+  refine congrArg₂ (· * ·) rfl ?_
+  exact hubTen_series (K := K) π hubPt _ _
+
 /-- "So Proposition prop:flat-rate holds for approximating circuits: cut the constants off, and note that Lemma
 lem:balanced holds over every commutative ring." -/
 theorem flat_rate_approximating {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk : 2 ≤ k) {ℓ s : ℕ}
@@ -161,9 +179,8 @@ theorem flat_rate_approximating {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk
   let π : End k → RPt k := Sum.inl
   let T : Fin (Fintype.card (bal (univ : Finset (Fin k)))) → Ten K (RPt k) := fun j =>
     hubTen K ℓ s π hubPt (balEnum k j).1
-  -- the hub decomposition over the Laurent series: the coefficient of an entry is a sum over the
-  -- balanced sets of the hub tensors over k, with functionals in k((ε))
-  obtain ⟨M, hM⟩ := (prop_flat_lower_sum hk hQ π hubPt).reindex (balEnum k)
+  -- the hub decomposition over the Laurent series
+  obtain ⟨M, hM⟩ := hubs_series hk hQ π
   -- and with the functionals cut off
   obtain ⟨q, hq⟩ := exists_cut_off (V := RPt k)
     fun e : Σ j, Σ p : RPt k, (Ten.push π (fklTen K k ℓ)).ι p × (T j).ι p => M e.1 e.2.1 e.2.2.1 e.2.2.2
@@ -186,9 +203,7 @@ theorem flat_rate_approximating {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk
   have e : (Ten.push π (fklTen K k ℓ)).val x = cf univ (fkl K k ℓ) (tables fun a => x (π a) ⟨a, rfl⟩) :=
     fklTen_val K fun a => x (π a) ⟨a, rfl⟩
   have hx : (cf univ Q (tables fun a => x (π a) ⟨a, rfl⟩)) =
-      ∑ j, ∑ y : ∀ p, (T j).ι p, (∏ p, M j p (x p) (y p)) * HahnSeries.C ((T j).val y) :=
-    (hM x).trans (Finset.sum_congr rfl fun j _ => Fintype.sum_equiv (Equiv.refl _) _ _ fun y =>
-      congrArg₂ (· * ·) rfl (hubTen_series (K := K) π hubPt _ _))
+      ∑ j, ∑ y : ∀ p, (T j).ι p, (∏ p, M j p (x p) (y p)) * HahnSeries.C ((T j).val y) := hM x
   rw [e, ← coeff_laurentToSeries]
   refine Eq.trans ?_ (hQf (mono univ (tables fun a => x (π a) ⟨a, rfl⟩)) i hi)
   rw [show coeff (mono univ (tables fun a => x (π a) ⟨a, rfl⟩)) Q = cf univ Q (tables fun a => x (π a) ⟨a, rfl⟩) from rfl,
