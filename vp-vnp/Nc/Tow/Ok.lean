@@ -51,6 +51,7 @@ def inpZ : ZM R FL (ch := ch) → Tg T m AA
 
 -- `consM_inl` and `consM_inr` are in `Nc/Tow/Plan.lean`, next to `consM`, so that `Slp4` can use them too.
 
+/-- A unit consumed at the slot `z` is allowed, and its target is the slot's target. -/
 theorem consM_al {z : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u ∈ consM R FL Pl lhat n o z) :
     AlU R FL Pl lhat n o u ∧ tgU R FL Pl u = inpZ z := by
   rcases z with ⟨x | l, e⟩
@@ -117,6 +118,7 @@ theorem card_consM (z : ZM R FL (ch := ch)) :
       rw [Nat.add_mul, Nat.one_mul, Nat.add_sub_cancel_left]
     · simp
 
+/-- A move that is earlier in time than the move at index `x` has a smaller index. -/
 theorem lt_of_time {mv : Mv T R ch FL} {x : Fin (Fintype.card (Mv T R ch FL))}
     (h : timeM R ch FL mv < timeM R ch FL (eE R FL x)) : (eE R FL).symm mv < x := by
   simpa using eE_lt R FL h
