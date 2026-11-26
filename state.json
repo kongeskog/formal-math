@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:39:09.315808425Z",
+  "updated_at": "2026-11-26T00:40:38.344143041Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1371,8 +1371,8 @@
     },
     {
       "path": "vp-vnp/NS1/DSteps.lean",
-      "tokens": 7039,
-      "loc": 414
+      "tokens": 6912,
+      "loc": 418
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
@@ -1390,11 +1390,6 @@
       "loc": 390
     },
     {
-      "path": "vp-vnp/NS1/Postpone.lean",
-      "tokens": 6489,
-      "loc": 504
-    },
-    {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
       "tokens": 6485,
       "loc": 396
@@ -1405,14 +1400,19 @@
       "loc": 395
     },
     {
-      "path": "vp-vnp/NS1/Guess.lean",
-      "tokens": 6442,
-      "loc": 441
+      "path": "vp-vnp/NS1/Postpone.lean",
+      "tokens": 6424,
+      "loc": 506
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
       "tokens": 6357,
       "loc": 363
+    },
+    {
+      "path": "vp-vnp/NS1/Guess.lean",
+      "tokens": 6352,
+      "loc": 442
     },
     {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
