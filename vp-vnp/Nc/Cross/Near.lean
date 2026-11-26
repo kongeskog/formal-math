@@ -9,8 +9,8 @@ import Nc.Cross.Split
 # States, and the terms of the expansion of `det [[X, AΛB],[B'ΛA', Y]]`
 
 The definitions for the step "The coefficients" of the proof of Proposition prop:identity; the step itself is in
-Paper/Identity.lean (Paper.prop_identity_schur to Paper.prop_identity_near). In the paper's letters `X = M₁`, `Y = M₂`, `A = F`,
-`A' = F′`, `B = G`, `B' = −G′` and `Λ = D`.
+Paper/Identity.lean (Paper.prop_identity_expand to Paper.prop_identity_near). In the paper's letters
+`X = M₁`, `Y = M₂`, `A = F`, `A' = F′`, `B = G`, `B' = −G′` and `Λ = D`.
 -/
 
 set_option linter.unusedSectionVars false
