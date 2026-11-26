@@ -213,8 +213,13 @@ theorem approx_rate_closed {K : Type} [Field K] {G : ∀ S, MvPolynomial (Fin S 
     have hF : Flat K := fun k V _ E => thm_alt_euclidean hK (μ := k + 3) (by omega) (by omega) V E
     obtain ⟨m₀, h⟩ := rate_of_projection κ
     refine ⟨m₀, h _ fun k ℓ m s hk hℓ hℓk hm hs => ?_⟩
-    obtain ⟨E, hE, he⟩ := fkl_complete hG hk hℓ hm
-    have hap : Approximates (fkl K k ℓ) (5 * s) := he ▸ hs.substitute_affine E hE
+    -- Lemma lem:fkl-perm for a family complete for grid sums: f_{k,ℓ} is a projection of G_m with
+    -- affine entries
+    obtain ⟨E, hE, he⟩ := clauses_of_complete hG fklLits (fklLits_ne hk hℓ) fklLits_occ (fklWt K)
+      (fun κ => Or.inl ⟨κ.1, rfl⟩) (S := m)
+      (le_trans (le_trans (Nat.mul_le_mul_left _ (fklLits_count hk)) (le_of_eq (by ring))) hm)
+    have hap : Approximates (fkl K k ℓ) (5 * s) :=
+      he.trans (lem_fkl_perm_clauseSum K k ℓ) ▸ hs.substitute_affine E hE
     refine rate_pow hk ?_ (flat_rate_approximating hF hk hℓk hap)
     obtain ⟨Q, ⟨l, -, a, ha, -⟩, -⟩ := hap
     omega

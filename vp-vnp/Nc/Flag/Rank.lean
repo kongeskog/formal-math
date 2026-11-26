@@ -45,7 +45,16 @@ theorem good_of_contr (l : Len G) {m : ℕ} {s : ℝ} (hC : Contr l m s)
     rw [add_zero] at h
     have : τ 0 = 1 := by simpa using h
     simp only [this, l.one']
-  digit _ e i := DM_digit l hC τ hτ e i
+  digit _ e i := by
+    have h0 : (0 : ℝ) < (Fintype.card (GLM (Fin m)) : ℝ) ^ 2 := by
+      positivity
+    refine le_of_mul_le_mul_left ?_ h0
+    rw [mul_left_comm, ← univ_product_univ, ← blow_dg, ← blow_dg, ← DM_blow, ← DM_blow, mul_sum]
+    refine sum_le_sum fun p _ => ?_
+    rw [mul_sum]
+    refine sum_le_sum fun q _ => ?_
+    exact hC (fun N => τ ((p : Matrix ι ι F2) * blow e N * (q : Matrix ι ι F2)))
+      (fun M N => by rw [blow_add, Matrix.mul_add, Matrix.add_mul, hτ]) i
 
 variable {f : Matrix ι ι F2 → ℝ} {m : ℕ} {s : ℝ}
 

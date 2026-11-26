@@ -78,7 +78,6 @@ theorem card_uid_le {A0 U0 U1 : ℕ} {N : Type} [Fintype N] [DecidableEq N] :
 theorem card_row (A0 : ℕ) : Fintype.card (RowData A0) = 2 * (A0 * A0) := by
   simp [RowData, Fintype.card_prod]
 
-set_option maxHeartbeats 400000 in
 theorem card_nm {K E pS : ℕ} {S N Id : Type} [Fintype S] [Fintype N] [Fintype Id] {X : ℕ} (h1 : K + K + 1 ≤ X)
     (h2 : Fintype.card (Option S) ≤ X) (h3 : Fintype.card N ≤ X) (h4 : pS ≤ X) (h5 : E + 1 ≤ X) (h6 : Fintype.card Id ≤ X) :
     Fintype.card (Nm K E pS S N Id) ≤ 30 * (X * X) := by
@@ -91,7 +90,7 @@ theorem card_nm {K E pS : ℕ} {S N Id : Type} [Fintype S] [Fintype N] [Fintype 
   have a4 : Fintype.card (Option (Fin E)) = E + 1 := by rw [Fintype.card_option, Fintype.card_fin]
   simp only [Fintype.card_sum, Fintype.card_fin, Fintype.card_unit, Fintype.card_bool, a4, Fintype.card_sigma,
     Finset.sum_const, Finset.card_univ, smul_eq_mul]
-  omega
+  linarith
 
 end Cards
 

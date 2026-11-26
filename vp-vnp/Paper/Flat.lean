@@ -110,17 +110,6 @@ theorem fklLits_count {k ℓ : ℕ} (hk : 2 ≤ k) : ∑ κ : Val k ℓ, (fklLit
     _ = k ^ 2 * ℓ * 2 ^ (k * ℓ) := by ring
     _ ≤ _ := Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by omega) (by omega)))
 
-/-- The form of Lemma lem:fkl-perm for every family that is complete for grid sums: if M ≥ κk³ℓ2^(kℓ), then f_{k,ℓ} is a
-projection of G_M with affine entries. -/
-theorem fkl_complete {F : Type} [Field F] {G : ∀ M, MvPolynomial (Fin M × Fin M) F} {κ : ℕ}
-    (hG : GridComplete F G κ) {k ℓ : ℕ} (hk : 2 ≤ k) (hℓ : 1 ≤ ℓ) {M : ℕ}
-    (hM : κ * k ^ 3 * ℓ * 2 ^ (k * ℓ) ≤ M) :
-    ∃ E : Fin M × Fin M → MvPolynomial (Fin k × Ix k ℓ) F, (∀ q, IsAffine (E q)) ∧ aeval E (G M) = fkl F k ℓ := by
-  obtain ⟨E, hE, he⟩ := clauses_of_complete hG fklLits (fklLits_ne hk hℓ) fklLits_occ (fklWt F)
-    (fun κ => Or.inl ⟨κ.1, rfl⟩) (S := M) (le_trans (le_trans (Nat.mul_le_mul_left _ (fklLits_count hk))
-      (le_of_eq (by ring))) hM)
-  exact ⟨E, hE, he.trans (lem_fkl_perm_clauseSum F k ℓ)⟩
-
 /-! ### Balanced products -/
 
 /-- A polynomial that is linear in each block of S and contains no other variables, by its coefficients. -/
@@ -207,23 +196,6 @@ theorem lem_balanced {R T : Type} [CommSemiring R] [Fintype T] [DecidableEq T] {
   rw [Finset.sum_comm, Finset.sum_comm (s := bal _)]
   exact Finset.sum_congr rfl fun δ _ => Finset.sum_comm
 
-/-- Lemma lem:balanced for the coefficients: the coefficient of ∏ x_{a,y_a} is a sum of products. -/
-theorem lem_balanced_cf {R T : Type} [CommSemiring R] [Fintype T] [DecidableEq T] {k : ℕ}
-    {P : MvPolynomial (Fin k × T) R} {L : ℕ} (h : Computes P L) (hk : 2 ≤ k) :
-    ∃ (g : ∀ S : Finset (Fin k), Fin L → (S → T) → R)
-      (q : ∀ S : Finset (Fin k), Fin L → ((Sᶜ : Finset (Fin k)) → T) → R),
-      ∀ y, cf univ P y = ∑ S ∈ bal univ, ∑ δ, g S δ (fun a => y a) * q S δ fun a => y a := by
-  obtain ⟨g, q, he⟩ := lem_balanced h hk
-  refine ⟨g, q, fun y => ?_⟩
-  have hbal : bal (univ : Finset (Fin k)) = univ.filter fun S => k ≤ 3 * S.card ∧ 3 * S.card ≤ 2 * k := by
-    ext S
-    simp [mem_bal]
-  rw [← linearPart_cf (fun x => cf univ P x) y, show (∑ x : Fin k → T, C (cf univ P x) * ∏ a, X (a, x a)) =
-    linearPart P from rfl, he, ← hbal, cf, coeff_sum]
-  simp only [linearIn_mul, coeff_sum]
-  exact Finset.sum_congr rfl fun S _ => Finset.sum_congr rfl fun δ _ => by
-    rw [← coeff_sum]; exact linearPart_cf _ y
-
 /-! ### The tensor of f_{k,ℓ} -/
 
 /-- The numbers below 2^ℓ are the strings of ℓ bits. -/
@@ -295,7 +267,21 @@ theorem prop_flat_lower_sum {K : Type} [Field K] {I : Type} [Fintype I] [Decidab
     Ten.SumRestr (Ten.push π ((fklTen K k ℓ).withVal fun z => cf univ P (tables z)))
       fun S : bal (univ : Finset (Fin k)) => hubTen K ℓ L π hub S := by
   classical
-  obtain ⟨g, q, he⟩ := lem_balanced_cf hP hk
+  -- Lemma lem:balanced for the coefficients: the coefficient of ∏ x_{a,y_a} is a sum of products
+  obtain ⟨g, q, he⟩ := lem_balanced hP hk
+  replace he : ∀ y,
+      cf univ P y = ∑ S ∈ bal univ, ∑ δ, g S δ (fun a => y a) * q S δ fun a => y a := by
+    intro y
+    have hbal : bal (univ : Finset (Fin k)) =
+        univ.filter fun S => k ≤ 3 * S.card ∧ 3 * S.card ≤ 2 * k := by
+      ext S
+      simp [mem_bal]
+    rw [← linearPart_cf (fun x => cf univ P x) y,
+      show (∑ x : Fin k → _, C (cf univ P x) * ∏ a, X (a, x a)) = linearPart P from rfl, he, ← hbal,
+      cf, coeff_sum]
+    simp only [linearIn_mul, coeff_sum]
+    exact Finset.sum_congr rfl fun S _ => Finset.sum_congr rfl fun δ _ => by
+      rw [← coeff_sum]; exact linearPart_cf _ y
   let part : bal (univ : Finset (Fin k)) → (End k → Fin (2 ^ ℓ)) → K := fun S z =>
     ∑ δ, g S.1 δ (fun a => tables z a) * q S.1 δ fun a => tables z a
   have hsum : Ten.SumRestr ((fklTen K k ℓ).withVal fun z => cf univ P (tables z))

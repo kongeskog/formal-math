@@ -595,25 +595,25 @@ theorem thm_alt_orthogonal (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W W
   rw [thm_alt_lambda hx hμ a h (tr hij) h1 h2 (r1 _) (r1 _)]
   linarith
 
-/-- By additivity, B_a vanishes on p·dg{i}·q and p·dg(S)·q if i is not in S. -/
-theorem BB_singleton_set (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) (p q : GLM (Fin μ)) {i : Fin μ}
-    {S : Finset (Fin μ)} (hi : i ∉ S) : BB w a (X p q {i}) (X p q S) = 0 := by
-  induction S using Finset.induction_on with
-  | empty => simp [BB, nn, X_empty, hx.price.self]
-  | insert j S hj ih =>
-    rw [mem_insert, not_or] at hi
-    have hd : Disjoint {j} S := by simpa using hj
-    have hij : Disjoint ({i} : Finset (Fin μ)) {j} := by simpa using hi.1
-    rw [insert_eq, X_union p q hd, thm_alt_additive hx (transversal_triple.2 ⟨p, q, {i}, {j}, S, hij, by simpa using hi.2, hd, rfl, rfl, rfl⟩),
-      ih hi.2, thm_alt_orthogonal hx hμ a (transversal_X p q hij) (by simp [rank_X]) (by simp [rank_X]), add_zero]
-
 /-- So n_a(p·dg(S)·q) is the sum of the n_a(p·dg{i}·q) over i in S. -/
 theorem nn_X (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) (p q : GLM (Fin μ)) (S : Finset (Fin μ)) :
     nn w a (X p q S) = ∑ i ∈ S, nn w a (X p q {i}) := by
   induction S using Finset.induction_on with
   | empty => simp [nn, X_empty, hx.price.self]
   | insert i S hi ih =>
-    have h1 := BB_singleton_set hx hμ a p q hi
+    -- by additivity, B_a vanishes on p·dg{i}·q and p·dg(S)·q, as i is not in S
+    have h1 : BB w a (X p q {i}) (X p q S) = 0 := by
+      clear ih
+      induction S using Finset.induction_on with
+      | empty => simp [BB, nn, X_empty, hx.price.self]
+      | insert j S hj ih =>
+        rw [mem_insert, not_or] at hi
+        have hd : Disjoint {j} S := by simpa using hj
+        have hij : Disjoint ({i} : Finset (Fin μ)) {j} := by simpa using hi.1
+        rw [insert_eq, X_union p q hd, thm_alt_additive hx (transversal_triple.2
+            ⟨p, q, {i}, {j}, S, hij, by simpa using hi.2, hd, rfl, rfl, rfl⟩), ih hi.2,
+          thm_alt_orthogonal hx hμ a (transversal_X p q hij) (by simp [rank_X]) (by simp [rank_X]),
+          add_zero]
     unfold BB at h1
     rw [sum_insert hi, insert_eq, X_union p q (by simpa using hi), ← ih]
     linarith
