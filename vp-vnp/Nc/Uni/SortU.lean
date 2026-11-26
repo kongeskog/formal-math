@@ -98,7 +98,8 @@ theorem runs_co : Runs (emCo : (Bl K → List (NB M K)) → Zc K → List (Sy M 
 noncomputable def emPs (p : Ps M K) : Zc K → List (Sy M K) := fun z =>
   (p.1.flatMap fun d => emDr d z) ++ (on barSet [Sy.bar] z ++ emCo p.2 z)
 
-theorem emDr_ne (d : Dr K) : ∃ z, (emDr d : Zc K → List (Sy M K)) z ≠ [] := ⟨lsT, by simp [emDr, rw']⟩
+theorem emDr_ne (d : Dr K) : ∃ z, (emDr d : Zc K → List (Sy M K)) z ≠ [] :=
+  ⟨lsT, by simp [emDr, rw']⟩
 
 theorem runs_ps : Runs (emPs : Ps M K → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h := ((runs_dr (A := A) (M := M) (K := K)).kstar fun d => emDr_ne d).mul
@@ -135,7 +136,8 @@ theorem runs_fi : Runs (emFi : List (Bool × List (Bl K)) → Zc K → List (Sy 
           · subst h3
             simp
           · simp [h1, h2, h3]) (fun d => by simp)
-  have h3 := (h2.kstar fun d => ⟨lsT, by simp [rw']⟩).mul (Runs.const (Z := Zc K) (on {lsT} [(Sy.bar : Sy M K)]))
+  have h3 := (h2.kstar fun d => ⟨lsT, by simp [rw']⟩).mul
+    (Runs.const (Z := Zc K) (on {lsT} [(Sy.bar : Sy M K)]))
   exact h3.congr ⟨fun l => (l, ()), Prod.fst, fun l => rfl, fun y => rfl⟩ (fun l z => rfl) fun l => by simp
 
 end Nc.Uni
