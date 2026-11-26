@@ -38,20 +38,21 @@ theorem prop_extend_product (π : L → I' → I) (θ : L → ℝ) (hθ : ∀ l,
   · exact Finset.prod_le_prod (fun l _ => Real.rpow_nonneg (φ.nonneg _) _) fun l _ =>
       Real.rpow_le_rpow (φ.nonneg _) ((def_spectral_congr φ).1 (h.push _)) (hθ l)
 
-/-- Proof of Proposition prop:extend: "Suppose that ιA = ∑ s_j, each s_j a restriction of b_j. As ιA has trivial index sets
-outside ι(I), so has every s_j; so s_j = ιa_j with ∑ a_j = A. Push-forwards preserve restrictions, so a_j = π_l s_j is a
-restriction of π_l b_j for every l." -/
-theorem prop_extend_cover (ι : I → I') {A : Ten K I} {κ : Type} [Fintype κ] {b : κ → Ten K I'}
-    (h : Ten.SumRestr (Ten.push ι A) b) :
-    ∃ c : κ → Ten K I, Ten.SumRestr A c ∧
-      ∀ k, ∀ π : I' → I, (∀ i, π (ι i) = i) → Ten.Restr (c k) (Ten.push π (b k)) := by
-  obtain ⟨v, hv, hr⟩ := Ten.sumRestr_iff.1 h
+/-- Proof of Proposition prop:extend: "So φ(A) ≤ ∑ φ(a_j) ≤ ∑ f(b_j)", for every cover (b_j) of
+ιA. -/
+theorem prop_extend_lower (ι : I → I') (π : L → I' → I) (hπ : ∀ l i, π l (ι i) = i) (θ : L → ℝ)
+    (hθ : ∀ l, 0 ≤ θ l)
+    (hθ1 : ∑ l, θ l = 1) (φ : Spec K I) (A : Ten K I) {κ : Type} [Fintype κ] (b : κ → Ten K I')
+    (hb : SumRestr (Ten.push ι A) b) : φ.F A ≤ ∑ k, extendProduct π θ φ (b k) := by
+  -- "Suppose that ιA = ∑ s_j, each s_j a restriction of b_j. As ιA has trivial index sets outside
+  -- ι(I), so has every s_j; so s_j = ιa_j with ∑ a_j = A. Push-forwards preserve restrictions, so
+  -- a_j = π_l s_j is a restriction of π_l b_j for every l."
+  obtain ⟨v, hv, hr'⟩ := Ten.sumRestr_iff.1 hb
   let emb : (∀ i, A.ι i) → ∀ q, (Ten.push ι A).ι q := fun x q j => x j.1
-  refine ⟨fun k => A.withVal fun x => v k (emb x), Ten.SumRestr.of_withVal A _ fun x => ?_,
-    fun k π hπ => ?_⟩
-  · exact hv (emb x)
-  · have h1 : Ten.Restr (Ten.push ι (A.withVal fun x => v k (emb x)))
-        ((Ten.push ι A).withVal (v k)) := by
+  set a : κ → Ten K I := fun k => A.withVal fun x => v k (emb x)
+  have hr : ∀ k, ∀ π' : I' → I, (∀ i, π' (ι i) = i) → Ten.Restr (a k) (Ten.push π' (b k)) := by
+    intro k π' hπ'
+    have h1 : Ten.Restr (Ten.push ι (a k)) ((Ten.push ι A).withVal (v k)) := by
       refine Ten.Restr.of_map' (fun q x => x) fun x => ?_
       rw [Ten.push_val]
       change v k _ = v k _
@@ -59,18 +60,11 @@ theorem prop_extend_cover (ι : I → I') {A : Ten K I} {κ : Type} [Fintype κ]
       funext q j
       obtain ⟨j, rfl⟩ := j
       rfl
-    have h2 := (h1.trans (hr k)).push π
-    have h3 : π ∘ ι = id := funext hπ
-    have h4 := tensor_push_comp π ι (A.withVal fun x => v k (emb x))
-    rw [h3] at h4
-    exact (h4.trans (Equi.push_id _)).2.trans h2
-
-/-- Proof of Proposition prop:extend: "So φ(A) ≤ ∑ φ(a_j) ≤ ∑ f(b_j)", for every cover (b_j) of ιA. -/
-theorem prop_extend_lower (ι : I → I') (π : L → I' → I) (hπ : ∀ l i, π l (ι i) = i) (θ : L → ℝ) (hθ : ∀ l, 0 ≤ θ l)
-    (hθ1 : ∑ l, θ l = 1) (φ : Spec K I) (A : Ten K I) {κ : Type} [Fintype κ] (b : κ → Ten K I')
-    (hb : SumRestr (Ten.push ι A) b) : φ.F A ≤ ∑ k, extendProduct π θ φ (b k) := by
-  obtain ⟨a, ha, hr⟩ := prop_extend_cover ι hb
-  refine (φ.le_sum A a ha).trans (Finset.sum_le_sum fun k _ => ?_)
+    have h4 := tensor_push_comp π' ι (a k)
+    rw [show π' ∘ ι = id from funext hπ'] at h4
+    exact (h4.trans (Equi.push_id _)).2.trans ((h1.trans (hr' k)).push π')
+  refine (φ.le_sum A a (Ten.SumRestr.of_withVal A _ fun x => hv (emb x))).trans
+    (Finset.sum_le_sum fun k _ => ?_)
   -- φ(a_j) is at most every factor φ(π_l b_j), so at most their weighted geometric mean
   rcases (φ.nonneg (a k)).eq_or_lt with h0 | h0
   · rw [← h0]

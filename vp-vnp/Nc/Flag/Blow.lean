@@ -148,20 +148,4 @@ theorem DM_blow (e : μ × κ ↪ ι) (f : Matrix ι ι F2 → ℝ) (M : Matrix 
       simp only [sum_const, card_univ, nsmul_eq_mul]
       ring
 
-variable {G : Type*} [Group G]
-
-theorem DM_digit (l : Len G) {m : ℕ} {s : ℝ} (hC : Contr l m s)
-    (τ : Matrix ι ι F2 → G) (hτ : ∀ M N, τ (M + N) = τ M * τ N) (e : Fin m × κ ↪ ι) (i : Fin m) :
-    DM (fun M => l.val (τ M)) (dg ((univ : Finset (Fin m × κ)).map e)) ≤
-      s ^ 2 * DM (fun M => l.val (τ M)) (dg ((({i} : Finset (Fin m)) ×ˢ univ).map e)) := by
-  have h0 : (0 : ℝ) < (Fintype.card (GLM (Fin m)) : ℝ) ^ 2 := by
-    positivity
-  refine le_of_mul_le_mul_left ?_ h0
-  rw [mul_left_comm, ← univ_product_univ, ← blow_dg, ← blow_dg, ← DM_blow, ← DM_blow, mul_sum]
-  refine sum_le_sum fun p _ => ?_
-  rw [mul_sum]
-  refine sum_le_sum fun q _ => ?_
-  exact hC (fun N => τ ((p : Matrix ι ι F2) * blow e N * (q : Matrix ι ι F2)))
-    (fun M N => by rw [blow_add, Matrix.mul_add, Matrix.add_mul, hτ]) i
-
 end Nc.Flag

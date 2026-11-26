@@ -82,24 +82,11 @@ theorem meanLength_len (hW : ∀ n, IsPrice K (W n))
   add := (lem_means_lip hW hΛ).len_add
   q x v y u o o' w w' τ hτ := (lem_means_lip hW hΛ).len_q x v y u o o' w w' τ hτ
 
-/-- N is an even subadditive function with (Q), and homogeneous. -/
-theorem meanNorm_len (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) :
-    Cat.Len (meanNorm W) ∧ Cat.Homog (meanNorm W) := by
-  obtain ⟨N, hN, hom, hle, hgl⟩ := (meanLength_len hW hΛ).exists_homog
-  have e : N = meanNorm W := by
-    funext g
-    refine le_antisymm (le_meanNorm W g fun S _ => ?_) (hgl g _ fun S hS => ?_)
-    · rw [mul_comm, ← hom S g]
-      exact hle _
-    · have := meanNorm_le W g hS
-      rwa [le_div_iff₀ (by exact_mod_cast hS)] at this
-  exact e ▸ ⟨hN, hom⟩
-
 /-! ### The proof of Lemma lem:means
 
 The steps after "so does N" use of N only that it is even, subadditive and homogeneous and satisfies (Q). This is
-Cat.Len N and Cat.Homog N, and it holds for N = meanNorm W by meanNorm_len. As in the paper c = a + b, e = a − b,
+Cat.Len N and Cat.Homog N, and it holds for N = meanNorm W (shown at the start of
+lem_means_norm). As in the paper c = a + b, e = a − b,
 f = N(c), f′ = N(e). -/
 
 section Parallelogram
@@ -369,7 +356,15 @@ prices W_n on two sheets of ℤ² with W_n(P,P+g) ≤ Λ|g| for points of one sh
 theorem lem_means_norm (hW : ∀ n, IsPrice K (W n))
     (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (a b : ℤ × ℤ) :
     meanNorm W (a + b) ^ 2 + meanNorm W (a - b) ^ 2 = 2 * meanNorm W a ^ 2 + 2 * meanNorm W b ^ 2 := by
-  obtain ⟨hN, hom⟩ := meanNorm_len hW hΛ
+  -- N is an even subadditive function with (Q), and homogeneous
+  obtain ⟨N, hN, hom, hle, hgl⟩ := (meanLength_len hW hΛ).exists_homog
+  obtain rfl : N = meanNorm W := by
+    funext g
+    refine le_antisymm (le_meanNorm W g fun S _ => ?_) (hgl g _ fun S hS => ?_)
+    · rw [mul_comm, ← hom S g]
+      exact hle _
+    · have := meanNorm_le W g hS
+      rwa [le_div_iff₀ (by exact_mod_cast hS)] at this
   refine le_antisymm (by linarith [lem_means_parallelogram_le hN hom a b]) ?_
   -- "applied to a+b, a−b it gives equality"
   have h := lem_means_parallelogram_le hN hom (a + b) (a - b)

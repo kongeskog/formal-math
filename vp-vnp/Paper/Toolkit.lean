@@ -363,23 +363,6 @@ theorem lem_toolkit_f_same {x u v y a b : Y} {h δ s : ℝ} (hp : dist x u = h) 
     rw [← mul_add, h8]
   constructor <;> nlinarith
 
-/-- The values of |xb|² and |ay|² from lem_toolkit_f_same, inserted into lem_toolkit_f_parts: the formula for |ab|², still in
-terms of the two diagonals. -/
-theorem lem_toolkit_f_parallelogram {x u v y a b : Y} {h δ s t : ℝ} (hp : dist x u = h) (hp' : dist y v = h)
-    (hq : dist u v = δ) (hq' : dist x y = δ)
-    (hd : 2 * h ^ 2 + 2 * δ ^ 2 ≤ dist x v ^ 2 + dist u y ^ 2)
-    (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
-    (ha : IsPt x u s a) (hb : IsPt y v t b) :
-    dist a b ^ 2 = (1 - s - t) * δ ^ 2 + t * dist x v ^ 2 + s * dist u y ^ 2
-      - s * (1 - s) * h ^ 2 - t * (1 - t) * h ^ 2 - 2 * s * t * h ^ 2 := by
-  have h1 := lem_toolkit_f_parts hp hp' hq hq' hd hs0 hs1 ht0 ht1 ha hb
-  obtain ⟨a', ha'⟩ := lem_toolkit_a_isPt x u ht0 ht1
-  obtain ⟨b', hb'⟩ := lem_toolkit_a_isPt y v hs0 hs1
-  have h2 := (lem_toolkit_f_same hp hp' hq hq' hd ht0 ht1 ha' hb).1
-  have h3 := (lem_toolkit_f_same hp hp' hq hq' hd hs0 hs1 ha hb').2
-  rw [h2, h3] at h1
-  linarith
-
 /-- **Paper: Lemma lem:toolkit (f).** "Flat rectangles: if |xy| = |uv| = δ, |xu| = |yv| = h and both
 diagonals have squared length δ² + h², and a ∈ [x,u], b ∈ [y,v] have |xa| = sh, |yb| = th, then
 |ab|² = δ² + h²(s−t)²." Here a and b are given by the inequality of (a) (Cat.IsPt), and the
@@ -390,13 +373,19 @@ theorem lem_toolkit_f_isPt {x u v y a b : Y} {h δ s t : ℝ} (hp : dist x u = h
     (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (ha : IsPt x u s a) (hb : IsPt y v t b) :
     dist a b ^ 2 = δ ^ 2 + (s - t) ^ 2 * h ^ 2 := by
-  have hab := lem_toolkit_f_parallelogram hp hp' hq hq' (by linarith) hs0 hs1 ht0 ht1 ha hb
+  -- the values of |xb|² and |ay|² from lem_toolkit_f_same, inserted into lem_toolkit_f_parts
+  have hd2 : 2 * h ^ 2 + 2 * δ ^ 2 ≤ dist x v ^ 2 + dist u y ^ 2 := by linarith
+  have h1 := lem_toolkit_f_parts hp hp' hq hq' hd2 hs0 hs1 ht0 ht1 ha hb
+  obtain ⟨a', ha'⟩ := lem_toolkit_a_isPt x u ht0 ht1
+  obtain ⟨b', hb'⟩ := lem_toolkit_a_isPt y v hs0 hs1
+  rw [(lem_toolkit_f_same hp hp' hq hq' hd2 ht0 ht1 ha' hb).1,
+    (lem_toolkit_f_same hp hp' hq hq' hd2 hs0 hs1 ha hb').2] at h1
   have h7 := (lem_toolkit_b x v u y).2.1
   rw [hp, hq, hq', dist_comm v y, hp'] at h7
   have h8 : dist x v ^ 2 = h ^ 2 + δ ^ 2 := by linarith
   have h9 : dist u y ^ 2 = h ^ 2 + δ ^ 2 := by linarith
-  rw [hab, h8, h9]
-  ring
+  rw [h8, h9] at h1
+  linarith
 
 end Toolkit
 

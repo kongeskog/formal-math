@@ -25,13 +25,28 @@ theorem prop_grid {R : Type} [CommRing R] (h : R) (hh : h * 2 = 1) {N V K : Type
     (hw : Function.Surjective w) (W : N → Bool → Bool → R) {S : ℕ} (hS : 3 * Fintype.card N ≤ S) :
     ∃ M : Matrix (Fin S) (Fin S) R, (∀ i j, GridEntry h w W (M i j)) ∧
       M.permanent = ∑ x : V → Bool, ∑ r : K → Bool, ∏ n, W n (x (v n)) (r (w n)) := by
-  obtain ⟨σ, ρ, hρ, H⟩ := exists_grid (R := R) v w hv hw
+  -- a sum over two families of bits is a permanent
+  obtain ⟨σ, s1, s2⟩ := exists_perm_fibres v
+  obtain ⟨ρ, hρ, r2⟩ := exists_perm_fibres w
+  have H : (gridMatrix h σ ρ W).permanent =
+      ∑ x : V → Bool, ∑ r : K → Bool, ∏ n, W n (x (v n)) (r (w n)) := by
+    rw [gridMatrix_permanent h hh]
+    refine Eq.trans ?_ (sum_invariant hv s1 s2 fun s => ∑ r : K → Bool, ∏ n, W n (s n) (r (w n)))
+    refine Finset.sum_congr rfl fun s _ => ?_
+    by_cases hs : ∀ n, s (σ n) = s n
+    · rw [if_pos hs]
+      refine Eq.trans ?_ (sum_invariant hw hρ r2 fun r => ∏ n, W n (s n) (r n))
+      refine Finset.sum_congr rfl fun r _ => ?_
+      simp [hs]
+    · rw [if_neg hs]
+      exact Finset.sum_eq_zero fun r _ => if_neg fun hc => hs hc.1
+  clear s1 s2 r2
   have hcard : Fintype.card (N × Option Bool) ≤ S := by
     refine le_trans (le_of_eq ?_) hS
     simp only [Fintype.card_prod, Fintype.card_option, Fintype.card_bool]
     ring
   obtain ⟨M, hM, hent⟩ := exists_permanent_fin (gridMatrix h σ ρ W) hcard
-  refine ⟨M, fun i j => ?_, hM.trans (H h hh W)⟩
+  refine ⟨M, fun i j => ?_, hM.trans H⟩
   rcases hent i j with (h0 | h1) | ⟨⟨n, q⟩, d, he⟩
   · exact Or.inl h0
   · exact Or.inr (Or.inl h1)

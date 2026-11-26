@@ -67,27 +67,6 @@ theorem sum_invariant [Fintype V] [DecidableEq V] {v : N → V} (hv : Function.S
   · intros
     rfl
 
-/-- A sum over two families of bits is a permanent. -/
-theorem exists_grid {K : Type*} [Fintype V] [DecidableEq V] [Fintype K] [DecidableEq K] (v : N → V) (w : N → K)
-    (hv : Function.Surjective v) (hw : Function.Surjective w) :
-    ∃ σ ρ : Equiv.Perm N, (∀ n, w (ρ n) = w n) ∧ ∀ (h : R) (_ : h * 2 = 1) (W : N → Bool → Bool → R),
-      (gridMatrix h σ ρ W).permanent =
-        ∑ x : V → Bool, ∑ r : K → Bool, ∏ n, W n (x (v n)) (r (w n)) := by
-  classical
-  obtain ⟨σ, s1, s2⟩ := exists_perm_fibres v
-  obtain ⟨ρ, r1, r2⟩ := exists_perm_fibres w
-  refine ⟨σ, ρ, r1, fun h hh W => ?_⟩
-  rw [gridMatrix_permanent h hh]
-  refine Eq.trans ?_ (sum_invariant hv s1 s2 fun s => ∑ r : K → Bool, ∏ n, W n (s n) (r (w n)))
-  refine Finset.sum_congr rfl fun s _ => ?_
-  by_cases hs : ∀ n, s (σ n) = s n
-  · rw [if_pos hs]
-    refine Eq.trans ?_ (sum_invariant hw r1 r2 fun r => ∏ n, W n (s n) (r n))
-    refine Finset.sum_congr rfl fun r _ => ?_
-    simp [hs]
-  · rw [if_neg hs]
-    exact Finset.sum_eq_zero fun r _ => if_neg fun hc => hs hc.1
-
 end Fibres
 
 end Nc
