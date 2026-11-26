@@ -118,11 +118,10 @@ theorem role_congr {o' : M.N → Fin U1} {y' : Uid A U0 M.N U1 → UW ub} (ho : 
     funext e
     rw [slotBits_congr (h1 e)]
 
-theorem role_ne_zero (h : role M x p t ids o y ≠ 0) :
-    ∃ (i : Fin (t * ub) → (M.kind x).I)
-      (g : ∀ k, ∀ ν : (M.kind x).CnAt p, Fin ((M.kind x).len (i k) ν) → Bool),
-      (∀ ν : (M.kind x).CnAt p, ChOk ⟨x, ν.1⟩ (o ⟨x, ν.1⟩).1
-        (chString (M.kind x).lab (fun j => (M.kind x).len j ν) i fun k => g k ν) y) := by
+/-- The roles at the ends of a channel force its new units to be present. -/
+theorem role_new_ne_none (h : role M x p t ids o y ≠ 0) {ν : (M.kind x).Cn}
+    (hν : (M.kind x).c ν = p ∨ (M.kind x).d ν = p) {k : Fin U1} (hk : k ≤ o ⟨x, ν⟩) :
+    y (.new ⟨x, ν⟩ k) ≠ none := by
   classical
   rw [role] at h
   split_ifs at h
@@ -131,14 +130,8 @@ theorem role_ne_zero (h : role M x p t ids o y ≠ 0) :
   obtain ⟨i, -, h⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   obtain ⟨g, -, h⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   split_ifs at h with hc
-  · exact ⟨i, g, hc⟩
+  · exact (hc ⟨ν, hν⟩).ne_none hk
   · exact absurd rfl h
-
-/-- The roles at the ends of a channel force its new units to be present. -/
-theorem role_new_ne_none (h : role M x p t ids o y ≠ 0) {ν : (M.kind x).Cn}
-    (hν : (M.kind x).c ν = p ∨ (M.kind x).d ν = p) {k : Fin U1} (hk : k ≤ o ⟨x, ν⟩) : y (.new ⟨x, ν⟩ k) ≠ none := by
-  obtain ⟨i, g, hg⟩ := role_ne_zero h
-  exact (hg ⟨ν, hν⟩).ne_none hk
 
 end Role
 
@@ -230,32 +223,6 @@ theorem sum_outTab (hub : 0 < ub) {m B : ℕ} (hm : L.Le m) (hB : B * (m + L.lam
     rw [Finset.sum_comm]
     simp
   rw [swap, ← L.pow B X]
-
-/-- Impossible outcomes contribute nothing. -/
-theorem sum_codeTab_zero (hub : 0 < ub) {m B : ℕ} (hm : L.Le m) (hB : B * (m + L.lam) / ub + 1 ≤ U1)
-    (X : L.Ro → Fin B → L.Sl → Bool) (o : L.Cn → Fin U1)
-    (h : ¬ ∃ i : Fin B → L.I, ∀ ν, (o ν).1 = (∑ k, (L.lam + L.len (i k) ν)) / ub) :
-    (∑ z : L.Cn → Fin U1 → UW ub, ∏ p, codeTab L.c L.d (chCode L ub U1 B) p (outTab L ub X o p) z) = 0 := by
-  classical
-  rcases isEmpty_or_nonempty L.Ro with hRo | hRo
-  · have hCn : IsEmpty L.Cn := ⟨fun ν => hRo.elim (L.c ν)⟩
-    have hSl : IsEmpty L.Sl := ⟨fun e => hRo.elim (L.a e)⟩
-    have := L.pow B X
-    -- with `L.Sl` empty (`hSl`) `this` says `1 = 0` in `F`
-    simp_all
-  rw [contract (fun ν => chCode_injective hub hm hB ν) (L.conn_pow B) (outTab L ub X o)]
-  refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun g _ => ?_
-  by_contra hne
-  refine h ⟨i, fun ν => ?_⟩
-  have h1 : outTab L ub X o (L.c ν) i (fun ν => g ν) ≠ 0 := fun h0 =>
-    hne (Finset.prod_eq_zero (Finset.mem_univ (L.c ν)) h0)
-  rw [outTab] at h1
-  split_ifs at h1 with h2
-  swap
-  · exact absurd rfl h1
-  have h3 := h2 ⟨ν, Or.inl rfl⟩
-  rw [ucount, length_chString, Nat.add_right_cancel_iff] at h3
-  exact h3.symm
 
 end Law
 
@@ -461,7 +428,25 @@ theorem move_zero (hub : 0 < ub) {m : ℕ} (hm : (M.kind x).Le m)
       role M x p t (fun e => ids e.1) (upd M o x oo)
         (ext (hold0 M.np) (hold1 M.np) (newUnits M x (upd M o x oo)) y z (M.part x p))) = 0 := by
   rw [move_outcome x o Seen hSeen hy ids hids ht hne oo]
-  exact sum_codeTab_zero hub hm hB _ oo hoo
+  rcases isEmpty_or_nonempty (M.kind x).Ro with hRo | hRo
+  · have hCn : IsEmpty (M.kind x).Cn := ⟨fun ν => hRo.elim ((M.kind x).c ν)⟩
+    have hSl : IsEmpty (M.kind x).Sl := ⟨fun e => hRo.elim ((M.kind x).a e)⟩
+    have := (M.kind x).pow (t * ub) fun _ _ e => hSl.elim e
+    -- with `(M.kind x).Sl` empty (`hSl`) `this` says `1 = 0` in `F`
+    simp_all
+  rw [contract (fun ν => chCode_injective hub hm hB ν) ((M.kind x).conn_pow _)]
+  refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun g _ => ?_
+  by_contra hne
+  refine hoo ⟨i, fun ν => ?_⟩
+  have h1 : outTab _ ub _ oo ((M.kind x).c ν) i (fun ν => g ν) ≠ 0 := fun h0 =>
+    hne (Finset.prod_eq_zero (Finset.mem_univ ((M.kind x).c ν)) h0)
+  rw [outTab] at h1
+  split_ifs at h1 with h2
+  swap
+  · exact absurd rfl h1
+  have h3 := h2 ⟨ν, Or.inl rfl⟩
+  rw [ucount, length_chString, Nat.add_right_cancel_iff] at h3
+  exact h3.symm
 
 end Identity
 

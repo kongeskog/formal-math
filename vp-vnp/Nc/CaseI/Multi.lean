@@ -107,20 +107,6 @@ theorem cf_mul (S : Finset (Fin k)) (P Q : MvPolynomial (Fin k × T) F) (x : Fin
   · intro A hA
     rfl
 
-theorem cf_X {S : Finset (Fin k)} (hS : 2 ≤ S.card) (i : Fin k × T) (x : Fin k → T) :
-    cf S (X i : MvPolynomial (Fin k × T) F) x = 0 := by
-  classical
-  rw [cf, coeff_X, if_neg]
-  intro h
-  obtain ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.1 (by omega : 1 < S.card)
-  have h1 := DFunLike.congr_fun h (a, x a)
-  have h2 := DFunLike.congr_fun h (b, x b)
-  rw [mono_apply, if_pos ⟨ha, rfl⟩, Finsupp.single_apply] at h1
-  rw [mono_apply, if_pos ⟨hb, rfl⟩, Finsupp.single_apply] at h2
-  split_ifs at h1 with e1
-  split_ifs at h2 with e2
-  exact hab (Prod.ext_iff.1 (e1.symm.trans e2)).1
-
 theorem cf_C {S : Finset (Fin k)} (hS : S.Nonempty) (c : F) (x : Fin k → T) :
     cf S (C c : MvPolynomial (Fin k × T) F) x = 0 := by
   classical
@@ -232,8 +218,17 @@ theorem dec_gate (hl : ∀ γ < s, IsStep l γ) (hk : 2 ≤ k) (γ : ℕ) (hγ :
     rcases hl γ hγ with ⟨i, h1⟩ | ⟨c, h1⟩ | ⟨i, hi, j, hj, h1⟩ | ⟨i, hi, j, hj, h1⟩
     · have : cf S (l γ) = fun _ => 0 := by
         funext x
-        rw [h1]
-        exact cf_X (by omega) i x
+        -- a variable has no monomial over a set `S` of two or more indices
+        rw [h1, cf, coeff_X, if_neg]
+        intro h
+        obtain ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.1 (by omega : 1 < S.card)
+        have h2 := DFunLike.congr_fun h (a, x a)
+        have h3 := DFunLike.congr_fun h (b, x b)
+        rw [mono_apply, if_pos ⟨ha, rfl⟩, Finsupp.single_apply] at h2
+        rw [mono_apply, if_pos ⟨hb, rfl⟩, Finsupp.single_apply] at h3
+        split_ifs at h2 with e1
+        split_ifs at h3 with e2
+        exact hab (Prod.ext_iff.1 (e1.symm.trans e2)).1
       rw [this]
       exact Dec.zero S
     · have : cf S (l γ) = fun _ => 0 := by

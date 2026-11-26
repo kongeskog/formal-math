@@ -19,12 +19,6 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA U0 U1 : ℕ} {T : Tower h b D 
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T}
 variable {Inp ι : Type} {Dd Y p c : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
 
-theorem ind_eq {X X' : Type} {P : X → Prop} {Q : X' → Prop} {x : X} {y : X'} (hi : P x ↔ Q y) :
-    ind P x = ind Q y := by
-  by_cases hp : P x
-  · rw [ind_true hp, ind_true (hi.1 hp)]
-  · rw [ind_false hp, ind_false fun hq => hp (hi.2 hq)]
-
 section Loads
 
 variable {L : Inp → Tg T m AA → ℕ} (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hb : 0 < b)
@@ -96,7 +90,7 @@ theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv T FL) : CY Dd H 
     intro x
     rw [tmin_sum (hlt x)]
     refine Finset.sum_congr rfl fun s _ => ?_
-    exact ind_eq Iff.rfl
+    rfl
   refine CY.congr ?_ fun x => (e x).symm
   refine CY.sum hA _ (by simp) (fun s hs => (h1 s hs).toCY) fun x => ?_
   rw [← e x]

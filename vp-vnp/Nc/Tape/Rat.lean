@@ -30,7 +30,8 @@ theorem add {f g : Series F Ω} (hf : Rational f) (hg : Rational g) : Rational (
   obtain ⟨Q₂, _, r₂, rfl⟩ := hg
   refine ⟨Q₁ ⊕ Q₂, inferInstance, r₁.add r₂, ?_⟩
   ext o
-  exact Rep.add_series r₁ r₂ o
+  rw [Rep.series, Rep.add_tail]
+  simp [Rep.series, Rep.add]
 
 theorem mul {f g : Series F Ω} (hf : Rational f) (hg : Rational g) :
     Rational (Series.mul f g) := by
@@ -38,13 +39,22 @@ theorem mul {f g : Series F Ω} (hf : Rational f) (hg : Rational g) :
   obtain ⟨Q₂, _, r₂, rfl⟩ := hg
   refine ⟨Q₁ ⊕ Q₂, inferInstance, r₁.mul r₂, ?_⟩
   ext o
-  exact Rep.mul_series r₁ r₂ o
+  rw [Rep.series, Rep.mul_tail, Series.mul, Finset.sum_range_succ']
+  have e : (r₁.mul r₂).lam = Sum.elim r₁.lam ((r₁.lam ⬝ᵥ r₁.gam) • r₂.lam) := rfl
+  rw [e, elim_dot, dotProduct_sum]
+  congr 1
+  · refine Finset.sum_congr rfl fun k _ => ?_
+    simp [Rep.series, mul_comm]
+  · simp [Rep.series, Rep.tail]
 
 theorem kstar {f : Series F Ω} (hf : Rational f) : Rational (Series.kstar f) := by
   obtain ⟨Q₁, _, r₁, rfl⟩ := hf
   refine ⟨Unit ⊕ Q₁, inferInstance, r₁.star, ?_⟩
   ext o
-  exact Rep.star_series r₁ o
+  rw [Rep.series, Rep.star_tail]
+  have e : r₁.star.lam = Sum.elim (1 : Unit → F) (0 : Q₁ → F) := rfl
+  rw [e, elim_dot]
+  simp [dotProduct]
 
 theorem smul {f : Series F Ω} (c : F) (hf : Rational f) : Rational (c • f) := by
   obtain ⟨Q, _, r, rfl⟩ := hf

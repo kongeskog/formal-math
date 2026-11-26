@@ -23,18 +23,16 @@ def bws (ws : List (List Bool)) : List (Sy M K) := ws.flatMap bw
 
 theorem bws_cons (w : List Bool) (ws : List (List Bool)) : (bws (w :: ws) : List (Sy M K)) = bw w ++ bws ws := rfl
 
-theorem bw_inj {w w' : List Bool} {u v : List (Sy M K)} (h : bw w ++ u = bw w' ++ v) : w = w' := by
+theorem bws_inj : Function.Injective (bws : List (List Bool) → List (Sy M K)) := by
+  refine flatMap_inj (fun w => by simp [bw]) ?_
+  intro w w' u v h
+  -- a word of bits is cut off by its semicolon
   simp only [bw, List.append_assoc, List.singleton_append] at h
   have hs : ∀ w : List Bool, (Sy.semi : Sy M K) ∉ w.map .bit := by
     intro w hw
     obtain ⟨b, -, hb⟩ := List.mem_map.1 hw
     exact absurd hb (by simp)
   exact List.map_injective_iff.2 (fun a b e => by simpa using e) (cut_inj (hs w) (hs w') h).1
-
-theorem bws_inj : Function.Injective (bws : List (List Bool) → List (Sy M K)) := by
-  refine flatMap_inj (fun w => by simp [bw]) ?_
-  intro w w' u v h
-  exact bw_inj h
 
 /-- The contents of the records, with the mark. -/
 def oc (c : List (Bl K)) : List (Option (Bl K)) := c.map some ++ [none]

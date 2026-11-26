@@ -34,17 +34,14 @@ theorem length_encW {l : List (Bool × List (Option (Bl K)))} {n : ℕ} (h : ∀
     rw [encW_cons, List.length_append, length_rw', h r (by simp), ih fun r hr => h r (by simp [hr]), List.length_cons]
     ring
 
-theorem length_rot {n : ℕ} {j : ℕ} (hj : j ≤ n) (x : Fin n → Bl K) : (rot j x).length = n + 1 := by
-  simp [rot]
-  omega
-
 theorem length_encW_recs {n : ℕ} {j : ℕ} (hj : j ≤ n) (l : List (Rc n (Bl K))) :
     (encW (recs j l) : List (Sy M K)).length = l.length * (n + 3) := by
   rw [length_encW (n := n + 1)]
   · simp [recs]
   · intro r hr
     obtain ⟨r', -, rfl⟩ := List.mem_map.1 hr
-    exact length_rot hj _
+    simp [rot]
+    omega
 
 theorem canon_length {n : ℕ} (l : List (Rc n (Bl K))) (k j : ℕ) (hjk : j + k = n) :
     (canon l k j : List (Ps M K)).length = k ∧ ∀ p ∈ (canon l k j : List (Ps M K)),

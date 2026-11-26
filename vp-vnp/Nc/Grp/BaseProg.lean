@@ -118,19 +118,6 @@ theorem ex_sim : ∃ F κ, ∀ (T : ℕ) (q q' : Fin (Fintype.card Q)),
   refine h3.mono ?_
   nlinarith
 
-theorem length_of_mem_pushOf {z : Letter S Unit Γ} {j : Fin (nT S + nT S)} {a : List Bool} (ha : a ∈ pushOf cb z j) :
-    a.length ≤ c := by
-  cases z with
-  | none => simp [pushOf] at ha
-  | some z =>
-    obtain ⟨ch, x⟩ := z
-    simp only [pushOf] at ha
-    split_ifs at ha
-    · rw [List.mem_singleton] at ha
-      subst ha
-      simp [code]
-    · simp at ha
-
 /-- The lengths of what is simulated, and its letters. -/
 theorem exists_simSem_length : ∃ κ, ∀ (T : ℕ) (q q' : Fin (Fintype.card Q)), ∀ r ∈ simSem θ mu cb T q q',
     (∀ j, (r.2 j).length ≤ κ * T) ∧ ∀ j, ∀ a ∈ r.2 j, a.length ≤ c := by
@@ -144,7 +131,15 @@ theorem exists_simSem_length : ∃ κ, ∀ (T : ℕ) (q q' : Fin (Fintype.card Q
       obtain ⟨o, ho, rfl⟩ := List.mem_map.1 hq
       obtain ⟨z, -, rfl⟩ := List.mem_map.1 ho
       rcases List.mem_append.1 ha with ha | ha
-      · exact length_of_mem_pushOf cb ha
+      · -- what a letter pushes is a code word, of length at most `c`
+        rcases z with _ | ⟨ch, x⟩
+        · simp [pushOf] at ha
+        simp only [pushOf] at ha
+        split_ifs at ha
+        · rw [List.mem_singleton] at ha
+          subst ha
+          simp [code]
+        · simp at ha
       · exact hm j a ha) (fun j a ha => by simp at ha) s hs
   split_ifs at hz
   · rw [List.mem_singleton] at hz
