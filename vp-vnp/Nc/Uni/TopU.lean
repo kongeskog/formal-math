@@ -105,7 +105,7 @@ theorem parse {S : A} (a : Tree) : ∀ (B : ℤ) (σ : St supp) (k : ℕ) (rest 
       have ok3 := ok2.nx (θ := θ) (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0)
       refine (ihb (B + 1) (nx θ σ2 (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0)) (σ2.n + 1) rest ok3 rfl rfl ?_ ?_).mono
         (by linarith)
-      · rw [inpA _ _ (by simp) (by simp), hi2]
+      · rw [inpA, hi2]
       · intro σ4 v' ok4 hm4 h41 h42 hh4 hi4 hv'
         have hfr' : ((.PB, ![σ4.regs 2, σ2.regs 1, σ.regs 1, σ2.regs 0]) : Rec Kd) ∈ σ4.heap := by
           rw [h42]
@@ -114,7 +114,7 @@ theorem parse {S : A} (a : Tree) : ∀ (B : ℤ) (σ : St supp) (k : ℕ) (rest 
         subst h41
         refine (hk (nx θ σ4 (.inl .pb) (σ2.regs 1) (σ.regs 1) (σ2.regs 0)) (σ4.n + 1) (ok4.nx _ _ _ _) rfl rfl h1
           (fun _ hc => heap_nx _ _ _ _ _ (hh4 (heap_nx _ _ _ _ _ (hh2 (heap_nx _ _ _ _ _ hc))))) ?_ ?_).mono (by linarith)
-        · rw [inpA _ _ (by simp) (by simp), hi4]
+        · rw [inpA, hi4]
         · refine ⟨σ2.regs 1, σ4.regs 1, σ4.regs 0, new_nx (θ := θ) σ4 (.inl .pb) (σ2.regs 1) (σ.regs 1) (σ2.regs 0), ?_, ?_⟩
           · exact ((hv.mono (heap_nx _ _ _ _ _)).mono hh4).mono (heap_nx _ _ _ _ _)
           · exact hv'.mono (heap_nx _ _ _ _ _)
@@ -167,7 +167,7 @@ theorem KS_halt {H : List (Rec Kd)} {k : ℕ} (hk : ((.HT, ![k, 0, 0, 0]) : Rec 
     exact hh hk
   refine rstep ok hm rfl hht .rht rfl rfl rfl ?_
   refine (Mach.SumTo.halt (P := UM θ supp) rfl ?_ (fun r => src_ne r)).mono (by norm_num)
-  rw [inpA _ _ (by simp) (by simp), hi]
+  rw [inpA, hi]
 
 theorem pv_eq (z : Tree) : pv θ z = tot (fun _ => 1) (evl θ (Fm.ofTree z.hd) z.tl) := by
   simp [pv, tot, pval]
@@ -185,7 +185,7 @@ theorem KS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h 
   subst h31
   have ok4 := ok3.nx (θ := θ) (.inl .pe) k s0 s1
   obtain ⟨p, q, s, hrec, hp', hq'⟩ := (hv.mono (heap_nx (θ := θ) σ3 (.inl .pe) k s0 s1)).load ok4
-  have hi4 : (nx θ σ3 (.inl .pe) k s0 s1).inp = [] := (inpA _ _ (by simp) (by simp) _ _ _).trans hi3
+  have hi4 : (nx θ σ3 (.inl .pe) k s0 s1).inp = [] := (inpA).trans hi3
   have hh4 : H ⊆ (nx θ σ3 (.inl .pe) k s0 s1).heap := fun _ hc => heap_nx _ _ _ _ _ (hh3 hc)
   have hr4 : (nx θ σ3 (.inl .pe) k s0 s1).regs 2 = k := rfl
   have hrec4 : ((kb (decide (z ≠ .nil)), ![(nx θ σ3 (.inl .pe) k s0 s1).regs 1, p, q, s]) : Rec Kd) ∈
@@ -200,7 +200,7 @@ theorem KS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h 
   intro r hr
   refine ⟨?_, ?_⟩
   · have e1 : (nx θ σ4 (.inl (.s2 b)) p q s).regs 3 = k := hr4
-    have e2 : (nx θ σ4 (.inl (.s2 b)) p q s).inp = [] := (inpA _ _ (by simp) (by simp) _ _ _).trans hi4
+    have e2 : (nx θ σ4 (.inl (.s2 b)) p q s).inp = [] := (inpA).trans hi4
     rw [e1, e2]
     exact KS_halt (heap_nx _ _ _ _ _ (hh4 hk)) _
   · have hC := Cc_ge (supp := supp)
@@ -213,7 +213,7 @@ theorem start0 {σ : St supp} (ok : OKs σ) (hm : σ.mode = .S0) {S : A} {B : �
     (h : ∀ (σ' : St supp) (j : ℕ), OKs σ' → σ'.mode = .S1 → σ'.regs 1 = j → ((.HT, ![j, 0, 0, 0]) : Rec Kd) ∈ σ'.heap →
       σ'.inp = σ.inp → Mach.SumTo (UM θ supp) σ' S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
   refine zstep ok hm rfl .s0 rfl (by simp) (by simp) rfl rfl ?_
-  refine h (nx θ σ (.inl .s0) 0 0 0) (σ.n + 1) (ok.nx _ _ _ _) rfl rfl ?_ (inpA _ _ (by simp) (by simp) _ _ _)
+  refine h (nx θ σ (.inl .s0) 0 0 0) (σ.n + 1) (ok.nx _ _ _ _) rfl rfl ?_ inpA
   have h1 : ((.HT, ![σ.n + 1, σ.regs 0, σ.regs 0, σ.regs 0]) : Rec Kd) ∈ (nx θ σ (.inl .s0) 0 0 0).heap :=
     new_nx (θ := θ) σ (.inl .s0) 0 0 0
   rw [ok.r0] at h1
@@ -226,7 +226,7 @@ theorem start1 {σ : St supp} (ok : OKs σ) (hm : σ.mode = .S1) {S : A} {B : �
       σ'.inp = σ.inp → Mach.SumTo (UM θ supp) σ' S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
   refine zstep ok hm rfl .s1 rfl (by simp) (by simp) rfl rfl ?_
   exact h (nx θ σ (.inl .s1) 0 0 0) (σ.n + 1) (σ.regs 0) (σ.regs 0) (ok.nx _ _ _ _) rfl rfl
-    (new_nx (θ := θ) σ (.inl .s1) 0 0 0) (heap_nx _ _ _ _ _) (inpA _ _ (by simp) (by simp) _ _ _)
+    (new_nx (θ := θ) σ (.inl .s1) 0 0 0) (heap_nx _ _ _ _ _) inpA
 
 /-- From the first state. -/
 theorem start (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : Plain θ τ z) {σ : St supp} (ok : OKs σ)

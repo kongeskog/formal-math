@@ -65,6 +65,10 @@ def cost (m mb : ℕ) : DStep → (List Bool → Tree) → ℕ
 
 end DStep
 
+-- Numerals, register reads and the code and effect of a step: the evaluation rules every
+-- proof below discharges its branch tests and step results with.
+attribute [local simp] num gets DStep.tree DStep.exec
+
 /-- The program of a step; the argument is (step, trie); `n` is the length of guessed bit lists, in binary. -/
 def dstepF (n : List Bool) : Fm := .ite (.hd (.hd .id))
   (.ite (.tl (.hd (.hd .id)))
@@ -97,22 +101,23 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       exact this
     by_cases h : tget p W = .nil
     · rw [h] at hg
-      refine ⟨[], ((Does.ite_true (Gives.id _).hd.hd (by simp [DStep.tree, num]) (Does.ite_true (Gives.id _).hd.hd.tl
-        (by simp [DStep.tree, num]) (Does.ite_true (Gives.id _).hd.hd.tl.tl (by simp [DStep.tree, num])
+      refine ⟨[], ((Does.ite_true (Gives.id _).hd.hd (by simp) (Does.ite_true (Gives.id _).hd.hd.tl
+        (by simp) (Does.ite_true (Gives.id _).hd.hd.tl.tl (by simp)
         (Does.ite_false hg (Does.fail _)))))).mono ?_, by simp, fun Φ => ?_⟩
       · simp only [DStep.cost]
         omega
-      · simp [DStep.exec, gets, h]
-    · refine ⟨[(1, W)], ((Does.ite_true (Gives.id _).hd.hd (by simp [DStep.tree, num]) (Does.ite_true (Gives.id _).hd.hd.tl
-        (by simp [DStep.tree, num]) (Does.ite_true (Gives.id _).hd.hd.tl.tl (by simp [DStep.tree, num])
+      · simp [h]
+    · refine ⟨[(1, W)], ((Does.ite_true (Gives.id _).hd.hd (by simp)
+        (Does.ite_true (Gives.id _).hd.hd.tl (by simp)
+        (Does.ite_true (Gives.id _).hd.hd.tl.tl (by simp)
         (Does.ite_true hg h (Gives.id _).tl))))).mono ?_, ?_, fun Φ => ?_⟩
       · simp only [DStep.cost]
         omega
       · intro q hq
         rw [List.mem_singleton] at hq
         subst hq
-        simp [DStep.exec, gets, h]
-      · simp [DStep.exec, gets, h]
+        simp [h]
+      · simp [h]
   | bits p dst =>
     have hg : Gives θ (getF (.hd (.tl (.hd .id))) (.tl .id)) (.cons (DStep.bits p dst).tree W) (tget p W)
         (4 + 2 + 30 * p.length + 20) := by
@@ -121,16 +126,16 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       exact this
     by_cases h : tget p W = .nil
     · rw [h] at hg
-      refine ⟨[(1, W)], ((Does.ite_true (Gives.id _).hd.hd (by simp [DStep.tree, num]) (Does.ite_true (Gives.id _).hd.hd.tl
-        (by simp [DStep.tree, num]) (Does.ite_false (Gives.id _).hd.hd.tl.tl
+      refine ⟨[(1, W)], ((Does.ite_true (Gives.id _).hd.hd (by simp)
+        (Does.ite_true (Gives.id _).hd.hd.tl (by simp) (Does.ite_false (Gives.id _).hd.hd.tl.tl
         (Does.ite_false hg (Gives.id _).tl))))).mono ?_, ?_, fun Φ => ?_⟩
       · simp only [DStep.cost, gets, h, if_true]
         omega
       · intro q hq
         rw [List.mem_singleton] at hq
         subst hq
-        simp [DStep.exec, gets, h]
-      · simp [DStep.exec, gets, h]
+        simp [h]
+      · simp [h]
     · obtain ⟨Q, d, h1, h2⟩ := bitsF_does (θ := θ) n (.cons (DStep.bits p dst).tree W)
       have hs : ∀ q ∈ Q, Does θ (setF (.tl (.tl (.hd (.hd .id)))) (.tl .id) (.tl (.hd .id)))
           (.cons (.cons (DStep.bits p dst).tree W) q.2) [(1, tset dst q.2 W)] (5 + 2 + 3 + 60 * dst.length + 30) := by
@@ -139,8 +144,8 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
           (Gives.id _).hd.tl
         simp only [DStep.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at this ⊢
         exact this
-      refine ⟨_, ((Does.ite_true (Gives.id _).hd.hd (by simp [DStep.tree, num]) (Does.ite_true (Gives.id _).hd.hd.tl
-        (by simp [DStep.tree, num]) (Does.ite_false (Gives.id _).hd.hd.tl.tl
+      refine ⟨_, ((Does.ite_true (Gives.id _).hd.hd (by simp) (Does.ite_true (Gives.id _).hd.hd.tl
+        (by simp) (Does.ite_false (Gives.id _).hd.hd.tl.tl
         (Does.ite_true hg h (Does.letk (R := fun o => [(1, tset dst o W)]) d hs)))))).mono ?_, ?_, fun Φ => ?_⟩
       · simp only [DStep.cost, gets, h, if_false]
         omega
@@ -155,7 +160,7 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       · rw [wsum_bindW]
         simp only [wsum_cons, wsum_nil, one_mul, add_zero, gets_tset]
         rw [h2 fun o => Φ (Function.update (gets W) dst o)]
-        simp [DStep.exec, gets, h, Function.comp_def]
+        simp [h, Function.comp_def]
   | op p q dst φ =>
     have hp : Gives θ (getF (.hd (.tl (.hd .id))) (.tl .id)) (.cons (DStep.op p q dst φ).tree W) (tget p W)
         (4 + 2 + 30 * p.length + 20) := by
@@ -171,16 +176,16 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
     have hs := setF_gives (Gives.id (θ := θ) (.cons (DStep.op p q dst φ).tree W)).hd.tl.tl.tl.hd hφ (Gives.id _).tl
     simp only [DStep.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at hs
     refine ⟨[(1, tset dst (tget (tget q W).path (tget (tget p W).path φ)) W)], (Does.ite_true (Gives.id _).hd.hd
-      (by simp [num]) (Does.ite_false (Gives.id _).hd.hd.tl hs)).mono ?_, ?_, fun Φ => ?_⟩
+      (by simp) (Does.ite_false (Gives.id _).hd.hd.tl hs)).mono ?_, ?_, fun Φ => ?_⟩
     · simp only [DStep.cost, gets]
       omega
     · intro r hr
       rw [List.mem_singleton] at hr
       subst hr
       rw [gets_tset]
-      simp [DStep.exec, gets]
+      simp
     · simp only [wsum_cons, wsum_nil, one_mul, add_zero, gets_tset]
-      simp [DStep.exec, gets]
+      simp
   | pick p tab =>
     have hp : Gives θ (getF (.hd (.tl (.hd .id))) (.tl .id)) (.cons (DStep.pick p tab).tree W) (tget p W)
         (4 + 2 + 30 * p.length + 20) := by
@@ -218,7 +223,7 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       exact List.mem_map.2 ⟨o, ho', rfl⟩
     · rw [wsum_bindW]
       simp only [wsum_cons, wsum_nil, one_mul, add_zero, gets_assign]
-      simp [DStep.exec, gets, ← ho, wsum, Function.comp_def]
+      simp [← ho, wsum, Function.comp_def]
 
 /-- The states after a list of steps. -/
 def execAll (m : ℕ) : List DStep → (List Bool → Tree) → List (List Bool → Tree)
@@ -363,6 +368,9 @@ def cost (σ : List Bool → Tree) : Tm → ℕ
 
 end Tm
 
+-- The code of a template, for the branch tests of the proofs below.
+attribute [local simp] Tm.tree
+
 /-- Recursive call of the expansion. -/
 def tmRec (t : Fm) : Fm := .run (.hd .id) (.cons (.hd .id) (.cons t (.tl (.tl .id))))
 
@@ -392,14 +400,15 @@ theorem tmB_gives (t : Tm) (W : Tree) :
   | get p =>
     have hg := getF_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.get p).tree W))).tl.hd.tl (Gives.id _).tl.tl
     simp only [Tm.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at hg
-    refine ((Gives.id _).tl.hd.hd.ite_true (by simp [num]) ((Gives.id _).tl.hd.hd.tl.ite_false hg)).mono ?_
+    refine ((Gives.id _).tl.hd.hd.ite_true (by simp)
+      ((Gives.id _).tl.hd.hd.tl.ite_false hg)).mono ?_
     simp only [Tm.cost]
     omega
   | cons a b iha ihb =>
     have ha := tmRec_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.cons a b).tree W))).tl.hd.tl.hd iha
     have hb := tmRec_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.cons a b).tree W))).tl.hd.tl.tl ihb
-    refine ((Gives.id _).tl.hd.hd.ite_true (by simp [Tm.tree, num]) ((Gives.id _).tl.hd.hd.tl.ite_true
-      (by simp [Tm.tree, num]) ((Gives.id _).tl.hd.hd.tl.tl.ite_false (Gives.cons ha hb)))).mono ?_
+    refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
+      (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_false (Gives.cons ha hb)))).mono ?_
     simp only [Tm.cost]
     omega
   | ifeq p t a b iha ihb =>
@@ -416,16 +425,16 @@ theorem tmB_gives (t : Tm) (W : Tree) :
     by_cases h : tget p W = t
     · rw [if_pos h]
       have hb' : bit (decide (tget p W = t)) ≠ .nil := by simp [h, bit, one]
-      refine ((Gives.id _).tl.hd.hd.ite_true (by simp [num]) ((Gives.id _).tl.hd.hd.tl.ite_true
-        (by simp [num]) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp [num])
+      refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
+        (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp)
         ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_false (Gives.ite_true he hb' ha))))).mono ?_
       rw [hc, hc0]
       omega
     · rw [if_neg h]
       have hb' : bit (decide (tget p W = t)) = .nil := by simp [h, bit]
       rw [show (Tree.cons tmB.code (.cons (Tm.ifeq p t a b).tree W)).tl.hd.tl.tl.hd = t from rfl, hb'] at he
-      refine ((Gives.id _).tl.hd.hd.ite_true (by simp [num]) ((Gives.id _).tl.hd.hd.tl.ite_true
-        (by simp [num]) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp [num])
+      refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
+        (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp)
         ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_false (Gives.ite_false he hb))))).mono ?_
       rw [hc, hc0]
       omega
@@ -435,9 +444,9 @@ theorem tmB_gives (t : Tm) (W : Tree) :
     rw [← listT_toList (a.expand (gets W))] at ha
     rw [← listT_toList (b.expand (gets W))] at hb
     have happ := appF_gives ha hb
-    refine ((Gives.id _).tl.hd.hd.ite_true (by simp [Tm.tree, num]) ((Gives.id _).tl.hd.hd.tl.ite_true
-      (by simp [Tm.tree, num]) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp [Tm.tree, num])
-      ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_true (by simp [Tm.tree, num]) happ)))).mono ?_
+    refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
+      (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp)
+      ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_true (by simp) happ)))).mono ?_
     simp only [Tm.cost]
     omega
 

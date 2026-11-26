@@ -35,6 +35,9 @@ abbrev Dr (K : Type) := Bool × Bl K × List (Option (Bl K))
 def emDr (d : Dr K) : Zc K → List (Sy M K) := fun z =>
   on {lsT} (rw' d.1 (some d.2.1 :: d.2.2)) z ++ on {.tp (.bk d.2.1) false} (rw' d.1 (d.2.2 ++ [some d.2.1])) z
 
+-- What `on` means and how a record ends: the tape cases of the `Runs` proofs below.
+attribute [local simp] on ol
+
 theorem runs_dr : Runs (emDr : Dr K → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h := Runs.sum (F := A) fun b : Bl K =>
     (((Runs.pick (F := A) (Z := Zc K) (fun f : Bool => on {lsT, .tp (.bk b) false} [(Sy.flag f : Sy M K)]) (fun _ => 1)).mul
@@ -47,11 +50,11 @@ theorem runs_dr : Runs (emDr : Dr K → Zc K → List (Sy M K)) (fun _ => (1 : A
   simp only [Equiv.coe_fn_mk, emDr, rw']
   by_cases h1 : z = lsT
   · subst h1
-    simp [on, ol]
+    simp
   · by_cases h2 : z = .tp (.bk b) false
     · subst h2
-      simp [on, ol]
-    · simp [on, h1, h2]
+      simp
+    · simp [h1, h2]
 
 /-- The channels where a pass of the distribution ends a block. -/
 def barSet : Finset (Zc K) := insert lsT (univ.image fun b : Bl K => (.tp (.bk b) false : Zc K))
@@ -95,7 +98,8 @@ theorem runs_co : Runs (emCo : (Bl K → List (NB M K)) → Zc K → List (Sy M 
 noncomputable def emPs (p : Ps M K) : Zc K → List (Sy M K) := fun z =>
   (p.1.flatMap fun d => emDr d z) ++ (on barSet [Sy.bar] z ++ emCo p.2 z)
 
-theorem emDr_ne (d : Dr K) : ∃ z, (emDr d : Zc K → List (Sy M K)) z ≠ [] := ⟨lsT, by simp [emDr, on, rw']⟩
+theorem emDr_ne (d : Dr K) : ∃ z, (emDr d : Zc K → List (Sy M K)) z ≠ [] :=
+  ⟨lsT, by simp [emDr, rw']⟩
 
 theorem runs_ps : Runs (emPs : Ps M K → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h := ((runs_dr (A := A) (M := M) (K := K)).kstar fun d => emDr_ne d).mul
@@ -124,15 +128,16 @@ theorem runs_fi : Runs (emFi : List (Bool × List (Bl K)) → Zc K → List (Sy 
       simp only [Equiv.coe_fn_mk, rw', List.map_cons, hw]
       by_cases h1 : z = lsT
       · subst h1
-        simp [on, ol]
+        simp
       · by_cases h2 : z = .tp (.cm false) false
         · subst h2
-          simp [on]
+          simp
         · by_cases h3 : z = .tp (.cm true) false
           · subst h3
-            simp [on]
-          · simp [on, h1, h2, h3]) (fun d => by simp)
-  have h3 := (h2.kstar fun d => ⟨lsT, by simp [on, rw']⟩).mul (Runs.const (Z := Zc K) (on {lsT} [(Sy.bar : Sy M K)]))
+            simp
+          · simp [h1, h2, h3]) (fun d => by simp)
+  have h3 := (h2.kstar fun d => ⟨lsT, by simp [rw']⟩).mul
+    (Runs.const (Z := Zc K) (on {lsT} [(Sy.bar : Sy M K)]))
   exact h3.congr ⟨fun l => (l, ()), Prod.fst, fun l => rfl, fun y => rfl⟩ (fun l z => rfl) fun l => by simp
 
 end Nc.Uni
