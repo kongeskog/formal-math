@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T06:33:44.519459793Z",
+  "updated_at": "2026-11-26T06:39:05.982802186Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 0,
     "contributors": 2,
-    "ideas_open": 2
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -110,10 +110,10 @@
     {
       "number": 176,
       "title": "Idea: merge(*): one lemma for the heap records of Nc/Uni, one have for facts repeated in a proof",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-26T09:38:10Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-26T04:02:40Z",
@@ -124,10 +124,10 @@
     {
       "number": 175,
       "title": "Idea: restructure(*): inline 21 small single-use lemmas at their one call (6 tried, list inside)",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-26T08:50:39Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 178,
       "result_delta": -1602,
       "created_at": "2026-11-26T04:02:38Z",
@@ -1161,24 +1161,19 @@
       "loc": 377
     },
     {
-      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
-      "tokens": 6568,
-      "loc": 368
-    },
-    {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
       "tokens": 6485,
       "loc": 396
     },
     {
-      "path": "vp-vnp/Nc/G/Move.lean",
-      "tokens": 6434,
-      "loc": 394
-    },
-    {
       "path": "vp-vnp/NS1/Postpone.lean",
       "tokens": 6424,
       "loc": 506
+    },
+    {
+      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
+      "tokens": 6359,
+      "loc": 370
     },
     {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
@@ -1189,6 +1184,11 @@
       "path": "vp-vnp/NS1/Guess.lean",
       "tokens": 6301,
       "loc": 439
+    },
+    {
+      "path": "vp-vnp/Nc/G/Move.lean",
+      "tokens": 6180,
+      "loc": 382
     },
     {
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
