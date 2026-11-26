@@ -80,8 +80,6 @@ theorem lower_bound {c : ℝ} (hc : 0 < c)
     nlinarith
   have b5 : Real.log ((E : ℝ) + 1) ≤ η / 8 * Real.sqrt n :=
     (Real.log_le_log (by positivity) (by linarith [floor_le' (p := p) n])).trans a1
-  have b6 : (c - ε) * (p * Real.sqrt n - 1) ≤ (c - ε) * Real.sqrt E :=
-    mul_le_mul_of_nonneg_left b4 (by linarith)
   have b7 : ε * p * Real.sqrt n ≤ η / 4 * Real.sqrt n :=
     mul_le_mul_of_nonneg_right hεp (Real.sqrt_nonneg _)
   nlinarith

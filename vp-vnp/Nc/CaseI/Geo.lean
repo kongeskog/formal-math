@@ -24,7 +24,6 @@ theorem dist_half_le {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V
   have h1 : ‖(1 / 2 : ℝ) • u - x‖ ^ 2 = 1 / 4 - inner ℝ u x + ‖x‖ ^ 2 := by
     rw [norm_sub_sq_real, norm_smul, hu, real_inner_smul_left, show ‖(1 / 2 : ℝ)‖ = 1 / 2 by norm_num]
     ring
-  have h2 : 0 ≤ ‖(1 / 2 : ℝ) • u - x‖ := norm_nonneg _
   nlinarith [sq_nonneg (‖(1 / 2 : ℝ) • u - x‖ - 1 / 2)]
 
 theorem sum_ite_card (A : Finset (Fin k)) (y z : ℝ) :

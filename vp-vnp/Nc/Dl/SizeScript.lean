@@ -386,7 +386,6 @@ theorem size_scriptT (hX : 1 ≤ X) (hLc : 1 ≤ Lc) (hK : K + K ≤ X) (hU0 : U
       calc X * Lc = X ^ 1 * Lc := by ring
         _ ≤ _ := Nat.mul_le_mul_right _ (Nat.pow_le_pow_right hX (by omega))
     have g6 : Lc ≤ X ^ 3 * Lc := Nat.le_mul_of_pos_left _ (by positivity)
-    have g7 : 1 ≤ X ^ 3 * Lc := Nat.one_le_iff_ne_zero.2 (by positivity)
     have e : X * (X * X * (8 * Lc + 10) + 10 * X + 12 + X * (8 * Lc + 10)) +
       X * (X * X * (8 * Lc + 4) + 8 * X + 16) + X * (8 * Lc + 12) + 8 * Lc + 6 =
       16 * (X ^ 3 * Lc) + 14 * X ^ 3 + 28 * X ^ 2 + 8 * (X ^ 2 * Lc) + 40 * X + 8 * (X * Lc) + 8 * Lc + 6 := by ring

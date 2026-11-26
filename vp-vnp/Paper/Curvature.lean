@@ -113,9 +113,7 @@ theorem prop_space_cauchy {X : Type*} [MetricSpace X] {a b m : ℕ → X} {x v :
   rw [Metric.cauchySeq_iff]
   intro ε hε
   set R := dist x v + 1
-  have hR0 : 0 < R := by positivity
   set δ := min 1 (ε ^ 2 / (2 * (2 * R + 4)))
-  have hδ0 : 0 < δ := by positivity
   obtain ⟨N₁, hN₁⟩ := Metric.cauchySeq_iff.1 ha.cauchySeq (δ / 2) (by positivity)
   obtain ⟨N₂, hN₂⟩ := Metric.cauchySeq_iff.1 hb.cauchySeq (δ / 2) (by positivity)
   obtain ⟨N₃, hN₃⟩ := eventually_atTop.1 (hR.eventually (gt_mem_nhds (show dist x v < R by linarith)))
@@ -152,7 +150,6 @@ theorem prop_space_cauchy {X : Type*} [MetricSpace X] {a b m : ℕ → X} {x v :
   have d5 := pow_le_pow_left₀ dist_nonneg d2 2
   have d6 : dist (m l) (m k) ^ 2 ≤ (2 * R + 4) * e := by
     have e4 : e ≤ 1 := hed.le.trans (min_le_left _ _)
-    have e5 : dist (a k) (b k) * e ≤ R * e := mul_le_mul_of_nonneg_right e3.le he0
     nlinarith
   have d7 : (2 * R + 4) * e < ε ^ 2 := by
     have e4 : e < ε ^ 2 / (2 * (2 * R + 4)) := hed.trans_le (min_le_right _ _)

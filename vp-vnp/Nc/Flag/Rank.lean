@@ -27,8 +27,6 @@ theorem grow_mono (m : ℕ) {s : ℝ} (hs : 1 ≤ s) {r r' : ℕ} (h : r ≤ r')
     grow m s r ≤ grow m s r' := by
   unfold grow
   have hl : Nat.log m r ≤ Nat.log m r' := Nat.log_mono_right h
-  have hl' : (Nat.log m r : ℝ) ≤ Nat.log m r' := by exact_mod_cast hl
-  have hp : s ^ Nat.log m r ≤ s ^ Nat.log m r' := pow_le_pow_right₀ hs hl
   have : 0 ≤ s ^ Nat.log m r := by positivity
   gcongr
 

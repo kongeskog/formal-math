@@ -274,20 +274,15 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
         generalize B' + n * J = B at *
         generalize Γ ^ n = M at *
         generalize 16 * h * α + 1 - 8 * (n + 1) = e at *
-        have hB1 := le_max_left B B'
-        have hB2 := le_max_right B B'
         -- basic inequalities
         have hX3 : 10 * X ^ 2 ≤ X ^ 3 := by
           have : X ^ 3 = X * X ^ 2 := by ring
           rw [this]
           exact Nat.mul_le_mul_right _ hX10
-        have hX2 : 10 * X ≤ X ^ 2 := by rw [pow_two]; exact Nat.mul_le_mul_right _ hX10
         rw [cst_def] at hcst
         obtain ⟨sU, hsU⟩ : ∃ n, n = UF.code.size := ⟨_, rfl⟩
         obtain ⟨sW, hsW⟩ : ∃ n, n = WN.code.size := ⟨_, rfl⟩
         rw [← hsU, ← hsW] at hcst
-        have he3 : h * α + 3 ≤ e := by omega
-        have he4 : 16 * h ≤ e := by omega
         have hH : 16 * h ≤ e + 9 := by omega
         have ppos : ∀ a, 1 ≤ u ^ a := fun a => Nat.one_le_pow _ _ (by omega)
         -- the tries of powers

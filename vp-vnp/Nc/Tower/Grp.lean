@@ -206,7 +206,6 @@ theorem wt_sub_one (h2 : 2 ≤ h) {i k : Fin h} (hk : k ≠ i) :
         exact hk0
       rw [Fin.sub_val_of_le h3, Fin.val_one', Nat.mod_eq_of_lt (show 1 < h by omega)]
     have hk0 : 0 < k.1 := Nat.pos_of_ne_zero fun e => h0 (Fin.ext e)
-    have hki : k.1 ≠ i.1 := fun e => hk (Fin.ext e)
     have h2' : k - 1 < i ↔ k < i := by
       rw [Fin.lt_def, Fin.lt_def, h1]
       omega

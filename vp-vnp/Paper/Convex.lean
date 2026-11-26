@@ -190,7 +190,6 @@ theorem hexp_convex (K : Type) [Field K] {V : Type} [Fintype V] [DecidableEq V] 
       (Finset.mem_univ v)).trans (Finset.single_le_sum (f := fun u => ∑ v, |w u v|)
         (fun _ _ => Finset.sum_nonneg fun _ _ => abs_nonneg _) (Finset.mem_univ u)))
   set n : ℝ := (Fintype.card A : ℝ) with hn
-  have hn0 : 0 ≤ n := Nat.cast_nonneg _
   have hden : 0 < (n ^ 2 + 1) * (2 * R + 4) := by positivity
   refine ⟨min 1 (ε ^ 2 / ((n ^ 2 + 1) * (2 * R + 4))), lt_min one_pos (by positivity), ?_⟩
   intro F c hc hF a b m ha hb
@@ -316,7 +315,6 @@ theorem prop_cube {K : Type} [Field K] (hK : Flat K) {k : ℕ} (V : Finset (Eucl
     obtain ⟨x₀, hx₀⟩ := hP
     obtain ⟨j₀, -, -⟩ := hc x₀ hx₀
     exact j₀.pos
-  have hk' : (0 : ℝ) < k := Nat.cast_pos.2 hk
   choose j b hjb using fun x : P => hc x.1 x.2
   -- add the points ½u
   let V' : Finset (EuclideanSpace ℝ (Fin k)) := V ∪ univ.image half
