@@ -91,7 +91,7 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
         _ ≤ c * (τ * Λ) * v ^ 208 + τ * Λ * k := by linarith [Nat.mul_le_mul_right (Λ * v ^ 208) hs]
         _ ≤ c * (k * v ^ H) * v ^ 208 + k * v ^ H * v ^ 208 := by gcongr
         _ = (c + 1) * (v ^ H * (k * v ^ 208)) := by ring
-        _ ≤ 8 * c * Λ * (v ^ H * (k * v ^ 208)) := Nat.mul_le_mul_right _ (by nlinarith)
+        _ ≤ 8 * c * Λ * (v ^ H * (k * v ^ 208)) := by grw [← hΛ1]; gcongr; omega
         _ = c * v ^ H * (8 * Λ) * (k * v ^ 208) := by ring
   intro r
   induction r with
@@ -142,31 +142,19 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
       have : τ₁ * v ^ 63 ≤ τ * v ^ 63 := hτ₁le.trans (Nat.mul_le_mul_left _ (hΛv.trans (Nat.le_self_pow (by norm_num) v)))
       exact Nat.le_of_mul_le_mul_right this (ppos 63)
     have hτ₁Λ : τ₁ * Λ < v ^ H * v ^ (64 + 62 * r) := by
-      have h1 : τ₁ * v ^ 63 < v ^ H * v ^ (63 + 62 * r) * v ^ 63 := by
-        calc τ₁ * v ^ 63 ≤ τ * Λ := hτ₁le
-          _ < v ^ H * v ^ (64 + 62 * (r + 1)) := hτΛ
-          _ = v ^ H * v ^ (63 + 62 * r) * v ^ 63 := by
-            rw [Nat.mul_assoc, ← pow_add]
-            ring
+      have h1 : τ₁ * v ^ 63 < v ^ H * v ^ (63 + 62 * r) * v ^ 63 :=
+        hτ₁le.trans_lt (hτΛ.trans_eq (by ring))
       have h2 : τ₁ < v ^ H * v ^ (63 + 62 * r) := lt_of_mul_lt_mul_right h1 (Nat.zero_le _)
-      calc τ₁ * Λ ≤ τ₁ * v := Nat.mul_le_mul_left _ hΛv
-        _ < v ^ H * v ^ (63 + 62 * r) * v := Nat.mul_lt_mul_of_pos_right h2 (by omega)
-        _ = v ^ H * v ^ (64 + 62 * r) := by
-          rw [Nat.mul_assoc, ← pow_succ]
-          congr 2
-          ring
+      exact (Nat.mul_le_mul_left _ hΛv).trans_lt
+        ((Nat.mul_lt_mul_of_pos_right h2 (by omega)).trans_eq (by ring))
     have hs₁c : s₁ * v ^ 48 ≤ 4 * c * τ₁ := by
       refine Nat.le_of_mul_le_mul_right (c := v ^ 63 * v ^ 256) ?_ (by positivity)
       have a1 : τ * v ^ 63 * v ^ 48 ≤ c * τ * v ^ 256 := by
         calc τ * v ^ 63 * v ^ 48 = τ * v ^ 111 := by rw [Nat.mul_assoc, ← pow_add]
           _ ≤ c * τ * v ^ 256 := Nat.mul_le_mul (Nat.le_mul_of_pos_left _ hc1) (pmono (by norm_num))
-      calc s₁ * v ^ 48 * (v ^ 63 * v ^ 256) = s₁ * v ^ 63 * v ^ 256 * v ^ 48 := by ring
-        _ ≤ (s * v ^ 256 + τ * v ^ 63) * Λ * v ^ 48 := Nat.mul_le_mul_right _ hs₁
-        _ = (s * v ^ 48 * v ^ 256 + τ * v ^ 63 * v ^ 48) * Λ := by ring
-        _ ≤ (c * τ * v ^ 256 + c * τ * v ^ 256) * Λ := by gcongr
-        _ = 2 * c * (τ * Λ) * v ^ 256 := by ring
-        _ ≤ 2 * c * (2 * (τ₁ * v ^ 63)) * v ^ 256 := by gcongr
-        _ = 4 * c * τ₁ * (v ^ 63 * v ^ 256) := by ring
+      -- `hs₁` times `v ^ 48`, both summands at most `c * τ * v ^ 256 * Λ`, then `hτ₁half`
+      linarith only [Nat.mul_le_mul_right (v ^ 48) hs₁, Nat.mul_le_mul_right (Λ * v ^ 256) hs,
+        Nat.mul_le_mul_right Λ a1, Nat.mul_le_mul_left (2 * c * v ^ 256) hτ₁half]
     obtain ⟨G₂, P₂, t₂, s₂, hcut₂, hP₂, ht₂, hs₂, hG₂⟩ := ih τ₁ s₁ (4 * c) hτ₁V ((Nat.mul_le_mul_left 4 (lg_mono hτ₁τ)).trans hlτ) hτ₁Λ hs₁c (by omega) hc4
     have hP : v ^ 63 * Λ * P₂ * v ^ H ≤ τ * (4 * Λ ^ 2) ^ (r + 1 + 1) := by
       grw [mul_assoc, hP₂, mul_mul_mul_comm, mul_comm (v ^ 63), hτ₁le, pow_succ _ (r + 1)]
@@ -177,11 +165,8 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
         refine Nat.le_of_mul_le_mul_right (c := v ^ 208) ?_ (ppos 208)
         have a1 : τ * v ^ 63 ≤ c * τ * v ^ 208 :=
           Nat.mul_le_mul (Nat.le_mul_of_pos_left _ hc1) (pmono (by norm_num))
-        calc t₁ * v ^ 48 * v ^ 208 = t₁ * v ^ 256 := by rw [Nat.mul_assoc, ← pow_add]
-          _ ≤ (s * v ^ 48 * v ^ 208 + τ * v ^ 63) * Λ := by
-            rw [Nat.mul_assoc s, ← pow_add]; exact ht₁
-          _ ≤ (c * τ * v ^ 208 + c * τ * v ^ 208) * Λ := by gcongr
-          _ = c * τ * (2 * Λ) * v ^ 208 := by ring
+        -- both summands of `ht₁` are at most `c * τ * v ^ 208 * Λ`
+        linarith only [ht₁, Nat.mul_le_mul_right (v ^ 208 * Λ) hs, Nat.mul_le_mul_right Λ a1]
       have b2 : v ^ 63 * Λ * t₂ * v ^ 48 ≤ c * τ * (4 * Λ ^ 2 * (100 * Λ ^ 3) ^ (r + 1)) := by
         linarith only [Nat.mul_le_mul_left (v ^ 63 * Λ) ht₂,
           Nat.mul_le_mul_right (4 * c * Λ * (100 * Λ ^ 3) ^ (r + 1)) hτ₁le]
@@ -193,16 +178,10 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
           one_mul]
       have b4 : v ^ 63 * Λ * 110 * v ^ 48 + 100 * v ^ 48 ≤ c * τ * 2 := by
         have h1 : v ^ 63 * Λ * 110 * v ^ 48 ≤ τ := by
-          calc v ^ 63 * Λ * 110 * v ^ 48 ≤ v ^ 63 * v * v * v ^ 48 :=
-                Nat.mul_le_mul_right _ (Nat.mul_le_mul (Nat.mul_le_mul_left _ hΛv) (by omega))
-            _ = v ^ 113 := by ring
-            _ ≤ v ^ H := pmono (by omega)
-            _ ≤ τ := hτ
+          grw [hΛv, show 110 ≤ v by omega, ← hτ, ← pmono (show 113 ≤ H by omega)]
+          ring_nf; rfl
         have h2 : 100 * v ^ 48 ≤ τ := by
-          calc 100 * v ^ 48 ≤ v * v ^ 48 := Nat.mul_le_mul_right _ (by omega)
-            _ = v ^ 49 := by rw [← pow_succ']
-            _ ≤ v ^ H := pmono (by omega)
-            _ ≤ τ := hτ
+          grw [show 100 ≤ v by omega, ← hτ, ← pmono (show 49 ≤ H by omega), pow_succ' v 48]
         have h3 : τ ≤ c * τ := Nat.le_mul_of_pos_left _ hc1
         omega
       have hL3 : Λ ≤ Λ ^ 3 := Nat.le_self_pow (by norm_num) Λ
@@ -220,19 +199,12 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
         have : 1 ≤ Λ ^ 3 := Nat.one_le_pow _ _ hΛ1
         grw [← this, hX, ← hX2]
       have c5 : (100 * Λ ^ 3) ^ (r + 1 + 1) = 100 * Λ ^ 3 * X := by rw [pow_succ, hX]; ring
-      calc (t₁ + v ^ 63 * Λ * (t₂ + 62 * P₂ + 110) + 100) * v ^ 48 = t₁ * v ^ 48 + v ^ 63 * Λ * t₂ * v ^ 48 +
-            v ^ 63 * Λ * (62 * P₂) * v ^ 48 + (v ^ 63 * Λ * 110 * v ^ 48 + 100 * v ^ 48) := by ring
-        _ ≤ c * τ * (2 * Λ) + c * τ * (4 * Λ ^ 2 * X) + c * τ * (4 * Λ ^ 2) ^ (r + 1 + 1) + c * τ * 2 := by
-            rw [hX]
-            exact Nat.add_le_add (Nat.add_le_add (Nat.add_le_add b1 b2) b3) b4
-        _ = c * τ * (2 * Λ + 4 * Λ ^ 2 * X + (4 * Λ ^ 2) ^ (r + 1 + 1) + 2) := by ring
-        _ ≤ c * τ * (100 * Λ ^ 3 * X) := Nat.mul_le_mul_left _ (by
-            have : 2 * Λ ^ 3 * X + 4 * Λ ^ 3 * X + 4 * Λ ^ 3 * X + 2 * Λ ^ 3 * X ≤ 100 * Λ ^ 3 * X := by
-              have e : 2 * Λ ^ 3 * X + 4 * Λ ^ 3 * X + 4 * Λ ^ 3 * X + 2 * Λ ^ 3 * X = 12 * (Λ ^ 3 * X) := by ring
-              have e' : 100 * Λ ^ 3 * X = 100 * (Λ ^ 3 * X) := by ring
-              omega
-            omega)
-        _ = c * τ * (100 * Λ ^ 3) ^ (r + 1 + 1) := by rw [c5]
+      rw [c5]
+      rw [← hX] at b2
+      -- the four parts `b1` to `b4`, each factor at most `4 * Λ ^ 3 * X` by `c1` to `c4`
+      linarith only [b1, b2, b3, b4, Nat.mul_le_mul_left (c * τ) c1, Nat.mul_le_mul_left (c * τ) c2,
+        Nat.mul_le_mul_left (c * τ) c3, Nat.mul_le_mul_left (c * τ) c4,
+        Nat.zero_le (c * τ * Λ ^ 3 * X)]
     · rw [pow_succ _ (r + 1)]
       linarith only [hs₂,
         Nat.mul_le_mul_left (c * v ^ H * (8 * Λ) ^ (r + 1)) (show 4 ≤ 8 * Λ by omega)]
