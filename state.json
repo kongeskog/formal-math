@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T08:21:45.094202510Z",
+  "updated_at": "2026-11-26T10:06:08.892469727Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 101,
     "rejected": 4,
-    "open": 0,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 0
   },
@@ -88,7 +88,7 @@
     {
       "login": "yidakra",
       "merged": 2,
-      "attempts": 2,
+      "attempts": 3,
       "saved": 906
     }
   ],
@@ -100,7 +100,7 @@
       "author": "kongeskog",
       "claimed_by": "yidakra",
       "lease_expires": "2026-11-26T11:20:35Z",
-      "pr": null,
+      "pr": 180,
       "result_delta": null,
       "created_at": "2026-11-26T04:22:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/177",
@@ -1088,7 +1088,81 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 180,
+      "title": "shorten(Nc/Dl/Num0): grw in place of calc chains in CutNums.time, size and deal",
+      "author": "yidakra",
+      "head_sha": "7703edb308223e34205e4002be9e444a3c5f0d60",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-26T10:05:23Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 177,
+      "url": "https://github.com/kongeskog/formal-math/pull/180",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Dl/Num0"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
