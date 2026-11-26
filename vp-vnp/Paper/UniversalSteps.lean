@@ -90,8 +90,8 @@ theorem prop_universal_series (hθ : ∀ q, q ∉ supp → θ q = 0) :
   let c := 41 + 2 * Lm supp
   let d := Nat.size c + 2
   refine ⟨S₀, h1, (50 + Fintype.card (Bl Kd)) * (c * d ^ 2), fun τ z hz => ?_⟩
-  -- "So an accepting run of cost c gives exactly one accepting run of the machine with the same weight, of at most
-  -- O(|z|+c) steps, and there are no others"
+  -- "So an accepting run of cost c gives exactly one accepting run of the machine with the same
+  -- weight, of at most O(|z|+c) steps, and there are no others"
   obtain ⟨R, r1, r2, r3⟩ := sum_machine (supp := supp) hθ hz
   have hT : ∀ tr ∈ R, tr.length ≤ stepsU supp τ z.size := by
     intro tr htr

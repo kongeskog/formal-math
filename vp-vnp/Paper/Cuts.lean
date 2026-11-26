@@ -42,6 +42,7 @@ theorem lg_mul_sq_le {τ v : ℕ} : lg (τ * v ^ 2) ≤ lg τ + 2 * lg v + 1 := 
   · have := Nat.log_lt_of_lt_pow (by omega) h1
     omega
 
+set_option maxHeartbeats 1200000 in
 /-- **Paper: Theorem thm:onecut.** "There are constants a₀, C, v₀ such that for all v ≥ v₀, all τ ≥ v^a₀ with
 4 lg τ ≤ (lg v)², all s ≤ τ and 2 ≤ k ≤ v^64, with Λ = (lg v)^C, a program of size at most v^a₀ cuts (τ,s) into
 (τΛ/k, (s/k + τ/v^256)Λ) with at most kΛ pieces, in (s + τk/v^256)Λ steps." The laws and the generators θ are the

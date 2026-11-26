@@ -729,8 +729,8 @@ theorem thm_alt_cube (f : Finset (Fin μ) → Y) (hf : ∀ S T, dist (f S) (f T)
           <;> simp [h1, h2] at hi ⊢
     | succ k ih =>
       intro hk
-      -- "Lemma lem:toolkit (f), applied to opposite edges in the new direction, shows that the map stays
-      -- isometric"
+      -- "Lemma lem:toolkit (f), applied to opposite edges in the new direction, shows that the map
+      -- stays isometric"
       obtain ⟨F, hF⟩ := ih (by omega)
       replace hk : k < μ := by omega
       set c : Fin μ := ⟨k, hk⟩
@@ -752,9 +752,11 @@ theorem thm_alt_cube (f : Finset (Fin μ) → Y) (hf : ∀ S T, dist (f S) (f T)
         congr 1
         refine sum_congr rfl fun i hi => ?_
         rw [Function.update_of_ne (ne_of_mem_erase hi), Function.update_of_ne (ne_of_mem_erase hi)]
-      have hD : ∀ {x y : Fin μ → ℝ} (_ : x ∈ cubePts μ (k + 1)) (_ : y ∈ cubePts μ (k + 1)) (s t : ℝ)
+      have hD : ∀ {x y : Fin μ → ℝ} (_ : x ∈ cubePts μ (k + 1)) (_ : y ∈ cubePts μ (k + 1))
+          (s t : ℝ)
           (_ : s = 0 ∨ s = 1) (_ : t = 0 ∨ t = 1), dist (F (Function.update x c s))
-            (F (Function.update y c t)) ^ 2 = (s - t) ^ 2 + ∑ i ∈ univ.erase c, (x i - y i) ^ 2 := by
+            (F (Function.update y c t)) ^ 2 =
+              (s - t) ^ 2 + ∑ i ∈ univ.erase c, (x i - y i) ^ 2 := by
         intro x y hx hy s t hs ht
         rw [hF _ (cubePts_update hk hx hs) _ (cubePts_update hk hy ht), hsum]
       set E := ∑ i ∈ univ.erase c, (x i - y i) ^ 2 with hE
