@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:55:11.621335240Z",
+  "updated_at": "2026-11-26T00:57:00.969220333Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -93,6 +93,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 164,
+      "title": "Idea: shorten(Paper/Cuts,Paper/Pieces,Paper/Tree): repeated facts and skeletons inside the longest proofs",
+      "status": "claimed",
+      "author": "kongeskog",
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-26T03:56:50Z",
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-26T00:56:49Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/164",
+      "technique": "shorten",
+      "scope": "Paper/Cuts,Paper/Pieces,Paper/Tree"
+    },
     {
       "number": 161,
       "title": "Idea: restructure(Paper): merge round_num into next in ApproxRound, lem_angle into pairs in Groups",
@@ -1055,13 +1069,27 @@
       "title": "merge(Nc/Dl,Nc/Tow): one uniqueness lemma, expand_endTm inside its caller, mem_cons skeletons",
       "author": "kongeskog",
       "head_sha": "696d269b43fc0b5900421267c6c442c69ef8a083",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "0caf161477b13fff4d8845a10b731ea84c6da227",
+      "status": "needs_fix",
       "created_at": "2026-11-26T00:55:18Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 828045,
+        "loc": 53025,
+        "decls": 4331,
+        "files": 314,
+        "bytes": 3092081,
+        "build_seconds": null
+      },
+      "base_metrics": {
+        "tokens": 825448,
+        "loc": 53027,
+        "decls": 4326,
+        "files": 314,
+        "bytes": 3086653,
+        "build_seconds": null
+      },
+      "delta": 2597,
       "gates": [
         {
           "key": "format",
@@ -1069,57 +1097,67 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "28 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "no_increase",
           "label": "No more long lines or exceptions",
-          "status": "pending"
+          "status": "fail",
+          "detail": "lines longer than 100 characters rose from 4657 to 4709 (vp-vnp/NS1/Accel.lean:30, vp-vnp/NS1/Accel.lean:33, vp-vnp/NS1/ApproxAdd.lean:11 and 2 more)"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "fail",
+          "detail": "tokens went from 825448 to 828045; it must drop by at least 300"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "skip",
+          "detail": "Not run because a static gate failed"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "skip",
+          "detail": "Not run because a static gate failed"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "skip"
         },
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "fail",
+          "detail": "Changes requested by kongeskog"
         }
       ],
       "idea": 160,
       "url": "https://github.com/kongeskog/formal-math/pull/163",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45732163532",
       "merge_sha": null,
-      "reason": null,
+      "reason": "No more long lines or exceptions: lines longer than 100 characters rose from 4657 to 4709 (vp-vnp/NS1/Accel.lean:30, vp-vnp/NS1/Accel.lean:33, vp-vnp/NS1/ApproxAdd.lean:11 and 2 more) · Score improves: tokens went from 825448 to 828045; it must drop by at least 300",
       "technique": "merge",
       "scope": "Nc/Dl,Nc/Tow",
       "warnings": [
@@ -1160,14 +1198,14 @@
       "loc": 568
     },
     {
-      "path": "vp-vnp/Paper/Identity.lean",
-      "tokens": 9117,
-      "loc": 546
-    },
-    {
       "path": "vp-vnp/Paper/ApproxScales.lean",
       "tokens": 9116,
       "loc": 530
+    },
+    {
+      "path": "vp-vnp/Paper/Identity.lean",
+      "tokens": 8762,
+      "loc": 528
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
@@ -1196,8 +1234,8 @@
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
-      "tokens": 6848,
-      "loc": 388
+      "tokens": 6673,
+      "loc": 377
     },
     {
       "path": "vp-vnp/Nc/Grp/GrpTime.lean",
@@ -1218,11 +1256,6 @@
       "path": "vp-vnp/NS1/Postpone.lean",
       "tokens": 6424,
       "loc": 506
-    },
-    {
-      "path": "vp-vnp/Paper/Prices.lean",
-      "tokens": 6357,
-      "loc": 363
     },
     {
       "path": "vp-vnp/NS1/Guess.lean",
@@ -1278,6 +1311,11 @@
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
       "tokens": 5456,
       "loc": 324
+    },
+    {
+      "path": "vp-vnp/Paper/Prices.lean",
+      "tokens": 5446,
+      "loc": 304
     }
   ]
 }
