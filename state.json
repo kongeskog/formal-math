@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T01:26:33.626359240Z",
+  "updated_at": "2026-11-26T01:27:57.743415983Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1007,9 +1007,9 @@
   "open": [
     {
       "pr": 166,
-      "title": "shorten(Paper): one side condition in thm_onecut, one stage fact in exists_thinTrees, shorter chains",
+      "title": "shorten(Paper): one side condition in thm_onecut, one stage fact in par_computed, shorter chains",
       "author": "kongeskog",
-      "head_sha": "d7a6be5b797fe29d6310a43435d0d05391c7681f",
+      "head_sha": "027735e6cbf9ddc558f8e19aaa404ab787016121",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-26T01:21:16Z",
