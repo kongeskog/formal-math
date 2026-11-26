@@ -10,8 +10,10 @@ import Nc.Flag.Cases
 /-!
 # The paper, section "Flat or contracting"
 
-The definitions, then the steps of the proof of Theorem thm:alt in the order of the paper, then the theorem. The paper's
-n_a(W) = |a, a+W|² is `nn w a W`, its B_a(W, W') is `BB w a W W'`, D(r)² is `meanSq w r`, and u xᵀ is `vecMulVec u x`.
+The definitions, then the steps of the proof of Theorem thm:alt in the order of the paper. The theorem
+itself, "one of the two cases occurs", is the case split in `approx_rate_closed` (Paper/Approximate).
+The paper's n_a(W) = |a, a+W|² is `nn w a W`, its B_a(W, W') is `BB w a W W'`, D(r)² is `meanSq w r`,
+and u xᵀ is `vecMulVec u x`.
 -/
 
 namespace Paper
@@ -672,13 +674,6 @@ theorem thm_alt_rank (hx : Extremal K w) (hμ : 3 ≤ μ) (a a' : Mt μ) : w a a
   rw [h1, e, hS, rank_X, nn_X hx hμ, sum_congr rfl fun i _ => thm_alt_rank_one hx hμ a (by simp [rank_X])]
   simp
 
-/-- "Suppose we are not in the contracting case and fix μ ≥ 3. We show that some price is exactly the square root of the
-rank of the difference." -/
-theorem thm_alt_rank_price (hK : ¬ Contracting K) (hμ : 3 ≤ μ) :
-    ∃ w : Mt μ → Mt μ → ℝ, IsPrice K w ∧ ∀ a a', w a a' ^ 2 = (a - a').rank := by
-  obtain ⟨w, hx⟩ := thm_alt_extremal hK (by omega : 2 ≤ μ)
-  exact ⟨w, hx.price, thm_alt_rank hx hμ⟩
-
 /-! ## The proof of Theorem thm:alt: a solid cube -/
 
 section Cube
@@ -806,10 +801,12 @@ theorem thm_alt_vertices (hrk : ∀ a a' : Mt μ, w a a' ^ 2 = (a - a').rank) (S
 hence a price." -/
 theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk : k ≤ μ) (V : Type) [Finite V]
     (E : V → EuclideanSpace ℝ (Fin k)) : IsPrice K fun a b => dist (E a) (E b) := by
-  obtain ⟨w, hw, hrk⟩ := thm_alt_rank_price hK hμ
-  obtain ⟨Y, _, _, f, hY, hf⟩ := prop_space hw
+  -- "Suppose we are not in the contracting case and fix μ ≥ 3. We show that some price is
+  -- exactly the square root of the rank of the difference."
+  obtain ⟨w, hx⟩ := thm_alt_extremal hK (by omega : 2 ≤ μ)
+  obtain ⟨Y, _, _, f, hY, hf⟩ := prop_space hx.price
   obtain ⟨F, hF⟩ := thm_alt_cube (fun S => f (dg S))
-    (fun S T => by rw [hf]; exact thm_alt_vertices hrk S T)
+    (fun S T => by rw [hf]; exact thm_alt_vertices (thm_alt_rank hx hμ) S T)
   obtain ⟨R, hR0, hR⟩ : ∃ R : ℝ, 0 < R ∧ ∀ v i, |E v i| ≤ R := by
     cases nonempty_fintype V
     refine ⟨1 + ∑ v, ∑ i, |E v i|, ?_, fun v i => ?_⟩
@@ -862,11 +859,5 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
   have h1 := (hY.comp fun v => F (g v)).smul (c := 2 * R) (by positivity)
   -- `grind` rewrites the distance `dist (E a) (E b)` by `hdist` and closes with `h1`
   grind
-
-/-- **Paper: Theorem thm:alt.** "One of the two cases occurs." -/
-theorem thm_alt (K : Type) [Field K] : Flat K ∨ Contracting K := by
-  by_cases hK : Contracting K
-  · exact Or.inr hK
-  · exact Or.inl fun k V _ E => thm_alt_euclidean hK (μ := k + 3) (by omega) (by omega) V E
 
 end Paper
