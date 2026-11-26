@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:42:23.234974607Z",
+  "updated_at": "2026-11-26T00:45:03.554953360Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "00ae72f7787fd01941dd4ee4226eeacb077f392e",
-    "at": "2026-11-26T00:39:09.315808425Z",
+    "sha": "d5cc697c4456f4e54f5ac1222371a29c6471ae84",
+    "at": "2026-11-26T00:45:03.554953360Z",
     "metrics": {
-      "tokens": 826962,
-      "loc": 53076,
-      "decls": 4332,
+      "tokens": 825940,
+      "loc": 53044,
+      "decls": 4328,
       "files": 314,
-      "bytes": 3091047,
-      "build_seconds": 417
+      "bytes": 3088092,
+      "build_seconds": 676
     }
   },
   "counts": {
-    "merged": 87,
+    "merged": 88,
     "rejected": 4,
-    "open": 4,
+    "open": 3,
     "contributors": 2,
-    "ideas_open": 4
+    "ideas_open": 5
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 87,
+      "merged": 88,
       "attempts": 94,
-      "saved": 101199
+      "saved": 102221
     },
     {
       "login": "yidakra",
@@ -138,12 +138,12 @@
     {
       "number": 151,
       "title": "Idea: restructure(Paper): flatten single-use clusters in ApproxRound, Laws, Approximate, Gauges; simplify; re-cut",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
+      "claimed_by": null,
       "lease_expires": null,
       "pr": 155,
-      "result_delta": null,
+      "result_delta": -1022,
       "created_at": "2026-11-25T23:56:45Z",
       "url": "https://github.com/kongeskog/formal-math/issues/151",
       "technique": "restructure",
@@ -963,101 +963,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 155,
-      "title": "restructure(Paper): inline four single-use lemmas in Laws, Approximate, Gauges, simplify",
-      "author": "kongeskog",
-      "head_sha": "465c35b7c644477807af285e8b34590967ea7c83",
-      "base_sha": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c",
-      "status": "stale",
-      "created_at": "2026-11-26T00:10:39Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 832039,
-        "loc": 53300,
-        "decls": 4347,
-        "files": 314,
-        "bytes": 3103120,
-        "build_seconds": 346
-      },
-      "base_metrics": {
-        "tokens": 833061,
-        "loc": 53332,
-        "decls": 4351,
-        "files": 314,
-        "bytes": 3106075,
-        "build_seconds": null
-      },
-      "delta": -1022,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "3 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 833061 → 832039 (-1022)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 151,
-      "url": "https://github.com/kongeskog/formal-math/pull/155",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45726850032",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    },
     {
       "pr": 156,
       "title": "restructure(Paper/Toolkit,Paper/Alternative): thm_alt_fill calls lem_toolkit_f_isPt directly",
