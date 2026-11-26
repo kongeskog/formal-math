@@ -369,23 +369,15 @@ In this section X = M₁, Y = M₂, A = F, A' = F′, B = G, B' = −G′, and l
 variable {p q ρ : Type*} [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q] [Fintype ρ] [DecidableEq ρ]
 variable {R : Type*} [CommRing R]
 
-/-- Proof of Proposition prop:identity, the coefficients: "Up to a sign that depends on R only, the determinant of such a matrix
-equals that of" the matrix with the block rows (M₁, 0, F, 0), (0, M₂, 0, G′), (0, DG, −1, 0), (DF′, 0, 0, 1) "(a Schur
-complement)". Here the last two block rows are (0, −DB, 1, 0) and (−DA', 0, 0, 1), and there is no sign. -/
-theorem prop_identity_schur (l : ρ → R) (X : Matrix p p R) (A : Matrix p ρ R) (A' : Matrix ρ p R)
-    (Y : Matrix q q R) (B : Matrix ρ q R) (B' : Matrix q ρ R) :
-    (fromBlocks X (A * diagonal l * B) (B' * diagonal l * A') Y).det =
-      (fromBlocks (fromBlocks X 0 0 Y) (fromBlocks A 0 0 B')
-        (-(fromBlocks 0 (diagonal l * B) (diagonal l * A') 0)) 1).det := by
-  rw [det_fromBlocks_one₂₂]
-  congr 1
-  rw [Matrix.mul_neg, sub_neg_eq_add, fromBlocks_multiply, fromBlocks_add]
-  simp [Matrix.mul_assoc]
-
-/-- Proof of Proposition prop:identity, the coefficients: "Each of the last 2R rows is the sum of its part in DG, respectively
-DF′, and its entry ±1. Expand by multilinearity, and let T₁, T₂ be the sets of rows of the third and of the fourth block row for
-which the first part is taken." The term of T = (T₁, T₂) is the product of the entries of D in T, which is X^E(T) in the paper,
-times the determinant of the matrix Nc.Cross.termMat T, in which the rows outside T have only their entry 1. -/
+/-- Proof of Proposition prop:identity, the coefficients: "Up to a sign that depends on R only, the
+determinant of such a matrix equals that of" the matrix with the block rows (M₁, 0, F, 0), (0, M₂,
+0, G′), (0, DG, −1, 0), (DF′, 0, 0, 1) "(a Schur complement)" (here the last two block rows are (0,
+−DB, 1, 0) and (−DA', 0, 0, 1), and there is no sign). "Each of the last 2R rows is the sum of its
+part in DG, respectively DF′, and its entry ±1. Expand by multilinearity, and let T₁, T₂ be the sets
+of rows of the third and of the fourth block row for which the first part is taken." The term of T =
+(T₁, T₂) is the product of the entries of D in T, which is X^E(T) in the paper, times the
+determinant of the matrix Nc.Cross.termMat T, in which the rows outside T have only their entry 1.
+-/
 theorem prop_identity_expand (l : ρ → R) (X : Matrix p p R) (A : Matrix p ρ R) (A' : Matrix ρ p R)
     (Y : Matrix q q R) (B : Matrix ρ q R) (B' : Matrix q ρ R) :
     (fromBlocks X (A * diagonal l * B) (B' * diagonal l * A') Y).det =
@@ -397,30 +389,11 @@ theorem prop_identity_expand (l : ρ → R) (X : Matrix p p R) (A : Matrix p ρ 
     ext i j
     rcases i with (i | i) | (i | i) <;> rcases j with (j | j) | (j | j) <;>
       simp [topRows, lowRows, unitRows, Matrix.diagonal_mul]
-  rw [prop_identity_schur, ← h1]
-  exact det_expand (topRows X A Y B') (Sum.elim l l) (lowRows A' B) unitRows
-
-/-- Proof of Proposition prop:identity, the coefficients: "This vanishes if |T₁| ≠ |T₂|, as the blocks are then not square". (In
-Lean the rows outside T are kept, with their entry 1; the form with two blocks is Nc.Cross.termMat_eq_glue.) -/
-theorem prop_identity_term_zero (T : Finset (ρ ⊕ ρ)) (hT : T.toLeft.card ≠ T.toRight.card)
-    (X : Matrix p p R) (A : Matrix p ρ R) (A' : Matrix ρ p R)
-    (Y : Matrix q q R) (B : Matrix ρ q R) (B' : Matrix q ρ R) :
-    (termMat T X A A' Y B B').det = 0 := by
-  rw [termMat_eq_glue]
-  refine det_glue_zero _ _ _ _ ?_
-  rw [card_cgrp]
-  have := card_rgrp (p := p) (q := q) T
-  omega
-
-/-- Proof of Proposition prop:identity, the coefficients: "otherwise it is a polynomial in X depending on (s_a, s_d) times one
-depending on (s_b, s_c)". For every T the determinant of the term is a function of (X, A, A') times a function of (Y, B, B'). -/
-theorem prop_identity_term_product (T : Finset (ρ ⊕ ρ)) :
-    ∃ (α : Matrix p p R → Matrix p ρ R → Matrix ρ p R → R)
-      (β : Matrix q q R → Matrix ρ q R → Matrix q ρ R → R),
-      ∀ X A A' Y B B', (termMat T X A A' Y B B').det = α X A A' * β Y B B' := by
-  obtain ⟨a, b, h⟩ := det_glue (R := R) (rgrp T : (p ⊕ q) ⊕ (ρ ⊕ ρ) → Prop) cgrp
-  exact ⟨fun X A A' => a (termMat T X A A' 0 0 0), fun Y B B' => b (termMat T 0 0 0 Y B B'),
-    fun X A A' Y B B' => by rw [termMat_eq_glue, h]⟩
+  refine Eq.trans ?_ (det_expand (topRows X A Y B') (Sum.elim l l) (lowRows A' B) unitRows)
+  rw [h1, det_fromBlocks_one₂₂]
+  congr 1
+  rw [Matrix.mul_neg, sub_neg_eq_add, fromBlocks_multiply, fromBlocks_add]
+  simp [Matrix.mul_assoc]
 
 /-- Proof of Proposition prop:identity, the coefficients: "The T with |T₁| = |T₂| and E(T) ≤ N are at most P(N) states". -/
 theorem prop_identity_term_count (K N : ℕ) : (goodT K N).card ≤ stateCount N := by
@@ -455,10 +428,12 @@ theorem prop_identity_near (K N : ℕ) {S T : Type*}
       (fromBlocks (X s) (A s * diagonal (fun r : Fin K => (Polynomial.X : ℤ[X]) ^ (2 * (r : ℕ) + 1)) * B t)
         (B' t * diagonal (fun r : Fin K => (Polynomial.X : ℤ[X]) ^ (2 * (r : ℕ) + 1)) * A' s) (Y t)).det.coeff N =
       ∑ k, g k s * h k t := by
-  choose α β hαβ using fun T : Finset (Fin K ⊕ Fin K) => prop_identity_term_product (p := p) (q := q) (R := ℤ[X]) T
-  refine ⟨fun k s => (α k.1 (X s) (A s) (A' s)).coeff k.2,
+  -- "otherwise it is a polynomial in X depending on (s_a, s_d) times one depending on (s_b, s_c)"
+  choose α β hαβ using fun T : Finset (Fin K ⊕ Fin K) =>
+    det_glue (R := ℤ[X]) (rgrp T : (p ⊕ q) ⊕ (Fin K ⊕ Fin K) → Prop) cgrp
+  refine ⟨fun k s => (α k.1 (termMat k.1 (X s) (A s) (A' s) 0 0 0)).coeff k.2,
     fun k t => ((Polynomial.X : ℤ[X]) ^ (enT (k.1 : Finset (Fin K ⊕ Fin K))) *
-      β k.1 (Y t) (B t) (B' t)).coeff (N - k.2), fun s t => ?_⟩
+      β k.1 (termMat k.1 0 0 0 (Y t) (B t) (B' t))).coeff (N - k.2), fun s t => ?_⟩
   rw [prop_identity_expand, Polynomial.finsetSum_coeff, Fintype.sum_prod_type]
   have hw : ∀ T : Finset (Fin K ⊕ Fin K),
       ∏ r ∈ T, Sum.elim (fun r : Fin K => (Polynomial.X : ℤ[X]) ^ (2 * (r : ℕ) + 1))
@@ -469,7 +444,7 @@ theorem prop_identity_near (K N : ℕ) {S T : Type*}
     rcases r with r | r <;> rfl
   rw [← Finset.sum_subset (Finset.subset_univ (goodT K N)), ← Finset.sum_coe_sort]
   · refine Finset.sum_congr rfl fun T _ => ?_
-    rw [hw, hαβ, mul_left_comm, Polynomial.coeff_mul,
+    rw [hw, termMat_eq_glue, hαβ, mul_left_comm, Polynomial.coeff_mul,
       Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, Finset.sum_range]
   · intro T _ hT
     rw [hw]
@@ -478,7 +453,10 @@ theorem prop_identity_near (K N : ℕ) {S T : Type*}
         by_contra hcon
         exact hT (mem_filter.2 ⟨mem_univ _, hb, not_lt.1 hcon⟩)
       rw [Polynomial.coeff_X_pow_mul', if_neg (not_le.2 this)]
-    · rw [prop_identity_term_zero T hb, mul_zero, Polynomial.coeff_zero]
+    · -- "This vanishes if |T₁| ≠ |T₂|, as the blocks are then not square"
+      have := card_rgrp (p := p) (q := q) T
+      rw [termMat_eq_glue, det_glue_zero _ _ _ _ (by rw [card_cgrp]; omega), mul_zero,
+        Polynomial.coeff_zero]
 
 end Expansion
 
