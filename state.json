@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T02:09:19.792867103Z",
+  "updated_at": "2026-11-26T02:16:58.554155892Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "004f2b6f04638f0141182c3db51a0c2f932dec16",
-    "at": "2026-11-26T01:56:38.415113999Z",
+    "sha": "409515862899b8b7fe81f65bc43ac144b57f1ea0",
+    "at": "2026-11-26T02:16:58.554155892Z",
     "metrics": {
-      "tokens": 821995,
-      "loc": 52824,
-      "decls": 4315,
+      "tokens": 821567,
+      "loc": 52819,
+      "decls": 4312,
       "files": 314,
-      "bytes": 3075981,
-      "build_seconds": 231
+      "bytes": 3075226,
+      "build_seconds": 248
     }
   },
   "counts": {
-    "merged": 95,
+    "merged": 96,
     "rejected": 4,
-    "open": 1,
+    "open": 0,
     "contributors": 2,
-    "ideas_open": 7
+    "ideas_open": 8
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 94,
+      "merged": 95,
       "attempts": 99,
-      "saved": 105674
+      "saved": 106102
     },
     {
       "login": "yidakra",
@@ -96,12 +96,12 @@
     {
       "number": 168,
       "title": "Idea: restructure(Paper): inline step-shaped single-use lemmas in Lengths, Curvature, Groups",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
+      "claimed_by": null,
       "lease_expires": null,
       "pr": 169,
-      "result_delta": null,
+      "result_delta": -428,
       "created_at": "2026-11-26T01:56:19Z",
       "url": "https://github.com/kongeskog/formal-math/issues/168",
       "technique": "restructure",
@@ -1018,84 +1018,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 169,
-      "title": "restructure(Paper): inline step-shaped single-use lemmas in Lengths, Curvature, Groups",
-      "author": "kongeskog",
-      "head_sha": "25b425500f8b4689fc567d12f1a7f0bf8235e5cc",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-26T02:02:47Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 168,
-      "url": "https://github.com/kongeskog/formal-math/pull/169",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper",
-      "warnings": [
-        "touches files reserved by idea #164 (claimed by @kongeskog): `vp-vnp/Paper/Cuts.lean`; coordinate there or expect to merge main after it lands"
-      ]
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
