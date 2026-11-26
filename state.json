@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T03:08:48.997985846Z",
+  "updated_at": "2026-11-26T03:13:45.338786965Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 1,
     "contributors": 2,
-    "ideas_open": 14
+    "ideas_open": 0
   },
   "leaderboard": [
     {
@@ -96,10 +96,10 @@
     {
       "number": 171,
       "title": "Idea: dead-code(*): facts that are proved and never used, judged by compiling",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-26T05:24:37Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 173,
       "result_delta": -753,
       "created_at": "2026-11-26T02:24:36Z",
@@ -124,7 +124,7 @@
     {
       "number": 168,
       "title": "Idea: restructure(Paper): inline step-shaped single-use lemmas in Lengths, Curvature, Groups",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -138,7 +138,7 @@
     {
       "number": 165,
       "title": "Idea: restructure(Paper): fold single-use lemmas in Alternative, UniversalSteps; drop unneeded heartbeat overrides",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -152,7 +152,7 @@
     {
       "number": 164,
       "title": "Idea: shorten(Paper/Cuts,Paper/Pieces,Paper/Tree): repeated facts and skeletons inside the longest proofs",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -166,7 +166,7 @@
     {
       "number": 161,
       "title": "Idea: restructure(Paper): merge round_num into next in ApproxRound, lem_angle into pairs in Groups",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -180,7 +180,7 @@
     {
       "number": 160,
       "title": "Idea: merge(Nc/Dl,Nc/Tow): one lemma for repeated uniqueness and list skeletons, single-caller lemmas that re-prove the caller's facts",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -194,7 +194,7 @@
     {
       "number": 158,
       "title": "Idea: restructure(Paper): flatten single-use clusters in Identity, Crossing, Prices; simplify; re-cut",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -208,7 +208,7 @@
     {
       "number": 153,
       "title": "Idea: restructure(Nc/Grp): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -222,7 +222,7 @@
     {
       "number": 151,
       "title": "Idea: restructure(Paper): flatten single-use clusters in ApproxRound, Laws, Approximate, Gauges; simplify; re-cut",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -236,7 +236,7 @@
     {
       "number": 148,
       "title": "Idea: shorten(Nc/Uni,NS1): local simp sets for repeated simp arguments, default proofs for side conditions",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -250,7 +250,7 @@
     {
       "number": 147,
       "title": "Idea: restructure(Paper/Fan,Paper/Groups): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -264,7 +264,7 @@
     {
       "number": 146,
       "title": "Idea: restructure(Nc/Tow): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -278,7 +278,7 @@
     {
       "number": 135,
       "title": "Idea: restructure(Paper/Alternative): the flat hypothesis for points of the cube only",
-      "status": "open",
+      "status": "closed",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -320,7 +320,7 @@
     {
       "number": 130,
       "title": "Idea: dead-code(*): second pass for conjuncts, fields, bound names and hypotheses that nothing uses",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -460,7 +460,7 @@
     {
       "number": 100,
       "title": "Idea: dead-code(*): remove conjuncts of internal lemmas and fields of internal structures that no use takes",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -1118,10 +1118,7 @@
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
-      "scope": "*",
-      "warnings": [
-        "touches files reserved by idea #171 (claimed by @kongeskog): `vp-vnp/Nc/Flag/Rank.lean`; coordinate there or expect to merge main after it lands"
-      ]
+      "scope": "*"
     }
   ],
   "top_files": [
