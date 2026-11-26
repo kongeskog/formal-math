@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T02:28:09.449885496Z",
+  "updated_at": "2026-11-26T02:37:13.698131830Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,9 +74,9 @@
   "counts": {
     "merged": 96,
     "rejected": 4,
-    "open": 0,
+    "open": 1,
     "contributors": 2,
-    "ideas_open": 9
+    "ideas_open": 11
   },
   "leaderboard": [
     {
@@ -88,7 +88,7 @@
     {
       "login": "yidakra",
       "merged": 1,
-      "attempts": 1,
+      "attempts": 2,
       "saved": 492
     }
   ],
@@ -236,10 +236,10 @@
     {
       "number": 148,
       "title": "Idea: shorten(Nc/Uni,NS1): local simp sets for repeated simp arguments, default proofs for side conditions",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-26T02:35:17Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 154,
       "result_delta": -1454,
       "created_at": "2026-11-25T23:35:12Z",
@@ -264,10 +264,10 @@
     {
       "number": 146,
       "title": "Idea: restructure(Nc/Tow): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-26T02:33:37Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 152,
       "result_delta": -2972,
       "created_at": "2026-11-25T23:33:32Z",
@@ -1046,7 +1046,81 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 172,
+      "title": "restructure(Paper): inline thm_alt, thm_alt_rank_price, flat_rate_approx_complete, a Toolkit step",
+      "author": "yidakra",
+      "head_sha": "6902c81517c2c5a240828635b4950bd31cb31eba",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-26T02:36:28Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 112,
+      "url": "https://github.com/kongeskog/formal-math/pull/172",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",

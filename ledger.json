@@ -4,14 +4,6 @@
       "login": "yidakra",
       "at": "2026-11-26T00:12:06Z"
     },
-    "146": {
-      "login": "kongeskog",
-      "at": "2026-11-25T23:33:37Z"
-    },
-    "148": {
-      "login": "kongeskog",
-      "at": "2026-11-25T23:35:17Z"
-    },
     "153": {
       "login": "kongeskog",
       "at": "2026-11-26T00:07:29Z"
@@ -45,6 +37,14 @@
     109,
     131
   ],
-  "judged": {},
+  "judged": {
+    "172@6902c81517c2c5a240828635b4950bd31cb31eba": {
+      "at": "2026-11-26T02:37:24Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    }
+  },
   "told": []
 }
