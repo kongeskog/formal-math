@@ -577,31 +577,6 @@ theorem lem_angle_projections {G₁ G₂ Z : Type} [Group G₁] [Fintype G₁] [
   simp only [← hαd, ← hβd] at h2 ⊢
   linarith [sq_nonneg (dist m g)]
 
-/-- **Paper: Lemma lem:angle.** "Let u, p, ζ be as in Lemma lem:tele, 0 ≤ ζ ≤ 1, and 1−c² ≤ (1−ζ)², c > 0. If a, a′
-are the projections of z for [p,p+2u) and [p+u,p+3u), then |aa′|² ≤ |za|² + |za′|² + 2c|za||za′|." -/
-theorem lem_angle {μ : ℕ} {s : ℝ} {h : ℕ} {Z : Type} [MetricSpace Z] [Cat.CN Z] (A : IsoAct (U h) Z)
-    (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A.len z) μ s) {u p : ℕ} {ζ c : ℝ}
-    (hu : 2 ≤ u) (hp : p + 3 * u ≤ h) (hζ : 0 ≤ ζ)
-    (hC : 4 * windowConst μ s (3 * u) ≤ ζ ^ 2 * ((u : ℝ) - 1) ^ 2) (hζ1 : ζ ≤ 1)
-    (hcζ : 1 - c ^ 2 ≤ (1 - ζ) ^ 2) (hc : 0 < c) (z : Z) :
-    dist ((A.W p (2 * u)).P z) ((A.W (p + u) (2 * u)).P z) ^ 2 ≤
-      dist z ((A.W p (2 * u)).P z) ^ 2 + dist z ((A.W (p + u) (2 * u)).P z) ^ 2 +
-        2 * c * (dist z ((A.W p (2 * u)).P z) * dist z ((A.W (p + u) (2 * u)).P z)) := by
-  set a := (A.W p (2 * u)).P z
-  set v := (A.W p (3 * u)).P a
-  have hvf : (A.W p (3 * u)).Fix v := IsoAct.P_fix _ a
-  have hv1 : (A.W p (2 * u)).Fix v := hvf.sub A le_rfl (by omega) hp
-  refine lem_angle_projections _ _ hc z v hv1 (hvf.sub A (by omega) (by omega) hp) fun q σ hσ0 hσ1 q1 q2 => ?_
-  have hqf : (A.W p (2 * u)).Fix q := segment_fixed _ hσ0.le hσ1 hv1 (IsoAct.P_fix _ z) q1 q2
-  have hqv : (A.W p (3 * u)).P q = v := projection_segment _ q1 q2
-  have h1 := lem_tele A hμ hs hA hu hp hζ hC hqf
-  rw [hqv] at h1
-  rw [dist_comm v q]
-  calc (1 - c ^ 2) * dist q v ^ 2 ≤ ((1 - ζ) * dist q v) ^ 2 := by
-        rw [mul_pow]
-        exact mul_le_mul_of_nonneg_right hcζ (sq_nonneg _)
-    _ ≤ _ := pow_le_pow_left₀ (mul_nonneg (by linarith) dist_nonneg) h1 2
-
 /-- The proof of Theorem thm:poincare: "If the windows of i, i′ do not meet and y is fixed by that of i, then the
 point nearest to y among those fixed by that of i′ is fixed by both. So this point can serve as v in the proof of Lemma
 lem:angle, with ζ = 0 and any c > 0, and gives |Q_iz Q_{i′}z|² ≤ r_i² + r_{i′}²." -/
@@ -657,8 +632,28 @@ theorem thm_poincare_pairs (hμ : 2 ≤ μ) (hs : 1 ≤ s) (hA : ∀ z, Contr (A
         have := hwin b
         rw [hb] at this
         nlinarith
-      have h1 := lem_angle A hμ hs hA hu h3 hζ hC hζ1 hcζ hc0 z
-      rw [show a.1 * u + u = b.1 * u by rw [hb]; ring] at h1
+      -- Lemma lem:angle: "Let u, p, ζ be as in Lemma lem:tele, 0 ≤ ζ ≤ 1, and 1−c² ≤ (1−ζ)², c > 0.
+      -- If a, a′ are the projections of z for [p,p+2u) and [p+u,p+3u), then
+      -- |aa′|² ≤ |za|² + |za′|² + 2c|za||za′|."
+      have h1 : dist (Q a z) (Q b z) ^ 2 ≤ dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2 +
+          2 * c * (dist z (Q a z) * dist z (Q b z)) := by
+        simp only [Q, show b.1 * u = a.1 * u + u by rw [hb]; ring]
+        generalize a.1 * u = p at h3 ⊢
+        set y := (A.W p (2 * u)).P z
+        set v := (A.W p (3 * u)).P y
+        have hvf : (A.W p (3 * u)).Fix v := IsoAct.P_fix _ y
+        have hv1 : (A.W p (2 * u)).Fix v := hvf.sub A le_rfl (by omega) h3
+        refine lem_angle_projections _ _ hc0 z v hv1 (hvf.sub A (by omega) (by omega) h3)
+          fun q σ hσ0 hσ1 q1 q2 => ?_
+        have hqf : (A.W p (2 * u)).Fix q := segment_fixed _ hσ0.le hσ1 hv1 (IsoAct.P_fix _ z) q1 q2
+        have hqv : (A.W p (3 * u)).P q = v := projection_segment _ q1 q2
+        have h1 := lem_tele A hμ hs hA hu h3 hζ hC hqf
+        rw [hqv] at h1
+        rw [dist_comm v q]
+        calc (1 - c ^ 2) * dist q v ^ 2 ≤ ((1 - ζ) * dist q v) ^ 2 := by
+              rw [mul_pow]
+              exact mul_le_mul_of_nonneg_right hcζ (sq_nonneg _)
+          _ ≤ _ := pow_le_pow_left₀ (mul_nonneg (by linarith) dist_nonneg) h1 2
       have h2 : 2 * c * (dist z (Q a z) * dist z (Q b z)) ≤
           c * (dist z (Q a z) ^ 2 + dist z (Q b z) ^ 2) := by
         nlinarith [sq_nonneg (dist z (Q a z) - dist z (Q b z))]
