@@ -10,10 +10,10 @@ import Nc.Flag.Cases
 /-!
 # The paper, section "Flat or contracting"
 
-The definitions, then the steps of the proof of Theorem thm:alt in the order of the paper. The theorem
-itself, "one of the two cases occurs", is the case split in `approx_rate_closed` (Paper/Approximate).
-The paper's n_a(W) = |a, a+W|² is `nn w a W`, its B_a(W, W') is `BB w a W W'`, D(r)² is `meanSq w r`,
-and u xᵀ is `vecMulVec u x`.
+The definitions, then the steps of the proof of Theorem thm:alt in the order of the paper. The
+theorem itself, "one of the two cases occurs", is the case split in `approx_rate_closed`
+(Paper/Approximate). The paper's n_a(W) = |a, a+W|² is `nn w a W`, its B_a(W, W') is
+`BB w a W W'`, D(r)² is `meanSq w r`, and u xᵀ is `vecMulVec u x`.
 -/
 
 namespace Paper
