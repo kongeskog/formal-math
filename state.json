@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T02:46:59.208561591Z",
+  "updated_at": "2026-11-26T02:50:48.991580344Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,21 +60,21 @@
     }
   },
   "current": {
-    "sha": "409515862899b8b7fe81f65bc43ac144b57f1ea0",
-    "at": "2026-11-26T02:16:58.554155892Z",
+    "sha": "f7f9c617717f1a3975106c2e584184c78bf22657",
+    "at": "2026-11-26T02:50:48.991580344Z",
     "metrics": {
-      "tokens": 821567,
-      "loc": 52819,
-      "decls": 4312,
+      "tokens": 821153,
+      "loc": 52798,
+      "decls": 4308,
       "files": 314,
-      "bytes": 3075226,
-      "build_seconds": 248
+      "bytes": 3073915,
+      "build_seconds": 286
     }
   },
   "counts": {
-    "merged": 96,
+    "merged": 97,
     "rejected": 4,
-    "open": 3,
+    "open": 2,
     "contributors": 2,
     "ideas_open": 14
   },
@@ -87,9 +87,9 @@
     },
     {
       "login": "yidakra",
-      "merged": 1,
+      "merged": 2,
       "attempts": 2,
-      "saved": 492
+      "saved": 906
     }
   ],
   "ideas": [
@@ -394,8 +394,8 @@
       "author": "kongeskog",
       "claimed_by": "yidakra",
       "lease_expires": "2026-11-26T03:12:06Z",
-      "pr": 156,
-      "result_delta": -3848,
+      "pr": 172,
+      "result_delta": -4262,
       "created_at": "2026-11-25T02:41:37Z",
       "url": "https://github.com/kongeskog/formal-math/issues/112",
       "technique": "restructure",
@@ -1047,79 +1047,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 172,
-      "title": "restructure(Paper): inline thm_alt, thm_alt_rank_price, flat_rate_approx_complete, a Toolkit step",
-      "author": "yidakra",
-      "head_sha": "6902c81517c2c5a240828635b4950bd31cb31eba",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-26T02:36:28Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog"
-        }
-      ],
-      "idea": 112,
-      "url": "https://github.com/kongeskog/formal-math/pull/172",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    },
     {
       "pr": 173,
       "title": "dead-code(*): remove facts that are proved and never used, judged by compiling",
