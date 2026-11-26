@@ -373,8 +373,8 @@ theorem lem_toolkit_f_isPt {x u v y a b : Y} {h δ s t : ℝ} (hp : dist x u = h
     (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (ha : IsPt x u s a) (hb : IsPt y v t b) :
     dist a b ^ 2 = δ ^ 2 + (s - t) ^ 2 * h ^ 2 := by
-  -- the values of |xb|² and |ay|² from lem_toolkit_f_same, inserted into lem_toolkit_f_parts
   have hd2 : 2 * h ^ 2 + 2 * δ ^ 2 ≤ dist x v ^ 2 + dist u y ^ 2 := by linarith
+  -- |ab|² from lem_toolkit_f_parts, with the values of |xb|² and |ay|² from lem_toolkit_f_same
   have h1 := lem_toolkit_f_parts hp hp' hq hq' hd2 hs0 hs1 ht0 ht1 ha hb
   obtain ⟨a', ha'⟩ := lem_toolkit_a_isPt x u ht0 ht1
   obtain ⟨b', hb'⟩ := lem_toolkit_a_isPt y v hs0 hs1

@@ -196,23 +196,6 @@ theorem flat_rate_approximating {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk
   simp only [map_sum, HahnSeries.coeff_sum]
   exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun y _ => hterm j y
 
-/-- "… and with it Theorem thm:flat-rate", for every family that is complete for grid sums. -/
-theorem flat_rate_approx_complete (κ : ℕ) : ∃ m₀ : ℕ, ∀ (K : Type) [Field K], Flat K →
-    ∀ G : ∀ S : ℕ, MvPolynomial (Fin S × Fin S) K, GridComplete K G κ →
-    ∀ m ≥ m₀, ∀ s : ℕ, Approximates (G m) s → (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
-  obtain ⟨m₀, h⟩ := rate_of_projection κ
-  refine ⟨m₀, fun K _ hK G hG => h _ fun k ℓ m s hk hℓ hℓk hm hs => ?_⟩
-  -- Lemma lem:fkl-perm for a family complete for grid sums: f_{k,ℓ} is a projection of G_m with
-  -- affine entries
-  obtain ⟨E, hE, he⟩ := clauses_of_complete hG fklLits (fklLits_ne hk hℓ) fklLits_occ (fklWt K)
-    (fun κ => Or.inl ⟨κ.1, rfl⟩) (S := m)
-    (le_trans (le_trans (Nat.mul_le_mul_left _ (fklLits_count hk)) (le_of_eq (by ring))) hm)
-  have hap : Approximates (fkl K k ℓ) (5 * s) :=
-    he.trans (lem_fkl_perm_clauseSum K k ℓ) ▸ hs.substitute_affine E hE
-  refine rate_pow hk ?_ (flat_rate_approximating hK hk hℓk hap)
-  obtain ⟨Q, ⟨l, -, a, ha, -⟩, -⟩ := hap
-  omega
-
 /-- Both cases over KK, for circuits with constants in KK[ε,ε⁻¹]. -/
 theorem approx_rate_closed {K : Type} [Field K] {G : ∀ S, MvPolynomial (Fin S × Fin S) K} {κ : ℕ}
     (hG : GridComplete K G κ) :
@@ -221,12 +204,25 @@ theorem approx_rate_closed {K : Type} [Field K] {G : ∀ S, MvPolynomial (Fin S 
       (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
   obtain ⟨m₀, h⟩ : ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, Approximates (G m) s →
       (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
-    rcases thm_alt K with hK | hK
-    · obtain ⟨m₀, h⟩ := flat_rate_approx_complete κ
-      exact ⟨m₀, h K hK _ hG⟩
+    -- Theorem thm:alt: "One of the two cases occurs."
+    by_cases hK : Contracting K
     · obtain ⟨C, M₁, h⟩ := contracting_approx_complete hK hG
       exact rate_of_exponents (P := fun m s => Approximates (G m) s)
         (fun _ _ _ hst ⟨Q, hQ, hQf⟩ => ⟨Q, Computes.mono hQ hst, hQf⟩) h
+    -- The flat case, "… and with it Theorem thm:flat-rate".
+    have hF : Flat K := fun k V _ E => thm_alt_euclidean hK (μ := k + 3) (by omega) (by omega) V E
+    obtain ⟨m₀, h⟩ := rate_of_projection κ
+    refine ⟨m₀, h _ fun k ℓ m s hk hℓ hℓk hm hs => ?_⟩
+    -- Lemma lem:fkl-perm for a family complete for grid sums: f_{k,ℓ} is a projection of G_m with
+    -- affine entries
+    obtain ⟨E, hE, he⟩ := clauses_of_complete hG fklLits (fklLits_ne hk hℓ) fklLits_occ (fklWt K)
+      (fun κ => Or.inl ⟨κ.1, rfl⟩) (S := m)
+      (le_trans (le_trans (Nat.mul_le_mul_left _ (fklLits_count hk)) (le_of_eq (by ring))) hm)
+    have hap : Approximates (fkl K k ℓ) (5 * s) :=
+      he.trans (lem_fkl_perm_clauseSum K k ℓ) ▸ hs.substitute_affine E hE
+    refine rate_pow hk ?_ (flat_rate_approximating hF hk hℓk hap)
+    obtain ⟨Q, ⟨l, -, a, ha, -⟩, -⟩ := hap
+    omega
   refine ⟨m₀, fun m hm s P hP hc => h m hm s (Approximates.of_laurentPolynomial hP fun d i hi => ?_)⟩
   rcases eq_or_lt_of_le hi with rfl | hlt
   · rw [if_pos rfl, (hc d).2]

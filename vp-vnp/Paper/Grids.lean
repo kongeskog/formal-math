@@ -40,6 +40,7 @@ theorem prop_grid {R : Type} [CommRing R] (h : R) (hh : h * 2 = 1) {N V K : Type
       simp [hs]
     · rw [if_neg hs]
       exact Finset.sum_eq_zero fun r _ => if_neg fun hc => hs hc.1
+  -- the fibre facts are not used below; left in scope they slow the later `simp_all` calls
   clear s1 s2 r2
   have hcard : Fintype.card (N × Option Bool) ≤ S := by
     refine le_trans (le_of_eq ?_) hS
