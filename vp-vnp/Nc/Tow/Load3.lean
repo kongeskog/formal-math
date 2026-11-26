@@ -31,14 +31,6 @@ theorem exists_im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : ∃ i, (∀ i', f
 theorem exists_isMin (hh : 0 < h) (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : ∃ i, IsMin L j i :=
   exists_im hh (sqs L j)
 
-/-- The chosen type is unique. -/
-theorem isMin_eq {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i i' : Fin h} (h1 : IsMin L j i)
-    (h2 : IsMin L j i') : i = i' := by
-  rcases lt_trichotomy i i' with hlt | heq | hlt
-  · exact absurd h1.1 (h2.2 i hlt)
-  · exact heq
-  · exact absurd h2.1 (h1.2 i' hlt)
-
 /-- The chosen type has a small part of the loads. -/
 theorem isMin_le {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i : Fin h} (hi : IsMin L j i) :
     (h : ℝ) * ∑ e ∈ univ.filter (fun e : T.Ed j => T.ty e = i), (L (.edge j e) : ℝ) ^ 2 ≤
@@ -178,7 +170,7 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o) 
       rw [h3, he'] at h4
       refine hne (alv_inr_zero hb (Or.inl fun hcon => ?_) ν)
       have : IsMin (load R ch FL lhat n o) j'.castSucc i' := hcon
-      exact h4 (isMin_eq hi this)
+      exact h4 (firstMin_eq hi this)
   · refine Finset.sum_image_le_of_nonneg ?_ |>.trans ?_
     · intro _ _; exact Nat.zero_le _
     · exact Finset.sum_le_sum fun e _ => (alv_mid_le hb j e 2 (hx2 e) false).1
@@ -225,7 +217,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       obtain ⟨e, h1, h2, h3⟩ := tgR_edge_succ (x := x) (ν := ν') hν
       subst h1
       refine hne ((alv_mid_le hb j e 2 hx ν').2 fun hcon => ?_)
-      have h4 : T.ty e = i := isMin_eq hcon hi
+      have h4 : T.ty e = i := firstMin_eq hcon hi
       have h5 := ((T.nr j.2 i).symm (ω, ν)).2
       rw [← h3, T.π_ty j.2, h4] at h5
       exact h5 rfl
@@ -237,7 +229,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       have hmin : IsMin (load R ch FL lhat n o) j'.castSucc i' := by
         by_contra hcon
         exact hne (alv_inr_zero hb (Or.inl hcon) ν')
-      obtain rfl : i' = i := isMin_eq hmin hi
+      obtain rfl : i' = i := firstMin_eq hmin hi
       have h4 : (T.nr j'.2 i').symm (ω', FL.cn d' ν') = (T.nr j'.2 i').symm (ω, ν) := Subtype.ext h3
       have h5 := (T.nr j'.2 i').symm.injective h4
       simp only [Prod.mk.injEq] at h5
@@ -246,11 +238,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       have hpk : Pick FL (load R ch FL lhat n o) ⟨j', i', ω', d'⟩ := by
         by_contra hcon
         exact hne (alv_inr_zero hb (Or.inr hcon) ν')
-      have hdd : d' = d := by
-        rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di d') with hlt | heq | hlt
-        · exact absurd hd.1 (hpk.2 d hlt)
-        · exact ((Fintype.equivFin FL.Di).injective heq).symm
-        · exact absurd hpk.1 (hd.2 d' hlt)
+      have hdd : d' = d := pick_eq _ (l := ⟨j', i', ω', d'⟩) hpk hd
       subst hdd
       have h8 : ν' = (FL.cn d').symm ν := by
         rw [← h7]

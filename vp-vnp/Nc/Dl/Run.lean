@@ -222,8 +222,7 @@ theorem phase3 {st : NmT S M U0 U1 pS → Tree} (hz : st .zero = .nil) (Φ : (Li
     · rename_i a0
       subst hx
       refine ⟨(.dg a0, dgT C a0 (f (a0, a0))), ?_, rfl⟩
-      simp only [o3, if_true]
-      exact List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (List.mem_singleton_self _)))
+      simp [o3]
     · subst hx
       exact ⟨_, List.mem_cons_of_mem _ (List.mem_cons_of_mem _ List.mem_cons_self), rfl⟩
 
