@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T02:37:13.698131830Z",
+  "updated_at": "2026-11-26T02:39:49.147885606Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 96,
     "rejected": 4,
-    "open": 1,
+    "open": 2,
     "contributors": 2,
     "ideas_open": 11
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 95,
-      "attempts": 99,
+      "attempts": 100,
       "saved": 106102
     },
     {
@@ -100,7 +100,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T05:24:37Z",
-      "pr": null,
+      "pr": 173,
       "result_delta": null,
       "created_at": "2026-11-26T02:24:36Z",
       "url": "https://github.com/kongeskog/formal-math/issues/171",
@@ -1108,8 +1108,8 @@
         {
           "key": "review",
           "label": "Independent review",
-          "status": "pending",
-          "detail": "0 of 1 approvals from vetted reviewers"
+          "status": "pass",
+          "detail": "Approved by kongeskog"
         }
       ],
       "idea": 112,
@@ -1119,6 +1119,82 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Paper"
+    },
+    {
+      "pr": 173,
+      "title": "dead-code(*): remove facts that are proved and never used, judged by compiling",
+      "author": "kongeskog",
+      "head_sha": "42fc6a9be6257dca61c00b330fd8fadb427c05cf",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-26T02:39:23Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 171,
+      "url": "https://github.com/kongeskog/formal-math/pull/173",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "dead-code",
+      "scope": "*",
+      "warnings": [
+        "touches files reserved by idea #153 (claimed by @kongeskog): `vp-vnp/Nc/Grp/Pack.lean`, `vp-vnp/Nc/Grp/RoleProg.lean`; coordinate there or expect to merge main after it lands"
+      ]
     }
   ],
   "top_files": [
