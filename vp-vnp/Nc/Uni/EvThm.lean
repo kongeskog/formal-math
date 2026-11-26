@@ -143,13 +143,13 @@ theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
       rw [h0]
       exact ok.nil
     have h2 := hk (nx θ σ (.inl .en) 0 0 0) 0 (ok.nx _ _ _ _) rfl h0 rfl (heap_nx σ _ _ _ _)
-      (inpA σ _ (by simp) (by simp) _ _ _) rfl
+      inpA rfl
     exact (sumTo_ruleA ok hrec .en (by rw [hm]; rfl) (by rw [hm]; simp) (by rw [hm]; simp) (by rw [hm]; rfl) rfl h2).mono
       (by linarith)
   · refine toOp (c := 0) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
     refine dstep ok1 hm1 h11 .d0 rfl (by decide) rfl rfl ?_
     refine (hk (nx θ σ1 (.inl .d0) 0 0 0) (σ1.regs 2) (ok1.nx _ _ _ _) rfl rfl h14
-      (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA σ1 _ (by simp) (by simp) _ _ _).trans hi1)
+      (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA).trans hi1)
       (h12.mono (heap_nx σ1 _ _ _ _))).mono (by linarith)
 
 theorem EvOK.id (x : Tree) : EvOK θ supp .id x [.det 1 x] := by
@@ -167,7 +167,7 @@ theorem EvOK.id (x : Tree) : EvOK θ supp .id x [.det 1 x] := by
   refine toOp (c := 1) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
   refine dstep ok1 hm1 h11 .d1 rfl (by decide) rfl rfl ?_
   refine (hk (nx θ σ1 (.inl .d1) 0 0 0) (σ1.regs 3) (ok1.nx _ _ _ _) rfl rfl h14
-    (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA σ1 _ (by simp) (by simp) _ _ _).trans hi1) ?_).mono (by linarith)
+    (fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)) ((inpA).trans hi1) ?_).mono (by linarith)
   rw [h13]
   exact hx.mono fun _ h => heap_nx σ1 _ _ _ _ (hh1 h)
 

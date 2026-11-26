@@ -61,13 +61,16 @@ theorem flatMap_unit {γ : Type*} (l : List Unit) (a : γ) : (l.flatMap fun _ =>
   | nil => rfl
   | cons x l ih => rw [List.flatMap_cons, ih]; rfl
 
+-- What `on` and `rgs` mean, and a constant `flatMap`: used by every `Runs` proof below.
+attribute [local simp] on mem_rgs flatMap_unit
+
 theorem runs_ct : Runs (emCt : List Bool × List Unit → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := Runs.wordstar (F := A) (Z := Zc K) {tp .cp true, tp .fr false, tp .cp false} ⟨tp .cp true, by simp⟩
     (fun b : Bool => (Sy.bit b : Sy M K))
   have h2 := Runs.const (F := A) fun z : Zc K => on {tp .cp true, tp .fr false} [(Sy.bit false : Sy M K)] z ++
     on {tp .cp false} [Sy.bit true] z
   have h3 := runs_rep (A := A) (fun z : Zc K => on {tp .cp true, tp .fr false} [(Sy.bit true : Sy M K)] z ++
-    on {tp .cp false} [Sy.bit false] z) ⟨tp .cp false, by simp [on]⟩
+    on {tp .cp false} [Sy.bit false] z) ⟨tp .cp false, by simp⟩
   have h4 := Runs.const (F := A) (Z := Zc K) (on {tp .cp true, tp .fr false, tp .cp false} [(Sy.semi : Sy M K)])
   refine (((h1.mul h2).mul h3).mul h4).congr ⟨fun r => (((r.1, ()), r.2), ()), fun y => (y.1.1.1, y.1.2), fun r => rfl,
     fun y => rfl⟩ (fun r z => ?_) fun r => ?_
@@ -75,14 +78,14 @@ theorem runs_ct : Runs (emCt : List Bool × List Unit → Zc K → List (Sy M K)
     simp only [Equiv.coe_fn_mk, emCt, cn, cn1, bw]
     by_cases hz1 : z = tp .cp true
     · subst hz1
-      simp [on, flatMap_unit]
+      simp
     · by_cases hz2 : z = tp .fr false
       · subst hz2
-        simp [on, flatMap_unit]
+        simp
       · by_cases hz3 : z = tp .cp false
         · subst hz3
-          simp [on, flatMap_unit]
-        · simp [on, hz1, hz2, hz3]
+          simp
+        · simp [hz1, hz2, hz3]
   · simp
 
 /-- The first words: registers 0, counter 1. -/
@@ -99,7 +102,7 @@ def emIn (m0 : M) (kN : K) (l : List Unit) : Zc K → List (Sy M K) := fun z =>
 theorem runs_in (m0 : M) (kN : K) : Runs (emIn m0 kN : List Unit → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := Runs.const (F := A) fun z : Zc K => on {lsF} [(Sy.flag false : Sy M K), .kd kN] z ++ on {tp .md false} [.md m0] z
   have h2 := runs_rep (A := A) (fun z : Zc K => on (insert (tp .cp false) (rgs false)) [(Sy.bit false : Sy M K)] z ++
-    on {lsF} [.col fun _ => false] z) ⟨lsF, by simp [on, mem_rgs]⟩
+    on {lsF} [.col fun _ => false] z) ⟨lsF, by simp⟩
   have h3 := Runs.const (F := A) fun z : Zc K => on (rgs false) [(Sy.bit false : Sy M K), .semi] z ++
     on {tp .cp false} [.bit true, .semi] z ++ on {lsF} [.col fun _ => false, .mark, .dot] z
   refine ((h1.mul h2).mul h3).congr ⟨fun l => (((), l), ()), fun y => y.1.2, fun l => rfl, fun y => rfl⟩
@@ -107,14 +110,14 @@ theorem runs_in (m0 : M) (kN : K) : Runs (emIn m0 kN : List Unit → Zc K → Li
   · simp only [Equiv.coe_fn_mk, emIn, i0, i1, bw, rec'_eq]
     by_cases hz1 : z ∈ rgs false
     · obtain ⟨i, rfl⟩ := (mem_rgs _ _).1 hz1
-      simp [on, mem_rgs, flatMap_unit, List.replicate_succ']
+      simp [List.replicate_succ']
     · by_cases hz2 : z = tp .cp false
       · subst hz2
-        simp [on, mem_rgs, flatMap_unit]
+        simp
       · by_cases hz3 : z = lsF
         · subst hz3
-          simp [on, mem_rgs, flatMap_unit, List.replicate_succ']
-        · simp [on, hz1, hz2, hz3]
+          simp [List.replicate_succ']
+        · simp [hz1, hz2, hz3]
   · simp
 
 section Steps
@@ -176,6 +179,9 @@ theorem flatMap_single' {α β : Type*} (l : List α) (f : α → β) : (l.flatM
 
 theorem flatMap_nil' {α β : Type*} (l : List α) : (l.flatMap fun _ => ([] : List β)) = [] := by simp
 
+-- The pieces of a step's record, unfolded by `emSt_eq` and `st1_ne`.
+attribute [local simp] st0 st1 st2 emSt
+
 theorem emSt_eq (x : P.Rl × List (Fin 9 → Bool)) (z : Zc K) :
     st0 P x.1 z ++ (x.2.flatMap (fun v => st1 P x.1 v z) ++ st2 z) = emSt P x z := by
   obtain ⟨r, w⟩ := x
@@ -183,25 +189,25 @@ theorem emSt_eq (x : P.Rl × List (Fin 9 → Bool)) (z : Zc K) :
   | .tp (.rg i) s =>
     simp only [st0, st1, st2, emSt, flatMap_single', rgw, bw, List.nil_append, cw]
     cases s <;> simp [List.map_map, Function.comp_def]
-  | .tp .md s => simp [st0, st1, st2, emSt]
-  | .tp .cp s => simp [st0, st1, st2, emSt]
+  | .tp .md s => simp
+  | .tp .cp s => simp
   | .tp .fr s =>
     cases s
-    · simp [st0, st1, st2, emSt]
-    · simp [st0, st1, st2, emSt, flatMap_single', bw, cw, List.map_map, Function.comp_def]
+    · simp
+    · simp [flatMap_single', bw, cw, List.map_map, Function.comp_def]
   | .tp .lk s =>
     cases s
-    · simp [st0, st1, st2, emSt, flatMap_single', rec'_eq, ldc, List.map_map, Function.comp_def]
-    · simp [st0, st1, st2, emSt]
+    · simp [flatMap_single', rec'_eq, ldc, List.map_map, Function.comp_def]
+    · simp
   | .tp .ls s =>
     cases s
-    · simp [st0, st1, st2, emSt, flatMap_single', rec'_eq, alc, List.map_map, Function.comp_def]
-    · simp [st0, st1, st2, emSt]
-  | .tp (.bk b) s => simp [st0, st1, st2, emSt]
-  | .tp (.cm k) s => simp [st0, st1, st2, emSt]
-  | .inp j => simp [st0, st1, st2, emSt]
+    · simp [flatMap_single', rec'_eq, alc, List.map_map, Function.comp_def]
+    · simp
+  | .tp (.bk b) s => simp
+  | .tp (.cm k) s => simp
+  | .inp j => simp
 
-theorem st1_ne (r : P.Rl) (v : Fin 9 → Bool) : ∃ z, st1 P r v z ≠ [] := ⟨tp .fr true, by simp [st1]⟩
+theorem st1_ne (r : P.Rl) (v : Fin 9 → Bool) : ∃ z, st1 P r v z ≠ [] := ⟨tp .fr true, by simp⟩
 
 theorem runs_st : Runs (emSt P : P.Rl × List (Fin 9 → Bool) → Zc K → List (Sy M K)) (fun x => P.wt x.1) := by
   have h := Runs.sum fun r : P.Rl =>
@@ -228,9 +234,12 @@ def ed1 (v : Fin 5 → Bool) : Zc K → List (Sy M K)
   | .tp (.rg i) s => if s then [.bit (v i)] else []
   | _ => []
 
+-- The pieces of the end record, unfolded by `runs_ed`.
+attribute [local simp] ed1 emEd
+
 theorem runs_ed (mh : M) : Runs (emEd mh : List (Fin 5 → Bool) × List Bool → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := (Runs.pick (F := A) (fun v : Fin 5 → Bool => (ed1 v : Zc K → List (Sy M K))) fun _ => 1).kstar
-    fun v => ⟨tp (.rg 0) true, by simp [ed1]⟩
+    fun v => ⟨tp (.rg 0) true, by simp⟩
   have h2 := Runs.const (F := A) fun z : Zc K => on (rgs true) [(Sy.semi : Sy M K)] z ++
     on {tp .md true} [.md mh] z ++ on {tp .cp true} [.bit true] z
   have h3 := Runs.wordstar (F := A) (Z := Zc K) {tp .cp true} ⟨tp .cp true, by simp⟩ (fun b : Bool => (Sy.bit b : Sy M K))
@@ -242,16 +251,16 @@ theorem runs_ed (mh : M) : Runs (emEd mh : List (Fin 5 → Bool) × List Bool �
     match z with
     | .tp (.rg i) s =>
       cases s
-      · simp [ed1, emEd, on, mem_rgs]
-      · simp [ed1, emEd, on, mem_rgs, flatMap_single', bw, List.map_map, Function.comp_def]
-    | .tp .md s => cases s <;> simp [ed1, emEd, on, mem_rgs]
-    | .tp .cp s => cases s <;> simp [ed1, emEd, on, mem_rgs, bw]
-    | .tp .fr s => simp [ed1, emEd, on, mem_rgs]
-    | .tp .lk s => simp [ed1, emEd, on, mem_rgs]
-    | .tp .ls s => simp [ed1, emEd, on, mem_rgs]
-    | .tp (.bk b) s => simp [ed1, emEd, on, mem_rgs]
-    | .tp (.cm k) s => simp [ed1, emEd, on, mem_rgs]
-    | .inp j => simp [ed1, emEd, on, mem_rgs]
+      · simp
+      · simp [flatMap_single', bw, List.map_map, Function.comp_def]
+    | .tp .md s => cases s <;> simp
+    | .tp .cp s => cases s <;> simp [bw]
+    | .tp .fr s => simp
+    | .tp .lk s => simp
+    | .tp .ls s => simp
+    | .tp (.bk b) s => simp
+    | .tp (.cm k) s => simp
+    | .inp j => simp
   · simp
 
 /-- Emissions of the phase that appends the lookups to the list. -/
@@ -279,7 +288,7 @@ theorem emSt_ne (x : P.Rl × List (Fin 9 → Bool)) : ∃ z, emSt P x z ≠ [] :
 
 theorem runs_X : Runs (emX P : XP P → Zc K → List (Sy M K)) (fun x => (x.2.2.1.map fun s => P.wt s.1).prod) := by
   have h := (runs_in P.m0 P.kN).mul
-    (((runs_ct).kstar fun r => ⟨tp .cp true, by simp [emCt, on, bw]⟩).mul
+    (((runs_ct).kstar fun r => ⟨tp .cp true, by simp [emCt, bw]⟩).mul
     (((runs_st P).kstar fun s => emSt_ne P s).mul ((runs_ed P.mh).mul
     ((runs_ap).mul (runs_U)))))
   refine h.congr (Equiv.refl _) (fun x z => rfl) fun x => ?_

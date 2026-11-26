@@ -104,7 +104,8 @@ theorem AD_dt (c : Bool) {x y : List Bool} (h : x.length = y.length) :
       have h3 : Dt θ (.hd (.tl .id)) (.cons AD.code (.cons (bit c) (.cons (ofBits (a :: x)) (ofBits (b :: y)))))
           (bit c) 3 := Dt.hd (Dt.tl (Dt.id _))
       have one_ne : bit true ≠ .nil := by simp [bit, one]
-      refine ⟨_, ?_, Dt.ite_true h0 (by simp [ofBits]) (j := 5 + 1 + (5 + 1 + (3 + 1 + (k + 21)))) ?_⟩
+      refine ⟨_, ?_, Dt.ite_true h0 (j := 5 + 1 + (5 + 1 + (3 + 1 + (k + 21)))) ?_
+        (by simp [ofBits])⟩
       · simp only [List.length_cons]
         omega
       · cases a <;> cases b <;> cases c <;>
@@ -112,12 +113,12 @@ theorem AD_dt (c : Bool) {x y : List Bool} (h : x.length = y.length) :
             Bool.or_true, Bool.or_false, Bool.xor_false, Bool.xor_true, Bool.not_true,
             Bool.not_false, addc, ofBits] at hbr ⊢
         · exact Dt.ite_false h1 (Dt.ite_false h2 (Dt.ite_false h3 hbr))
-        · exact Dt.ite_false h1 (Dt.ite_false h2 (Dt.ite_true h3 one_ne hbr))
-        · exact Dt.ite_false h1 (Dt.ite_true h2 one_ne (Dt.ite_false h3 hbr))
-        · exact Dt.ite_false h1 (Dt.ite_true h2 one_ne (Dt.ite_true h3 one_ne hbr))
-        · exact Dt.ite_true h1 one_ne (Dt.ite_false h2 (Dt.ite_false h3 hbr))
-        · exact Dt.ite_true h1 one_ne (Dt.ite_false h2 (Dt.ite_true h3 one_ne hbr))
-        · exact Dt.ite_true h1 one_ne (Dt.ite_true h2 one_ne (Dt.ite_false h3 hbr))
-        · exact Dt.ite_true h1 one_ne (Dt.ite_true h2 one_ne (Dt.ite_true h3 one_ne hbr))
+        · exact Dt.ite_false h1 (Dt.ite_false h2 (Dt.ite_true h3 hbr one_ne))
+        · exact Dt.ite_false h1 (Dt.ite_true h2 (Dt.ite_false h3 hbr) one_ne)
+        · exact Dt.ite_false h1 (Dt.ite_true h2 (Dt.ite_true h3 hbr one_ne) one_ne)
+        · exact Dt.ite_true h1 (Dt.ite_false h2 (Dt.ite_false h3 hbr)) one_ne
+        · exact Dt.ite_true h1 (Dt.ite_false h2 (Dt.ite_true h3 hbr one_ne)) one_ne
+        · exact Dt.ite_true h1 (Dt.ite_true h2 (Dt.ite_false h3 hbr) one_ne) one_ne
+        · exact Dt.ite_true h1 (Dt.ite_true h2 (Dt.ite_true h3 hbr one_ne) one_ne) one_ne
 
 end NS1

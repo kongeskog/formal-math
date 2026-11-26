@@ -106,6 +106,9 @@ theorem decw_val (w : List Bool) : (decw w = none ∧ KT.val w = 0) ∨ ∃ w', 
         simp
         omega
 
+-- One step of decoding, unfolded by the lemmas on `ok` below.
+attribute [local simp] Bt.dec
+
 theorem ok_leaf (w : List Bool) (b : List (List Bool)) :
     ok (.leaf w) b = true ↔ (∀ p ∈ b, p = []) ∧ KT.val w = b.length := by
   induction b generalizing w with
@@ -115,7 +118,7 @@ theorem ok_leaf (w : List Bool) (b : List (List Bool)) :
   | cons p b ih =>
     rw [ok_cons]
     cases p with
-    | cons a p => simp [Bt.dec]
+    | cons a p => simp
     | nil =>
       rcases decw_val w with ⟨h1, h2⟩ | ⟨w', h1, h2⟩
       · simp only [Bt.dec, h1, Option.map_none, Option.getD_none, Bool.false_eq_true, List.length_cons, false_iff]
@@ -146,24 +149,24 @@ theorem ok_node (l r : Bt) (b : List (List Bool)) :
   | cons p b ih =>
     rw [ok_cons]
     cases p with
-    | nil => simp [Bt.dec]
+    | nil => simp
     | cons a p =>
       cases a with
       | true =>
         rw [part_cons, part_cons, if_neg (by simp), if_pos rfl, ok_cons]
         cases h : Bt.dec p r with
-        | none => simp [Bt.dec, h]
-        | some r' => simp [Bt.dec, h, ih]
+        | none => simp [h]
+        | some r' => simp [h, ih]
       | false =>
         rw [part_cons, part_cons, if_pos rfl, if_neg (by simp), ok_cons]
         cases h : Bt.dec p l with
-        | none => simp [Bt.dec, h]
-        | some l' => simp [Bt.dec, h, ih]
+        | none => simp [h]
+        | some l' => simp [h, ih]
 
 theorem ok_none (b : List (List Bool)) : ok .none b = true ↔ b = [] := by
   cases b with
   | nil => simp [ok_nil, Bt.zero]
-  | cons p b => simp [ok_cons, Bt.dec]
+  | cons p b => simp [ok_cons]
 
 theorem sum_words (J n : ℕ) (c : R) :
     ((KT.words J).map fun w => if KT.val w = n then c else 0).sum = if n < 2 ^ J then c else 0 := by
@@ -341,9 +344,9 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     intro t t' _ h
     simp only [names, Bt.decAll, Option.some.injEq] at h
     subst h
-    exact ⟨_, by simp only [Tree.size]; omega, Dt.ite_true (.hd (.tl (.id _))) (by simp)
+    exact ⟨_, by simp only [Tree.size]; omega, Dt.ite_true (.hd (.tl (.id _)))
       (Dt.ite_false (.tl (.hd (.tl (.id _)))) (Dt.ite_false (.hd (.hd (.tl (.id _))))
-          (.tl (.tl (.id _)))))⟩
+        (.tl (.tl (.id _)))))⟩
   | case3 a b iha ihb =>
     intro t t' ht h
     rw [names, Bt.decAll_append, Option.bind_eq_some_iff] at h
@@ -354,8 +357,8 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
       rwa [Fm.ofTree_code]
     have eb : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) t'.enc kb := by
       rwa [Fm.ofTree_code]
-    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (by simp) (Dt.ite_false (.tl (.hd (.tl (.id _))))
-      (Dt.ite_true (.hd (.hd (.tl (.id _)))) (by simp) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
+    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (Dt.ite_false (.tl (.hd (.tl (.id _))))
+      (Dt.ite_true (.hd (.hd (.tl (.id _)))) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
         (.cons (.tl (.hd (.hd (.tl (.id _))))) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
           (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))) eb)))⟩
     have e : (60 * H + 41) * (a.size + b.size + 1 + 1 + 1) =
@@ -368,10 +371,9 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     obtain ⟨k, hk, d⟩ := DC_some (θ := θ) h
     have e : Dt θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) t'.enc k := by
       rwa [Fm.ofTree_code]
-    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _)))
-        (by simp) (Dt.ite_true (.tl (.hd (.tl (.id _)))) (by simp)
+    refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (Dt.ite_true (.tl (.hd (.tl (.id _))))
       (Dt.run (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
-          (.tl (.tl (.id _))))) e))⟩
+        (.tl (.tl (.id _))))) e))⟩
     have e : (60 * H + 41) * (x.size + (u.size + v.size + 1) + 1) =
         (60 * H + 41) * x.size + (60 * H + 41) * (u.size + v.size) + 2 * (60 * H + 41) := by ring
     have := Nat.mul_le_mul_left (60 * H + 41) (Tree.size_pos x)
@@ -388,8 +390,8 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
   | case3 a b iha ihb =>
     intro t h
     rw [names, Bt.decAll_append] at h
-    refine Ev.ite_true_nil (.hd (.tl (.id _))) (by simp) (Ev.ite_false_nil (.tl (.hd (.tl (.id _))))
-      (Ev.ite_true_nil (.hd (.hd (.tl (.id _)))) (by simp) ?_))
+    refine Ev.ite_true_nil (.hd (.tl (.id _))) (Ev.ite_false_nil (.tl (.hd (.tl (.id _))))
+      (Ev.ite_true_nil (.hd (.hd (.tl (.id _)))) ?_))
     cases h1 : Bt.decAll (names a) t with
     | none =>
       have ea : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) [] := by
@@ -422,10 +424,9 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
       | some t' => simp [names, Bt.decAll, hd] at h
     have e : Ev θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) [] := by
       rw [Fm.ofTree_code]; exact DC_none h'
-    exact Ev.ite_true_nil (.hd (.tl (.id _))) (by simp)
-      (Ev.ite_true_nil (.tl (.hd (.tl (.id _)))) (by simp)
+    exact Ev.ite_true_nil (.hd (.tl (.id _))) (Ev.ite_true_nil (.tl (.hd (.tl (.id _))))
       (Ev.run_nil (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
-          (.tl (.tl (.id _))))) e))
+        (.tl (.tl (.id _))))) e))
 
 section Weights
 
@@ -489,6 +490,9 @@ theorem sum_filter_th (t : Bt) (l : List (Run A)) :
   | nil => rfl
   | cons r l ih => cases hr : ok t (names r.out) <;> simp [hr, ih]
 
+-- How runs compose, for the run conditions in `WN_ev` and below.
+attribute [local simp] Run.det Run.seq Run.tick
+
 /-- **Postponing**: `WN` is plain; it has the runs of the program whose values name the
 constants as the budget prescribes, with their weights. -/
 theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) d l)
@@ -508,8 +512,8 @@ theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTre
           List.map_nil, flatMap_single,
         List.map_map, List.forall₂_map_left_iff]
       refine List.forall₂_same.2 fun r hr => ⟨?_, ?_, ?_⟩
-      · simp [Run.seq, Run.tick, Run.det, Run.delay]
-      · simp [Run.seq, Run.tick, Run.det, Run.delay, Tree.tl]
+      · simp [Run.delay]
+      · simp [Run.delay, Tree.tl]
       · simp only [Function.comp, Run.seq, Run.tick, Run.det, Run.delay]
         omega)
     (Q2 := fun q => ((Bt.decAll (names q.out) t).map fun t' => (q, t')).toList)
@@ -524,8 +528,8 @@ theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTre
         refine ⟨_, dk, ?_⟩
         simp only [Option.map_some, Option.toList_some]
         refine .cons ⟨?_, ?_, ?_⟩ .nil
-        · simp [Run.det, h1]
-        · simp [Run.det]
+        · simp [h1]
+        · simp
         · have := Nat.mul_le_mul_left (60 * H + 41) (hT q hq).2
           simp only [Run.det]
           omega)
@@ -538,8 +542,8 @@ theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTre
       refine r2.imp fun r q hr => ?_
       obtain ⟨h1, h2, h3⟩ := hr
       refine ⟨?_, ?_, ?_⟩
-      · simp [Run.seq, Run.tick, Run.det, h1]
-      · simp [Run.seq, Run.tick, Run.det, h2]
+      · simp [h1]
+      · simp [h2]
       · simp only [Run.seq, Run.tick, Run.det]
         omega) (Q2 := fun q => if q.2.zero then [q] else [])
     (R2 := fun r q => r.th = q.1.th ∧ r.cost ≤ q.1.cost + (60 * H + 41) * S + 40 * t.nds + 80) (by
@@ -551,7 +555,7 @@ theorem WN_ev {H T S : ℕ} {p d : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTre
       by_cases hz : q.2.zero
       · simp only [hz, if_true]
         refine .cons ⟨?_, ?_⟩ .nil
-        · simp [Run.det, h1]
+        · simp [h1]
         · simp only [Run.det]
           omega
       · simp only [hz]
