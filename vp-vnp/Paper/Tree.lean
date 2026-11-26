@@ -498,13 +498,12 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
     exact hconst _
   simp only [treePar, e]
   by_cases hjJ : j < J
-  · rcases nd_cases (Pl.pt.symm q) with eq | ⟨i, hi, c', eq⟩
-    · have : ∀ x, ¬ (Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) := by
-        intro x hx
-        have := congrArg Pl.pt.symm hx
-        rw [Equiv.symm_apply_apply, eq] at this
-        simp only [ndPar, nd, parN, dif_pos (show j + 1 ≤ J by omega)] at this
-        exact absurd this (Option.some_ne_none _)
+  · -- the parent of a node of stage `j` is of stage `j + 1`
+    have hoff : ndStage (Pl.pt.symm q) ≠ j + 1 →
+        ∀ x, ¬ (Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) :=
+      fun hq x hx => hq (by rw [← hx, Equiv.symm_apply_apply, ndStage_par hh _ nd_ne_none]; rfl)
+    rcases nd_cases (Pl.pt.symm q) with eq | ⟨i, hi, c', eq⟩
+    · have := hoff (by rw [eq]; simp only [ndStage]; omega)
       -- `this` makes the predicate `False` for every `x`; `hconst` closes it
       simp_all
     · by_cases hij : i = j + 1
@@ -518,13 +517,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
           simp
         rw [e2]
         exact hH j hjJ c c'
-      · have : ∀ x, ¬ (Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) := by
-          intro x hx
-          have := congrArg Pl.pt.symm hx
-          rw [Equiv.symm_apply_apply, eq] at this
-          have h1 := congrArg ndStage this
-          rw [ndStage_par hh _ nd_ne_none] at h1
-          exact hij h1.symm
+      · have := hoff (by rw [eq]; exact hij)
         -- `this` makes the predicate `False` for every `x`; `hconst` closes it
         simp_all
   · have e2 : (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =

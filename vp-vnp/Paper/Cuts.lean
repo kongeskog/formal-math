@@ -86,9 +86,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
   have hv1 : 1 ≤ v := by omega
   generalize hm : l ^ C1 = m
   have hml' : ∀ p, p ≤ C1 → l ^ p ≤ m := fun p hp => hm ▸ Nat.pow_le_pow_right hl1 hp
-  have hlm : l ≤ m := by
-    have := hml' 1 (by omega)
-    rwa [pow_one] at this
+  have hlm : l ≤ m := by simpa using hml' 1 (by omega)
   have hmv : m ≤ v := by
     have := hn1 v (by omega)
     rw [one_mul, hl, hm] at this
@@ -155,8 +153,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     calc K * T = K * (tU / K) + K := by rw [← hT]; ring
       _ ≤ tU + τ := Nat.add_le_add (Nat.mul_div_le _ _) (hKX.trans hXτ)
       _ ≤ τ * l ^ 5 + τ * l ^ 5 := Nat.add_le_add htUle (Nat.le_mul_of_pos_right _ (Nat.pow_pos hl1))
-      _ = τ * (2 * l ^ 5) := by ring
-      _ ≤ τ * (l * l ^ 5) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega))
+      _ ≤ τ * l ^ 5 * l := by rw [← Nat.mul_two]; exact Nat.mul_le_mul_left _ (by omega)
       _ = τ * l ^ 6 := by ring
       _ ≤ τ * m := Nat.mul_le_mul_left _ (hml' 6 (by omega))
   have hτtU : τ ≤ tU := by
@@ -252,15 +249,11 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       exact lg_pow_le (by omega)
     have h2 := lg_mul_sq_le (τ := τ) (v := v)
     rw [hl] at h2 hlτ
-    calc Lc + 1 ≤ 3 * b₁ * l + (l ^ 2 + 2 * l + 3) := by omega
-      _ ≤ l * l + (l * l + l * l + l * l) := by
-          have : 3 * b₁ * l ≤ l * l := Nat.mul_le_mul_right _ (by omega)
-          have : 2 * l ≤ l * l := Nat.mul_le_mul_right _ (by omega)
-          have : 3 ≤ l * l := le_trans (by omega : 3 ≤ l) (Nat.le_mul_self l)
-          rw [pow_two]
-          omega
-      _ = 4 * (l * l) := by ring
-      _ ≤ l * (l * l) := Nat.mul_le_mul_right _ (by omega)
+    have : 3 * b₁ * l ≤ l * l := Nat.mul_le_mul_right _ (by omega)
+    have : 4 * (l * l) ≤ l * (l * l) := Nat.mul_le_mul_right _ (by omega)
+    have : 2 * l ≤ l * l := Nat.mul_le_mul_right _ (by omega)
+    have : l ^ 2 = l * l := pow_two l
+    calc Lc + 1 ≤ l * (l * l) := by omega
       _ = l ^ 3 := by ring
       _ ≤ m := hml' 3 (by omega)
   have hX30 : 60 ≤ X := by omega
@@ -458,12 +451,12 @@ theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h
   · have hq : 4 ^ r ≤ v := (Nat.pow_le_pow_right (by norm_num) (Nat.le_succ r)).trans (by rw [hq4]; omega)
     calc G.size ≤ 4 ^ r * (v ^ a₀ + 3000) := hG
       _ ≤ v * (v ^ a₀ + v) := Nat.mul_le_mul hq (by omega)
-      _ ≤ v * (v ^ (a₀ + 1) + v ^ (a₀ + 1)) := Nat.mul_le_mul_left _ (Nat.add_le_add (pmono (Nat.le_succ _)) (by
-          calc v = v ^ 1 := (pow_one v).symm
-            _ ≤ _ := pmono (by omega)))
-      _ = 2 * v ^ (a₀ + 2) := by rw [pow_succ v (a₀ + 1)]; ring
-      _ ≤ v * v ^ (a₀ + 2) := Nat.mul_le_mul_right _ (by omega)
-      _ = v ^ (a₀ + 3) := by rw [pow_succ v (a₀ + 2)]; ring
+      _ ≤ v * (v * v ^ (a₀ + 1)) := Nat.mul_le_mul_left _ (by
+        -- both terms are at most `v ^ (a₀ + 1)`, and `2 ≤ v`
+        have : v ^ a₀ ≤ v ^ (a₀ + 1) := pmono (by omega)
+        have : v ≤ v ^ (a₀ + 1) := (pow_one v).symm.le.trans (pmono (by omega))
+        linarith [Nat.mul_le_mul_right (v ^ (a₀ + 1)) (show 2 ≤ v by omega)])
+      _ = v ^ (a₀ + 3) := by ring
       _ ≤ v ^ (16 * h) := pmono (by omega)
   · have h1 : t * v ^ 24 * v ^ 24 ≤ τ * v ^ 24 := by
       calc t * v ^ 24 * v ^ 24 = t * v ^ 48 := by rw [Nat.mul_assoc, ← pow_add]
