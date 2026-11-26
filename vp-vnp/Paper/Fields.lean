@@ -69,7 +69,6 @@ theorem exists_beyond_poly {c : ℝ} (hc : 0 < c) (m₀ C : ℕ) :
   rw [Real.rpow_natCast] at h3
   have h4 : m ^ (C + 1) < m ^ C + C := by exact_mod_cast h3
   have h5 : 1 ≤ m ^ C := Nat.one_le_pow _ _ (by omega)
-  have h6 : m ^ C * (C + 1) ≤ m ^ C * m := Nat.mul_le_mul_left _ (by omega)
   rw [pow_succ] at h4
   nlinarith
 

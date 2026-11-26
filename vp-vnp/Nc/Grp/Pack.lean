@@ -183,8 +183,6 @@ theorem ex_pack (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) : ∃ F κ
     rw [bindW_assoc]
   · have h1 := sum_items_le (c := c) (N := N) (n := nT S) (by simp [itemsR]) (fun it hit => (hlR it hit).1)
     have h2 := sum_items_le (c := c) (N := N) (n := nT S) (by simp [itemsC]) (fun it hit => (hlC it hit).1)
-    have h3 : m ≤ N := by omega
-    have h4 : 1 ≤ N := by omega
     have h5 : κC * (6 + m * 41 + 21 + 2 + 1) ≤ κC * 71 * N := by
       calc κC * (6 + m * 41 + 21 + 2 + 1) ≤ κC * (71 * N) := Nat.mul_le_mul_left _ (by omega)
         _ = _ := by ring

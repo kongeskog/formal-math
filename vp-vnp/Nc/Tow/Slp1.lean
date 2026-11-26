@@ -136,8 +136,6 @@ theorem tmin_lt (hb : 0 < b) {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R
     push Not at hcon
     have h4 : (FL.a₁ : ℝ) * ((b * s * w : ℕ) + 1) < FL.a₁ * tmin FL L l :=
       mul_lt_mul_of_pos_left hcon (by linarith)
-    have h5 : ((b * s * w : ℕ) : ℝ) ≤ FL.a₁ * (b * s * w : ℕ) :=
-      le_mul_of_one_le_left (Nat.cast_nonneg _) ha
     nlinarith
   have h4 : tmin FL L l ≤ b * s * w + 1 := by exact_mod_cast h3
   omega

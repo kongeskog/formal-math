@@ -214,8 +214,6 @@ theorem ex_role (L : G.Law A) (p : L.Ro) : ∃ F κ, ∀ (ub : ℕ) (ct : List B
             gcongr
             omega
         _ = _ := by ring
-    have a2 : κ * (tt * ub + 1) ≤ κ * (tt * (ub + 1) + 1) := by gcongr; omega
-    have a3 : tt * (ub * 62 + 100) ≤ 100 * (tt * (ub + 1)) := by nlinarith
     nlinarith [Nat.zero_le (κ * Z), Nat.zero_le (κ * Y), Nat.zero_le (nO * (κ' * 31 + 100) * Z),
       Nat.zero_le (nO * (κ' * 31 + 100) * Y)]
 

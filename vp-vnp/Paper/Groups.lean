@@ -111,8 +111,6 @@ theorem lem_first_double {m : ℕ} {s : ℝ} (hm : 2 ≤ m) (hs : 1 ≤ s) {a : 
   have hM := lem_first_block l hm hs hC
   set cM : ℝ := (Fintype.card (Matrix (Fin a) (Fin a) F2) : ℝ) with hcM
   set cU : ℝ := (Fintype.card (U a) : ℝ) with hcU
-  have hcM0 : 0 < cM := by rw [hcM]; exact_mod_cast Fintype.card_pos
-  have hcU0 : 0 < cU := by rw [hcU]; exact_mod_cast Fintype.card_pos
   have hcard : (Fintype.card (U (a + a)) : ℝ) = cU * (cM * cU) := by
     have := Fintype.card_of_bijective (blk_bijective (a := a) (b := a))
     rw [← this, Fintype.card_prod, Fintype.card_prod]

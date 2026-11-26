@@ -240,7 +240,6 @@ theorem sum_codeTab_zero (hub : 0 < ub) {m B : ℕ} (hm : L.Le m) (hB : B * (m +
   rcases isEmpty_or_nonempty L.Ro with hRo | hRo
   · have hCn : IsEmpty L.Cn := ⟨fun ν => hRo.elim (L.c ν)⟩
     have hSl : IsEmpty L.Sl := ⟨fun e => hRo.elim (L.a e)⟩
-    have hI : IsEmpty (Fin B → L.I) := ⟨fun i => h ⟨i, fun ν => hCn.elim ν⟩⟩
     have := L.pow B X
     -- with `L.Sl` empty (`hSl`) `this` says `1 = 0` in `F`
     simp_all

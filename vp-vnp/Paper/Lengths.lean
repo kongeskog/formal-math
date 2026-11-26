@@ -90,7 +90,6 @@ theorem lengths_of_maps {K : Type} [Field K] {μ : ℕ} {s : ℝ} (hμ : 1 ≤ �
     simp only [rankMean, meanSq, h1, ← Finset.sum_div]
     rw [Finset.sum_comm, sum_congr rfl fun a _ => Finset.sum_comm]
     simp only [h2, sum_const, card_univ, nsmul_eq_mul]
-    have hM : (Fintype.card (Mt μ) : ℝ) ≠ 0 := by exact_mod_cast Fintype.card_ne_zero
     field_simp
   have h3 : ∀ k : G, meanSq (fun a b => dist (f (τ a * k)) (f (τ b * k))) μ ≤
       s ^ 2 * meanSq (fun a b => dist (f (τ a * k)) (f (τ b * k))) 1 := fun k => by

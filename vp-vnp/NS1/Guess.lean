@@ -522,9 +522,6 @@ theorem size_gt (ν : ℕ → ℕ) (J B : ℕ) (K : KT R) (pre : List Bool) (N :
       apply Nat.mul_le_mul_left
       have := le_max_right l.ht r.ht
       omega
-    have e3 : 400 ≤ (J + 1) * (4 * (pre.length + (max l.ht r.ht + 1) + N) + 400) := by nlinarith
-    have e4 := h1.trans (Nat.mul_le_mul_left _ e1)
-    have e5 := h2.trans (Nat.mul_le_mul_left _ e2)
     nlinarith
 
 end Sizes

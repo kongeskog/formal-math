@@ -110,7 +110,6 @@ theorem thm_laws_over_field {K : Type} [Field K] {h : ℕ} [NeZero h] (h2 : 2 �
   have hbN : 2 ≤ Fintype.card (U h) :=
     Fintype.one_lt_card_iff.2 ⟨x h ⟨0, by omega⟩, 1, x_ne_one _⟩
   set b : ℝ := (Fintype.card (U h) : ℝ) with hb
-  have hb0 : 0 < b := by rw [hb]; exact_mod_cast (by omega : 0 < Fintype.card (U h))
   have hb1 : 0 < b - 1 := by
     have : (2 : ℝ) ≤ b := by rw [hb]; exact_mod_cast hbN
     linarith
@@ -330,13 +329,6 @@ theorem thm_laws_over_field {K : Type} [Field K] {h : ℕ} [NeZero h] (h2 : 2 �
       rw [hc, Real.sqrt_mul (by norm_num), show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
     rw [← hZ₂, h3]
     push_cast
-    have hqa' : (a : ℝ) ≤ (a : ℝ) * q := le_mul_of_one_le_right (Nat.cast_nonneg a) hq1
-    have h4 : (lam : ℝ) * Z₂ ≤ 3 / 4 * (c * ((a : ℝ) * q)) := by
-      calc (lam : ℝ) * Z₂ ≤ (ε * q + 2) * Z₂ := mul_le_mul_of_nonneg_right h2 hZ₂0
-        _ = ε * Z₂ * q + 2 * Z₂ := by ring
-        _ ≤ (a : ℝ) / 4 * q + 2 * Z₂ := by gcongr
-        _ ≤ 3 / 4 * ((a : ℝ) * q) := by linarith
-        _ ≤ _ := mul_le_mul_of_nonneg_left (le_mul_of_one_le_left hqa.le hc1) (by norm_num)
     have h5 : c * Z₁ + Z₂ ≤ c * ((a : ℝ) / 4) := by
       calc c * Z₁ + Z₂ ≤ c * Z₁ + c * Z₂ := by gcongr; exact le_mul_of_one_le_left hZ₂0 hc1
         _ = c * (Z₁ + Z₂) := by ring

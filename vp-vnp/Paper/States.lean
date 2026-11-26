@@ -114,7 +114,6 @@ theorem lem_count_upper {E : ℕ} (hE : 1 ≤ E) : Real.log (stateCount E) ≤ 1
       field_simp
       ring
     rw [h6] at h5
-    have htE : 0 < t ^ E := by positivity
     calc ((sets E).card : ℝ) = (sets E).card * t ^ E * (t ^ E)⁻¹ := by field_simp
       _ ≤ Real.exp (2 * √(E : ℝ)) * Real.exp √(E : ℝ) := mul_le_mul h5 h3 (by positivity) (Real.exp_pos _).le
       _ = Real.exp (3 * √(E : ℝ)) := by rw [← Real.exp_add]; ring_nf
@@ -181,9 +180,6 @@ theorem lem_count : ∃ κ : ℝ, 0 < κ ∧ (∀ E : ℕ, Real.log (stateCount 
     have h5 : k * lp E₁ ≤ lp E := (mul_lp_le k E₁).trans (lp_mono hk1)
     have h6 : (k : ℝ) * ((c - ε / 2) * Real.sqrt E₁) ≤ k * lp E₁ :=
       mul_le_mul_of_nonneg_left hlt.le (Nat.cast_nonneg _)
-    have h7 : (c - ε / 2) * Real.sqrt E ≤ (c - ε / 2) * ((k + 1) * Real.sqrt E₁) :=
-      mul_le_mul_of_nonneg_left hk3 (by linarith)
-    have h8 : 0 ≤ ε / 2 * Real.sqrt E₁ := by positivity
     nlinarith
 
 end Paper

@@ -101,7 +101,6 @@ theorem mean_place : mean place = 1 / 2 := by
   norm_num at h1
   refine h1.congr' ?_
   filter_upwards [eventually_ne_atTop 0] with n hn
-  have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
   have h2 : ∀ b : Bool, ∑ i ∈ range (n ^ 2), ∑ k ∈ range n, place n b (i : ℕ) (k : ℕ) =
       n * (((n ^ 2 : ℕ) : ℝ) * ((n ^ 2 : ℕ) - 1) / 2 / n ^ 2) := by
     intro b
@@ -138,11 +137,9 @@ theorem sq_core {n L' L0 r a θ K W : ℝ} (hr0 : 0 ≤ r) (hr2 : 0 ≤ 1 - r) (
     (ha : 0 ≤ a) (hK : 0 ≤ K) (hZ : n ^ 2 * (L' ^ 2 - L0 ^ 2) ≤ K)
     (h1 : r * (n ^ 2 * (L' - L0)) + a * L' ≤ W) (h2 : -(r * (n ^ 2 * (L' - L0)) + a * L') ≤ W) :
     a ^ 2 * (L' * L') + a * (n ^ 2 * (L' ^ 2 - L0 ^ 2)) - a * (2 * θ * K) ≤ W * W := by
-  have E3 : (r * (n ^ 2 * (L' - L0)) + a * L') ^ 2 ≤ W ^ 2 := sq_le_sq' (by linarith) h1
   have Z2 : (1 - r) * (n ^ 2 * (L' ^ 2 - L0 ^ 2)) ≤ 2 * θ * K :=
     (mul_le_mul_of_nonneg_left hZ hr2).trans (mul_le_mul_of_nonneg_right hr1 hK)
   have Z4 : 0 ≤ a * r * (n ^ 2 * (L' - L0) ^ 2) := mul_nonneg (mul_nonneg ha hr0) (by positivity)
-  have Z5 := mul_le_mul_of_nonneg_left Z2 ha
   have Z6 : 0 ≤ (r * (n ^ 2 * (L' - L0))) ^ 2 := sq_nonneg _
   nlinarith
 
