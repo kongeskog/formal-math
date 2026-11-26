@@ -188,7 +188,7 @@ theorem lem_circuit_phi (mu : Letter S Unit Γ → Matrix Q Q F) (i e : Q) (t N 
   have cE := card_RE_le (Γ := Γ) (S := S) (Q := Q) (n := 1) (t := t) (M := M) (B := B) (by omega) (by omega)
     (by omega) (by omega) (by omega) (by omega) hB
   have cD := card_RD_le (S := S) (n := 1) (t := t) (M := M) (B := B) (by omega) (by omega)
-    (by omega) (by omega) hB
+    (by omega) (by omega)
   have cS := card_RS_le (Γ := Γ) (S := S) (Q := Q) (n := 1) (t := t) (B := B) (by omega) (by omega)
     (by omega) (by omega) (by omega) hB
   have cH := card_RH_le (Γ := Γ) (S := S) (n := 1) (t := t) (M := M) (B := B) (by omega) (by omega)

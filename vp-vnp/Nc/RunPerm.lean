@@ -32,19 +32,15 @@ variable {Γ S Q : Type} [Fintype Γ] [Fintype S] [Fintype Q] {n t M N B : ℕ}
 theorem card_letter_le (hΓ : Fintype.card Γ ≤ B) (hS : Fintype.card S ≤ B) (hn : n ≤ B) (hB : 1 ≤ B) :
     Fintype.card (Letter S (Fin n) Γ) ≤ 4 * B ^ 2 := by
   rw [Fintype.card_option, Fintype.card_prod, card_ChN]
-  calc (2 * Fintype.card S + n) * Fintype.card Γ + 1 ≤ (2 * B + B) * B + 1 * 1 := by gcongr
-    _ ≤ (2 * B + B) * B + B * B := by gcongr
-    _ = 4 * B ^ 2 := by ring
+  grw [hΓ, hS, hn]
+  nlinarith
 
-theorem card_RD_le (hS : Fintype.card S ≤ B) (hn : n ≤ B) (ht : t + 1 ≤ B) (hM : M ≤ B) (hB : 1 ≤ B) :
+theorem card_RD_le (hS : Fintype.card S ≤ B) (hn : n ≤ B) (ht : t + 1 ≤ B) (hM : M ≤ B) :
     Fintype.card (RD S n t M) ≤ 6 * B ^ 2 := by
   have ht' : t ≤ B := by omega
   simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_fin, card_ChN]
-  calc t + (t + 1 + ((2 * Fintype.card S + n) * (t + 1) + Fintype.card S * M))
-      ≤ B * 1 + (B * 1 + ((2 * B + B) * B + B * B)) := by
-        rw [mul_one]; gcongr
-    _ ≤ B * B + (B * B + ((2 * B + B) * B + B * B)) := by gcongr
-    _ = 6 * B ^ 2 := by ring
+  grw [ht, ht', hS, hn, hM]
+  nlinarith
 
 theorem card_RE_le [DecidableEq Γ] [DecidableEq S] [DecidableEq Q] (hΓ : Fintype.card Γ + 1 ≤ B)
     (hS : Fintype.card S ≤ B) (hQ : Fintype.card Q ≤ B) (hn : n ≤ B) (ht : t + 1 ≤ B) (hM : M ≤ B) (hB : 1 ≤ B) :
@@ -64,10 +60,8 @@ theorem card_RE_le [DecidableEq Γ] [DecidableEq S] [DecidableEq Q] (hΓ : Finty
     simp only [e1, e2, e3, e4, Finset.sum_const, Finset.card_univ, smul_eq_mul, Fintype.card_fin,
       Fintype.card_prod, card_ChN]
   rw [h]
-  calc _ ≤ B * (4 * B ^ 2) + (B * B * 1 + (((2 * B + B) * B) * B + (B * B) * B)) := by
-        rw [mul_one]; gcongr
-    _ ≤ B * (4 * B ^ 2) + (B * B * B + (((2 * B + B) * B) * B + (B * B) * B)) := by gcongr
-    _ = 9 * B ^ 3 := by ring
+  grw [hL, ht, ht', hQ, hS, hn, hM, hΓ]
+  nlinarith [Nat.mul_le_mul_left (B * B) hB]
 
 theorem card_RS_le (hΓ : Fintype.card Γ + 1 ≤ B) (hS : Fintype.card S ≤ B) (hQ : Fintype.card Q ≤ B)
     (hn : n ≤ B) (ht : t ≤ B) (hB : 1 ≤ B) : Fintype.card (RS Γ S Q n t) ≤ 4 * B ^ 5 := by
@@ -90,8 +84,7 @@ theorem card_RH_le (hΓ : Fintype.card Γ + 1 ≤ B) (hS : Fintype.card S ≤ B)
   rw [card_ChN]
   calc _ ≤ 2 + ((2 * B + B) + ((2 * B + B) * (B * (B * (4 * B ^ 2))) + (B * (B * B) +
         (B * (2 * (B * (B * B))) + (B * (2 * (B * B)) + (B * (B * (B * B)) + B * B)))))) := by gcongr
-    _ = 2 * B ^ 0 + 3 * B ^ 1 + 12 * B ^ 5 + 3 * B ^ 3 + 3 * B ^ 4 + B ^ 2 := by ring
-    _ ≤ 25 * B ^ 5 := by omega
+    _ ≤ 25 * B ^ 5 := by linarith
 
 end Count
 
