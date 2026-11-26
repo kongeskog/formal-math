@@ -78,16 +78,6 @@ end General
 
 variable {A : Type} [CommRing A] {θ : List Bool → A} {supp : Finset (List Bool)}
 
-/-- **Paper: proof of Proposition prop:universal, the pointer machine is exact.** "So an accepting run of cost c gives
-exactly one accepting run of the machine with the same weight, of at most O(|z|+c) steps, and there are no others", as
-used: the accepting runs of the machine form a finite set, their weights sum to pv(z), and they have O(|z|+τ) steps. -/
-theorem prop_universal_machine (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h : Plain θ τ z) :
-    ∃ R : Finset (List (UM θ supp).Step), (∀ tr, tr ∈ R ↔ Mach.GV (σ0 supp z) tr) ∧
-      ∑ tr ∈ R, Mach.wts tr = pv θ z ∧ ∀ tr ∈ R, (tr.length : ℤ) ≤ 3 * z.size + Cc supp * τ + 10 := by
-  obtain ⟨R, h1, h2, h3⟩ := sum_machine (supp := supp) hθ h
-  refine ⟨R, fun tr => ?_, h2, h3⟩
-  rw [h1, Mach.gv_iff (closed_σ0 z)]
-
 variable (θ supp) in
 /-- **Paper: proof of Proposition prop:universal, exactness and time.** The series of the automaton has the value pv(z) in
 O((|z|+τ) lg(|z|+τ)²) letters. -/
@@ -100,7 +90,9 @@ theorem prop_universal_series (hθ : ∀ q, q ∉ supp → θ q = 0) :
   let c := 41 + 2 * Lm supp
   let d := Nat.size c + 2
   refine ⟨S₀, h1, (50 + Fintype.card (Bl Kd)) * (c * d ^ 2), fun τ z hz => ?_⟩
-  obtain ⟨R, r1, r2, r3⟩ := prop_universal_machine (supp := supp) hθ hz
+  -- "So an accepting run of cost c gives exactly one accepting run of the machine with the same weight, of at most
+  -- O(|z|+c) steps, and there are no others"
+  obtain ⟨R, r1, r2, r3⟩ := sum_machine (supp := supp) hθ hz
   have hT : ∀ tr ∈ R, tr.length ≤ stepsU supp τ z.size := by
     intro tr htr
     have h3 := r3 tr htr
@@ -110,7 +102,8 @@ theorem prop_universal_series (hθ : ∀ q, q ∉ supp → θ q = 0) :
       ring
     rw [this] at h3
     exact_mod_cast h3
-  obtain ⟨a1, a2⟩ := prop_universal_automaton h2 (closed_σ0 z) R r1 hT
+  obtain ⟨a1, a2⟩ := prop_universal_automaton h2 (closed_σ0 z) R
+    (fun tr => (r1 tr).trans (Mach.gv_iff (closed_σ0 z) tr).symm) hT
   replace a2 := a2.trans r2
   set N := z.size + τ + 2 with hN
   have hT : stepsU supp τ z.size + 1 ≤ c * N := by

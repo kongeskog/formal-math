@@ -39,7 +39,6 @@ theorem cube_le {h cB U u X : ℕ} (hL : LargeScale h cB U) (hu : U ≤ u) (hX :
     _ = 1000 * (3 * cB) ^ 3 * lg u ^ 9 := by ring
     _ ≤ u := hL.poly u hu
 
-set_option maxHeartbeats 1000000 in
 /-- **Paper: proof of Proposition prop:approx-acc, One round, repeated from a scale to its fifth power.** "The time again
 has a factor u to spare." The new constants inherit every property of the old ones that rescaling keeps. -/
 theorem prop_approx_acc_step {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (hC : ∀ u, U ≤ u → CutAt θ (16 * h) u 10)
@@ -135,7 +134,6 @@ theorem prop_approx_acc_all_scales {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (h
         _ = u' ^ 5 := by ring
     omega
 
-set_option maxHeartbeats 1000000 in
 /-- **Paper: proof of Proposition prop:approx-acc, Back to exact values, with the sizes.** At a scale that is large against the numbers of the invariant there is an
 exact accelerator of size a fixed power of the scale. -/
 theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D : Tree}
@@ -177,8 +175,7 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
     calc nB ≤ K.nds * (2 * B + 1) := hnB ▸ KT.nds_expand B K
       _ ≤ u * u := Nat.mul_le_mul hI.nds (by omega)
       _ = u ^ 2 := (pow_two u).symm
-  have pu : ∀ a, u ^ (a + 1) = u * u ^ a := fun a => by rw [pow_succ]; ring
-  have pbig : ∀ a, 2000 * u ^ a ≤ u ^ (a + 1) := fun a => by rw [pu]; exact Nat.mul_le_mul_right _ hu
+  have pbig := pow_big hu
   have hu2l : u ^ 2 < 2 ^ (2 * l) := by
     rw [Nat.mul_comm, pow_mul]
     exact Nat.pow_lt_pow_left hltu (by norm_num)
@@ -219,7 +216,7 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
               have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 1 (u ^ (16 * h - 17))
               omega
         _ ≤ u * u ^ (16 * h - 17) := Nat.mul_le_mul_right _ m1
-        _ = u ^ (16 * h - 16) := by rw [← pu]; congr 1; omega)
+        _ = u ^ (16 * h - 16) := by rw [← pow_succ']; congr 1; omega)
   rw [hnB] at hn' hs'
   have h2l : ∀ k, 2 ^ (k * l) ≤ u ^ (2 * k) := by
     intro k
@@ -269,7 +266,6 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
   · rw [hY]
     exact Nat.one_le_pow _ _ (by omega)
 
-set_option maxHeartbeats 1000000 in
 /-- **Paper: proof of Proposition prop:approx-acc, the first step**, to a scale at which everything is small. It takes
 the parts of an approximate accelerator of size v^a (trie, exponent bound, program and their bounds) and returns the
 invariant at the scale v^α; the new constants inherit every property of the given ones that rescaling keeps. -/

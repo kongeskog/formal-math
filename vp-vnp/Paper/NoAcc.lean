@@ -73,7 +73,6 @@ theorem thm_noacc_periodic (R : Type) [CommRing R] [Finite R] :
   obtain ⟨M, hM⟩ := hbdd.bddAbove
   refine ⟨M + 1, red, fun i => Nat.lt_succ_of_le (hM ⟨i, rfl⟩), fun c i => congrFun (hred i) c⟩
 
-set_option maxHeartbeats 1000000 in
 /-- **Paper: proof of Theorem thm:noacc, the diagonal.** "Let v be large against E and the number of constants": the
 program P guesses a bit, and for one value accepts with weight 1, for the other guesses exponents e, names λ^e and runs D
 on the instance z_e of P applied to P; so its value V satisfies V = 1 + V, "impossible in E". -/
@@ -94,8 +93,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
   rw [hsU, hsW] at hcst
   have hv4 : 2000 ≤ v := by omega
   have hv1 : 1 ≤ v := by omega
-  have pu : ∀ a, v ^ (a + 1) = v * v ^ a := fun a => by rw [pow_succ]; ring
-  have pbig : ∀ a, 2000 * v ^ a ≤ v ^ (a + 1) := fun a => by rw [pu]; exact Nat.mul_le_mul_right _ hv4
+  have pbig := pow_big hv4
   have ppos : ∀ a, 1 ≤ v ^ a := fun a => Nat.one_le_pow _ _ (by omega)
   set nB := (K.expand B').nds with hnB
   have hnB1 : nB ≤ K.nds * (2 * X) := (KT.nds_expand B' K).trans (Nat.mul_le_mul_left _ (by omega))
@@ -220,7 +218,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
       rw [m5]
       omega
     have m8 : v * v ^ (16 * h - 15) ≤ v ^ (16 * h) := by
-      rw [← pu]
+      rw [← pow_succ']
       exact pow_le_pow hv1 (by omega)
     rw [← hnB]
     calc (60 * ((K.expand B').ht + J + 1) + 42) * v ^ (16 * h - 15) + 40 * (nB * (J + 1)) + 80

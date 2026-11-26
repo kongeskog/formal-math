@@ -701,100 +701,6 @@ theorem cubePts_update {k : ℕ} (hk : k < μ) {x : Fin μ → ℝ} (hx : x ∈ 
     have : i.1 ≠ k := fun h2 => hi (Fin.ext h2)
     omega
 
-/-- "Fill it one coordinate at a time: Lemma lem:toolkit (f), applied to opposite edges in the new direction, shows that
-the map stays isometric." A map F that is isometric on the points whose coordinates from k on are 0 or 1 gives a map F'
-(an extension of F; only its isometry is stated) that is isometric on the points whose coordinates from k + 1 on are 0
-or 1. -/
-theorem thm_alt_fill {k : ℕ} (hk : k < μ) (F : (Fin μ → ℝ) → Y)
-    (hF : ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k, dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2) :
-    ∃ F' : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ (k + 1), ∀ y ∈ cubePts μ (k + 1),
-      dist (F' x) (F' y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
-  set c : Fin μ := ⟨k, hk⟩
-  -- the point at z_c on the edge in the new direction, by Lemma lem:toolkit (a)
-  have hγ : ∀ z : Fin μ → ℝ, ∃ γ : Y, 0 ≤ z c ∧ z c ≤ 1 →
-      Cat.IsPt (F (Function.update z c 0)) (F (Function.update z c 1)) (z c) γ := by
-    intro z
-    by_cases hz : 0 ≤ z c ∧ z c ≤ 1
-    · obtain ⟨γ, h⟩ :=
-        lem_toolkit_a_isPt (F (Function.update z c 0)) (F (Function.update z c 1)) hz.1 hz.2
-      exact ⟨γ, fun _ => h⟩
-    · exact ⟨F z, fun h => absurd h hz⟩
-  choose F' hF' using hγ
-  refine ⟨F', fun x hx y hy => ?_⟩
-  have hsum : ∀ (x y : Fin μ → ℝ) (s t : ℝ), ∑ i, (Function.update x c s i -
-      Function.update y c t i) ^ 2 = (s - t) ^ 2 + ∑ i ∈ univ.erase c, (x i - y i) ^ 2 := by
-    intro x y s t
-    rw [← add_sum_erase univ _ (mem_univ c), Function.update_self, Function.update_self]
-    congr 1
-    refine sum_congr rfl fun i hi => ?_
-    rw [Function.update_of_ne (ne_of_mem_erase hi), Function.update_of_ne (ne_of_mem_erase hi)]
-  have hD : ∀ {x y : Fin μ → ℝ} (_ : x ∈ cubePts μ (k + 1)) (_ : y ∈ cubePts μ (k + 1)) (s t : ℝ)
-      (_ : s = 0 ∨ s = 1) (_ : t = 0 ∨ t = 1), dist (F (Function.update x c s))
-        (F (Function.update y c t)) ^ 2 = (s - t) ^ 2 + ∑ i ∈ univ.erase c, (x i - y i) ^ 2 := by
-    intro x y hx hy s t hs ht
-    rw [hF _ (cubePts_update hk hx hs) _ (cubePts_update hk hy ht), hsum]
-  set E := ∑ i ∈ univ.erase c, (x i - y i) ^ 2 with hE
-  have d1 : dist (F (Function.update x c 0)) (F (Function.update x c 1)) ^ 2 = 1 := by
-    rw [hD hx hx 0 1 (Or.inl rfl) (Or.inr rfl)]
-    simp
-  have d2 : dist (F (Function.update y c 0)) (F (Function.update y c 1)) ^ 2 = 1 := by
-    rw [hD hy hy 0 1 (Or.inl rfl) (Or.inr rfl)]
-    simp
-  have d3 : dist (F (Function.update x c 1)) (F (Function.update y c 1)) ^ 2 = E := by
-    rw [hD hx hy 1 1 (Or.inr rfl) (Or.inr rfl)]
-    simp [hE]
-  have d4 : dist (F (Function.update x c 0)) (F (Function.update y c 0)) ^ 2 = E := by
-    rw [hD hx hy 0 0 (Or.inl rfl) (Or.inl rfl)]
-    simp [hE]
-  have d5 : dist (F (Function.update x c 0)) (F (Function.update y c 1)) ^ 2 = 1 + E := by
-    rw [hD hx hy 0 1 (Or.inl rfl) (Or.inr rfl)]
-    simp [hE]
-  have d6 : dist (F (Function.update x c 1)) (F (Function.update y c 0)) ^ 2 = 1 + E := by
-    rw [hD hx hy 1 0 (Or.inr rfl) (Or.inl rfl)]
-    simp [hE]
-  have h := lem_toolkit_f_isPt rfl
-    ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d2.trans d1.symm))
-    ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d3.trans d4.symm)) rfl
-    (by linarith) (by linarith)
-    (hx c).1.1 (hx c).1.2 (hy c).1.1 (hy c).1.2 (hF' x (hx c).1) (hF' y (hy c).1)
-  rw [h, d4, d1, ← add_sum_erase univ _ (mem_univ c), ← hE]
-  ring
-
-/-- "Fill it one coordinate at a time": if points f(S) of a CAT(0) space have the distances of the vertices of the cube, then
-there is an isometric map F of the solid cube [0,1]^μ into the space (it extends the map that sends the vertex with the
-coordinates 1 on S and 0 elsewhere to f(S); only its isometry is stated). -/
-theorem thm_alt_cube (f : Finset (Fin μ) → Y) (hf : ∀ S T, dist (f S) (f T) ^ 2 = (symmDiff S T).card) :
-    ∃ F : (Fin μ → ℝ) → Y, ∀ x y : Fin μ → ℝ, (∀ i, 0 ≤ x i ∧ x i ≤ 1) →
-        (∀ i, 0 ≤ y i ∧ y i ≤ 1) → dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
-  classical
-  have key : ∀ k ≤ μ, ∃ F : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k,
-      dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
-    intro k
-    induction k with
-    | zero =>
-      intro _
-      refine ⟨fun x => f (univ.filter fun i => x i = 1), fun x hx y hy => ?_⟩
-      rw [hf, card_eq_sum_ones, Nat.cast_sum, ← sum_filter_add_sum_filter_not univ
-        (fun i => i ∈ symmDiff (univ.filter fun i => x i = 1) (univ.filter fun i => y i = 1))
-        (fun i => (x i - y i) ^ 2)]
-      rw [sum_eq_zero (s := univ.filter fun i => ¬ _), add_zero, filter_mem_eq_inter, univ_inter]
-      · refine sum_congr rfl fun i hi => ?_
-        simp only [mem_symmDiff, mem_filter, mem_univ, true_and] at hi
-        rcases (hx i).2 (Nat.zero_le _) with h1 | h1 <;> rcases (hy i).2 (Nat.zero_le _) with h2 | h2
-          <;> simp [h1, h2] at hi ⊢
-      · intro i hi
-        simp only [mem_filter, mem_univ, true_and, mem_symmDiff] at hi
-        rcases (hx i).2 (Nat.zero_le _) with h1 | h1 <;> rcases (hy i).2 (Nat.zero_le _) with h2 | h2
-          <;> simp [h1, h2] at hi ⊢
-    | succ k ih =>
-      intro hk
-      obtain ⟨F, hF⟩ := ih (by omega)
-      exact thm_alt_fill (by omega) F hF
-  obtain ⟨F, hF⟩ := key μ le_rfl
-  refine ⟨F, fun x y hx hy => hF x (fun i => ⟨hx i, fun h => ?_⟩) y (fun i => ⟨hy i, fun h => ?_⟩)⟩
-  · exact absurd i.2 (by omega)
-  · exact absurd i.2 (by omega)
-
 end Cube
 
 theorem dg_sub_dg (S T : Finset (Fin μ)) : (dg S - dg T : Mt μ) = dg (symmDiff S T) := by
@@ -813,8 +719,84 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
     (E : V → EuclideanSpace ℝ (Fin k)) : IsPrice K fun a b => dist (E a) (E b) := by
   obtain ⟨w, hw, hrk⟩ := thm_alt_rank_price hK hμ
   obtain ⟨Y, _, _, f, hY, hf⟩ := prop_space hw
-  obtain ⟨F, hF⟩ := thm_alt_cube (fun S => f (dg S))
-    (fun S T => by rw [hf]; exact thm_alt_vertices hrk S T)
+  -- "Fill it one coordinate at a time": an isometric map F of the solid cube [0,1]^μ, here built on the points whose
+  -- coordinates from k on are 0 or 1, by induction on k
+  have key : ∀ k ≤ μ, ∃ F : (Fin μ → ℝ) → Y, ∀ x ∈ cubePts μ k, ∀ y ∈ cubePts μ k,
+      dist (F x) (F y) ^ 2 = ∑ i, (x i - y i) ^ 2 := by
+    intro k
+    induction k with
+    | zero =>
+      intro _
+      refine ⟨fun x => f (dg (univ.filter fun i => x i = 1)), fun x hx y hy => ?_⟩
+      rw [hf, thm_alt_vertices hrk, card_eq_sum_ones, Nat.cast_sum, ← sum_filter_add_sum_filter_not univ
+        (fun i => i ∈ symmDiff (univ.filter fun i => x i = 1) (univ.filter fun i => y i = 1))
+        (fun i => (x i - y i) ^ 2)]
+      rw [sum_eq_zero (s := univ.filter fun i => ¬ _), add_zero, filter_mem_eq_inter, univ_inter]
+      · refine sum_congr rfl fun i hi => ?_
+        simp only [mem_symmDiff, mem_filter, mem_univ, true_and] at hi
+        rcases (hx i).2 (Nat.zero_le _) with h1 | h1 <;> rcases (hy i).2 (Nat.zero_le _) with h2 | h2
+          <;> simp [h1, h2] at hi ⊢
+      · intro i hi
+        simp only [mem_filter, mem_univ, true_and, mem_symmDiff] at hi
+        rcases (hx i).2 (Nat.zero_le _) with h1 | h1 <;> rcases (hy i).2 (Nat.zero_le _) with h2 | h2
+          <;> simp [h1, h2] at hi ⊢
+    | succ k ih =>
+      intro hk
+      -- "Lemma lem:toolkit (f), applied to opposite edges in the new direction, shows that the map stays
+      -- isometric"
+      obtain ⟨F, hF⟩ := ih (by omega)
+      replace hk : k < μ := by omega
+      set c : Fin μ := ⟨k, hk⟩
+      -- the point at z_c on the edge in the new direction, by Lemma lem:toolkit (a)
+      have hγ : ∀ z : Fin μ → ℝ, ∃ γ : Y, 0 ≤ z c ∧ z c ≤ 1 →
+          Cat.IsPt (F (Function.update z c 0)) (F (Function.update z c 1)) (z c) γ := by
+        intro z
+        by_cases hz : 0 ≤ z c ∧ z c ≤ 1
+        · obtain ⟨γ, h⟩ :=
+            lem_toolkit_a_isPt (F (Function.update z c 0)) (F (Function.update z c 1)) hz.1 hz.2
+          exact ⟨γ, fun _ => h⟩
+        · exact ⟨F z, fun h => absurd h hz⟩
+      choose F' hF' using hγ
+      refine ⟨F', fun x hx y hy => ?_⟩
+      have hsum : ∀ (x y : Fin μ → ℝ) (s t : ℝ), ∑ i, (Function.update x c s i -
+          Function.update y c t i) ^ 2 = (s - t) ^ 2 + ∑ i ∈ univ.erase c, (x i - y i) ^ 2 := by
+        intro x y s t
+        rw [← add_sum_erase univ _ (mem_univ c), Function.update_self, Function.update_self]
+        congr 1
+        refine sum_congr rfl fun i hi => ?_
+        rw [Function.update_of_ne (ne_of_mem_erase hi), Function.update_of_ne (ne_of_mem_erase hi)]
+      have hD : ∀ {x y : Fin μ → ℝ} (_ : x ∈ cubePts μ (k + 1)) (_ : y ∈ cubePts μ (k + 1)) (s t : ℝ)
+          (_ : s = 0 ∨ s = 1) (_ : t = 0 ∨ t = 1), dist (F (Function.update x c s))
+            (F (Function.update y c t)) ^ 2 = (s - t) ^ 2 + ∑ i ∈ univ.erase c, (x i - y i) ^ 2 := by
+        intro x y hx hy s t hs ht
+        rw [hF _ (cubePts_update hk hx hs) _ (cubePts_update hk hy ht), hsum]
+      set E := ∑ i ∈ univ.erase c, (x i - y i) ^ 2 with hE
+      have d1 : dist (F (Function.update x c 0)) (F (Function.update x c 1)) ^ 2 = 1 := by
+        rw [hD hx hx 0 1 (Or.inl rfl) (Or.inr rfl)]
+        simp
+      have d2 : dist (F (Function.update y c 0)) (F (Function.update y c 1)) ^ 2 = 1 := by
+        rw [hD hy hy 0 1 (Or.inl rfl) (Or.inr rfl)]
+        simp
+      have d3 : dist (F (Function.update x c 1)) (F (Function.update y c 1)) ^ 2 = E := by
+        rw [hD hx hy 1 1 (Or.inr rfl) (Or.inr rfl)]
+        simp [hE]
+      have d4 : dist (F (Function.update x c 0)) (F (Function.update y c 0)) ^ 2 = E := by
+        rw [hD hx hy 0 0 (Or.inl rfl) (Or.inl rfl)]
+        simp [hE]
+      have d5 : dist (F (Function.update x c 0)) (F (Function.update y c 1)) ^ 2 = 1 + E := by
+        rw [hD hx hy 0 1 (Or.inl rfl) (Or.inr rfl)]
+        simp [hE]
+      have d6 : dist (F (Function.update x c 1)) (F (Function.update y c 0)) ^ 2 = 1 + E := by
+        rw [hD hx hy 1 0 (Or.inr rfl) (Or.inl rfl)]
+        simp [hE]
+      have h := lem_toolkit_f_isPt rfl
+        ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d2.trans d1.symm))
+        ((pow_left_inj₀ dist_nonneg dist_nonneg two_ne_zero).1 (d3.trans d4.symm)) rfl
+        (by linarith) (by linarith)
+        (hx c).1.1 (hx c).1.2 (hy c).1.1 (hy c).1.2 (hF' x (hx c).1) (hF' y (hy c).1)
+      rw [h, d4, d1, ← add_sum_erase univ _ (mem_univ c), ← hE]
+      ring
+  obtain ⟨F, hF⟩ := key μ le_rfl
   obtain ⟨R, hR0, hR⟩ : ∃ R : ℝ, 0 < R ∧ ∀ v i, |E v i| ≤ R := by
     cases nonempty_fintype V
     refine ⟨1 + ∑ v, ∑ i, |E v i|, ?_, fun v i => ?_⟩
@@ -837,7 +819,8 @@ theorem thm_alt_euclidean (hK : ¬ Contracting K) (hμ : 3 ≤ μ) {k : ℕ} (hk
     · exact ⟨le_rfl, zero_le_one⟩
   have hdist : ∀ u v, dist (E u) (E v) = 2 * R * dist (F (g u)) (F (g v)) := by
     intro u v
-    have h1 := hF (g u) (g v) (hg u) (hg v)
+    have h1 := hF (g u) (fun i => ⟨hg u i, fun h => absurd i.2 (by omega)⟩) (g v)
+      (fun i => ⟨hg v i, fun h => absurd i.2 (by omega)⟩)
     have h2 : ∑ i, (g u i - g v i) ^ 2 = (1 / (2 * R)) ^ 2 * dist (E u) (E v) ^ 2 := by
       rw [EuclideanSpace.dist_eq, Real.sq_sqrt (sum_nonneg fun _ _ => sq_nonneg _), mul_sum]
       have h3 : ∀ i : Fin μ, (g u i - g v i) ^ 2 = if hi : i.1 < k then

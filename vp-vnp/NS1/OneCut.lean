@@ -40,7 +40,6 @@ def OneCutAt (θ : List Bool → A) (v a₀ Λ : ℕ) : Prop := ∀ τ s k τ', 
     CutD θ τ s τ' s' (k * Λ) t G ∧ s' * k * v ^ 256 ≤ (s * v ^ 256 + τ * k) * Λ ∧
     t * v ^ 256 ≤ (s * v ^ 256 + τ * k) * Λ
 
-set_option maxHeartbeats 1000000 in
 /-- **Paper: Theorem thm:cut, the induction on (τ_i, s_i, P_i).** Cut by v^63 as long as the steps are many, and at last
 once to v^H; sizes, pieces and time. -/
 theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤ v) (hΛ2 : 2 ≤ Λ) (hΛv : Λ ≤ v) (hH : a₀ ≤ H) (hH' : 200 ≤ H) :
