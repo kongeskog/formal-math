@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T06:51:31.628595373Z",
+  "updated_at": "2026-11-26T06:58:30.804227211Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 100,
     "rejected": 4,
-    "open": 0,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 1
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 98,
-      "attempts": 102,
+      "attempts": 103,
       "saved": 109296
     },
     {
@@ -114,7 +114,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T09:38:10Z",
-      "pr": null,
+      "pr": 179,
       "result_delta": null,
       "created_at": "2026-11-26T04:02:40Z",
       "url": "https://github.com/kongeskog/formal-math/issues/176",
@@ -1088,7 +1088,81 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 179,
+      "title": "merge(*): one lemma for the heap records of Nc/Uni, one have for facts proved twice",
+      "author": "kongeskog",
+      "head_sha": "6102478027fe5e2f2dab5d9a47b7866df76846bc",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-26T06:57:37Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 176,
+      "url": "https://github.com/kongeskog/formal-math/pull/179",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "*"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
