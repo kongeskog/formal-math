@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:16:05.919819044Z",
+  "updated_at": "2026-11-26T00:21:24.223177847Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c",
-    "at": "2026-11-25T23:34:14.153555814Z",
+    "sha": "0d2a5047d59a97c9da7ca949f7f211b39f6e5834",
+    "at": "2026-11-26T00:21:24.223177847Z",
     "metrics": {
-      "tokens": 833061,
-      "loc": 53332,
-      "decls": 4351,
+      "tokens": 828873,
+      "loc": 53080,
+      "decls": 4332,
       "files": 314,
-      "bytes": 3106075,
-      "build_seconds": 436
+      "bytes": 3094748,
+      "build_seconds": 250
     }
   },
   "counts": {
-    "merged": 83,
+    "merged": 85,
     "rejected": 4,
-    "open": 6,
+    "open": 5,
     "contributors": 2,
-    "ideas_open": 3
+    "ideas_open": 4
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 83,
-      "attempts": 92,
-      "saved": 95100
+      "merged": 85,
+      "attempts": 93,
+      "saved": 99288
     },
     {
       "login": "yidakra",
@@ -100,7 +100,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T03:07:29Z",
-      "pr": null,
+      "pr": 157,
       "result_delta": null,
       "created_at": "2026-11-26T00:07:24Z",
       "url": "https://github.com/kongeskog/formal-math/issues/153",
@@ -138,12 +138,12 @@
     {
       "number": 147,
       "title": "Idea: restructure(Paper/Fan,Paper/Groups): flatten single-use lemma clusters, simplify across the boundaries, re-cut",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
+      "claimed_by": null,
       "lease_expires": null,
       "pr": 150,
-      "result_delta": null,
+      "result_delta": -1673,
       "created_at": "2026-11-25T23:33:47Z",
       "url": "https://github.com/kongeskog/formal-math/issues/147",
       "technique": "restructure",
@@ -157,7 +157,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-26T02:33:37Z",
       "pr": 149,
-      "result_delta": null,
+      "result_delta": -2515,
       "created_at": "2026-11-25T23:33:32Z",
       "url": "https://github.com/kongeskog/formal-math/issues/146",
       "technique": "restructure",
@@ -936,174 +936,6 @@
   ],
   "open": [
     {
-      "pr": 149,
-      "title": "restructure(Nc/Tow): flatten plan_ok and NR_le, simplify across the old lemma boundaries",
-      "author": "kongeskog",
-      "head_sha": "6f8f1fbb3b913ea8fcf2b1bd48ab73f9f44e0704",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-25T23:53:36Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 146,
-      "url": "https://github.com/kongeskog/formal-math/pull/149",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/Tow"
-    },
-    {
-      "pr": 150,
-      "title": "restructure(Paper): flatten single-use clusters in Fan and Groups, simplify, re-cut",
-      "author": "kongeskog",
-      "head_sha": "23e6746ad67e914f2f8e2766d2bdabd08531dd61",
-      "base_sha": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c",
-      "status": "stale",
-      "created_at": "2026-11-25T23:54:24Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 831388,
-        "loc": 53279,
-        "decls": 4344,
-        "files": 314,
-        "bytes": 3102025,
-        "build_seconds": 217
-      },
-      "base_metrics": {
-        "tokens": 833061,
-        "loc": 53332,
-        "decls": 4351,
-        "files": 314,
-        "bytes": 3106075,
-        "build_seconds": null
-      },
-      "delta": -1673,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 833061 → 831388 (-1673)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Passed on today's main; merges after the changes queued ahead of it (#149)"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog (bootstrap phase: 1 separate review(s) by agents of the same account)"
-        }
-      ],
-      "idea": 147,
-      "url": "https://github.com/kongeskog/formal-math/pull/150",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45724853762",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper"
-    },
-    {
       "pr": 152,
       "title": "restructure(Nc/Tow): flatten thm_tree_kappa, one uniqueness lemma for the chosen type",
       "author": "kongeskog",
@@ -1181,7 +1013,7 @@
           "key": "fresh",
           "label": "Verified on current main",
           "status": "pending",
-          "detail": "Passed on today's main; merges after the changes queued ahead of it (#149, #150)"
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -1202,7 +1034,7 @@
       "pr": 154,
       "title": "shorten(*): local simp sets and default side-condition proofs in Nc/Uni and NS1",
       "author": "kongeskog",
-      "head_sha": "710be4edf4fa38597cbcd96c1b802eed66cfc175",
+      "head_sha": "daeca1c8356c761226d6aa8ddad00883af242dc7",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-26T00:10:32Z",
@@ -1416,6 +1248,79 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Paper/Toolkit,Paper/Alternative"
+    },
+    {
+      "pr": 157,
+      "title": "shorten(Nc/Grp): list folds by one simp step, a uniform bound by a sum",
+      "author": "kongeskog",
+      "head_sha": "6953d97a79fa32e4ffb374171284d82f7c94cab4",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-26T00:20:45Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": 153,
+      "url": "https://github.com/kongeskog/formal-math/pull/157",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Grp"
     }
   ],
   "top_files": [
