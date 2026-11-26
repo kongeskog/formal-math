@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T01:56:38.415113999Z",
+  "updated_at": "2026-11-26T01:57:45.188052915Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1042,8 +1042,8 @@
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
-      "tokens": 11578,
-      "loc": 703
+      "tokens": 11450,
+      "loc": 701
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
@@ -1052,8 +1052,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 9116,
-      "loc": 530
+      "tokens": 9046,
+      "loc": 526
     },
     {
       "path": "vp-vnp/Paper/Identity.lean",
