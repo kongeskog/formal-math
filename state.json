@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T00:29:33.894865063Z",
+  "updated_at": "2026-11-26T00:33:11.692472713Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1217,13 +1217,27 @@
       "title": "shorten(Nc/Grp): list folds by one simp step, a uniform bound by a sum",
       "author": "kongeskog",
       "head_sha": "6953d97a79fa32e4ffb374171284d82f7c94cab4",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "ab9fc4656335e5ffc4bffcf69cf3698dcbc9897c",
+      "status": "stale",
       "created_at": "2026-11-26T00:20:45Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 832753,
+        "loc": 53298,
+        "decls": 4351,
+        "files": 314,
+        "bytes": 3104777,
+        "build_seconds": 203
+      },
+      "base_metrics": {
+        "tokens": 833061,
+        "loc": 53332,
+        "decls": 4351,
+        "files": 314,
+        "bytes": 3106075,
+        "build_seconds": null
+      },
+      "delta": -308,
       "gates": [
         {
           "key": "format",
@@ -1231,44 +1245,52 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "3 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "no_increase",
           "label": "No more long lines or exceptions",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 833061 → 832753 (-308)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; will be re-verified once approved"
         },
         {
           "key": "review",
@@ -1279,7 +1301,7 @@
       ],
       "idea": 153,
       "url": "https://github.com/kongeskog/formal-math/pull/157",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45728077864",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
@@ -1289,7 +1311,7 @@
       "pr": 159,
       "title": "restructure(Paper): fold single-use lemmas in Identity, Crossing, Prices, simplify",
       "author": "kongeskog",
-      "head_sha": "f2536f0e7a761880ab1df6b1183982102f3732fb",
+      "head_sha": "8ebaf4f5047358013f074a6b5e3d5682a524fce1",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-26T00:27:48Z",
