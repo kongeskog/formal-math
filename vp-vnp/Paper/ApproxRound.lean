@@ -176,203 +176,6 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
     obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hP
     exact diff q hq
 
-set_option maxHeartbeats 1000000 in
-/-- **Paper: proof of Proposition prop:approx-acc, one round with numbers.** -/
-theorem prop_approx_acc_round_num {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤ α) (hC : CutAt θ (16 * h) u (2 * α)) (hcst : cst ≤ u)
-    {K' : KT E[T;T⁻¹]} {B' : ℕ} {D : Tree} (hD : IsAccA θ (16 * h) u (u ^ (16 * h - 16)) K' B' D)
-    (hK' : K'.nds ≤ u ^ (h * α)) (hDs : D.size ≤ u ^ (h * α)) {K : KT E[T;T⁻¹]} {p : Tree} {B J X e M : ℕ}
-    (hp : IsPreA θ (16 * h) (u ^ α) (u ^ (e + 8)) K B p) (hK : K.nds ≤ u ^ (h * α)) (hM : K.All (Span M)) (hM1 : 1 ≤ M)
-    (hps : p.size ≤ u ^ (4 * h * α))
-    (hJ : u ^ (e + 8) < 2 ^ J) (hX : K.ht + K'.ht + max B B' + J + 1 ≤ X) (hX10 : 10 ≤ X) (hXu : 1000 * X ^ 3 ≤ u)
-    (he1 : α * (16 * h - 32) + 40 ≤ e) (he2 : e + 9 ≤ 16 * h * (2 * α)) :
-    ∃ r p', r ≤ 2 ^ (3 * X) * M ∧
-      IsAccA θ (16 * h) (u ^ α) (u ^ e) (.node K (K'.map (rescale A r))) (max B B' + J) p' ∧
-      p'.size ≤ p.size + (u ^ (h * α + 2) + u ^ (16 * h + 1)) := by
-  have hB1 := le_max_left B B'
-  have hB2 := le_max_right B B'
-  -- basic inequalities
-  have hX3 : 10 * X ^ 2 ≤ X ^ 3 := by
-    have : X ^ 3 = X * X ^ 2 := by ring
-    rw [this]
-    exact Nat.mul_le_mul_right _ hX10
-  have hX2 : 10 * X ≤ X ^ 2 := by rw [pow_two]; exact Nat.mul_le_mul_right _ hX10
-  rw [cst_def] at hcst
-  obtain ⟨sU, hsU⟩ : ∃ n, n = UF.code.size := ⟨_, rfl⟩
-  obtain ⟨sW, hsW⟩ : ∃ n, n = WN.code.size := ⟨_, rfl⟩
-  rw [← hsU, ← hsW] at hcst
-  have hu4 : 2000 ≤ u := by omega
-  have hu1 : 1 ≤ u := by omega
-  have hh1 : 5 * h ≤ h * α := by rw [Nat.mul_comm h α]; exact Nat.mul_le_mul_right _ hα
-  have hα32 := mul_sub_scale α h 32
-  have hαh : 17 * α ≤ h * α := Nat.mul_le_mul_right _ hh
-  have he3 : h * α + 3 ≤ e := by omega
-  have he4 : 16 * h ≤ e := by omega
-  have hH : 16 * h ≤ e + 9 := by omega
-  have pbig := pow_big hu4
-  have ppos : ∀ a, 1 ≤ u ^ a := fun a => Nat.one_le_pow _ _ (by omega)
-  -- the tries of powers
-  obtain ⟨nB, hnB⟩ : ∃ n, n = (K.expand B).nds := ⟨_, rfl⟩
-  obtain ⟨nB', hnB'⟩ : ∃ n, n = (K'.expand B').nds := ⟨_, rfl⟩
-  have hb : ∀ c, c * X ^ 2 ≤ 1000 * X ^ 3 → nB * (c * X) ≤ 2 * u ^ (h * α + 1) ∧ nB' * (c * X) ≤ 2 * u ^ (h * α + 1) :=
-    fun c hc => ⟨hnB ▸ nds_expand_le hK (by omega) hXu hc, hnB' ▸ nds_expand_le hK' (by omega) hXu hc⟩
-  -- the cut
-  obtain ⟨G, hG⟩ := hC (u ^ (e + 9)) (u ^ (α * (16 * h - 32) + 1)) (pow_le_pow hu1 hH)
-    (pow_le_pow hu1 he2) (by
-      rw [← pow_add]
-      exact pow_le_pow hu1 (by omega))
-  obtain ⟨f, hf⟩ : ∃ f, e = f + 15 := ⟨e - 15, by omega⟩
-  obtain ⟨g, hg⟩ : ∃ g, e + 11 = g + 16 * h := ⟨e + 11 - 16 * h, by omega⟩
-  have hJX : J + 1 ≤ X := by omega
-  obtain ⟨e', he'⟩ : ∃ e', e = e' + 1 := ⟨e - 1, by omega⟩
-  have hpos := ppos (16 * h - 16)
-  have hLP : (u ^ (16 * h - 16) + 30) * u ^ g + 10 ≤ u ^ (e - 4) := by
-    have h1 : (u ^ (16 * h - 16) + 30) * u ^ g ≤ 31 * u ^ (e - 5) := by
-      calc (u ^ (16 * h - 16) + 30) * u ^ g ≤ (31 * u ^ (16 * h - 16)) * u ^ g := Nat.mul_le_mul_right _ (by omega)
-        _ = 31 * u ^ (16 * h - 16 + g) := by rw [pow_add]; ring
-        _ = _ := by congr 2; omega
-    have h2 := pbig (e - 5)
-    have h3 := ppos (e - 5)
-    rw [show e - 5 + 1 = e - 4 by omega] at h2
-    omega
-  have hn : ∀ q ∈ (K.expand B).budg J, Span (nB * 2 ^ J * (2 ^ B * M)) q.2 :=
-    fun q hq => hnB ▸ span_expand_budg hM hq
-  refine ⟨_, _, ?_, prop_approx_acc_round hD hp hJ hn hG (tG := u ^ f) (Ln := u ^ g) (L := X)
-      (t := u ^ e) ?_ ?_ ?_ ?_ ?_ (by omega) ?_,
-    ?_⟩
-  · -- the exponent of the rescaling
-    have h1 : nB ≤ 2 ^ J := by
-      calc nB ≤ nB * (1 * X) := Nat.le_mul_of_pos_right _ (by omega)
-        _ ≤ 2 * u ^ (h * α + 1) := (hb 1 (by omega)).1
-        _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
-        _ ≤ u ^ (e + 8) := pow_le_pow hu1 (by omega)
-        _ ≤ 2 ^ J := hJ.le
-    calc nB * 2 ^ J * (2 ^ B * M) + 1 ≤ 2 ^ J * 2 ^ J * (2 ^ B * M) + 2 ^ J * 2 ^ J * (2 ^ B * M) := by
-          refine Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ h1)) ?_
-          exact Nat.mul_pos (Nat.mul_pos (Nat.two_pow_pos J) (Nat.two_pow_pos J))
-            (Nat.mul_pos (Nat.two_pow_pos B) (by omega))
-      _ = 2 ^ (J + J + B + 1) * M := by rw [pow_succ, pow_add, pow_add]; ring
-      _ ≤ _ := Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by norm_num) (by omega))
-  · -- time of the plain instances
-    rw [← hnB]
-    -- the factor of the plain instances is below u, as K.ht + B + J + 1 ≤ X ≤ X³ ≤ u
-    have m1 : 60 * (K.ht + B + J + 1) + 42 + 2 ≤ u := by
-      have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
-      omega
-    have m2 : 40 * (nB * (J + 1)) ≤ u ^ (e + 8) := by
-      calc 40 * (nB * (J + 1)) ≤ 40 * (nB * X) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
-        _ = nB * (40 * X) := by ring
-        _ ≤ 2 * u ^ (h * α + 1) := (hb 40 (by omega)).1
-        _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
-        _ ≤ u ^ (e + 8) := pow_le_pow hu1 (by omega)
-    have m3 : 80 ≤ u ^ (e + 8) := by
-      have h7 : 2000 * u ^ (e + 7) ≤ u ^ (e + 8) := pbig (e + 7)
-      have := ppos (e + 7)
-      omega
-    calc (60 * (K.ht + B + J + 1) + 42) * u ^ (e + 8) + 40 * (nB * (J + 1)) + 80
-        ≤ (60 * (K.ht + B + J + 1) + 42 + 2) * u ^ (e + 8) := by
-          have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 2 (u ^ (e + 8))
-          omega
-      _ ≤ u * u ^ (e + 8) := Nat.mul_le_mul_right _ m1
-      _ = u ^ (e + 9) := (pow_succ' u (e + 8)).symm
-  · -- size of the plain instances
-    rw [← hnB, ← hsW]
-    have m1 : sW + 3 ≤ u ^ (α * (16 * h - 32)) := by
-      calc sW + 3 ≤ u ^ 1 := by rw [pow_one]; omega
-        _ ≤ _ := pow_le_pow hu1 (by omega)
-    have m2 : p.size ≤ u ^ (α * (16 * h - 32)) := hps.trans (pow_le_pow hu1 (by
-      have : 4 * h * α = 4 * (h * α) := by ring
-      omega))
-    have m3 : (u ^ α) ^ (16 * h - 32) = u ^ (α * (16 * h - 32)) := by rw [← pow_mul]
-    have m4 : 4 * (nB * (J + 1)) ≤ u ^ (α * (16 * h - 32)) := by
-      calc 4 * (nB * (J + 1)) ≤ 4 * (nB * X) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
-        _ = nB * (4 * X) := by ring
-        _ ≤ 2 * u ^ (h * α + 1) := (hb 4 (by omega)).1
-        _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
-        _ ≤ _ := pow_le_pow hu1 (by omega)
-    have := pbig (α * (16 * h - 32))
-    rw [m3]
-    omega
-  · intro k hk
-    rw [show e + 9 = f + 24 by omega, pow_add] at hk
-    exact Nat.le_of_mul_le_mul_right hk (ppos 24)
-  · intro k hk
-    rw [← pow_add, show e + 9 + 2 = g + 16 * h by omega, pow_add] at hk
-    exact Nat.le_of_mul_le_mul_right hk (ppos _)
-  · -- the run of the list fits into the digits
-    exact lt_of_le_of_lt (hLP.trans (pow_le_pow hu1 (by omega))) hJ
-  · -- time
-    rw [← hnB, ← hnB']
-    have h3 : 2 * u ^ (h * α + 1) ≤ u ^ e' := by
-      have := pbig (h * α + 1)
-      exact le_trans (by omega : _ ≤ u ^ (h * α + 1 + 1)) (pow_le_pow hu1 (by omega))
-    -- with `J ≤ X` and `10 ≤ X`: (4X + 48)J + 80 ≤ 4X² + 48X + 80 ≤ 10X²
-    have e8 : (4 * X + 48) * J + 80 ≤ 10 * X * X := by
-      have h1 : (4 * X + 48) * J ≤ (4 * X + 48) * X := Nat.mul_le_mul_left _ (by omega)
-      have h2 : (4 * X + 48) * X = 4 * (X * X) + 48 * X := by ring
-      have h3 : 10 * X ≤ X * X := Nat.mul_le_mul_right X hX10
-      have h4 : 10 * X * X = 10 * (X * X) := by ring
-      omega
-    have h10 := hb (10 * X) (by rw [show 10 * X * X ^ 2 = 10 * X ^ 3 by ring]; omega)
-    have m1 : 2 * (((4 * X + 48) * J + 80) * nB) ≤ 2 * u ^ e' ∧
-        2 * (((4 * X + 48) * J + 80) * nB') ≤ 2 * u ^ e' ∧
-        40 * (nB' * (J + 1)) ≤ u ^ e' := by
-      have h40 := (hb 40 (by omega)).2
-      refine ⟨?_, ?_, ?_⟩
-      · refine Nat.mul_le_mul_left _ ((Nat.mul_le_mul_right _ e8).trans ?_)
-        rw [Nat.mul_comm]
-        exact h10.1.trans h3
-      · refine Nat.mul_le_mul_left _ ((Nat.mul_le_mul_right _ e8).trans ?_)
-        rw [Nat.mul_comm]
-        exact h10.2.trans h3
-      · refine le_trans ?_ (h40.trans h3)
-        calc 40 * (nB' * (J + 1)) ≤ 40 * (nB' * X) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
-          _ = nB' * (40 * X) := by ring
-    have m2 : u ^ f ≤ u ^ e' := pow_le_pow hu1 (by omega)
-    have m3 : (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤
-        u ^ e' := by
-      calc (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10)
-          ≤ u * u ^ (e - 4) := by
-            refine Nat.mul_le_mul ?_ hLP
-            have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
-            omega
-        _ = u ^ (e - 4 + 1) := (pow_succ' u _).symm
-        _ ≤ u ^ e' := pow_le_pow hu1 (by omega)
-    have m4 : 200 ≤ u ^ e' := by
-      obtain ⟨e'', he''⟩ : ∃ e'', e' = e'' + 1 := ⟨e' - 1, by omega⟩
-      have := pbig e''
-      have := ppos e''
-      rw [he'']
-      omega
-    have := pbig e'
-    rw [he']
-    omega
-  · -- size
-    have s1 := size_roundA K K' B B' J D G p
-    rw [← hsW, ← hsU] at s1
-    have s2 := hG.size
-    have s3 : ∀ (K₀ : KT E[T;T⁻¹]) (B₀ : ℕ) (pre : List Bool), K₀.nds ≤ u ^ (h * α) → pre.length ≤ 1 →
-        K₀.ht + B₀ + J + 1 ≤ X → (gt id J B₀ K₀ pre).code.size ≤ 2 * u ^ (h * α + 1) := by
-      intro K₀ B₀ pre h0 h1 h2
-      have s4 := nds_expand_le (B := B₀) (c := 44 * X) h0 (by omega) hXu (by
-        rw [show 44 * X * X ^ 2 = 44 * X ^ 3 by ring]
-        omega)
-      refine (size_gt id J B₀ K₀ pre (B₀ + J) (fun i hi => (show id i ≤ B₀ + J from hi.le))).trans ?_
-      refine le_trans (Nat.mul_le_mul_left _ (Nat.mul_le_mul (show J + 1 ≤ X by omega)
-        (show 4 * (pre.length + K₀.ht + (B₀ + J)) + 400 ≤ 44 * X by omega))) ?_
-      calc (K₀.expand B₀).nds * (X * (44 * X)) = (K₀.expand B₀).nds * (44 * X * X) := by ring
-        _ ≤ _ := s4
-    have sg := s3 K B [false] hK (by simp) (by omega)
-    have sg' := s3 K' B' [true] hK' (by simp) (by omega)
-    have s6 : 2 * sW + sU + 2000 ≤ 3 * u ^ (16 * h) := by
-      have : u ^ 1 ≤ u ^ (16 * h) := pow_le_pow hu1 (by omega)
-      rw [pow_one] at this
-      omega
-    have s7 := pbig (16 * h)
-    have s8 : 2000 * u ^ (h * α + 1) ≤ u ^ (h * α + 2) := pbig (h * α + 1)
-    have s9 : u ^ (h * α) ≤ u ^ (h * α + 1) := pow_le_pow hu1 (Nat.le_succ _)
-    omega
-
-set_option maxHeartbeats 1000000 in
 /-- **Paper: proof of Proposition prop:approx-acc, from one scale to the next.** An approximate accelerator at the scale `u ^ H` gives
 one at the scale `(u ^ α) ^ H`; its constants are rescaled copies of the given ones, so they inherit every property that
 rescaling keeps. -/
@@ -451,11 +254,210 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
       have g2 : K.ht + K'.ht + max (B' + n * J) B' + J + 1 ≤ X := by omega
       have g3 : α * (16 * h - 32) + 40 ≤ 16 * h * α + 1 - 8 * (n + 1) := by omega
       have g4 : 16 * h * α + 1 - 8 * (n + 1) + 9 ≤ 16 * h * (2 * α) := by omega
-      have hres := prop_approx_acc_round_num hh hα hC hcst hD hK' hDs (B := B' + n * J)
-        (M := Γ ^ n) (e := 16 * h * α + 1 - 8 * (n + 1)) hp8
-        ((hk1.trans (hnds n hn')).trans hK) hk3 (Nat.one_le_pow _ _ hΓ1) (hps.trans (size_rounds hh hα hu4 (by omega)))
-        (lt_of_le_of_lt (pow_le_pow hu1 g1) hJ) g2 hX10 hXu g3 g4
-      obtain ⟨r, p', hr, hp', hps'⟩ := hres
+      -- one round with numbers
+      obtain ⟨r, p', hr, hp', hps'⟩ : ∃ r p', r ≤ 2 ^ (3 * X) * Γ ^ n ∧
+          IsAccA θ (16 * h) (u ^ α) (u ^ (16 * h * α + 1 - 8 * (n + 1)))
+            (.node K (K'.map (rescale A r))) (max (B' + n * J) B' + J) p' ∧
+          p'.size ≤ p.size + (u ^ (h * α + 2) + u ^ (16 * h + 1)) := by
+        replace hp := hp8
+        replace hK := (hk1.trans (hnds n hn')).trans hK
+        replace hps := hps.trans (size_rounds hh hα hu4 (by omega))
+        replace hJ := lt_of_le_of_lt (pow_le_pow hu1 g1) hJ
+        have hM1 : 1 ≤ Γ ^ n := Nat.one_le_pow _ _ hΓ1
+        replace hM := hk3
+        replace hX := g2
+        have he1 := g3
+        have he2 := g4
+        clear hp8 hnds hk1 hk2 hk4 hmax e1 e2 hnJ g1 g2 g3 g4 hk3 hΓ hΓ1 hn hn' e16 e17 hαX hUF hXu'
+        generalize B' + n * J = B at *
+        generalize Γ ^ n = M at *
+        generalize 16 * h * α + 1 - 8 * (n + 1) = e at *
+        have hB1 := le_max_left B B'
+        have hB2 := le_max_right B B'
+        -- basic inequalities
+        have hX3 : 10 * X ^ 2 ≤ X ^ 3 := by
+          have : X ^ 3 = X * X ^ 2 := by ring
+          rw [this]
+          exact Nat.mul_le_mul_right _ hX10
+        have hX2 : 10 * X ≤ X ^ 2 := by rw [pow_two]; exact Nat.mul_le_mul_right _ hX10
+        rw [cst_def] at hcst
+        obtain ⟨sU, hsU⟩ : ∃ n, n = UF.code.size := ⟨_, rfl⟩
+        obtain ⟨sW, hsW⟩ : ∃ n, n = WN.code.size := ⟨_, rfl⟩
+        rw [← hsU, ← hsW] at hcst
+        have he3 : h * α + 3 ≤ e := by omega
+        have he4 : 16 * h ≤ e := by omega
+        have hH : 16 * h ≤ e + 9 := by omega
+        have ppos : ∀ a, 1 ≤ u ^ a := fun a => Nat.one_le_pow _ _ (by omega)
+        -- the tries of powers
+        obtain ⟨nB, hnB⟩ : ∃ n, n = (K.expand B).nds := ⟨_, rfl⟩
+        obtain ⟨nB', hnB'⟩ : ∃ n, n = (K'.expand B').nds := ⟨_, rfl⟩
+        have hb : ∀ c, c * X ^ 2 ≤ 1000 * X ^ 3 →
+            nB * (c * X) ≤ 2 * u ^ (h * α + 1) ∧ nB' * (c * X) ≤ 2 * u ^ (h * α + 1) :=
+          fun c hc => ⟨hnB ▸ nds_expand_le hK (by omega) hXu hc,
+            hnB' ▸ nds_expand_le hK' (by omega) hXu hc⟩
+        -- the cut
+        obtain ⟨G, hG⟩ := hC (u ^ (e + 9)) (u ^ (α * (16 * h - 32) + 1)) (pow_le_pow hu1 hH)
+          (pow_le_pow hu1 he2) (by
+            rw [← pow_add]
+            exact pow_le_pow hu1 (by omega))
+        obtain ⟨f, hf⟩ : ∃ f, e = f + 15 := ⟨e - 15, by omega⟩
+        obtain ⟨g, hg⟩ : ∃ g, e + 11 = g + 16 * h := ⟨e + 11 - 16 * h, by omega⟩
+        have hJX : J + 1 ≤ X := by omega
+        obtain ⟨e', he'⟩ : ∃ e', e = e' + 1 := ⟨e - 1, by omega⟩
+        have hpos := ppos (16 * h - 16)
+        have hLP : (u ^ (16 * h - 16) + 30) * u ^ g + 10 ≤ u ^ (e - 4) := by
+          have h1 : (u ^ (16 * h - 16) + 30) * u ^ g ≤ 31 * u ^ (e - 5) := by
+            calc (u ^ (16 * h - 16) + 30) * u ^ g ≤ (31 * u ^ (16 * h - 16)) * u ^ g :=
+                  Nat.mul_le_mul_right _ (by omega)
+              _ = 31 * u ^ (16 * h - 16 + g) := by rw [pow_add]; ring
+              _ = _ := by congr 2; omega
+          have h2 := pbig (e - 5)
+          have h3 := ppos (e - 5)
+          rw [show e - 5 + 1 = e - 4 by omega] at h2
+          omega
+        have hn : ∀ q ∈ (K.expand B).budg J, Span (nB * 2 ^ J * (2 ^ B * M)) q.2 :=
+          fun q hq => hnB ▸ span_expand_budg hM hq
+        refine ⟨_, _, ?_, prop_approx_acc_round hD hp hJ hn hG (tG := u ^ f) (Ln := u ^ g) (L := X)
+            (t := u ^ e) ?_ ?_ ?_ ?_ ?_ (by omega) ?_,
+          ?_⟩
+        · -- the exponent of the rescaling
+          have h1 : nB ≤ 2 ^ J := by
+            calc nB ≤ nB * (1 * X) := Nat.le_mul_of_pos_right _ (by omega)
+              _ ≤ 2 * u ^ (h * α + 1) := (hb 1 (by omega)).1
+              _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
+              _ ≤ u ^ (e + 8) := pow_le_pow hu1 (by omega)
+              _ ≤ 2 ^ J := hJ.le
+          calc nB * 2 ^ J * (2 ^ B * M) + 1 ≤
+                2 ^ J * 2 ^ J * (2 ^ B * M) + 2 ^ J * 2 ^ J * (2 ^ B * M) := by
+                refine Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ h1)) ?_
+                exact Nat.mul_pos (Nat.mul_pos (Nat.two_pow_pos J) (Nat.two_pow_pos J))
+                  (Nat.mul_pos (Nat.two_pow_pos B) (by omega))
+            _ = 2 ^ (J + J + B + 1) * M := by rw [pow_succ, pow_add, pow_add]; ring
+            _ ≤ _ := Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by norm_num) (by omega))
+        · -- time of the plain instances
+          rw [← hnB]
+          -- the factor of the plain instances is below u, as K.ht + B + J + 1 ≤ X ≤ X³ ≤ u
+          have m1 : 60 * (K.ht + B + J + 1) + 42 + 2 ≤ u := by
+            have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
+            omega
+          have m2 : 40 * (nB * (J + 1)) ≤ u ^ (e + 8) := by
+            calc 40 * (nB * (J + 1)) ≤ 40 * (nB * X) :=
+                  Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
+              _ = nB * (40 * X) := by ring
+              _ ≤ 2 * u ^ (h * α + 1) := (hb 40 (by omega)).1
+              _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
+              _ ≤ u ^ (e + 8) := pow_le_pow hu1 (by omega)
+          have m3 : 80 ≤ u ^ (e + 8) := by
+            have h7 : 2000 * u ^ (e + 7) ≤ u ^ (e + 8) := pbig (e + 7)
+            have := ppos (e + 7)
+            omega
+          calc (60 * (K.ht + B + J + 1) + 42) * u ^ (e + 8) + 40 * (nB * (J + 1)) + 80
+              ≤ (60 * (K.ht + B + J + 1) + 42 + 2) * u ^ (e + 8) := by
+                have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 2 (u ^ (e + 8))
+                omega
+            _ ≤ u * u ^ (e + 8) := Nat.mul_le_mul_right _ m1
+            _ = u ^ (e + 9) := (pow_succ' u (e + 8)).symm
+        · -- size of the plain instances
+          rw [← hnB, ← hsW]
+          have m1 : sW + 3 ≤ u ^ (α * (16 * h - 32)) := by
+            calc sW + 3 ≤ u ^ 1 := by rw [pow_one]; omega
+              _ ≤ _ := pow_le_pow hu1 (by omega)
+          have m2 : p.size ≤ u ^ (α * (16 * h - 32)) := hps.trans (pow_le_pow hu1 (by
+            have : 4 * h * α = 4 * (h * α) := by ring
+            omega))
+          have m3 : (u ^ α) ^ (16 * h - 32) = u ^ (α * (16 * h - 32)) := by rw [← pow_mul]
+          have m4 : 4 * (nB * (J + 1)) ≤ u ^ (α * (16 * h - 32)) := by
+            calc 4 * (nB * (J + 1)) ≤ 4 * (nB * X) :=
+                  Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
+              _ = nB * (4 * X) := by ring
+              _ ≤ 2 * u ^ (h * α + 1) := (hb 4 (by omega)).1
+              _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
+              _ ≤ _ := pow_le_pow hu1 (by omega)
+          have := pbig (α * (16 * h - 32))
+          rw [m3]
+          omega
+        · intro k hk
+          rw [show e + 9 = f + 24 by omega, pow_add] at hk
+          exact Nat.le_of_mul_le_mul_right hk (ppos 24)
+        · intro k hk
+          rw [← pow_add, show e + 9 + 2 = g + 16 * h by omega, pow_add] at hk
+          exact Nat.le_of_mul_le_mul_right hk (ppos _)
+        · -- the run of the list fits into the digits
+          exact lt_of_le_of_lt (hLP.trans (pow_le_pow hu1 (by omega))) hJ
+        · -- time
+          rw [← hnB, ← hnB']
+          have h3 : 2 * u ^ (h * α + 1) ≤ u ^ e' := by
+            have := pbig (h * α + 1)
+            exact le_trans (by omega : _ ≤ u ^ (h * α + 1 + 1)) (pow_le_pow hu1 (by omega))
+          -- with `J ≤ X` and `10 ≤ X`: (4X + 48)J + 80 ≤ 4X² + 48X + 80 ≤ 10X²
+          have e8 : (4 * X + 48) * J + 80 ≤ 10 * X * X := by
+            have h1 : (4 * X + 48) * J ≤ (4 * X + 48) * X := Nat.mul_le_mul_left _ (by omega)
+            have h2 : (4 * X + 48) * X = 4 * (X * X) + 48 * X := by ring
+            have h3 : 10 * X ≤ X * X := Nat.mul_le_mul_right X hX10
+            have h4 : 10 * X * X = 10 * (X * X) := by ring
+            omega
+          have h10 := hb (10 * X) (by rw [show 10 * X * X ^ 2 = 10 * X ^ 3 by ring]; omega)
+          have m1 : 2 * (((4 * X + 48) * J + 80) * nB) ≤ 2 * u ^ e' ∧
+              2 * (((4 * X + 48) * J + 80) * nB') ≤ 2 * u ^ e' ∧
+              40 * (nB' * (J + 1)) ≤ u ^ e' := by
+            have h40 := (hb 40 (by omega)).2
+            refine ⟨?_, ?_, ?_⟩
+            · refine Nat.mul_le_mul_left _ ((Nat.mul_le_mul_right _ e8).trans ?_)
+              rw [Nat.mul_comm]
+              exact h10.1.trans h3
+            · refine Nat.mul_le_mul_left _ ((Nat.mul_le_mul_right _ e8).trans ?_)
+              rw [Nat.mul_comm]
+              exact h10.2.trans h3
+            · refine le_trans ?_ (h40.trans h3)
+              calc 40 * (nB' * (J + 1)) ≤ 40 * (nB' * X) :=
+                    Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
+                _ = nB' * (40 * X) := by ring
+          have m2 : u ^ f ≤ u ^ e' := pow_le_pow hu1 (by omega)
+          have m3 : (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤
+              u ^ e' := by
+            calc (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10)
+                ≤ u * u ^ (e - 4) := by
+                  refine Nat.mul_le_mul ?_ hLP
+                  have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
+                  omega
+              _ = u ^ (e - 4 + 1) := (pow_succ' u _).symm
+              _ ≤ u ^ e' := pow_le_pow hu1 (by omega)
+          have m4 : 200 ≤ u ^ e' := by
+            obtain ⟨e'', he''⟩ : ∃ e'', e' = e'' + 1 := ⟨e' - 1, by omega⟩
+            have := pbig e''
+            have := ppos e''
+            rw [he'']
+            omega
+          have := pbig e'
+          rw [he']
+          omega
+        · -- size
+          have s1 := size_roundA K K' B B' J D G p
+          rw [← hsW, ← hsU] at s1
+          have s2 := hG.size
+          have s3 : ∀ (K₀ : KT E[T;T⁻¹]) (B₀ : ℕ) (pre : List Bool), K₀.nds ≤ u ^ (h * α) →
+              pre.length ≤ 1 →
+              K₀.ht + B₀ + J + 1 ≤ X → (gt id J B₀ K₀ pre).code.size ≤ 2 * u ^ (h * α + 1) := by
+            intro K₀ B₀ pre h0 h1 h2
+            have s4 := nds_expand_le (B := B₀) (c := 44 * X) h0 (by omega) hXu (by
+              rw [show 44 * X * X ^ 2 = 44 * X ^ 3 by ring]
+              omega)
+            refine (size_gt id J B₀ K₀ pre (B₀ + J)
+              (fun i hi => (show id i ≤ B₀ + J from hi.le))).trans ?_
+            refine le_trans (Nat.mul_le_mul_left _ (Nat.mul_le_mul (show J + 1 ≤ X by omega)
+              (show 4 * (pre.length + K₀.ht + (B₀ + J)) + 400 ≤ 44 * X by omega))) ?_
+            calc (K₀.expand B₀).nds * (X * (44 * X)) = (K₀.expand B₀).nds * (44 * X * X) := by ring
+              _ ≤ _ := s4
+          have sg := s3 K B [false] hK (by simp) (by omega)
+          have sg' := s3 K' B' [true] hK' (by simp) (by omega)
+          have s6 : 2 * sW + sU + 2000 ≤ 3 * u ^ (16 * h) := by
+            have : u ^ 1 ≤ u ^ (16 * h) := pow_le_pow hu1 (by omega)
+            rw [pow_one] at this
+            omega
+          have s7 := pbig (16 * h)
+          have s8 : 2000 * u ^ (h * α + 1) ≤ u ^ (h * α + 2) := pbig (h * α + 1)
+          have s9 : u ^ (h * α) ≤ u ^ (h * α + 1) := pow_le_pow hu1 (Nat.le_succ _)
+          omega
       rw [hmax, show B' + n * J + J = B' + (n + 1) * J by omega] at hp'
       refine ⟨_, p', hp'.pre, ?_, ?_, ?_, ⟨?_, ?_⟩,
         fun P hP hK' => ⟨hk4 P hP hK', hK'.map fun c hc => hP r c hc⟩, fun _ => hp'⟩
