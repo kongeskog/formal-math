@@ -172,7 +172,7 @@ theorem emCo_other (m : Bl K → List (NB M K)) {z : Zc K} (h1 : z ≠ lsF) (h2 
     emCo m z = [] := by
   simp [emCo, h1, h2]
 
--- The parts of `emPs`, unfolded by the `emPs_*` lemmas.
+-- The parts of `emPs`, unfolded by the `emPs_*` lemmas; in force to the end of the section.
 attribute [local simp] emDr emCo_other
 
 theorem emPs_lsT (p : Ps M K) : emPs p lsT = encW (dIn p.1) ++ [Sy.bar] := by
@@ -216,6 +216,7 @@ theorem rk_flatMap (l : List (Rk K)) : (l.flatMap rk : List (Sy M K)) = encW (fO
 
 theorem emCm_true (y : XG (List (Bl K))) (k : Bool) :
     (emCm y (.tp (.cm k) true) : List (Sy M K)) = encW (fOut (if k then QlG y else PlG y)) := by
+  -- `encW` is local simp here; keep it folded so `← rk_flatMap` can apply.
   cases k <;> simp [emCm, -encW, ← rk_flatMap]
 
 theorem emCm_other (y : XG (List (Bl K))) {z : Zc K} (h : ∀ k, z ≠ .tp (.cm k) true) :

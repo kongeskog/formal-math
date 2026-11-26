@@ -77,6 +77,8 @@ theorem rdA (r : Ra) (h : r ≠ .pr0) (h' : r ≠ .pr1) : (rule θ supp (.inl r)
   | d7 b => cases b <;> rfl
   | _ => rfl
 
+/-- A step by a rule other than `pr0`, `pr1` leaves the input alone; both side conditions default
+to `by simp`. -/
 theorem inpA {σ : St supp} {r : Ra} {p q s : ℕ} (h : r ≠ .pr0 := by simp)
     (h' : r ≠ .pr1 := by simp) :
     (nx θ σ (.inl r) p q s).inp = σ.inp := by

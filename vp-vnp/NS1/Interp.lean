@@ -18,6 +18,8 @@ open _root_.NS1.Tree
 
 variable {A : Type} [CommRing A] {θ : List Bool → A}
 
+/-- A branch whose test is not `nil` takes the first arm; `o ≠ .nil` comes last and defaults to
+`by simp`. -/
 theorem Dt.ite_true {a b c : Fm} {x o p : Tree} {k j : ℕ} (ha : Dt θ a x o k) (hb : Dt θ b x p j)
     (ho : o ≠ .nil := by simp) : Dt θ (.ite a b c) x p (k + 1 + j) := Ev.ite_true (c := c) ha ho hb
 
@@ -27,6 +29,7 @@ theorem Dt.ite_false {a b c : Fm} {x p : Tree} {k j : ℕ} (ha : Dt θ a x .nil 
 theorem Dt.run {a b : Fm} {x p d o : Tree} {k j i : ℕ} (ha : Dt θ a x p k) (hb : Dt θ b x d j)
     (h : Dt θ (Fm.ofTree p) d o i) : Dt θ (.run a b) x o (k + j + 1 + i) := Ev.run_det ha hb h
 
+/-- `Ev.ite_true` with no runs; `o ≠ .nil` comes last and defaults to `by simp`. -/
 theorem Ev.ite_true_nil {a b c : Fm} {x o : Tree} {k : ℕ} (ha : Dt θ a x o k) (hb : Ev θ b x [])
     (ho : o ≠ .nil := by simp) : Ev θ (.ite a b c) x [] := Ev.ite_true (c := c) ha ho hb
 

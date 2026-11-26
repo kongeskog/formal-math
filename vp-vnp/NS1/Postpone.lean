@@ -106,7 +106,9 @@ theorem decw_val (w : List Bool) : (decw w = none ∧ KT.val w = 0) ∨ ∃ w', 
         simp
         omega
 
--- One step of decoding, unfolded by the lemmas on `ok` below.
+section Ok
+
+-- One step of decoding, unfolded by the lemmas on `ok` in this section.
 attribute [local simp] Bt.dec
 
 theorem ok_leaf (w : List Bool) (b : List (List Bool)) :
@@ -167,6 +169,8 @@ theorem ok_none (b : List (List Bool)) : ok .none b = true ↔ b = [] := by
   cases b with
   | nil => simp [ok_nil, Bt.zero]
   | cons p b => simp [ok_cons]
+
+end Ok
 
 theorem sum_words (J n : ℕ) (c : R) :
     ((KT.words J).map fun w => if KT.val w = n then c else 0).sum = if n < 2 ^ J then c else 0 := by

@@ -235,8 +235,7 @@ def ed1 (v : Fin 5 → Bool) : Zc K → List (Sy M K)
   | _ => []
 
 -- The pieces of the end record, unfolded by `runs_ed`.
-attribute [local simp] ed1 emEd
-
+attribute [local simp] ed1 emEd in
 theorem runs_ed (mh : M) : Runs (emEd mh : List (Fin 5 → Bool) × List Bool → Zc K → List (Sy M K)) (fun _ => (1 : A)) := by
   have h1 := (Runs.pick (F := A) (fun v : Fin 5 → Bool => (ed1 v : Zc K → List (Sy M K))) fun _ => 1).kstar
     fun v => ⟨tp (.rg 0) true, by simp⟩
