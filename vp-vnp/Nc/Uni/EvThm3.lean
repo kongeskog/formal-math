@@ -51,7 +51,8 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
   have ok2 := ok1.nx (θ := θ) (.inl .d6) 0 0 0
   obtain ⟨p, q, s, hrec, hp, hq⟩ := (h12.mono (heap_nx (θ := θ) σ1 (.inl .d6) 0 0 0)).load ok2
   generalize decide (a' ≠ .nil) = bt at hrec
-  refine lstep ok2 (md := .K6) rfl rfl hrec (.k6 bt) (by cases bt <;> rfl) (by simp) (by simp) rfl rfl ?_
+  refine lstep ok2 (md := .K6) rfl rfl rfl hrec (.k6 bt) (by cases bt <;> rfl) (by simp) (by simp)
+    rfl rfl ?_
   set σ2 := nx θ σ1 (.inl .d6) 0 0 0 with hσ2
   have hh2 : σ.heap ⊆ (nx θ σ2 (.inl (.k6 bt)) p q s).heap := fun _ hc => heap_nx _ _ _ _ _ (heap_nx _ _ _ _ _ (hh1 hc))
   have hr2 : σ2.regs 2 = σ.regs 2 := h13
@@ -63,10 +64,8 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
     exact hx.mono hh2
   · intro r hr
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by linarith⟩
-    have hfr : ((.RU1, ![σ3.regs 2, q, σ2.regs 2, σ2.regs 3]) : Rec Kd) ∈ σ3.heap := by
-      rw [h32]
-      exact hh3 (new_nx (θ := θ) σ2 (.inl (.k6 bt)) p q s)
-    refine rstep ok3 hm3 rfl hfr .rru1 rfl rfl rfl ?_
+    refine rstep ok3 hm3 rfl h32 (hh3 (new_nx (θ := θ) σ2 (.inl (.k6 bt)) p q s))
+      .rru1 rfl rfl rfl ?_
     subst h31
     have ok4 := ok3.nx (θ := θ) (.inl .rru1) q (σ2.regs 2) (σ2.regs 3)
     set σ4 := nx θ σ3 (.inl .rru1) q (σ2.regs 2) (σ2.regs 3) with hσ4
@@ -81,10 +80,8 @@ theorem EvOK.run {a b : Fm} {x : Tree} {la lb : List (Run A)} {L : Run A → Run
       exact hx.mono hh4
     · intro s' hs'
       refine ⟨fun σ5 v' ok5 hm5 h51 h52 hh5 hi5 hv' => ?_, by linarith⟩
-      have hfr' : ((.RU2, ![σ5.regs 2, σ3.regs 1, σ2.regs 3, σ3.regs 0]) : Rec Kd) ∈ σ5.heap := by
-        rw [h52]
-        exact hh5 (new_nx (θ := θ) σ3 (.inl .rru1) q (σ2.regs 2) (σ2.regs 3))
-      refine rstep ok5 hm5 rfl hfr' .rru2 rfl rfl rfl ?_
+      refine rstep ok5 hm5 rfl h52 (hh5 (new_nx (θ := θ) σ3 (.inl .rru1) q (σ2.regs 2) (σ2.regs 3)))
+        .rru2 rfl rfl rfl ?_
       subst h51
       have hh6 : σ.heap ⊆ (nx θ σ5 (.inl .rru2) (σ3.regs 1) (σ2.regs 3) (σ3.regs 0)).heap :=
         fun _ hc => heap_nx _ _ _ _ _ (hh5 (hh4 hc))
@@ -114,21 +111,10 @@ theorem EvOK.guess (x : Tree) : EvOK θ supp .guess x [.det 1 .nil, .det 1 Tree.
     simp [tot, Run.det]
   rw [ht]
   have hC := Cc_ge (supp := supp)
-  have hB0' : Cc supp + Bd (.det 1 .nil) ≤ B := by
-    have : ((Run.det 1 .nil : Run A).cost : ℤ) = 1 := rfl
-    rw [this] at hB0
-    linarith
-  have hB1' : Cc supp + Bd (.det 1 Tree.one) ≤ B := by
-    have : ((Run.det 1 Tree.one : Run A).cost : ℤ) = 1 := rfl
-    rw [this] at hB1
-    linarith
+  have hB0' := Cc_det hB0
+  have hB1' := Cc_det hB1
   obtain ⟨o, a, rfl, hl⟩ := inv_guess hF
   refine toOp (c := 7) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
-  have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
-    rw [hm1]
-    change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
-    rw [h11]
-    exact ok1.nil
   have hz : σ1.mode ≠ (UM θ supp).mh := by
     rw [hm1]
     change Md.D 7 ≠ .Z
@@ -141,7 +127,7 @@ theorem EvOK.guess (x : Tree) : EvOK θ supp .guess x [.det 1 .nil, .det 1 Tree.
   have hfire : ∀ st' : (UM θ supp).Step, Mach.Fire σ1 st' ↔ st' = (.inl (.d7 false), envOf σ1 0 0 0) ∨
       st' = (.inl (.d7 true), envOf σ1 0 0 0) := by
     intro st'
-    rw [fire_iff ok1 hrec, hm1]
+    rw [fire_iff ok1 (heap_laM hm1 h11 rfl ok1.nil), hm1]
     constructor
     · rintro ⟨h1, h2, -, h4⟩
       have h5 : ∃ b, st'.1 = .inl (.d7 b) := by
@@ -195,11 +181,7 @@ theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l
     have hcost : ((f r).cost : ℤ) = r.cost + 1 := by simp [f]
     rw [hcost] at k2
     refine ⟨fun σ3 v ok3 hm3 h31 h32 hh3 hi3 hv => ?_, by unfold Cc at *; linarith⟩
-    have hfr : ((.TH, ![σ3.regs (laM σ3.mode), σ1.regs 4, σ1.regs 0, σ1.regs 0]) : Rec Kd) ∈ σ3.heap := by
-      rw [hm3]
-      change ((.TH, ![σ3.regs 2, σ1.regs 4, σ1.regs 0, σ1.regs 0]) : Rec Kd) ∈ σ3.heap
-      rw [h32]
-      exact hh3 (new_nx (θ := θ) σ1 (.inl .d9) 0 0 0)
+    have hfr := heap_laM hm3 h32 rfl (hh3 (new_nx (θ := θ) σ1 (.inl .d9) 0 0 0))
     by_cases hp : ([] : List Bool) ∈ pre supp
     · have ok4 := ok3.nx (θ := θ) (.inr (.inl ⟨(), hp⟩)) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)
       have h4 := readName (θ := θ) hθ (S := m (f r)) (B := Bd (f r)) r.out ⟨[], hp⟩

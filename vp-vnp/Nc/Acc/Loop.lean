@@ -55,29 +55,23 @@ theorem walkF_does (m : ℕ) (T : Tree) (acc : List Bool) : Does θ (walkF m) (.
     have h0 := (Gives.cons (Gives.id (θ := θ) (.cons T (ofBits acc))).hd.tl
       (Gives.cons (Gives.quote one _) (Gives.id _).tl)).either
       (Gives.cons (Gives.id (θ := θ) (.cons T (ofBits acc))).hd.hd (Gives.cons (Gives.quote .nil _) (Gives.id _).tl))
-    have h := h0.lett (G := walkF m) (R := fun o => (wd m).map fun p => (1, .cons (look p o.hd)
-      (ofBits (p.reverse ++ o.tl.path)))) (d := 12 * m + 1) (by
-        intro q hq
-        simp only [hd_cons, tl_cons, List.cons_append, List.nil_append, List.mem_cons, List.not_mem_nil, or_false] at hq
-        rcases hq with rfl | rfl
-        · have := ih T.tl (true :: acc)
-          have e : (Tree.cons one (ofBits acc)).path = true :: acc := by
-            have : ofBits (true :: acc) = Tree.cons one (ofBits acc) := rfl
-            rw [← this, path_ofBits]
-          simp only [hd_cons, tl_cons, e]
-          exact this
-        · have := ih T.hd (false :: acc)
-          have e : (Tree.cons Tree.nil (ofBits acc)).path = false :: acc := by
-            have : ofBits (false :: acc) = Tree.cons .nil (ofBits acc) := rfl
-            rw [← this, path_ofBits]
-          simp only [hd_cons, tl_cons, e]
-          exact this)
     have e1 : (Tree.cons one (ofBits acc)).path = true :: acc := by
       have : ofBits (true :: acc) = Tree.cons one (ofBits acc) := rfl
       rw [← this, path_ofBits]
     have e2 : (Tree.cons Tree.nil (ofBits acc)).path = false :: acc := by
       have : ofBits (false :: acc) = Tree.cons .nil (ofBits acc) := rfl
       rw [← this, path_ofBits]
+    have h := h0.lett (G := walkF m) (R := fun o => (wd m).map fun p => (1, .cons (look p o.hd)
+      (ofBits (p.reverse ++ o.tl.path)))) (d := 12 * m + 1) (by
+        intro q hq
+        simp only [hd_cons, tl_cons, List.cons_append, List.nil_append, List.mem_cons, List.not_mem_nil, or_false] at hq
+        rcases hq with rfl | rfl
+        · have := ih T.tl (true :: acc)
+          simp only [hd_cons, tl_cons, e1]
+          exact this
+        · have := ih T.hd (false :: acc)
+          simp only [hd_cons, tl_cons, e2]
+          exact this)
     simp only [bindW, hd_cons, tl_cons, List.cons_append, List.nil_append, List.flatMap_cons, List.flatMap_nil,
       List.append_nil, List.map_map, Function.comp_def, one_mul, e1, e2] at h
     have e : ((wd (m + 1)).map fun p => ((1 : A), Tree.cons (look p T) (ofBits (p.reverse ++ acc)))) =

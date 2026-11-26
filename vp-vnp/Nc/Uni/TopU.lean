@@ -26,18 +26,13 @@ def word : Tree → List Bool
 theorem bstep {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .P) (b : Bool) {rest : List Bool} (hi : σ.inp = b :: rest) {S : A}
     {B : ℤ} (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl (if b then .pr1 else .pr0)) 0 0 0) S (B - 1)) :
     Mach.SumTo (UM θ supp) σ S B := by
-  have hrec : ((.N, ![σ.regs (laM σ.mode), 0, 0, 0]) : Rec Kd) ∈ σ.heap := by
-    rw [hm]
-    change ((.N, ![σ.regs 0, 0, 0, 0]) : Rec Kd) ∈ σ.heap
-    rw [hσ.r0]
-    exact hσ.nil
   have hz : σ.mode ≠ (UM θ supp).mh := by
     rw [hm]
     change Md.P ≠ .Z
     simp
   have hfire : ∀ st' : (UM θ supp).Step, Mach.Fire σ st' ↔ st' = (.inl (if b then .pr1 else .pr0), envOf σ 0 0 0) := by
     intro st'
-    rw [fire_iff hσ hrec, hm, hi]
+    rw [fire_iff hσ (heap_laM hm hσ.r0 rfl hσ.nil), hm, hi]
     constructor
     · rintro ⟨h1, h2, h3, h4⟩
       refine Prod.ext ?_ h4
@@ -97,20 +92,15 @@ theorem parse {S : A} (a : Tree) : ∀ (B : ℤ) (σ : St supp) (k : ℕ) (rest 
     · rw [inp_nx, hi']
       rfl
     · intro σ2 v ok2 hm2 h21 h22 hh2 hi2 hv
-      have hfr : ((.PA, ![σ2.regs 2, σ.regs 1, σ.regs 0, σ.regs 0]) : Rec Kd) ∈ σ2.heap := by
-        rw [h22]
-        exact hh2 (new_nx (θ := θ) σ (.inl .pr1) 0 0 0)
-      refine rstep ok2 hm2 rfl hfr .pa rfl rfl rfl ?_
+      refine rstep ok2 hm2 rfl h22 (hh2 (new_nx (θ := θ) σ (.inl .pr1) 0 0 0)) .pa rfl rfl rfl ?_
       subst h21
       have ok3 := ok2.nx (θ := θ) (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0)
       refine (ihb (B + 1) (nx θ σ2 (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0)) (σ2.n + 1) rest ok3 rfl rfl ?_ ?_).mono
         (by linarith)
       · rw [inpA, hi2]
       · intro σ4 v' ok4 hm4 h41 h42 hh4 hi4 hv'
-        have hfr' : ((.PB, ![σ4.regs 2, σ2.regs 1, σ.regs 1, σ2.regs 0]) : Rec Kd) ∈ σ4.heap := by
-          rw [h42]
-          exact hh4 (new_nx (θ := θ) σ2 (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0))
-        refine rstep ok4 hm4 rfl hfr' .pb rfl rfl rfl ?_
+        refine rstep ok4 hm4 rfl h42
+          (hh4 (new_nx (θ := θ) σ2 (.inl .pa) (σ.regs 1) (σ.regs 0) (σ.regs 0))) .pb rfl rfl rfl ?_
         subst h41
         refine (hk (nx θ σ4 (.inl .pb) (σ2.regs 1) (σ.regs 1) (σ2.regs 0)) (σ4.n + 1) (ok4.nx _ _ _ _) rfl rfl h1
           (fun _ hc => heap_nx _ _ _ _ _ (hh4 (heap_nx _ _ _ _ _ (hh2 (heap_nx _ _ _ _ _ hc))))) ?_ ?_).mono (by linarith)
@@ -152,20 +142,15 @@ theorem zstep {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = 
     (hr : nextR supp md .N = some (.inl r)) (hP : md ≠ .P) (hD : md ≠ .D 7) (hs : (ruleA r : RD A (Nm supp)).src = md)
     (hk : (ruleA r : RD A (Nm supp)).lk = .N) {S : A} {B : ℤ}
     (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) 0 0 0) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
-  have hrec' : ((.N, ![σ.regs (laM σ.mode), 0, 0, 0]) : Rec Kd) ∈ σ.heap := by
-    rw [hm, hla, hσ.r0]
-    exact hσ.nil
-  exact (sumTo_ruleA hσ hrec' r (by rw [hm]; exact hr) (by rw [hm]; exact hP) (by rw [hm]; exact fun e => hD e.1)
-    (by rw [hm]; exact hs) hk h).mono (by omega)
+  exact (sumTo_ruleA hσ (heap_laM hm hσ.r0 hla hσ.nil) r (by rw [hm]; exact hr)
+    (by rw [hm]; exact hP) (by rw [hm]; exact fun e => hD e.1) (by rw [hm]; exact hs) hk
+    h).mono (by omega)
 
 /-- The end of a run. -/
 theorem KS_halt {H : List (Rec Kd)} {k : ℕ} (hk : ((.HT, ![k, 0, 0, 0]) : Rec Kd) ∈ H) (o : Tree) :
     KS θ supp .R H k [] o 1 1 := by
   intro σ v ok hm h1 h2 hh hi hv
-  have hht : ((.HT, ![σ.regs 2, 0, 0, 0]) : Rec Kd) ∈ σ.heap := by
-    rw [h2]
-    exact hh hk
-  refine rstep ok hm rfl hht .rht rfl rfl rfl ?_
+  refine rstep ok hm rfl h2 (hh hk) .rht rfl rfl rfl ?_
   refine (Mach.SumTo.halt (P := UM θ supp) rfl ?_ (fun r => src_ne r)).mono (by norm_num)
   rw [inpA, hi]
 
@@ -178,10 +163,7 @@ theorem KS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h 
     KS θ supp .PR H j [] z (pv θ z) (Cc supp * τ + 3) := by
   intro σ3 v ok3 hm3 h31 h32 hh3 hi3 hv
   have hev := evOK (supp := supp) hθ h.1.ev
-  have hfr : ((.PE, ![σ3.regs 2, k, s0, s1]) : Rec Kd) ∈ σ3.heap := by
-    rw [h32]
-    exact hh3 hj
-  refine rstep ok3 hm3 rfl hfr .pe rfl rfl rfl ?_
+  refine rstep ok3 hm3 rfl h32 (hh3 hj) .pe rfl rfl rfl ?_
   subst h31
   have ok4 := ok3.nx (θ := θ) (.inl .pe) k s0 s1
   obtain ⟨p, q, s, hrec, hp', hq'⟩ := (hv.mono (heap_nx (θ := θ) σ3 (.inl .pe) k s0 s1)).load ok4
@@ -193,7 +175,7 @@ theorem KS_eval (hθ : ∀ q, q ∉ supp → θ q = 0) {τ : ℕ} {z : Tree} (h 
   have hm4 : (nx θ σ3 (.inl .pe) k s0 s1).mode = .S2 := rfl
   generalize nx θ σ3 (.inl .pe) k s0 s1 = σ4 at *
   generalize decide (z ≠ .nil) = b at hrec4
-  refine lstep ok4 hm4 rfl hrec4 (.s2 b) (by cases b <;> rfl) (by simp) (by simp) rfl rfl ?_
+  refine lstep ok4 hm4 rfl rfl hrec4 (.s2 b) (by cases b <;> rfl) (by simp) (by simp) rfl rfl ?_
   rw [pv_eq z]
   refine (hev (nx θ σ4 (.inl (.s2 b)) p q s) ⟨ok4.nx _ _ _ _, rfl, ⟨z.hd, hp'.mono (heap_nx _ _ _ _ _), rfl⟩,
     hq'.mono (heap_nx _ _ _ _ _)⟩ (fun _ => 1) (fun _ => 1) (Cc supp * τ + 1) ?_).mono (by linarith)

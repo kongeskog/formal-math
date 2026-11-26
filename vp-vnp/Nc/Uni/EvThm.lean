@@ -95,6 +95,12 @@ theorem Cc_ge : 40 ≤ Cc supp := by
   unfold Cc
   omega
 
+/-- The cost bound of a run `.det 1 o`, whose cost is 1. -/
+theorem Cc_det {o : Tree} {b B : ℤ} (h : Cc supp * ((Run.det 1 o : Run A).cost : ℤ) + b ≤ B) :
+    Cc supp + b ≤ B := by
+  rw [← mul_one (Cc supp)]
+  exact h
+
 /-- The machine is about to evaluate the formula F at the tree x. -/
 structure ES (σ : St supp) (F : Fm) (x : Tree) : Prop where
   ok : OKs σ
@@ -115,13 +121,8 @@ theorem dstep {σ : St supp} (hσ : OKs σ) {c : Fin 11} (hm : σ.mode = .D c) (
     (hr : nextR supp (.D c) .N = some (.inl r)) (hc : c ≠ 7) (hs : (ruleA r : RD A (Nm supp)).src = .D c)
     (hk : (ruleA r : RD A (Nm supp)).lk = .N) {S : A} {B : ℤ}
     (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) 0 0 0) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
-  have hrec : ((.N, ![σ.regs (laM σ.mode), 0, 0, 0]) : Rec Kd) ∈ σ.heap := by
-    rw [hm]
-    change ((.N, ![σ.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ.heap
-    rw [h1]
-    exact hσ.nil
-  have h2 := sumTo_ruleA hσ hrec r (by rw [hm]; exact hr) (by rw [hm]; simp) (by rw [hm]; simp [hc]) (by rw [hm]; exact hs)
-    hk h
+  have h2 := sumTo_ruleA hσ (heap_laM hm h1 rfl hσ.nil) r (by rw [hm]; exact hr) (by rw [hm]; simp)
+    (by rw [hm]; simp [hc]) (by rw [hm]; exact hs) hk h
   exact h2.mono (by omega)
 
 theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
@@ -131,21 +132,13 @@ theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
   have ht : tot m [.det 1 c0] = m (.det 1 c0) := by simp [tot, Run.det]
   rw [ht]
   have hC := Cc_ge (supp := supp)
-  have hB' : Cc supp + Bd (.det 1 c0) ≤ B := by
-    have : ((Run.det 1 c0 : Run A).cost : ℤ) = 1 := rfl
-    rw [this] at hB
-    linarith
+  have hB' := Cc_det hB
   rcases inv_quote hF with ⟨rfl, rfl⟩ | ⟨o, rfl, hl⟩
   · have h0 : σ.regs 1 = 0 := hc
-    have hrec : ((.N, ![σ.regs (laM σ.mode), 0, 0, 0]) : Rec Kd) ∈ σ.heap := by
-      rw [hm]
-      change ((.N, ![σ.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ.heap
-      rw [h0]
-      exact ok.nil
     have h2 := hk (nx θ σ (.inl .en) 0 0 0) 0 (ok.nx _ _ _ _) rfl h0 rfl (heap_nx σ _ _ _ _)
       inpA rfl
-    exact (sumTo_ruleA ok hrec .en (by rw [hm]; rfl) (by rw [hm]; simp) (by rw [hm]; simp) (by rw [hm]; rfl) rfl h2).mono
-      (by linarith)
+    exact (sumTo_ruleA ok (heap_laM hm h0 rfl ok.nil) .en (by rw [hm]; rfl) (by rw [hm]; simp)
+      (by rw [hm]; simp) (by rw [hm]; rfl) rfl h2).mono (by linarith)
   · refine toOp (c := 0) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
     refine dstep ok1 hm1 h11 .d0 rfl (by decide) rfl rfl ?_
     refine (hk (nx θ σ1 (.inl .d0) 0 0 0) (σ1.regs 2) (ok1.nx _ _ _ _) rfl rfl h14
@@ -159,10 +152,7 @@ theorem EvOK.id (x : Tree) : EvOK θ supp .id x [.det 1 x] := by
   have ht : tot m [.det 1 x] = m (.det 1 x) := by simp [tot, Run.det]
   rw [ht]
   have hC := Cc_ge (supp := supp)
-  have hB' : Cc supp + Bd (.det 1 x) ≤ B := by
-    have : ((Run.det 1 x : Run A).cost : ℤ) = 1 := rfl
-    rw [this] at hB
-    linarith
+  have hB' := Cc_det hB
   obtain ⟨o, a, rfl, hl⟩ := inv_id hF
   refine toOp (c := 1) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
   refine dstep ok1 hm1 h11 .d1 rfl (by decide) rfl rfl ?_
@@ -181,19 +171,10 @@ theorem EvOK.fail (x : Tree) : EvOK θ supp .fail x [] := by
   rw [tot_nil]
   obtain ⟨o, a, rfl, hl | hl | hl⟩ := inv_fail hF
   · refine toOp (c := 8) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
-    have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
-      rw [hm1]
-      change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
-      rw [h11]
-      exact ok1.nil
-    exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by rw [hm1]; simp) (by rw [hm1]; simp) _
+    exact sumTo_stuck ok1 (heap_laM hm1 h11 rfl ok1.nil) (by rw [hm1]; rfl) (by rw [hm1]; simp)
+      (by rw [hm1]; simp) (by rw [hm1]; simp) _
   · refine toOp (c := 10) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
-    have hrec : ((.N, ![σ1.regs (laM σ1.mode), 0, 0, 0]) : Rec Kd) ∈ σ1.heap := by
-      rw [hm1]
-      change ((.N, ![σ1.regs 1, 0, 0, 0]) : Rec Kd) ∈ σ1.heap
-      rw [h11]
-      exact ok1.nil
-    exact sumTo_stuck ok1 hrec (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
+    exact sumTo_stuck ok1 (heap_laM hm1 h11 rfl ok1.nil) (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
         rw [hm1]
         rintro ⟨h, -⟩
         injection h with h
