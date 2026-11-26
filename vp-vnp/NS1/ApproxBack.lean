@@ -175,7 +175,6 @@ theorem size_xF (J m W : ℕ) (K : KT E[T;T⁻¹]) (pre : List Bool) :
     simp only [size_tl, size_hd, size_id, Tree.size]
     linarith
 
-set_option maxHeartbeats 1000000 in
 theorem size_extF (P : Tree) (g : Fm) : (extF P g).code.size ≤ P.size + g.code.size + xcst := by
   rw [xcst_def, extF, guessF, finF, size_lett, node]
   simp only [size_quote, size_cons, size_hd, size_tl, size_id, size_run, size_app, Tree.size]
