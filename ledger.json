@@ -6,17 +6,9 @@
     }
   },
   "comments_seen_until": "2026-11-26T02:47:01Z",
-  "dispatched": {
-    "173@42fc6a9be6257dca61c00b330fd8fadb427c05cf@3f948c41cdbd597cdff9b0bdd32c46a3e606650d@172@6902c81517c2c5a240828635b4950bd31cb31eba": "2026-11-26T02:45:53.103124600Z"
-  },
-  "lines": {
-    "173@42fc6a9be6257dca61c00b330fd8fadb427c05cf": [
-      "172@6902c81517c2c5a240828635b4950bd31cb31eba"
-    ]
-  },
-  "line_bases": {
-    "173@42fc6a9be6257dca61c00b330fd8fadb427c05cf": "409515862899b8b7fe81f65bc43ac144b57f1ea0"
-  },
+  "dispatched": {},
+  "lines": {},
+  "line_bases": {},
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],

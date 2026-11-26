@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T03:01:46.740917630Z",
+  "updated_at": "2026-11-26T03:03:11.996938484Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1053,7 +1053,7 @@
       "author": "kongeskog",
       "head_sha": "43f5aca886e1c296517f0267d9a067740796fb27",
       "base_sha": "409515862899b8b7fe81f65bc43ac144b57f1ea0",
-      "status": "conflict",
+      "status": "stale",
       "created_at": "2026-11-26T02:45:34Z",
       "decided_at": null,
       "metrics": {
@@ -1124,8 +1124,8 @@
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "fail",
-          "detail": "Conflicts with main; merge main into your branch and push"
+          "status": "pending",
+          "detail": "Main moved; will be re-verified once approved"
         },
         {
           "key": "review",
@@ -1154,8 +1154,8 @@
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 15192,
-      "loc": 961
+      "tokens": 15162,
+      "loc": 959
     },
     {
       "path": "vp-vnp/Paper/Fan.lean",
@@ -1174,8 +1174,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 9390,
-      "loc": 571
+      "tokens": 9333,
+      "loc": 566
     },
     {
       "path": "vp-vnp/Paper/ApproxScales.lean",
@@ -1229,8 +1229,8 @@
     },
     {
       "path": "vp-vnp/Nc/G/Move.lean",
-      "tokens": 6460,
-      "loc": 395
+      "tokens": 6434,
+      "loc": 394
     },
     {
       "path": "vp-vnp/NS1/Postpone.lean",
@@ -1238,14 +1238,14 @@
       "loc": 506
     },
     {
-      "path": "vp-vnp/NS1/Guess.lean",
-      "tokens": 6352,
-      "loc": 442
-    },
-    {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
       "tokens": 6329,
       "loc": 420
+    },
+    {
+      "path": "vp-vnp/NS1/Guess.lean",
+      "tokens": 6301,
+      "loc": 439
     },
     {
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
@@ -1254,8 +1254,8 @@
     },
     {
       "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 6054,
-      "loc": 374
+      "tokens": 5889,
+      "loc": 366
     },
     {
       "path": "vp-vnp/Paper/Rate.lean",
@@ -1269,8 +1269,8 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeScript.lean",
-      "tokens": 5586,
-      "loc": 362
+      "tokens": 5568,
+      "loc": 361
     },
     {
       "path": "vp-vnp/Nc/Tower/Inst.lean",
