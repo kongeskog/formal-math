@@ -104,8 +104,8 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
   | succ r ih =>
     intro τ s c hτ hlτ hτΛ hs hc1 hcv
     have hc4 : 4 * c * 4 ^ (r + 1) ≤ v := by
-      calc 4 * c * 4 ^ (r + 1) = c * 4 ^ (r + 1 + 1) := by rw [pow_succ 4 (r + 1)]; ring
-        _ ≤ v := hcv
+      convert hcv using 1
+      ring
     have h41 : 1 ≤ 4 ^ (r + 1) := Nat.one_le_pow _ _ (by norm_num)
     have hc4v : 4 * c ≤ v := (Nat.le_mul_of_pos_right _ h41).trans hc4
     have hX1 : 1 ≤ (4 * Λ ^ 2) ^ (r + 1) := Nat.one_le_pow _ _ (by positivity)
@@ -123,9 +123,8 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
       · refine h4.trans (Nat.mul_le_mul_left _ ?_)
         rw [pow_succ (8 * Λ) (r + 1)]
         exact Nat.le_mul_of_pos_left _ hX3
-      · have : 1 ≤ 4 ^ (r + 1) := h41
-        calc G.size ≤ 1 * (v ^ a₀ + 3000) := by omega
-          _ ≤ 4 ^ (r + 1) * (v ^ a₀ + 3000) := Nat.mul_le_mul_right _ this
+      · grw [← h41]
+        omega
     -- one cut by v ^ 63, then the rest
     push Not at hbase
     have hk63 : 2 ≤ v ^ 63 := (by omega : 2 ≤ v).trans (Nat.le_self_pow (by norm_num) v)
@@ -170,13 +169,8 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
         _ = 4 * c * τ₁ * (v ^ 63 * v ^ 256) := by ring
     obtain ⟨G₂, P₂, t₂, s₂, hcut₂, hP₂, ht₂, hs₂, hG₂⟩ := ih τ₁ s₁ (4 * c) hτ₁V ((Nat.mul_le_mul_left 4 (lg_mono hτ₁τ)).trans hlτ) hτ₁Λ hs₁c (by omega) hc4
     have hP : v ^ 63 * Λ * P₂ * v ^ H ≤ τ * (4 * Λ ^ 2) ^ (r + 1 + 1) := by
-      calc v ^ 63 * Λ * P₂ * v ^ H = v ^ 63 * Λ * (P₂ * v ^ H) := by ring
-        _ ≤ v ^ 63 * Λ * (τ₁ * (4 * Λ ^ 2) ^ (r + 1)) := Nat.mul_le_mul_left _ hP₂
-        _ = τ₁ * v ^ 63 * (Λ * (4 * Λ ^ 2) ^ (r + 1)) := by ring
-        _ ≤ τ * Λ * (Λ * (4 * Λ ^ 2) ^ (r + 1)) := Nat.mul_le_mul_right _ hτ₁le
-        _ = τ * (Λ ^ 2 * (4 * Λ ^ 2) ^ (r + 1)) := by ring
-        _ ≤ τ * (4 * Λ ^ 2 * (4 * Λ ^ 2) ^ (r + 1)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega))
-        _ = τ * (4 * Λ ^ 2) ^ (r + 1 + 1) := by rw [pow_succ (4 * Λ ^ 2) (r + 1)]; ring
+      grw [mul_assoc, hP₂, mul_mul_mul_comm, mul_comm (v ^ 63), hτ₁le, pow_succ _ (r + 1)]
+      ring_nf; omega
     refine ⟨_, _, _, _, Paper.thm_cut_compose hcut₁ hcut₂, hP, ?_, ?_, ?_⟩
     · -- time
       have b1 : t₁ * v ^ 48 ≤ c * τ * (2 * Λ) := by
@@ -189,21 +183,14 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
           _ ≤ (c * τ * v ^ 208 + c * τ * v ^ 208) * Λ := by gcongr
           _ = c * τ * (2 * Λ) * v ^ 208 := by ring
       have b2 : v ^ 63 * Λ * t₂ * v ^ 48 ≤ c * τ * (4 * Λ ^ 2 * (100 * Λ ^ 3) ^ (r + 1)) := by
-        calc v ^ 63 * Λ * t₂ * v ^ 48 = v ^ 63 * Λ * (t₂ * v ^ 48) := by ring
-          _ ≤ v ^ 63 * Λ * (4 * c * τ₁ * (100 * Λ ^ 3) ^ (r + 1)) := Nat.mul_le_mul_left _ ht₂
-          _ = τ₁ * v ^ 63 * (4 * c * Λ * (100 * Λ ^ 3) ^ (r + 1)) := by ring
-          _ ≤ τ * Λ * (4 * c * Λ * (100 * Λ ^ 3) ^ (r + 1)) := Nat.mul_le_mul_right _ hτ₁le
-          _ = c * τ * (4 * Λ ^ 2 * (100 * Λ ^ 3) ^ (r + 1)) := by ring
+        linarith only [Nat.mul_le_mul_left (v ^ 63 * Λ) ht₂,
+          Nat.mul_le_mul_right (4 * c * Λ * (100 * Λ ^ 3) ^ (r + 1)) hτ₁le]
       have b3 : v ^ 63 * Λ * (62 * P₂) * v ^ 48 ≤ c * τ * (4 * Λ ^ 2) ^ (r + 1 + 1) := by
         have hv62 : 62 * v ^ 48 ≤ v ^ H := by
-          calc 62 * v ^ 48 ≤ v * v ^ 48 := Nat.mul_le_mul_right _ (by omega)
-            _ = v ^ 49 := by rw [← pow_succ']
-            _ ≤ v ^ H := pmono (by omega)
-        calc v ^ 63 * Λ * (62 * P₂) * v ^ 48 = v ^ 63 * Λ * P₂ * (62 * v ^ 48) := by ring
-          _ ≤ v ^ 63 * Λ * P₂ * v ^ H := Nat.mul_le_mul_left _ hv62
-          _ ≤ τ * (4 * Λ ^ 2) ^ (r + 1 + 1) := hP
-          _ ≤ c * (τ * (4 * Λ ^ 2) ^ (r + 1 + 1)) := Nat.le_mul_of_pos_left _ hc1
-          _ = c * τ * (4 * Λ ^ 2) ^ (r + 1 + 1) := by ring
+          grw [← pmono (show 49 ≤ H by omega), pow_succ' v 48]
+          gcongr; omega
+        grw [mul_assoc, mul_assoc 62, mul_left_comm 62, hv62, ← mul_assoc, hP, mul_assoc c, ← hc1,
+          one_mul]
       have b4 : v ^ 63 * Λ * 110 * v ^ 48 + 100 * v ^ 48 ≤ c * τ * 2 := by
         have h1 : v ^ 63 * Λ * 110 * v ^ 48 ≤ τ := by
           calc v ^ 63 * Λ * 110 * v ^ 48 ≤ v ^ 63 * v * v * v ^ 48 :=
@@ -223,17 +210,15 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
       obtain ⟨X, hX⟩ := exists_eq (a' := (100 * Λ ^ 3) ^ (r + 1))
       have c1 : 2 * Λ ≤ 2 * Λ ^ 3 * X := by
         rw [hX]
-        calc 2 * Λ ≤ 2 * Λ ^ 3 * 1 := by omega
-          _ ≤ _ := Nat.mul_le_mul_left _ hX2
+        grw [← hX2]
+        omega
       have c2 : 4 * Λ ^ 2 * X ≤ 4 * Λ ^ 3 * X := Nat.mul_le_mul_right _ (by omega)
       have c3 : (4 * Λ ^ 2) ^ (r + 1 + 1) ≤ 4 * Λ ^ 3 * X := by
         rw [pow_succ, hX, Nat.mul_comm]
         exact Nat.mul_le_mul (by omega) (Nat.pow_le_pow_left (by omega) _)
       have c4 : 2 ≤ 2 * Λ ^ 3 * X := by
         have : 1 ≤ Λ ^ 3 := Nat.one_le_pow _ _ hΛ1
-        have hX' : 1 ≤ X := hX ▸ hX2
-        calc 2 = 2 * 1 * 1 := rfl
-          _ ≤ 2 * Λ ^ 3 * X := Nat.mul_le_mul (Nat.mul_le_mul_left 2 this) hX'
+        grw [← this, hX, ← hX2]
       have c5 : (100 * Λ ^ 3) ^ (r + 1 + 1) = 100 * Λ ^ 3 * X := by rw [pow_succ, hX]; ring
       calc (t₁ + v ^ 63 * Λ * (t₂ + 62 * P₂ + 110) + 100) * v ^ 48 = t₁ * v ^ 48 + v ^ 63 * Λ * t₂ * v ^ 48 +
             v ^ 63 * Λ * (62 * P₂) * v ^ 48 + (v ^ 63 * Λ * 110 * v ^ 48 + 100 * v ^ 48) := by ring
@@ -248,10 +233,9 @@ theorem _root_.Paper.thm_cut_iterate (hc : OneCutAt θ v a₀ Λ) (hv : 1000 ≤
               omega
             omega)
         _ = c * τ * (100 * Λ ^ 3) ^ (r + 1 + 1) := by rw [c5]
-    · calc s₂ * v ^ 48 ≤ 4 * c * v ^ H * (8 * Λ) ^ (r + 1) := hs₂
-        _ = c * v ^ H * (4 * (8 * Λ) ^ (r + 1)) := by ring
-        _ ≤ c * v ^ H * (8 * Λ * (8 * Λ) ^ (r + 1)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega))
-        _ = c * v ^ H * (8 * Λ) ^ (r + 1 + 1) := by rw [pow_succ (8 * Λ) (r + 1)]; ring
+    · rw [pow_succ _ (r + 1)]
+      linarith only [hs₂,
+        Nat.mul_le_mul_left (c * v ^ H * (8 * Λ) ^ (r + 1)) (show 4 ≤ 8 * Λ by omega)]
     · have := size_compC G₁ G₂
       have e : 4 ^ (r + 1) * (v ^ a₀ + 3000) = 4 * (4 ^ r * (v ^ a₀ + 3000)) := by rw [pow_succ]; ring
       have h4r : 1 ≤ 4 ^ r := Nat.one_le_pow _ _ (by norm_num)
