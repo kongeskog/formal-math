@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T17:44:36.461698881Z",
+  "updated_at": "2026-11-26T17:45:46.797091056Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -96,10 +96,10 @@
     {
       "number": 177,
       "title": "Idea: shorten(Nc/Dl/Num0,NS1/OneCut,Paper/Cuts): grw for chains of monotone bound steps, in place of calc with Nat.mul_le_mul terms",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "yidakra",
-      "lease_expires": "2026-11-26T11:20:35Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 180,
       "result_delta": -3383,
       "created_at": "2026-11-26T04:22:13Z",
@@ -1221,11 +1221,6 @@
       "loc": 339
     },
     {
-      "path": "vp-vnp/Nc/Dl/Num0.lean",
-      "tokens": 5486,
-      "loc": 311
-    },
-    {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
       "tokens": 5475,
       "loc": 417
@@ -1239,6 +1234,11 @@
       "path": "vp-vnp/Paper/Prices.lean",
       "tokens": 5446,
       "loc": 304
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Load.lean",
+      "tokens": 5395,
+      "loc": 312
     }
   ]
 }
