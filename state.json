@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-26T01:15:04.106061960Z",
+  "updated_at": "2026-11-26T01:19:11.975575904Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1010,13 +1010,27 @@
       "title": "merge(Nc/Dl,Nc/Tow): one uniqueness lemma, expand_endTm inside its caller, mem_cons skeletons",
       "author": "kongeskog",
       "head_sha": "33c3af6c29353b8caa52e0a9716df6f19bec6605",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "438fa960163a3050546a7562f8a34faf56d70e97",
+      "status": "stale",
       "created_at": "2026-11-26T00:55:18Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 823328,
+        "loc": 52877,
+        "decls": 4319,
+        "files": 314,
+        "bytes": 3078447,
+        "build_seconds": 500
+      },
+      "base_metrics": {
+        "tokens": 823699,
+        "loc": 52905,
+        "decls": 4320,
+        "files": 314,
+        "bytes": 3079683,
+        "build_seconds": null
+      },
+      "delta": -371,
       "gates": [
         {
           "key": "format",
@@ -1024,44 +1038,52 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "8 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "no_increase",
           "label": "No more long lines or exceptions",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 823699 → 823328 (-371)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         },
         {
           "key": "review",
@@ -1072,7 +1094,7 @@
       ],
       "idea": 160,
       "url": "https://github.com/kongeskog/formal-math/pull/163",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/45732844456",
       "merge_sha": null,
       "reason": null,
       "technique": "merge",
@@ -1090,8 +1112,8 @@
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
-      "tokens": 15613,
-      "loc": 967
+      "tokens": 15374,
+      "loc": 962
     },
     {
       "path": "vp-vnp/Paper/Fan.lean",
@@ -1110,8 +1132,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 9713,
-      "loc": 568
+      "tokens": 9390,
+      "loc": 571
     },
     {
       "path": "vp-vnp/Paper/ApproxScales.lean",
