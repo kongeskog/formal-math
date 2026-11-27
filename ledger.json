@@ -13,5 +13,8 @@
     131
   ],
   "judged": {},
-  "told": []
+  "told": [],
+  "turn": null,
+  "turns_voided": {},
+  "turns_lost": {}
 }
