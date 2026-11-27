@@ -1,10 +1,5 @@
 {
-  "claims": {
-    "181": {
-      "login": "yidakra",
-      "at": "2026-11-27T17:08:43Z"
-    }
-  },
+  "claims": {},
   "comments_seen_until": "2026-11-27T17:08:43Z",
   "dispatched": {},
   "lines": {},
@@ -17,6 +12,21 @@
     109,
     131
   ],
-  "judged": {},
+  "judged": {
+    "182@3b7b8aa0680a0eb1fe564769a7918d5c5ad57109": {
+      "at": "2026-11-27T21:51:49Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    },
+    "183@ebb49902ee138f4de4103d7116507f6e0ab758f3": {
+      "at": "2026-11-27T21:51:52Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    }
+  },
   "told": []
 }

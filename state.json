@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-27T17:09:38.515727458Z",
+  "updated_at": "2026-11-27T21:51:36.872131525Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,9 +74,9 @@
   "counts": {
     "merged": 102,
     "rejected": 4,
-    "open": 0,
+    "open": 2,
     "contributors": 2,
-    "ideas_open": 0
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -88,7 +88,7 @@
     {
       "login": "yidakra",
       "merged": 3,
-      "attempts": 3,
+      "attempts": 5,
       "saved": 4289
     }
   ],
@@ -96,10 +96,10 @@
     {
       "number": 181,
       "title": "Idea: shorten(NS1/OneCut,Paper/Cuts): grw for the bound chains of thm_cut_iterate and thm_cut (the rest of #177)",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "yidakra",
-      "lease_expires": "2026-11-27T20:08:43Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-26T17:47:09Z",
@@ -1102,7 +1102,154 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 182,
+      "title": "shorten(Nc/Grp,Nc/RunPerm,Paper/Circuit): combine cost and cardinality bounds",
+      "author": "yidakra",
+      "head_sha": "3b7b8aa0680a0eb1fe564769a7918d5c5ad57109",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-27T21:50:56Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": null,
+      "url": "https://github.com/kongeskog/formal-math/pull/182",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Nc/Grp,Nc/RunPerm,Paper/Circuit"
+    },
+    {
+      "pr": 183,
+      "title": "merge(Nc/Tow/EndB): sum incident edge ends once for every chamber",
+      "author": "yidakra",
+      "head_sha": "ebb49902ee138f4de4103d7116507f6e0ab758f3",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-27T21:51:05Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        },
+        {
+          "key": "review",
+          "label": "Independent review",
+          "status": "pending",
+          "detail": "0 of 1 approvals from vetted reviewers"
+        }
+      ],
+      "idea": null,
+      "url": "https://github.com/kongeskog/formal-math/pull/183",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "merge",
+      "scope": "Nc/Tow/EndB"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
