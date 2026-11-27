@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-27T22:04:36.288090110Z",
+  "updated_at": "2026-11-27T22:06:04.606925593Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1296,13 +1296,27 @@
       "title": "shorten(NS1/OneCut,Paper/Cuts): share the time and size bound across cut iteration",
       "author": "yidakra",
       "head_sha": "3f66b161b6c3ef4226d1e55206513f58b4b8adcf",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "7b2d5d572cf2f832ca581ebacbb961209abaf889",
+      "status": "awaiting_review",
       "created_at": "2026-11-27T21:54:54Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 810534,
+        "loc": 52235,
+        "decls": 4279,
+        "files": 314,
+        "bytes": 3041151,
+        "build_seconds": 83
+      },
+      "base_metrics": {
+        "tokens": 813118,
+        "loc": 52338,
+        "decls": 4279,
+        "files": 314,
+        "bytes": 3049204,
+        "build_seconds": null
+      },
+      "delta": -2584,
       "gates": [
         {
           "key": "format",
@@ -1310,44 +1324,51 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "2 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "no_increase",
           "label": "No more long lines or exceptions",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 813118 → 810534 (-2584)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "review",
@@ -1358,7 +1379,7 @@
       ],
       "idea": 181,
       "url": "https://github.com/kongeskog/formal-math/pull/184",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46073334362",
       "merge_sha": null,
       "reason": null,
       "technique": "shorten",
