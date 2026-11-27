@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-27T23:16:04.753004798Z",
+  "updated_at": "2026-11-27T23:17:36.561590160Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -96,10 +96,10 @@
     {
       "number": 181,
       "title": "Idea: shorten(NS1/OneCut,Paper/Cuts): grw for the bound chains of thm_cut_iterate and thm_cut (the rest of #177)",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "yidakra",
-      "lease_expires": "2026-11-28T00:54:26Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 184,
       "result_delta": -2584,
       "created_at": "2026-11-26T17:47:09Z",
@@ -1165,11 +1165,6 @@
       "loc": 418
     },
     {
-      "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 6889,
-      "loc": 428
-    },
-    {
       "path": "vp-vnp/Paper/Crossing.lean",
       "tokens": 6673,
       "loc": 377
@@ -1198,6 +1193,11 @@
       "path": "vp-vnp/Nc/G/Move.lean",
       "tokens": 6180,
       "loc": 382
+    },
+    {
+      "path": "vp-vnp/Paper/Cuts.lean",
+      "tokens": 6128,
+      "loc": 397
     },
     {
       "path": "vp-vnp/Nc/Grp/StepBase.lean",
