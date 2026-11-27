@@ -264,9 +264,6 @@ variable {T : Tower h b D J} (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : F
 noncomputable def eE : Fin (Fintype.card (Mv T R ch FL)) ≃ Mv T R ch FL :=
   (exists_mono_equiv (timeM R ch FL)).choose
 
-theorem eE_lt {x y : Mv T R ch FL} (hxy : timeM R ch FL x < timeM R ch FL y) :
-    (eE R FL).symm x < (eE R FL).symm y := (exists_mono_equiv (timeM R ch FL)).choose_spec x y hxy
-
 /-- The system of moves. -/
 noncomputable def sys : Sys F (AA + A') (Fintype.card (Mv T R ch FL)) where
   kind x := kindM R ch FL (eE R FL x)

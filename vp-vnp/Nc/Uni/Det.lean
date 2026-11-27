@@ -216,18 +216,20 @@ theorem fire_iff {σ : St supp} (hσ : OKs σ) {κ : Kd} {p q s : ℕ}
     exact hrec
 
 /-- A step that is forced. -/
-theorem sumTo_rule {σ : St supp} (hσ : OKs σ) {κ : Kd} {p q s : ℕ}
-    (hrec : (κ, ![σ.regs (laM σ.mode), p, q, s]) ∈ σ.heap) (r : Ru supp) (hr : nextR supp σ.mode κ = some r)
-    (hm : σ.mode ≠ .P) (hd : ¬ (σ.mode = .D 7 ∧ κ = .N)) (hs : (rule θ supp r).src = σ.mode) (hk : (rule θ supp r).lk = κ)
+theorem sumTo_rule {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = md) {κ : Kd}
+    {p q s : ℕ} (hrec : (κ, ![σ.regs (laM σ.mode), p, q, s]) ∈ σ.heap) (r : Ru supp)
+    (hr : nextR supp md κ = some r) (hP : md ≠ .P) (hd : ¬ (md = .D 7 ∧ κ = .N))
+    (hs : (rule θ supp r).src = md) (hk : (rule θ supp r).lk = κ)
     {S : A} {B : ℤ} (h : Mach.SumTo (UM θ supp) (nx θ σ r p q s) S B) :
     Mach.SumTo (UM θ supp) σ ((rule θ supp r).wt * S) (B + 1) := by
+  subst hm
   have hz : σ.mode ≠ (UM θ supp).mh := by
     rw [← hs]
     exact src_ne r
   have hsp : ∀ r' : Ru supp, (rule θ supp r').src = σ.mode → (rule θ supp r').lk = κ → ¬ Sp r' := by
     rintro r' h1 h2 (rfl | rfl | ⟨b, rfl⟩)
-    · exact hm h1.symm
-    · exact hm h1.symm
+    · exact hP h1.symm
+    · exact hP h1.symm
     · cases b
       · exact hd ⟨h1.symm, h2.symm⟩
       · exact hd ⟨h1.symm, h2.symm⟩
@@ -244,17 +246,19 @@ theorem sumTo_rule {σ : St supp} (hσ : OKs σ) {κ : Kd} {p q s : ℕ}
     exact List.nil_prefix
 
 /-- No rule applies. -/
-theorem sumTo_stuck {σ : St supp} (hσ : OKs σ) {κ : Kd} {p q s : ℕ}
-    (hrec : (κ, ![σ.regs (laM σ.mode), p, q, s]) ∈ σ.heap) (hr : nextR supp σ.mode κ = none)
-    (hm : σ.mode ≠ .P) (hd : ¬ (σ.mode = .D 7 ∧ κ = .N)) (hz : σ.mode ≠ .Z) (B : ℤ) :
+theorem sumTo_stuck {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = md) {κ : Kd}
+    {p q s : ℕ} (hrec : (κ, ![σ.regs (laM σ.mode), p, q, s]) ∈ σ.heap)
+    (hr : nextR supp md κ = none)
+    (hP : md ≠ .P) (hd : ¬ (md = .D 7 ∧ κ = .N)) (hz : md ≠ .Z) (B : ℤ) :
     Mach.SumTo (UM θ supp) σ 0 B := by
+  subst hm
   refine Mach.SumTo.none hz (fun st hf => ?_) B
   rw [fire_iff hσ hrec] at hf
   obtain ⟨h1, h2, -, -⟩ := hf
   have hsp : ¬ Sp st.1 := by
     rintro (h | h | ⟨b, h⟩)
-    · rw [h] at h1; exact hm h1.symm
-    · rw [h] at h1; exact hm h1.symm
+    · rw [h] at h1; exact hP h1.symm
+    · rw [h] at h1; exact hP h1.symm
     · rw [h] at h1 h2
       cases b
       · exact hd ⟨h1.symm, h2.symm⟩

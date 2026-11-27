@@ -276,9 +276,6 @@ noncomputable def idx (i k : Fin h) (hk : k ≠ i) : Fin (h - 1) := (exists_sh h
 
 theorem sh_idx (i k : Fin h) (hk : k ≠ i) : sh i (idx i k hk) = k := (exists_sh hk).choose_spec
 
-theorem idx_sh (i : Fin h) (l : Fin (h - 1)) : idx i (sh i l) (sh_ne i l) = l :=
-  sh_injective i (sh_idx i _ _)
-
 theorem gen_idx (h2 : 2 ≤ h) (i k : Fin h) (hk : k ≠ i) : (gen h2 k : G h n) = th i (x h (idx i k hk)) := by
   rw [th_x h2, sh_idx]
 
@@ -320,7 +317,7 @@ theorem nearFun_bijective (h2 : 2 ≤ h) (j : ℕ) (i : Fin h) : Function.Biject
     refine ⟨⟨edge h2 (sh i l) c, by rw [edge_type]; exact hk⟩, ?_⟩
     have h5 : ∀ (k : Fin h) (hk' : k ≠ i), k = sh i l → idx i k hk' = l := by
       rintro k hk' rfl
-      exact idx_sh i l
+      exact sh_injective i (sh_idx i _ _)
     have hg : (gen h2 (sh i l) : G h n) = th i (x h l) := (th_x h2 i l).symm
     refine Prod.ext ?_ ?_
     · change vert i (edge h2 (sh i l) c).1.2 = v

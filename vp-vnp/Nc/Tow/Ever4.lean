@@ -26,16 +26,12 @@ variable {F : Type} [CommRing F] {A A' E U0 U1 : ℕ}
 def initN (n : Fin A → Fin A → Fin (U0 + 1)) (p : Fin (A + A')) : ℕ :=
   ∑ a, ∑ c, ((if Fin.castAdd A' a = p then (n a c).1 else 0) + if Fin.castAdd A' c = p then (n a c).1 else 0)
 
-theorem card_fin_le (N c : ℕ) : ((univ : Finset (Fin N)).filter fun k => k.1 < c).card ≤ c := by
-  rw [Fin.card_filter_val_lt]
-  exact min_le_right _ _
-
 theorem sum_fin_le (N c : ℕ) (p : Prop) [Decidable p] :
     (∑ k : Fin N, if p ∧ k.1 < c then 1 else 0) ≤ if p then c else 0 := by
   by_cases hp : p
   · simp only [hp, true_and, if_true]
-    rw [← card_filter]
-    exact card_fin_le N c
+    rw [← card_filter, Fin.card_filter_val_lt]
+    exact min_le_right _ _
   · simp [hp]
 
 open Classical in

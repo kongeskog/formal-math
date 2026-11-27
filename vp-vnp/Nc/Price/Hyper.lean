@@ -24,16 +24,10 @@ section Simple
 variable {K : Type} [Field K] {I J A B : Type} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
   [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
 
-/-- A spectral point has the value n ^ g at the unit tensor of size n ≥ 1 with
-the legs at π. -/
-theorem unit_eq_rpow_hexp [Nonempty I] (F : Spec K I) (π : A → I) {n : ℕ} (hn : 1 ≤ n) :
-    F.F (Ten.push π (Ten.unit K A n)) = (n : ℝ) ^ hexp F π :=
-  F.unit_eq π hn
-
 /-- The case n = 2 of the definition of g. -/
 theorem unit_two_eq_rpow_hexp [Nonempty I] (F : Spec K I) (π : A → I) :
     F.F (Ten.push π (Ten.unit K A 2)) = 2 ^ hexp F π := by
-  have h := unit_eq_rpow_hexp F π (n := 2) (by norm_num)
+  have h := F.unit_eq π (n := 2) (by norm_num)
   exact_mod_cast h
 
 /-- The exponent of a unit tensor depends only on the set of the parties that hold

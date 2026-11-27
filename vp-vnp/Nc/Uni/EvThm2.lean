@@ -30,8 +30,7 @@ theorem rstep {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = 
     (hr : nextR supp md κ = some (.inl r))
     (hs : (ruleA r : RD A (Nm supp)).src = md) (hk : (ruleA r : RD A (Nm supp)).lk = κ) {S : A} {B : ℤ}
     (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) p q s) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
-  subst hm
-  exact (sumTo_ruleA hσ (heap_laM rfl h2 hla hrec) r hr (fun e => by rw [e] at hla; cases hla)
+  exact (sumTo_ruleA hσ hm (heap_laM hm h2 hla hrec) r hr (fun e => by rw [e] at hla; cases hla)
     (fun e => by rw [e.1] at hla; cases hla) hs hk h).mono (by omega)
 
 /-- A step that loads the record of register 1, whose address `k` is the value of that register. -/
@@ -42,8 +41,8 @@ theorem lstep {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = 
     (hP : md ≠ .P) (hD : md ≠ .D 7) (hs : (ruleA r : RD A (Nm supp)).src = md)
     (hk : (ruleA r : RD A (Nm supp)).lk = κ) {S : A} {B : ℤ}
     (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) p q s) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
-  exact (sumTo_ruleA hσ (heap_laM hm h1 hla hrec) r (by rw [hm]; exact hr) (by rw [hm]; exact hP)
-    (by rw [hm]; exact fun e => hD e.1) (by rw [hm]; exact hs) hk h).mono (by omega)
+  exact (sumTo_ruleA hσ hm (heap_laM hm h1 hla hrec) r hr hP (fun e => hD e.1) hs hk
+    h).mono (by omega)
 
 theorem cost_tick (r : Run A) (o : Tree) : ((r.tick o).cost : ℤ) = r.cost + 1 := by
   simp [Run.tick]

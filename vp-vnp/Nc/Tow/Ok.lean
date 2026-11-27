@@ -109,7 +109,8 @@ theorem card_consM (z : ZM R FL (ch := ch)) :
 /-- A move that is earlier in time than the move at index `x` has a smaller index. -/
 theorem lt_of_time {mv : Mv T R ch FL} {x : Fin (Fintype.card (Mv T R ch FL))}
     (h : timeM R ch FL mv < timeM R ch FL (eE R FL x)) : (eE R FL).symm mv < x := by
-  simpa using eE_lt R FL h
+  rw [← (eE R FL).symm_apply_apply x]
+  exact (exists_mono_equiv (timeM R ch FL)).choose_spec _ _ h
 
 section Causal
 

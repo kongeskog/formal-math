@@ -142,8 +142,7 @@ theorem zstep {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = 
     (hr : nextR supp md .N = some (.inl r)) (hP : md ≠ .P) (hD : md ≠ .D 7) (hs : (ruleA r : RD A (Nm supp)).src = md)
     (hk : (ruleA r : RD A (Nm supp)).lk = .N) {S : A} {B : ℤ}
     (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) 0 0 0) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
-  exact (sumTo_ruleA hσ (heap_laM hm hσ.r0 hla hσ.nil) r (by rw [hm]; exact hr)
-    (by rw [hm]; exact hP) (by rw [hm]; exact fun e => hD e.1) (by rw [hm]; exact hs) hk
+  exact (sumTo_ruleA hσ hm (heap_laM hm hσ.r0 hla hσ.nil) r hr hP (fun e => hD e.1) hs hk
     h).mono (by omega)
 
 /-- The end of a run. -/
