@@ -44,10 +44,14 @@ guards = [
   { metric = "bytes", max_increase_pct = 0.5 },
 ]
 
+# No approval is needed: a change whose gates all pass merges. A
+# `/request-changes` from a leader blocks a change until the same person
+# approves its head commit. Set `required = 1` to have every change read by a
+# vetted reviewer first.
 [review]
-required = 1
+required = 0
 large_change_files = 20
-required_large = 2
+required_large = 0
 
 # Who may do what. Anyone may contribute changes. Reviewing, and putting ideas
 # straight into the queue, are earned: leaders grant those roles directly or by
