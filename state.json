@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-27T23:14:35.940466353Z",
+  "updated_at": "2026-11-27T23:16:04.753004798Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,21 +60,21 @@
     }
   },
   "current": {
-    "sha": "f0fa1636d2bbd9326cb5650f8d8ca51f4c59cbde",
-    "at": "2026-11-27T23:14:35.940466353Z",
+    "sha": "8824aa021c4b837961a8d7750af278c14b203b11",
+    "at": "2026-11-27T23:16:04.753004798Z",
     "metrics": {
-      "tokens": 810498,
-      "loc": 52206,
-      "decls": 4277,
+      "tokens": 807543,
+      "loc": 52102,
+      "decls": 4278,
       "files": 314,
-      "bytes": 3041350,
-      "build_seconds": 162
+      "bytes": 3032669,
+      "build_seconds": 204
     }
   },
   "counts": {
-    "merged": 104,
+    "merged": 106,
     "rejected": 4,
-    "open": 2,
+    "open": 0,
     "contributors": 2,
     "ideas_open": 0
   },
@@ -87,9 +87,9 @@
     },
     {
       "login": "yidakra",
-      "merged": 5,
+      "merged": 7,
       "attempts": 7,
-      "saved": 6909
+      "saved": 9864
     }
   ],
   "ideas": [
@@ -101,7 +101,7 @@
       "claimed_by": "yidakra",
       "lease_expires": "2026-11-28T00:54:26Z",
       "pr": 184,
-      "result_delta": null,
+      "result_delta": -2584,
       "created_at": "2026-11-26T17:47:09Z",
       "url": "https://github.com/kongeskog/formal-math/issues/181",
       "technique": "shorten",
@@ -1102,198 +1102,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 184,
-      "title": "shorten(NS1/OneCut,Paper/Cuts): share the time and size bound across cut iteration",
-      "author": "yidakra",
-      "head_sha": "3f66b161b6c3ef4226d1e55206513f58b4b8adcf",
-      "base_sha": "7b2d5d572cf2f832ca581ebacbb961209abaf889",
-      "status": "stale",
-      "created_at": "2026-11-27T21:54:54Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 810534,
-        "loc": 52235,
-        "decls": 4279,
-        "files": 314,
-        "bytes": 3041151,
-        "build_seconds": 83
-      },
-      "base_metrics": {
-        "tokens": 813118,
-        "loc": 52338,
-        "decls": 4279,
-        "files": 314,
-        "bytes": 3049204,
-        "build_seconds": null
-      },
-      "delta": -2584,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 813118 → 810534 (-2584)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog"
-        }
-      ],
-      "idea": 181,
-      "url": "https://github.com/kongeskog/formal-math/pull/184",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46073334362",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "NS1/OneCut,Paper/Cuts"
-    },
-    {
-      "pr": 185,
-      "title": "merge(Nc/Uni/EvThm2): share the evaluator proof for head and tail",
-      "author": "yidakra",
-      "head_sha": "875628cf5e532866ca6db58c9887fc57e5724321",
-      "base_sha": "7b2d5d572cf2f832ca581ebacbb961209abaf889",
-      "status": "stale",
-      "created_at": "2026-11-27T21:55:02Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 812747,
-        "loc": 52337,
-        "decls": 4280,
-        "files": 314,
-        "bytes": 3048576,
-        "build_seconds": 82
-      },
-      "base_metrics": {
-        "tokens": 813118,
-        "loc": 52338,
-        "decls": 4279,
-        "files": 314,
-        "bytes": 3049204,
-        "build_seconds": null
-      },
-      "delta": -371,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "1 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 813118 → 812747 (-371)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        },
-        {
-          "key": "review",
-          "label": "Independent review",
-          "status": "pass",
-          "detail": "Approved by kongeskog"
-        }
-      ],
-      "idea": null,
-      "url": "https://github.com/kongeskog/formal-math/pull/185",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46073348895",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "merge",
-      "scope": "Nc/Uni/EvThm2"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
@@ -1376,11 +1185,6 @@
       "loc": 506
     },
     {
-      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
-      "tokens": 6359,
-      "loc": 370
-    },
-    {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
       "tokens": 6329,
       "loc": 420
@@ -1424,6 +1228,11 @@
       "path": "vp-vnp/Nc/Tower/Inst.lean",
       "tokens": 5532,
       "loc": 339
+    },
+    {
+      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
+      "tokens": 5528,
+      "loc": 332
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
