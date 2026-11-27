@@ -219,113 +219,42 @@ theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : F
       exact (alv_mid_le hb j e s hx β).1
 
 open Classical in
-/-- The alive units between a chamber of a level before the last and its parent. -/
-theorem sum_child_lt (j : Fin J) (c : T.X j) : (∑ ν : NM R FL, if IsCh R ch FL ν ⟨j.castSucc, c⟩ then
-      alv R ch FL lhat n o ν else 0) ≤
-    ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then load R ch FL lhat n o (.edge j.castSucc e) else 0 := by
-  let C : T.Ed j → Bool → Finset (NM R FL) := fun e β => (univ : Finset (NM R FL)).filter (fun ν =>
-      alv R ch FL lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR T R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR T R ch x.1 β = .done ∧ OfEd j e x.1)
-  have hall : ∀ ν : NM R FL, (if IsCh R ch FL ν ⟨j.castSucc, c⟩ then alv R ch FL lhat n o ν else 0) ≤
-      if ν ∈ ((univ.filter fun e : T.Ed j => T.e0 e = c).biUnion fun e => C e false) ∪
-        ((univ.filter fun e : T.Ed j => T.e1 e = c).biUnion fun e => C e true) then alv R ch FL lhat n o ν else 0 := by
-    intro ν
-    by_cases h1 : IsCh R ch FL ν ⟨j.castSucc, c⟩
-    swap
-    · rw [if_neg h1]; exact Nat.zero_le _
-    rw [if_pos h1]
-    by_cases h0 : alv R ch FL lhat n o ν = 0
-    · rw [h0]; exact Nat.zero_le _
-    rw [if_pos]
-    obtain ⟨x, β, hν, hd, hc⟩ := h1
-    have hmem : ∀ e, OfEd j e x.1 → ν ∈ C e β := fun e he => mem_filter.2 ⟨mem_univ _, h0, x, hν, hd, he⟩
-    have hex : ∃ e : T.Ed j, OfEd j e x.1 ∧ (if β then T.e1 e else T.e0 e) = c := by
-      obtain ⟨x, hx⟩ := x
-      simp only at hc ⊢
-      rcases x with ⟨a, c', γ, s⟩ | ⟨j', i, e⟩ | ⟨j', e, s⟩ | e
-      · simp [chd] at hc
-      · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
-        obtain ⟨hj, hc⟩ := hc
-        have hj : j' = j := Fin.castSucc_injective _ hj
-        subst hj
-        exact ⟨e, Or.inl ⟨i, rfl⟩, eq_of_heq hc⟩
-      · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
-        obtain ⟨hj, hc⟩ := hc
-        have hj : j' = j := Fin.castSucc_injective _ hj
-        subst hj
-        exact ⟨e, Or.inr ⟨s, rfl⟩, eq_of_heq hc⟩
-      · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
-        exact absurd hc.1.symm (Fin.castSucc_lt_last j).ne
-    obtain ⟨e, he, hce⟩ := hex
-    cases β
-    · exact mem_union_left _ (mem_biUnion.2 ⟨e, mem_filter.2 ⟨mem_univ _, by simpa using hce⟩, hmem e he⟩)
-    · exact mem_union_right _ (mem_biUnion.2 ⟨e, mem_filter.2 ⟨mem_univ _, by simpa using hce⟩, hmem e he⟩)
-  refine (Finset.sum_le_sum fun ν _ => hall ν).trans ?_
-  rw [← Finset.sum_filter, filter_mem_eq_inter, univ_inter]
-  refine (sum_union_le _ _ _).trans ?_
-  refine (add_le_add (sum_biUnion_le' _ _ _) (sum_biUnion_le' _ _ _)).trans ?_
-  rw [Finset.sum_filter, Finset.sum_filter, ← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun e _ => ?_
-  have hne := T.e_ne e
-  by_cases h0 : T.e0 e = c
-  · have h1 : ¬ T.e1 e = c := fun hcon => hne (h0.trans hcon.symm)
-    rw [if_pos h0, if_neg h1, if_pos (Or.inl h0)]
-    exact sum_edge_end hb hh j e false
-  · by_cases h1 : T.e1 e = c
-    · rw [if_neg h0, if_pos h1, if_pos (Or.inr h1), Nat.zero_add]
-      exact sum_edge_end hb hh j e true
-    · rw [if_neg h0, if_neg h1]
-      exact Nat.zero_le _
-
-open Classical in
-/-- The alive units between a chamber of the last level and the root. -/
-theorem sum_child_last (c : T.X J) : (∑ ν : NM R FL, if IsCh R ch FL ν ⟨Fin.last J, c⟩ then
-      alv R ch FL lhat n o ν else 0) ≤
-    ∑ e : T.Ed J, if T.e0 e = c ∨ T.e1 e = c then load R ch FL lhat n o (.edge (Fin.last J) e) else 0 := by
-  let C : T.Ed J → Bool → Finset (NM R FL (ch := ch)) := fun e β => {⟨.inl ⟨.fin e, trivial⟩, β⟩}
-  have hC : ∀ e β, ∑ ν ∈ C e β, alv R ch FL lhat n o ν ≤ load R ch FL lhat n o (.edge (Fin.last J) e) := by
-    intro e β
-    simp only [C]
-    rw [Finset.sum_singleton]
-    exact (alv_le_num _ _).trans (num_inl _)
-  have hall : ∀ ν : NM R FL, (if IsCh R ch FL ν ⟨Fin.last J, c⟩ then alv R ch FL lhat n o ν else 0) ≤
-      if ν ∈ ((univ.filter fun e : T.Ed J => T.e0 e = c).biUnion fun e => C e false) ∪
-        ((univ.filter fun e : T.Ed J => T.e1 e = c).biUnion fun e => C e true) then alv R ch FL lhat n o ν else 0 := by
-    intro ν
-    by_cases h1 : IsCh R ch FL ν ⟨Fin.last J, c⟩
-    swap
-    · rw [if_neg h1]; exact Nat.zero_le _
-    rw [if_pos h1, if_pos]
-    obtain ⟨⟨x, hx⟩, β, hν, hd, hc⟩ := h1
-    rcases x with ⟨a, c', γ, s⟩ | ⟨j', i, e⟩ | ⟨j', e, s⟩ | e
-    · simp [chd] at hc
-    · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
-      exact absurd hc.1 (Fin.castSucc_lt_last j').ne
-    · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
-      exact absurd hc.1 (Fin.castSucc_lt_last j').ne
-    · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
-      have hce : (if β then T.e1 e else T.e0 e) = c := eq_of_heq hc.2
-      have hmem : ν ∈ C e β := by
-        rw [hν]
-        exact mem_singleton_self _
+omit hb hh in
+/-- A nonzero unit at the chamber lies at an incident edge end. Sum the end bounds,
+using that an edge has at most one end at the given chamber. -/
+private theorem sum_child_of_cover (j : Fin (J + 1)) (c : T.X j)
+    (C : T.Ed j → Bool → Finset (NM R FL (ch := ch)))
+    (bound : ∀ e β, ∑ ν ∈ C e β, alv R ch FL lhat n o ν ≤ load R ch FL lhat n o (.edge j e))
+    (cover : ∀ ν, IsCh R ch FL ν ⟨j, c⟩ → alv R ch FL lhat n o ν ≠ 0 →
+      ∃ (e : T.Ed j) (β : Bool), (if β then T.e1 e else T.e0 e) = c ∧ ν ∈ C e β) :
+    (∑ ν, if IsCh R ch FL ν ⟨j, c⟩ then alv R ch FL lhat n o ν else 0) ≤
+      ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then load R ch FL lhat n o (.edge j e) else 0 := by
+  let ends (β : Bool) := (univ.filter fun e : T.Ed j =>
+    (if β then T.e1 e else T.e0 e) = c).biUnion fun e => C e β
+  have hall (ν : NM R FL) : (if IsCh R ch FL ν ⟨j, c⟩ then alv R ch FL lhat n o ν else 0) ≤
+      if ν ∈ ends false ∪ ends true then alv R ch FL lhat n o ν else 0 := by
+    split_ifs with hch hmem
+    · exact le_rfl
+    · by_contra! hpos
+      obtain ⟨e, β, he, hν⟩ := cover ν hch (by omega)
+      have hm : ν ∈ ends β := mem_biUnion.2 ⟨e, mem_filter.2 ⟨mem_univ _, he⟩, hν⟩
       cases β
-      · exact mem_union_left _ (mem_biUnion.2 ⟨e, mem_filter.2 ⟨mem_univ _, by simpa using hce⟩, hmem⟩)
-      · exact mem_union_right _ (mem_biUnion.2 ⟨e, mem_filter.2 ⟨mem_univ _, by simpa using hce⟩, hmem⟩)
+      · exact hmem (mem_union_left _ hm)
+      · exact hmem (mem_union_right _ hm)
+    all_goals exact Nat.zero_le _
   refine (Finset.sum_le_sum fun ν _ => hall ν).trans ?_
   rw [← Finset.sum_filter, filter_mem_eq_inter, univ_inter]
+  unfold ends
   refine (sum_union_le _ _ _).trans ?_
   refine (add_le_add (sum_biUnion_le' _ _ _) (sum_biUnion_le' _ _ _)).trans ?_
   rw [Finset.sum_filter, Finset.sum_filter, ← Finset.sum_add_distrib]
   refine Finset.sum_le_sum fun e _ => ?_
-  have hne := T.e_ne e
   by_cases h0 : T.e0 e = c
-  · have h1 : ¬ T.e1 e = c := fun hcon => hne (h0.trans hcon.symm)
-    rw [if_pos h0, if_neg h1, if_pos (Or.inl h0)]
-    exact hC e false
+  · have h1 : T.e1 e ≠ c := fun he => T.e_ne e (h0.trans he.symm)
+    simpa [h0, h1] using bound e false
   · by_cases h1 : T.e1 e = c
-    · rw [if_neg h0, if_pos h1, if_pos (Or.inr h1), Nat.zero_add]
-      exact hC e true
-    · rw [if_neg h0, if_neg h1]
-      exact Nat.zero_le _
+    · simpa [h0, h1] using bound e true
+    · simp [h0, h1]
 
 open Classical in
 /-- **The alive units between a chamber and its parent.** -/
@@ -339,8 +268,38 @@ theorem sum_child (j : ℕ) (hj : j ≤ J) (c : T.X j) : (∑ ν : NM R FL,
     rw [dif_pos (Nat.lt_succ_of_le hj)]
   rw [e1]
   rcases hj.lt_or_eq with h1 | h1
-  · exact sum_child_lt hb hh ⟨j, h1⟩ c
-  · subst h1
-    exact sum_child_last hb hh c
+  · let i : Fin J := ⟨j, h1⟩
+    refine sum_child_of_cover i.castSucc c _ (sum_edge_end hb hh i) ?_
+    rintro ν ⟨x, β, rfl, hd, hc⟩ h0
+    have hex : ∃ e : T.Ed i, OfEd i e x.1 ∧ (if β then T.e1 e else T.e0 e) = c := by
+      obtain ⟨x, hx⟩ := x
+      simp only at hc ⊢
+      rcases x with ⟨a, c', γ, s⟩ | ⟨j', k, e⟩ | ⟨j', e, s⟩ | e
+      · simp [chd] at hc
+      · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
+        obtain ⟨hj, hc⟩ := hc
+        have hj : j' = i := Fin.castSucc_injective _ hj
+        subst hj
+        exact ⟨e, Or.inl ⟨k, rfl⟩, eq_of_heq hc⟩
+      · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
+        obtain ⟨hj, hc⟩ := hc
+        have hj : j' = i := Fin.castSucc_injective _ hj
+        subst hj
+        exact ⟨e, Or.inr ⟨s, rfl⟩, eq_of_heq hc⟩
+      · simp only [chd, Option.some.injEq, Sigma.mk.injEq] at hc
+        exact absurd hc.1.symm (Fin.castSucc_lt_last i).ne
+    obtain ⟨e, he, hce⟩ := hex
+    exact ⟨e, β, hce, mem_filter.2 ⟨mem_univ _, h0, x, rfl, hd, he⟩⟩
+  · subst j
+    refine sum_child_of_cover (Fin.last J) c (fun e β => {⟨.inl ⟨.fin e, trivial⟩, β⟩}) ?_ ?_
+    · intro e β
+      rw [Finset.sum_singleton]
+      exact (alv_le_num _ _).trans (num_inl _)
+    · rintro ν ⟨⟨x, hx⟩, β, rfl, hd, hc⟩ _
+      rcases x with ⟨a, c', γ, s⟩ | ⟨i, k, e⟩ | ⟨i, e, s⟩ | e
+      · simp [chd] at hc
+      · exact absurd (Sigma.mk.inj (Option.some.inj hc)).1 (Fin.castSucc_lt_last i).ne
+      · exact absurd (Sigma.mk.inj (Option.some.inj hc)).1 (Fin.castSucc_lt_last i).ne
+      · exact ⟨e, β, eq_of_heq (Sigma.mk.inj (Option.some.inj hc)).2, mem_singleton_self _⟩
 
 end Nc.Tow
