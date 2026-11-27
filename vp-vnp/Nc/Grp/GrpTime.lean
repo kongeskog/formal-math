@@ -34,7 +34,7 @@ theorem putCost_le {ub Lc : ℕ} (kss : List (List (List Bool))) (h : ∀ ks ∈
     have h2 : (ks.map fun k => ub * 90 + k.length * 60 + 330).sum ≤ ks.length * (330 * (ub + Lc + 1)) := by
       refine sum_le_length_mul _ _ _ fun k hk => ?_
       have := h ks (by simp) k hk
-      nlinarith
+      omega
     rw [List.map_cons, List.sum_cons, List.map_cons, List.sum_cons, List.length_cons, add_mul]
     omega
 
@@ -46,14 +46,6 @@ theorem length_filter_lt (U m : ℕ) : ((List.finRange U).filter fun k => k.1 < 
         intro k hk
         simpa using hk
     _ = m := Finset.card_range m
-
-theorem length_filterMap_le {α β : Type*} (f : α → Option β) (l : List α) :
-    (l.filterMap f).length = (l.filter fun a => (f a).isSome).length := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    -- `ih`, after unfolding the head of both lists by cases on `f a`
-    grind
 
 end lists
 
@@ -138,7 +130,7 @@ theorem holds1 (id : G.Uid (K + K) U0 M.N U1) : Holds (G.hold0 M.np) (G.hold1 M.
 theorem length_endIns (b : G.Uid (K + K) U0 M.N U1 → UW ub) : (endIns P n o grp g key b).length ≤ evG n o grp g := by
   rw [← card_dom]
   unfold endIns
-  rw [length_filterMap_le]
+  rw [List.length_filterMap_eq_countP, List.countP_eq_length_filter]
   set l := (((G.allIds (K + K) U0 M.N U1).filter fun id => id ∈ P.cur n o E).filter fun id =>
     (if grp (G.hold0 M.np id) = g then
       if grp (G.hold1 M.np id) = g then some (Ins.both (key (G.hold0 M.np id, id)) (key (G.hold1 M.np id, id)))
@@ -364,45 +356,27 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
   have l3 := length_endIns (P := P) (n := n) (o := o) (grp := grp) (g := g) (key := key) b
   unfold script
   rw [List.map_append, List.sum_append, List.map_append, List.sum_append, List.length_append, List.length_append]
-  generalize (((baseList grp g).flatMap (baseIns qn cb q x ρ n key dkey)).map (insCost T ub)).sum = C1 at *
-  generalize ((baseList grp g).flatMap (baseIns qn cb q x ρ n key dkey)).length = L1 at *
-  generalize (((roleList grp g M).map (roleIns P n o key tg)).map (insCost T ub)).sum = C2 at *
-  generalize ((roleList grp g M).map (roleIns P n o key tg)).length = L2 at *
-  generalize ((endIns P n o grp g key b).map (insCost T ub)).sum = C3 at *
-  generalize (endIns P n o grp g key b).length = L3 at *
-  generalize evG n o grp g = e at *
-  generalize pdG P n o grp g = p at *
-  have h0 : (bT.length + 1) * (T + 1) + (bub.length + 1) * (ub + 1) ≤ 2 * (Lc + 1) * (T + ub + 2) := by
-    have a1 : (bT.length + 1) * (T + 1) ≤ (Lc + 1) * (T + ub + 2) := Nat.mul_le_mul (by omega) (by omega)
-    have a2 : (bub.length + 1) * (ub + 1) ≤ (Lc + 1) * (T + ub + 2) := Nat.mul_le_mul (by omega) (by omega)
-    linarith
+  have h0 : (bT.length + 1) * (T + 1) + (bub.length + 1) * (ub + 1) ≤
+      2 * (Lc + 1) * (T + ub + 2) := by
+    grw [hlT, hlub]; ring_nf; omega
+  have cost := Nat.add_le_add (Nat.add_le_add c1 c2) c3
+  have len := Nat.add_le_add (Nat.add_le_add l1 l2) l3
+  refine (Nat.add_le_add (Nat.add_le_add h0 cost) len).trans ?_
+  grw [hev, hpd]
   set W := ub + Lc + 1
-  have hW1 : 1 ≤ W := by omega
-  have b1 : ιb * (T + lh * (660 * W) + X * X + 401 * X + 1) ≤ ιb * T + 660 * (ιb * lh * W) + 403 * X ^ 3 := by
-    have : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
-    have a1 : ιb * (X * X + 401 * X + 1) ≤ 403 * X ^ 3 := by
-      grw [hιX, show X * X + 401 * X + 1 ≤ 403 * (X * X) by linarith]; ring_nf; rfl
-    linarith
-  have b2 : ιb * (1 + lh) ≤ X ^ 3 + ιb * lh * W := by
-    have a1 : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
-    have a3 : ιb * lh ≤ ιb * lh * W := Nat.le_mul_of_pos_right _ hW1
-    linarith
-  have b3 : (p + e) * (330 * W) + X * (400 * X + 1) ≤ 330 * (pd * W) + 330 * (ev * W) + 401 * X ^ 3 := by
-    have a1 : X * (400 * X + 1) ≤ 401 * X ^ 3 := by
-      have : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
-      have h2 : X * X ≤ X ^ 3 := by nlinarith
-      linarith
-    have a3 : p * W ≤ pd * W := Nat.mul_le_mul_right _ hpd
-    have a4 : e * W ≤ ev * W := Nat.mul_le_mul_right _ hev
-    linarith
-  have b4 : e * (2 * W) ≤ 2 * (ev * W) := by
-    have a4 : e * W ≤ ev * W := Nat.mul_le_mul_right _ hev
-    linarith
-  have b5 : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
-  have b6 : e ≤ ev * W := hev.trans (Nat.le_mul_of_pos_right _ hW1)
-  have hfin : (ev + pd + ιb * lh) * (1000 * W) =
-      1000 * (ev * W) + 1000 * (pd * W) + 1000 * (ιb * lh * W) := by ring
-  rw [hfin]
+  have hW : 1 ≤ W := by omega
+  have hX2 : X ≤ X * X := Nat.le_mul_of_pos_left _ hX
+  have hX3 : X * X ≤ X ^ 3 := by
+    rw [pow_succ, sq]; exact Nat.le_mul_of_pos_right _ hX
+  have hsmall : ιb * (X * X + 401 * X + 1) ≤ 403 * X ^ 3 := by
+    calc _ ≤ X * (403 * (X * X)) := Nat.mul_le_mul hιX (by omega)
+      _ = _ := by ring
+  have hiW := Nat.le_mul_of_pos_right (ιb * lh) hW
+  have heW := Nat.le_mul_of_pos_right ev hW
+  -- The cubic overhead has coefficients 403 from the base costs, 401 from the roles,
+  -- and at most two more from the list lengths.
+  clear * - hsmall hιX hX2 hX3 hiW heW
+  ring_nf at hsmall hX2 hX3 hiW heW ⊢
   omega
 
 end group

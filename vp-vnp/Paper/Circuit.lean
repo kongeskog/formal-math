@@ -119,7 +119,7 @@ theorem lem_circuit_universal (hθ : (Function.support θ).Finite) {H : ℕ} (hH
       rw [pow_succ']
       exact Nat.mul_le_mul_right _ (by omega)
     grw [h2, h1, ht, pow_succ v H]
-    linarith [Nat.mul_le_mul_left (v ^ H) (hn₀ v (by omega))]
+    linarith only [Nat.mul_le_mul_left (v ^ H) (hn₀ v (by omega))]
 
 open Nc.Acc in
 /-- **Paper: proof of Lemma lem:circuit, the program.** "Lemma lem:lowdeg turns it into a program
@@ -149,7 +149,6 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
     exact Nat.succ_le_of_lt (Nat.pow_lt_pow_right (by omega) (by omega))
   have hN2 : v ^ (H - 32) + 1 ≤ v ^ H := Nat.succ_le_of_lt (Nat.pow_lt_pow_right (by omega) (by omega))
   have hv1 : 1 ≤ v := by omega
-  have hv100 : 100 ≤ v := by omega
   obtain ⟨l, hl⟩ : ∃ l, l = lg v := ⟨_, rfl⟩
   have hl2 : 2 ≤ l := hl ▸ lg_ge_two (by omega)
   rw [← hl] at hlv
@@ -161,23 +160,17 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
     have : (a + H + 2) * l = (a + 1) * l + H * l + l := by ring
     omega
   have hsM : s ≤ 2 ^ M := by
-    have h1 := lt_two_pow_lg (v ^ (a + 1))
-    rw [← hM] at h1
-    exact (hs.trans (Nat.pow_le_pow_right hv1 (Nat.le_succ a))).trans h1.le
-  have hNm : v ^ (H - 32) + 1 ≤ 2 ^ m := by
-    have h1 := lt_two_pow_lg (v ^ H)
-    rw [← hm] at h1
-    exact hN2.trans h1.le
+    rw [hM]
+    exact (hs.trans (Nat.pow_le_pow_right hv1 (Nat.le_succ a))).trans (lt_two_pow_lg _).le
+  have hNm : v ^ (H - 32) + 1 ≤ 2 ^ m := hm ▸ hN2.trans (lt_two_pow_lg _).le
+  have budget (k : ℕ) (hk : k ≤ c + 10000) : k * (M + m + 1) ≤ v :=
+    (Nat.mul_le_mul hk hMm).trans (Nat.mul_assoc _ _ _ ▸ hlv)
   obtain ⟨K, out, hout, hnds, hht, hkv⟩ := accF_kv hp hsM (show 0 < d by omega) hNm
   have hcost : ∀ z : Tree, z.size ≤ v ^ (H - 32) →
       d * (800 * (M + m) + 4000) + (z.size + 2) * (40 * m + 60) + 10 * m + 100 ≤ v ^ (H - 16) := by
     intro z hz
-    have e1 : 10000 * ((a + H + 2) * l) ≤ v := by
-      refine le_trans ?_ hlv
-      have : (c + 10000) * (a + H + 2) * l = c * ((a + H + 2) * l) + 10000 * ((a + H + 2) * l) := by ring
-      rw [this]
-      exact Nat.le_add_left _ _
-    have e2 : 800 * (M + m) + 4000 ≤ v := by omega
+    have e2 : 800 * (M + m) + 4000 ≤ v := by
+      linarith only [budget 10000 (Nat.le_add_left _ _), Nat.zero_le (M + m)]
     have e3 : 40 * m + 60 ≤ v := by omega
     have e4 : v ^ (H - 24) * v ^ 8 = v ^ (H - 16) := by rw [← pow_add]; congr 1; omega
     have e6 : 1 ≤ v ^ (H - 24) := Nat.one_le_pow _ _ hv1
@@ -190,7 +183,7 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
     have e10 : 7 * v ≤ v ^ 8 := by
       grw [show 7 ≤ v by omega, ← Nat.pow_le_pow_right hv1 (show 2 ≤ 8 by norm_num), sq]
     rw [← e4]
-    linarith [Nat.mul_le_mul_left (v ^ (H - 24)) e10]
+    linarith only [e7, e8, e9, Nat.mul_le_mul_left (v ^ (H - 24)) e10]
   refine ⟨K, (accF M m d out).code, fun z hz => ?_, ?_, ?_, ?_⟩
   · have h := hkv A θ z (lt_of_le_of_lt hz hN1)
     rw [Fm.ofTree_code]
@@ -198,45 +191,30 @@ theorem lem_circuit_program (H : ℕ) (hH : 32 ≤ H) : ∃ c : ℕ, ∀ v a, 10
     rw [h.evl.2, hdd]
     exact Finset.sum_congr rfl fun i _ => line_coeff_eq _ p i
   · -- the number of constants
-    have h1 : 2 ^ M ≤ 2 * v ^ (a + 1) := by
-      have h2 := two_pow_lg_le (n := v ^ (a + 1)) (by positivity)
-      have h3 : M = M - 1 + 1 := by
-        have : 1 ≤ lg (v ^ (a + 1)) := by unfold lg; omega
-        omega
-      rw [← hM] at h2
-      rw [h3, pow_succ]
-      omega
-    have h2 : 2 ^ m ≤ 2 * v ^ H := by
-      have h2 := two_pow_lg_le (n := v ^ H) (by positivity)
-      have h3 : m = m - 1 + 1 := by
-        have : 1 ≤ lg (v ^ H) := by unfold lg; omega
-        omega
-      rw [← hm] at h2
-      rw [h3, pow_succ]
-      omega
+    have double (n : ℕ) (hn : n ≠ 0) : 2 ^ lg n ≤ 2 * n := by
+      rw [lg, pow_succ']
+      exact Nat.mul_le_mul_left _ (Nat.pow_log_le_self _ hn)
+    have h1 : 2 ^ M ≤ 2 * v ^ (a + 1) := hM ▸ double _ (by positivity)
+    have h2 : 2 ^ m ≤ 2 * v ^ H := hm ▸ double _ (by positivity)
     have h3 : 2 ^ (3 * M + 1) ≤ 16 * v ^ (3 * a + H + 3) := by
       grw [pow_succ, mul_comm 3 M, pow_mul, h1]
-      linarith [pow_mul v (a + 1) 3,
+      linarith only [pow_mul v (a + 1) 3,
         Nat.pow_le_pow_right hv1 (show (a + 1) * 3 ≤ 3 * a + H + 3 by omega)]
     have h4 : 2 ^ (M + m + 3) ≤ 32 * v ^ (3 * a + H + 3) := by
       grw [pow_add, pow_add, h1, h2]
-      linarith [pow_add v (a + 1) H,
+      linarith only [pow_add v (a + 1) H,
         Nat.pow_le_pow_right hv1 (show a + 1 + H ≤ 3 * a + H + 3 by omega)]
     have h5 : 1 ≤ v ^ (3 * a + H + 3) := Nat.one_le_pow _ _ hv1
     grw [hnds, ← Nat.pow_le_pow_right hv1 (show 3 * a + H + 3 + 1 ≤ 3 * a + H + 20 by omega),
       pow_succ v]
-    have := Nat.mul_le_mul_left (v ^ (3 * a + H + 3)) hv100
+    have := Nat.mul_le_mul_left (v ^ (3 * a + H + 3)) hv
     omega
   · -- the size of the program
-    have h2 : c * (M + m + 1) ≤ v := by
-      refine le_trans (Nat.mul_le_mul_left c hMm) (le_trans ?_ hlv)
-      have : (c + 10000) * (a + H + 2) * l = c * ((a + H + 2) * l) + 10000 * ((a + H + 2) * l) := by ring
-      rw [this]
-      exact Nat.le_add_right _ _
+    have := budget c (Nat.le_add_right _ _)
     have h4 : v ≤ v ^ H := Nat.le_self_pow (by omega) v
     grw [hc M m d out hout, ← Nat.pow_le_pow_right hv1 (show H + 1 ≤ 3 * a + H + 20 by omega),
       pow_succ v]
-    have := Nat.mul_le_mul_left (v ^ H) hv100
+    have := Nat.mul_le_mul_left (v ^ H) hv
     omega
   · -- the length of names
     refine hht.trans ?_
