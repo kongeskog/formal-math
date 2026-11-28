@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T15:08:56.529077355Z",
+  "updated_at": "2026-11-28T15:18:28.360383442Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -96,10 +96,10 @@
     {
       "number": 219,
       "title": "Idea: restructure(NS1/ApproxRound): a round renames the constants of D by a pass over the names of the value",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T17:47:46Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 220,
       "result_delta": -673,
       "created_at": "2026-11-28T14:46:37Z",
@@ -1399,8 +1399,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 7806,
-      "loc": 466
+      "tokens": 7350,
+      "loc": 434
     },
     {
       "path": "vp-vnp/Paper/Gauges.lean",
