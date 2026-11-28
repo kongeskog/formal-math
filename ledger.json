@@ -1,6 +1,11 @@
 {
-  "claims": {},
-  "comments_seen_until": "2026-11-28T14:21:47Z",
+  "claims": {
+    "217": {
+      "login": "kongeskog",
+      "at": "2026-11-28T14:39:15Z"
+    }
+  },
+  "comments_seen_until": "2026-11-28T14:39:15Z",
   "dispatched": {},
   "lines": {},
   "line_bases": {},
@@ -12,7 +17,15 @@
     109,
     131
   ],
-  "judged": {},
+  "judged": {
+    "218@897f8ecbb243c4615abc2e308cc6705b9cd1af3f": {
+      "at": "2026-11-28T14:40:15Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    }
+  },
   "told": [],
   "turn": null,
   "turns_voided": {},
