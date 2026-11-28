@@ -29,17 +29,16 @@ def grpT (bT bub : List Bool) (l : List Grp.Ins) : ℕ :=
 def GroupOK {A : Type} [CommRing A] (θ : List Bool → A) {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S]
     [DecidableEq S] [Fintype Q] [DecidableEq Q] {c : ℕ} (mu : Letter S Unit Γ → Matrix Q Q A)
     (cb : Option Γ → Fin c → Bool) (kinds : List (Σ L : G.Law A, L.Ro)) (qn : Q → ℕ) (GROUP : Fm) (κ : ℕ) : Prop :=
-  ∀ {A' K E U0 U1 cap : ℕ} {Gr : Type} [DecidableEq Gr] [Fintype Gr]
+  ∀ {A' K E U0 U1 : ℕ} {Gr : Type} [DecidableEq Gr] [Fintype Gr]
     {M : Sys A (K + K + A') E} (P : G.Plan M U0 U1) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
     (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1))
     (o : M.N → Fin U1) (grp : Fin (K + K + A') → Gr) (g : Gr) (key : Grp.Cell M U0 U1 → List Bool)
-    (dkey : Fin (K + K) × Fin U0 → List Bool) (tg : M.R → ℕ) (bT bub : List Bool)
-    (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub)),
-    Function.Injective (Sum.elim key dkey) → 0 < Grp.bval bub → P.Ok cap → (∀ κ, (x κ).length ≤ Grp.bval bT) →
+    (tg : M.R → ℕ) (bT bub : List Bool) (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub)),
+    Function.Injective key → 0 < Grp.bval bub → (∀ κ, (x κ).length ≤ Grp.bval bT) →
     (∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) → (∀ r, kinds[tg r]? = some ⟨M.kind r.1, r.2⟩) →
-    Plain θ (κ * grpT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))
-      (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) ∧
-    pv θ (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b))) =
+    Plain θ (κ * grpT bT bub (Grp.script qn cb P q x ρ n o grp g key tg b))
+      (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key tg b))) ∧
+    pv θ (.cons GROUP.code (Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o grp g key tg b))) =
       G.grpVal mu (Grp.bval bT) cb P q x ρ n o grp g b
 
 end Nc.Dl
@@ -57,12 +56,14 @@ theorem exists_group (mu : Letter S Unit Γ → Matrix Q Q A) (cb : Option Γ �
     (htab : ∀ z ∈ kinds, ∀ i y h, ∃ e : WE, e.val θ = z.1.tab z.2 i y h) :
     ∃ (GROUP : Fm) (κ : ℕ), Nc.Dl.GroupOK θ mu cb kinds (fun z => (qn Q z : ℕ)) GROUP κ := by
   obtain ⟨F, κ, hF⟩ := ex_group (S := S) (θ := θ) mu cb kinds (by simp [sepOf])
-  refine ⟨F, κ, fun {A' K E U0 U1 cap Gr} _ _ {M} P q x ρ n o grp g key dkey tg bT bub b hkey hub hP hx hρ hkind => ?_⟩
-  have h1 := hF bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key dkey tg b) (insOk_script hkind b)
+  refine ⟨F, κ,
+    fun {A' K E U0 U1 Gr} _ _ {M} P q x ρ n o grp g key tg bT bub b hkey hub hx hρ hkind => ?_⟩
+  have h1 := hF bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key tg b)
+    (insOk_script hkind b)
   have htab' : ∀ (r : M.R) i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h := fun r =>
     htab ⟨M.kind r.1, r.2⟩ (List.mem_of_getElem? (hkind r))
-  have h2 := wsum_script (cb := cb) (kinds := kinds) (tg := tg) hkey hub hP hmu hx hρ hkind htab' (q := q) (o := o) (n := n)
-    (grp := grp) (g := g) b
+  have h2 := wsum_script (cb := cb) (kinds := kinds) (tg := tg) (P := P) hkey hub hmu hx hρ hkind
+    htab' (q := q) (o := o) (n := n) (grp := grp) (g := g) b
   obtain ⟨p1, p2⟩ := h1.plain
   refine ⟨p1, ?_⟩
   rw [p2, ← h2, wsum, List.map_map]

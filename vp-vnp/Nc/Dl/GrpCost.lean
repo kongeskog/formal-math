@@ -24,16 +24,16 @@ def GrpTimeOK (A : Type) [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq 
   ∀ {K A' E U0 U1 cap mm : ℕ} {M : Sys A (K + K + A') E} (P : G.Plan M U0 U1) (_ : P.Ok cap) (q : Fin (K + 1) → Q)
     (x : Fin K → List Γ) (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : NN K U0) (o : M.N → Fin U1)
     (grp : Fin (K + K + A') → Fin mm) (g : Fin mm) (key : Grp.Cell M U0 U1 → List Bool)
-    (dkey : Fin (K + K) × Fin U0 → List Bool) (tg : M.R → ℕ) (bT bub : List Bool)
-    (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub)) {Lc X ιb lh ev : ℕ},
-    (∀ κ, (x κ).length ≤ Grp.bval bT) → (∀ a, (key a).length ≤ Lc) → (∀ a, (dkey a).length ≤ Lc) → bT.length ≤ Lc →
+    (tg : M.R → ℕ) (bT bub : List Bool) (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub))
+    {Lc X ιb lh ev : ℕ},
+    (∀ κ, (x κ).length ≤ Grp.bval bT) → (∀ a, (key a).length ≤ Lc) → bT.length ≤ Lc →
     bub.length ≤ Lc → Fintype.card (Option S) ≤ X → K + K + 1 ≤ X → Fintype.card M.R ≤ X →
     Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X → (∀ y, Fintype.card (M.kind y).Sl ≤ X) →
     (∀ y, Fintype.card (M.kind y).Cn ≤ X) →
     (univ.filter fun p : Fin (K + K) => grp (Fin.castAdd A' p) = g).card ≤ ιb → ιb ≤ X →
     (∀ p : Fin (K + K), grp (Fin.castAdd A' p) = g → ∑ b, ((n p b).val + (n b p).val) ≤ lh) →
     evG (fun _ _ => grp) n o g + pdG P (fun _ _ => grp) n o g ≤ ev →
-    grpT bT bub (Grp.script qn cb P q x ρ n o grp g key dkey tg b) ≤
+    grpT bT bub (Grp.script qn cb P q x ρ n o grp g key tg b) ≤
       2 * (Lc + 1) * (Grp.bval bT + Grp.bval bub + 2) + ιb * Grp.bval bT +
       1000 * (ev + ιb * lh) * (Grp.bval bub + Lc + 1) + X ^ 4 * 1000 * (Lc + 1)
 
@@ -102,8 +102,8 @@ variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
 /-- The time of GROUP. -/
 theorem grpTimeOK (cb : Option Γ → Fin c → Bool) (qn : Q → ℕ) : GrpTimeOK (S := S) A cb qn := by
   classical
-  intro K A' E U0 U1 cap mm M P hP q x ρ n o grp g key dkey tg bT bub b Lc X ιb lh ev hx hk hd hbT hbub hS hK hR hId hSl hCn hι
-    hιX hlh hev
+  intro K A' E U0 U1 cap mm M P hP q x ρ n o grp g key tg bT bub b Lc X ιb lh ev hx hk hbT hbub hS
+    hK hR hId hSl hCn hι hιX hlh hev
   have e1 : Grp.evG n o grp g = evG (fun _ _ => grp) n o g := by
     unfold Grp.evG evG
     refine Finset.sum_congr ?_ fun p _ => ?_
@@ -121,8 +121,9 @@ theorem grpTimeOK (cb : Option Γ → Fin c → Bool) (qn : Q → ℕ) : GrpTime
     ext p
     simp
   have h := Grp.script_time_le (qn := qn) (cb := cb) (q := q) (x := x) (ρ := ρ) (n := n) (o := o) (grp := grp) (g := g)
-    (key := key) (dkey := dkey) (tg := tg) (Lc := Lc) (X := X) (ιb := ιb) (lh := lh) (ev := evG (fun _ _ => grp) n o g)
-    (pd := pdG P (fun _ _ => grp) n o g) (bT := bT) (bub := bub) rfl rfl hbT hbub hP hx hk hd hS (by omega) hR
+    (key := key) (tg := tg) (Lc := Lc) (X := X) (ιb := ιb) (lh := lh)
+    (ev := evG (fun _ _ => grp) n o g) (pd := pdG P (fun _ _ => grp) n o g) (bT := bT) (bub := bub)
+    rfl rfl hbT hbub hP hx hk hS (by omega) hR
     (fun r => (Fintype.card_subtype_le _).trans (hSl _)) (fun r => (Fintype.card_subtype_le _).trans (hCn _)) hbase hιX hlh
     e1.le e2.le b
   have hX1 : 1 ≤ X := by omega

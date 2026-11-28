@@ -34,7 +34,6 @@ structure Mid (q : Fin (K + 1) → Q) (ρ : Option S → Fin (K + K) → RowData
   flag : ∀ s p, st (.flag s p) = flagT (ρ s p)
   kR : ∀ a b, st (.kR a b) = kRT C a b (n a b)
   kC : ∀ a b, st (.kC a b) = kCT C a b (n a b)
-  dg : ∀ a, st (.dg a) = dgT C a (n a a)
   ch : ∀ ν d, st (.ch ν d) = chT C ν d (o ν)
   slp : ∀ k, st (.slp k) = C.dt (tab.fn k (n, o))
   num : ∀ x, st (.num x) = NS1.Tree.num (P.num n o x)
@@ -110,9 +109,9 @@ theorem exists_mid (q : Fin (K + 1) → Q) (ρ : Option S → Fin (K + K) → Ro
       · exact h1 x
       · exact h2 c
       · exact h3 id
-    refine ⟨fun κ => ?_, fun a => ?_, fun s p => ?_, fun a b => ?_, fun a b => ?_, fun a => ?_, fun ν d => ?_, fun k => ?_,
-      fun x => ?_, fun s p => ?_, fun x => ?_, ?_, fun id => ?_⟩
-    iterate 7 · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
+    refine ⟨fun κ => ?_, fun a => ?_, fun s p => ?_, fun a b => ?_, fun a b => ?_, fun ν d => ?_,
+      fun k => ?_, fun x => ?_, fun s p => ?_, fun x => ?_, ?_, fun id => ?_⟩
+    iterate 6 · rw [old _ (by simp) (by simp) (n7 _ (by simp) (by simp) (by simp)), hs4]; rfl
     · rw [k7 _ (n7 _ (by simp) (by simp) (by simp)), w6]
     · have := w7 (.inl x)
       simp only [nm7, v7] at this
@@ -211,14 +210,13 @@ theorem sum_allSteps (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] : ∃ st : (F
     (s7 q ρ n o), fun q ρ n o b => ?_, fun B _ Φ => ?_⟩
   · obtain ⟨f1, f2⟩ := foldl_ov9 b (univ : Finset (G.Uid (K + K) U0 M.N U1)).toList (s7 q ρ n o)
     have h := hm7 q ρ n o
-    refine ⟨fun κ => ?_, fun a => ?_, fun s p => ?_, fun a b => ?_, fun a b => ?_, fun a => ?_, fun ν d => ?_, fun k => ?_,
-      fun x => ?_, fun id v hv => f1 id (Finset.mem_toList.2 (Finset.mem_univ _)) v hv⟩
+    refine ⟨fun κ => ?_, fun a => ?_, fun s p => ?_, fun a b => ?_, fun a b => ?_, fun ν d => ?_,
+      fun k => ?_, fun x => ?_, fun id v hv => f1 id (Finset.mem_toList.2 (Finset.mem_univ _)) v hv⟩
     · exact (f2 _ fun _ => by simp).trans (h.part κ)
     · exact (f2 _ fun _ => by simp).trans (h.q a)
     · exact (f2 _ fun _ => by simp).trans (h.flag s p)
     · exact (f2 _ fun _ => by simp).trans (h.kR a b)
     · exact (f2 _ fun _ => by simp).trans (h.kC a b)
-    · exact (f2 _ fun _ => by simp).trans (h.dg a)
     · exact (f2 _ fun _ => by simp).trans (h.ch ν d)
     · exact (f2 _ fun _ => by simp).trans (h.slp k)
     · exact (f2 _ fun _ => by simp).trans (h.num x)

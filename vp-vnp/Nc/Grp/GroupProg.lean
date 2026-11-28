@@ -3,10 +3,14 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import Nc.Grp.Pack
+import Nc.Grp.Guess
 
 /-!
 # The program GROUP
+
+GROUP runs over the script twice. First every instruction guesses the contents at its keys that
+have none; then every instruction compares what it computes with the contents, and the trie does
+not change any more.
 -/
 
 set_option linter.unusedSectionVars false
@@ -119,51 +123,51 @@ theorem TOk.tset {ub : ℕ} {t : Tree} (h : TOk ub t) (k w : List Bool) (hw : w.
   · exact ⟨w, rfl, hw⟩
   · exact h k'
 
-theorem TOk.putL {ub : ℕ} {keys : List (List Bool)} {r : List Bool} {t : Tree} (h : TOk ub t) :
-    ∀ t' ∈ putL ub keys r t, TOk ub t' := by
-  induction keys generalizing r t with
+theorem putL_out {ub : ℕ} {keys : List (List Bool)} {r : List Bool} {t : Tree} :
+    ∀ t' ∈ putL ub keys r t, t' = t := by
+  induction keys generalizing r with
   | nil =>
     intro t' ht'
     rw [Grp.putL] at ht'
     split_ifs at ht'
-    · rw [List.mem_singleton] at ht'
-      exact ht' ▸ h
+    · exact List.mem_singleton.1 ht'
     · simp at ht'
   | cons k ks ih =>
     intro t' ht'
     rw [Grp.putL] at ht'
     split_ifs at ht'
+    · exact ih t' ht'
     · simp at ht'
-    · exact ih (h.tset k _ (length_padTake _ _).le) t' ht'
 
-theorem TOk.putsL {ub : ℕ} {kss : List (List (List Bool))} {strs : List (List Bool)} {t : Tree} (h : TOk ub t) :
-    ∀ t' ∈ putsL ub kss strs t, TOk ub t' := by
-  induction kss generalizing strs t with
+theorem putsL_out {ub : ℕ} {kss : List (List (List Bool))} {strs : List (List Bool)} {t : Tree} :
+    ∀ t' ∈ putsL ub kss strs t, t' = t := by
+  induction kss generalizing strs with
   | nil =>
     intro t' ht'
-    rw [Grp.putsL, List.mem_singleton] at ht'
-    exact ht' ▸ h
+    rw [Grp.putsL] at ht'
+    exact List.mem_singleton.1 ht'
   | cons ks kss ih =>
     intro t' ht'
     rw [Grp.putsL, List.mem_flatMap] at ht'
     obtain ⟨t1, h1, h2⟩ := ht'
-    exact ih (h.putL t1 h1) t' h2
+    rw [putL_out t1 h1] at h2
+    exact ih t' h2
 
 theorem mem_encT {l : List Tree} {q : A × Tree} (h : q ∈ encT l) : q.2 ∈ l := by
   obtain ⟨t, ht, rfl⟩ := List.mem_map.1 h
   exact ht
 
-theorem TOk.pack {sep : List Bool} {ub : ℕ} {B : Body} {o : Outs S} {t : Tree} (h : TOk ub t) :
-    ∀ q ∈ packSem A sep ub B o t, TOk ub q.2 := by
+theorem pack_out {sep : List Bool} {ub : ℕ} {B : Body} {o : Outs S} {t : Tree} :
+    ∀ q ∈ packSem A sep ub B o t, q.2 = t := by
   intro q hq
   obtain ⟨a, -, r, hr, e1, -⟩ := mem_bindW hq
   obtain ⟨b, hb, r', hr', e2, -⟩ := mem_bindW hr
   obtain ⟨d, -, r'', hr'', e3, -⟩ := mem_bindW hr'
-  rw [e1, e2, e3]
-  exact (h.putsL _ (mem_encT hb)).putsL _ (mem_encT hr'')
+  rw [e1, e2, e3, putsL_out _ (mem_encT hr''), putsL_out _ (mem_encT hb)]
 
-theorem TOk.insSem {T ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
-    ∀ q ∈ insSem θ mu cb kinds T ub i t, TOk ub q.2 := by
+/-- An instruction does not change the trie. -/
+theorem insSem_out {T ub : ℕ} {i : Ins} {t : Tree} :
+    ∀ q ∈ insSem θ mu cb kinds T ub i t, q.2 = t := by
   intro q hq
   cases i with
   | block q₁ q₂ B =>
@@ -171,14 +175,13 @@ theorem TOk.insSem {T ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
     split_ifs at hq
     · obtain ⟨a, -, r, hr, e1, -⟩ := mem_bindW hq
       rw [e1]
-      exact h.pack r hr
+      exact pack_out r hr
     · simp at hq
-  | input part B => exact h.pack q hq
+  | input part B => exact pack_out q hq
   | both | one =>
     rw [Grp.insSem] at hq
     split_ifs at hq
-    · rw [List.mem_singleton] at hq
-      exact hq ▸ h
+    · rw [List.mem_singleton.1 hq]
     · simp at hq
   | role j tt slots keys =>
     rw [Grp.insSem] at hq
@@ -187,9 +190,50 @@ theorem TOk.insSem {T ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
       split_ifs at hq
       · obtain ⟨a, -, r, hr, e1, -⟩ := mem_bindW hq
         rw [e1]
-        exact h.putsL _ (mem_encT hr)
+        exact putsL_out _ (mem_encT hr)
       · simp at hq
     · simp at hq
+
+variable (A) in
+/-- What an instruction guesses: the contents at its keys that have none. -/
+def insG (ub : ℕ) : Ins → Tree → List (A × Tree)
+  | .block _ _ B, t | .input _ B, t => bindW (gKss A ub B.kR t) (gKss A ub B.kC)
+  | .role _ _ _ keys, t => gKss A ub keys t
+  | _, t => [(1, t)]
+
+theorem length_gBits (n : ℕ) : ∀ q ∈ gBits A n, q.2.length = n := by
+  have := mem_foldL_induct (A := A)
+    (f := fun (_ : Unit) (w : List Bool) => [((1 : A), true :: w), (1, false :: w)])
+    (Inv := fun m w => w.length = m) (xs := List.replicate n ()) (s := []) (m := 0)
+    (fun _ _ s m hs q hq => by
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hq
+      rcases hq with rfl | rfl <;> simp [hs]) rfl
+  simpa [gBits] using this
+
+theorem TOk.gKss {ub : ℕ} {kss : List (List (List Bool))} {t : Tree} (h : TOk ub t) :
+    ∀ q ∈ gKss A ub kss t, TOk ub q.2 :=
+  mem_foldL_induct (Inv := fun _ t => TOk ub t) (m := 0) (fun ks _ s _ hs q hq =>
+    mem_foldL_induct (Inv := fun _ t => TOk ub t) (m := 0) (fun k _ s _ hs q hq => by
+      unfold gK at hq
+      split_ifs at hq
+      · obtain ⟨a, ha, r, hr, e1, -⟩ := mem_bindW hq
+        rw [e1, List.mem_singleton.1 hr]
+        exact hs.tset k a.2 (length_gBits ub a ha).le
+      · rw [List.mem_singleton.1 hq]
+        exact hs) hs q hq) h
+
+theorem TOk.insG {ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
+    ∀ q ∈ insG A ub i t, TOk ub q.2 := by
+  intro q hq
+  cases i with
+  | block _ _ B | input _ B =>
+    obtain ⟨a, ha, r, hr, e1, -⟩ := mem_bindW hq
+    rw [e1]
+    exact (h.gKss a ha).gKss r hr
+  | role => exact h.gKss q hq
+  | both | one =>
+    rw [List.mem_singleton.1 hq]
+    exact h
 
 /-- The state of GROUP. -/
 def encG (T ub : ℕ) (t : Tree) : Tree := .cons (num T) (.cons (num ub) t)
@@ -217,7 +261,8 @@ theorem ex_kinds : ∃ (Fs : List Fm) (κ : ℕ), ∀ (j : ℕ) (z : Σ L : G.La
         unfold putCost
         rw [← List.sum_map_mul_left]
         refine List.sum_le_sum fun es _ => ?_
-        have : (es.map fun k => ub * 62 + k.length * 60 + 330).sum ≤ (es.map fun k => ub * 90 + k.length * 60 + 330).sum :=
+        have : (es.map fun k => ub * 62 + k.length * 60 + 330).sum ≤
+            (es.map fun k => ub * 330 + k.length * 60 + 330).sum :=
           List.sum_le_sum fun k _ => by omega
         omega
       change κ' * (_ + _ + putCost ub keys + 1) ≤ _
@@ -407,45 +452,101 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
       have h4 : 1 ≤ N := by omega
       omega
 
+/-- The guessing program of one instruction: argument (instruction, (T, (yardstick, trie))). -/
+def insGF : Fm := .cons (.hd (.tl .id)) (.ite (.tl (.hd (.hd .id)))
+  (.ite (.tl (.tl (.tl (.hd (.hd .id)))))
+    (gKssF (.tl (.tl .id)) (.tl (.tl (.tl (.hd .id))))) (.tl (.tl .id)))
+  (lett (.cons .id (gKssF (.tl (.tl .id)) (.hd (.tl (.tl (.tl (.hd .id)))))))
+    (gKssF (.tl .id) (.tl (.tl (.tl (.tl (.hd (.hd .id)))))))))
+
+theorem insGF_does (T ub : ℕ) (i : Ins) (t : Tree) :
+    Does θ insGF (.cons i.tree (encG T ub t)) ((insG A ub i t).map (Prod.map id (encG T ub)))
+      (2 * insCost T ub i + 100) := by
+  refine ((Does.cons (Gives.id _).tl.hd
+    (?_ : Does θ _ _ ((insG A ub i t).map (Prod.map id fun t => .cons (num ub) t))
+      (2 * insCost T ub i + 90))).replace ?_).mono (by omega)
+  · cases i with
+    | block _ _ B | input _ B =>
+      refine (Does.ite_false (Gives.id _).hd.hd.tl ((Does.letkT
+        (f := fun t1 => (gKss A ub B.kC t1).map (Prod.map id fun t => .cons (num ub) t))
+        (gKssF_does (θ := θ) ub B.kR t (Gives.id _).tl.tl (Gives.id _).hd.tl.tl.tl.hd)
+        fun b _ => gKssF_does ub B.kC b.2 (Gives.id _).tl (Gives.id _).hd.hd.tl.tl.tl.tl).replace
+        (bindW_map _ _ _))).mono ?_
+      simp only [insCost, bodyCost]
+      omega
+    | both | one =>
+      exact (Does.ite_true (Gives.id _).hd.hd.tl (by simp [Ins.tree, num])
+        (Does.ite_false (Gives.id _).hd.hd.tl.tl.tl (Gives.id _).tl.tl)).mono (by omega)
+    | role j tt slots keys =>
+      refine (Does.ite_true (Gives.id _).hd.hd.tl (by simp [Ins.tree, Nat.add_comm 4 j, num])
+        (Does.ite_true (Gives.id _).hd.hd.tl.tl.tl (by simp [Ins.tree, Nat.add_comm 4 j, num])
+          (gKssF_does (A := A) ub keys t (Gives.id _).tl.tl (Gives.id _).hd.tl.tl.tl))).mono ?_
+      simp only [insCost]
+      omega
+  · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_map, one_mul]
+    rfl
+
 variable (θ) in
 /-- What a script does with a trie. -/
 noncomputable def scriptSem (T ub : ℕ) (l : List Ins) (t : Tree) : List (A × Tree) :=
   foldL (insSem θ mu cb kinds T ub) l t
 
-/-- **The program GROUP.** -/
+/-- **The program GROUP**: it guesses the contents at all keys, then every instruction compares. -/
 theorem ex_group (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (bT bub : List Bool) (l : List Ins),
     (∀ i ∈ l, InsOk S Q c kinds i) →
-    Does θ F (scriptT bT bub l) ((scriptSem θ mu cb kinds (bval bT) (bval bub) l .nil).map
-      (Prod.map id (encG (bval bT) (bval bub))))
+    Does θ F (scriptT bT bub l)
+      ((bindW (foldL (insG A (bval bub)) l .nil)
+          (scriptSem θ mu cb kinds (bval bT) (bval bub) l)).map
+        (Prod.map id (encG (bval bT) (bval bub))))
       (κ * ((bT.length + 1) * (bval bT + 1) + (bub.length + 1) * (bval bub + 1) +
         (l.map (insCost (bval bT) (bval bub))).sum + l.length)) := by
   obtain ⟨F, κ, hF⟩ := ex_ins (θ := θ) mu cb kinds hc
-  refine ⟨foldF F (.cons (unF (.hd (.hd .id))) (.cons (unF (.tl (.hd .id))) (.quote .nil))) (.tl .id), κ + 300,
-    fun bT bub l hl => ?_⟩
+  refine ⟨lett
+    (.cons .id (foldF insGF
+      (.cons (unF (.hd (.hd .id))) (.cons (unF (.tl (.hd .id))) (.quote .nil))) (.tl .id)))
+    (foldF F (.tl .id) (.tl (.hd .id))), κ + 500, fun bT bub l hl => ?_⟩
   have g1 : Gives θ (.hd (.hd .id)) (scriptT bT bub l) (ofBits bT) 3 := (Gives.id _).hd.hd
   have g2 : Gives θ (.tl (.hd .id)) (scriptT bT bub l) (ofBits bub) 3 := (Gives.id _).hd.tl
   have h0 := Gives.cons (unF_gives g1) (Gives.cons (unF_gives g2) (Gives.quote .nil (scriptT bT bub l)))
-  have h1 := foldT (θ := θ) (enc := encG (bval bT) (bval bub)) (s₀ := .nil)
-    (f := insSem θ mu cb kinds (bval bT) (bval bub)) (Inv := fun _ t => TOk (bval bub) t)
-    (d := fun i => κ * insCost (bval bT) (bval bub) i) (l := .tl .id) (x := scriptT bT bub l) h0
-    (Gives.id _).tl (fun i _ t hi ht => ⟨hF _ _ i t (hl i hi) ht, fun q hq => ht.insSem mu cb kinds q hq⟩) (tOk_nil _)
-  refine h1.mono ?_
-  have h2 : ∀ l : List Ins, (l.map fun i => κ * insCost (bval bT) (bval bub) i + 30).sum =
-      κ * (l.map (insCost (bval bT) (bval bub))).sum + 30 * l.length := by
-    intro l
+  have h1 := foldT (θ := θ) (enc := encG (bval bT) (bval bub)) (s₀ := .nil) (f := insG A (bval bub))
+    (Inv := fun _ _ => True) (d := fun i => 2 * insCost (bval bT) (bval bub) i + 100) (l := .tl .id)
+    (x := scriptT bT bub l) h0 (Gives.id _).tl
+    (fun i _ t _ _ => ⟨insGF_does _ _ i t, fun _ _ => trivial⟩) trivial
+  have hok : ∀ b ∈ foldL (insG A (bval bub)) l .nil, TOk (bval bub) b.2 := by
+    have := mem_foldL_induct (f := insG A (bval bub)) (Inv := fun _ t => TOk (bval bub) t)
+      (xs := l) (m := 0) (fun i _ s _ hs q hq => hs.insG q hq) (tOk_nil _)
+    exact this
+  have h2 := Does.letkT (G := foldF F (.tl .id) (.tl (.hd .id)))
+    (f := fun t => (scriptSem θ mu cb kinds (bval bT) (bval bub) l t).map
+      (Prod.map id (encG (bval bT) (bval bub))))
+    (d := 2 + 3 + (l.map fun i => κ * insCost (bval bT) (bval bub) i + 0 + 30).sum + 20) h1
+    (fun b hb =>
+      foldT (θ := θ) (enc := encG (bval bT) (bval bub)) (s₀ := b.2)
+        (f := insSem θ mu cb kinds (bval bT) (bval bub))
+        (Inv := fun _ t => TOk (bval bub) t) (d := fun i => κ * insCost (bval bT) (bval bub) i + 0)
+        (Gives.id _).tl (Gives.id _).hd.tl
+        (fun i _ t hi ht => ⟨hF _ _ i t (hl i hi) ht, fun q hq => insSem_out mu cb kinds q hq ▸ ht⟩)
+        (hok b hb))
+  rw [bindW_map] at h2
+  refine h2.mono ?_
+  have hs : ∀ (a b : ℕ) (l : List Ins),
+      (l.map fun i => a * insCost (bval bT) (bval bub) i + b + 30).sum =
+        a * (l.map (insCost (bval bT) (bval bub))).sum + (b + 30) * l.length := by
+    intro a b l
     induction l with
     | nil => simp
     | cons i l ih =>
       simp only [List.map_cons, List.sum_cons, List.length_cons, ih]
       ring
-  rw [h2]
+  rw [hs, hs κ 0 l]
   set P := (bT.length + 1) * (bval bT + 1) with hP
   set R := (bub.length + 1) * (bval bub + 1) with hR
   set Sm := (l.map (insCost (bval bT) (bval bub))).sum
   have p1 : bT.length * (bval bT * 62 + 130) ≤ 130 * P := by rw [hP]; nlinarith
   have p2 : bub.length * (bval bub * 62 + 130) ≤ 130 * R := by rw [hR]; nlinarith
   have p3 : 1 ≤ P := Nat.succ_le_of_lt (by positivity)
-  have p4 : (κ + 300) * (P + R + Sm + l.length) = κ * (P + R + l.length) + κ * Sm + 300 * (P + R + Sm + l.length) := by ring
+  have p4 : (κ + 500) * (P + R + Sm + l.length) =
+      κ * (P + R + l.length) + κ * Sm + 500 * (P + R + Sm + l.length) := by ring
   omega
 
 end group

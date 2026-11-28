@@ -28,24 +28,20 @@ structure CodesLe {A : Type} [CommRing A] {S : Type} [Fintype S] {K A' E U0 U1 D
   dc : ∀ d, (C.dc d).length ≤ Lc
   rc : ∀ d, (C.rc d).length ≤ Lc
   key : ∀ a, (C.key a).length ≤ Lc
-  dkey : ∀ a, (C.dkey a).length ≤ Lc
-  inj : Function.Injective (Sum.elim C.key C.dkey)
+  inj : Function.Injective C.key
 
 theorem exists_codes {A : Type} [CommRing A] {S : Type} [Fintype S] [DecidableEq S] {K A' E U0 U1 D pS : ℕ}
     {M : Sys A (K + K + A') E} {Lc : ℕ}
     (h1 : Fintype.card (Nm K E pS S M.N (G.Uid (K + K) U0 M.N U1)) ≤ 2 ^ Lc) (h2 : D ≤ 2 ^ Lc)
     (h3 : Fintype.card (RowData (K + K)) ≤ 2 ^ Lc)
-    (h4 : Fintype.card (Grp.Cell M U0 U1 ⊕ Fin (K + K) × Fin U0) ≤ 2 ^ Lc) :
+    (h4 : Fintype.card (Grp.Cell M U0 U1) ≤ 2 ^ Lc) :
     ∃ C : Codes S M U0 U1 D pS, CodesLe C Lc := by
   obtain ⟨f1, i1, l1⟩ := exists_code _ h1
   obtain ⟨f2, i2, l2⟩ := exists_code (Fin D) (by rwa [Fintype.card_fin])
   obtain ⟨f3, i3, l3⟩ := exists_code _ h3
   obtain ⟨f4, i4, l4⟩ := exists_code _ h4
-  refine ⟨⟨f1, i1, f2, i2, f3, i3, fun a => f4 (.inl a), fun a => f4 (.inr a)⟩, fun y => (l1 y).le, fun y => (l2 y).le,
-    fun y => (l3 y).le, fun y => (l4 _).le, fun y => (l4 _).le, ?_⟩
-  intro x y hxy
-  apply i4
-  cases x <;> cases y <;> exact hxy
+  exact ⟨⟨f1, i1, f2, i2, f3, i3, f4⟩, fun y => (l1 y).le, fun y => (l2 y).le, fun y => (l3 y).le,
+    fun y => (l4 _).le, i4⟩
 
 variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q]
   [DecidableEq Q] {θ : List Bool → A} {K A' E U0 U1 mm D pS c ℓ : ℕ} {M : Sys A (K + K + A') E} {P : G.Plan M U0 U1}
@@ -70,13 +66,14 @@ theorem card_cutUnits_le {n : NN K U0} {o : M.N → Fin U1} {bd : ℕ}
 open Classical in
 /-- **Paper: Theorem thm:onecut, the program G.** "Every choice in the formula is guessed exactly once"; script
 size and time: G cuts, with numbers. -/
-theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb X Lc tB : ℕ} {tg : M.R → ℕ} {bT bub nub nl : List Bool}
+theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s bd ιb X Lc tB : ℕ} {tg : M.R → ℕ}
+    {bT bub nub nl : List Bool}
     -- the automaton and GROUP
     (hK : 0 < K) [Nonempty Q] (hGR : GroupOK θ mu cb kinds qn GROUP κ)
     (hU : ∀ z, z.size ≤ s → Plain θ τ z → runVal mu i e (K * Grp.bval bT) (fun _ => wordG b0 b1 z) = pv θ z)
     (hkind : ∀ r, kinds[tg r]? = some ⟨M.kind r.1, r.2⟩)
     -- the plan, the formula and the bounds of the pieces
-    (tab : SlpTab P grp D pS) (hP : P.Ok cap) (hub : 0 < Grp.bval bub) (hnub : KT.val nub = Grp.bval bub)
+    (tab : SlpTab P grp D pS) (hub : 0 < Grp.bval bub) (hnub : KT.val nub = Grp.bval bub)
     (hnl : KT.val nl = ℓ) (hU1p : 0 < U1) (hℓ : ℓ ≤ Grp.bval bT)
     (hval : ∀ z, z.size ≤ s → runVal mu i e (K * Grp.bval bT) (fun _ => wordG b0 b1 z) =
       ∑ q : Fin (K + 1) → Q, if q 0 = i ∧ q (Fin.last K) = e then
@@ -107,7 +104,7 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
     (htB : ∀ (q : Fin (K + 1) → Q) (x : Fin K → List Γ) (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : NN K U0)
       (o : M.N → Fin U1) (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub)) (g : Fin mm), (∀ κ, (x κ).length ≤ Grp.bval bT) →
       tab.valid n → (∀ x, P.good n o x) →
-      grpT bT bub (Grp.script qn cb P q x ρ n o (grp n o) g C.key C.dkey tg b) ≤ tB) :
+      grpT bT bub (Grp.script qn cb P q x ρ n o (grp n o) g C.key tg b) ≤ tB) :
     ∃ G : Tree, G.size ≤ (dealC + 3000) * (X * Lc) ^ 4 ∧ CutD θ τ s (κ * tB)
       (14800 * (X * Lc) ^ 4 + ιb * ℓ * (4 * c + 2) + bd * (4 * Grp.bval bub)) mm
       (dealB Lc X K mm (Grp.bval bub) (mm * bd) (11 * X ^ 2) s) G := by
@@ -127,7 +124,7 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
     rw [dt]
     omega
   have hH : SizeHyp C qn tg X Lc := by
-    refine { hLc := hLc, nm := hC.nm, dc := hC.dc, rc := hC.rc, key := hC.key, dkey := hC.dkey, hK1 := by omega,
+    refine { hLc := hLc, nm := hC.nm, dc := hC.dc, rc := hC.rc, key := hC.key, hK1 := by omega,
              hK2 := by omega, hU0 := hU0X, hU1 := hU1X, hE := hE, hD := hDX, hpS := hpS, hN := hN, hId := hId, hS := hS,
              hQ := hQ, row := hrow, hR := hR, Sl := ?_, Cn := ?_, hqn := hqn, htg := htg }
     · exact hSlAt
@@ -149,8 +146,8 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
       have := hρ s p
       rw [if_neg (by simp [hf])] at this
       exact this.2
-    obtain ⟨h1, h2⟩ := hGR P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key C.dkey tg bT bub b hC.inj hub hP hx hρ'
-      hkind
+    obtain ⟨h1, h2⟩ := hGR P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key tg bT bub b
+      hC.inj hub hx hρ' hkind
     refine ⟨?_, ?_, h2⟩
     · -- the script is the expansion of its template in a final state
       obtain ⟨st, hst, -⟩ := sum_allSteps (ub := Grp.bval bub) C tab

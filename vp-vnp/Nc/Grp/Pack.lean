@@ -28,7 +28,7 @@ noncomputable def packSem (sep : List Bool) (ub : ℕ) (B : Body) (o : Outs S) (
 
 /-- Costs of writing. -/
 def putCost (ub : ℕ) (kss : List (List (List Bool))) : ℕ :=
-  (kss.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum
+  (kss.map fun ks => (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 200).sum
 
 /-- The number of flags. -/
 def flen (l : List (List ℕ)) : ℕ := (l.map List.length).sum

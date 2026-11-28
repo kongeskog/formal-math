@@ -7,7 +7,7 @@ import Nc.Grp.PutDef
 import Nc.Grp.Seg
 
 /-!
-# Writing units: programs
+# Comparing units with the stored contents: programs
 -/
 
 set_option linter.unusedSectionVars false
@@ -73,17 +73,19 @@ theorem unit_gives {s y : Fm} {x : Tree} {cs cy ub : ℕ} {r : List Bool} (hs : 
   simp only [List.map_replicate, List.sum_replicate, smul_eq_mul]
   omega
 
-/-- Step of the writing program: argument (key, (yardstick, (rest, trie))). -/
+/-- Step of the comparing program: argument (key, (yardstick, (rest, trie))). -/
 def putStep : Fm := .ite (.hd (.tl (.tl .id)))
   (lett (.cons .id (foldF unitStep (.cons (.hd (.tl (.tl .id))) (.quote .nil)) (.hd (.tl .id))))
-    (.cons (.hd (.tl (.hd .id))) (.cons (.hd (.tl .id))
-      (setF (.hd (.hd .id)) (foldF .id (.quote (ofBits [])) (.tl (.tl .id))) (.tl (.tl (.tl (.hd .id))))))))
+    (.ite
+      (eqF (foldF .id (.quote (ofBits [])) (.tl (.tl .id)))
+        (getF (.hd (.hd .id)) (.tl (.tl (.tl (.hd .id))))))
+      (.cons (.hd (.tl (.hd .id))) (.cons (.hd (.tl .id)) (.tl (.tl (.tl (.hd .id)))))) .fail))
   .fail
 
 variable (A) in
 /-- One key. -/
 def putOne (ub : ℕ) (k : List Bool) (s : List Bool × Tree) : List (A × (List Bool × Tree)) :=
-  if s.1 = [] then [] else [(1, (s.1.drop ub, tset k (ofBits (padTake ub s.1)) s.2))]
+  if s.1 ≠ [] ∧ ofBits (padTake ub s.1) = tget k s.2 then [(1, (s.1.drop ub, s.2))] else []
 
 theorem length_padTake (ub : ℕ) (r : List Bool) : (padTake ub r).length = ub := by
   simp only [padTake, List.length_append, List.length_take, List.length_replicate]
@@ -92,53 +94,76 @@ theorem length_padTake (ub : ℕ) (r : List Bool) : (padTake ub r).length = ub :
 theorem putStep_does (ub : ℕ) (k : List Bool) (s : List Bool × Tree) :
     Does θ putStep (.cons (ofBits k) (.cons (num ub) (.cons (ofBits s.1) s.2)))
       ((putOne A ub k s).map (Prod.map id fun s => .cons (num ub) (.cons (ofBits s.1) s.2)))
-      (ub * 90 + k.length * 60 + 300) := by
+      (ub * 330 + k.length * 60 + 300) := by
   obtain ⟨r, t⟩ := s
   cases r with
   | nil =>
     refine (Does.ite_false (Gives.id _).tl.tl.hd ?_).mono (c := 4 + 0 + 1) (by omega)
     simpa [putOne] using Does.fail (θ := θ) (.cons (ofBits k) (.cons (num ub) (.cons (ofBits []) t)))
   | cons b r =>
-    have h1 := unit_gives (θ := θ) (x := .cons (ofBits k) (.cons (num ub) (.cons (ofBits (b :: r)) t))) (r := b :: r)
+    set x : Tree := .cons (ofBits k) (.cons (num ub) (.cons (ofBits (b :: r)) t))
+    have h1 := unit_gives (θ := θ) (x := x) (r := b :: r)
       (s := .hd (.tl (.tl .id))) (y := .hd (.tl .id)) (Gives.id _).tl.tl.hd (Gives.id _).tl.hd
-    have h2 := reverse_gives (θ := θ) (x := .cons (.cons (ofBits k) (.cons (num ub) (.cons (ofBits (b :: r)) t)))
-      (.cons (ofBits ((b :: r).drop ub)) (ofBits (padTake ub (b :: r)).reverse))) (l := .tl (.tl .id))
+    set x' : Tree :=
+      .cons x (.cons (ofBits ((b :: r).drop ub)) (ofBits (padTake ub (b :: r)).reverse))
+    have h2 := reverse_gives (θ := θ) (x := x') (l := .tl (.tl .id))
       (w := (padTake ub (b :: r)).reverse) (Gives.id _).tl.tl []
     rw [List.reverse_reverse, List.append_nil] at h2
-    have h3 := setF_gives (θ := θ) (x := .cons (.cons (ofBits k) (.cons (num ub) (.cons (ofBits (b :: r)) t)))
-      (.cons (ofBits ((b :: r).drop ub)) (ofBits (padTake ub (b :: r)).reverse))) (pf := .hd (.hd .id))
-      (tf := .tl (.tl (.tl (.hd .id)))) (p := ofBits k) (Gives.id _).hd.hd h2 (Gives.id _).hd.tl.tl.tl
-    rw [path_ofBits] at h3
-    have h4 := Gives.letk h1 (Gives.cons (Gives.id _).hd.tl.hd (Gives.cons (Gives.id _).tl.hd h3))
-    refine (Does.ite_true (Gives.id _).tl.tl.hd (by simp [ofBits]) h4).mono ?_
-    rw [List.length_reverse, length_padTake, len_ofBits]
-    omega
+    have h3 := getF_gives (θ := θ) (x := x') (pf := .hd (.hd .id)) (tf := .tl (.tl (.tl (.hd .id))))
+      (p := ofBits k) (t := t) (Gives.id _).hd.hd (Gives.id _).hd.tl.tl.tl
+    rw [path_ofBits, len_ofBits] at h3
+    have h4 := eqF_gives h2 h3
+    have hsz := size_ofBits (padTake ub (b :: r))
+    rw [List.length_reverse, length_padTake] at h4
+    rw [length_padTake] at hsz
+    have h5 : Gives θ
+        (.cons (.hd (.tl (.hd .id))) (.cons (.hd (.tl .id)) (.tl (.tl (.tl (.hd .id)))))) x'
+        (.cons (num ub) (.cons (ofBits ((b :: r).drop ub)) t)) 14 :=
+      (Gives.cons (Gives.id _).hd.tl.hd
+        (Gives.cons (Gives.id _).tl.hd (Gives.id _).hd.tl.tl.tl)).mono (by omega)
+    by_cases he : ofBits (padTake ub (b :: r)) = tget k t
+    · have h6 := Does.ite_true (H := .fail) h4 (by simp [he, bit, one]) h5
+      have h7 := Does.letk h1
+        (R := fun _ => [((1 : A), .cons (num ub) (.cons (ofBits ((b :: r).drop ub)) t))])
+        (fun q hq => by rw [List.mem_singleton.1 hq]; exact h6)
+      refine ((Does.ite_true (Gives.id _).tl.tl.hd
+        (by show ofBits (b :: r) ≠ .nil; simp [ofBits]) h7).replace ?_).mono (by omega)
+      simp [putOne, he, bindW]
+    · have hb : bit (decide (ofBits (padTake ub (b :: r)) = tget k t)) = .nil := by simp [he, bit]
+      rw [hb] at h4
+      have h6 := Does.ite_false
+        (G := .cons (.hd (.tl (.hd .id))) (.cons (.hd (.tl .id)) (.tl (.tl (.tl (.hd .id))))))
+        h4 (Does.fail (θ := θ) x')
+      have h7 := Does.letk h1 (R := fun _ => ([] : List (A × Tree))) (fun q hq => by
+        rw [List.mem_singleton.1 hq]; exact h6)
+      refine ((Does.ite_true (Gives.id _).tl.tl.hd
+        (by show ofBits (b :: r) ≠ .nil; simp [ofBits]) h7).replace ?_).mono (by omega)
+      simp [putOne, he, bindW]
 
-/-- Write the units of a string: argument (yardstick, (keys, (rest, trie))). -/
+/-- Compare the units of a string: argument (yardstick, (keys, (rest, trie))). -/
 def putF : Fm := lett (foldF putStep (.cons (.hd .id) (.tl (.tl .id))) (.hd (.tl .id)))
   (.ite (.hd (.tl .id)) .fail (.tl (.tl .id)))
 
 theorem bind_putOne (ub : ℕ) (keys : List (List Bool)) (r : List Bool) (t : Tree) :
     bindW (foldL (putOne A ub) keys (r, t)) (fun s => if s.1 = [] then [((1 : A), s.2)] else []) =
       encT (putL ub keys r t) := by
-  induction keys generalizing r t with
+  induction keys generalizing r with
   | nil =>
     rw [foldL, bindW_single, putL]
     by_cases h : r = [] <;> simp [h]
   | cons k ks ih =>
     rw [foldL, putOne, putL]
-    by_cases h : r = []
-    · simp [h, bindW]
-    · simp only [h, if_false]
-      rw [bindW_single]
-      exact ih _ _
+    split_ifs
+    · rw [bindW_single]
+      exact ih _
+    · rfl
 
 theorem putF_does (ub : ℕ) (keys : List (List Bool)) (r : List Bool) (t : Tree) :
     Does θ putF (.cons (num ub) (.cons (listT (keys.map ofBits)) (.cons (ofBits r) t)))
-      (encT (putL ub keys r t)) ((keys.map fun k => ub * 90 + k.length * 60 + 330).sum + 100) := by
+      (encT (putL ub keys r t)) ((keys.map fun k => ub * 330 + k.length * 60 + 330).sum + 100) := by
   have h1 := foldT (θ := θ)
     (enc := fun s : List Bool × Tree => .cons (num ub) (.cons (ofBits s.1) s.2)) (s₀ := (r, t)) (f := putOne A ub)
-    (Inv := fun _ _ => True) (d := fun k => ub * 90 + k.length * 60 + 300)
+    (Inv := fun _ _ => True) (d := fun k => ub * 330 + k.length * 60 + 300)
     (s := .cons (.hd .id) (.tl (.tl .id))) (l := .hd (.tl .id))
     (x := .cons (num ub) (.cons (listT (keys.map ofBits)) (.cons (ofBits r) t)))
     (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl) (Gives.id _).tl.hd
@@ -174,12 +199,13 @@ theorem bind_puts (ub : ℕ) (kss : List (List (List Bool))) (strs : List (List 
 theorem putsF_does (ub : ℕ) (kss : List (List (List Bool))) (strs : List (List Bool)) (t : Tree) :
     Does θ putsF (.cons (num ub) (.cons (listT (kss.map fun ks => listT (ks.map ofBits)))
         (.cons (listT (strs.map ofBits)) t))) (encT (putsL ub kss strs t))
-      ((kss.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum + 100) := by
+      ((kss.map fun ks =>
+        (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 200).sum + 100) := by
   have h1 := foldT (θ := θ) (encE := fun ks : List (List Bool) => listT (ks.map ofBits))
     (enc := fun s : List (List Bool) × Tree => .cons (num ub) (.cons (listT (s.1.map ofBits)) s.2)) (s₀ := (strs, t))
     (f := fun ks (s : List (List Bool) × Tree) => (putL ub ks (s.1.headD []) s.2).map fun t =>
       ((1 : A), (s.1.tail, t))) (Inv := fun _ _ => True)
-    (d := fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 160)
+    (d := fun ks => (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 160)
     (s := .cons (.hd .id) (.tl (.tl .id))) (l := .hd (.tl .id))
     (x := .cons (num ub) (.cons (listT (kss.map fun ks => listT (ks.map ofBits))) (.cons (listT (strs.map ofBits)) t)))
     (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl) (Gives.id _).tl.hd
@@ -206,8 +232,9 @@ theorem putsF_does (ub : ℕ) (kss : List (List (List Bool))) (strs : List (List
     (fun b _ => by exact (Gives.id _).tl.tl)
   rw [bind_puts] at h2
   refine h2.mono ?_
-  have : ∀ l : List (List (List Bool)), (l.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 160 + 30).sum ≤
-      (l.map fun ks => (ks.map fun k => ub * 90 + k.length * 60 + 330).sum + 200).sum := by
+  have : ∀ l : List (List (List Bool)),
+      (l.map fun ks => (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 160 + 30).sum ≤
+        (l.map fun ks => (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 200).sum := by
     intro l
     exact List.sum_le_sum fun ks _ => by omega
   have := this kss

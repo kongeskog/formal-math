@@ -77,9 +77,6 @@ noncomputable def baseTm (p : Fin (K + K)) : Tm :=
     (fun κ => .cons (.c (num 0)) (.cons (.cons (gN C (.q κ.castSucc)) (gN C (.q κ.succ))) (bodyTm C (Fin.castAdd K κ))))
     (fun κ => .cons (.c (num 1)) (.cons (gN C (.part κ)) (bodyTm C (Fin.natAdd K κ)))) p
 
-/-- Instructions of a base party, with the diagonal. -/
-noncomputable def basesTm (p : Fin (K + K)) : Tm := .cons (baseTm C p) (gN C (.dg p))
-
 /-- The units given in a slot. -/
 noncomputable def slotTm (z : M.Z) (a : Fin (K + K + A')) : Tm :=
   catTm ((G.allIds (K + K) U0 M.N U1).reverse.map fun id =>
@@ -109,7 +106,7 @@ noncomputable def endTm (g : Fin mm) (id : G.Uid (K + K) U0 M.N U1) : Tm :=
 noncomputable def scriptTm (g : Fin mm) : Tm :=
   .cons (.c (.cons (ofBits bT) (ofBits bub))) (catTm (
     (List.finRange (K + K)).map (fun p =>
-      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (basesTm C p)) ++
+      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (listTm [baseTm C p])) ++
     (Grp.allRoles M).map (fun r => ifTm (C.nm (.slp (tab.kgrp (M.rp r)))) (gt g) (listTm [roleTm C tab tg d1 r])) ++
     (G.allIds (K + K) U0 M.N U1).map (endTm C tab gt d1 g)))
 
@@ -124,7 +121,6 @@ structure Final (C : Codes S M U0 U1 D pS) (tab : SlpTab P grp D pS) (qn : Q →
   flag : ∀ s p, st (.flag s p) = flagT (ρ s p)
   kR : ∀ a b, st (.kR a b) = kRT C a b (n a b)
   kC : ∀ a b, st (.kC a b) = kCT C a b (n a b)
-  dg : ∀ a, st (.dg a) = dgT C a (n a a)
   ch : ∀ ν d, st (.ch ν d) = chT C ν d (o ν)
   slp : ∀ k, st (.slp k) = C.dt (tab.fn k (n, o))
   num : ∀ x, st (.num x) = NS1.Tree.num (P.num n o x)
@@ -150,7 +146,7 @@ variable (h : Final C tab qn pt q ρ n o b st)
 include h
 
 theorem expand_bodyTm (p : Fin (K + K)) :
-    (bodyTm C p).expand (byPath C.nm st) = (Grp.bodyOf ρ n C.key C.dkey p).tree := by
+    (bodyTm C p).expand (byPath C.nm st) = (Grp.bodyOf ρ n C.key p).tree := by
   simp only [bodyTm, Tm.expand, expand_listTm, List.map_map, Function.comp_def, expand_gN, Grp.Body.tree, Grp.bodyOf,
     Grp.keysT, List.map_ofFn]
   congr 1
@@ -167,19 +163,15 @@ theorem expand_bodyTm (p : Fin (K + K)) :
       rfl
 
 theorem expand_baseTm (hpt : ∀ κ, pt κ = listT (((x κ).map fun a => ofBits (List.ofFn (cb (some a)))).reverse))
-    (p : Fin (K + K)) : (basesTm C p).expand (byPath C.nm st) =
-      listT ((Grp.baseIns qn cb q x ρ n C.key C.dkey p).map Grp.Ins.tree) := by
-  rw [basesTm, Tm.expand, Grp.baseIns, List.map_cons, expand_gN, h.dg]
-  show _ = Tree.cons _ _
-  congr 1
-  · refine Fin.addCases (fun κ => ?_) (fun κ => ?_) p
-    · rw [baseTm, Fin.addCases_left, Fin.addCases_left]
-      simp only [Tm.expand, expand_gN, h.q, expand_bodyTm h, Grp.Ins.tree]
-    · rw [baseTm, Fin.addCases_right, Fin.addCases_right]
-      simp only [Tm.expand, expand_gN, h.part, expand_bodyTm h, Grp.Ins.tree, hpt, List.map_reverse, List.map_map,
-        Function.comp_def]
-  · rw [dgT, List.map_map]
-    rfl
+    (p : Fin (K + K)) : (baseTm C p).expand (byPath C.nm st) =
+      (Grp.baseIns qn cb q x ρ n C.key p).tree := by
+  rw [Grp.baseIns]
+  refine Fin.addCases (fun κ => ?_) (fun κ => ?_) p
+  · rw [baseTm, Fin.addCases_left, Fin.addCases_left]
+    simp only [Tm.expand, expand_gN, h.q, expand_bodyTm h, Grp.Ins.tree]
+  · rw [baseTm, Fin.addCases_right, Fin.addCases_right]
+    simp only [Tm.expand, expand_gN, h.part, expand_bodyTm h, Grp.Ins.tree, hpt,
+      List.map_reverse, List.map_map, Function.comp_def]
 
 theorem expand_slotTm {d1 : Tree} (hd1 : ∀ d : Fin D, C.dt d = d1 ↔ d.1 = 1) (z : M.Z) (a : Fin (K + K + A')) :
     (slotTm C tab d1 z a).expand (byPath C.nm st) =
@@ -224,7 +216,7 @@ theorem expand_scriptTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D,
     (hpt : ∀ κ, pt κ = listT (((x κ).map fun a => ofBits (List.ofFn (cb (some a)))).reverse))
     (hb : ∀ id ∈ P.cur n o E, grp n o (G.hold0 M.np id) ≠ grp n o (G.hold1 M.np id) → b id ≠ none) (g : Fin mm) :
     (scriptTm C tab tg bT bub gt d1 g).expand (byPath C.nm st) =
-      Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o (grp n o) g C.key C.dkey tg b) := by
+      Grp.scriptT bT bub (Grp.script qn cb P q x ρ n o (grp n o) g C.key tg b) := by
   classical
   have hslp : ∀ k, byPath C.nm st (C.nm (.slp k)) = C.dt (tab.fn k (n, o)) := fun k => by
     rw [byPath_nm C.nm_inj, h.slp]
@@ -279,14 +271,17 @@ theorem expand_scriptTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D,
     List.flatMap_map, List.flatMap_map]
   congr 1
   · congr 1
-    · have e : ∀ p : Fin (K + K), ((ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (basesTm C p)).expand
-          (byPath C.nm st)).toList = if grp n o (Fin.castAdd A' p) = g then
-          (Grp.baseIns qn cb q x ρ n C.key C.dkey p).map Grp.Ins.tree else [] := by
+    · have e : ∀ p : Fin (K + K), ((ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g)
+          (listTm [baseTm C p])).expand (byPath C.nm st)).toList =
+          if grp n o (Fin.castAdd A' p) = g then
+            [(Grp.baseIns qn cb q x ρ n C.key p).tree] else [] := by
         intro p
-        rw [expand_ifTm, hslp, expand_baseTm h hpt, toList_listT]
-        exact if_congr (hg _) rfl rfl
+        rw [expand_ifTm, hslp, expand_listTm, toList_listT]
+        refine if_congr (hg _) ?_ rfl
+        simp [expand_baseTm h hpt]
       simp only [e]
-      rw [flatMap_if, Grp.baseList, List.map_flatMap]
+      rw [flatMap_if, flatMap_single, Grp.baseList, List.map_map]
+      rfl
     · have e : ∀ r : M.R, ((ifTm (C.nm (.slp (tab.kgrp (M.rp r)))) (gt g) (listTm [roleTm C tab tg d1 r])).expand
           (byPath C.nm st)).toList = if grp n o (M.rp r) = g then [(Grp.roleIns P n o C.key tg r).tree] else [] := by
         intro r

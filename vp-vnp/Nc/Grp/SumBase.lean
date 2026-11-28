@@ -23,11 +23,11 @@ variable {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq 
   {F : Type} [CommRing F] {M : Sys F (K + K + A') E} {q : Fin (K + 1) → Q} {x : Fin K → List Γ}
   {ρ : Option S → Fin (K + K) → RowData (K + K)} {n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)}
   {o : M.N → Fin U1} {grp : Fin (K + K + A') → Gr} {g : Gr}
-  {key : Cell M U0 U1 → List Bool} {dkey : Fin (K + K) × Fin U0 → List Bool}
+  {key : Cell M U0 U1 → List Bool}
 
 /-- The trie has the contents `σ`. -/
 def Rep (ub : ℕ) (key : Cell M U0 U1 → List Bool) (t : Tree) (σ : Cell M U0 U1 → UW ub) : Prop :=
-  TOk ub t ∧ ∀ c, tget (key c) t = ofBits (uwBits (σ c))
+  ∀ c, tget (key c) t = ofBits (uwBits (σ c))
 
 /-- All tapes, as an equivalence. -/
 noncomputable def tapeEquiv (S : Type) [Fintype S] [DecidableEq S] : Fin (nT S) ≃ Option S :=
@@ -116,9 +116,9 @@ noncomputable def kRl (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (key : 
 
 /-- The keys of the units that are read. -/
 noncomputable def kCl (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (key : Cell M U0 U1 → List Bool)
-    (dkey : Fin (K + K) × Fin U0 → List Bool) (p b : Fin (K + K)) :
+    (p b : Fin (K + K)) :
     List (List Bool) := ((List.finRange U0).filter fun k => k.1 < (n b p).1).map fun k =>
-  if b = p then dkey (p, k) else key (Fin.castAdd A' p, .init b p k)
+  key (Fin.castAdd A' p, .init b p k)
 
 /-- The list of what is written. -/
 noncomputable def PR (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (key : Cell M U0 U1 → List Bool)
@@ -127,9 +127,9 @@ noncomputable def PR (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (key : C
 
 /-- The list of what is read. -/
 noncomputable def PC (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (key : Cell M U0 U1 → List Bool)
-    (dkey : Fin (K + K) × Fin U0 → List Bool) (cb : Option Γ → Fin c → Bool) (p : Fin (K + K))
-    (C : Option S → Fin (K + K) → List Γ) :
-    List (List (List Bool) × List Bool) := List.ofFn fun b => (kCl n key dkey p b, strOf cb fun s => C s b)
+    (cb : Option Γ → Fin c → Bool) (p : Fin (K + K)) (C : Option S → Fin (K + K) → List Γ) :
+    List (List (List Bool) × List Bool) :=
+  List.ofFn fun b => (kCl n key p b, strOf cb fun s => C s b)
 
 theorem sum_segs_equiv {m : ℕ} (f : (Fin (nT S) → Fin m → Wt Γ T) → A) :
     ∑ X, f X = ∑ X : Segs S Γ m T, f fun i => X ((tapes S).get i) :=
@@ -148,31 +148,30 @@ theorem forall_tapes {p : Option S → Prop} : (∀ i : Fin (nT S), p ((tapes S)
     exact h _
 
 open Classical in
-/-- **Cutting and writing, as a sum.** -/
+/-- **Cutting and comparing, as a sum.** -/
 theorem wsum_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
     (hρ : ∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) {wl rl : Option S → List Γ}
     (hwl : ∀ s, (wl s).length ≤ T) (hrl : ∀ s, (rl s).length ≤ T) {out : Outs S}
     (h1 : ∀ i, out (Fin.castAdd (nT S) i) = ((wl ((tapes S).get i)).map (code cb)).reverse)
     (h2 : ∀ i, out (Fin.natAdd (nT S) i) = ((rl ((tapes S).get i)).map (code cb)).reverse) (t : Tree) (Ψ : Tree → A) :
-    wsum (packSem A (sepOf cb) ub (bodyOf ρ n key dkey p) out t) Ψ =
+    wsum (packSem A (sepOf cb) ub (bodyOf ρ n key p) out t) Ψ =
       ∑ R : Segs S Γ (K + K) T, ∑ C : Segs S Γ (K + K) T,
         if (∀ s, cat (R.words s) = wl s) ∧ (∀ s, cat (C.words s) = rl s) ∧ (∀ s, RowOk (ρ s p) (R.words s)) ∧
-          (∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b) ∧
-          (∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p) then
-          Ψ (putsAll ub (PC n key dkey cb p C.words) (putsAll ub (PR n key cb p R.words) t)) else 0 := by
-  have hm : (bodyOf ρ n key dkey p).kR.length = K + K := by simp [bodyOf]
+          FitsAll ub (PR n key cb p R.words) t ∧ FitsAll ub (PC n key cb p C.words) t then Ψ t
+        else 0 := by
+  have hm : (bodyOf ρ n key p).kR.length = K + K := by simp [bodyOf]
   have hrep : List.replicate (K + K) [true] = (List.ofFn fun _ : Fin (K + K) => [true]).reverse := by
     rw [List.ofFn_const, List.reverse_replicate]
-  have hflags : ∀ i : Fin (nT S), (bodyOf ρ n key dkey p).flags.getD i.rev [] =
+  have hflags : ∀ i : Fin (nT S), (bodyOf ρ n key p).flags.getD i.rev [] =
       (List.ofFn fun b => rowFlag (ρ ((tapes S).get i.rev) p) b).reverse := by
     intro i
-    have hlt : (i.rev : ℕ) < (bodyOf ρ n key dkey p).flags.length := by
+    have hlt : (i.rev : ℕ) < (bodyOf ρ n key p).flags.length := by
       simp only [bodyOf, List.length_map]
       exact i.rev.2
     rw [List.getD_eq_getElem _ _ hlt]
     simp only [bodyOf, List.getElem_map]
     rfl
-  have eR : itemsR (bodyOf ρ n key dkey p).flags out = List.ofFn fun i : Fin (nT S) =>
+  have eR : itemsR (bodyOf ρ n key p).flags out = List.ofFn fun i : Fin (nT S) =>
       ((List.ofFn fun b => rowFlag (ρ ((tapes S).get i.rev) p) b).reverse,
         ((wl ((tapes S).get i.rev)).map (code cb)).reverse) := by
     rw [itemsR]
@@ -185,12 +184,6 @@ theorem wsum_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
     congr 1
     funext i
     rw [h2, List.ofFn_const, List.reverse_replicate]
-  have hlenR : ∀ b, (kRl n key p b).length = n p b := by
-    intro b
-    rw [kRl, List.length_map, filter_finRange (by have := (n p b).2; omega), List.length_ofFn]
-  have hlenC : ∀ b, (kCl n key dkey p b).length = n b p := by
-    intro b
-    rw [kCl, List.length_map, filter_finRange (by have := (n b p).2; omega), List.length_ofFn]
   rw [packSem, hm, hrep, wsum_bindW, eR,
     wsum_segs (sepOf cb) hK (code cb) T (fun i b => rowFlag (ρ ((tapes S).get i) p) b) (fun i => wl ((tapes S).get i))
       (fun i => hwl _), sum_segs_equiv]
@@ -216,21 +209,16 @@ theorem wsum_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
     show _ = strOf cb (fun s => R.words s b) ++ [true]
     rw [← joined_tapes]
     rfl
-  have kR : (bodyOf ρ n key dkey p).kR = (PR n key cb p R.words).map Prod.fst := by
+  have kR : (bodyOf ρ n key p).kR = (PR n key cb p R.words).map Prod.fst := by
     rw [PR, List.map_ofFn]
     rfl
   rw [sR, kR, putsL_eq hub]
-  have cR2 : (∀ z ∈ PR n key cb p R.words, ucount ub z.2 = z.1.length) ↔
-      ∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b := by
-    rw [PR, List.forall_mem_ofFn_iff]
-    refine forall_congr' fun b => ?_
-    rw [hlenR]
-  by_cases hR2 : ∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b
+  by_cases hR2 : FitsAll ub (PR n key cb p R.words) t
   swap
-  · rw [if_neg fun h => hR2 (cR2.1 h)]
+  · rw [if_neg hR2]
     symm
     refine Finset.sum_eq_zero fun C _ => if_neg fun h => hR2 h.2.2.2.1
-  rw [if_pos (cR2.2 hR2)]
+  rw [if_pos hR2]
   simp only [encT, List.map_cons, List.map_nil, wsum_single]
   rw [wsum_bindW, eC, wsum_segs (sepOf cb) hK (code cb) T (fun _ _ => 2) (fun i => rl ((tapes S).get i))
     (fun i => hrl _), sum_segs_equiv]
@@ -247,26 +235,21 @@ theorem wsum_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
   · rw [if_neg fun h => hC (cC.1 h), if_neg fun h => hC h.2.1]
   rw [if_pos (cC.2 hC), List.reverse_reverse]
   have sC : (List.ofFn fun b => joined (code cb) (sepOf cb) (fun i : Fin (nT S) => (C ((tapes S).get i) b : List Γ)) ++ [true]) =
-      (PC n key dkey cb p C.words).map fun z => z.2 ++ [true] := by
+      (PC n key cb p C.words).map fun z => z.2 ++ [true] := by
     rw [PC, List.map_ofFn]
     congr 1
     funext b
     show _ = strOf cb (fun s => C.words s b) ++ [true]
     rw [← joined_tapes]
     rfl
-  have kC : (bodyOf ρ n key dkey p).kC = (PC n key dkey cb p C.words).map Prod.fst := by
+  have kC : (bodyOf ρ n key p).kC = (PC n key cb p C.words).map Prod.fst := by
     rw [PC, List.map_ofFn]
     rfl
   rw [sC, kC, putsL_eq hub]
-  have cC2 : (∀ z ∈ PC n key dkey cb p C.words, ucount ub z.2 = z.1.length) ↔
-      ∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p := by
-    rw [PC, List.forall_mem_ofFn_iff]
-    refine forall_congr' fun b => ?_
-    rw [hlenC]
-  by_cases hC2 : ∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p
-  · rw [if_pos (cC2.2 hC2), if_pos ⟨hR.1, hC, hR.2, hR2, hC2⟩]
+  by_cases hC2 : FitsAll ub (PC n key cb p C.words) t
+  · rw [if_pos hC2, if_pos ⟨hR.1, hC, hR.2, hR2, hC2⟩]
     simp only [List.map_cons, List.map_nil, wsum_single]
-  · rw [if_neg fun h => hC2 (cC2.1 h), if_neg fun h => hC2 h.2.2.2.2]
+  · rw [if_neg hC2, if_neg fun h => hC2 h.2.2.2.2]
     rfl
 
 end Nc.Grp
