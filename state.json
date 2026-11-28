@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T14:22:43.960903207Z",
+  "updated_at": "2026-11-28T14:37:05.602366166Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "db9c8769d239142a705d043b0f968cf3d072625d",
-    "at": "2026-11-28T13:59:18.631311880Z",
+    "sha": "1f5bc99958f999165144d246f64aea0835906792",
+    "at": "2026-11-28T14:37:05.602366166Z",
     "metrics": {
-      "tokens": 760306,
-      "loc": 50065,
-      "decls": 4167,
+      "tokens": 755892,
+      "loc": 49803,
+      "decls": 4161,
       "files": 312,
-      "bytes": 2885947,
-      "build_seconds": 263
+      "bytes": 2873594,
+      "build_seconds": 344
     }
   },
   "counts": {
-    "merged": 121,
+    "merged": 122,
     "rejected": 4,
-    "open": 1,
+    "open": 0,
     "contributors": 2,
-    "ideas_open": 2
+    "ideas_open": 3
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 114,
+      "merged": 115,
       "attempts": 119,
-      "saved": 157991
+      "saved": 162405
     },
     {
       "login": "yidakra",
@@ -94,6 +94,20 @@
   ],
   "ideas": [
     {
+      "number": 217,
+      "title": "Idea: restructure(NS1/ApproxExtract): back to exact values by a fold over the names of the value",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-28T14:36:30Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/217",
+      "technique": "restructure",
+      "scope": "NS1/ApproxExtract"
+    },
+    {
       "number": 215,
       "title": "Idea: restructure(NS1): the check of names against a budget as one weighted list",
       "status": "claimed",
@@ -101,7 +115,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T17:21:47Z",
       "pr": 216,
-      "result_delta": null,
+      "result_delta": -4414,
       "created_at": "2026-11-28T14:20:31Z",
       "url": "https://github.com/kongeskog/formal-math/issues/215",
       "technique": "restructure",
@@ -1312,95 +1326,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 216,
-      "title": "restructure(NS1): the check of names against a budget as one weighted list",
-      "author": "kongeskog",
-      "head_sha": "1fed556b8475f000e43ce1137827a3e4d67e7d5b",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-28T14:22:04Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pending"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pending"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pending"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        }
-      ],
-      "idea": 215,
-      "url": "https://github.com/kongeskog/formal-math/pull/216",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "NS1"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
