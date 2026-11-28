@@ -336,8 +336,13 @@ theorem thm_alt_extremal (hK : ¬ Contracting K) (hμ : 2 ≤ μ) : ∃ w : Mt �
     rw [sub_zero] at h4
     exact le_of_tendsto_of_tendsto' h4 h3 fun n => hW3 (φ n)
 
+section
+
+variable (hx : Extremal K w)
+include hx
+
 /-- "For it D(r)² = r for all r, as μ ≤ D(r)² + D(μ−r)²." -/
-theorem thm_alt_ranks (hx : Extremal K w) {r : ℕ} (hr : r ≤ μ) : meanSq w r = r := by
+theorem thm_alt_ranks {r : ℕ} (hr : r ≤ μ) : meanSq w r = r := by
   have h1 := meanSq_le hx.price hr
   have h2 := meanSq_le hx.price (Nat.sub_le μ r)
   have h3 := thm_alt_subadditive hx.price (i := r) (j := μ - r) (by omega)
@@ -348,7 +353,7 @@ theorem thm_alt_ranks (hx : Extremal K w) {r : ℕ} (hr : r ≤ μ) : meanSq w r
 
 /-- "So equality holds for all these quadrangles, that is, for every a and every transversal pair": the squared sides of
 a, a+W, a+W+W', a+W' add up to the squared diagonals. -/
-theorem thm_alt_equality (hx : Extremal K w) {W W' : Mt μ} (h : Transversal ![W, W']) (a : Mt μ) :
+theorem thm_alt_equality {W W' : Mt μ} (h : Transversal ![W, W']) (a : Mt μ) :
     w a (a + W) ^ 2 + w (a + W) (a + W + W') ^ 2 + w (a + W + W') (a + W') ^ 2 + w a (a + W') ^ 2 =
       w a (a + W + W') ^ 2 + w (a + W) (a + W') ^ 2 := by
   obtain ⟨p, q, S, T, hd, rfl, rfl⟩ := transversal_pair.1 h
@@ -370,14 +375,14 @@ theorem thm_alt_equality (hx : Extremal K w) {W W' : Mt μ} (h : Transversal ![W
   linarith
 
 /-- "For transversal W, W', opposite sides are equal: n_{a+W'}(W) = n_a(W)." -/
-theorem thm_alt_opposite (hx : Extremal K w) {W W' : Mt μ} (h : Transversal ![W, W']) (a : Mt μ) :
+theorem thm_alt_opposite {W W' : Mt μ} (h : Transversal ![W, W']) (a : Mt μ) :
     nn w (a + W') W = nn w a W := by
   have h1 := ((thm_alt_quadrangle hx.price a (a + W + W') (a + W) (a + W')).2 (thm_alt_equality hx h a).symm).1
   unfold nn
   rw [add_right_comm, hx.price.symm, ← h1]
 
 /-- "Also all quadrangles have equality, so |a+W, a+W'|² = 2n_a(W) + 2n_a(W') − n_a(W+W')." -/
-theorem thm_alt_diagonal (hx : Extremal K w) {W W' : Mt μ} (h : Transversal ![W, W']) (a : Mt μ) :
+theorem thm_alt_diagonal {W W' : Mt μ} (h : Transversal ![W, W']) (a : Mt μ) :
     w (a + W) (a + W') ^ 2 = 2 * nn w a W + 2 * nn w a W' - nn w a (W + W') := by
   have h1 := thm_alt_equality hx h a
   have h2 := thm_alt_opposite hx (transversal_symm h) a
@@ -391,7 +396,7 @@ theorem thm_alt_diagonal (hx : Extremal K w) {W W' : Mt μ} (h : Transversal ![W
 
 /-- "Insert this into the quadrangle at a+W₂ with sides W₁, W₂+W₃, whose other vertices are a+W₁+W₂, a+W₃ and a+W₁+W₃. This
 gives, for transversal W₁, W₂, W₃, … B_a(W₁, W₂+W₃) = B_a(W₁, W₂) + B_a(W₁, W₃)." -/
-theorem thm_alt_additive (hx : Extremal K w) {W₁ W₂ W₃ : Mt μ} (h : Transversal ![W₁, W₂, W₃]) (a : Mt μ) :
+theorem thm_alt_additive {W₁ W₂ W₃ : Mt μ} (h : Transversal ![W₁, W₂, W₃]) (a : Mt μ) :
     BB w a W₁ (W₂ + W₃) = BB w a W₁ W₂ + BB w a W₁ W₃ := by
   obtain ⟨p, q, S₁, S₂, S₃, h12, h13, h23, rfl, rfl, rfl⟩ := transversal_triple.1 h
   have t1 : Transversal ![X p q S₁, X p q S₂ + X p q S₃] := by
@@ -429,6 +434,8 @@ theorem thm_alt_additive (hx : Extremal K w) {W₁ W₂ W₃ : Mt μ} (h : Trans
   unfold BB
   rw [← add_assoc]
   linarith
+
+end
 
 theorem exists_singleton {p q : GLM (Fin μ)} {S : Finset (Fin μ)} (h : (X p q S).rank = 1) : ∃ i, S = {i} := by
   rw [rank_X] at h
@@ -533,8 +540,13 @@ theorem thm_alt_third (hμ : 3 ≤ μ) {V W : Mt μ} (hV : V.rank = 1) (hW : W.r
     (transversal_vec hu0 hx0).2 ⟨fun h => hu (Submodule.mem_sup_left h), fun h => hx (Submodule.mem_sup_left h)⟩,
     (transversal_vec hu0 hx0).2 ⟨fun h => hu (Submodule.mem_sup_right h), fun h => hx (Submodule.mem_sup_right h)⟩⟩
 
+section
+
+variable (hx : Extremal K w) (hμ : 3 ≤ μ)
+include hx hμ
+
 /-- "As B_a is symmetric, it has one value λ(a) on all transversal pairs of rank one." -/
-theorem thm_alt_lambda (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {V V' W W' : Mt μ} (hV : Transversal ![V, V'])
+theorem thm_alt_lambda (a : Mt μ) {V V' W W' : Mt μ} (hV : Transversal ![V, V'])
     (hW : Transversal ![W, W']) (h1 : V.rank = 1) (h2 : V'.rank = 1) (h3 : W.rank = 1) (h4 : W'.rank = 1) :
     BB w a V V' = BB w a W W' := by
   have con : ∀ {Z U U' : Mt μ}, Z.rank = 1 → U.rank = 1 → U'.rank = 1 → Transversal ![Z, U] → Transversal ![Z, U'] →
@@ -547,9 +559,10 @@ theorem thm_alt_lambda (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {V V' W 
     _ = BB w a W Z := BB_comm _ _ _
     _ = BB w a W W' := con h3 hZ h4 t2 hW
 
+omit hμ in
 /-- "Since n_{a+V}(V) = n_a(V), n_{a+V}(W') = n_a(W') and n_{a+V}(V+W') = |a+V, a+W'|², the display of the first step gives
 B_{a+V}(V, W') = −B_a(V, W')", for transversal V, W'. -/
-theorem thm_alt_reflect (hx : Extremal K w) {V W' : Mt μ} (h : Transversal ![V, W']) (a : Mt μ) :
+theorem thm_alt_reflect {V W' : Mt μ} (h : Transversal ![V, W']) (a : Mt μ) :
     BB w (a + V) V W' = - BB w a V W' := by
   have e1 := thm_alt_diagonal hx h a
   have e2 := thm_alt_opposite hx (transversal_symm h) a
@@ -566,7 +579,7 @@ theorem thm_alt_reflect (hx : Extremal K w) {V W' : Mt μ} (h : Transversal ![V,
 /-- "So λ = 0": B_a vanishes on the transversal pairs of rank one. The proof is the printed one, "By additivity this value is
 2λ if V has rank two; so we get λ(a+V) = −λ(a) for V of rank one or two; but two steps of rank one give λ(a+V) = λ(a)", for
 the matrices V = dg{i}, dg{j} and dg{i} + dg{j}. -/
-theorem thm_alt_orthogonal (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W W' : Mt μ} (h : Transversal ![W, W'])
+theorem thm_alt_orthogonal (a : Mt μ) {W W' : Mt μ} (h : Transversal ![W, W'])
     (h1 : W.rank = 1) (h2 : W'.rank = 1) : BB w a W W' = 0 := by
   set i : Fin μ := ⟨0, by omega⟩ with hi
   set j : Fin μ := ⟨1, by omega⟩ with hj
@@ -596,7 +609,7 @@ theorem thm_alt_orthogonal (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W W
   linarith
 
 /-- So n_a(p·dg(S)·q) is the sum of the n_a(p·dg{i}·q) over i in S. -/
-theorem nn_X (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) (p q : GLM (Fin μ)) (S : Finset (Fin μ)) :
+theorem nn_X (a : Mt μ) (p q : GLM (Fin μ)) (S : Finset (Fin μ)) :
     nn w a (X p q S) = ∑ i ∈ S, nn w a (X p q {i}) := by
   induction S using Finset.induction_on with
   | empty => simp [nn, X_empty, hx.price.self]
@@ -619,19 +632,19 @@ theorem nn_X (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) (p q : GLM (Fin μ
     linarith
 
 /-- "By additivity n_a is additive on transversal sums." -/
-theorem thm_alt_sum (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W W' : Mt μ} (h : Transversal ![W, W']) :
+theorem thm_alt_sum (a : Mt μ) {W W' : Mt μ} (h : Transversal ![W, W']) :
     nn w a (W + W') = nn w a W + nn w a W' := by
   obtain ⟨p, q, S, T, hd, rfl, rfl⟩ := transversal_pair.1 h
   rw [← X_union p q hd, nn_X hx hμ, nn_X hx hμ, nn_X hx hμ, sum_union hd]
 
 /-- "The same exchange, with W = 0 and n_a in place of B_a, shows that n_a has one value on rank one". -/
-theorem thm_alt_one_value (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {V V' : Mt μ} (h1 : V.rank = 1)
+theorem thm_alt_one_value (a : Mt μ) {V V' : Mt μ} (h1 : V.rank = 1)
     (h2 : V'.rank = 1) : nn w a V = nn w a V' :=
   thm_alt_connect (W := 0) (fun _ _ h => thm_alt_sum hx hμ a h.tail) (by rw [Matrix.rank_zero]; omega)
     (transversal_zero V) (transversal_zero V') h1 h2
 
 /-- "… as n_{a+W'}(W) = n_a(W), it does not depend on a". -/
-theorem thm_alt_base_point (hx : Extremal K w) (hμ : 3 ≤ μ) (a b : Mt μ) {V : Mt μ} (hV : V.rank = 1) :
+theorem thm_alt_base_point (a b : Mt μ) {V : Mt μ} (hV : V.rank = 1) :
     nn w a V = nn w b V := by
   -- a step of rank one
   have shift : ∀ (a : Mt μ) {Z : Mt μ}, Z.rank = 1 → nn w (a + Z) V = nn w a V := by
@@ -650,7 +663,7 @@ theorem thm_alt_base_point (hx : Extremal K w) (hμ : 3 ≤ μ) (a b : Mt μ) {V
   rw [← h1 S, ← hS, add_cancel_left]
 
 /-- "… so it is 1": the mean of n_a(W) over all a and all W of rank one is D(1)² = 1. -/
-theorem thm_alt_rank_one (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W : Mt μ} (hW : W.rank = 1) : nn w a W = 1 := by
+theorem thm_alt_rank_one (a : Mt μ) {W : Mt μ} (hW : W.rank = 1) : nn w a W = 1 := by
   have all : ∀ (b V : Mt μ), V.rank = 1 → nn w b V = nn w a W := fun b V hV => by
     rw [thm_alt_one_value hx hμ b hV hW, thm_alt_base_point hx hμ b a hW]
   have hn : (0 : ℝ) < ((univ : Finset (Mt μ)).filter fun W => W.rank = 1).card := by
@@ -665,7 +678,7 @@ theorem thm_alt_rank_one (hx : Extremal K w) (hμ : 3 ≤ μ) (a : Mt μ) {W : M
   exact h1
 
 /-- "Hence |a, a'|² = rk(a − a')." -/
-theorem thm_alt_rank (hx : Extremal K w) (hμ : 3 ≤ μ) (a a' : Mt μ) : w a a' ^ 2 = (a - a').rank := by
+theorem thm_alt_rank (a a' : Mt μ) : w a a' ^ 2 = (a - a').rank := by
   have e : a - a' = a + a' := by
     ext i j
     exact CharTwo.sub_eq_add _ _
@@ -673,6 +686,8 @@ theorem thm_alt_rank (hx : Extremal K w) (hμ : 3 ≤ μ) (a a' : Mt μ) : w a a
   have h1 : w a a' ^ 2 = nn w a (a + a') := by rw [nn, add_cancel_left]
   rw [h1, e, hS, rank_X, nn_X hx hμ, sum_congr rfl fun i _ => thm_alt_rank_one hx hμ a (by simp [rank_X])]
   simp
+
+end
 
 /-! ## The proof of Theorem thm:alt: a solid cube -/
 
