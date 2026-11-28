@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T06:09:34.999879480Z",
+  "updated_at": "2026-11-28T06:14:21.146452673Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "2a36db834b5c285ab5621017c6f2cd99723ed57e",
-    "at": "2026-11-28T05:45:15.487646213Z",
+    "sha": "222636498cf36b9341d1c75886fe0b1e0e5136af",
+    "at": "2026-11-28T06:14:21.146452673Z",
     "metrics": {
-      "tokens": 791563,
-      "loc": 51975,
-      "decls": 4268,
-      "files": 313,
-      "bytes": 2989696,
-      "build_seconds": 327
+      "tokens": 786291,
+      "loc": 51671,
+      "decls": 4254,
+      "files": 312,
+      "bytes": 2972161,
+      "build_seconds": 166
     }
   },
   "counts": {
-    "merged": 112,
+    "merged": 113,
     "rejected": 4,
-    "open": 2,
+    "open": 1,
     "contributors": 2,
-    "ideas_open": 0
+    "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 105,
+      "merged": 106,
       "attempts": 111,
-      "saved": 126734
+      "saved": 132006
     },
     {
       "login": "yidakra",
@@ -110,12 +110,12 @@
     {
       "number": 197,
       "title": "Idea: restructure(Nc/Dl): the cost of a step or template depends only on its size; the state invariant goes",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
+      "claimed_by": null,
       "lease_expires": null,
       "pr": 198,
-      "result_delta": null,
+      "result_delta": -5272,
       "created_at": "2026-11-28T05:44:18Z",
       "url": "https://github.com/kongeskog/formal-math/issues/197",
       "technique": "restructure",
@@ -1201,93 +1201,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 198,
-      "title": "restructure(Nc/Dl): the cost of a step or template depends only on its size; the state invariant goes",
-      "author": "kongeskog",
-      "head_sha": "726d92efeb8f082fb39579046147f8cb35105dc3",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-28T06:01:50Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pending"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pending"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pending"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        }
-      ],
-      "idea": 197,
-      "url": "https://github.com/kongeskog/formal-math/pull/198",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/Dl"
-    },
     {
       "pr": 200,
       "title": "restructure(Paper/Approximate): the hub decomposition over the Laurent polynomials; no second cut-off",

@@ -23,16 +23,10 @@
   "format_notified": [
     104,
     109,
-    131
+    131,
+    201
   ],
   "judged": {
-    "198@726d92efeb8f082fb39579046147f8cb35105dc3": {
-      "at": "2026-11-28T06:03:13Z",
-      "names": null,
-      "on": [],
-      "contains": true,
-      "has_merged": null
-    },
     "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc": {
       "at": "2026-11-28T06:09:56Z",
       "names": null,
