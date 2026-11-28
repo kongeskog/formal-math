@@ -505,11 +505,8 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
       omega
     have h2 : 0 + 2 * TT.depth + 9 + 1 + 1 + 1 + 1 ≤ 3 * Y := by omega
     have h3 : 2 * Y ≤ 2 * Y * Y ^ 12 := Nat.le_mul_of_pos_right _ (Nat.pow_pos hA.pos)
-    calc _ ≤ 2 * Y * Y ^ 12 + 3 * Y * Y ^ 12 := Nat.add_le_add (h1.trans h3) (Nat.mul_le_mul_right _ h2)
-      _ = 5 * Y ^ 13 := by ring
-      _ ≤ Y * Y ^ 13 := Nat.mul_le_mul_right _ (by omega)
-      _ = Y ^ 14 := by ring
-      _ ≤ Y ^ 15 := Nat.pow_le_pow_right hA.pos (by norm_num)
+    grw [h1, h2, ← Nat.pow_le_pow_right hA.pos (show 14 ≤ 15 by norm_num)]
+    linarith [Nat.mul_le_mul_right (Y ^ 13) (show 5 ≤ Y by omega)]
   obtain ⟨fn, hst, hfn⟩ := SlpN.le hA.zero_lt hsteps s5
   have ex : ∀ f, f ∈ H5 → ∃ q : Fin (Y ^ 15), ∀ x, (fn q x : ℕ) = f x := by
     intro f hf
@@ -593,10 +590,9 @@ theorem pieces_numbers {c σ v e M C₀ a' T : ℕ} (hc : 1 ≤ c) (hσ : 1 ≤ 
             omega
         _ = ub * (4 * c * v ^ a') := by ring
     have h2 : M ≤ v ^ a' := hM.trans (pw _ _ (by nlinarith))
-    calc load ≤ 2 * (4 * c * v ^ a' + v ^ a') := by rw [hload]; gcongr
-      _ = (8 * c + 2) * v ^ a' := by ring
-      _ ≤ v * v ^ a' := Nat.mul_le_mul_right _ (by omega)
-      _ = v ^ (a' + 1) := (pow_succ' v a').symm
+    rw [hload, pow_succ']
+    grw [h1, h2]
+    linarith [Nat.mul_le_mul_right (v ^ a') (show 8 * c + 2 ≤ v by omega)]
   · have h1 : (T + σ) * c / ub ≤ (T + M * σ) * c / ub :=
       Nat.div_le_div_right (Nat.mul_le_mul_right _ (Nat.add_le_add_left (Nat.le_mul_of_pos_left _ hM1) _))
     omega
@@ -794,43 +790,25 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     exact List.mem_flatMap.2 ⟨_, hk', List.mem_map.2 ⟨r.2, by simp, rfl⟩⟩
   · refine (min_le_left _ _).trans ?_
     rw [hL]
-    calc 1 + C₀ + 2 ^ ee h * (TT.depth * k) ≤ (1 + C₀) * (L ^ C₀ * k) + 2 ^ ee h * (Ee * L ^ C₀ * k) :=
-          Nat.add_le_add (Nat.le_mul_of_pos_right _ (Nat.mul_pos hL1 (by omega)))
-            (Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ hdep))
-      _ = k * ((1 + C₀ + 2 ^ ee h * Ee) * L ^ C₀) := by ring
-      _ ≤ k * L ^ C := Nat.mul_le_mul_left _ (const_mul_pow_le hL2 (by omega))
+    grw [hdep, ← const_mul_pow_le hL2 (show 1 + C₀ + 2 ^ ee h * Ee + C₀ ≤ C by omega)]
+    linarith [Nat.le_mul_of_pos_right (1 + C₀) (Nat.mul_pos hL1 (show 0 < k by omega))]
   · refine (piece_blocks hn hg hK0 le_rfl (by omega) hkM g).trans ?_
-    calc 4 * (K + K) = 8 * K := by ring
-      _ ≤ C * K := Nat.mul_le_mul_right _ (by omega)
+    linarith [Nat.mul_le_mul_right K (show 8 ≤ C by omega)]
   · refine hWC _ ?_
     have h1 := piece_cut hn hg hK0 le_rfl (by omega) hk64 hnode g
-    calc _ = _ * v ^ 300 * ub := by ring
-      _ ≤ (yhat load (K + K) C₀ + (K + K) ^ C₀ * v ^ 300) * ub := Nat.mul_le_mul_right _ h1
-      _ = yhat load (K + K) C₀ * ub + (K + K) ^ C₀ * v ^ 300 * ub := by ring
-      _ ≤ 2 * (4 * c + 5) * Ee * L ^ C₀ * (K * T) + 1 * L ^ C₀ * (K * T) :=
-          Nat.add_le_add hYub (b5.trans (hKT.trans (Nat.le_mul_of_pos_left _ (by omega))))
-      _ = (2 * (4 * c + 5) * Ee + 1) * L ^ C₀ * (K * T) := by ring
-      _ ≤ _ := by
-          refine Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ ?_)
-          rw [← hW]
-          nlinarith
+    grw [mul_right_comm, h1, add_mul, b5, hYub]
+    linarith [Nat.mul_le_mul_right (L ^ C₀ * (K * T)) (show 2 * (4 * c + 5) * Ee + 1 ≤ W by rw [← hW]; nlinarith),
+      hKT.trans (Nat.le_mul_of_pos_left _ hL1)]
   · refine hWC _ ?_
     have h1 := piece_all hn hg hK0 le_rfl (by omega) hk64 hnode hkM g
     have h2 : (K + K) ^ C₀ * k * ub ≤ T := (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ hk64)).trans b5
-    calc _ = _ * k * ub := by ring
-      _ ≤ (C₀ * (4 * yhat load (K + K) C₀) + 4 * (K + K) * (lg (K + K) ^ C₀ * load) + 2 * C₀ * (K + K) ^ C₀ * k) * ub :=
-          Nat.mul_le_mul_right _ h1
-      _ = 4 * C₀ * (yhat load (K + K) C₀ * ub) + 8 * K * lg (K + K) ^ C₀ * (load * ub) +
-          2 * C₀ * ((K + K) ^ C₀ * k * ub) := by ring
-      _ ≤ 4 * C₀ * (2 * (4 * c + 5) * Ee * L ^ C₀ * (K * T)) + 8 * K * (Ee * L ^ C₀) * ((4 * c + 4) * T) +
-          2 * C₀ * (1 * L ^ C₀ * (K * T)) :=
-          Nat.add_le_add (Nat.add_le_add (Nat.mul_le_mul_left _ hYub) (Nat.mul_le_mul (Nat.mul_le_mul_left _ hPL) b3))
-            (Nat.mul_le_mul_left _ (h2.trans (hKT.trans (Nat.le_mul_of_pos_left _ (by omega)))))
-      _ = (8 * C₀ * (4 * c + 5) * Ee + 8 * (4 * c + 4) * Ee + 2 * C₀) * L ^ C₀ * (K * T) := by ring
-      _ ≤ _ := by
-          refine Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ ?_)
-          rw [← hW]
-          nlinarith [Nat.zero_le (C₀ * c * Ee)]
+    grw [mul_right_comm, h1]
+    refine le_of_eq_of_le (by ring : _ = 4 * C₀ * (yhat load (K + K) C₀ * ub) +
+      8 * K * lg (K + K) ^ C₀ * (load * ub) + 2 * C₀ * ((K + K) ^ C₀ * k * ub)) ?_
+    grw [h2, hYub, hPL, b3]
+    linarith [Nat.mul_le_mul_right (L ^ C₀ * (K * T)) (show 8 * C₀ * (4 * c + 5) * Ee + 8 * (4 * c + 4) * Ee + 2 * C₀
+      ≤ W by rw [← hW]; nlinarith [Nat.zero_le (C₀ * c * Ee)]), Nat.mul_le_mul_left (2 * C₀)
+      (hKT.trans (Nat.le_mul_of_pos_left _ hL1))]
   · obtain ⟨-, -, -, -, -, -, d3, d4, d5, -⟩ := TT.computed
     have hMY := hMN.trans (vp (show (e + a' + 2) * C₀ ≤ C by omega))
     refine ⟨?_, ?_, d3.trans hMY, d4.trans hMY, b6.trans (vp (by omega)), d5.trans hMY⟩
