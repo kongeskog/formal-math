@@ -118,7 +118,7 @@ variable {o' : (sys R FL Pl).N → Fin U1} {t : ℕ}
 
 /-- The units given at a slot depend only on the outcomes of earlier moves. -/
 theorem consM_congr (z : ZM R FL (ch := ch))
-    (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL z.1 →
+    (hag : ∀ mv' : Mv R ch FL, timeM R ch FL mv' < timeM R ch FL z.1 →
       ∀ c, oo o ⟨mv', c⟩ = oo o' ⟨mv', c⟩) :
     (consM lhat n o z : Finset (Un R FL Pl U0 U1)) = consM lhat n o' z := by
   -- whether a unit that is due by then is allowed
@@ -242,9 +242,9 @@ theorem plan_ok {cap : ℕ}
             · rfl
           · rfl
         rw [h1, Sym2.map_mk]
-      · change s(Pl.pt (nd T (l.1 + 1) l.1.2
+      · change s(Pl.pt (nd l.1.2
             (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
-          Pl.pt (nd T (l.1 + 1) l.1.2
+          Pl.pt (nd l.1.2
             (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
         simp only [inpZ, hT, pr, Sym2.map_mk]
     rw [← h4, Sym2.eq_iff] at h3

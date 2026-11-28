@@ -70,7 +70,7 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
     refine Finset.sum_le_sum fun l _ => ?_
     rw [Finset.mul_sum, ← Equiv.sum_comp (FL.ro l.2.2.2)]
     refine Finset.sum_le_sum (ι := (FL.L l.2.2.2).Ro) fun p _ => ?_
-    change (if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p)) = P then _ else 0) ≤ _
+    change (if nd l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p)) = P then _ else 0) ≤ _
     have h2 : ∀ (inst : Fintype ((FL.L l.2.2.2).SlAt p)), @Fintype.card _ inst ≤ Sm := fun inst =>
       (Fintype.card_le_of_injective (Subtype.val : (FL.L l.2.2.2).SlAt p → (FL.L l.2.2.2).Sl)
         Subtype.val_injective).trans (hSm _)
@@ -85,7 +85,7 @@ theorem held_node_le
     -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
     (hg : ∀ mv, GoodMv lhat (nn n) (oo o) mv)
     {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) {ℓf : ℕ}
-    (P : Nd T) (hini : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
+    (P : Nd T) (hini : ∀ a, P = nd (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
     heldN R FL Pl n o (Pl.pt P) +
       (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) ≤
       isB ch P * (ℓf + 8 * m * lhat) + chanN R FL Pl (Pl.pt P) +

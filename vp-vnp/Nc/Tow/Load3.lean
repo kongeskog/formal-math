@@ -85,7 +85,7 @@ theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick FL L (wit
   exact absurd hd' (not_lt.2 this)
 
 /-- The number of units at a vertex is small. -/
-theorem tmin_le (L : Tg T m AA → ℕ) (l : LMv T FL) {n' : Sym2 T.Fl → ℕ}
+theorem tmin_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
     (hn' : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) ≤ n' q) :
     (FL.a₁ : ℝ) * tmin FL L l ≤ √(vN2 b n') + FL.a₁ := by
   have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
@@ -255,12 +255,12 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
   obtain ⟨i, hi⟩ := exists_isMin (load lhat n o) j.castSucc
   obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
   refine Tower.load_step j.2 FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
-    (fun ω => tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)) ?_ ?_
+    (fun ω => tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)) ?_ ?_
   · exact isMin_le hi
   · intro e' he'
     exact mid_load_le j hi e' he'
   · intro ω
-    obtain ⟨d, hd⟩ := exists_pick (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)
+    obtain ⟨d, hd⟩ := exists_pick (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)
     have h4 : ∑ ν : T.Nr, (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1)) ^ 2 ≤
         ∑ ν : (FL.L d).Cn, (alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R FL (ch := ch))) ^ 2 := by
       rw [← Equiv.sum_comp (FL.cn d)]
@@ -269,10 +269,10 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
       rwa [Equiv.symm_apply_apply] at this
     -- the squares are bounded by the length of the laws, `G₁ ≤ 2 C₁ a₁²`, and `num ≤ tmin`
     have h5 := (Nat.mul_le_mul_left b h4).trans ((alive_sq _).trans
-      (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv T FL)) 2)))
+      (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv FL)) 2)))
     have h6 : (b : ℝ) * ∑ ν : T.Nr,
           (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
-        FL.G₁ * (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ) ^ 2 := by
+        FL.G₁ * (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ) ^ 2 := by
       exact_mod_cast h5
     linarith [mul_le_mul_of_nonneg_right FL.G₁_le
       (sq_nonneg (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ))]

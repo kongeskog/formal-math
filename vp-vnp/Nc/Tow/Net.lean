@@ -25,24 +25,24 @@ variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ}
 abbrev Nd (T : Tower h b J) := Option (Σ j : Fin (J + 1), T.X j)
 
 /-- The node of a chamber. -/
-def nd (T : Tower h b J) (j : ℕ) (hj : j ≤ J) (c : T.X j) : Nd T :=
+def nd {T : Tower h b J} {j : ℕ} (hj : j ≤ J) (c : T.X j) : Nd T :=
   some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩
 
 theorem nd_inj {T : Tower h b J} {j : ℕ} {hj hj' : j ≤ J} {c c' : T.X j} :
-    nd T j hj c = nd T j hj' c' ↔ c = c' := by
+    nd hj c = nd hj' c' ↔ c = c' := by
   unfold nd
   rw [Option.some_inj, Sigma.mk.injEq]
   simp
 
 theorem nd_ne {T : Tower h b J} {j j' : ℕ} (hjj : j ≠ j') {hj : j ≤ J} {hj' : j' ≤ J}
     {c : T.X j} {c' : T.X j'} :
-    nd T j hj c ≠ nd T j' hj' c' := by
+    nd hj c ≠ nd hj' c' := by
   unfold nd
   rw [Ne, Option.some_inj, Sigma.mk.injEq]
   rintro ⟨h1, -⟩
   exact hjj (congrArg Fin.val h1)
 
-theorem nd_ne_none {T : Tower h b J} {j : ℕ} {hj : j ≤ J} {c : T.X j} : nd T j hj c ≠ none := by
+theorem nd_ne_none {T : Tower h b J} {j : ℕ} {hj : j ≤ J} {c : T.X j} : nd hj c ≠ none := by
   unfold nd; exact Option.some_ne_none _
 
 /-- Names of relays. -/
@@ -73,7 +73,7 @@ noncomputable instance (T : Tower h b J) (m AA : ℕ) : DecidableEq (Tg T m AA) 
 
 section
 
-variable (T : Tower h b J) (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0)
+variable {T : Tower h b J} (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0)
 
 /-- The host of an end of an edge. -/
 abbrev hst {j : ℕ} (i : Fin h) (c : T.X j) : T.X (j + 1) := T.host i (T.vx i c)
@@ -133,7 +133,7 @@ theorem tri_inj {x : RM T m AA} (hx : okR R ch x) : Function.Injective (tri R ch
       · change nd j.2 (T.π (T.e0 e)) ≠ nd j.2 (T.π (T.e1 e))
         rw [Ne, nd_inj]
         exact π_ne e
-      · change nd T (j + 1) j.2 (T.π (T.e1 e)) ≠ nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e))
+      · change nd j.2 (T.π (T.e1 e)) ≠ nd j.2 (hst (T.ty e) (T.e1 e))
         rw [Ne, nd_inj]
         exact hx.2 rfl
     · fin_cases s
@@ -223,9 +223,9 @@ theorem atv_eq {j : ℕ} (i : Fin h) (c : T.X j) : atv i (T.vx i c) (T.co i c) =
   (Equiv.ofBijective _ (T.vx_co i)).symm_apply_apply c
 
 /-- The parties of a move. -/
-noncomputable def partM (FL : FlagLaws F T) : (mv : Mv T R ch FL) → (kindM R ch FL mv).Ro → Nd T
-  | .inl x => fun p => tri T R ch x.1 p
-  | .inr l => fun p => nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p))
+noncomputable def partM (FL : FlagLaws F T) : (mv : Mv R ch FL) → (kindM R ch FL mv).Ro → Nd T
+  | .inl x => fun p => tri R ch x.1 p
+  | .inr l => fun p => nd l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p))
 
 theorem partM_inj (FL : FlagLaws F T) (mv : Mv R ch FL) : Function.Injective (partM R ch FL mv) := by
   rcases mv with x | l
@@ -243,8 +243,8 @@ def timeM (FL : FlagLaws F T) : Mv R ch FL → ℕ
   | .inr l => 2 * m + 6 * l.1 + 4
 
 /-- Targets of channels. -/
-noncomputable def tgM (FL : FlagLaws F T) : (mv : Mv T R ch FL) → (kindM R ch FL mv).Cn → Tg T m AA
-  | .inl x => fun ν => tgR T R ch x.1 ν
+noncomputable def tgM (FL : FlagLaws F T) : (mv : Mv R ch FL) → (kindM R ch FL mv).Cn → Tg T m AA
+  | .inl x => fun ν => tgR R ch x.1 ν
   | .inr l => fun ν => .edge l.1.succ ((T.nr l.2.1).symm (l.2.2.1, FL.cn l.2.2.2 ν)).1
 
 end

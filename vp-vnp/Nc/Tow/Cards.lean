@@ -97,7 +97,7 @@ section Moves
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'}
 
 theorem card_LMv_le :
-    Fintype.card (LMv T FL) ≤ lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) := by
+    Fintype.card (LMv FL) ≤ lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) := by
   simp only [Fintype.card_sigma, Fintype.card_prod]
   unfold lmN
   calc ∑ j : Fin J, ∑ i : Fin h, Fintype.card (T.V (j + 1) i) * Fintype.card FL.Di ≤
@@ -121,7 +121,7 @@ theorem sum_mv_le (f : Mv R ch FL → ℕ) {a : ℕ} {g : LMv FL → ℕ} (h1 : 
 
 theorem sum_moves (f : Mv R ch FL → ℕ) : ∑ x, f (eE R FL x) = ∑ mv, f mv := Equiv.sum_comp (eE R FL) f
 
-theorem card_Mv_le : Fintype.card (Mv T R ch FL) ≤
+theorem card_Mv_le : Fintype.card (Mv R ch FL) ≤
     rmN h m J AA (Fintype.card (T.X 0)) + lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) := by
   have h1 := sum_mv_le (R := R) (ch := ch) (FL := FL) (fun _ => 1) (a := 1) (g := fun _ => 1) (fun _ => le_rfl)
     fun _ => le_rfl
@@ -139,7 +139,7 @@ theorem card_N_le : Fintype.card (sys R FL Pl).N ≤ rmN h m J AA (Fintype.card 
   · exact le_of_eq (Fintype.card_congr (Equiv.refl Bool))
   · exact le_of_eq (Fintype.card_congr (FL.cn l.2.2.2))
   · refine Nat.add_le_add (Nat.mul_le_mul_right _ card_RM_le) ?_
-    have h1 : ∑ _l : LMv T FL, Fintype.card T.Nr =
+    have h1 : ∑ _l : LMv FL, Fintype.card T.Nr =
         ∑ j : Fin J, ∑ i : Fin h, Fintype.card (T.V (j + 1) i) * Fintype.card T.Nr * Fintype.card FL.Di := by
       rw [Finset.sum_const, card_univ, smul_eq_mul, Fintype.card_sigma, Finset.sum_mul]
       refine Finset.sum_congr rfl fun j _ => ?_

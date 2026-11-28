@@ -211,8 +211,8 @@ theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
 
 /-- **The current units in the end**: alive units between a node and its parent, and dead units. -/
 theorem cur_end {u : Un R FL Pl U0 U1}
-    (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL))) :
-    u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ∧
+    (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv R ch FL))) :
+    u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ∧
       (AlU lhat n o u → tgU u = .done) := by
   rw [Plan.cur, mem_sdiff] at hu
   refine ⟨hu.1, fun ha => ?_⟩

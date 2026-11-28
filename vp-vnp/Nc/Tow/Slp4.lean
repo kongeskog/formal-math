@@ -150,7 +150,7 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
   rcases z with ⟨y | l, e⟩
   · have h1 : PY Dd H Y 0 fun x => ActR (load lhat (nX nI x) (oX oI x)) y.1 := py_actR hA hB ha.isMin y.1
     have h2 := PY.and hA (h1.mono hY (Nat.zero_le 1)) (PY.and hA (PY.base (hal u))
-      (PY.const hA (tgU u = inpR T y.1)))
+      (PY.const hA (tgU u = inpR y.1)))
     exact (h2.congr fun x => (consM_inl y e u).symm).mono hY (by omega)
   · have h1 : PY Dd H Y 0 fun x => Pick FL (load lhat (nX nI x) (oX oI x)) l :=
       PY.base (ha.pick l)

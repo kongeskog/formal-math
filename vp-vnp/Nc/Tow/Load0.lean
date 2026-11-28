@@ -22,7 +22,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Ro
 /-- The number of units of a batch. -/
 noncomputable def Bt (T : Tower h b J) (ch : Fin AA ↪ T.X 0) (lhat : ℕ)
     (n : Fin AA → Fin AA → ℕ) (a c : Fin AA) (γ : T.X 0) : ℕ :=
-  if Valid lhat n then ((range (n a c)).filter fun k => gam T ch a k = γ).card else 0
+  if Valid lhat n then ((range (n a c)).filter fun k => gam ch a k = γ).card else 0
 
 theorem Bt_le (a c : Fin AA) (γ : T.X 0) : Bt T ch lhat n a c γ ≤ n a c / Fintype.card (T.X 0) + 1 := by
   unfold Bt

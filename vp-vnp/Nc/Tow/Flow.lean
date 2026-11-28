@@ -379,7 +379,7 @@ theorem alvN_congr {ν : NM R FL (ch := ch)} (hν : ∀ c, o ⟨ν.1, c⟩ = o' 
     rw [alvN_inr, alvN_inr, hν]
     exact if_congr hg rfl rfl
 
-theorem ld_congr {N : Mv T R ch FL → ℕ}
+theorem ld_congr {N : Mv R ch FL → ℕ}
     (hN : ∀ mv, N mv ≠ 0 → ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) (τ : Tg T m AA) :
     ld lhat n o N τ = ld lhat n o' N τ := by
   unfold ld
@@ -391,7 +391,7 @@ theorem ld_congr {N : Mv T R ch FL → ℕ}
     · exact alvN_congr (hN ν.1 h0) _
   · rfl
 
-theorem numS_congr {t : ℕ} (ho : ∀ mv : Mv T R ch FL, timeM R ch FL mv < t →
+theorem numS_congr {t : ℕ} (ho : ∀ mv : Mv R ch FL, timeM R ch FL mv < t →
     ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) :
     numS lhat n o t = numS lhat n o' t := by
   induction t with
@@ -408,8 +408,8 @@ theorem numS_congr {t : ℕ} (ho : ∀ mv : Mv T R ch FL, timeM R ch FL mv < t �
       exact hmv' (numS_zero_of_le (by omega))
     · rfl
 
-theorem num_congr {mv : Mv T R ch FL}
-    (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
+theorem num_congr {mv : Mv R ch FL}
+    (ho : ∀ mv' : Mv R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
     num lhat n o mv = num lhat n o' mv := by
   rw [num, num, numS_stable (timeM_lt mv), numS_stable (timeM_lt mv), numS_congr ho]
   refine numF_congr fun τ _ => ld_congr ?_ τ
@@ -419,7 +419,7 @@ theorem num_congr {mv : Mv T R ch FL}
   exact hmv' (numS_zero_of_le (by omega))
 
 theorem load_congr {τ : Tg T m AA} {t : ℕ} (hτ : tgTime τ ≤ t)
-    (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
+    (ho : ∀ mv' : Mv R ch FL, timeM R ch FL mv' < t → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
     load lhat n o τ = load lhat n o' τ := by
   rw [← ld_numS hτ, ← ld_numS hτ, numS_congr ho]
   refine ld_congr ?_ τ
@@ -428,8 +428,8 @@ theorem load_congr {τ : Tg T m AA} {t : ℕ} (hτ : tgTime τ ≤ t)
   by_contra hcon
   exact hmv' (numS_zero_of_le (by omega))
 
-theorem good_congr {mv : Mv T R ch FL}
-    (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩)
+theorem good_congr {mv : Mv R ch FL}
+    (ho : ∀ mv' : Mv R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩)
     (ho' : ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) : GoodMv lhat n o mv ↔ GoodMv lhat n o' mv := by
   have hnum := num_congr (lhat := lhat) (n := n) ho
   rcases mv with x | l

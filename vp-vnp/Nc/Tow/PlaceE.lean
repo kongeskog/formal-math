@@ -19,7 +19,7 @@ variable {h b J AA : ℕ}
 
 /-- The node of a base party. -/
 def baseNd (T : Tower h b J) (ch : Fin AA ↪ T.X 0) : Fin AA ↪ Nd T where
-  toFun a := nd T 0 (Nat.zero_le _) (ch a)
+  toFun a := nd (Nat.zero_le _) (ch a)
   inj' a c hac := ch.injective (nd_inj.1 hac)
 
 /-- The number of extra parties. -/

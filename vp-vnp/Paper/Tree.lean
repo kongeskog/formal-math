@@ -288,7 +288,7 @@ theorem card_ndChildren (Lf : ∀ j, T.Ed j → ℕ) [DecidableEq (Nd T)] {ν : 
     rw [hμ.2] at this
     exact absurd this.symm (Nat.succ_ne_zero _)
   · refine le_trans ?_ (card_children (Lf := Lf) (j := j) (by omega) c')
-    refine le_trans (card_le_card ?_) (card_image_le (f := fun c : T.X j => nd T j (by omega) c))
+    refine le_trans (card_le_card ?_) (card_image_le (f := fun c : T.X j => nd (by omega) c))
     intro μ hμ
     obtain ⟨-, hμ1, hμ2⟩ := mem_filter.1 hμ
     have hs := ndStage_par Lf hμ1
@@ -300,7 +300,7 @@ theorem card_ndChildren (Lf : ∀ j, T.Ed j → ℕ) [DecidableEq (Nd T)] {ν : 
       omega
     subst e
     refine mem_image.2 ⟨c, mem_filter.2 ⟨mem_univ _, ?_⟩, rfl⟩
-    have h2 : parN Lf i c = nd T (i + 1) hi c' := hμ2
+    have h2 : parN Lf i c = nd hi c' := hμ2
     unfold parN at h2
     rw [dif_pos hi, nd_inj] at h2
     exact h2
@@ -410,7 +410,7 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
       refine ⟨⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩, hmem _ ⟨⟨x, hx⟩, β, rfl, hdone, h1⟩, ?_⟩
       have h3 : s(partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β false),
           partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
-          s(nd T j hj c, parN (lev (load N (nn n) (oo o))) j c) := h2
+          s(nd hj c, parN (lev (load N (nn n) (oo o))) j c) := h2
       have h4 := congrArg (Sym2.map Pl.pt) h3
       simp only [Sym2.map_mk] at h4
       rw [h4, treePar, Equiv.symm_apply_apply]
@@ -501,7 +501,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
   · -- the parent of a node of stage `j` is of stage `j + 1`
     have hoff : ndStage (Pl.pt.symm q) ≠ j + 1 →
         ∀ x, ¬ (Pl.pt (ndPar (lev (load U0' (nn (n' x)) (oo (o' x))))
-          (nd T j hj c)) = q) :=
+          (nd hj c)) = q) :=
       fun hq x hx => hq (by rw [← hx, Equiv.symm_apply_apply, ndStage_par _ nd_ne_none]; rfl)
     rcases nd_cases (Pl.pt.symm q) with eq | ⟨i, hi, c', eq⟩
     · have := hoff (by rw [eq]; simp only [ndStage]; omega)
@@ -511,7 +511,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
       · subst hij
         refine Or.inl ?_
         have e2 : (fun x => Pl.pt (ndPar (lev (load U0' (nn (n' x)) (oo (o' x))))
-            (nd T j hj c)) = q) =
+            (nd hj c)) = q) =
             fun x => hostj (lev (load U0' (nn (n' x)) (oo (o' x)))) c = c' := by
           funext x
           rw [← Equiv.eq_symm_apply, eq]
@@ -523,7 +523,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
         -- `this` makes the predicate `False` for every `x`; `hconst` closes it
         simp_all
   · have e2 : (fun x => Pl.pt (ndPar (lev (load U0' (nn (n' x)) (oo (o' x))))
-      (nd T j hj c)) = q) =
+      (nd hj c)) = q) =
         fun _ => Pl.pt none = q := by
       funext x
       simp only [ndPar, nd, parN, dif_neg (show ¬ j + 1 ≤ J by omega)]
@@ -879,7 +879,7 @@ theorem tree_computed {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V) (hJ : J + 1 ≤ V)
       Fintype.card (Un R FL Pl N U1) ≤ 20 * V ^ 9 ∧
       (∀ a c x, (inp (.inl (a, c)) x : ℕ) = x.1 a c) ∧ (∀ ν x, (inp (.inr ν) x : ℕ) = x.2 ν) ∧ SlpN inp steps H ∧
       (∀ p q, (ind fun x => treePar R FL Pl x.1 x.2 p = q) ∈ H) ∧
-      (∀ u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cur x.1 x.2 (Fintype.card (Mv T R ch FL))) ∈ H) ∧
+      (∀ u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cur x.1 x.2 (Fintype.card (Mv R ch FL))) ∈ H) ∧
       (∀ z u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cons x.1 x.2 z) ∈ H) ∧
       (∀ y, (fun x => (Tow.plan R FL Pl N N U1).num x.1 x.2 y) ∈ H) ∧
       (∀ p, (fun x => treeUp R FL Pl x.1 x.2 p) ∈ H) ∧

@@ -101,7 +101,7 @@ theorem cy_bt (hb : Base nx ox H) (hv : ind (fun x => Valid lhat (nx x)) ∈ H) 
   have h1 : CY Dd H Y 5 fun x => ∑ a, ∑ c, ((range (nx x a c)).filter fun k => tgB R ch a c k = τ).card := by
     refine CY.sum hA univ (by simpa using hB.aa1) (fun a _ => ?_) fun x => hA.lt_of_le (hb0 x)
     refine CY.sum hA univ (by simpa using hB.aa1) (fun c _ => ?_) fun x => hA.lt_of_le ?_
-    · refine CY.op1 hA (fun s => ((range s).filter fun k => tgB T R ch a c k = τ).card)
+    · refine CY.op1 hA (fun s => ((range s).filter fun k => tgB R ch a c k = τ).card)
         (CY.base (hb.n a c)) fun x => hA.lt_of_le ?_
       refine (card_filter_le _ _).trans ?_
       rw [card_range]

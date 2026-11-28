@@ -59,7 +59,7 @@ theorem tmin_real_le (l : LMv FL) : (tmin FL (load lhat n o) l : ℝ) ≤ 3 * b 
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have ha1 : (1 : ℝ) ≤ FL.a₁ := by exact_mod_cast FL.a₁_pos
   set nf : T.Ed j → ℕ := lds lhat n o j.castSucc with hnf
-  have h1 : (FL.a₁ : ℝ) * tmin FL (load lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) ≤
+  have h1 : (FL.a₁ : ℝ) * tmin FL (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) ≤
       √(vN2 b (T.nEnd i nf ω)) + FL.a₁ := tmin_le _ _ fun q => seg_le j i ω q
   have hX : 0 < Fintype.card (T.X (j.1 + 1)) := by
     rw [← Tower.card_V i]

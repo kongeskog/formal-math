@@ -20,7 +20,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Ro
 
 /-- The parent of a chamber, as a node. -/
 noncomputable def parN (Lf : ∀ j, T.Ed j → ℕ) (j : ℕ) (c : T.X j) : Nd T :=
-  if hj : j + 1 ≤ J then nd T (j + 1) hj (hostj Lf c) else none
+  if hj : j + 1 ≤ J then nd hj (hostj Lf c) else none
 
 /-- The chamber below: which end of the edge of a relay. -/
 def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
@@ -29,7 +29,7 @@ def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
   | .fin e, β => some ⟨Fin.last J, if β then T.e1 e else T.e0 e⟩
   | _, _ => none
 
-theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i e)) (hne : num lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
+theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR R ch (.inn j i e)) (hne : num lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
     i = imin (lev (load lhat n o)) j.1 := by
   classical
   rw [num_eq, numF] at hne
@@ -54,7 +54,7 @@ theorem done_hold {x : RM T m AA} (hx : okR R ch x) {β : Bool} (hd : tgR R ch x
     (hne : num lhat n o (.inl ⟨x, hx⟩) ≠ 0) :
     ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), chd x β = some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ ∧
       hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
-        s(nd T j hj c, parN (lev (load lhat n o)) j c) := by
+        s(nd hj c, parN (lev (load lhat n o)) j c) := by
   have e0 : ∀ β : Bool, hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
       if β then s(tri R ch x 1, tri R ch x 2) else s(tri R ch x 0, tri R ch x 1) := by
     intro β
@@ -72,7 +72,7 @@ theorem done_hold {x : RM T m AA} (hx : okR R ch x) {β : Bool} (hd : tgR R ch x
   · have hi := num_inn j i e hx hne
     have hjJ := j.2
     have hpar : ∀ c : T.X j.1, parN (lev (load lhat n o)) j.1 c =
-        nd T (j + 1) j.2 (hst T i c) := by
+        nd j.2 (hst i c) := by
       intro c
       unfold parN
       rw [dif_pos (by omega : j.1 + 1 ≤ J), hi]
@@ -85,7 +85,7 @@ theorem done_hold {x : RM T m AA} (hx : okR R ch x) {β : Bool} (hd : tgR R ch x
       rw [hpar]
       have h1 : T.vx i (T.e0 e) = T.vx i (T.e1 e) := by
         rw [T.nr_vx0 i ⟨e, hx⟩, T.nr_vx1 i ⟨e, hx⟩]
-      have h2 : hst T i (T.e0 e) = hst T i (T.e1 e) := by
+      have h2 : hst i (T.e0 e) = hst i (T.e1 e) := by
         unfold hst
         rw [h1]
       change s(nd j.2 (hst i (T.e0 e)), nd j.2.le (T.e1 e)) = _
@@ -93,7 +93,7 @@ theorem done_hold {x : RM T m AA} (hx : okR R ch x) {β : Bool} (hd : tgR R ch x
   · have hi := num_mid j e s hx hne
     have hjJ := j.2
     have hpar : ∀ c : T.X j.1, parN (lev (load lhat n o)) j.1 c =
-        nd T (j + 1) j.2 (hst T (T.ty e) c) := by
+        nd j.2 (hst (T.ty e) c) := by
       intro c
       unfold parN
       rw [dif_pos (by omega : j.1 + 1 ≤ J), hi]
