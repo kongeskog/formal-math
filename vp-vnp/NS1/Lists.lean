@@ -37,52 +37,6 @@ theorem listT_ofBits (w : List Bool) : listT (w.map bit) = ofBits w := by
   | nil => rfl
   | cons b w ih => simp [listT, ofBits, ih]
 
-/-- Apply the program that is the value of a formula to the values of another one. -/
-theorem Does.runW {F G : Fm} {x p : Tree} {Q : List (A × Tree)} {R : Tree → List (A × Tree)} {c d e : ℕ}
-    (hF : Gives θ F x p c) (hG : Does θ G x Q d) (h : ∀ q ∈ Q, Does θ (Fm.ofTree p) q.2 (R q.2) e) :
-    Does θ (.run F G) x (bindW Q R) (c + d + e + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
-  obtain ⟨l', f1, f2, f3⟩ := hG
-  have ho : ∀ r ∈ l, r.out = p := by
-    intro r hr
-    obtain ⟨-, q, hq, h⟩ := e2 r hr
-    rw [List.mem_singleton] at hq
-    subst hq
-    exact h.symm
-  have hG' : ∀ s ∈ l', Does θ (Fm.ofTree p) s.out (R s.out) e := by
-    intro s hs
-    obtain ⟨-, q, hq, h'⟩ := f2 s hs
-    rw [← h']
-    exact h q hq
-  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [ho r hr]; exact (hG' s hs).hl, ?_, fun φ => ?_⟩
-  · intro u hu
-    simp only [List.mem_flatMap, List.mem_map] at hu
-    obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu
-    rw [ho r hr] at ht
-    obtain ⟨a2, -⟩ := e2 r hr
-    obtain ⟨b2, q, hq, b3⟩ := f2 s hs
-    obtain ⟨c2, q', hq', c3⟩ := (hG' s hs).evl.1 t ht
-    rw [← b3] at hq'
-    refine ⟨?_, (q.1 * q'.1, q'.2), mem_bindW_of hq hq', c3⟩
-    simp only [Run.seq, Run.tick]
-    omega
-  · rw [sum_flatMap_map, wsum_bindW]
-    have h1 : ∀ r ∈ l, ((l'.flatMap fun s => (NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
-        ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum = r.th * wsum Q fun o => wsum (R o) φ := by
-      intro r hr
-      rw [sum_flatMap_map, ← f3 fun o => wsum (R o) φ, ← List.sum_map_mul_left]
-      congr 1
-      refine List.map_congr_left fun s hs => ?_
-      rw [ho r hr, List.map_map, ← (hG' s hs).evl.2 φ, ← List.sum_map_mul_left, ← List.sum_map_mul_left]
-      congr 1
-      refine List.map_congr_left fun t _ => ?_
-      simp only [Function.comp_apply, Run.seq, Run.tick]
-      ring
-    rw [List.map_congr_left h1]
-    have := e3 fun _ => wsum Q fun o => wsum (R o) φ
-    rw [this]
-    simp [wsum]
-
 section Fold
 
 /-- Fold over a list with a state. The argument is (this program, (state, list)); `step` is applied to
