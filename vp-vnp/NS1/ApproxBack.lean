@@ -23,10 +23,9 @@ variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] 
 /-- Accept only with the counter at 0; then run the plain instance. The argument is
 (argument, ((budgets, counter), names)). -/
 def finF (P : Tree) : Fm :=
-  .tl (.cons (.run (.quote AZ.code) (.cons (.quote AZ.code)
-      (.cons (.quote .nil) (.tl (.hd (.tl .id))))))
+  .ite (app nzB.code (.cons (.quote nzB.code) (.tl (.hd (.tl .id))))) .fail
     (app UF.code (.cons (.quote WN.code) (.cons (.quote P)
-        (.cons (.hd .id) (.hd (.hd (.tl .id))))))))
+        (.cons (.hd .id) (.hd (.hd (.tl .id)))))))
 
 theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t : Bt}
     {o : List Bool} {τ : ℕ}
@@ -34,41 +33,20 @@ theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t :
     KV θ κ S (finF P) (.cons z u)
       ((if KT.val o = 0 then 1 else 0) * algebraMap A E (pv θ (zq P z t)))
       (40 * (o.length + 1) + τ + 40) := by
-  obtain ⟨k, hk, v, hv⟩ := AZ_ev (θ := θ) (.leaf o)
-  generalize hx : Tree.cons z u = x
-  have hv' : Ev θ (Fm.ofTree AZ.code) (.cons AZ.code (.cons .nil (ofBits o)))
-      (if (Bt.leaf o).zero then [.det k v] else []) := by
-    rw [Fm.ofTree_code]
-    exact hv
-  have eA := Ev.run_det (Dt.quote (θ := θ) AZ.code x) (Dt.cons (Dt.quote AZ.code x) (Dt.cons (Dt.quote .nil x)
-    (Dt.tl (Dt.hd (Dt.tl (Dt.id x)))))) (by rw [← hx]; simpa [hu] using hv')
-  have g : Gives θ (.cons (.quote WN.code) (.cons (.quote P)
-      (.cons (.hd .id) (.hd (.hd (.tl .id)))))) x
-      (zq P z t) 11 := by
-    subst hx
-    simpa [zq, hu] using (Gives.cons (Gives.quote (θ := θ) WN.code (.cons z u))
-        (Gives.cons (Gives.quote P _)
-      (Gives.cons (Gives.id _).hd (Gives.id _).tl.hd.hd)))
-  obtain ⟨l, e, h1, h2⟩ := KV.app_gives (κ := κ) (S := S) (p := UF.code) g
-    (by rw [Fm.ofTree_code]; exact NS1.UF_kv (κ := κ) (S := S) hP)
-  have e' := Ev.tl (Ev.cons eA e)
-  simp only [Bt.nds] at hk
-  have hz : (Bt.leaf o).zero = true ↔ KT.val o = 0 := by rw [Bt.zero]; exact all_not_iff o
-  refine ⟨_, e', ?_, ?_⟩
-  · intro r hr
-    by_cases hb : (Bt.leaf o).zero <;> simp only [hb, if_true, if_false,
-        List.map_cons, List.map_nil,
-      List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_map, reduceCtorEq] at hr
-    · obtain ⟨_, ⟨s, hs, rfl⟩, rfl⟩ := hr
-      obtain ⟨a1, a2⟩ := h1 s hs
-      simp only [Run.tick, Run.seq, Run.delay, Run.det, tl_cons]
-      exact ⟨by omega, a2⟩
-    · simp at hr
-  · by_cases hb : KT.val o = 0
-    · simp [hz.2 hb, hb, ← h2, val, wt, Run.tick, Run.seq, Run.delay, Run.det,
-        Function.comp_def]
-      rfl
-    · simp [Bool.eq_false_iff.2 (fun h => hb (hz.1 h)), hb, val]
+  have hn := Gives.lett (Gives.cons (Gives.quote (θ := θ) nzB.code (.cons z u))
+    (show Gives θ (.tl (.hd (.tl .id))) (.cons z u) (ofBits o) 4 by
+      simpa [hu] using (Gives.id (θ := θ) (.cons z u)).tl.hd.tl)) (nzB_gives o)
+  by_cases hz : KT.val o = 0
+  · rw [show bit (decide (KT.val o ≠ 0)) = .nil by simp [hz, bit]] at hn
+    have g : Gives θ (.cons (.quote WN.code) (.cons (.quote P)
+        (.cons (.hd .id) (.hd (.hd (.tl .id)))))) (.cons z u) (zq P z t) 11 := by
+      simpa [zq, hu] using (Gives.cons (Gives.quote (θ := θ) WN.code (.cons z u))
+        (Gives.cons (Gives.quote P _) (Gives.cons (Gives.id _).hd (Gives.id _).tl.hd.hd)))
+    rw [if_pos hz, one_mul]
+    exact (KV.ite_false hn (KV.app_gives g (by rw [Fm.ofTree_code]; exact UF_kv hP))).mono
+      (by omega)
+  · rw [if_neg hz, zero_mul]
+    exact (KV.ite_true hn (by simp [hz, bit, one]) (KV.fail _)).mono (by omega)
 
 theorem nds_coefK (J m : ℕ) (K : KT E[T;T⁻¹]) : (coefK J m K).nds ≤ K.nds * 2 ^ (J + m + 1) := by
   induction K with
@@ -111,10 +89,10 @@ theorem extF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {g : F
   · simp [path_ofBits, zq]
 
 /-- The sizes of the fixed programs of the extraction. -/
-def xcst : ℕ := combF.code.size + 2 * AZ.code.size + UF.code.size + WN.code.size + 1000
+def xcst : ℕ := combF.code.size + 2 * nzB.code.size + UF.code.size + WN.code.size + 1000
 
-theorem xcst_def : xcst = combF.code.size + 2 * AZ.code.size + UF.code.size + WN.code.size + 1000 :=
-  rfl
+theorem xcst_def :
+    xcst = combF.code.size + 2 * nzB.code.size + UF.code.size + WN.code.size + 1000 := rfl
 
 theorem size_chT {n C : ℕ} {f : List Bool → Fm} (h : ∀ w : List Bool, w.length = n → (f w).code.size ≤ C) :
     (chT n f).code.size + 31 ≤ 2 ^ n * (C + 31) := by
@@ -176,8 +154,9 @@ theorem size_xF (J m W : ℕ) (K : KT E[T;T⁻¹]) (pre : List Bool) :
     linarith
 
 theorem size_extF (P : Tree) (g : Fm) : (extF P g).code.size ≤ P.size + g.code.size + xcst := by
+  have hf : Fm.fail.code.size = 19 := rfl
   rw [xcst_def, extF, guessF, finF, size_lett, node]
-  simp only [size_quote, size_cons, size_hd, size_tl, size_id, size_run, size_app, Tree.size]
+  simp only [size_quote, size_cons, size_hd, size_tl, size_id, size_ite, size_app, hf, Tree.size]
   omega
 
 end NS1

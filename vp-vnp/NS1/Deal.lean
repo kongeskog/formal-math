@@ -104,10 +104,9 @@ theorem bitsB_does (n : ℕ) : ∀ (w : List Bool) (acc : List Bool), KT.val w =
       simp [this, bit, one]
     rcases decw_val w with ⟨h1, h2⟩ | ⟨w', h1, h2⟩
     · omega
-    obtain ⟨k, hk, hdw⟩ := DW_some (θ := θ) h1
     have hd : Gives θ (app DW.code (.cons (.quote DW.code) (.hd (.tl .id))))
         (.cons bitsB.code (.cons (ofBits w) (ofBits acc))) (ofBits w') (1 + 3 + 1 + 20 * w.length + 2) :=
-      Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) ((Does.of_dt hdw).mono hk)
+      Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) (DW_gives h1)
     have hl : w'.length = w.length := length_decw h1
     obtain ⟨Q1, d1, q1, v1⟩ := ih w' (true :: acc) (by omega)
     obtain ⟨Q0, d0, q0, v0⟩ := ih w' (false :: acc) (by omega)

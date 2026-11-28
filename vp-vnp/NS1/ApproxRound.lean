@@ -100,7 +100,7 @@ theorem renamed_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} 
       exact fun r hr p hp => KT.lookup_expand ((KT.inB_map f _ K p).2 ((hT r hr).2 p hp)))
   have h2 := KT.ht_expand B (K.map f)
   rw [KT.ht_map] at h2
-  refine ((rebF_kv eg rg fun q hq => (hze q hq).1).mono ?_).congr ?_
+  refine ((rebF_kv eg rg hze).mono ?_).congr ?_
   · rw [hn]
     have := Nat.mul_le_mul_right T (show 60 * (((K.map f).expand B).ht + J + 1) + 42 ≤
       60 * (K.ht + B + J + 1) + 42 by omega)

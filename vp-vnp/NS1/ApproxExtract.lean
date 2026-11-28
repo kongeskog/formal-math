@@ -185,7 +185,7 @@ noncomputable def xL (J m W : ℕ) : KT E[T;T⁻¹] → List (Bt × E × List Bo
 
 /-- Pair the budgets and add the counters. The argument is ((data, names), (data, names)) where the
 data are (budgets, counter). -/
-def combF : Fm := .cons (.cons (.cons (.hd (.hd (.hd .id))) (.hd (.hd (.tl .id)))) (.quote .nil))
+def combF : Fm := .cons (.cons (.quote .nil) (.cons (.hd (.hd (.hd .id))) (.hd (.hd (.tl .id)))))
   (.run (.quote AD.code) (.cons (.quote AD.code) (.cons (.quote .nil)
     (.cons (.tl (.hd (.hd .id))) (.tl (.hd (.tl .id)))))))
 
@@ -300,8 +300,8 @@ theorem combF_dt {W : ℕ} {t t' : Bt} {o o' : List Bool} (h : o.length = W)
     ∃ k ≤ 60 * W + 90, Dt θ combF (.cons u w) (.cons (Bt.node t t').enc (ofBits
         (addc false o o'))) k := by
   obtain ⟨k, hk, hd⟩ := AD_dt (θ := θ) false (h.trans h'.symm)
-  have := Dt.cons (Dt.cons (Dt.cons (Dt.hd (Dt.hd (Dt.hd (Dt.id (θ := θ) (.cons u w)))))
-    (Dt.hd (Dt.hd (Dt.tl (Dt.id _))))) (Dt.quote .nil _))
+  have := Dt.cons (Dt.cons (Dt.quote .nil _) (Dt.cons (Dt.hd (Dt.hd (Dt.hd (Dt.id (θ := θ)
+    (.cons u w))))) (Dt.hd (Dt.hd (Dt.tl (Dt.id _))))))
     (Dt.run (Dt.quote AD.code _) (Dt.cons (Dt.quote AD.code _) (Dt.cons (Dt.quote .nil _)
       (Dt.cons (Dt.tl (Dt.hd (Dt.hd (Dt.id _))))
           (Dt.tl (Dt.hd (Dt.tl (Dt.id _))))))) (by simpa [hu, hw, bit] using hd))
@@ -357,7 +357,7 @@ theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : 
       simpa [coefK, KT.lk] using h (false :: p) hp
     obtain ⟨lr, er, rr⟩ := ihr (pre ++ [true]) fun p hp => by
       simpa [coefK, KT.lk] using h (true :: p) hp
-    obtain ⟨L', eL, rL⟩ := zip_rel (e := fun a b => .cons (.cons (.cons a.hd b.hd) .nil)
+    obtain ⟨L', eL, rL⟩ := zip_rel (e := fun a b => .cons (.cons .nil (.cons a.hd b.hd))
         (ofBits (addc false a.tl.path
       b.tl.path))) el er rl rr (fun a ha b hb u w hu hw => by
         simpa [path_ofBits, Bt.enc] using combF_dt (θ := θ) (length_xL a ha) (length_xL b hb) hu hw)

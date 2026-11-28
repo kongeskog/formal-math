@@ -12,7 +12,7 @@ Data are binary trees. A program is a formula of a small functional language; it
 tree. A formula may guess a bit, reject, or multiply the weight of the run by a fixed constant `θ`
 of the ring `A` (named by a list of bits). `run a b` applies the program that is the value of `a` to
 the value of `b`. Every step costs 1. The other constants a program wants are named in its value,
-as a tree of names (`names` and `WN` in `NS1/Postpone.lean`).
+as a tree of names (`names` in `NS1/Postpone.lean`, `WN` in `NS1/Util.lean`).
 
 `Ev θ F x l`: all runs of the formula `F` at the tree `x` stop, and `l` is the list of the accepting runs.
 -/

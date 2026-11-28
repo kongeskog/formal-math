@@ -76,11 +76,11 @@ def nds : Bt → ℕ
   | leaf w => w.length + 1
   | node l r => l.nds + r.nds + 1
 
-/-- Budgets as trees. -/
+/-- Budgets as trees, in the form of the tries of `NS1/Lists.lean`: (number, (left, right)). -/
 def enc : Bt → Tree
   | none => .nil
-  | leaf w => .cons .nil (.ofBits w)
-  | node l r => .cons (.cons l.enc r.enc) .nil
+  | leaf w => .cons (.ofBits w) .nil
+  | node l r => .cons .nil (.cons l.enc r.enc)
 
 theorem size_enc (t : Bt) : t.enc.size ≤ 4 * t.nds := by
   induction t with
@@ -117,15 +117,6 @@ theorem ht_nds_dec {p : List Bool} {t t' : Bt} (h : dec p t = some t') :
         simp only [dec, Option.map_eq_some_iff] at h
         obtain ⟨v, hv, rfl⟩ := h
         simp [ht, nds, ihl hv]
-
-theorem decAll_append (b b' : List (List Bool)) (t : Bt) : decAll (b ++ b') t = (decAll b t).bind (decAll b') := by
-  induction b generalizing t with
-  | nil => rfl
-  | cons p b ih =>
-    simp only [List.cons_append, decAll, Option.bind_assoc]
-    congr 1
-    funext t
-    exact ih t
 
 theorem ht_nds_decAll {b : List (List Bool)} {t t' : Bt} (h : decAll b t = some t') :
     t'.ht = t.ht ∧ t'.nds = t.nds := by

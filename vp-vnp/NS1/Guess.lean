@@ -247,15 +247,15 @@ def gw (ν : ℕ → ℕ) (pre : List Bool) (b : ℕ) : ℕ → ℕ → Fm
 /-- The budgets of the powers of a constant. -/
 def gcomb (ν : ℕ → ℕ) (J : ℕ) (pre : List Bool) : ℕ → ℕ → Fm
   | _, 0 => .quote (.cons .nil .nil)
-  | b, n + 1 => zipF (.cons pairE (.quote .nil)) (zipF pairE (.quote (.cons .nil .nil))
-      (gw ν pre b 0 J))
+  | b, n + 1 => zipF (.cons (.quote .nil) pairE) (zipF pairE (gw ν pre b 0 J)
+      (.quote (.cons .nil .nil)))
     (gcomb ν J pre (b + 1) n)
 
 /-- The budgets of all powers `2 ^ b`, `b < B`, of all constants. -/
 def gt (ν : ℕ → ℕ) (J B : ℕ) : KT R → List Bool → Fm
   | .none, _ => .quote (.cons .nil .nil)
   | .leaf _, pre => gcomb ν J pre 0 B
-  | .node l r, pre => zipF (.cons pairE (.quote .nil)) (gt ν J B l (pre ++ [false])) (gt ν J B r
+  | .node l r, pre => zipF (.cons (.quote .nil) pairE) (gt ν J B l (pre ++ [false])) (gt ν J B r
       (pre ++ [true]))
 
 /-- A run whose value is (`o`, a tree of names) with weight 1; the constants named multiply to `v`,
@@ -395,21 +395,21 @@ theorem gcomb_ev {J L : ℕ} {pre : List Bool} {c : R} (x : Tree) {n b : ℕ}
         [(.det 1 (.cons .nil .nil) : Run A)] [()] :=
       .cons ⟨rfl, rfl, by simp, by simp,
         by simp⟩ .nil
-    obtain ⟨lf, ef, rf⟩ := zip_rel (.quote _ x) ew r0 rw' (fun _ _ _ _ u w hu hw => ⟨_, le_rfl,
+    obtain ⟨lf, ef, rf⟩ := zip_rel ew (.quote _ x) rw' r0 (fun _ _ _ _ u w hu hw => ⟨_, le_rfl,
         hu ▸ hw ▸ pairE_dt u w⟩) fun _ _ _ _ => by simp
-    obtain ⟨l, e, r⟩ := zip_rel (e := fun a b => .cons (.cons a b) .nil) ef eg rf (rg.imp
+    obtain ⟨l, e, r⟩ := zip_rel (e := fun a b => .cons .nil (.cons a b)) ef eg rf (rg.imp
         fun _ _ h => h) (fun _ _ _ _ u w hu hw => ⟨_, le_rfl,
-        hu ▸ hw ▸ (pairE_dt u w).cons (Dt.quote .nil _)⟩)
-      fun _ _ _ _ => by simp
+        hu ▸ hw ▸ (Dt.quote .nil _).cons (pairE_dt u w)⟩)
+      fun _ _ _ _ => by simp only [Tree.size]; omega
     refine ⟨l, e, ?_⟩
     have hc : (c ^ 2 ^ b) ^ 2 = c ^ 2 ^ (b + 1) := by rw [← pow_mul, ← pow_succ]
     have eL : (KT.comb (c ^ 2 ^ b) (n + 1)).budg J = (((KT.words J).map
-        fun a => ((), a)).flatMap fun a =>
+        fun a => (a, ())).flatMap fun a =>
         ((KT.comb (c ^ 2 ^ (b + 1)) n).budg J).map fun q => (a, q)).map
-          fun p => (Bt.node (.leaf p.1.2) p.2.1, (c ^ 2 ^ b) ^ KT.val p.1.2 * p.2.2) := by
+          fun p => (Bt.node (.leaf p.1.1) p.2.1, (c ^ 2 ^ b) ^ KT.val p.1.1 * p.2.2) := by
       simp [KT.comb, KT.budg, hc, List.map_flatMap, List.flatMap_map, Function.comp_def]
     rw [eL, List.forall₂_map_right_iff]
-    simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil] at r
+    simp only [List.map_cons, List.map_nil, flatMap_single] at r
     refine r.imp fun s p hs => ⟨hs.1, hs.2.1, by simpa using hs.2.2.1, hs.2.2.2.1, ?_⟩
     have := hs.2.2.2.2
     nlinarith
@@ -449,9 +449,9 @@ theorem gt_ev {J B L : ℕ} (x : Tree) (K : KT R) (pre : List Bool)
     obtain ⟨lr, er, rr⟩ := ihr (pre ++ [true]) (fun p hp i hi => by
       have := h (true :: p) hp i hi
       simpa [KT.lk] using this)
-    obtain ⟨l', e', r'⟩ := zip_rel (e := fun a b => .cons (.cons a b) .nil) el er rl rr
-      (fun _ _ _ _ u w hu hw => ⟨_, le_rfl, hu ▸ hw ▸ (pairE_dt u w).cons
-          (Dt.quote .nil _)⟩) fun _ _ _ _ => by simp
+    obtain ⟨l', e', r'⟩ := zip_rel (e := fun a b => .cons .nil (.cons a b)) el er rl rr
+      (fun _ _ _ _ u w hu hw => ⟨_, le_rfl, hu ▸ hw ▸ (Dt.quote .nil _).cons
+          (pairE_dt u w)⟩) fun _ _ _ _ => by simp only [Tree.size]; omega
     refine ⟨l', e', ?_⟩
     have eL : ((KT.node l r).expand B).budg J = (((l.expand B).budg J).flatMap fun a =>
         ((r.expand B).budg J).map fun b => (a, b)).map
