@@ -33,8 +33,8 @@ theorem exists_isMin (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : ∃ i, IsMin L 
 
 /-- The chosen type has a small part of the loads. -/
 theorem isMin_le {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i : Fin h} (hi : IsMin L j i) :
-    (h : ℝ) * ∑ e ∈ univ.filter (fun e : T.Ed j => T.ty e = i), (L (.edge j e) : ℝ) ^ 2 ≤
-      ∑ e : T.Ed j, (L (.edge j e) : ℝ) ^ 2 := by
+    h * ∑ e ∈ univ.filter (fun e : T.Ed j => T.ty e = i), L (.edge j e) ^ 2 ≤
+      ∑ e : T.Ed j, L (.edge j e) ^ 2 := by
   have h1 : h * sqs L j i ≤ ∑ i', sqs L j i' := by
     calc h * sqs L j i = ∑ _i' : Fin h, sqs L j i := by simp
       _ ≤ _ := Finset.sum_le_sum fun i' _ => hi.1 i'
@@ -43,32 +43,15 @@ theorem isMin_le {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i : Fin h} (hi : IsM
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun e _ => ?_
     simp
-  have h3 : (sqs L j i : ℝ) = ∑ e ∈ univ.filter (fun e : T.Ed j => T.ty e = i), (L (.edge j e) : ℝ) ^ 2 := by
-    unfold sqs
-    rw [Finset.sum_filter]
-    push_cast
-    rfl
-  rw [h2] at h1
-  rw [← h3]
-  exact_mod_cast h1
-
-theorem vN2_mono {n n' : Sym2 T.Fl → ℕ} (hn : ∀ q, n q ≤ n' q) : vN2 b n ≤ vN2 b n' := by
-  have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
-  unfold vN2
-  refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun q _ => ?_) ?_
-  · split_ifs
-    · exact le_rfl
-    · exact pow_le_pow_left₀ (Nat.cast_nonneg _) (by exact_mod_cast hn q) 2
-  · positivity
+  rw [Finset.sum_filter, ← h2]
+  exact h1
 
 /-- Some number of units is enough. -/
 theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ t d, Fits L (withD l d) t := by
-  have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
-  obtain ⟨t, ht⟩ := exists_nat_ge (√(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) / FL.a₁)
-  obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) t (by
-    rw [div_le_iff₀ ha] at ht
-    linarith)
-  exact ⟨t, d, hd⟩
+  obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) _
+    ((Nat.le_mul_of_pos_left _ FL.a₁_pos).trans
+      ((Nat.le_self_pow two_ne_zero _).trans (Nat.le_mul_of_pos_left _ two_pos)))
+  exact ⟨_, d, hd⟩
 
 theorem tmin_spec (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Fits L (withD l d) (tmin L l) := by
   obtain ⟨t, ht⟩ := exists_fits L l
@@ -84,31 +67,27 @@ theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick L (withD 
   have := hmin d' (mem_filter.2 ⟨mem_univ _, hf⟩)
   exact absurd hd' (not_lt.2 this)
 
-/-- The number of units at a vertex is small. -/
-theorem tmin_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
+/-- The number of units at a vertex is small: one unit less does not fit, and
+`t² ≤ 2 (t - 1)² + 2`. -/
+theorem tmin_sq_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
     (hn' : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) ≤ n' q) :
-    (FL.a₁ : ℝ) * tmin L l ≤ √(vN2 b n') + FL.a₁ := by
-  have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
-  rcases Nat.eq_zero_or_pos (tmin L l) with h0 | h0
-  · rw [h0]
-    have := Real.sqrt_nonneg (vN2 b n')
-    simp only [Nat.cast_zero, mul_zero]
-    linarith
-  · have h1 : ¬ ∃ d, Fits L (withD l d) (tmin L l - 1) := by
+    FL.a₁ ^ 2 * tmin L l ^ 2 ≤ b ^ 2 * ∑ q, n' q ^ 2 + 2 * FL.a₁ ^ 2 := by
+  cases ht : tmin L l with
+  | zero => simp
+  | succ t =>
+    have h1 : ¬ ∃ d, Fits L (withD l d) t := by
       intro hcon
       have := Nat.sInf_le (s := {t | ∃ d, Fits L (withD l d) t}) hcon
       change tmin L l ≤ _ at this
       omega
-    have h2 : ¬ √(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) ≤
-        (FL.a₁ : ℝ) * (tmin L l - 1 : ℕ) := by
-      intro hcon
-      obtain ⟨d, hd⟩ := FL.L1 _ _ hcon
-      exact h1 ⟨d, hd⟩
-    have h3 : √(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) ≤ √(vN2 b n') :=
-      Real.sqrt_le_sqrt (vN2_mono hn')
-    rw [Nat.cast_sub h0] at h2
-    push_cast at h2
-    linarith [not_le.1 h2]
+    have h2 : 2 * (FL.a₁ * t) ^ 2 < b ^ 2 * ∑ q, L (.seg l.1 l.2.1 l.2.2.1 q) ^ 2 :=
+      not_le.1 fun hcon => h1 (FL.L1 _ _ hcon)
+    have h3 : b ^ 2 * ∑ q, L (.seg l.1 l.2.1 l.2.2.1 q) ^ 2 ≤ b ^ 2 * ∑ q, n' q ^ 2 :=
+      Nat.mul_le_mul_left _ (Finset.sum_le_sum fun q _ => Nat.pow_le_pow_left (hn' q) 2)
+    calc FL.a₁ ^ 2 * (t + 1) ^ 2 ≤ FL.a₁ ^ 2 * (2 * (t ^ 2 + 1 ^ 2)) :=
+          Nat.mul_le_mul_left _ add_sq_le
+      _ = 2 * (FL.a₁ * t) ^ 2 + 2 * FL.a₁ ^ 2 := by ring
+      _ ≤ _ := Nat.add_le_add_right (h2.le.trans h3) _
 
 theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) :
     tmin L l = 0 := by
@@ -251,39 +230,34 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.cast
       exact mem_singleton_self _
   · rw [Finset.sum_singleton]
 
-/-- **Paper: Theorem thm:tree, One stage.** "κ_{j+1} ≤ κ_j/2 + c'|X^(j+1)|", with ρ for 1/2, where 1 + 8C₁ ≤ ρ²h. -/
-theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h)
-    (j : Fin J) :
-    T.kap (fun e : T.Ed (j + 1) => load lhat n o (.edge j.succ e)) ≤
-      ρ * T.kap (fun e : T.Ed j => load lhat n o (.edge j.castSucc e)) +
-        √FL.C₁ * FL.a₁ / b * Fintype.card (T.X (j + 1)) := by
+/-- **Paper: Theorem thm:tree, One stage.** "κ_{j+1} ≤ κ_j/2 + c'|X^(j+1)|", as squares: with
+`K_j = |X^(j)| ∑ n_e²` (twice the square of κ_j), `4 K_{j+1} ≤ K_j + 16 C₁ a₁² |X^(j+1)|²`, where
+`4 (1 + 8C₁) ≤ h`. The square of a sum is bounded by `(u + v)² ≤ 2u² + 2v²` in place of the
+triangle inequality. -/
+theorem _root_.Paper.thm_tree_kappa (hg : 4 * (1 + 8 * FL.C₁) ≤ h) (j : Fin J) :
+    4 * (Fintype.card (T.X (j + 1)) * ∑ e : T.Ed (j + 1), load lhat n o (.edge j.succ e) ^ 2) ≤
+      Fintype.card (T.X j) * ∑ e : T.Ed j, load lhat n o (.edge j.castSucc e) ^ 2 +
+        8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X (j + 1)) ^ 2 := by
   classical
   obtain ⟨i, hi⟩ := exists_isMin (load lhat n o) j.castSucc
-  obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
-  refine Tower.load_step j.2 FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
-    (fun ω => tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)) ?_ ?_
-  · exact isMin_le hi
-  · intro e' he'
-    exact mid_load_le j hi e' he'
-  · intro ω
-    obtain ⟨d, hd⟩ := exists_pick (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)
-    have h4 : ∑ ν : T.Nr, (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1)) ^ 2 ≤
-        ∑ ν : (FL.L d).Cn, (alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R ch FL)) ^ 2 := by
-      rw [← Equiv.sum_comp (FL.cn d)]
-      refine Finset.sum_le_sum fun ν _ => Nat.pow_le_pow_left ?_ 2
-      have := other_load_le j hi ω d hd (FL.cn d ν)
-      rwa [Equiv.symm_apply_apply] at this
-    -- the squares are bounded by the length of the laws, `G₁ ≤ 2 C₁ a₁²`, and `num ≤ tmin`
-    have h5 := (Nat.mul_le_mul_left b h4).trans ((alive_sq _).trans
-      (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv FL)) 2)))
-    have h6 : (b : ℝ) * ∑ ν : T.Nr,
-          (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
-        FL.G₁ * (tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ) ^ 2 := by
-      exact_mod_cast h5
-    linarith [mul_le_mul_of_nonneg_right FL.G₁_le
-      (sq_nonneg (tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ))]
-  · intro ω
-    exact tmin_le _ _ fun q => seg_le j i ω q
+  obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp)
+  refine Tower.load_step j.2 (i := i) hg (isMin_le hi) (fun e' he' => mid_load_le j hi e' he')
+    fun ω => ?_
+  obtain ⟨d, hd⟩ := exists_pick (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)
+  have h4 : ∑ ν : T.Nr, (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1)) ^ 2 ≤
+      ∑ ν : (FL.L d).Cn, (alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R ch FL)) ^ 2 := by
+    rw [← Equiv.sum_comp (FL.cn d)]
+    refine Finset.sum_le_sum fun ν _ => Nat.pow_le_pow_left ?_ 2
+    have := other_load_le j hi ω d hd (FL.cn d ν)
+    rwa [Equiv.symm_apply_apply] at this
+  -- the squares are bounded by the length of the laws, `G₁ ≤ 2 C₁ a₁²`, and `num ≤ tmin`
+  have h5 := (Nat.mul_le_mul_left b h4).trans ((alive_sq _).trans
+    (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv FL)) 2)))
+  have h6 := tmin_sq_le (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) fun q => seg_le j i ω q
+  calc _ ≤ 2 * FL.C₁ * FL.a₁ ^ 2 * tmin (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) ^ 2 :=
+        h5.trans (Nat.mul_le_mul_right _ FL.G₁_le)
+    _ = 2 * FL.C₁ * (FL.a₁ ^ 2 * tmin (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) ^ 2) := by ring
+    _ ≤ _ := Nat.mul_le_mul_left _ h6
 
 end Stage
 

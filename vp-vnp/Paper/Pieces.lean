@@ -616,7 +616,7 @@ operation on numbers below v^C, in a program that may depend on v, T and k. The 
 (Nc.G.start for the value, Nc.Dl.init_count for the units of a node), then Theorem
 thm:tree (`tree_towers` and `exists_thinTrees`), and calls the nodes heavy as printed. -/
 theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
-    (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
+    (hgain : 4 * (1 + 8 * VL.C₁) ≤ h) :
     ∃ a e : ℕ, 300 ≤ e ∧ ∀ (Γ S Q : Type) [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q]
       (mu : Nc.Letter S Unit Γ → Matrix Q Q A),
       ∃ C v₀ : ℕ, ∀ v, v₀ ≤ v → ∃ K, v ^ e ≤ K ∧ K ≤ C * v ^ e ∧
@@ -628,11 +628,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
     unfold Nc.Tower.ee
     have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
     omega
-  have htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ) := by
-    have : (4 : ℝ) ≤ ((2 ^ ee h : ℕ) : ℝ) := by
-      exact_mod_cast Nat.pow_le_pow_right (show 0 < 2 by norm_num) he2
-    linarith
-  obtain ⟨ct, htow⟩ := tree_towers VL h3 (by linarith) htwo
+  obtain ⟨ct, htow⟩ := tree_towers VL h3 hgain
   generalize hC₀ : cTree ct = C₀
   generalize he : 300 * ee h + 64 = e
   generalize ha' : (e + 2) * (C₀ + 2) + 300 = a'
@@ -671,7 +667,7 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
       rw [← pow_mul]
       exact (vp (show 300 * ee h ≤ e by omega)).trans (by omega))
   -- the tower facts are not used below, and they slow the later `omega` calls
-  clear htow Rt FL hct hX1 hX2 hm1 hm2 hUu htwo Tw
+  clear htow Rt FL hct hX1 hX2 hm1 hm2 hUu Tw
   have hk64 : k ≤ v ^ 300 := hk'.trans (vp (by norm_num))
   have hkM : k ≤ 4 * (K + K) := by
     have : v ^ 64 ≤ K := hK ▸ vp (by omega)

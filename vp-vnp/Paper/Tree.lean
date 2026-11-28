@@ -250,7 +250,7 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
 section Build
 
 variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 : ℕ} {T : Tower h b J} (R : Routes T m Uu)
-  {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') {ρ : ℝ} {lhat : ℕ}
+  {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') {lhat : ℕ}
 
 /-- The stage of a node of the tree. -/
 def ndStage : Nd T → ℕ
@@ -567,7 +567,7 @@ end Numbers
 section Lemmas
 
 variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 ℓ c : ℕ} {T : Tower h b J}
-  {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {ρ : ℝ}
+  {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'}
 
 /-- Units are few: the bounds in numbers. -/
 theorem tree_nums {c M N X J m : ℕ} (hc : 1 ≤ c) (hM : 2 ≤ M) (hN : 1 ≤ N) (hX : X ≤ c * M) (hJ : J + 1 ≤ X)
@@ -630,17 +630,19 @@ theorem card_treeChildren (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL
     exact h1.trans (card_ndChildren _ hν)
 
 open Classical in
-/-- The loads at one node. -/
-theorem tree_up_node (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
-    (hb : b ≤ c) (hX : Fintype.card (T.X J) ≤ c) (p : Fin (AA + A')) :
-    treeUp R FL Pl n o p + ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl n o q = p),
-      treeUp R FL Pl n o q ≤ (c + 1) * BhN FL Uu AA N ρ := by
-  have h1 : ∀ q, treeUp R FL Pl n o q ≤ BhN FL Uu AA N ρ := fun q => by
+/-- The loads at one node, with the gain `g` of the tower. -/
+theorem tree_up_node (hH : THypR FL) {r g : ℕ} (hr : 2 ≤ r) (hbr : b ≤ 2 ^ r)
+    (hg : g ^ r ≤ Fintype.card (T.X 0)) (n : Fin AA → Fin AA → Fin (N + 1))
+    (o : (sys R FL Pl).N → Fin U1) (hb : b ≤ c) (hX : Fintype.card (T.X J) ≤ c)
+    (p : Fin (AA + A')) :
+    (treeUp R FL Pl n o p + ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl n o q = p),
+      treeUp R FL Pl n o q) * g ≤ (c + 1) * (h * kbar FL Uu AA N) := by
+  have h1 : ∀ q, treeUp R FL Pl n o q * g ≤ h * kbar FL Uu AA N := fun q => by
     rcases nd_cases (Pl.pt.symm q) with e | ⟨j, hj, x, e⟩
     · simp [treeUp, e, onN]
     · simp only [treeUp, e, onN_nd]
-      exact fb_le hH j hj x
-  rw [add_mul, one_mul, add_comm]
+      exact fb_mul_le hH hr hbr hg j hj x
+  rw [add_mul, Finset.sum_mul, add_mul, one_mul, add_comm]
   refine Nat.add_le_add ((Finset.sum_le_sum fun q _ => h1 q).trans ?_) (h1 p)
   rw [Finset.sum_const, smul_eq_mul]
   refine Nat.mul_le_mul_right _ ?_
@@ -648,8 +650,9 @@ theorem tree_up_node (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) 
   split_ifs at this <;> omega
 
 /-- All loads. -/
-theorem tree_up_total (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) :
-    ∑ p, treeUp R FL Pl n o p ≤ YhN FL Uu AA N ρ := by
+theorem tree_up_total (hH : THypR FL) (n : Fin AA → Fin AA → Fin (N + 1))
+    (o : (sys R FL Pl).N → Fin U1) :
+    ∑ p, treeUp R FL Pl n o p ≤ 4 * (h * kbar FL Uu AA N) := by
   rw [← Equiv.sum_comp Pl.pt]
   simp only [treeUp, Equiv.symm_apply_apply]
   rw [Fintype.sum_option]
@@ -759,7 +762,7 @@ theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
 
 open Classical in
 /-- The network is the sum of the networks on trees. -/
-theorem tree_value (hH : THypR FL ρ) (hℓ : 1 ≤ ℓ) {cap : ℕ} (hcap : capN FL N Uu AA N ≤ cap)
+theorem tree_value (hH : THypR FL) (hℓ : 1 ≤ ℓ) {cap : ℕ} (hcap : capN FL N Uu AA N ≤ cap)
     (hlen : ∀ d, (FL.L d).Le c ∧ (FL.L d).lam ≤ c) (hc : 1 ≤ c) (hU1 : U1 = cap * (c + c) + 1)
     {n : Fin AA → Fin AA → Fin (N + 1)} (tab : ∀ a, NodeTable F (fun a c => (n a c).1) ℓ a) :
     netValue tab = ∑ o : (sys R FL Pl).N → Fin U1, if ∀ x, (Tow.plan R FL Pl N N U1).good n o x then
@@ -908,10 +911,10 @@ def _root_.Nc.Tow.Routes.mono {h b J m Uu m' Uu' : ℕ} {T : Tower h b J} (R : R
 tower construction, whose sizes, bottom and words of bounded length give the size, the bottom and the routes. -/
 theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
-    (hgain : 1 + 8 * VL.C₁ ≤ (1 / 2 : ℝ) ^ 2 * h) (htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ)) :
+    (hgain : 4 * (1 + 8 * VL.C₁) ≤ h) :
     ∃ c, ∀ y, 1 ≤ y → ∃ (J m Uu : ℕ) (T : Tower h (2 ^ ee h) J) (_ : Routes T m Uu)
       (FL : FlagLaws A T),
-      TCst FL ((univ : Finset VL.Di).toList.map VL.L) c (1 / 2) (ee h) ∧
+      TCst FL ((univ : Finset VL.Di).toList.map VL.L) c (ee h) ∧
       y ≤ Fintype.card (T.X 0) ∧ Fintype.card (T.X 0) ≤ c * y ∧ 1 ≤ m ∧ m ≤ c * (J + 1) ^ 7 ∧
       Uu ≤ 2 * Fintype.card (T.X 0) * m := by
   classical
@@ -935,10 +938,11 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
   obtain ⟨c, k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15⟩ : ∃ c : ℕ, h ≤ c ∧ 2 ^ ee h ≤ c ∧ 3 ≤ c ∧
       Fintype.card (NN h) ≤ c ∧ VL.G₁ ≤ c ∧ Fintype.card VL.Di ≤ c ∧ Fintype.card (Sym2 (U h)) ≤ c ∧
       ∑ d, Fintype.card (VL.L d).Sl ≤ c ∧ ∑ d, ∑ i, ∑ ν, (VL.L d).len i ν ≤ c ∧ ∑ d, (VL.L d).lam ≤ c ∧
-      ⌈√(h : ℝ) + √VL.C₁ * VL.a₁⌉₊ ≤ c ∧ S * 2 ^ ee h ≤ c ∧ g 0 ≤ c ∧ 2 ^ (h ^ 2 - 1) ≤ c ∧ C + 1 ≤ c := by
+      2 * h + 4 * VL.C₁ * VL.a₁ ≤ c ∧ S * 2 ^ ee h ≤ c ∧ g 0 ≤ c ∧ 2 ^ (h ^ 2 - 1) ≤ c ∧
+      C + 1 ≤ c := by
     let l : List ℕ := [h, 2 ^ ee h, 3, Fintype.card (NN h), VL.G₁, Fintype.card VL.Di, Fintype.card (Sym2 (U h)),
       ∑ d, Fintype.card (VL.L d).Sl, ∑ d, ∑ i, ∑ ν, (VL.L d).len i ν, ∑ d, (VL.L d).lam,
-      ⌈√(h : ℝ) + √VL.C₁ * VL.a₁⌉₊, S * 2 ^ ee h, g 0, 2 ^ (h ^ 2 - 1), C + 1]
+      2 * h + 4 * VL.C₁ * VL.a₁, S * 2 ^ ee h, g 0, 2 ^ (h ^ 2 - 1), C + 1]
     have hl : ∀ a ∈ l, a ≤ l.sum := fun a ha => List.single_le_sum (fun _ _ => Nat.zero_le _) a ha
     refine ⟨l.sum, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_,
       hl _ ?_, hl _ ?_, hl _ ?_, hl _ ?_⟩ <;> simp only [l, List.mem_cons, true_or, or_true]
@@ -980,8 +984,8 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     exact Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega))
   · have hlaw : ∀ d : VL.Di, VL.L d ∈ (univ : Finset VL.Di).toList.map VL.L := fun d =>
       List.mem_map.2 ⟨d, Finset.mem_toList.2 (mem_univ d), rfl⟩
-    refine ⟨⟨by norm_num, by norm_num, hgain, htwo⟩, ?_, ?_, ?_,
-      ?_, ?_, ?_, ?_, ?_, hXJ0, ?_, ?_, ?_, ?_, hlaw, ?_⟩
+    refine ⟨⟨hgain, (Nat.pow_le_pow_right two_pos hee2).trans' (by norm_num)⟩, ?_, ?_, ?_,
+      ?_, ?_, ?_, ?_, ?_, hXJ0, k11, hee2, le_rfl, hlaw, ?_⟩
     · exact k1
     · exact k2
     · refine (Fintype.card_congr (Equiv.refl _)).le.trans (?_ : Fintype.card (NN h) ≤ c)
@@ -996,17 +1000,6 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
         Finset.single_le_sum (f := fun d => Fintype.card (VL.L d).Sl) (fun _ _ => Nat.zero_le _) (mem_univ d)
       exact h4.trans k8
     · exact (Nc.Tower.card_XJ h n h2).le.trans k12
-    · show √(h : ℝ) + √VL.C₁ * VL.a₁ ≤ (c : ℝ)
-      exact (Nat.le_ceil _).trans (Nat.cast_le.2 k11)
-    · have h4 : (1 : ℝ) / (1 - 1 / 2) = ((2 : ℕ) : ℝ) := by norm_num
-      rw [h4]
-      exact Nat.cast_le.2 (by omega)
-    · omega
-    · have h4 : (1 / 2 : ℝ) ^ ee h * ((2 ^ ee h : ℕ) : ℝ) = 1 := by
-        push_cast
-        rw [← mul_pow]
-        norm_num
-      exact h4.le
     · intro L hL
       obtain ⟨d, -, rfl⟩ := List.mem_map.1 hL
       refine ⟨⟨fun i ν => ?_⟩, ?_⟩
@@ -1037,8 +1030,8 @@ def cTree (c : ℕ) : ℕ := (c + 4) * 200000 + cKap c * (2 * c + 1) + 7 + (4 + 
 
 open Classical in
 /-- The thin trees of one tower. -/
-theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G.Law F)} {c q : ℕ} {ρ : ℝ}
-    (hC : TCst FL laws c ρ q) {C : ℕ} (hC0 : cTree c ≤ C) (hm1 : 1 ≤ m)
+theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G.Law F)} {c q : ℕ}
+    (hC : TCst FL laws c q) {C : ℕ} (hC0 : cTree c ≤ C) (hm1 : 1 ≤ m)
     (hm : m ≤ c * (J + 1) ^ 7) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hM : 2 ≤ M)
     (hX1 : M ≤ Fintype.card (T.X 0)) (hX2 : Fintype.card (T.X 0) ≤ c * M) (hAA : AA ≤ M)
     (hN : 1 ≤ N) (hℓ : 1 ≤ ℓ) {g : ℕ} (hgq : g ^ q ≤ M) :
@@ -1049,7 +1042,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
   have hH := hC.toTHypR
   have hc := hC.c_pos
   have hl := lg_two hM
-  have hJX := two_pow_le (T := T) hC.D_two hC.bot_pos
+  have hJX := two_pow_le (T := T) (le_trans (by norm_num) hC.three) hC.bot_pos
   have hdep : J + 1 ≤ (2 * c + 1) * lg M := depth_le hJX (hX2.trans (Nat.mul_le_mul_left _ (by omega)))
   have hJ1 : J + 1 ≤ Fintype.card (T.X 0) := Nat.succ_le_of_lt ((Nat.lt_two_pow_self (n := J)).trans_le hJX)
   obtain ⟨a1, a2, a3, a4, a5, a6, a7⟩ := tree_nums (N := N) hc hM hN hX2 hJ1 hm
@@ -1064,28 +1057,32 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
   have hcV : c ≤ V := a1.trans a5
   have hMN : 2 ≤ M * N := le_trans hM (Nat.le_mul_of_pos_right _ hN)
   -- loads
-  have hnode : (c + 1) * BhN FL Uu AA N ρ * g ≤ lg M ^ C * M * (N + M ^ 2) := by
-    have h1 : (BhN FL Uu AA N ρ * g) ^ q ≤ (2 * c * kapB c m (Fintype.card (T.X 0)) N) ^ q := by
-      rw [mul_pow]
-      exact (Nat.mul_le_mul_left _ (hgq.trans hX1)).trans (BhN_le (lh := N) hC hm1 hUu hAX)
-    have h2 := (Nat.pow_le_pow_iff_left (by have := hC.pq; omega)).1 h1
+  have hk : h * kbar FL Uu AA N ≤ c * kapB c m (Fintype.card (T.X 0)) N :=
+    Nat.mul_le_mul hC.h_le (kbar_kapB hC hm1 hUu hAX)
+  have hnode : (c + 1) * (h * kbar FL Uu AA N) ≤ lg M ^ C * M * (N + M ^ 2) := by
     have h3 : (c + 1) * (cKap c * lg M ^ 7) ≤ lg M ^ C := by
       rw [← mul_assoc]
       refine const_mul_pow_le hl ?_
       calc (c + 1) * cKap c + 7 ≤ (2 * c + 1) * cKap c + 7 := by gcongr; omega
         _ ≤ C := by rw [mul_comm (2 * c + 1)]; omega
-    calc (c + 1) * BhN FL Uu AA N ρ * g = (c + 1) * (BhN FL Uu AA N ρ * g) := by ring
-      _ ≤ (c + 1) * (cKap c * (lg M ^ 7 * M * (N + M ^ 2))) := Nat.mul_le_mul_left _ (h2.trans hkap)
+    calc (c + 1) * (h * kbar FL Uu AA N) ≤ (c + 1) * (2 * c * kapB c m (Fintype.card (T.X 0)) N) :=
+          Nat.mul_le_mul_left _
+            (hk.trans (by rw [Nat.mul_assoc]; exact Nat.le_mul_of_pos_left _ two_pos))
+      _ ≤ (c + 1) * (cKap c * (lg M ^ 7 * M * (N + M ^ 2))) := Nat.mul_le_mul_left _ hkap
       _ = (c + 1) * (cKap c * lg M ^ 7) * (M * (N + M ^ 2)) := by ring
       _ ≤ lg M ^ C * (M * (N + M ^ 2)) := Nat.mul_le_mul_right _ h3
       _ = _ := by ring
-  have htot : YhN FL Uu AA N ρ ≤ lg M ^ C * M * (N + M ^ 2) := by
-    have h1 := YhN_le (lh := N) hC hm1 hUu hAX
-    have h2 : cKap c * c * lg M ^ 7 ≤ lg M ^ C := const_mul_pow_le hl (by
-      have : cKap c * c ≤ cKap c * (2 * c + 1) := Nat.mul_le_mul_left _ (by omega)
+  have htot : 4 * (h * kbar FL Uu AA N) ≤ lg M ^ C * M * (N + M ^ 2) := by
+    have h2 : 2 * cKap c * lg M ^ 7 ≤ lg M ^ C := const_mul_pow_le hl (by
+      have : cKap c * 2 ≤ cKap c * (2 * c + 1) := Nat.mul_le_mul_left _ (by omega)
       omega)
-    grw [h1, hkap, ← h2]
-    exact (by ring : _ = _).le
+    calc 4 * (h * kbar FL Uu AA N) ≤ 4 * (c * kapB c m (Fintype.card (T.X 0)) N) :=
+          Nat.mul_le_mul_left _ hk
+      _ = 2 * (2 * c * kapB c m (Fintype.card (T.X 0)) N) := by ring
+      _ ≤ 2 * (cKap c * (lg M ^ 7 * M * (N + M ^ 2))) := Nat.mul_le_mul_left _ hkap
+      _ = 2 * cKap c * lg M ^ 7 * (M * (N + M ^ 2)) := by ring
+      _ ≤ lg M ^ C * (M * (N + M ^ 2)) := Nat.mul_le_mul_right _ h2
+      _ = _ := by ring
   have hne : ∀ p, p ≠ Pl.pt none → Pl.pt.symm p ≠ none := fun p hp e => hp (by
     rw [← Equiv.apply_symm_apply Pl.pt p, e])
   have hV3 : 3 ≤ V := hV ▸ (le_trans (Nat.le_add_left 3 c)
@@ -1154,7 +1151,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     obtain ⟨hu, hd⟩ := mem_sdiff.1 hu
     obtain ⟨s, hs⟩ := cur_tree (valid_of n hv) hg hu hd hl'
     exact ⟨_, fun e => Option.some_ne_none s (Pl.pt.injective e), hs⟩
-  · exact (Nat.mul_le_mul_right g (tree_up_node hH n o hC.b_le hC.bot p)).trans hnode
+  · exact (tree_up_node hH hC.pq hC.pow (hgq.trans hX1) n o hC.b_le hC.bot p).trans hnode
   · exact (tree_up_total hH n o).trans htot
   · -- copies
     refine (thm_tree_copies (R := R) (FL := FL) (Pl := Pl) hv hg hC.sl_le p).trans ?_

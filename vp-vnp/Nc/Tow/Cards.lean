@@ -31,22 +31,9 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
 namespace Tower
 
 /-- The levels shrink. -/
-theorem card_X_le : ∀ j ≤ J, Fintype.card (T.X j) ≤ Fintype.card (T.X 0) := by
-  intro j
-  induction j with
-  | zero => exact fun _ => le_rfl
-  | succ j ih =>
-    intro hj
-    refine le_trans ?_ (ih (by omega))
-    rw [T.card_X j (by omega)]
-    exact Nat.le_mul_of_pos_left _ T.b_pos
-
-theorem two_card_ed {j : ℕ} : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
-  have h1 : Fintype.card (T.Ed j) = ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i).card := by
-    rw [← card_univ]
-    exact card_eq_sum_card_fiberwise (fun _ _ => mem_coe.2 (mem_univ _))
-  rw [h1, Finset.mul_sum, Finset.sum_congr rfl fun i _ => T.card_ed j i]
-  simp
+theorem card_X_le (j : ℕ) (hj : j ≤ J) : Fintype.card (T.X j) ≤ Fintype.card (T.X 0) := by
+  rw [card_X_pow j hj]
+  exact Nat.le_mul_of_pos_left _ (pow_pos T.b_pos j)
 
 theorem card_ed_le {j : ℕ} (hj : j ≤ J) : Fintype.card (T.Ed j) ≤ h * Fintype.card (T.X 0) := by
   have h1 := two_card_ed (T := T) (j := j)
@@ -56,10 +43,8 @@ theorem card_ed_le {j : ℕ} (hj : j ≤ J) : Fintype.card (T.Ed j) ≤ h * Fint
 
 theorem card_V_le {j : ℕ} (hj : j ≤ J) (i : Fin h) :
     Fintype.card (T.V j i) ≤ Fintype.card (T.X 0) := by
-  have h1 : Fintype.card (T.V j i) * b = Fintype.card (T.X j) := by
-    rw [Fintype.card_of_bijective (T.vx_co i), Fintype.card_prod, T.card_fl]
   refine le_trans ?_ (card_X_le j hj)
-  rw [← h1]
+  rw [← card_V i]
   exact Nat.le_mul_of_pos_right _ T.b_pos
 
 theorem card_V_Nr {j : ℕ} (i : Fin h) :

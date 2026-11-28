@@ -51,7 +51,7 @@ them. Stated without quotients, as `NS1.OneCutAt`: the cut is to any τ' ≥ τ�
 the size and the time are multiplied out. -/
 theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
-    (hgain : 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4) :
+    (hgain : 4 * (1 + 8 * VL.C₁) ≤ h) :
     ∃ a₀ C v₀ : ℕ, ∀ v, v₀ ≤ v → OneCutAt θ v a₀ (lg v ^ C) := by
   classical
   obtain ⟨S, Γ, Q, i1, i2, i3, i4, i5, i6, mu, i, e', b0, b1, CU, hCU⟩ := prop_universal θ hθ.1
@@ -372,7 +372,7 @@ into (v^H, v^(H−32)) with at most τv²/v^H pieces in at most τ/v^24 steps." 
 NS1.CutHyp that the next section starts from. The proof composes the cuts of Theorem thm:onecut. -/
 theorem thm_cut {θ : List Bool → A} (hθ : Generates θ) {h' : ℕ} [NeZero h']
     (VL : VLaws A (cNear (h := h')) (dNear (h := h')) (2 ^ ee h')) (h3 : 3 ≤ h')
-    (hgain : 1 + 8 * VL.C₁ ≤ (h' : ℝ) / 4) :
+    (hgain : 4 * (1 + 8 * VL.C₁) ≤ h') :
     ∃ h C₀ v₀ : ℕ, 17 ≤ h ∧ CutHyp θ (16 * h) C₀ v₀ := by
   obtain ⟨a₀, C, v₀, hv₀⟩ := thm_onecut hθ VL h3 hgain
   generalize hhdef : a₀ + 217 = h

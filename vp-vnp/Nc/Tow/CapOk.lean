@@ -20,14 +20,6 @@ open Finset Nc.G
 variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
-/-- The bound for the units between a node and its parent, a natural number. -/
-noncomputable def BhN (FL : FlagLaws F T) (Uu AA lhat : ℕ) (ρ : ℝ) : ℕ := ⌊bhat FL Uu AA lhat ρ⌋₊
-
-theorem bhat_nonneg (ρ : ℝ) : 0 ≤ bhat FL Uu AA lhat ρ := by
-  have hk0 := kbar_nonneg Uu AA FL lhat
-  unfold bhat
-  positivity
-
 theorem lev_eq (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : lev L j.1 = fun e => L (.edge j e) := by
   funext e
   unfold lev
@@ -35,7 +27,7 @@ theorem lev_eq (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : lev L j.1 = fun e => 
 
 section
 
-variable {ρ : ℝ} (hH : THypR FL ρ)
+variable (hH : THypR FL)
 
 include hH
 
@@ -44,38 +36,29 @@ theorem plan_ok_cap : (plan R FL Pl lhat U0 U1).Ok (capN FL U0 Uu AA lhat) :=
   plan_ok fun n _ mv => num_le_cap hH
     (fun a c => Nat.le_of_lt_succ (n a c).2) mv
 
+variable {n : Fin AA → Fin AA → ℕ} {o : NM R ch FL → ℕ}
+
 /-- All units of the tree. -/
-theorem sum_fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R ch FL → ℕ} :
-    ∑ i ∈ range (J + 1), ∑ c, fb (lev (load lhat n o)) i c ≤ YhN FL Uu AA lhat ρ := by
+theorem sum_fb_le :
+    ∑ i ∈ range (J + 1), ∑ c, fb (lev (load lhat n o)) i c ≤ 4 * (h * kbar FL Uu AA lhat) := by
   rw [Finset.sum_range]
-  refine le_trans (le_of_eq ?_) (sum_bet_le_YhN (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o)
-    hH)
+  refine le_trans (le_of_eq ?_) (sum_bet_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH)
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun c _ => ?_
   unfold fb
   rw [lev_eq]
   rfl
 
-/-- Units between a node and its parent. -/
-theorem fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R ch FL → ℕ} (j : ℕ) (hj : j ≤ J) (c : T.X j) :
-    fb (lev (load lhat n o)) j c ≤ BhN FL Uu AA lhat ρ := by
-  refine Nat.le_floor ?_
-  have h1 := bet_le_bhat (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH
-    ⟨j, Nat.lt_succ_of_le hj⟩ c
-  refine le_trans (le_of_eq ?_) h1
+/-- Units between a node and its parent, with the gain `g` of the tower. -/
+theorem fb_mul_le {q g : ℕ} (hq : 2 ≤ q) (hb : b ≤ 2 ^ q) (hg : g ^ q ≤ Fintype.card (T.X 0))
+    (j : ℕ) (hj : j ≤ J) (c : T.X j) :
+    fb (lev (load lhat n o)) j c * g ≤ h * kbar FL Uu AA lhat := by
+  refine le_trans (le_of_eq ?_)
+    (bet_mul_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH hq hb hg
+      ⟨j, Nat.lt_succ_of_le hj⟩ c)
   unfold fb
   have := lev_eq (load lhat n o) ⟨j, Nat.lt_succ_of_le hj⟩
   rw [this]
   rfl
-
-omit hH in
-/-- **The gain of the tower.** -/
-theorem BhN_pow_le (hρ : 0 < ρ) (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hpq : 2 ≤ q)
-    (hgain : ρ ^ q * (b : ℝ) ≤ 1) :
-    (BhN FL Uu AA lhat ρ : ℝ) ^ q * (Fintype.card (T.X 0) : ℝ) ≤
-      (2 * (h : ℝ)) ^ q * kbar FL Uu AA lhat ^ q := by
-  refine le_trans ?_ (bhat_pow_le hρ hX hpq hgain)
-  refine mul_le_mul_of_nonneg_right ?_ (by positivity)
-  exact pow_le_pow_left₀ (Nat.cast_nonneg _) (Nat.floor_le (bhat_nonneg ρ)) q
 
 end
 

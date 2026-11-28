@@ -338,17 +338,14 @@ theorem thm_laws_over_field {K : Type} [Field K] {h : ℕ} [NeZero h] (h2 : 2 �
 /-- What the sections on towers and cuts take from Theorem thm:laws. -/
 theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
     ∃ (h : ℕ) (_ : NeZero h), 3 ≤ h ∧ ∃ (A : Subring K) (_ : Algebra.FiniteType ℤ A)
-      (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)), 1 + 8 * VL.C₁ ≤ (h : ℝ) / 4 := by
+      (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)), 4 * (1 + 8 * VL.C₁) ≤ h := by
   classical
   obtain ⟨u, hu, C, hC, hP⟩ := thm_poincare hK
   obtain ⟨C₀, hC₀⟩ := exists_nat_ge (2 * C + 1)
-  -- h is a multiple of u with h ≥ 2u, h ≥ 3 and 1 + 8C₁ ≤ h/4, where C₁ = 4C₀
+  -- h is a multiple of u with h ≥ 2u, h ≥ 3 and 4(1 + 8C₁) ≤ h, where C₁ = 4C₀
   set h := (4 * (1 + 8 * (4 * C₀)) + 3) * u
   have hl : 4 * (1 + 8 * (4 * C₀)) + 3 ≤ h := Nat.le_mul_of_pos_right _ (by omega)
   have h3 : 3 ≤ h := by omega
-  have hgain : 1 + 8 * (4 * (C₀ : ℝ)) ≤ (h : ℝ) / 4 := by
-    rw [le_div_iff₀ (by norm_num)]
-    exact_mod_cast (by omega : (1 + 8 * (4 * C₀)) * 4 ≤ h)
   have hne : NeZero h := ⟨by omega⟩
   have hC₀1 : 1 ≤ C₀ := by exact_mod_cast (by linarith : (1 : ℝ) ≤ C₀)
   obtain ⟨a₁, Di, fD, L, ro, cn, ha₁, hends, hlam, ha, hb⟩ :=
@@ -396,9 +393,20 @@ theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
   exact ⟨h, hne, h3, A, hA,
     { Di := Di, L := fun d => restrictLaw (L d) A (hmem d), ro := ro, cn := cn, ends := hends
       lam_pos := fun d => (hlam d).1, nonempty := fun d => (hlam d).2
-      a₁ := a₁, a₁_pos := ha₁, C₁ := 4 * (C₀ : ℝ), C₁_nonneg := by positivity
-      G₁ := 8 * C₀ * a₁ ^ 2, G₁_le := le_of_eq (by push_cast; ring)
-      L1 := fun n t ht => ha n t (by rw [hcard]; exact ht)
-      L2 := hL2 }, hgain⟩
+      a₁ := a₁, a₁_pos := ha₁, C₁ := 4 * C₀
+      G₁ := 8 * C₀ * a₁ ^ 2, G₁_le := le_of_eq (by ring)
+      L1 := fun n t ht => ha n t (by
+        -- the square of the norm is at most `b² / 2` times the sum of all squares
+        have h1 : ((2 ^ ee h : ℕ) : ℝ) ^ 2 * ∑ q, (n q : ℝ) ^ 2 ≤ 2 * ((a₁ : ℝ) * t) ^ 2 := by
+          exact_mod_cast ht
+        have h2 : ∑ q : Sym2 (U h), (if q.IsDiag then 0 else (n q : ℝ) ^ 2) ≤ ∑ q, (n q : ℝ) ^ 2 :=
+          sum_le_sum fun q _ => by split_ifs; exacts [sq_nonneg _, le_rfl]
+        have h3 : (0 : ℝ) ≤ ∑ q : Sym2 (U h), if q.IsDiag then 0 else (n q : ℝ) ^ 2 :=
+          sum_nonneg fun q _ => by split_ifs <;> positivity
+        rw [hcard, Real.sqrt_le_left (by positivity)]
+        calc _ ≤ ((2 ^ ee h : ℕ) : ℝ) ^ 2 / 2 * ∑ q, (n q : ℝ) ^ 2 :=
+              mul_le_mul (by rw [pow_two]; gcongr; linarith) h2 h3 (by positivity)
+          _ ≤ _ := by linarith)
+      L2 := hL2 }, (by omega : 4 * (1 + 8 * (4 * C₀)) ≤ h)⟩
 
 end Paper
