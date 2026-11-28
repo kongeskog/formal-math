@@ -22,13 +22,6 @@
     131
   ],
   "judged": {
-    "218@897f8ecbb243c4615abc2e308cc6705b9cd1af3f": {
-      "at": "2026-11-28T14:40:15Z",
-      "names": null,
-      "on": [],
-      "contains": true,
-      "has_merged": null
-    },
     "220@d9042e5990ee32ef62e9fa8510495398ca61a7f1": {
       "at": "2026-11-28T14:49:19Z",
       "names": 218,
@@ -45,7 +38,7 @@
         "218@897f8ecbb243c4615abc2e308cc6705b9cd1af3f"
       ],
       "contains": true,
-      "has_merged": null
+      "has_merged": true
     }
   },
   "told": [],

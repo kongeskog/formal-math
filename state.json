@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T14:54:49.341192192Z",
+  "updated_at": "2026-11-28T14:55:54.582656695Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "1f5bc99958f999165144d246f64aea0835906792",
-    "at": "2026-11-28T14:37:05.602366166Z",
+    "sha": "ac718e2b2d5a8053e8c3447e21c420d2c90199a2",
+    "at": "2026-11-28T14:55:54.582656695Z",
     "metrics": {
-      "tokens": 755892,
-      "loc": 49803,
-      "decls": 4161,
+      "tokens": 754227,
+      "loc": 49738,
+      "decls": 4166,
       "files": 312,
-      "bytes": 2873594,
-      "build_seconds": 344
+      "bytes": 2869786,
+      "build_seconds": 399
     }
   },
   "counts": {
-    "merged": 122,
+    "merged": 123,
     "rejected": 4,
-    "open": 2,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 115,
+      "merged": 116,
       "attempts": 121,
-      "saved": 162405
+      "saved": 164070
     },
     {
       "login": "yidakra",
@@ -115,7 +115,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T17:39:15Z",
       "pr": 218,
-      "result_delta": null,
+      "result_delta": -1665,
       "created_at": "2026-11-28T14:36:30Z",
       "url": "https://github.com/kongeskog/formal-math/issues/217",
       "technique": "restructure",
@@ -1342,93 +1342,6 @@
   ],
   "open": [
     {
-      "pr": 218,
-      "title": "restructure(NS1/ApproxExtract): back to exact values by a fold over the names of the value",
-      "author": "kongeskog",
-      "head_sha": "897f8ecbb243c4615abc2e308cc6705b9cd1af3f",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-28T14:39:52Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pending"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pending"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pending"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        }
-      ],
-      "idea": 217,
-      "url": "https://github.com/kongeskog/formal-math/pull/218",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "NS1/ApproxExtract"
-    },
-    {
       "pr": 220,
       "title": "restructure(NS1/ApproxRound): a round renames the constants of D by a pass over the names of the value",
       "author": "kongeskog",
@@ -1504,8 +1417,7 @@
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Built on #218: verified with it applied first, and merges only after it has merged"
+          "status": "pending"
         }
       ],
       "idea": 219,
@@ -1515,11 +1427,8 @@
       "reason": null,
       "technique": "restructure",
       "scope": "NS1/ApproxRound",
-      "depends": [
-        218
-      ],
-      "judged_on": [
-        "218@897f8ecbb243c4615abc2e308cc6705b9cd1af3f"
+      "warnings": [
+        "touches files reserved by idea #217 (claimed by @kongeskog): `vp-vnp/NS1/ApproxBack.lean`, `vp-vnp/NS1/ApproxExtract.lean`; coordinate there or expect to merge main after it lands"
       ]
     }
   ],
