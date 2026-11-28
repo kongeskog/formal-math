@@ -316,7 +316,7 @@ theorem z_γ_le (b : Bool) (i : ℕ) (hi : i ≤ n ^ 2) :
     push_cast
     rw [abs_of_nonneg (by linarith)]
     linarith [(Nat.cast_nonneg i : (0 : ℝ) ≤ i)]
-  have h5 := h3.trans (mul_le_mul_of_nonneg_right h4 (F.D_nonneg))
+  have h5 := h3.trans (mul_le_mul_of_nonneg_right h4 F.D_nonneg)
   have h6 := le_of_mul_le_mul_left h5 (by positivity)
   linarith
 
@@ -395,7 +395,7 @@ theorem fanLen_step (b : Bool) (i : ℤ) :
     |(n : ℝ) ^ 2 * (fanLen d z n b (i + 1) - fanLen d z n b i)| ≤ D := by
   have h1 := F.γ_le b (cl (n ^ 2) i) (cl (n ^ 2) (i + 1)) (cl_le _ _) (cl_le _ _)
   have h2 : |((cl (n ^ 2) i : ℕ) : ℝ) - (cl (n ^ 2) (i + 1) : ℕ)| * D ≤ D := by
-    calc _ ≤ 1 * D := mul_le_mul_of_nonneg_right (cl_succ _ i) (F.D_nonneg)
+    calc _ ≤ 1 * D := mul_le_mul_of_nonneg_right (cl_succ _ i) F.D_nonneg
       _ = D := one_mul D
   have h3 := F.price.triangle (FanPts.old z) (γ b (cl (n ^ 2) i)) (γ b (cl (n ^ 2) (i + 1)))
   have h4 := F.price.triangle (FanPts.old z) (γ b (cl (n ^ 2) (i + 1))) (γ b (cl (n ^ 2) i))

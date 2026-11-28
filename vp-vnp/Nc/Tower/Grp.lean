@@ -139,8 +139,8 @@ theorem sub_one_ne (h2 : 2 ≤ h) (k : Fin h) : k - 1 ≠ k := by
   have := congrArg Fin.val this
   rw [Fin.val_one', Fin.val_zero, Nat.mod_eq_of_lt (by omega)] at this
   omega
-variable (h2 : 2 ≤ h)
 
+variable (h2 : 2 ≤ h)
 
 /-- The generators: involutions of type k. -/
 noncomputable def gen (k : Fin h) : G h n :=

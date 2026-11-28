@@ -14,9 +14,9 @@ open Finset Matrix
 namespace Nc.Flag
 
 variable {μ κ ι : Type*} [Fintype μ] [DecidableEq μ] [Fintype κ] [DecidableEq κ]
+  [Fintype ι] [DecidableEq ι]
 
 variable (e : μ × κ ↪ ι)
-  [Fintype ι] [DecidableEq ι]
 
 /-- The inclusion matrix of an embedding. -/
 def inc : Matrix ι (μ × κ) F2 := fun i x => if i = e x then 1 else 0
