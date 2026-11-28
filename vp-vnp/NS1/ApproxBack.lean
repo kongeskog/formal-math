@@ -16,147 +16,157 @@ set_option linter.unusedSectionVars false
 
 namespace NS1
 
-open _root_.NS1.Tree LaurentPolynomial
+open _root_.NS1.Tree LaurentPolynomial Nc.Grp
 
 variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] [Algebra A E]
 
-/-- Accept only with the counter at 0; then run the plain instance. The argument is
-(argument, ((budgets, counter), names)). -/
-def finF (P : Tree) : Fm :=
-  .ite (app nzB.code (.cons (.quote nzB.code) (.tl (.hd (.tl .id))))) .fail
-    (app UF.code (.cons (.quote WN.code) (.cons (.quote P)
-        (.cons (.hd .id) (.hd (.hd (.tl .id)))))))
+/-- Accept only with the counter at 0; the value is then the tree of names. The argument is
+(counter, names). -/
+def finF : Fm := .ite (app nzB.code (.cons (.quote nzB.code) (.hd .id))) .fail (.tl .id)
 
-theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z u : Tree} {t : Bt}
-    {o : List Bool} {τ : ℕ}
-    (hu : u.hd = .cons t.enc (ofBits o)) (hP : Plain θ τ (zq P z t)) :
-    KV θ κ S (finF P) (.cons z u)
-      ((if KT.val o = 0 then 1 else 0) * algebraMap A E (pv θ (zq P z t)))
-      (40 * (o.length + 1) + τ + 40) := by
-  have hn := Gives.lett (Gives.cons (Gives.quote (θ := θ) nzB.code (.cons z u))
-    (show Gives θ (.tl (.hd (.tl .id))) (.cons z u) (ofBits o) 4 by
-      simpa [hu] using (Gives.id (θ := θ) (.cons z u)).tl.hd.tl)) (nzB_gives o)
+theorem finF_kv {κ : List Bool → E} {S : Set (List Bool)} {o : List Bool} {acc : Tree}
+    (hS : ∀ n ∈ names acc, n ∈ S) : KV θ κ S finF (.cons (ofBits o) acc)
+      ((if KT.val o = 0 then 1 else 0) * ((names acc).map κ).prod)
+      (20 * o.length + acc.size + 20) := by
+  have hn := Gives.lett (Gives.cons (Gives.quote (θ := θ) nzB.code (.cons (ofBits o) acc))
+    (Gives.id _).hd) (nzB_gives o)
   by_cases hz : KT.val o = 0
   · rw [show bit (decide (KT.val o ≠ 0)) = .nil by simp [hz, bit]] at hn
-    have g : Gives θ (.cons (.quote WN.code) (.cons (.quote P)
-        (.cons (.hd .id) (.hd (.hd (.tl .id)))))) (.cons z u) (zq P z t) 11 := by
-      simpa [zq, hu] using (Gives.cons (Gives.quote (θ := θ) WN.code (.cons z u))
-        (Gives.cons (Gives.quote P _) (Gives.cons (Gives.id _).hd (Gives.id _).tl.hd.hd)))
     rw [if_pos hz, one_mul]
-    exact (KV.ite_false hn (KV.app_gives g (by rw [Fm.ofTree_code]; exact UF_kv hP))).mono
-      (by omega)
+    exact (KV.ite_false hn (KV.gives (Gives.id _).tl hS)).mono (by simp only [tl_cons]; omega)
   · rw [if_neg hz, zero_mul]
     exact (KV.ite_true hn (by simp [hz, bit, one]) (KV.fail _)).mono (by omega)
 
-theorem nds_coefK (J m : ℕ) (K : KT E[T;T⁻¹]) : (coefK J m K).nds ≤ K.nds * 2 ^ (J + m + 1) := by
-  induction K with
-  | none => simpa [coefK, KT.nds] using Nat.one_le_two_pow
-  | leaf c =>
-    have := KT.nds_full (J + m) fun w => termCoef (c ^ KT.val (w.take J)) (KT.val (w.drop J))
-    simp only [coefK, KT.nds]
+theorem coeff_list_sum {G : Type*} [AddCommMonoid G] (l : List (AddMonoidAlgebra E G)) (i : G) :
+    l.sum.coeff i = (l.map fun P => P.coeff i).sum := by
+  induction l with
+  | nil => rfl
+  | cons P l ih => simp [AddMonoidAlgebra.coeff_add, ih]
+
+/-- The coefficient at 0 of a coefficient with a counter: the counter has to be 0. -/
+theorem coeff_mark_zero {W : ℕ} {o : List Bool} (h : o.length = W) (a : E) :
+    (mark W o a).coeff 0 = if KT.val o = 0 then a else 0 := by
+  have h0 : (((KT.val o : ℕ) : ZMod (2 ^ W)) = 0) ↔ KT.val o = 0 := by
+    rw [ZMod.natCast_eq_zero_iff]
+    exact ⟨fun h' => Nat.eq_zero_of_dvd_of_lt h' (val_lt_of_length h), fun h' => h' ▸ dvd_zero _⟩
+  rw [mark, AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
+  exact if_congr h0 rfl rfl
+
+theorem coeff_algebraMap_mul (a : A) (P : E[T;T⁻¹]) (i : ℤ) :
+    (algebraMap A E[T;T⁻¹] a * P).coeff i = algebraMap A E a * P.coeff i := by
+  rw [← Algebra.smul_def, ← Algebra.smul_def]
+  rfl
+
+theorem Span.list_prod {N : ℕ} (l : List E[T;T⁻¹]) (h : ∀ P ∈ l, Span N P) :
+    Span (l.length * N) l.prod := by
+  induction l with
+  | nil => simpa using Span.one (E := E) 0
+  | cons P l ih =>
+    rw [List.prod_cons, List.length_cons, Nat.succ_mul, Nat.add_comm]
+    exact (h P List.mem_cons_self).mul (ih fun Q hQ => h Q (List.mem_cons_of_mem _ hQ))
+
+/-- The program of the extraction: run `D`, go through the names of its value with `termF`, and
+accept only with the counter at 0. -/
+def extF (D : Tree) (W m : ℕ) (T : Tree) : Fm :=
+  lett (app D .id) (lett (foldF (termF m T) (.quote (.cons (ofBits (List.replicate W false)) .nil))
+    (app flatB.code (.cons (.quote flatB.code) (.cons .id (.quote .nil))))) finF)
+
+/-- **The value of the extraction**: the coefficient of ε^0 of the value of `D`. -/
+theorem extF_kv {κ : List Bool → E[T;T⁻¹]} {κ' : List Bool → E} {S : Set (List Bool)} {D z T : Tree}
+    {l : List (Run A)} {t W m N : ℕ} (hD : Ev θ (Fm.ofTree D) z l)
+    (ht : ∀ r ∈ l, r.cost + r.out.size ≤ t)
+    (hn : ∀ r ∈ l, ∀ x ∈ nmT r.out, (κ x.path).coeff.support.card ≤ 2 ^ m ∧ Span N (κ x.path) ∧
+      ∀ w : List Bool, w.length = m →
+        tget (x.path ++ w) T = ofBits (expBits W (termExp (κ x.path) (KT.val w))) ∧
+        κ' (x.path ++ (w ++ [false])) = termCoef (κ x.path) (KT.val w) ∧
+        x.path ++ (w ++ [false]) ∈ S)
+    (hW : t * N < 2 ^ W) :
+    KV θ κ' S (extF D W m T) z ((val κ l).coeff 0)
+      (t * (51 * m + 15 * W + 202) + 20 * W + 60) := by
+  have he := Ev.run_det (Dt.quote (θ := θ) D z) (Dt.id z) hD
+  refine ((KV.app_ev (κ := κ') (S := S) (c := t + 3) (d := t * (51 * m + 15 * W + 201) + 20 * W + 55)
+    (ω := fun s => ((names s.out).map κ).prod.coeff 0) he ?_ ?_).mono ?_).congr ?_
+  · intro s hs
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hs
+    have := ht r hr
+    simp only [Run.delay]
     omega
-  | node l r ihl ihr =>
-    simp only [coefK, KT.nds]
-    have := Nat.one_le_two_pow (n := J + m + 1)
-    linarith
-
-theorem ht_coefK (J m : ℕ) (K : KT E[T;T⁻¹]) : (coefK J m K).ht ≤ K.ht + J + m := by
-  induction K with
-  | none => simp [coefK, KT.ht]
-  | leaf c => simp [coefK, KT.ht, KT.ht_full]
-  | node l r ihl ihr =>
-    simp only [coefK, KT.ht]
-    omega
-
-/-- The program of the extraction: guess with `g`, then check the counter and run the plain instance. -/
-def extF (P : Tree) (g : Fm) : Fm := guessF g (finF P)
-
-/-- **The value of the extraction.** -/
-theorem extF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {g : Fm} {cg τ W : ℕ}
-    {lg : List (Run A)} {Q : List (Bt × E × List Bool)} (hg : Ev θ g z lg) (rg : List.Forall₂
-        (RelX κ S cg) lg Q)
-    (hP : ∀ q ∈ Q, Plain θ τ (zq P z q.1) ∧ q.2.2.length = W) :
-    KV θ κ S (extF P g) z (Q.map fun q => q.2.1 * ((if KT.val q.2.2 = 0 then 1 else 0) *
-      algebraMap A E (pv θ (zq P z q.1)))).sum (2 * cg + 40 * (W + 1) + τ + 60) := by
-  refine (guess_kv (cg := cg) (o := fun q : Bt × E × List Bool => .cons q.1.enc (ofBits q.2.2))
-      (v := fun q => q.2.1)
-    (ω := fun e => (if KT.val e.tl.path = 0 then 1 else 0) *
-      algebraMap A E (pv θ (.cons WN.code (.cons P (.cons z e.hd)))))
-    (d := 40 * (W + 1) + τ + 40) hg rg fun q hq u hu => ?_).mono (by omega) |>.congr ?_
-  · obtain ⟨h1, h2⟩ := hP q hq
-    rw [← h2]
-    simpa [path_ofBits, zq] using finF_kv (κ := κ) (S := S) hu h1
-  · simp [path_ofBits, zq]
-
-/-- The sizes of the fixed programs of the extraction. -/
-def xcst : ℕ := combF.code.size + 2 * nzB.code.size + UF.code.size + WN.code.size + 1000
-
-theorem xcst_def :
-    xcst = combF.code.size + 2 * nzB.code.size + UF.code.size + WN.code.size + 1000 := rfl
-
-theorem size_chT {n C : ℕ} {f : List Bool → Fm} (h : ∀ w : List Bool, w.length = n → (f w).code.size ≤ C) :
-    (chT n f).code.size + 31 ≤ 2 ^ n * (C + 31) := by
-  induction n generalizing f with
-  | zero => simpa [chT] using h [] rfl
-  | succ n ih =>
-    have h1 := ih (f := fun w => f (true :: w)) fun w hw => h _ (by simp [hw])
-    have h2 := ih (f := fun w => f (false :: w)) fun w hw => h _ (by simp [hw])
-    rw [chT, size_ite, size_guess, pow_succ]
-    linarith
-
-theorem size_xF (J m W : ℕ) (K : KT E[T;T⁻¹]) (pre : List Bool) :
-    (xF J m W K pre).code.size ≤ K.nds * (2 ^ (J + m) * (4 * (pre.length + K.ht) + 8 * (J + m + W) + xcst + 31)) := by
-  induction K generalizing pre with
-  | none =>
-    have h2 := size_ofBits (List.replicate W false)
-    rw [List.length_replicate] at h2
-    rw [KT.nds, one_mul]
-    refine le_trans ?_ (Nat.le_mul_of_pos_left _ (Nat.two_pow_pos _))
-    rw [xcst_def]
-    simp only [xF, size_quote, Bt.enc, Tree.size, KT.ht]
-    omega
-  | leaf c =>
-    have h := size_chT (n := J + m) (C := 4 * (pre.length + KT.ht (KT.leaf c)) + 8 * (J + m + W) + xcst)
-      (f := fun w => .cons
-      (.quote (.cons (Bt.leaf (w.take J)).enc (ofBits (expBits W (termExp (c ^ KT.val (w.take J))
-          (KT.val (w.drop J)))))))
-      (leaf (.quote (ofBits (pre ++ (w ++ [false]))))))
-      fun w hw => by
-        have h1 := size_ofBits (pre ++ (w ++ [false]))
-        have h2 := size_ofBits (w.take J)
-        have h3 := size_ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J))))
-        rw [length_expBits] at h3
-        have h4 : (w.take J).length ≤ J := List.length_take_le _ _
-        simp only [List.length_append, List.length_singleton, hw] at h1
-        rw [xcst_def, size_cons, size_leaf, size_quote, size_quote]
-        simp only [Bt.enc, Tree.size, KT.ht]
-        omega
-    rw [KT.nds, one_mul]
-    exact (Nat.le_add_right _ 31).trans h
-  | node l r ihl ihr =>
-    have h1 := ihl (pre ++ [false])
-    have h2 := ihr (pre ++ [true])
-    simp only [List.length_append, List.length_singleton] at h1 h2
-    obtain ⟨P, hP⟩ : ∃ P, P = 2 ^ (J + m) * (4 * (pre.length + KT.ht (KT.node l r)) + 8 * (J + m + W) + xcst + 31) :=
-      ⟨_, rfl⟩
-    have e1 := h1.trans (Nat.mul_le_mul_left _ ((Nat.mul_le_mul_left _ (by simp only [KT.ht]; omega)).trans_eq hP.symm :
-      2 ^ (J + m) * (4 * (pre.length + 1 + l.ht) + 8 * (J + m + W) + xcst + 31) ≤ P))
-    have e2 := h2.trans (Nat.mul_le_mul_left _ ((Nat.mul_le_mul_left _ (by simp only [KT.ht]; omega)).trans_eq hP.symm :
-      2 ^ (J + m) * (4 * (pre.length + 1 + r.ht) + 8 * (J + m + W) + xcst + 31) ≤ P))
-    have e3 : combF.code.size + 130 ≤ P := by
-      rw [hP]
-      refine le_trans ?_ (Nat.le_mul_of_pos_left _ (Nat.two_pow_pos _))
-      rw [xcst_def]
+  · intro s hs
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hs
+    have hno := hn r hr
+    have hto : r.out.size ≤ t := (Nat.le_add_left _ _).trans (ht r hr)
+    show KV θ κ' S _ r.out (((names r.out).map κ).prod.coeff 0) _
+    generalize r.out = o at hno hto
+    rw [Fm.ofTree_code]
+    have hl := Gives.lett (Gives.cons (Gives.quote (θ := θ) flatB.code o)
+      (Gives.cons (Gives.id o) (Gives.quote (listT []) o))) (flatB_gives o [])
+    rw [List.append_nil] at hl
+    have hf := foldT (encE := id) (enc := fun s : List Bool × Tree => .cons (ofBits s.1) s.2)
+      (f := termL W m κ) (Inv := fun _ s => s.1.length = W)
+      (d := fun x => 160 * x.size + 200 * m + 60 * W + 400) (s₀ := (List.replicate W false, .nil))
+      (Gives.quote _ o) (by rwa [List.map_id])
+      (fun x _ s hx hs => ⟨by
+        have := termF_does (θ := θ) (m := m) (T := T) (x := x) (s := s)
+          (e := fun w => expBits W (termExp (κ x.path) (KT.val w)))
+          (fun w hw => ((hno x hx).2.2 w hw).1) fun w => (length_expBits _ _).trans hs.symm
+        rwa [hs] at this, fun q hq => by
+        obtain ⟨w, -, rfl⟩ := List.mem_map.1 hq
+        exact (length_addc _ (hs.trans (length_expBits _ _).symm)).trans hs⟩)
+      (List.length_replicate ..)
+    have hm := fun q (hq : q ∈ foldL (A := A) (termL W m κ) (nmT o)
+        (List.replicate W false, .nil)) => mem_foldL_term (S := S) (nmT o)
+      (fun x hx w hw => ((hno x hx).2.2 w hw).2.2) _ (List.length_replicate ..)
+      (by simp [names]) hq
+    refine ((KV.lett (ω := fun u => (if KT.val u.hd.path = 0 then 1 else 0) *
+        ((names u.tl).map κ').prod) hf
+      (d := 20 * W + (1 + ((nmT o).map fun x => x.size + 4 * m + 12).sum) + 20)
+      fun q hq => ?_).mono ?_).congr ?_
+    · obtain ⟨q', hq', rfl⟩ := List.mem_map.1 hq
+      obtain ⟨a1, a2, a3⟩ := hm q' hq'
+      have := finF_kv (θ := θ) (κ := κ') (o := q'.2.1) a2
+      simp only [Prod.map, id, hd_cons, tl_cons, path_ofBits]
+      rw [a1] at this
+      exact this.mono (by simp only [Tree.size] at a3; omega)
+    · have key : ((nmT o).map fun x => 160 * x.size + 200 * m + 60 * W + 400 + 30).sum +
+          ((nmT o).map fun x => x.size + 4 * m + 12).sum ≤ (51 * m + 15 * W + 161) * o.size := by
+        rw [← List.sum_map_add]
+        calc _ ≤ ((nmT o).map fun x => (51 * m + 15 * W + 161) * (x.size + 4)).sum :=
+              List.sum_le_sum fun x _ => by
+                have e : (51 * m + 15 * W + 161) * (x.size + 4) =
+                    161 * x.size + 204 * m + 60 * W + 644 + (51 * m + 15 * W) * x.size := by ring
+                omega
+          _ = (51 * m + 15 * W + 161) * ((nmT o).map fun x => x.size + 4).sum := by
+              rw [List.sum_map_mul_left]
+          _ ≤ _ := Nat.mul_le_mul_left _ (sum_nmT_le o)
+      have h2 := Nat.mul_le_mul_right (51 * m + 15 * W + 201) hto
+      have e : o.size * (51 * m + 15 * W + 201) =
+          (51 * m + 15 * W + 161) * o.size + 40 * o.size := by ring
       omega
-    rw [← hP, KT.nds, xF, zipF, size_lett, size_cons, size_cons, node, size_cons,
-        size_cons, size_quote]
-    simp only [size_tl, size_hd, size_id, Tree.size]
-    linarith
-
-theorem size_extF (P : Tree) (g : Fm) : (extF P g).code.size ≤ P.size + g.code.size + xcst := by
-  have hf : Fm.fail.code.size = 19 := rfl
-  rw [xcst_def, extF, guessF, finF, size_lett, node]
-  simp only [size_quote, size_cons, size_hd, size_tl, size_id, size_ite, size_app, hf, Tree.size]
-  omega
+    · have e2 := congrArg (fun P : AddMonoidAlgebra E (ZMod (2 ^ W)) => P.coeff 0)
+        (sum_foldL_term (A := A) (κ' := κ') (nmT o)
+          (fun x hx => ⟨(hno x hx).1, fun w hw => ((hno x hx).2.2 w hw).2.1⟩)
+          (List.replicate W false, .nil) (List.length_replicate ..))
+      have e0 : mark W (List.replicate W false) (1 : E) = 1 := by
+        rw [mark, (all_not_iff _).1 (by simp), Nat.cast_zero]
+        rfl
+      have hsp : Span ((names o).length * N) ((names o).map κ).prod := by
+        have := Span.list_prod (N := N) ((names o).map κ) fun P hP => by
+          rw [names_eq, List.map_map] at hP
+          obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hP
+          exact (hno x hx).2.1
+        rwa [List.length_map] at this
+      simp only [coeff_list_sum, List.map_map, names, List.map_nil, List.prod_nil, e0, one_mul] at e2
+      rw [show (nmT o).map (fun x => κ x.path) = (names o).map κ by
+        rw [names_eq, List.map_map]; rfl, coeff_wrap_zero hsp (lt_of_le_of_lt
+          (Nat.mul_le_mul_right N ((length_names_le o).trans hto)) hW)] at e2
+      rw [← e2, List.map_map]
+      refine congrArg List.sum (List.map_congr_left fun q hq => ?_)
+      simp only [Function.comp_apply, Prod.map, id, hd_cons, tl_cons, path_ofBits,
+        coeff_mark_zero (hm q hq).1]
+      split_ifs <;> simp
+  · have e : t * (51 * m + 15 * W + 202) = t * (51 * m + 15 * W + 201) + t := by ring
+    omega
+  · rw [List.map_map, val, coeff_list_sum, List.map_map]
+    exact congrArg List.sum (List.map_congr_left fun r _ => (coeff_algebraMap_mul _ _ _).symm)
 
 end NS1

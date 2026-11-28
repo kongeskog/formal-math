@@ -5,69 +5,24 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import NS1.ApproxScale
 import NS1.ApproxAdd
-import Nc.Acc.Trie
+import Nc.Acc.Loop
 
 /-!
 # Back to equality
 
-A program guesses, for every constant, the digits of its power and one term of that power, names the
-coefficient of the term, an element of the ring E, and adds the exponent of ε on a counter. It accepts only if the
-counter is 0. So its value is the coefficient of ε^0 of an approximate value: the exact one.
+A program runs an approximate accelerator and goes through the names of its value. For every name it guesses one
+term of the constant, names the coefficient of the term, an element of the ring E, and adds the exponent of ε on a
+counter. It accepts only if the counter is 0. So its value is the coefficient of ε^0 of an approximate value: the
+exact one.
 -/
 
 set_option linter.unusedSectionVars false
 
 namespace NS1
 
-open _root_.NS1.Tree LaurentPolynomial
+open _root_.NS1.Tree LaurentPolynomial Nc.Grp
 
 variable {A : Type} [CommRing A] {θ : List Bool → A} {E : Type} [CommRing E] [Algebra A E]
-
-section Choice
-
-/-- Guess a word of length `n`; go on with the formula of this word. -/
-def chT : ℕ → (List Bool → Fm) → Fm
-  | 0, f => f []
-  | n + 1, f => .ite .guess (chT n fun w => f (true :: w)) (chT n fun w => f (false :: w))
-
-/-- A run that gives budgets and the digits of a counter, and names constants whose product is a
-coefficient. -/
-def RelX (κ : List Bool → E) (S : Set (List Bool)) (c : ℕ) (r : Run A)
-    (q : Bt × E × List Bool) : Prop :=
-  RelT κ (· ∈ S) c r (.cons q.1.enc (ofBits q.2.2)) q.2.1
-
-theorem RelX.mono {κ : List Bool → E} {S : Set (List Bool)} {c d : ℕ} {r : Run A} {q : Bt × E × List Bool}
-    (h : RelX κ S c r q) (hd : c ≤ d) : RelX κ S d r q :=
-  ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.trans hd⟩
-
-theorem chT_ev {κ : List Bool → E} {S : Set (List Bool)} {c : ℕ} {x : Tree} {n : ℕ} {f : List Bool → Fm}
-    {o : List Bool → Bt × E × List Bool}
-    (h : ∀ w : List Bool, w.length = n → ∃ l, Ev θ (f w) x l ∧ List.Forall₂ (RelX κ S c) l [o w]) :
-    ∃ l, Ev θ (chT n f) x l ∧ List.Forall₂ (RelX κ S (c + 3 * n)) l ((KT.words n).map o) := by
-  induction n generalizing f o with
-  | zero =>
-    obtain ⟨l, e, r⟩ := h [] rfl
-    exact ⟨l, e, r⟩
-  | succ n ih =>
-    obtain ⟨l1, e1, r1⟩ := ih (f := fun w => f (true :: w)) (o := fun w => o (true :: w)) fun w hw => h _ (by simp [hw])
-    obtain ⟨l0, e0, r0⟩ := ih (f := fun w => f (false :: w)) (o := fun w => o (false :: w)) fun w hw => h _ (by simp [hw])
-    refine ⟨_, Ev.ite (L := fun r => if r.out = .nil then l0 else l1) (Ev.guess x)
-      (fun r _ h => by rw [if_neg h]; exact e1) (fun r _ h => by rw [if_pos h]; exact e0), ?_⟩
-    simp only [KT.words, List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_append, List.map_map,
-      Run.det, Tree.one, if_true, reduceCtorEq, if_false, Function.comp_def]
-    refine List.rel_append ?_ ?_ <;> rw [List.forall₂_map_left_iff]
-    · refine r0.imp fun r q hr => ⟨by simp [Run.seq, Run.tick, hr.1], hr.2.1,
-        hr.2.2.1, hr.2.2.2.1, ?_⟩
-      have := hr.2.2.2.2
-      simp only [Run.seq, Run.tick]
-      omega
-    · refine r1.imp fun r q hr => ⟨by simp [Run.seq, Run.tick, hr.1], hr.2.1,
-        hr.2.2.1, hr.2.2.2.1, ?_⟩
-      have := hr.2.2.2.2
-      simp only [Run.seq, Run.tick]
-      omega
-
-end Choice
 
 section Terms
 
@@ -123,37 +78,11 @@ theorem coeff_wrap_zero {W n : ℕ} {P : E[T;T⁻¹]} (h : Span n P) (hn : n < 2
   · intro h0
     simp [Finsupp.notMem_support_iff.1 h0]
 
-theorem sum_words_range (n : ℕ) {G : Type*} [AddCommMonoid G] (f : ℕ → G) :
-    ((KT.words n).map fun w => f (KT.val w)).sum = ∑ k ∈ Finset.range (2 ^ n), f k := by
-  induction n generalizing f with
-  | zero => simp [KT.words, KT.val]
-  | succ n ih =>
-    have e : ((KT.words (n + 1)).map fun w => f (KT.val w)).sum =
-        ((KT.words n).map fun w => f (2 * KT.val w)).sum + ((KT.words n).map fun w => f (1 + 2 * KT.val w)).sum := by
-      simp [KT.words, KT.val, Function.comp_def]
-    rw [e, ih fun k => f (2 * k), ih fun k => f (1 + 2 * k), pow_succ, mul_comm]
-    clear e ih
-    induction 2 ^ n with
-    | zero => simp
-    | succ k ih =>
-      rw [Finset.sum_range_succ, Finset.sum_range_succ, mul_add, mul_one, Finset.sum_range_succ, Finset.sum_range_succ,
-        ← ih, show 1 + 2 * k = 2 * k + 1 by ring]
-      abel
-
-theorem sum_words_split (J m : ℕ) {G : Type*} [AddCommMonoid G] (F : List Bool → List Bool → G) :
-    ((KT.words (J + m)).map fun w => F (w.take J) (w.drop J)).sum =
-      ((KT.words J).map fun v => ((KT.words m).map fun w => F v w).sum).sum := by
-  induction J generalizing F with
-  | zero => simp [KT.words]
-  | succ J ih =>
-    rw [Nat.succ_add]
-    simp [KT.words, Function.comp_def, ih fun v w => F (false :: v) w, ih fun v w => F (true :: v) w]
-
 /-- **All terms of a Laurent polynomial.** -/
 theorem sum_terms {W m : ℕ} (P : E[T;T⁻¹]) (h : P.coeff.support.card ≤ 2 ^ m) :
-    ((KT.words m).map fun w => mark W (expBits W (termExp P (KT.val w))) (termCoef P (KT.val w))).sum =
+    ((wd m).map fun w => mark W (expBits W (termExp P (KT.val w))) (termCoef P (KT.val w))).sum =
       wrap A W P := by
-  rw [sum_words_range m fun k => mark W (expBits W (termExp P k)) (termCoef P k), wrap_apply]
+  rw [sum_wd m fun k => mark W (expBits W (termExp P k)) (termCoef P k), wrap_apply]
   simp only [mark, cast_val_expBits]
   rw [← Finset.sum_subset (Finset.range_mono (show P.coeff.support.toList.length ≤ 2 ^ m by simpa using h))]
   · conv_rhs => rw [← Finset.sum_map_toList, ← Fin.sum_univ_fun_getElem]
@@ -167,221 +96,292 @@ theorem sum_terms {W m : ℕ} (P : E[T;T⁻¹]) (h : P.coeff.support.card ≤ 2 
 
 end Terms
 
+section Leaves
+
+variable {R : Type} [CommRing R]
+
+theorem KT.leaf_comb (c : R) {B b : ℕ} (h : b < B) : (KT.comb c B).Leaf (KT.pw b) := by
+  induction b generalizing c B with
+  | zero =>
+    cases B with
+    | zero => omega
+    | succ B => rfl
+  | succ b ih =>
+    cases B with
+    | zero => omega
+    | succ B => exact ih _ (by omega)
+
+/-- The name of a power of a constant is a leaf of the trie of the powers. -/
+theorem KT.leaf_expand {B : ℕ} {K : KT R} {p : List Bool} (h : K.InB B p) : (K.expand B).Leaf p := by
+  induction K generalizing p with
+  | none => exact h.elim
+  | leaf c =>
+    obtain ⟨b, hb, rfl⟩ := h
+    exact KT.leaf_comb c hb
+  | node l r ihl ihr =>
+    cases p with
+    | nil => exact h.elim
+    | cons a p =>
+      cases a with
+      | true => exact ihr h
+      | false => exact ihl h
+
+theorem KT.All.lookup {P : R → Prop} {K : KT R} (h : K.All P) {p : List Bool} (hp : K.Leaf p) :
+    P (K.lookup p) := by
+  induction K generalizing p with
+  | none => exact hp.elim
+  | leaf c =>
+    obtain rfl : p = [] := hp
+    exact h
+  | node l r ihl ihr =>
+    cases p with
+    | nil => exact hp.elim
+    | cons a p =>
+      cases a with
+      | true => exact ihr h.2 hp
+      | false => exact ihl h.1 hp
+
+end Leaves
+
 section Gadget
 
-/-- The coefficients of the terms of the powers, with names for every choice of digits and term. -/
-noncomputable def coefK (J m : ℕ) : KT E[T;T⁻¹] → KT E
+/-- The coefficients of the terms of the constants, with a name for every term: the name of the
+constant, the number of the term in `m` digits, and 0. -/
+noncomputable def coefK (m : ℕ) : KT E[T;T⁻¹] → KT E
   | .none => .none
-  | .leaf c => KT.full (J + m) fun w => termCoef (c ^ KT.val (w.take J)) (KT.val (w.drop J))
-  | .node l r => .node (coefK J m l) (coefK J m r)
+  | .leaf c => KT.full m fun w => termCoef c (KT.val w)
+  | .node l r => .node (coefK m l) (coefK m r)
 
-/-- What the gadget guesses: budgets, a coefficient, the digits of the counter. -/
-noncomputable def xL (J m W : ℕ) : KT E[T;T⁻¹] → List (Bt × E × List Bool)
-  | .none => [(.none, 1, List.replicate W false)]
-  | .leaf c => (KT.words (J + m)).map fun w => (.leaf (w.take J), termCoef (c ^ KT.val (w.take J)) (KT.val (w.drop J)),
-      expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J))))
-  | .node l r => (xL J m W l).flatMap fun p => (xL J m W r).map fun q =>
-      (.node p.1 q.1, p.2.1 * q.2.1, addc false p.2.2 q.2.2)
-
-/-- Pair the budgets and add the counters. The argument is ((data, names), (data, names)) where the
-data are (budgets, counter). -/
-def combF : Fm := .cons (.cons (.quote .nil) (.cons (.hd (.hd (.hd .id))) (.hd (.hd (.tl .id)))))
-  (.run (.quote AD.code) (.cons (.quote AD.code) (.cons (.quote .nil)
-    (.cons (.tl (.hd (.hd .id))) (.tl (.hd (.tl .id)))))))
-
-/-- The gadget. Its value is ((budgets, counter), names). -/
-noncomputable def xF (J m W : ℕ) : KT E[T;T⁻¹] → List Bool → Fm
-  | .none, _ => .quote (.cons (.cons Bt.none.enc (ofBits (List.replicate W false))) .nil)
-  | .leaf c, pre => chT (J + m) fun w => .cons
-      (.quote (.cons (Bt.leaf (w.take J)).enc (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))))
-      (leaf (.quote (ofBits (pre ++ (w ++ [false])))))
-  | .node l r, pre => zipF combF (xF J m W l (pre ++ [false])) (xF J m W r (pre ++ [true]))
-
-section
-
--- The gadget for the tree of constants `K`, with `J` digits of budget, `m` of term, `W` of counter.
-variable {J m W : ℕ} {K : KT E[T;T⁻¹]}
-
-theorem length_xL : ∀ q ∈ xL J m W K, q.2.2.length = W := by
-  induction K with
-  | none =>
-    intro q hq
-    simp only [xL, List.mem_singleton] at hq
-    subst hq
-    simp
+theorem lk_coefK {m : ℕ} {K : KT E[T;T⁻¹]} {p w : List Bool} (hp : K.Leaf p) (hw : w.length = m) :
+    (coefK m K).lk (p ++ (w ++ [false])) = termCoef (K.lookup p) (KT.val w) ∧
+      (coefK m K).InB 1 (p ++ (w ++ [false])) := by
+  induction K generalizing p with
+  | none => exact hp.elim
   | leaf c =>
-    intro q hq
-    simp only [xL, List.mem_map] at hq
-    obtain ⟨w, -, rfl⟩ := hq
-    exact length_expBits _ _
+    obtain rfl : p = [] := hp
+    exact KT.lk_full _ hw
   | node l r ihl ihr =>
-    intro q hq
-    simp only [xL, List.mem_flatMap, List.mem_map] at hq
-    obtain ⟨a, ha, b, hb, rfl⟩ := hq
-    rw [length_addc _ ((ihl a ha).trans (ihr b hb).symm)]
-    exact ihl a ha
+    cases p with
+    | nil => exact hp.elim
+    | cons a p =>
+      cases a with
+      | true => exact ihr hp
+      | false => exact ihl hp
 
-/-- The budgets of the gadget have few digits. -/
-theorem bt_xL :
-    ∀ q ∈ xL J m W K, q.1.ht ≤ K.ht + J + 1 ∧ q.1.nds ≤ K.nds * (J + 1) := by
-  induction K with
-  | none =>
-    intro q hq
-    simp only [xL, List.mem_singleton] at hq
-    subst hq
-    simp [Bt.ht, Bt.nds, KT.nds]
-  | leaf c =>
-    intro q hq
-    simp only [xL, List.mem_map] at hq
-    obtain ⟨w, hw, rfl⟩ := hq
-    simp [Bt.ht, Bt.nds, KT.ht, KT.nds, KT.length_words hw]
-  | node l r ihl ihr =>
-    intro q hq
-    simp only [xL, List.mem_flatMap, List.mem_map] at hq
-    obtain ⟨a, ha, b, hb, rfl⟩ := hq
-    obtain ⟨h1, h2⟩ := ihl a ha
-    obtain ⟨h3, h4⟩ := ihr b hb
-    simp only [Bt.ht, Bt.nds, KT.ht, KT.nds]
-    refine ⟨by omega, ?_⟩
-    have : (l.nds + r.nds + 1) * (J + 1) = l.nds * (J + 1) + r.nds * (J + 1) + (J + 1) := by ring
-    omega
+/-- A trie, as `tget` reads it, with the value `f w` at every name `w` of length `n`. -/
+def fullT : ℕ → (List Bool → Tree) → Tree
+  | 0, f => .cons (f []) .nil
+  | n + 1, f => .cons .nil (.cons (fullT n fun w => f (false :: w)) (fullT n fun w => f (true :: w)))
 
-/-- **Paper: proof of Proposition prop:approx-acc, the guessed terms together give all budgets.** Counted modulo 2 ^ W. -/
-theorem sum_xL (hK : K.All fun c => ∀ n < 2 ^ J, (c ^ n).coeff.support.card ≤ 2 ^ m)
-    (φ : Bt → AddMonoidAlgebra E (ZMod (2 ^ W))) :
-    ((xL J m W K).map fun q => φ q.1 * mark W q.2.2 q.2.1).sum = ((K.budg J).map fun q => φ q.1 * wrap A W q.2).sum := by
-  induction K generalizing φ with
-  | none =>
-    have : KT.val (List.replicate W false) = 0 := (all_not_iff _).1 (by simp)
-    simp only [xL, KT.budg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, mark, this, Nat.cast_zero,
-      map_one]
+theorem tget_fullT {n : ℕ} (f : List Bool → Tree) {w : List Bool} (h : w.length = n) :
+    tget w (fullT n f) = f w := by
+  induction n generalizing f w with
+  | zero =>
+    obtain rfl := List.length_eq_zero_iff.1 h
     rfl
+  | succ n ih =>
+    cases w with
+    | nil => simp at h
+    | cons b w => cases b <;> exact ih _ (by simpa using h)
+
+theorem size_fullT {n C : ℕ} (f : List Bool → Tree) (h : ∀ w, (f w).size ≤ C) :
+    (fullT n f).size + 3 ≤ 2 ^ n * (C + 5) := by
+  induction n generalizing f with
+  | zero =>
+    have := h []
+    simp only [fullT, Tree.size]
+    omega
+  | succ n ih =>
+    have h1 := ih (fun w => f (false :: w)) fun w => h _
+    have h2 := ih (fun w => f (true :: w)) fun w => h _
+    have e : 2 ^ (n + 1) * (C + 5) = 2 ^ n * (C + 5) + 2 ^ n * (C + 5) := by ring
+    simp only [fullT, Tree.size]
+    omega
+
+/-- The exponents of the terms of the constants, as a trie: at the name of a constant and the
+number of a term, the exponent in `W` digits. -/
+noncomputable def expT (W m : ℕ) : KT E[T;T⁻¹] → Tree
+  | .none => .nil
+  | .leaf c => fullT m fun w => ofBits (expBits W (termExp c (KT.val w)))
+  | .node l r => .cons .nil (.cons (expT W m l) (expT W m r))
+
+theorem tget_expT {W m : ℕ} {K : KT E[T;T⁻¹]} {p w : List Bool} (hp : K.Leaf p) (hw : w.length = m) :
+    tget (p ++ w) (expT W m K) = ofBits (expBits W (termExp (K.lookup p) (KT.val w))) := by
+  induction K generalizing p with
+  | none => exact hp.elim
   | leaf c =>
-    simp only [xL, KT.budg, List.map_map, Function.comp_def]
-    rw [sum_words_split J m fun v w => φ (.leaf v) *
-      mark W (expBits W (termExp (c ^ KT.val v) (KT.val w))) (termCoef (c ^ KT.val v) (KT.val w))]
-    congr 1
-    refine List.map_congr_left fun v hv => ?_
-    rw [List.sum_map_mul_left, sum_terms (A := A) _ (hK _ (val_lt_of_length (KT.length_words hv)))]
+    obtain rfl : p = [] := hp
+    exact tget_fullT _ hw
   | node l r ihl ihr =>
-    simp only [xL, KT.budg, sum_flatMap_map, List.map_map, Function.comp_def]
-    calc ((xL J m W l).map fun p => ((xL J m W r).map fun q =>
-          φ (.node p.1 q.1) * mark W (addc false p.2.2 q.2.2) (p.2.1 * q.2.1)).sum).sum
-        = ((xL J m W l).map fun p => ((r.budg J).map fun q => φ (.node p.1 q.1) * wrap A W q.2).sum *
-            mark W p.2.2 p.2.1).sum := by
-          congr 1
-          refine List.map_congr_left fun p hp => ?_
-          rw [← ihr hK.2 fun t => φ (.node p.1 t), ← List.sum_map_mul_right]
-          congr 1
-          refine List.map_congr_left fun q hq => ?_
-          rw [mark_addc (length_xL p hp) (length_xL q hq)]
-          ring
-      _ = _ := by
-          rw [ihl hK.1 fun t => ((r.budg J).map fun q => φ (.node t q.1) * wrap A W q.2).sum]
-          congr 1
-          refine List.map_congr_left fun p _ => ?_
-          rw [← List.sum_map_mul_right]
-          congr 1
-          refine List.map_congr_left fun q _ => ?_
-          rw [map_mul]
-          ring
+    cases p with
+    | nil => exact hp.elim
+    | cons a p =>
+      cases a with
+      | true => exact ihr hp
+      | false => exact ihl hp
 
-end
-
-/-- A word of bits as a tree has at least two nodes per bit. -/
-theorem le_size_ofBits (w : List Bool) : 2 * w.length + 1 ≤ (ofBits w).size := by
-  induction w with
-  | nil => simp [ofBits, Tree.size]
-  | cons b w ih => cases b <;> simp [ofBits, bit, one, Tree.size] <;> omega
-
-theorem combF_dt {W : ℕ} {t t' : Bt} {o o' : List Bool} (h : o.length = W)
-    (h' : o'.length = W) {u w : Tree}
-    (hu : u.hd = .cons t.enc (ofBits o)) (hw : w.hd = .cons t'.enc (ofBits o')) :
-    ∃ k ≤ 60 * W + 90, Dt θ combF (.cons u w) (.cons (Bt.node t t').enc (ofBits
-        (addc false o o'))) k := by
-  obtain ⟨k, hk, hd⟩ := AD_dt (θ := θ) false (h.trans h'.symm)
-  have := Dt.cons (Dt.cons (Dt.quote .nil _) (Dt.cons (Dt.hd (Dt.hd (Dt.hd (Dt.id (θ := θ)
-    (.cons u w))))) (Dt.hd (Dt.hd (Dt.tl (Dt.id _))))))
-    (Dt.run (Dt.quote AD.code _) (Dt.cons (Dt.quote AD.code _) (Dt.cons (Dt.quote .nil _)
-      (Dt.cons (Dt.tl (Dt.hd (Dt.hd (Dt.id _))))
-          (Dt.tl (Dt.hd (Dt.tl (Dt.id _))))))) (by simpa [hu, hw, bit] using hd))
-  simp only [hd_cons, tl_cons, hu, hw, Bt.enc] at this ⊢
-  exact ⟨_, by omega, this⟩
-
-/-- **The runs of the gadget.** -/
-theorem xF_ev {J m W L : ℕ} {κ : List Bool → E} {S : Set (List Bool)} (x : Tree)
-    (K : KT E[T;T⁻¹]) (pre : List Bool)
-    (h : ∀ p, (coefK J m K).InB 1 p → κ (pre ++ p) = (coefK J m K).lk p ∧ pre ++ p ∈ S ∧
-        (pre ++ p).length ≤ L) :
-    ∃ l, Ev θ (xF J m W K pre) x l ∧
-      List.Forall₂ (RelX κ S (K.nds * (70 * W + 4 * L + 7 * (J + m) + 200))) l (xL J m W K) := by
-  induction K generalizing pre with
+theorem size_expT (W m : ℕ) (K : KT E[T;T⁻¹]) : (expT W m K).size + 3 ≤ K.nds * (2 ^ m * (4 * W + 6)) := by
+  induction K with
   | none =>
-    have := size_ofBits (List.replicate W false)
-    refine ⟨_, .quote _ x, .cons ⟨rfl, rfl, by simp [Run.det, names], by simp [Run.det, names],
-      ?_⟩ .nil⟩
-    simp only [Run.det, Tree.size, Bt.enc, KT.nds, List.length_replicate] at this ⊢
+    have := Nat.mul_le_mul (Nat.one_le_two_pow (n := m)) (Nat.le_add_left 6 (4 * W))
+    simp only [expT, Tree.size, KT.nds, one_mul]
     omega
   | leaf c =>
-    have hl := chT_ev (θ := θ) (κ := κ) (S := S) (c := 4 * W + 4 * L + 4 * (J + m) + 30)
-      (x := x) (n := J + m)
-      (f := fun w => .cons (.quote (.cons (Bt.leaf (w.take J)).enc
-        (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))))
-        (leaf (.quote (ofBits (pre ++ (w ++ [false]))))))
-      (o := fun w => (.leaf (w.take J), termCoef (c ^ KT.val (w.take J)) (KT.val (w.drop J)),
-        expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J))))) fun w hw => by
-        have e := Dt.cons (Dt.quote (θ := θ) (.cons (Bt.leaf (w.take J)).enc
-          (ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J)))))) x)
-          (Dt.cons (Dt.quote (ofBits (pre ++ (w ++ [false]))) x) (Dt.quote (.cons .nil .nil) x))
-        refine ⟨_, e, .cons ⟨rfl, rfl, ?_, ?_, ?_⟩ .nil⟩
-        · obtain ⟨h1, -, -⟩ := h (w ++ [false]) (KT.lk_full _ hw).2
-          simp only [Run.det, tl_cons, names, path_ofBits, List.map_cons,
-              List.map_nil, List.prod_cons,
-            List.prod_nil, mul_one]
-          rw [h1]
-          exact (KT.lk_full _ hw).1
-        · simpa [Run.det, names, path_ofBits] using (h (w ++ [false]) (KT.lk_full _ hw).2).2.1
-        · have h3 := (h (w ++ [false]) (KT.lk_full _ hw).2).2.2
-          have s1 := size_ofBits (pre ++ (w ++ [false]))
-          have s2 := size_ofBits (w.take J)
-          have s3 := size_ofBits (expBits W (termExp (c ^ KT.val (w.take J)) (KT.val (w.drop J))))
-          simp only [length_expBits, List.length_take] at s2 s3
-          simp only [Run.det, Tree.size, Bt.enc]
-          omega
-    obtain ⟨l, e, r⟩ := hl
-    refine ⟨l, e, r.imp fun s q hs => hs.mono ?_⟩
-    simp only [KT.nds]
-    omega
+    have := size_fullT (n := m) (C := 4 * W + 1)
+      (fun w => ofBits (expBits W (termExp c (KT.val w)))) fun w => by
+        have := size_ofBits (expBits W (termExp c (KT.val w)))
+        rwa [length_expBits] at this
+    simpa [expT, KT.nds] using this
   | node l r ihl ihr =>
-    obtain ⟨ll, el, rl⟩ := ihl (pre ++ [false]) fun p hp => by
-      simpa [coefK, KT.lk] using h (false :: p) hp
-    obtain ⟨lr, er, rr⟩ := ihr (pre ++ [true]) fun p hp => by
-      simpa [coefK, KT.lk] using h (true :: p) hp
-    obtain ⟨L', eL, rL⟩ := zip_rel (e := fun a b => .cons (.cons .nil (.cons a.hd b.hd))
-        (ofBits (addc false a.tl.path
-      b.tl.path))) el er rl rr (fun a ha b hb u w hu hw => by
-        simpa [path_ofBits, Bt.enc] using combF_dt (θ := θ) (length_xL a ha) (length_xL b hb) hu hw)
-      fun a ha b hb => by
-        have := size_ofBits (addc false a.2.2 b.2.2)
-        rw [length_addc _ ((length_xL a ha).trans (length_xL b hb).symm), length_xL a ha] at this
-        have h1 := le_size_ofBits a.2.2
-        have h2 := le_size_ofBits b.2.2
-        rw [length_xL a ha] at h1
-        rw [length_xL b hb] at h2
-        simp only [hd_cons, tl_cons, path_ofBits, Tree.size]
-        omega
-    refine ⟨L', eL, ?_⟩
-    have e : xL J m W (l.node r) = (((xL J m W l).flatMap fun a => (xL J m W r).map
-        fun b => (a, b)).map
-        fun p => (Bt.node p.1.1 p.2.1, p.1.2.1 * p.2.2.1, addc false p.1.2.2 p.2.2.2)) := by
-      simp [xL, List.map_flatMap, Function.comp_def]
-    rw [e, List.forall₂_map_right_iff]
-    refine rL.imp fun s p hs =>
-      ⟨hs.1, by simpa [Bt.enc, path_ofBits] using hs.2.1, hs.2.2.1, hs.2.2.2.1, ?_⟩
-    have := hs.2.2.2.2
-    simp only [KT.nds]
-    nlinarith
+    simp only [expT, Tree.size, KT.nds, add_mul, one_mul]
+    omega
 
 end Gadget
+
+section Walk
+
+/-- The names of a list of trees and bits put after one another. -/
+theorem path_listT_append (x : Tree) (w : List Bool) :
+    (listT (x.toList ++ w.map bit)).path = x.path ++ w := by
+  induction x with
+  | nil => rw [toList, List.nil_append, listT_ofBits, path_ofBits]; rfl
+  | cons a b _ ih => simp only [toList, List.cons_append, listT, path, ih]
+
+theorem length_toList (x : Tree) : x.toList.length = x.len := by
+  induction x with
+  | nil => rfl
+  | cons a b _ ih => simp only [toList, List.length_cons, len, ih]
+
+theorem len_listT (l : List Tree) : (listT l).len = l.length := by
+  rw [← length_toList, toList_listT]
+
+theorem size_listT_append (x : Tree) (ys : List Tree) :
+    (listT (x.toList ++ ys)).size + 1 = x.size + (listT ys).size := by
+  induction x with
+  | nil => simp only [toList, List.nil_append, Tree.size]; omega
+  | cons a b _ ih => simp only [toList, List.cons_append, listT, Tree.size]; omega
+
+/-- One name: guess a term of its constant, add the exponent of the term to the counter, and put the
+name of its coefficient in front of the names. The argument is (name, (counter, names)); `T` is the
+trie of the exponents. -/
+def termF (m : ℕ) (T : Tree) : Fm :=
+  lett (.cons .id (gwd m)) (lett (.cons .id (appF (.hd (.hd .id)) (.tl .id)))
+    (.cons (.run (.quote AD.code) (.cons (.quote AD.code) (.cons (.quote .nil)
+        (.cons (.hd (.tl (.hd (.hd .id)))) (getF (.tl .id) (.quote T))))))
+      (node (leaf (appF (.tl .id) (.quote (ofBits [false])))) (.tl (.tl (.hd (.hd .id)))))))
+
+/-- The state after a name `x` with the term `w`: `e` is the exponent of the term. -/
+def termS (x : Tree) (w e : List Bool) (s : List Bool × Tree) : List Bool × Tree :=
+  (addc false s.1 e, .cons (.cons (.cons (listT (x.toList ++ (w ++ [false]).map bit))
+    (.cons .nil .nil)) s.2) .nil)
+
+theorem termF_does {m : ℕ} {T x : Tree} {s : List Bool × Tree} {e : List Bool → List Bool}
+    (hT : ∀ w, w.length = m → tget (x.path ++ w) T = ofBits (e w))
+    (he : ∀ w, (e w).length = s.1.length) :
+    Does θ (termF m T) (.cons x (.cons (ofBits s.1) s.2))
+      (((wd m).map fun w => ((1 : A), termS x w (e w) s)).map
+        (Prod.map id fun s => .cons (ofBits s.1) s.2))
+      (160 * x.size + 200 * m + 60 * s.1.length + 400) := by
+  refine ((Does.letk (gwd_does (θ := θ) m (.cons x (.cons (ofBits s.1) s.2)))
+    (R := fun v => [(1, .cons (ofBits (addc false s.1 (e v.path)))
+      (.cons (.cons (.cons (listT (x.toList ++ (v.path ++ [false]).map bit)) (.cons .nil .nil)) s.2)
+        .nil))])
+    (d := 212 * x.len + 160 * m + 60 * s.1.length + 300) fun q hq => by
+      obtain ⟨w, hw, rfl⟩ := List.mem_map.1 hq
+      have hwm := length_of_mem_wd hw
+      obtain ⟨k, hk', hd⟩ := AD_dt (θ := θ) false (he w).symm
+      obtain ⟨y, hy⟩ : ∃ y, y = Tree.cons (.cons (.cons x (.cons (ofBits s.1) s.2)) (ofBits w))
+        (listT (x.toList ++ w.map bit)) := ⟨_, rfl⟩
+      have hg := getF_gives (θ := θ) (Gives.id y).tl (Gives.quote T y)
+      have hn := appF_gives (θ := θ) (xs := x.toList ++ w.map bit) (ys := [bit false])
+        (by rw [hy]; exact (Gives.id _).tl) (Gives.quote _ y)
+      have hc : Gives θ (.hd (.tl (.hd (.hd .id)))) y (ofBits s.1) 5 := by
+        rw [hy]; exact (Gives.id _).hd.hd.tl.hd
+      have ha : Gives θ (.tl (.tl (.hd (.hd .id)))) y s.2 5 := by
+        rw [hy]; exact (Gives.id _).hd.hd.tl.tl
+      rw [hy, tl_cons, path_listT_append, hT w hwm, ← hy] at hg
+      have h2 := Gives.cons (Gives.run (Gives.quote AD.code y) (Gives.cons (Gives.quote AD.code y)
+        (Gives.cons (Gives.quote .nil y) (Gives.cons hc hg)))
+          (by rw [Fm.ofTree_code]; exact (Does.of_dt hd).mono hk'))
+        (Gives.cons (Gives.cons (Gives.cons hn (Gives.quote (.cons .nil .nil) y)) ha)
+          (Gives.quote .nil y))
+      have hk := appF_gives (θ := θ) (xs := x.toList) (ys := w.map bit)
+        (x := .cons (.cons x (.cons (ofBits s.1) s.2)) (ofBits w))
+        (by rw [listT_toList]; exact (Gives.id _).hd.hd) (by rw [listT_ofBits]; exact (Gives.id _).tl)
+      rw [hy] at h2
+      have h3 := Gives.lett (Gives.cons (Gives.id _) hk) h2
+      rw [List.append_assoc] at h3
+      simp only [path_ofBits, List.map_append, List.map_cons, List.map_nil]
+      refine Does.mono h3 ?_
+      simp only [len_listT, List.length_append, List.length_map, length_toList, hwm]
+      omega).replace ?_).mono (by have := two_len_lt x; omega)
+  simp [bindW, flatMap_single, termS, Function.comp_def]
+
+/-- What `termF` gives at the name `x`: for every term of the constant `κ x.path`, the counter with
+the exponent of the term added and the names with the name of its coefficient. -/
+noncomputable def termL (W m : ℕ) (κ : List Bool → E[T;T⁻¹]) (x : Tree) (s : List Bool × Tree) :
+    List (A × List Bool × Tree) :=
+  (wd m).map fun w => (1, termS x w (expBits W (termExp (κ x.path) (KT.val w))) s)
+
+/-- **Paper: proof of Proposition prop:approx-acc, the guessed terms together give the constants.**
+Summed over the runs of the walk, the coefficients named, with the counter as exponent modulo
+2 ^ W, are the product of the constants of the names. -/
+theorem sum_foldL_term {W m : ℕ} {κ : List Bool → E[T;T⁻¹]} {κ' : List Bool → E} (xs : List Tree)
+    (hx : ∀ x ∈ xs, (κ x.path).coeff.support.card ≤ 2 ^ m ∧ ∀ w, w.length = m →
+      κ' (x.path ++ (w ++ [false])) = termCoef (κ x.path) (KT.val w))
+    (s : List Bool × Tree) (hs : s.1.length = W) :
+    ((foldL (A := A) (termL W m κ) xs s).map fun q =>
+      mark W q.2.1 (algebraMap A E q.1 * ((names q.2.2).map κ').prod)).sum =
+      mark W s.1 ((names s.2).map κ').prod * wrap A W (xs.map fun x => κ x.path).prod := by
+  induction xs generalizing s with
+  | nil => simp [foldL]
+  | cons x xs ih =>
+    obtain ⟨h1, h2⟩ := hx x List.mem_cons_self
+    rw [foldL, termL, bindW_pure, sum_flatMap_map, List.map_cons, List.prod_cons, map_mul,
+      ← sum_terms (A := A) (W := W) _ h1, ← mul_assoc, ← List.sum_map_mul_left,
+      ← List.sum_map_mul_right]
+    refine congrArg List.sum (List.map_congr_left fun w hw => ?_)
+    rw [ih (fun y hy => hx y (List.mem_cons_of_mem _ hy)) _
+      (by rw [termS, length_addc _ (hs.trans (length_expBits _ _).symm), hs])]
+    have e : names (termS x w (expBits W (termExp (κ x.path) (KT.val w))) s).2 =
+        (x.path ++ (w ++ [false])) :: names s.2 := by
+      rw [termS, names, names, path_listT_append]
+      rfl
+    rw [e, List.map_cons, List.prod_cons, h2 w (length_of_mem_wd hw), mul_comm (termCoef _ _), termS,
+      mark_addc hs (length_expBits _ _)]
+
+/-- The states of the walk: the counter keeps its length, the names are names of coefficients, and
+the tree of names grows by the name and twelve nodes more for every name. -/
+theorem mem_foldL_term {W m : ℕ} {κ : List Bool → E[T;T⁻¹]} {S : Set (List Bool)} (xs : List Tree)
+    (hx : ∀ x ∈ xs, ∀ w : List Bool, w.length = m → x.path ++ (w ++ [false]) ∈ S)
+    (s : List Bool × Tree) (hs : s.1.length = W) (hS : ∀ n ∈ names s.2, n ∈ S)
+    {q : A × List Bool × Tree} (hq : q ∈ foldL (termL W m κ) xs s) :
+    q.2.1.length = W ∧ (∀ n ∈ names q.2.2, n ∈ S) ∧
+      q.2.2.size ≤ s.2.size + (xs.map fun x => x.size + 4 * m + 12).sum := by
+  induction xs generalizing s with
+  | nil =>
+    obtain rfl := List.mem_singleton.1 hq
+    exact ⟨hs, hS, Nat.le_add_right _ _⟩
+  | cons x xs ih =>
+    rw [foldL, termL, bindW_pure, List.mem_flatMap] at hq
+    obtain ⟨w, hw, hq⟩ := hq
+    have hwm := length_of_mem_wd hw
+    obtain ⟨a1, a2, a3⟩ := ih (fun y hy => hx y (List.mem_cons_of_mem _ hy)) _
+      (by rw [termS, length_addc _ (hs.trans (length_expBits _ _).symm), hs]) (by
+        intro n hn
+        simp only [termS, names, path_listT_append, List.cons_append, List.nil_append,
+          List.mem_cons] at hn
+        rcases hn with rfl | hn
+        · exact hx x List.mem_cons_self w hwm
+        · exact hS n hn) hq
+    refine ⟨a1, a2, a3.trans ?_⟩
+    have h1 := size_listT_append x ((w ++ [false]).map bit)
+    have h2 := size_ofBits (w ++ [false])
+    rw [listT_ofBits] at h1
+    simp only [List.length_append, List.length_singleton, hwm] at h2
+    simp only [termS, Tree.size, List.map_cons, List.sum_cons]
+    omega
+
+end Walk
 
 end NS1
