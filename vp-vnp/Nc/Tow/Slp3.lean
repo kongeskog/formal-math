@@ -127,7 +127,7 @@ theorem py_actR (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H) (y : RM T m
 
 theorem cy_numF (hm : ∀ τ, (fun x => L x τ) ∈ H) (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H)
     (ht : ∀ l : LMv T FL, (fun x => tmin FL (L x) l) ∈ H) (hp : ∀ l : LMv T FL, ind (fun x => Pick FL (L x) l) ∈ H)
-    (mv : Mv T R ch FL) : CY Dd H Y 2 fun x => numF R ch FL (L x) mv := by
+    (mv : Mv T R ch FL) : CY Dd H Y 2 fun x => numF (L x) mv := by
   classical
   have hY := hA.pos
   rcases mv with y | l
@@ -147,7 +147,7 @@ structure Chosen (L : Inp → Tg T m AA → ℕ) (R : Routes T m Uu) (ch : Fin A
   isMin : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H
   tmin : ∀ l : LMv T FL, (fun x => tmin FL (L x) l) ∈ H
   pick : ∀ l : LMv T FL, ind (fun x => Pick FL (L x) l) ∈ H
-  numF : ∀ mv : Mv T R ch FL, (fun x => numF R ch FL (L x) mv) ∈ H
+  numF : ∀ mv : Mv T R ch FL, (fun x => numF (L x) mv) ∈ H
 
 omit hA hB hb hL in
 theorem Chosen.weaken {L : Inp → Tg T m AA → ℕ} {H H' : Set (Inp → ℕ)} (hc : Chosen L R ch FL H) (hH : H ⊆ H') :
@@ -173,7 +173,7 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
   obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := LMv T FL) (fun l => ind fun x => Pick FL (L x) l) (a := 7) (e := 1) hl
     (fun l => py_pick hA hB m3 f3 l) (by omega)
   have m4 : ∀ τ, (fun x => L x τ) ∈ H4 := fun τ => u4 (m3 τ)
-  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv T R ch FL) (fun mv x => numF R ch FL (L x) mv) (a := 2) (e := 1)
+  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv T R ch FL) (fun mv x => numF (L x) mv) (a := 2) (e := 1)
     (by simpa using hB.mv) (fun mv => cy_numF hA hB hb hL m4 (fun j i => u4 (u3 (f2 (j, i)))) (fun l => u4 (f3 l)) f4 mv)
     (by omega)
   exact ⟨H5, s5, u1.trans (u2.trans (u3.trans (u4.trans u5))), fun j i => u5 (u4 (u3 (f2 (j, i)))),
@@ -188,11 +188,11 @@ include hA hB hR hb
 /-- The loop over time. -/
 theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
     ∃ H', SY inp Y p (c + 1 + 8 * t) H' ∧ H ⊆ H' ∧
-      ∀ mv : Mv T R ch FL, (fun x => numS R ch FL lhat (nx x) (ox x) t mv) ∈ H' := by
+      ∀ mv : Mv T R ch FL, (fun x => numS lhat (nx x) (ox x) t mv) ∈ H' := by
   have hY := hA.pos
   induction t with
   | zero =>
-    obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Mv T R ch FL) (fun mv x => numS R ch FL lhat (nx x) (ox x) 0 mv)
+    obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Mv T R ch FL) (fun mv x => numS lhat (nx x) (ox x) 0 mv)
       (a := 0) (e := 1) (by simpa using hB.mv) (fun mv => CY.const 0 hA.zero_lt) (by omega)
     exact ⟨H1, s1, u1, f1⟩
   | succ t ih =>
@@ -201,7 +201,7 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
     obtain ⟨H2, s2, u2, f2⟩ := pick_stage hA hB hb
       (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s1 g1
     obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := Mv T R ch FL)
-      (fun mv x => numS R ch FL lhat (nx x) (ox x) (t + 1) mv) (a := 0) (e := 1) (by simpa using hB.mv)
+      (fun mv x => numS lhat (nx x) (ox x) (t + 1) mv) (a := 0) (e := 1) (by simpa using hB.mv)
       (fun mv => by
         by_cases ht : timeM R ch FL mv = t
         · refine (CY.base (f2.numF mv) hY).congr fun x => ?_
@@ -213,10 +213,10 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
 /-- What is known after the loop. -/
 structure After (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R FL (ch := ch) → ℕ) (lhat : ℕ)
     (H : Set (Inp → ℕ)) : Prop extends Stat nx ox lhat H,
-    Chosen (fun x => load R ch FL lhat (nx x) (ox x)) R ch FL H where
-  num : ∀ mv : Mv T R ch FL, (fun x => num R ch FL lhat (nx x) (ox x) mv) ∈ H
-  alv : ∀ ν : NM R FL (ch := ch), (fun x => alv R ch FL lhat (nx x) (ox x) ν) ∈ H
-  load : ∀ τ : Tg T m AA, (fun x => load R ch FL lhat (nx x) (ox x) τ) ∈ H
+    Chosen (fun x => load lhat (nx x) (ox x)) R ch FL H where
+  num : ∀ mv : Mv T R ch FL, (fun x => num lhat (nx x) (ox x) mv) ∈ H
+  alv : ∀ ν : NM R FL (ch := ch), (fun x => alv lhat (nx x) (ox x) ν) ∈ H
+  load : ∀ τ : Tg T m AA, (fun x => load lhat (nx x) (ox x) τ) ∈ H
 
 omit hA hB hR hb in
 theorem After.weaken {H H' : Set (Inp → ℕ)} (ha : After nx ox lhat H) (hH : H ⊆ H') : After nx ox lhat H' where
@@ -231,8 +231,8 @@ theorem after_stage (hS : SY inp Y p c H) (hbs : Base nx ox H) :
   obtain ⟨H1, s1, u1, f1⟩ := stat_stage hA hB hR hS hbs (lhat := lhat)
   obtain ⟨H2, s2, u2, f2⟩ := num_stage hA hB hR hb s1 f1 (tend J m)
   obtain ⟨H3, s3, u3, f3, g3⟩ := ld_stage hA hB hR s2 (f1.weaken u2)
-    (Nf := fun x => num R ch FL lhat (nx x) (ox x)) f2
-  obtain ⟨H4, s4, u4, f4⟩ := pick_stage (L := fun x => load R ch FL lhat (nx x) (ox x)) hA hB hb
+    (Nf := fun x => num lhat (nx x) (ox x)) f2
+  obtain ⟨H4, s4, u4, f4⟩ := pick_stage (L := fun x => load lhat (nx x) (ox x)) hA hB hb
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 g3
   refine ⟨H4, s4.le hA ?_, (f1.weaken (u2.trans (u3.trans u4))), f4,
     fun mv => u4 (u3 (f2 mv)), fun ν => u4 (f3 ν), fun τ => u4 (g3 τ)⟩

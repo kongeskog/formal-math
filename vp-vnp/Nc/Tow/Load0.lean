@@ -115,13 +115,13 @@ variable (hb : 0 < b)
 include hb
 
 theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R ch (.start a c γ s)) :
-    num R ch FL lhat n o (.inl ⟨.start a c γ s, hx⟩) ≤ Bt T ch lhat n a c γ := by
+    num lhat n o (.inl ⟨.start a c γ s, hx⟩) ≤ Bt T ch lhat n a c γ := by
   classical
   obtain ⟨s, hs⟩ := s
   induction s with
   | zero =>
-    have h1 : num R ch FL lhat n o (.inl ⟨.start a c γ ⟨0, hs⟩, hx⟩) ≤
-        load R ch FL lhat n o (.nxt (.start a c γ ⟨0, hs⟩)) := by
+    have h1 : num lhat n o (.inl ⟨.start a c γ ⟨0, hs⟩, hx⟩) ≤
+        load lhat n o (.nxt (.start a c γ ⟨0, hs⟩)) := by
       rw [num_eq, numF]
       split_ifs
       · exact le_rfl
@@ -142,8 +142,8 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R
     have hx0 : okR T R ch (.start a c γ ⟨s, hs0⟩) := by
       obtain ⟨h1, h2⟩ := hx
       exact ⟨h1, by simp only at h2 ⊢; omega⟩
-    have h1 : num R ch FL lhat n o (.inl ⟨.start a c γ ⟨s + 1, hs⟩, hx⟩) ≤
-        load R ch FL lhat n o (.nxt (.start a c γ ⟨s + 1, hs⟩)) := by
+    have h1 : num lhat n o (.inl ⟨.start a c γ ⟨s + 1, hs⟩, hx⟩) ≤
+        load lhat n o (.nxt (.start a c γ ⟨s + 1, hs⟩)) := by
       rw [num_eq, numF]
       split_ifs
       · exact le_rfl
@@ -220,7 +220,7 @@ variable (hb : 0 < b)
 include hb
 
 /-- The load of an edge after the start. -/
-theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
+theorem load_start_le (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
     ∑ a, ∑ c, ∑ γ, if a = c then 0 else Bt T ch lhat n a c γ * (R.path (ch a) (ch c) γ).count e := by
   classical
   -- initial units
@@ -258,12 +258,12 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
     · rw [if_neg hv]
       exact Nat.zero_le _
   -- relays
-  have h2 : (∑ ν : NM R FL, if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv R ch FL lhat n o ν else 0) ≤
+  have h2 : (∑ ν : NM R FL, if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
       ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), if a = c then 0 else Bt T ch lhat n a c γ *
         ((if s.1 + 1 < R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1]? = some e then 1 else 0) +
         if s.1 + 2 = R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e then 1 else 0) := by
     -- only the relays of the start
-    have h3 : ∀ ν : NM R FL, (if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv R ch FL lhat n o ν else 0) ≤
+    have h3 : ∀ ν : NM R FL, (if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
         ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), ((if ∃ hx : okR T R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, false⟩ ∧
             (R.path (ch a) (ch c) γ)[s.1]? = some e then Bt T ch lhat n a c γ else 0) +
           if ∃ hx : okR T R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
@@ -461,7 +461,7 @@ theorem batch_le (e : T.Ed 0) : (∑ a, ∑ c, ∑ γ, if a = c then 0 else
 
 /-- **Paper: Theorem thm:tree, Start.** "Every edge gets at most n₀ = 4L(N+M²) units": every edge of X^(0) gets at
 most Uu (N/|X^(0)| + 2AA), where Uu ≤ 2|X^(0)|L bounds the routes through an edge. -/
-theorem _root_.Paper.thm_tree_start (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
+theorem _root_.Paper.thm_tree_start (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
     Uu * (lhat / Fintype.card (T.X 0) + 2 * AA) := (load_start_le hb e).trans (batch_le e)
 
 end

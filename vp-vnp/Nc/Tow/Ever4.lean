@@ -100,15 +100,15 @@ section
 
 variable (hb : 0 < b)
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-  (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
+  (hg : ∀ mv, GoodMv lhat (nn n) (oo R FL Pl o) mv)
 
 include hb hg in
 /-- The outcome of a law move is not large. -/
 theorem law_le (l : LMv T FL) (ν : (FL.L l.2.2.2).Cn) :
-    oo R FL Pl o ⟨.inr l, ν⟩ ≤ FL.G₁ * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) := by
+    oo R FL Pl o ⟨.inr l, ν⟩ ≤ FL.G₁ * num lhat (nn n) (oo R FL Pl o) (.inr l) := by
   have h1 := (hg (.inr l)).1
   unfold GoodL at h1
-  set t := num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) with ht
+  set t := num lhat (nn n) (oo R FL Pl o) (.inr l) with ht
   have h2 : (oo R FL Pl o ⟨.inr l, ν⟩) ^ 2 ≤ ∑ ν : (FL.L l.2.2.2).Cn, (oo R FL Pl o ⟨Sum.inr l, ν⟩) ^ 2 :=
     Finset.single_le_sum (f := fun ν : (FL.L l.2.2.2).Cn => (oo R FL Pl o ⟨Sum.inr l, ν⟩) ^ 2)
       (fun _ _ => Nat.zero_le _) (mem_univ ν)
@@ -130,8 +130,8 @@ theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d 
     if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
       oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ 2 * Fintype.card T.Nr * FL.G₁ *
     ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then
-      num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) else 0 := by
-  set t := num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) with ht
+      num lhat (nn n) (oo R FL Pl o) (.inr l) else 0 := by
+  set t := num lhat (nn n) (oo R FL Pl o) (.inr l) with ht
   set S := ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then t else 0 with hS
   have h5 : ∀ (ν : (FL.L l.2.2.2).Cn) (d : Bool),
       (if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
@@ -158,8 +158,8 @@ include hb hg
 open Classical in
 /-- **The units that a party ever holds.** -/
 theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n (Pl.pt P) + chanN R FL Pl (Pl.pt P) +
-    2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P +
-    2 * Fintype.card T.Nr * FL.G₁ * NL R ch FL lhat (nn n) (oo R FL Pl o) P := by
+    2 * NR lhat (nn n) (oo R FL Pl o) P +
+    2 * Fintype.card T.Nr * FL.G₁ * NL lhat (nn n) (oo R FL Pl o) P := by
   refine (held_le_chan (sys R FL Pl) n o (Pl.pt P)).trans ?_
   have h1 : (∑ ν : (sys R FL Pl).N, ∑ d : Bool, if (sys R FL Pl).np ν d = Pl.pt P then (o ν).1 + 1 else 0) =
       chanN R FL Pl (Pl.pt P) + ∑ ν : (sys R FL Pl).N, ∑ d : Bool,
@@ -185,8 +185,8 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
   rw [h1, h2]
   have h4 : (∑ ν : NM R FL (ch := ch), ∑ d : Bool,
       if partM R ch FL ν.1 ((kindM R ch FL ν.1).cnEnd ν.2 d) = P then oo R FL Pl o ν else 0) ≤
-      2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P +
-      2 * Fintype.card T.Nr * FL.G₁ * NL R ch FL lhat (nn n) (oo R FL Pl o) P := by
+      2 * NR lhat (nn n) (oo R FL Pl o) P +
+      2 * Fintype.card T.Nr * FL.G₁ * NL lhat (nn n) (oo R FL Pl o) P := by
     change (∑ ν : (Σ mv : Mv T R ch FL, (kindM R ch FL mv).Cn), ∑ d : Bool,
       if partM R ch FL ν.1 ((kindM R ch FL ν.1).cnEnd ν.2 d) = P then oo R FL Pl o ν else 0) ≤ _
     rw [Fintype.sum_sigma, Fintype.sum_sum_type]
@@ -195,20 +195,20 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
       have h5 : ∀ x : {x : RM T m AA // okR T R ch x}, (∑ ν : Bool, ∑ d : Bool,
           if tri T R ch x.1 (if d then (if ν then 2 else 1) else (if ν then 1 else 0)) = P then
             oo R FL Pl o ⟨.inl x, ν⟩ else 0) ≤
-          2 * ∑ q : Fin 3, if tri T R ch x.1 q = P then nR R ch FL lhat (nn n) (oo R FL Pl o) x.1 else 0 := by
+          2 * ∑ q : Fin 3, if tri T R ch x.1 q = P then nR lhat (nn n) (oo R FL Pl o) x.1 else 0 := by
         intro x
-        have h6 : nR R ch FL lhat (nn n) (oo R FL Pl o) x.1 = num R ch FL lhat (nn n) (oo R FL Pl o) (.inl x) := by
+        have h6 : nR lhat (nn n) (oo R FL Pl o) x.1 = num lhat (nn n) (oo R FL Pl o) (.inl x) := by
           unfold nR
           rw [dif_pos x.2]
         rw [Fintype.sum_bool, Fintype.sum_bool, Fintype.sum_bool, Fin.sum_univ_three, h6]
         simp only [show ∀ ν : Bool, _ = _ from hg (.inl x), if_true, Bool.false_eq_true, if_false]
         split_ifs <;> omega
       have h7 : (∑ x : {x : RM T m AA // okR T R ch x}, 2 * ∑ q : Fin 3, if tri T R ch x.1 q = P then
-          nR R ch FL lhat (nn n) (oo R FL Pl o) x.1 else 0) ≤ 2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P := by
+          nR lhat (nn n) (oo R FL Pl o) x.1 else 0) ≤ 2 * NR lhat (nn n) (oo R FL Pl o) P := by
         rw [← Finset.mul_sum]
         refine Nat.mul_le_mul_left _ ?_
         exact sum_sub_le (fun x => okR T R ch x) fun x => ∑ q : Fin 3, if tri T R ch x q = P then
-          nR R ch FL lhat (nn n) (oo R FL Pl o) x else 0
+          nR lhat (nn n) (oo R FL Pl o) x else 0
       refine le_trans (Finset.sum_le_sum fun x _ => ?_) h7
       refine le_trans (le_of_eq ?_) (h5 x)
       refine Finset.sum_congr rfl fun ν _ => Finset.sum_congr rfl fun d _ => ?_

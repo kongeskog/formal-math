@@ -114,7 +114,7 @@ variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U
 theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
     (hd : tgU R FL Pl u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
   classical
-  set L := load R ch FL lhat (nn n) (oo R FL Pl o) with hL
+  set L := load lhat (nn n) (oo R FL Pl o) with hL
   have one : ∀ x : RM T m AA, okR T R ch x → ActR L x → tgU R FL Pl u = inpR T x →
       ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
     intro x hx ha ht
@@ -155,7 +155,7 @@ theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n
     obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
     obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv T FL)
     have hd : Pick FL L (⟨j, i, ω, d⟩ : LMv T FL) := hd
-    have hnum : num R ch FL lhat (nn n) (oo R FL Pl o) (.inr (⟨j, i, ω, d⟩ : LMv T FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) := by
+    have hnum : num lhat (nn n) (oo R FL Pl o) (.inr (⟨j, i, ω, d⟩ : LMv T FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) := by
       rw [num_eq, numF, if_pos hd]
     set t := tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) with ht
     have hfit := hd.1 q hq

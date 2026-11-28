@@ -92,7 +92,7 @@ theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u 
 
 /-- The number of units of a slot. -/
 theorem card_consM (z : ZM R FL (ch := ch)) :
-    (consM R FL Pl lhat n o z : Finset (Un R FL Pl U0 U1)).card ≤ num R ch FL lhat (nn n) (oo R FL Pl o) z.1 := by
+    (consM R FL Pl lhat n o z : Finset (Un R FL Pl U0 U1)).card ≤ num lhat (nn n) (oo R FL Pl o) z.1 := by
   classical
   rcases z with ⟨x | l, e⟩
   · rw [num_eq, consM, numF]
@@ -129,8 +129,8 @@ theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
     | new ν k =>
       have h1 : timeM R ch FL (eN R FL Pl ν).1 < timeM R ch FL z.1 :=
         (tg_time (eN R FL Pl ν)).trans_le hu
-      change k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ↔
-        k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν)
+      change k.1 < alv lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ↔
+        k.1 < alv lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν)
       unfold alv
       rw [num_congr hb fun mv' hmv' c => hag mv' (hmv'.trans h1) c,
         alvN_congr (fun c => hag _ h1 c)]
@@ -164,7 +164,7 @@ end Causal
 /-- **The plan obeys the rules.** -/
 theorem plan_ok (hb : 0 < b) {cap : ℕ}
     (hcap : ∀ (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) mv,
-      num R ch FL lhat (nn n) (oo R FL Pl o) mv ≤ cap) : (plan R FL Pl lhat U0 U1).Ok cap where
+      num lhat (nn n) (oo R FL Pl o) mv ≤ cap) : (plan R FL Pl lhat U0 U1).Ok cap where
   causal n o o' z ho := consM_congr hb _ fun mv h => oo_congr (P := (· < z.1)) ho (lt_of_time h)
   causal' n o o' x ho := num_congr hb fun mv h => oo_congr (P := (· < x)) ho (lt_of_time h)
   causal'' n o o' x ho :=
@@ -192,8 +192,8 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
           have h5 := (tg_time (eN R FL Pl ν)).trans_le ((congrArg tgTime h2).le.trans h4)
           simpa [eN_fst] using lt_of_time h5
         · simp only [newUnits, mem_filter, mem_univ, true_and, decide_eq_true_eq]
-          have h3 : k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) := h1
-          have h4 : alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≤ (o ν).1 := by
+          have h3 : k.1 < alv lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) := h1
+          have h4 : alv lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≤ (o ν).1 := by
             refine (alvN_le _ _).trans ?_
             unfold oo
             rw [Equiv.symm_apply_apply]

@@ -46,8 +46,8 @@ theorem plan_ok_cap : (plan R FL Pl lhat U0 U1).Ok (capN FL U0 Uu AA lhat) :=
     (fun a c => Nat.le_of_lt_succ (n a c).2) mv
 
 /-- All units of the tree. -/
-theorem sum_fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL → ℕ} :
-    ∑ i ∈ range (J + 1), ∑ c, fb (lev (load R ch FL lhat n o)) i c ≤ YhN FL Uu AA lhat ρ := by
+theorem sum_fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ} :
+    ∑ i ∈ range (J + 1), ∑ c, fb (lev (load lhat n o)) i c ≤ YhN FL Uu AA lhat ρ := by
   rw [Finset.sum_range]
   refine le_trans (le_of_eq ?_) (sum_bet_le_YhN (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o)
     hb hh hbD hρ hρ' hρ1 hρD)
@@ -58,14 +58,14 @@ theorem sum_fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL → ℕ} :
 
 omit hρ' in
 /-- Units between a node and its parent. -/
-theorem fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL → ℕ} (j : ℕ) (hj : j ≤ J) (c : T.X j) :
-    fb (lev (load R ch FL lhat n o)) j c ≤ BhN FL Uu AA lhat ρ := by
+theorem fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ} (j : ℕ) (hj : j ≤ J) (c : T.X j) :
+    fb (lev (load lhat n o)) j c ≤ BhN FL Uu AA lhat ρ := by
   refine Nat.le_floor ?_
   have h1 := bet_le_bhat (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hb hh hbD hρ hρ1 hρD
     ⟨j, Nat.lt_succ_of_le hj⟩ c
   refine le_trans (le_of_eq ?_) h1
   unfold fb
-  have := lev_eq (load R ch FL lhat n o) ⟨j, Nat.lt_succ_of_le hj⟩
+  have := lev_eq (load lhat n o) ⟨j, Nat.lt_succ_of_le hj⟩
   rw [this]
   rfl
 

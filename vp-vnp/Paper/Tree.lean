@@ -331,11 +331,11 @@ theorem ndStage_eq_top {ν : Nd T} : ndStage ν = J + 1 ↔ ν = none := by
 /-- The parent of a party. -/
 noncomputable def treePar (hh : 0 < h) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
     (p : Fin (AA + A')) : Fin (AA + A') :=
-  Pl.pt (ndPar hh (lev (load R ch FL N (nn n) (oo R FL Pl o))) (Pl.pt.symm p))
+  Pl.pt (ndPar hh (lev (load N (nn n) (oo R FL Pl o))) (Pl.pt.symm p))
 
 /-- The load at a party: the number of units between it and its parent. -/
 noncomputable def treeUp (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (p : Fin (AA + A')) : ℕ :=
-  onN (fb (lev (load R ch FL N (nn n) (oo R FL Pl o)))) 0 (Pl.pt.symm p)
+  onN (fb (lev (load N (nn n) (oo R FL Pl o)))) 0 (Pl.pt.symm p)
 
 variable {R FL Pl}
 
@@ -357,8 +357,8 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
   classical
   have hb := hH.b_pos
   have hh := hH.h_pos
-  have hp : ∀ mv, GoodMv R ch FL N (nn n) (oo R FL Pl o) mv := fun mv => by
-    have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
+  have hp : ∀ mv, GoodMv N (nn n) (oo R FL Pl o) mv := fun mv => by
+    have h1 : GoodMv N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨hseen, hal⟩ := cur_end hh hu
   cases u with
@@ -376,7 +376,7 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
       (R.pl_pos (fun e => hne (ch.injective e)) _)).1 hdone
   | new ν kk =>
     have hko := mem_seen_new.1 hseen
-    have halv : alv R ch FL N (nn n) (oo R FL Pl o) (eN R FL Pl ν) = (o ν).1 := by
+    have halv : alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν) = (o ν).1 := by
       rw [alv_good _ (hp _)]
       unfold oo
       rw [Equiv.symm_apply_apply]
@@ -387,7 +387,7 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
       have e : kk = o ν := Fin.ext (by omega)
       rw [e]
     have hA : AlU R FL Pl N n o (Uid.new ν kk : Un R FL Pl N U1) := by
-      change kk.1 < alv R ch FL N (nn n) (oo R FL Pl o) (eN R FL Pl ν)
+      change kk.1 < alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν)
       rw [halv]
       exact hlt
     have hdone : tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .done := hal hA
@@ -400,19 +400,19 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
     rw [e0, e1]
     have hmem : ∀ s, IsCh R ch FL (eN R FL Pl ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU R FL Pl N n o s :=
       fun s hs => mem_AsU_new.2 ⟨hA, hs⟩
-    have hal' : alv R ch FL N (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≠ 0 := by omega
+    have hal' : alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≠ 0 := by omega
     revert hdone hal' hmem
     generalize eN R FL Pl ν = w
     intro hdone hmem hal'
     rcases w with ⟨⟨x, hx⟩ | l, β⟩
-    · have hnum : num R ch FL N (nn n) (oo R FL Pl o) (.inl ⟨x, hx⟩) ≠ 0 := by
+    · have hnum : num N (nn n) (oo R FL Pl o) (.inl ⟨x, hx⟩) ≠ 0 := by
         have := alv_le_num (lhat := N) (n := nn n) (o := oo R FL Pl o) (FL := FL) ⟨x, hx⟩ β
         omega
       obtain ⟨j, hj, c, h1, h2⟩ := done_hold hb hh hx (β := β) hdone hnum
       refine ⟨⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩, hmem _ ⟨⟨x, hx⟩, β, rfl, hdone, h1⟩, ?_⟩
       have h3 : s(partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β false),
           partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
-          s(nd T j hj c, parN hh (lev (load R ch FL N (nn n) (oo R FL Pl o))) j c) := h2
+          s(nd T j hj c, parN hh (lev (load N (nn n) (oo R FL Pl o))) j c) := h2
       have h4 := congrArg (Sym2.map Pl.pt) h3
       simp only [Sym2.map_mk] at h4
       rw [h4, treePar, Equiv.symm_apply_apply]
@@ -454,8 +454,8 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     (hS : SlpN inp p H) (hn : ∀ a c, (fun x => ((nI x a c : Fin (U0 + 1)) : ℕ)) ∈ H)
     (ho : ∀ ν, (fun x => ((oI x ν : Fin U1) : ℕ)) ∈ H) (lhat : ℕ) :
     ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat TM H' ∧
-      HostOk hh (fun x => load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x))) H' ∧
-      ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x)))) j c) ∈ H' := by
+      HostOk hh (fun x => load lhat (nn (nI x)) (oo R FL Pl (oI x))) H' ∧
+      ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load lhat (nn (nI x)) (oo R FL Pl (oI x)))) j c) ∈ H' := by
   have hR : Rng (nX nI) (oX oI : Inp → NM R FL → ℕ) U0 U1 := rng
   have hS0 : SY inp Y p 0 H := by
     unfold SY
@@ -464,9 +464,9 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
   have hb0 : Base (nX nI) (oX oI : Inp → NM R FL → ℕ) H := ⟨hn, fun ν => ho _⟩
   obtain ⟨H1, s1, f1⟩ := after_stage hA hB hR hb hS0 hb0
   obtain ⟨H2, s2, u2, f2⟩ := units_stage hA hB hB2 s1 f1
-  obtain ⟨H3, s3, u3, f3⟩ := host_stage hh (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
+  obtain ⟨H3, s3, u3, f3⟩ := host_stage hh (L := fun x => load lhat (nX nI x) (oX oI x)) hA hB s2
     (fun j i => u2 (f1.isMin j i))
-  obtain ⟨H4, s4, u4, f4⟩ := fb_stage (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB
+  obtain ⟨H4, s4, u4, f4⟩ := fb_stage (L := fun x => load lhat (nX nI x) (oX oI x)) hA hB
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 (fun τ => u3 (u2 (f1.load τ)))
   refine ⟨H4, ?_, (f2.weaken u3).weaken u4, fun j hj c c' => u4 (f3 j hj c c'), f4⟩
   refine SlpN.le hA.zero_lt ?_ s4
@@ -483,7 +483,7 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
 
 /-- Parents are computed: the indicator of "q is the parent of p". -/
 theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 1)} {o' : Inp → (sys R FL Pl).N → Fin U1}
-    (hh : 0 < h) (hH : HostOk hh (fun x => load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))) H) (a q : Fin (AA + A')) :
+    (hh : 0 < h) (hH : HostOk hh (fun x => load U0' (nn (n' x)) (oo R FL Pl (o' x))) H) (a q : Fin (AA + A')) :
     (ind fun x => treePar R FL Pl hh (n' x) (o' x) a = q) ∈ H ∪ {(fun _ => 0), (fun _ => 1)} := by
   classical
   have hconst : ∀ P : Prop, (ind fun _ : Inp => P) ∈ H ∪ {(fun _ => 0), (fun _ => 1)} := by
@@ -500,7 +500,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
   by_cases hjJ : j < J
   · -- the parent of a node of stage `j` is of stage `j + 1`
     have hoff : ndStage (Pl.pt.symm q) ≠ j + 1 →
-        ∀ x, ¬ (Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+        ∀ x, ¬ (Pl.pt (ndPar hh (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x))))
           (nd T j hj c)) = q) :=
       fun hq x hx => hq (by rw [← hx, Equiv.symm_apply_apply, ndStage_par hh _ nd_ne_none]; rfl)
     rcases nd_cases (Pl.pt.symm q) with eq | ⟨i, hi, c', eq⟩
@@ -510,8 +510,8 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
     · by_cases hij : i = j + 1
       · subst hij
         refine Or.inl ?_
-        have e2 : (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
-            fun x => hostj hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) c = c' := by
+        have e2 : (fun x => Pl.pt (ndPar hh (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
+            fun x => hostj hh (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x)))) c = c' := by
           funext x
           rw [← Equiv.eq_symm_apply, eq]
           simp only [ndPar, nd, parN, dif_pos (show j + 1 ≤ J by omega)]
@@ -521,7 +521,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
       · have := hoff (by rw [eq]; exact hij)
         -- `this` makes the predicate `False` for every `x`; `hconst` closes it
         simp_all
-  · have e2 : (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
+  · have e2 : (fun x => Pl.pt (ndPar hh (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
         fun _ => Pl.pt none = q := by
       funext x
       simp only [ndPar, nd, parN, dif_neg (show ¬ j + 1 ≤ J by omega)]
@@ -647,7 +647,7 @@ theorem card_treeChildren (hh : 0 < h) (n : Fin AA → Fin AA → Fin (N + 1)) (
       (if q = Pl.pt none then Fintype.card (T.X J) else b) := by
   obtain ⟨ν, rfl⟩ := Pl.pt.surjective q
   have h1 : (univ.filter fun p => p ≠ Pl.pt none ∧ treePar R FL Pl hh n o p = Pl.pt ν).card ≤
-      (univ.filter fun μ : Nd T => μ ≠ none ∧ ndPar hh (lev (load R ch FL N (nn n) (oo R FL Pl o))) μ = ν).card := by
+      (univ.filter fun μ : Nd T => μ ≠ none ∧ ndPar hh (lev (load N (nn n) (oo R FL Pl o))) μ = ν).card := by
     refine card_le_card_of_injOn Pl.pt.symm ?_ Pl.pt.symm.injective.injOn
     intro p hp
     obtain ⟨-, h1, h2⟩ := mem_filter.1 (mem_coe.1 hp)
@@ -725,7 +725,7 @@ theorem tree_up_total (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1))
   rw [Fintype.sum_option]
   simp only [onN, Nat.zero_add]
   rw [Fintype.sum_sigma, Fin.sum_univ_eq_sum_range
-    (fun j => ∑ x : T.X j, fb (lev (load R ch FL N (nn n) (oo R FL Pl o))) j x) (J + 1)]
+    (fun j => ∑ x : T.X j, fb (lev (load N (nn n) (oo R FL Pl o))) j x) (J + 1)]
   exact sum_fb_le hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.ρ_lt hH.gain hH.two
 
 /-- The loads at a chamber and below its children are those at the party and its children. -/
@@ -791,8 +791,8 @@ theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1
           ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl hH.h_pos n o q = p), treeUp R FL Pl n o q) +
         (if (p : ℕ) < AA then (1 + 8 * m) * N else 0) +
         2 * ((deadU R FL Pl N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
-  have hgd : ∀ mv, GoodMv R ch FL N (nn n) (oo R FL Pl o) mv := fun mv => by
-    have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
+  have hgd : ∀ mv, GoodMv N (nn n) (oo R FL Pl o) mv := fun mv => by
+    have h1 : GoodMv N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨P, rfl⟩ := Pl.pt.surjective p
   have h0 := held_node_le hH.h_pos hH.b_pos

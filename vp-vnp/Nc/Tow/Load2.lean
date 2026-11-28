@@ -20,20 +20,20 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R 
   {o : NM R FL (ch := ch) → ℕ}
 
 theorem alv_le_num (x : {x : RM T m AA // okR T R ch x}) (ν : (kindM R ch FL (.inl x)).Cn) :
-    alv R ch FL lhat n o ⟨.inl x, ν⟩ ≤ num R ch FL lhat n o (.inl x) := by
+    alv lhat n o ⟨.inl x, ν⟩ ≤ num lhat n o (.inl x) := by
   unfold alv
   rw [alvN_inl]
   split_ifs
   · exact le_rfl
   · exact Nat.zero_le _
 
-theorem load_def (τ : Tg T m AA) : load R ch FL lhat n o τ = bt R ch lhat n τ +
-    ∑ ν : NM R FL (ch := ch), if tgM R ch FL ν.1 ν.2 = τ then alv R ch FL lhat n o ν else 0 := rfl
+theorem load_def (τ : Tg T m AA) : load lhat n o τ = bt R ch lhat n τ +
+    ∑ ν : NM R FL (ch := ch), if tgM R ch FL ν.1 ν.2 = τ then alv lhat n o ν else 0 := rfl
 
 /-- A load that comes from few channels. -/
 theorem load_le_sum {τ : Tg T m AA} (s : Finset (NM R FL (ch := ch))) (hbt : bt R ch lhat n τ = 0)
-    (hs : ∀ ν : NM R FL (ch := ch), tgM R ch FL ν.1 ν.2 = τ → alv R ch FL lhat n o ν ≠ 0 → ν ∈ s) :
-    load R ch FL lhat n o τ ≤ ∑ ν ∈ s, alv R ch FL lhat n o ν := by
+    (hs : ∀ ν : NM R FL (ch := ch), tgM R ch FL ν.1 ν.2 = τ → alv lhat n o ν ≠ 0 → ν ∈ s) :
+    load lhat n o τ ≤ ∑ ν ∈ s, alv lhat n o ν := by
   rw [load_def, hbt, Nat.zero_add, ← Finset.sum_filter]
   rw [← Finset.sum_filter_ne_zero]
   refine Finset.sum_le_sum_of_subset ?_
@@ -301,8 +301,8 @@ theorem seg_chan {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} {�
 
 section Mid
 
-theorem num_inl (x : {x : RM T m AA // okR T R ch x}) : num R ch FL lhat n o (.inl x) ≤
-    load R ch FL lhat n o (inpR T x.1) := by
+theorem num_inl (x : {x : RM T m AA // okR T R ch x}) : num lhat n o (.inl x) ≤
+    load lhat n o (inpR T x.1) := by
   classical
   rw [num_eq, numF]
   split_ifs
@@ -310,8 +310,8 @@ theorem num_inl (x : {x : RM T m AA // okR T R ch x}) : num R ch FL lhat n o (.i
   · exact Nat.zero_le _
 
 theorem num_mid0 (j : Fin J) (e : T.Ed j) (hx : okR T R ch (.mid j e 0)) :
-    num R ch FL lhat n o (.inl ⟨.mid j e 0, hx⟩) ≤ load R ch FL lhat n o (.edge j.castSucc e) ∧
-    (¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) → num R ch FL lhat n o (.inl ⟨.mid j e 0, hx⟩) = 0) := by
+    num lhat n o (.inl ⟨.mid j e 0, hx⟩) ≤ load lhat n o (.edge j.castSucc e) ∧
+    (¬ IsMin (load lhat n o) j.castSucc (T.ty e) → num lhat n o (.inl ⟨.mid j e 0, hx⟩) = 0) := by
   classical
   refine ⟨num_inl _, fun hn => ?_⟩
   rw [num_eq, numF, if_neg]
@@ -323,15 +323,15 @@ include hb
 
 /-- The relays of an edge are given at most what is on the edge. -/
 theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)) :
-    ∃ hx0 : okR T R ch (.mid j e 0), num R ch FL lhat n o (.inl ⟨.mid j e s, hx⟩) ≤
-      num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
+    ∃ hx0 : okR T R ch (.mid j e 0), num lhat n o (.inl ⟨.mid j e s, hx⟩) ≤
+      num lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
   have hx0 : okR T R ch (.mid j e 0) := ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
   refine ⟨hx0, ?_⟩
   -- The step shared by all relays: the load at relay `s` is at most the number at the one
   -- relay `y` that feeds it.
   have key : ∀ (s : Fin 4) (y : RM T m AA) (hy : okR T R ch y),
       (∀ x ν, okR T R ch x → tgR T R ch x ν = .nxt (.mid j e s) → x = y) →
-      load R ch FL lhat n o (.nxt (.mid j e s)) ≤ num R ch FL lhat n o (.inl ⟨y, hy⟩) := by
+      load lhat n o (.nxt (.mid j e s)) ≤ num lhat n o (.inl ⟨y, hy⟩) := by
     intro s y hy hxy
     refine (load_le_sum {(⟨.inl ⟨y, hy⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e s) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
@@ -342,15 +342,15 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
       · simp [tgM] at hν
     · rw [Finset.sum_singleton]
       exact alv_le_num _ _
-  have one : ∀ hx1 : okR T R ch (.mid j e 1), num R ch FL lhat n o (.inl ⟨.mid j e 1, hx1⟩) ≤
-      num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) :=
+  have one : ∀ hx1 : okR T R ch (.mid j e 1), num lhat n o (.inl ⟨.mid j e 1, hx1⟩) ≤
+      num lhat n o (.inl ⟨.mid j e 0, hx0⟩) :=
     fun hx1 => (num_inl _).trans <| key 1 _ hx0 fun x ν _ hν => by
       rcases (tgR_mid hν).2 with h2 | h2 | h2
       · exact h2.2
       · exact absurd h2.1 (by decide)
       · exact absurd h2.1 (by decide)
-  have two : ∀ hx2 : okR T R ch (.mid j e 2), num R ch FL lhat n o (.inl ⟨.mid j e 2, hx2⟩) ≤
-      num R ch FL lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
+  have two : ∀ hx2 : okR T R ch (.mid j e 2), num lhat n o (.inl ⟨.mid j e 2, hx2⟩) ≤
+      num lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
     intro hx2
     refine (num_inl _).trans ?_
     by_cases hh : hst T (T.ty e) (T.e0 e) = T.π (T.e0 e)
@@ -382,9 +382,9 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
     · exact h2.2
 
 theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)) (ν : Bool) :
-    alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load R ch FL lhat n o (.edge j.castSucc e) ∧
-    (¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) →
-      alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
+    alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load lhat n o (.edge j.castSucc e) ∧
+    (¬ IsMin (load lhat n o) j.castSucc (T.ty e) →
+      alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
   obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
   have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0
   have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) (⟨.mid j e s, hx⟩ : {x : RM T m AA // okR T R ch x}) ν
@@ -393,8 +393,8 @@ theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
   omega
 
 /-- End segments, inactive types. -/
-theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load R ch FL lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
-    (q : Sym2 T.Fl) : load R ch FL lhat n o (.seg j i ω q) = 0 := by
+theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
+    (q : Sym2 T.Fl) : load lhat n o (.seg j i ω q) = 0 := by
   rw [load_def, bt_seg, Nat.zero_add]
   refine Finset.sum_eq_zero fun ν _ => ?_
   split_ifs with hν
@@ -408,8 +408,8 @@ open Classical in
 noncomputable def segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : Finset (NM R FL (ch := ch)) :=
   if hx : okR T R ch (.mid j e s) then {⟨.inl ⟨.mid j e s, hx⟩, false⟩} else ∅
 
-theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : ∑ ν ∈ segS (R := R) (ch := ch) (FL := FL) j s e, alv R ch FL lhat n o ν ≤
-    load R ch FL lhat n o (.edge j.castSucc e) := by
+theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : ∑ ν ∈ segS (R := R) (ch := ch) (FL := FL) j s e, alv lhat n o ν ≤
+    load lhat n o (.edge j.castSucc e) := by
   unfold segS
   split_ifs with hx
   · rw [Finset.sum_singleton]
@@ -419,7 +419,7 @@ theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : ∑ ν ∈ segS (R := R)
 
 /-- End segments. -/
 theorem seg_le (j : Fin J) (i : Fin h) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) :
-    load R ch FL lhat n o (.seg j i ω q) ≤ T.nEnd i (fun e => load R ch FL lhat n o (.edge j.castSucc e)) ω q := by
+    load lhat n o (.seg j i ω q) ≤ T.nEnd i (fun e => load lhat n o (.edge j.castSucc e)) ω q := by
   classical
   rw [nEnd_eq]
   refine (load_le_sum
