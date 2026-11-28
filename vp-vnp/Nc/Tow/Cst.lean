@@ -130,17 +130,8 @@ section Numbers
 /-- The depth of a tower is logarithmic. -/
 theorem two_pow_le {h b J : ℕ} {T : Tower h b J} (hD : 2 ≤ b) (hX : 0 < Fintype.card (T.X J)) :
     2 ^ J ≤ Fintype.card (T.X 0) := by
-  have key : ∀ n ≤ J, 2 ^ n * Fintype.card (T.X n) ≤ Fintype.card (T.X 0) := by
-    intro n
-    induction n with
-    | zero => intro _; simp
-    | succ n ih =>
-      intro hn
-      refine le_trans ?_ (ih (by omega))
-      rw [T.card_X n (by omega), pow_succ, mul_assoc]
-      exact Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ hD)
-  refine le_trans ?_ (key J le_rfl)
-  exact Nat.le_mul_of_pos_right _ hX
+  rw [Tower.card_X_pow J le_rfl]
+  exact (Nat.pow_le_pow_left hD J).trans (Nat.le_mul_of_pos_right _ hX)
 
 theorem depth_le {J X c K : ℕ} (hJ : 2 ^ J ≤ X) (hX : X ≤ c * (2 * K)) : J + 1 ≤ (2 * c + 1) * lg K := by
   have hl : 1 ≤ lg K := Nat.succ_le_succ (Nat.zero_le _)
