@@ -21,7 +21,7 @@ attribute [-instance] Subtype.instBEq
 variable (h n : ℕ) [NeZero h]
 
 /-- **The tower.** -/
-noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (JJ h n) where
+noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (JJ h n) where
   X := XX h n
   Ed := EE h n h2
   V := VV h n
@@ -41,21 +41,28 @@ noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (J
   e1 := fun e => (gen h2 e.1.1 : G h n) • e.1.2
   e_ne := fun e => (gen_smul_ne h2 _ _).symm
   ty := fun e => e.1.1
-  card_ed := fun j _ i => card_edges h2 j i
-  deg := fun j _ c i => deg_edges h2 j c i
+  card_ed := fun j i => card_edges h2 j i
+  deg := fun j c i => deg_edges h2 j c i
   vx := vert
   co := cor
-  vx_co := fun _ i => vert_cor_bijective _ i
+  vx_co := fun i => vert_cor_bijective _ i
   card_fl := card_U h
+  b_pos := by positivity
+  h_pos := by omega
   cN := fun ν => ν.1.2
   dN := fun ν => x h ν.1.1 * ν.1.2
   n_ne := fun ν e => x_ne_one ν.1.1 (by simpa using e.symm)
-  nr := fun _ i => Equiv.ofBijective _ (nearFun_bijective h2 _ i)
-  nr_vx0 := fun _ i e => rfl
-  nr_vx1 := fun _ i e => by
+  near := fun f => by
+    have h4 := npair_sym (⟨0, by omega⟩ : Fin (h - 1)) f
+    rcases Sym2.eq_iff.1 h4 with ⟨e1, -⟩ | ⟨e1, -⟩
+    · exact ⟨npair ⟨0, by omega⟩ f, Or.inl e1.symm⟩
+    · exact ⟨npair ⟨0, by omega⟩ f, Or.inr e1.symm⟩
+  nr := fun i => Equiv.ofBijective _ (nearFun_bijective h2 _ i)
+  nr_vx0 := fun i e => rfl
+  nr_vx1 := fun i e => by
     change vert i ((gen h2 e.1.1.1 : G h n) • e.1.1.2) = vert i e.1.1.2
     rw [gen_idx h2 i _ e.2, vert_th]
-  nr_co := fun _ i e => by
+  nr_co := fun i e => by
     change s(cor i e.1.1.2, cor i ((gen h2 e.1.1.1 : G h n) • e.1.1.2)) =
       s((npair (idx i e.1.1.1 e.2) (cor i e.1.1.2)).1.2,
         x h (npair (idx i e.1.1.1 e.2) (cor i e.1.1.2)).1.1 * (npair (idx i e.1.1.1 e.2) (cor i e.1.1.2)).1.2)
@@ -64,14 +71,14 @@ noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (J
   π := pr
   πE := prE h2
   πV := prV
-  π_ends := fun _ e => by
+  π_ends := fun e => by
     change s(pr e.1.2, (gen h2 e.1.1 : G h n) • pr e.1.2) = s(pr e.1.2, pr ((gen h2 e.1.1 : G h n) • e.1.2))
     rw [Paper.prop_tower_equivariant]
-  π_ty := fun _ _ => rfl
+  π_ty := fun _ => rfl
   card_X := fun _ hj => card_XX_succ hj
   fibre := fun hj d => fibre_edges h2 hj d
-  π_vx := fun _ i c => vert_pr i c
-  π_co := fun _ i c => cor_pr i c
+  π_vx := fun i c => vert_pr i c
+  π_co := fun i c => cor_pr i c
   host := fun {j} i => (exists_host j i).choose
   host_inj := fun {j} hj i => ((exists_host j i).choose_spec hj).1
   host_vx := fun {j} hj i v => ((exists_host j i).choose_spec hj).2 v

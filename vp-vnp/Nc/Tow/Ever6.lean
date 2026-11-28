@@ -19,25 +19,24 @@ open Finset Nc.G
 
 section Tree
 
-variable {h b D J AA : ℕ} {T : Tower h b D J} {hh : 0 < h} {Lf : ∀ j, T.Ed j → ℕ}
+variable {h b J AA : ℕ} {T : Tower h b J} {Lf : ∀ j, T.Ed j → ℕ}
 
 /-- Units between the children of a chamber and the chamber. -/
-noncomputable def chF (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) : ∀ j, T.X j → ℕ
+noncomputable def chF (Lf : ∀ j, T.Ed j → ℕ) : ∀ j, T.X j → ℕ
   | 0, _ => 0
-  | j + 1, c => chs hh Lf j c
+  | j + 1, c => chs Lf j c
 
 end Tree
 
 section Ever
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
   {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
-variable (hh : 0 < h) (hb : 0 < b)
+variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
   (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
-  (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f)
 
 variable (R ch FL Pl lhat n o) in
 /-- The loads. -/
@@ -48,17 +47,17 @@ open Classical in
 /-- Is the node a base party? -/
 noncomputable def isB (P : Nd T) : ℕ := if ∃ a, P = nd T 0 (Nat.zero_le _) (ch a) then 1 else 0
 
-include hh hb hg in
+include hg in
 open Classical in
 theorem NR_onN (P : Nd T) : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) +
-    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF hh (LfO R ch FL Pl lhat n o) j x)
+    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF (LfO R ch FL Pl lhat n o) j x)
       (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
   rcases nd_cases P with rfl | ⟨j, hj, c, rfl⟩
-  · exact (NR_none hh hb hg).trans (Nat.le_add_left _ _)
+  · exact (NR_none hg).trans (Nat.le_add_left _ _)
   · rw [onN_nd]
     cases j with
     | zero =>
-      refine (NR_zero hh hb hg c).trans (add_le_add ?_ ?_)
+      refine (NR_zero hg c).trans (add_le_add ?_ ?_)
       · unfold isB
         by_cases hc : ∃ a, ch a = c
         · obtain ⟨a, rfl⟩ := hc
@@ -67,13 +66,13 @@ theorem NR_onN (P : Nd T) : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P
           exact Nat.zero_le _
       · linarith
     | succ j =>
-      refine (NR_succ hh hb hg hj c).trans (le_trans (le_of_eq ?_) (Nat.le_add_left _ _))
+      refine (NR_succ hg hj c).trans (le_trans (le_of_eq ?_) (Nat.le_add_left _ _))
       rfl
 
-include hh hb hg hnr in
+include hg in
 open Classical in
 theorem NL_onN (P : Nd T) : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di *
-    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF hh (LfO R ch FL Pl lhat n o) j x)
+    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF (LfO R ch FL Pl lhat n o) j x)
       (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
   rcases nd_cases P with rfl | ⟨j, hj, c, rfl⟩
   · rw [NL_none]
@@ -84,7 +83,7 @@ theorem NL_onN (P : Nd T) : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.
       rw [NL_zero]
       exact Nat.zero_le _
     | succ j =>
-      refine (NL_succ hh hb hg hnr hj c).trans (Nat.mul_le_mul_left _ ?_)
+      refine (NL_succ hg hj c).trans (Nat.mul_le_mul_left _ ?_)
       linarith
 
 open Classical in

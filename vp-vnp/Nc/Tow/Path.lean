@@ -15,7 +15,7 @@ open Finset
 
 namespace Tower
 
-variable {h b D J : ℕ} {T : Tower h b D J} {j : ℕ}
+variable {h b J : ℕ} {T : Tower h b J} {j : ℕ}
 
 theorem step_ends (e : T.Ed j) {c : T.X j} (hc : T.e0 e = c ∨ T.e1 e = c) :
     s(T.e0 e, T.e1 e) = s(c, T.step e c) := by
@@ -83,7 +83,7 @@ end Tower
 
 namespace Routes
 
-variable {h b D J : ℕ} {T : Tower h b D J} {m Uu : ℕ} (R : Routes T m Uu)
+variable {h b J : ℕ} {T : Tower h b J} {m Uu : ℕ} (R : Routes T m Uu)
 
 /-- The path from `c` to `c'` by way of `γ`. -/
 def path (c c' γ : T.X 0) : List (T.Ed 0) := R.rt c γ ++ (R.rt c' γ).reverse

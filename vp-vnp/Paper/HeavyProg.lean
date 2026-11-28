@@ -61,12 +61,13 @@ theorem anc_stage (hS : SY inp Y p c H) (hpar : ∀ q q', ind (fun x => (T x).pa
         | zero => exact (((PY.const hA (q.1 = q.2)).congr fun x => Iff.rfl).toCY).mono hY (Nat.zero_le 3)
         | succ t =>
           have h1 : PY D H0 Y 3 fun x => ∃ q', (T x).nxt^[t] q.1 = q' ∧ (T x).nxt q' = q.2 :=
-            PY.exists_univ hA (by simpa using hP) fun q' => PY.and hA (PY.base (f0 t (Nat.lt_succ_self t) q.1 q') hY) (by
+            PY.exists_univ hA (by simpa using hP) fun q' =>
+              PY.and hA (PY.base (f0 t (Nat.lt_succ_self t) q.1 q')) (by
               by_cases h : q' = rt
               · refine (PY.const hA (q' = q.2)).congr fun x => ?_
                 unfold nxt
                 rw [if_pos (h.trans (hrt x).symm)]
-              · refine (PY.base (u0 (hpar q' q.2)) hY).congr fun x => ?_
+              · refine (PY.base (u0 (hpar q' q.2))).congr fun x => ?_
                 unfold nxt
                 rw [if_neg fun e => h (e.trans (hrt x))])
           refine (h1.congr fun x => ?_).toCY
@@ -112,7 +113,7 @@ theorem piece_prog (hS : SY inp Y p c H) (hpar : ∀ q q', ind (fun x => (T x).p
           omega
         · exact Or.inr fun x => hne ⟨x⟩
       rcases h1 with h1 | h1
-      · refine (PY.base (f1 _ h1 q q') hY).congr fun x => ?_
+      · refine (PY.base (f1 _ h1 q q')).congr fun x => ?_
         unfold Below
         rw [hst]
         exact ⟨fun e => ⟨h, e⟩, fun e => e.2⟩
@@ -138,15 +139,16 @@ theorem piece_prog (hS : SY inp Y p c H) (hpar : ∀ q q', ind (fun x => (T x).p
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (fun q x => (T x).below giv q) (a := 3) (e := 1) hPc
     (hbel (fun _ => giv) (fun q => CY.const _ (hA.lt_of_le ((hgiv q).trans hY))) fun x q => (hgiv q).trans hY) (by omega)
   obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (fun q x => (T x).below (u x) q) (a := 3) (e := 1) hPc
-    (fun q => (hbel u (fun q => CY.base (u1 (hu q)) hY) hub q).weaken u2) (by omega)
+    (fun q => (hbel u (fun q => CY.base (u1 (hu q))) hub q).weaken u2) (by omega)
   -- heavy and heads
   obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (fun q => ind fun x => (T x).Heavy giv (u x) M Yh k q) (a := 1) (e := 1) hPc
     (fun q => by
       by_cases h : q = rt
       · exact ((((PY.const hA True).congr fun x => ⟨fun _ => Or.inl (h.trans (hrt x).symm), fun _ => trivial⟩)).toCY).mono hY
           (Nat.zero_le 1)
-      · refine ((PY.rel hA (fun a b => 8 * M * Yh < k * (a * (2 * Yh) + b * (4 * M))) (CY.base (u3 (f2 q)) hY)
-          (CY.base (f3 q) hY)).congr fun x => ?_).toCY
+      · refine ((PY.rel hA (fun a b => 8 * M * Yh < k * (a * (2 * Yh) + b * (4 * M)))
+          (CY.base (u3 (f2 q)))
+          (CY.base (f3 q))).congr fun x => ?_).toCY
         exact ⟨Or.inr, fun e => e.resolve_left fun e => h (e.trans (hrt x))⟩) (by omega)
   obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (fun q => ind fun x => (T x).Head giv (u x) M Yh k q) (a := 3) (e := 1) hPc
     (fun q => by
@@ -155,7 +157,7 @@ theorem piece_prog (hS : SY inp Y p c H) (hpar : ∀ q q', ind (fun x => (T x).p
           (Nat.zero_le 3)
       · have h1 : PY D H4 Y 3 fun x => ∃ q', (T x).par q = q' ∧ (T x).Heavy giv (u x) M Yh k q' :=
           PY.exists_univ hA (by simpa using hP) fun q' =>
-            PY.and hA (PY.base (u4 (u3 (u2 (u1 (hpar q q'))))) hY) (PY.base (f4 q') hY)
+            PY.and hA (PY.base (u4 (u3 (u2 (u1 (hpar q q')))))) (PY.base (f4 q'))
         refine (h1.congr fun x => ?_).toCY
         exact ⟨fun ⟨q', e, e'⟩ => Or.inr (e ▸ e'),
           fun e => ⟨_, rfl, e.resolve_left fun e => h (e.trans (hrt x))⟩⟩) (by omega)
@@ -172,11 +174,11 @@ theorem piece_prog (hS : SY inp Y p c H) (hpar : ∀ q q', ind (fun x => (T x).p
         cases t with
         | zero => exact (((PY.const hA (q.1 = q.2)).congr fun x => Iff.rfl).toCY).mono hY (Nat.zero_le 5)
         | succ t =>
-          have hd : PY D H0 Y 0 fun x => (T x).Head giv (u x) M Yh k q.1 := PY.base (u0 (f5 q.1)) hY
+          have hd : PY D H0 Y 0 fun x => (T x).Head giv (u x) M Yh k q.1 := PY.base (u0 (f5 q.1))
           have h1 : PY D H0 Y 3 fun x => ∃ q', (T x).par q.1 = q' ∧ (T x).top giv (u x) M Yh k t q' = q.2 :=
             PY.exists_univ hA (by simpa using hP) fun q' =>
-              PY.and hA (PY.base (u0 (u5 (u4 (u3 (u2 (u1 (hpar q.1 q'))))))) hY)
-                (PY.base (f0 t (Nat.lt_succ_self t) q' q.2) hY)
+              PY.and hA (PY.base (u0 (u5 (u4 (u3 (u2 (u1 (hpar q.1 q'))))))))
+                (PY.base (f0 t (Nat.lt_succ_self t) q' q.2))
           have h2 := PY.or hA
             ((PY.and hA hd (PY.const hA (q.1 = q.2))).mono hY (show 1 ≤ 4 by omega))
             (PY.and hA ((PY.not hA hd).mono hY (show 1 ≤ 3 by omega)) h1)
@@ -207,7 +209,8 @@ theorem piece_prog (hS : SY inp Y p c H) (hpar : ∀ q q', ind (fun x => (T x).p
       · rw [if_neg fun e => h e.1, ind_false (P := fun x => (T x).Head giv (u x) M Yh k q') h]
         split_ifs <;> rfl
     refine CY.congr ?_ fun x => (e x).symm
-    refine CY.sum hA _ ((card_filter_le _ _).trans (by simpa using hP)) (fun q' _ => CY.base (u6 (f5 q')) hY) fun x => ?_
+    refine CY.sum hA _ ((card_filter_le _ _).trans (by simpa using hP))
+      (fun q' _ => CY.base (u6 (f5 q'))) fun x => ?_
     refine hA.lt_of_le ((Finset.sum_le_sum fun q' _ => ind_le _ x).trans ?_)
     rw [Finset.sum_const, smul_eq_mul, mul_one]
     exact (card_filter_le _ _).trans (by simpa using hP)) (by omega)
@@ -233,7 +236,7 @@ theorem piece_prog (hS : SY inp Y p c H) (hpar : ∀ q q', ind (fun x => (T x).p
       unfold rank
       exact (card_filter_le _ _).trans (by simpa using hP)
     exact CY.sum hA univ (by simpa using hP) (fun q' _ => CY.op hA (fun a b => a * b)
-      (CY.base (u7 (f6 _ (by omega) q q')) hY) (CY.base (f7 q') hY) fun x => hA.lt_of_le (hle x q'))
+      (CY.base (u7 (f6 _ (by omega) q q'))) (CY.base (f7 q')) fun x => hA.lt_of_le (hle x q'))
       fun x => hsum _ (hle x)) (by omega)
   exact ⟨H8, s8.le hA (by omega),
     u1.trans (u2.trans (u3.trans (u4.trans (u5.trans (u6.trans (u7.trans u8)))))), f8⟩

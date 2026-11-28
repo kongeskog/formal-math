@@ -15,18 +15,19 @@ namespace Nc.Tow
 
 open Finset
 
-variable {h b D J AA : ℕ}
+variable {h b J AA : ℕ}
 
 /-- The node of a base party. -/
-def baseNd (T : Tower h b D J) (ch : Fin AA ↪ T.X 0) : Fin AA ↪ Nd T where
+def baseNd (T : Tower h b J) (ch : Fin AA ↪ T.X 0) : Fin AA ↪ Nd T where
   toFun a := nd T 0 (Nat.zero_le _) (ch a)
   inj' a c hac := ch.injective (nd_inj.1 hac)
 
 /-- The number of extra parties. -/
-def extra (T : Tower h b D J) (AA : ℕ) : ℕ := Fintype.card (Nd T) - AA
+def extra (T : Tower h b J) (AA : ℕ) : ℕ := Fintype.card (Nd T) - AA
 
 /-- **Places exist.** -/
-theorem exists_place (T : Tower h b D J) (ch : Fin AA ↪ T.X 0) : Nonempty (Place T ch (extra T AA)) := by
+theorem exists_place (T : Tower h b J) (ch : Fin AA ↪ T.X 0) :
+    Nonempty (Place T ch (extra T AA)) := by
   classical
   -- `AA ≤ Fintype.card (Nd T)`, since the base nodes embed `Fin AA`
   -- the base nodes and the others

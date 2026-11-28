@@ -253,7 +253,7 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
 
 section Build
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' N U1 : ℕ} {T : Tower h b D J} (R : Routes T m Uu)
+variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 : ℕ} {T : Tower h b J} (R : Routes T m Uu)
   {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') {ρ : ℝ} {lhat : ℕ}
 
 /-- The stage of a node of the tree. -/
@@ -262,15 +262,15 @@ def ndStage : Nd T → ℕ
   | some s => s.1.1
 
 /-- The parent of a node of the tree. -/
-noncomputable def ndPar (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) : Nd T → Nd T
+noncomputable def ndPar (Lf : ∀ j, T.Ed j → ℕ) : Nd T → Nd T
   | none => none
-  | some s => parN hh Lf s.1.1 s.2
+  | some s => parN Lf s.1.1 s.2
 
-theorem ndStage_par (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) {ν : Nd T} (hν : ν ≠ none) :
-    ndStage (ndPar hh Lf ν) = ndStage ν + 1 := by
+theorem ndStage_par (Lf : ∀ j, T.Ed j → ℕ) {ν : Nd T} (hν : ν ≠ none) :
+    ndStage (ndPar Lf ν) = ndStage ν + 1 := by
   rcases ν with _ | ⟨j, c⟩
   · exact absurd rfl hν
-  · show ndStage (parN hh Lf j.1 c) = j.1 + 1
+  · show ndStage (parN Lf j.1 c) = j.1 + 1
     unfold parN
     split_ifs with hj
     · rfl
@@ -278,20 +278,20 @@ theorem ndStage_par (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) {ν : Nd T} (hν :
       show J + 1 = j.1 + 1
       omega
 
-theorem card_ndChildren (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) [DecidableEq (Nd T)] {ν : Nd T} (hν : ν ≠ none) :
-    (univ.filter fun μ : Nd T => μ ≠ none ∧ ndPar hh Lf μ = ν).card ≤ b := by
+theorem card_ndChildren (Lf : ∀ j, T.Ed j → ℕ) [DecidableEq (Nd T)] {ν : Nd T} (hν : ν ≠ none) :
+    (univ.filter fun μ : Nd T => μ ≠ none ∧ ndPar Lf μ = ν).card ≤ b := by
   rcases nd_cases ν with rfl | ⟨i, hi, c', rfl⟩
   · exact absurd rfl hν
   rcases i with _ | j
   · refine le_of_eq_of_le (card_eq_zero.2 (filter_false_of_mem fun μ _ hμ => ?_)) (Nat.zero_le _)
-    have := ndStage_par hh Lf hμ.1
+    have := ndStage_par Lf hμ.1
     rw [hμ.2] at this
     exact absurd this.symm (Nat.succ_ne_zero _)
-  · refine le_trans ?_ (card_children (hh := hh) (Lf := Lf) (j := j) (by omega) c')
+  · refine le_trans ?_ (card_children (Lf := Lf) (j := j) (by omega) c')
     refine le_trans (card_le_card ?_) (card_image_le (f := fun c : T.X j => nd T j (by omega) c))
     intro μ hμ
     obtain ⟨-, hμ1, hμ2⟩ := mem_filter.1 hμ
-    have hs := ndStage_par hh Lf hμ1
+    have hs := ndStage_par Lf hμ1
     rw [hμ2] at hs
     rcases nd_cases μ with rfl | ⟨i, hi', c, rfl⟩
     · exact absurd rfl hμ1
@@ -300,20 +300,20 @@ theorem card_ndChildren (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) [DecidableEq (
       omega
     subst e
     refine mem_image.2 ⟨c, mem_filter.2 ⟨mem_univ _, ?_⟩, rfl⟩
-    have h2 : parN hh Lf i c = nd T (i + 1) hi c' := hμ2
+    have h2 : parN Lf i c = nd T (i + 1) hi c' := hμ2
     unfold parN at h2
     rw [dif_pos hi, nd_inj] at h2
     exact h2
 
-theorem card_ndRoot (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) [DecidableEq (Nd T)] :
-    (univ.filter fun μ : Nd T => μ ≠ none ∧ ndPar hh Lf μ = none).card ≤ Fintype.card (T.X J) := by
+theorem card_ndRoot (Lf : ∀ j, T.Ed j → ℕ) [DecidableEq (Nd T)] :
+    (univ.filter fun μ : Nd T => μ ≠ none ∧ ndPar Lf μ = none).card ≤ Fintype.card (T.X J) := by
   rw [← card_univ (α := T.X J)]
   refine le_trans (card_le_card ?_) (card_image_le (f := fun c : T.X J => nd T J le_rfl c))
   intro μ hμ
   obtain ⟨-, hμ1, hμ2⟩ := mem_filter.1 hμ
   rcases nd_cases μ with rfl | ⟨i, hi', c, rfl⟩
   · exact absurd rfl hμ1
-  have h2 : parN hh Lf i c = none := hμ2
+  have h2 : parN Lf i c = none := hμ2
   unfold parN at h2
   split_ifs at h2 with hi
   · exact absurd h2 nd_ne_none
@@ -329,9 +329,9 @@ theorem ndStage_eq_top {ν : Nd T} : ndStage ν = J + 1 ↔ ν = none := by
     omega
 
 /-- The parent of a party. -/
-noncomputable def treePar (hh : 0 < h) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
+noncomputable def treePar (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
     (p : Fin (AA + A')) : Fin (AA + A') :=
-  Pl.pt (ndPar hh (lev (load R ch FL N (nn n) (oo R FL Pl o))) (Pl.pt.symm p))
+  Pl.pt (ndPar (lev (load R ch FL N (nn n) (oo R FL Pl o))) (Pl.pt.symm p))
 
 /-- The load at a party: the number of units between it and its parent. -/
 noncomputable def treeUp (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (p : Fin (AA + A')) : ℕ :=
@@ -347,20 +347,18 @@ theorem valid_of (n : Fin AA → Fin AA → Fin (N + 1)) (h : ∀ a, ∑ c, ((n 
   · exact le_rfl
 
 /-- Every unit of the end is dead or lies between a chamber and its parent. -/
-theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
+theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
     (hv : Valid N (nn n)) {o : (sys R FL Pl).N → Fin U1} (hg : ∀ x, (plan R FL Pl N N U1).good n o x)
     {u : Un R FL Pl N U1} (hu : u ∈ (plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)))
     (hd : u ∉ deadU R FL Pl N o) (hloop : hold0 (sys R FL Pl).np u ≠ hold1 (sys R FL Pl).np u) :
     ∃ s : Σ j : Fin (J + 1), T.X j, u ∈ AsU R FL Pl N n o s ∧
       s(hold0 (sys R FL Pl).np u, hold1 (sys R FL Pl).np u) =
-        s(Pl.pt (some s), treePar R FL Pl hH.h_pos n o (Pl.pt (some s))) := by
+        s(Pl.pt (some s), treePar R FL Pl n o (Pl.pt (some s))) := by
   classical
-  have hb := hH.b_pos
-  have hh := hH.h_pos
   have hp : ∀ mv, GoodMv R ch FL N (nn n) (oo R FL Pl o) mv := fun mv => by
     have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
-  obtain ⟨hseen, hal⟩ := cur_end hh hu
+  obtain ⟨hseen, hal⟩ := cur_end hu
   cases u with
   | init a c kk =>
     exfalso
@@ -408,11 +406,11 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
     · have hnum : num R ch FL N (nn n) (oo R FL Pl o) (.inl ⟨x, hx⟩) ≠ 0 := by
         have := alv_le_num (lhat := N) (n := nn n) (o := oo R FL Pl o) (FL := FL) ⟨x, hx⟩ β
         omega
-      obtain ⟨j, hj, c, h1, h2⟩ := done_hold hb hh hx (β := β) hdone hnum
+      obtain ⟨j, hj, c, h1, h2⟩ := done_hold hx (β := β) hdone hnum
       refine ⟨⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩, hmem _ ⟨⟨x, hx⟩, β, rfl, hdone, h1⟩, ?_⟩
       have h3 : s(partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β false),
           partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
-          s(nd T j hj c, parN hh (lev (load R ch FL N (nn n) (oo R FL Pl o))) j c) := h2
+          s(nd T j hj c, parN (lev (load R ch FL N (nn n) (oo R FL Pl o))) j c) := h2
       have h4 := congrArg (Sym2.map Pl.pt) h3
       simp only [Sym2.map_mk] at h4
       rw [h4, treePar, Equiv.symm_apply_apply]
@@ -423,7 +421,7 @@ end Build
 
 section Good
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' N U1 ℓ : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 ℓ : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'}
 
 /-- "Every possible outcome is good, by Theorem thm:laws(b), the triangle inequality over the tℓ layers, and λ ≥ 1." -/
@@ -444,17 +442,17 @@ end Good
 
 section Program
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J}
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 variable {Inp ι : Type} {Dd Y p TM : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
 variable {nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)} {oI : Inp → (sys R FL Pl).N → Fin U1}
 
 /-- The program of the tower plan, with the parents and the loads. -/
-theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl U0 U1 Y TM) (hh : 0 < h) (hb : 0 < b)
+theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl U0 U1 Y TM)
     (hS : SlpN inp p H) (hn : ∀ a c, (fun x => ((nI x a c : Fin (U0 + 1)) : ℕ)) ∈ H)
     (ho : ∀ ν, (fun x => ((oI x ν : Fin U1) : ℕ)) ∈ H) (lhat : ℕ) :
     ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat TM H' ∧
-      HostOk hh (fun x => load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x))) H' ∧
+      HostOk (fun x => load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x))) H' ∧
       ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x)))) j c) ∈ H' := by
   have hR : Rng (nX nI) (oX oI : Inp → NM R FL → ℕ) U0 U1 := rng
   have hS0 : SY inp Y p 0 H := by
@@ -462,9 +460,10 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     rw [Nat.zero_mul, Nat.add_zero]
     exact hS
   have hb0 : Base (nX nI) (oX oI : Inp → NM R FL → ℕ) H := ⟨hn, fun ν => ho _⟩
-  obtain ⟨H1, s1, f1⟩ := after_stage hA hB hR hb hS0 hb0
+  obtain ⟨H1, s1, f1⟩ := after_stage hA hB hR hS0 hb0
   obtain ⟨H2, s2, u2, f2⟩ := units_stage hA hB hB2 s1 f1
-  obtain ⟨H3, s3, u3, f3⟩ := host_stage hh (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
+  obtain ⟨H3, s3, u3, f3⟩ :=
+    host_stage (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
     (fun j i => u2 (f1.isMin j i))
   obtain ⟨H4, s4, u4, f4⟩ := fb_stage (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 (fun τ => u3 (u2 (f1.load τ)))
@@ -483,8 +482,9 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
 
 /-- Parents are computed: the indicator of "q is the parent of p". -/
 theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 1)} {o' : Inp → (sys R FL Pl).N → Fin U1}
-    (hh : 0 < h) (hH : HostOk hh (fun x => load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))) H) (a q : Fin (AA + A')) :
-    (ind fun x => treePar R FL Pl hh (n' x) (o' x) a = q) ∈ H ∪ {(fun _ => 0), (fun _ => 1)} := by
+    (hH : HostOk (fun x => load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))) H)
+    (a q : Fin (AA + A')) :
+    (ind fun x => treePar R FL Pl (n' x) (o' x) a = q) ∈ H ∪ {(fun _ => 0), (fun _ => 1)} := by
   classical
   have hconst : ∀ P : Prop, (ind fun _ : Inp => P) ∈ H ∪ {(fun _ => 0), (fun _ => 1)} := by
     intro P
@@ -500,9 +500,9 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
   by_cases hjJ : j < J
   · -- the parent of a node of stage `j` is of stage `j + 1`
     have hoff : ndStage (Pl.pt.symm q) ≠ j + 1 →
-        ∀ x, ¬ (Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+        ∀ x, ¬ (Pl.pt (ndPar (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
           (nd T j hj c)) = q) :=
-      fun hq x hx => hq (by rw [← hx, Equiv.symm_apply_apply, ndStage_par hh _ nd_ne_none]; rfl)
+      fun hq x hx => hq (by rw [← hx, Equiv.symm_apply_apply, ndStage_par _ nd_ne_none]; rfl)
     rcases nd_cases (Pl.pt.symm q) with eq | ⟨i, hi, c', eq⟩
     · have := hoff (by rw [eq]; simp only [ndStage]; omega)
       -- `this` makes the predicate `False` for every `x`; `hconst` closes it
@@ -510,8 +510,9 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
     · by_cases hij : i = j + 1
       · subst hij
         refine Or.inl ?_
-        have e2 : (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
-            fun x => hostj hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) c = c' := by
+        have e2 : (fun x => Pl.pt (ndPar (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+            (nd T j hj c)) = q) =
+            fun x => hostj (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) c = c' := by
           funext x
           rw [← Equiv.eq_symm_apply, eq]
           simp only [ndPar, nd, parN, dif_pos (show j + 1 ≤ J by omega)]
@@ -521,7 +522,8 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
       · have := hoff (by rw [eq]; exact hij)
         -- `this` makes the predicate `False` for every `x`; `hconst` closes it
         simp_all
-  · have e2 : (fun x => Pl.pt (ndPar hh (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) (nd T j hj c)) = q) =
+  · have e2 : (fun x => Pl.pt (ndPar (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+      (nd T j hj c)) = q) =
         fun _ => Pl.pt none = q := by
       funext x
       simp only [ndPar, nd, parN, dif_neg (show ¬ j + 1 ≤ J by omega)]
@@ -584,7 +586,7 @@ end Numbers
 
 section Lemmas
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' N U1 ℓ c : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 ℓ c : ℕ} {T : Tower h b J}
   {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {ρ : ℝ}
 
 /-- Units are few: the bounds in numbers. -/
@@ -641,13 +643,14 @@ theorem tree_nums {c M N X J m : ℕ} (hc : 1 ≤ c) (hM : 2 ≤ M) (hN : 1 ≤ 
 
 open Classical in
 /-- The children of a node are few. -/
-theorem card_treeChildren (hh : 0 < h) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
+theorem card_treeChildren (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
     (q : Fin (AA + A')) :
-    (univ.filter fun p => p ≠ Pl.pt none ∧ treePar R FL Pl hh n o p = q).card ≤
+    (univ.filter fun p => p ≠ Pl.pt none ∧ treePar R FL Pl n o p = q).card ≤
       (if q = Pl.pt none then Fintype.card (T.X J) else b) := by
   obtain ⟨ν, rfl⟩ := Pl.pt.surjective q
-  have h1 : (univ.filter fun p => p ≠ Pl.pt none ∧ treePar R FL Pl hh n o p = Pl.pt ν).card ≤
-      (univ.filter fun μ : Nd T => μ ≠ none ∧ ndPar hh (lev (load R ch FL N (nn n) (oo R FL Pl o))) μ = ν).card := by
+  have h1 : (univ.filter fun p => p ≠ Pl.pt none ∧ treePar R FL Pl n o p = Pl.pt ν).card ≤
+      (univ.filter fun μ : Nd T => μ ≠ none ∧
+        ndPar (lev (load R ch FL N (nn n) (oo R FL Pl o))) μ = ν).card := by
     refine card_le_card_of_injOn Pl.pt.symm ?_ Pl.pt.symm.injective.injOn
     intro p hp
     obtain ⟨-, h1, h2⟩ := mem_filter.1 (mem_coe.1 hp)
@@ -656,9 +659,9 @@ theorem card_treeChildren (hh : 0 < h) (n : Fin AA → Fin AA → Fin (N + 1)) (
   by_cases hν : ν = none
   · subst hν
     rw [if_pos rfl]
-    exact h1.trans (card_ndRoot _ _)
+    exact h1.trans (card_ndRoot _)
   · rw [if_neg fun e => hν (Pl.pt.injective e)]
-    exact h1.trans (card_ndChildren _ _ hν)
+    exact h1.trans (card_ndChildren _ hν)
 
 open Classical in
 /-- The units at one node. -/
@@ -669,52 +672,53 @@ theorem tree_node_le (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
       ((Tow.plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)) \ deadU R FL Pl N o)).filter
       (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card ≤ (c + 1) * BhN FL Uu AA N ρ := by
   let S := (univ : Finset (Σ j : Fin (J + 1), T.X j)).filter fun s =>
-    Pl.pt (some s) = p ∨ treePar R FL Pl hH.h_pos n o (Pl.pt (some s)) = p
+    Pl.pt (some s) = p ∨ treePar R FL Pl n o (Pl.pt (some s)) = p
   refine le_trans (card_le_card (t := S.biUnion (AsU R FL Pl N n o)) ?_) ?_
   · intro u hu
     obtain ⟨hu1, hu2⟩ := mem_filter.1 hu
     obtain ⟨hu1, hu4⟩ := mem_filter.1 hu1
     obtain ⟨hu1, hu3⟩ := mem_sdiff.1 hu1
-    obtain ⟨s, hs1, hs2⟩ := cur_tree hH hv hg hu1 hu3 hu4
+    obtain ⟨s, hs1, hs2⟩ := cur_tree hv hg hu1 hu3 hu4
     refine mem_biUnion.2 ⟨s, mem_filter.2 ⟨mem_univ _, ?_⟩, hs1⟩
-    have h2 : p ∈ s(Pl.pt (some s), treePar R FL Pl hH.h_pos n o (Pl.pt (some s))) := by
+    have h2 : p ∈ s(Pl.pt (some s), treePar R FL Pl n o (Pl.pt (some s))) := by
       rw [← hs2, Sym2.mem_iff]
       exact hu2
     rw [Sym2.mem_iff] at h2
     exact h2.imp Eq.symm Eq.symm
-  refine card_biUnion_le.trans ((Finset.sum_le_sum fun s _ => (card_AsU hH.b_pos hH.h_pos s).trans
-    (fb_le hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.gain hH.two _ (Nat.le_of_lt_succ s.1.2) _)).trans ?_)
+  refine card_biUnion_le.trans ((Finset.sum_le_sum fun s _ => (card_AsU s).trans
+    (fb_le hH _ (Nat.le_of_lt_succ s.1.2) _)).trans ?_)
   rw [Finset.sum_const, smul_eq_mul]
   refine Nat.mul_le_mul_right _ ?_
-  calc S.card ≤ ({p} ∪ univ.filter fun v => v ≠ Pl.pt none ∧ treePar R FL Pl hH.h_pos n o v = p : Finset _).card := by
+  calc S.card ≤
+      ({p} ∪ univ.filter fun v => v ≠ Pl.pt none ∧ treePar R FL Pl n o v = p : Finset _).card := by
         refine card_le_card_of_injOn (fun s => Pl.pt (some s)) ?_ (fun s _ s' _ e => Option.some.inj (Pl.pt.injective e))
         intro s hs
         rcases (mem_filter.1 (mem_coe.1 hs)).2 with h3 | h3
         · exact mem_coe.2 (mem_union_left _ (mem_singleton.2 h3))
         · exact mem_coe.2 (mem_union_right _ (mem_filter.2
             ⟨mem_univ _, fun e => Option.some_ne_none s (Pl.pt.injective e), h3⟩))
-    _ ≤ 1 + (univ.filter fun v => v ≠ Pl.pt none ∧ treePar R FL Pl hH.h_pos n o v = p).card :=
+    _ ≤ 1 + (univ.filter fun v => v ≠ Pl.pt none ∧ treePar R FL Pl n o v = p).card :=
         (card_union_le _ _).trans (by simp)
     _ ≤ c + 1 := by
-        have := card_treeChildren hH.h_pos n o p
+        have := card_treeChildren n o p
         split_ifs at this <;> omega
 
 open Classical in
 /-- The loads at one node. -/
 theorem tree_up_node (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
     (hb : b ≤ c) (hX : Fintype.card (T.X J) ≤ c) (p : Fin (AA + A')) :
-    treeUp R FL Pl n o p + ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl hH.h_pos n o q = p),
+    treeUp R FL Pl n o p + ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl n o q = p),
       treeUp R FL Pl n o q ≤ (c + 1) * BhN FL Uu AA N ρ := by
   have h1 : ∀ q, treeUp R FL Pl n o q ≤ BhN FL Uu AA N ρ := fun q => by
     rcases nd_cases (Pl.pt.symm q) with e | ⟨j, hj, x, e⟩
     · simp [treeUp, e, onN]
     · simp only [treeUp, e, onN_nd]
-      exact fb_le hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.gain hH.two j hj x
+      exact fb_le hH j hj x
   rw [add_mul, one_mul, add_comm]
   refine Nat.add_le_add ((Finset.sum_le_sum fun q _ => h1 q).trans ?_) (h1 p)
   rw [Finset.sum_const, smul_eq_mul]
   refine Nat.mul_le_mul_right _ ?_
-  have := card_treeChildren hH.h_pos n o p
+  have := card_treeChildren n o p
   split_ifs at this <;> omega
 
 /-- All loads. -/
@@ -726,19 +730,19 @@ theorem tree_up_total (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1))
   simp only [onN, Nat.zero_add]
   rw [Fintype.sum_sigma, Fin.sum_univ_eq_sum_range
     (fun j => ∑ x : T.X j, fb (lev (load R ch FL N (nn n) (oo R FL Pl o))) j x) (J + 1)]
-  exact sum_fb_le hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.ρ_lt hH.gain hH.two
+  exact sum_fb_le hH
 
 /-- The loads at a chamber and below its children are those at the party and its children. -/
-theorem onN_le_up (hh : 0 < h) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (P : Nd T) :
-    onN (fun j x => 8 * fb (LfO R ch FL Pl N n o) j x + 3 * chF hh (LfO R ch FL Pl N n o) j x)
+theorem onN_le_up (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (P : Nd T) :
+    onN (fun j x => 8 * fb (LfO R ch FL Pl N n o) j x + 3 * chF (LfO R ch FL Pl N n o) j x)
         (∑ e : T.Ed J, LfO R ch FL Pl N n o J e) P ≤
       8 * (treeUp R FL Pl n o (Pl.pt P) + ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧
-        treePar R FL Pl hh n o q = Pl.pt P), treeUp R FL Pl n o q) := by
+        treePar R FL Pl n o q = Pl.pt P), treeUp R FL Pl n o q) := by
   classical
   have kids : ∀ (j : ℕ) (hj : j ≤ J) (s : Finset (T.X j)),
-      (∀ x ∈ s, parN hh (LfO R ch FL Pl N n o) j x = P) →
+      (∀ x ∈ s, parN (LfO R ch FL Pl N n o) j x = P) →
       ∑ x ∈ s, fb (LfO R ch FL Pl N n o) j x ≤ ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧
-        treePar R FL Pl hh n o q = Pl.pt P), treeUp R FL Pl n o q := by
+        treePar R FL Pl n o q = Pl.pt P), treeUp R FL Pl n o q := by
     intro j hj s hs
     have e1 : ∀ x, treeUp R FL Pl n o (Pl.pt (nd T j hj x)) = fb (LfO R ch FL Pl N n o) j x := fun x => by
       simp only [treeUp, Equiv.symm_apply_apply, onN_nd]
@@ -767,9 +771,10 @@ theorem onN_le_up (hh : 0 < h) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys
     rcases j with _ | j
     · simp only [chF]
       omega
-    · have h1 : chF hh (LfO R ch FL Pl N n o) (j + 1) x ≤ _ :=
+    · have h1 : chF (LfO R ch FL Pl N n o) (j + 1) x ≤ _ :=
         le_trans (le_of_eq (by rw [chF, chs, Finset.sum_filter]))
-          (kids j (by omega) (univ.filter fun y => hostj hh (LfO R ch FL Pl N n o) y = x) fun y hy => by
+          (kids j (by omega) (univ.filter fun y => hostj (LfO R ch FL Pl N n o) y = x)
+            fun y hy => by
             unfold parN
             rw [dif_pos hj, (mem_filter.1 hy).2])
       omega
@@ -779,7 +784,7 @@ open Classical in
 the units that it has in the end ...": relays leave copies here, so what a node ever holds, zeros in slots included, is at
 most a constant times the loads at it and its children, plus (1+8m)N at a given node (m bounds the words) and twice the
 dead units at it. -/
-theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
+theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
     (hv : ∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) {o : (sys R FL Pl).N → Fin U1}
     (hg : ∀ x, (Tow.plan R FL Pl N N U1).good n o x) {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm)
     (p : Fin (AA + A')) :
@@ -788,15 +793,16 @@ theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1
         ∑ r' ∈ univ.filter (fun r' : (sys R FL Pl).R => (sys R FL Pl).rp r' = p),
           (1 + Fintype.card (((sys R FL Pl).kind r'.1).SlAt r'.2)) * (Tow.plan R FL Pl N N U1).num n o r'.1 ≤
       (4 + (2 * Fintype.card T.Nr * FL.G₁ + 1 + Sm) * Fintype.card FL.Di) * 8 * (treeUp R FL Pl n o p +
-          ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl hH.h_pos n o q = p), treeUp R FL Pl n o q) +
+          ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl n o q = p),
+            treeUp R FL Pl n o q) +
         (if (p : ℕ) < AA then (1 + 8 * m) * N else 0) +
         2 * ((deadU R FL Pl N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
   have hgd : ∀ mv, GoodMv R ch FL N (nn n) (oo R FL Pl o) mv := fun mv => by
     have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨P, rfl⟩ := Pl.pt.surjective p
-  have h0 := held_node_le hH.h_pos hH.b_pos
-    hgd hH.near hSm (ℓf := N) P (fun a _ => hv a)
+  have h0 := held_node_le
+    hgd hSm (ℓf := N) P (fun a _ => hv a)
   have h2 : isB ch P * (N + 8 * m * N) ≤ if ((Pl.pt P : Fin (AA + A')) : ℕ) < AA then (1 + 8 * m) * N else 0 := by
     unfold isB
     split_ifs with e1 e2 e2
@@ -817,7 +823,7 @@ theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1
       split_ifs <;> omega
     · rw [if_neg e, if_neg fun h => e (Or.inr h.symm), if_neg fun h => e (Or.inl h.symm)]
       exact Nat.zero_le _
-  have h4 := onN_le_up hH.h_pos n o P
+  have h4 := onN_le_up n o P
   rw [Finset.sum_filter]
   refine le_trans h0 ?_
   calc _ ≤ _ + _ + _ := Nat.add_le_add (Nat.add_le_add h2 h3) (Nat.mul_le_mul_left _ h4)
@@ -837,7 +843,7 @@ theorem tree_value (hH : THypR FL ρ) (hℓ : 1 ≤ ℓ) {cap : ℕ} (hcap : cap
           (fun a => partyTab (Tow.plan R FL Pl N N U1) n o (startTab (sys R FL Pl) U1 n tab a) a) p w
       else 0 := by
   have hok : (Tow.plan R FL Pl N N U1).Ok (capN FL N Uu AA N) :=
-    plan_ok_cap hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.ρ_lt hH.gain hH.two
+    plan_ok_cap hH
   have hgood : ∀ n o x, (Tow.plan R FL Pl N N U1).Poss n o ℓ x → (Tow.plan R FL Pl N N U1).good n o x :=
     fun n o x => thm_tree_poss_good hℓ n o x
   have hkl : ∀ x, ((sys R FL Pl).kind x).Le c ∧ ((sys R FL Pl).kind x).lam ≤ c := by
@@ -862,25 +868,27 @@ theorem tree_value (hH : THypR FL ρ) (hℓ : 1 ≤ ℓ) {cap : ℕ} (hcap : cap
 
 open Classical in
 /-- The program that computes the trees. -/
-theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V) (hJ : J + 1 ≤ V) (hh : h ≤ V)
+theorem tree_computed {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V) (hJ : J + 1 ≤ V) (hh : h ≤ V)
     (hAA : AA ≤ V) (hX : Fintype.card (T.X 0) ≤ V) (hdd : Fintype.card FL.Di ≤ V) (hbV : b ≤ V)
-    (hfl : Fintype.card (Sym2 T.Fl) ≤ V) (hS : ∀ d, Fintype.card (FL.L d).Sl ≤ V) (hN : N ≤ V) (hU1 : U1 ≤ V)
-    (hD : 0 < D) :
+    (hfl : Fintype.card (Sym2 T.Fl) ≤ V) (hS : ∀ d, Fintype.card (FL.L d).Sl ≤ V)
+    (hN : N ≤ V) (hU1 : U1 ≤ V) :
     ∃ (steps : ℕ) (inp : (Fin AA × Fin AA) ⊕ (sys R FL Pl).N →
         (Fin AA → Fin AA → Fin (N + 1)) × ((sys R FL Pl).N → Fin U1) → Fin ((20 * V ^ 9) ^ 4))
       (H : Set ((Fin AA → Fin AA → Fin (N + 1)) × ((sys R FL Pl).N → Fin U1) → ℕ)),
       steps ≤ 3 * (20 * V ^ 9) ^ 16 ∧ Fintype.card (Nd T) ≤ 20 * V ^ 9 ∧ Fintype.card (Mv T R ch FL) ≤ 20 * V ^ 9 ∧
       Fintype.card (Un R FL Pl N U1) ≤ 20 * V ^ 9 ∧
       (∀ a c x, (inp (.inl (a, c)) x : ℕ) = x.1 a c) ∧ (∀ ν x, (inp (.inr ν) x : ℕ) = x.2 ν) ∧ SlpN inp steps H ∧
-      (∀ p q, (ind fun x => treePar R FL Pl hH.h_pos x.1 x.2 p = q) ∈ H) ∧
+      (∀ p q, (ind fun x => treePar R FL Pl x.1 x.2 p = q) ∈ H) ∧
       (∀ u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cur x.1 x.2 (Fintype.card (Mv T R ch FL))) ∈ H) ∧
       (∀ z u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cons x.1 x.2 z) ∈ H) ∧
       (∀ y, (fun x => (Tow.plan R FL Pl N N U1).num x.1 x.2 y) ∈ H) ∧
       (∀ p, (fun x => treeUp R FL Pl x.1 x.2 p) ∈ H) ∧
       ∀ y, (ind fun x => (Tow.plan R FL Pl N N U1).good x.1 x.2 y) ∈ H := by
-  obtain ⟨n1, n2, n3, n4, n5, n6⟩ := cards_le (R := R) (ch := ch) (FL := FL) (Pl := Pl) (U0 := N) (U1 := U1) hD
-    hH.b_pos (by omega : 1 ≤ V) hh hm (show J ≤ V by omega) hAA hX hdd hbV hS hN hU1
-  have n7 := card_Tg_le (T := T) (m := m) (AA := AA) hD hH.b_pos (by omega : 1 ≤ V) hh hm (show J ≤ V by omega) hAA hX
+  obtain ⟨n1, n2, n3, n4, n5, n6⟩ := cards_le (R := R) (ch := ch) (FL := FL) (Pl := Pl)
+    (U0 := N) (U1 := U1)
+    (by omega : 1 ≤ V) hh hm (show J ≤ V by omega) hAA hX hdd hbV hS hN hU1
+  have n7 := card_Tg_le (T := T) (m := m) (AA := AA) (by omega : 1 ≤ V) hh hm
+    (show J ≤ V by omega) hAA hX
     hfl
   generalize hY : 20 * V ^ 9 = Y
   have pw : ∀ a, a ≤ 9 → V ^ a ≤ V ^ 9 := fun a ha => Nat.pow_le_pow_right (by omega) ha
@@ -925,7 +933,7 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
       (Fin AA → Fin AA → Fin (N + 1)) × ((sys R FL Pl).N → Fin U1) → Fin (Y ^ 4) := fun i x => match i with
     | .inl q => ⟨(x.1 q.1 q.2).1, by have := (x.1 q.1 q.2).2; omega⟩
     | .inr ν => ⟨(x.2 ν).1, by have := (x.2 ν).2; omega⟩
-  obtain ⟨H', s1, f1, g1, e1⟩ := tree_slp (R := R) (FL := FL) (Pl := Pl) hA hBd hB2 hH.h_pos hH.b_pos
+  obtain ⟨H', s1, f1, g1, e1⟩ := tree_slp (R := R) (FL := FL) (Pl := Pl) hA hBd hB2
     (SlpN.inputs hA.zero_lt inp) (nI := fun x => x.1) (oI := fun x => x.2) (fun a b => ⟨.inl (a, b), rfl⟩)
     (fun ν => ⟨.inr ν, rfl⟩) N
   have s2 := (s1.snoc (fun _ => ⟨0, hA.zero_lt⟩) (Or.inr (Or.inl ⟨_, rfl⟩))).snoc
@@ -938,7 +946,7 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
     omega
   · intro p q
     have key := par_computed (R := R) (FL := FL) (Pl := Pl) (U0' := N) (H := H') (n' := fun x => x.1) (o' := fun x => x.2)
-      hH.h_pos g1 p q
+      g1 p q
     -- the three cases of `key`, reordered
     grind
   · exact fun u => Or.inr (Or.inr (f1.cur u))
@@ -958,7 +966,8 @@ end Lemmas
 section Towers
 
 /-- More generous routes. -/
-def _root_.Nc.Tow.Routes.mono {h b D J m Uu m' Uu' : ℕ} {T : Tower h b D J} (R : Routes T m Uu) (hm : m ≤ m')
+def _root_.Nc.Tow.Routes.mono {h b J m Uu m' Uu' : ℕ} {T : Tower h b J} (R : Routes T m Uu)
+    (hm : m ≤ m')
     (hU : Uu ≤ Uu') : Routes T m' Uu' where
   rt := R.rt
   walk := R.walk
@@ -970,7 +979,8 @@ tower construction, whose sizes, bottom and words of bounded length give the siz
 theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (1 / 2 : ℝ) ^ 2 * h) (htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ)) :
-    ∃ c, ∀ y, 1 ≤ y → ∃ (J m Uu : ℕ) (T : Tower h (2 ^ ee h) (2 ^ ee h) J) (_ : Routes T m Uu) (FL : FlagLaws A T),
+    ∃ c, ∀ y, 1 ≤ y → ∃ (J m Uu : ℕ) (T : Tower h (2 ^ ee h) J) (_ : Routes T m Uu)
+      (FL : FlagLaws A T),
       TCst FL ((univ : Finset VL.Di).toList.map VL.L) c (1 / 2) (ee h) ∧
       y ≤ Fintype.card (T.X 0) ∧ Fintype.card (T.X 0) ≤ c * y ∧ 1 ≤ m ∧ m ≤ c * (J + 1) ^ 7 ∧
       Uu ≤ 2 * Fintype.card (T.X 0) * m := by
@@ -1040,13 +1050,8 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     exact Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega))
   · have hlaw : ∀ d : VL.Di, VL.L d ∈ (univ : Finset VL.Di).toList.map VL.L := fun d =>
       List.mem_map.2 ⟨d, Finset.mem_toList.2 (mem_univ d), rfl⟩
-    refine ⟨⟨by positivity, by omega, by omega, by norm_num, by norm_num, hgain, htwo, ?_⟩, ?_, ?_, ?_,
+    refine ⟨⟨by norm_num, by norm_num, hgain, htwo⟩, ?_, ?_, ?_,
       ?_, ?_, ?_, ?_, ?_, hXJ0, ?_, ?_, ?_, ?_, hlaw, ?_⟩
-    · intro (f : U h)
-      have h4 := npair_sym (⟨0, by omega⟩ : Fin (h - 1)) f
-      rcases Sym2.eq_iff.1 h4 with ⟨e1, -⟩ | ⟨e1, -⟩
-      · exact ⟨npair ⟨0, by omega⟩ f, Or.inl e1.symm⟩
-      · exact ⟨npair ⟨0, by omega⟩ f, Or.inr e1.symm⟩
     · exact k1
     · exact k2
     · refine (Fintype.card_congr (Equiv.refl _)).le.trans (?_ : Fintype.card (NN h) ≤ c)
@@ -1094,7 +1099,7 @@ end Towers
 
 section Thm
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA N M ℓ : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA N M ℓ : ℕ} {T : Tower h b J}
 
 /-- The exponent of the trees of a tower with the constant c. -/
 def cTree (c : ℕ) : ℕ := (c + 4) * 200000 + cKap c * (2 * c + 1) + 7 + (4 + (2 * c * c + 1 + c) * c) * 8 +
@@ -1168,9 +1173,9 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
   have hV3 : 3 ≤ V := hV ▸ (le_trans (Nat.le_add_left 3 c)
     (Nat.le_mul_of_pos_right (c + 3) (show 0 < M * N by omega))).trans (Nat.le_self_pow (by norm_num) _)
   obtain ⟨steps, inp, H, b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12⟩ := tree_computed (R := R) (FL := FL)
-    (Pl := Pl) (U1 := U1) (N := N) hH (V := V) hV3 (by omega) (by omega) (hC.h_le.trans hcV)
+    (Pl := Pl) (U1 := U1) (N := N) (V := V) hV3 (by omega) (by omega) (hC.h_le.trans hcV)
     (by omega) (by omega) (hC.di_le.trans hcV) (hC.b_le.trans hcV) (hC.fl_le.trans hcV)
-    (fun d => (hC.sl_le d).trans hcV) a6 a7 (by have := hC.D_two; omega)
+    (fun d => (hC.sl_le d).trans hcV) a6 a7
   refine ⟨{
     A' := extra T AA
     E := Fintype.card (Mv T R ch FL)
@@ -1180,7 +1185,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     stage := fun p => ndStage (Pl.pt.symm p)
     depth := J + 1
     root := Pl.pt none
-    par := treePar R FL Pl hH.h_pos
+    par := treePar R FL Pl
     dead := deadU R FL Pl N
     isLaw := fun x => (eE R FL x).isRight
     depth_le := hdep.trans ((le_of_eq (by rw [pow_one])).trans (const_mul_pow_le hl (show 2 * c + 1 + 1 ≤ C by omega)))
@@ -1188,19 +1193,19 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     stage_root := fun p => by rw [ndStage_eq_top, Equiv.symm_apply_eq]
     stage_par := fun n o p hp => by
       rw [treePar, Equiv.symm_apply_apply]
-      exact ndStage_par _ _ (hne p hp)
+      exact ndStage_par _ (hne p hp)
     children_le := fun n o x hx => by
-      have := card_treeChildren (R := R) (FL := FL) (Pl := Pl) hH.h_pos n o x
+      have := card_treeChildren (R := R) (FL := FL) (Pl := Pl) n o x
       rwa [if_neg hx] at this
     root_children_le := fun n o => by
-      have := card_treeChildren (R := R) (FL := FL) (Pl := Pl) hH.h_pos n o (Pl.pt none)
+      have := card_treeChildren (R := R) (FL := FL) (Pl := Pl) n o (Pl.pt none)
       rw [if_pos rfl] at this
       exact this.trans (hC.bot.trans (by omega))
     dead_le := fun o => ?_
     kinds := fun x => ?_
     U1_pos := by rw [hU1]; exact Nat.succ_pos _
     cap := capN FL N Uu AA N
-    ok := plan_ok_cap hH.b_pos hH.h_pos hH.bD hH.ρ_pos hH.ρ_lt hH.gain hH.two
+    ok := plan_ok_cap hH
     up := treeUp R FL Pl
     edge := fun n hv o hg u hu => ?_
     node_le := fun n hv o hg p => ?_
@@ -1213,7 +1218,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     · exact le_rfl
     · exact Nat.le_of_lt (show j.1 < J + 1 from j.2)
   · obtain ⟨n1', -⟩ := cards_le (R := R) (ch := ch) (FL := FL) (Pl := Pl) (U0 := 0) (U1 := 0)
-      (show 0 < D by have := hC.D_two; omega) hC.b_pos (show 1 ≤ W by omega) (hC.h_le.trans a1) a2
+      (show 1 ≤ W by omega) (hC.h_le.trans a1) a2
       (show J ≤ W by omega) (show AA ≤ W by omega) a3 (hC.di_le.trans a1) (hC.b_le.trans a1)
       (fun d => (hC.sl_le d).trans a1) (Nat.zero_le _) (Nat.zero_le _)
     refine (card_image_le.trans (le_of_eq card_univ)).trans (n1'.trans ?_)
@@ -1231,14 +1236,14 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       exact hC.mem _
   · obtain ⟨hu, hl'⟩ := mem_filter.1 hu
     obtain ⟨hu, hd⟩ := mem_sdiff.1 hu
-    obtain ⟨s, -, hs⟩ := cur_tree hH (valid_of n hv) hg hu hd hl'
+    obtain ⟨s, -, hs⟩ := cur_tree (valid_of n hv) hg hu hd hl'
     exact ⟨_, fun e => Option.some_ne_none s (Pl.pt.injective e), hs⟩
   · -- the units at one node
     exact (Nat.cast_le.2 (tree_node_le (R := R) (FL := FL) (Pl := Pl) hH (valid_of n hv) hg hC.b_le hC.bot p)).trans hnode
   · exact (Nat.cast_le.2 (tree_up_node hH n o hC.b_le hC.bot p)).trans hnode
   · exact (tree_up_total hH n o).trans htot
   · -- copies
-    refine (thm_tree_copies (R := R) (FL := FL) (Pl := Pl) hH hv hg hC.sl_le p).trans ?_
+    refine (thm_tree_copies (R := R) (FL := FL) (Pl := Pl) hv hg hC.sl_le p).trans ?_
     refine Nat.add_le_add (Nat.add_le_add (Nat.mul_le_mul_right _ ?_) ?_) (Nat.mul_le_mul_right _ (by omega))
     · refine le_trans ?_ hC8
       have a1 := hC.nr_le
