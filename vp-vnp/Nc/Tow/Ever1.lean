@@ -31,7 +31,7 @@ section Levels
 open Classical in
 /-- Sums over the nodes of the levels before the last one. -/
 theorem sum_level (g : ∀ j : Fin J, T.X j → ℕ) (j0 : ℕ) (hj0 : j0 ≤ J) (c : T.X j0) :
-    (∑ j : Fin J, ∑ x, if nd T j j.2.le x = nd T j0 hj0 c then g j x else 0) =
+    (∑ j : Fin J, ∑ x, if nd j.2.le x = nd hj0 c then g j x else 0) =
       if hlt : j0 < J then g ⟨j0, hlt⟩ c else 0 := by
   by_cases hlt : j0 < J
   · rw [dif_pos hlt, Finset.sum_eq_single ⟨j0, hlt⟩, Finset.sum_eq_single c]
@@ -50,14 +50,14 @@ theorem sum_level (g : ∀ j : Fin J, T.X j → ℕ) (j0 : ℕ) (hj0 : j0 ≤ J)
 open Classical in
 /-- Sums over the nodes of the levels after the first one. -/
 theorem sum_level_zero (g : ∀ j : Fin J, T.X (j + 1) → ℕ) (c : T.X 0) :
-    (∑ j : Fin J, ∑ x, if nd T (j + 1) j.2 x = nd T 0 (Nat.zero_le _) c then g j x else 0) = 0 := by
+    (∑ j : Fin J, ∑ x, if nd j.2 x = nd (Nat.zero_le _) c then g j x else 0) = 0 := by
   refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun x _ => if_neg ?_
   exact nd_ne (Nat.succ_ne_zero _)
 
 open Classical in
 /-- Sums over the nodes of the levels after the first one. -/
 theorem sum_level_succ (g : ∀ j : Fin J, T.X (j + 1) → ℕ) (k : ℕ) (hk : k + 1 ≤ J) (c : T.X (k + 1)) :
-    (∑ j : Fin J, ∑ x, if nd T (j + 1) j.2 x = nd T (k + 1) hk c then g j x else 0) = g ⟨k, hk⟩ c := by
+    (∑ j : Fin J, ∑ x, if nd j.2 x = nd hk c then g j x else 0) = g ⟨k, hk⟩ c := by
   rw [Finset.sum_eq_single ⟨k, hk⟩, Finset.sum_eq_single c]
   · rw [if_pos rfl]
   · intro x _ hx
@@ -103,31 +103,32 @@ theorem fb_eq (j : ℕ) (c : T.X j) : fb Lf j c = (∑ e, if T.e0 e = c then Lf 
 section Num
 
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
-  {o : NM R FL (ch := ch) → ℕ}
+  {o : NM R ch FL → ℕ}
 
-variable (R ch FL lhat n o) in
+variable (lhat n o) in
 open Classical in
 /-- The number of units given in a relay (0 if the relay does not exist). -/
-noncomputable def nR (x : RM T m AA) : ℕ := if hx : okR T R ch x then num R ch FL lhat n o (.inl ⟨x, hx⟩) else 0
+noncomputable def nR (x : RM T m AA) : ℕ :=
+  if hx : okR R ch x then num lhat n o (.inl ⟨x, hx⟩) else 0
 
-variable (R ch FL lhat n o) in
+variable (lhat n o) in
 /-- The loads of the edges. -/
-noncomputable abbrev ldL : ∀ j, T.Ed j → ℕ := lev (load R ch FL lhat n o)
+noncomputable abbrev ldL : ∀ j, T.Ed j → ℕ := lev (load lhat n o)
 
-theorem lev_castSucc (j : Fin J) (e : T.Ed j) : load R ch FL lhat n o (.edge j.castSucc e) =
-    ldL R ch FL lhat n o j e := by
+theorem lev_castSucc (j : Fin J) (e : T.Ed j) : load lhat n o (.edge j.castSucc e) =
+    ldL lhat n o j e := by
   unfold ldL lev
   rw [dif_pos (Nat.lt_succ_of_lt j.2)]
   rfl
 
-theorem lev_succ (j : Fin J) (e : T.Ed (j + 1)) : load R ch FL lhat n o (.edge j.succ e) =
-    ldL R ch FL lhat n o (j + 1) e := by
+theorem lev_succ (j : Fin J) (e : T.Ed (j + 1)) : load lhat n o (.edge j.succ e) =
+    ldL lhat n o (j + 1) e := by
   unfold ldL lev
   rw [dif_pos (Nat.succ_lt_succ j.2)]
   rfl
 
-theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn j i e) ≤
-    if i = imin (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
+theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR lhat n o (.inn j i e) ≤
+    if i = imin (ldL lhat n o) j then ldL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
@@ -139,22 +140,22 @@ theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn 
   · exact Nat.zero_le _
   · exact le_rfl
 
-theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
-    if T.ty e = imin (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
+theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR lhat n o (.mid j e s) ≤
+    if T.ty e = imin (ldL lhat n o) j then ldL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le FL lhat n o j e s hx
     refine h2.trans ((num_mid0 j e hx0).1.trans (le_of_eq ?_))
     exact lev_castSucc j e
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le FL lhat n o j e s hx
     refine h2.trans (le_of_eq ?_)
     refine (num_mid0 j e hx0).2 fun hm => h1 ?_
     exact (isMin_iff _ j.castSucc _).1 hm
   · exact Nat.zero_le _
   · exact le_rfl
 
-theorem nR_fin (e : T.Ed J) : nR R ch FL lhat n o (.fin e) ≤ ldL R ch FL lhat n o J e := by
+theorem nR_fin (e : T.Ed J) : nR lhat n o (.fin e) ≤ ldL lhat n o J e := by
   classical
   unfold nR
   split_ifs with hx

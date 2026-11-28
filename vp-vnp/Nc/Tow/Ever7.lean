@@ -22,36 +22,37 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
 
 /-- Roles by their moves. -/
 noncomputable def eR (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') :
-    (sys R FL Pl).R ≃ Σ mv : Mv T R ch FL, (kindM R ch FL mv).Ro :=
-  Equiv.sigmaCongrLeft (β := fun mv => (kindM R ch FL mv).Ro) (eE R FL)
+    (sys R FL Pl).R ≃ Σ mv : Mv R ch FL, (kindM FL mv).Ro :=
+  Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Ro) (eE R FL)
 
-variable (R ch FL Pl lhat n o) in
+variable (lhat n o) in
 /-- Units of zeros and counts of a role. -/
 noncomputable def padR (r' : (sys R FL Pl).R) : ℕ :=
-  (1 + Fintype.card (((sys R FL Pl).kind r'.1).SlAt r'.2)) * num R ch FL lhat (nn n) (oo R FL Pl o) (eE R FL r'.1)
+  (1 + Fintype.card (((sys R FL Pl).kind r'.1).SlAt r'.2)) * num lhat (nn n) (oo o) (eE R FL r'.1)
 
 open Classical in
 /-- **The units of zeros at a node.** -/
 theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P : Nd T) :
-    (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR R ch FL Pl lhat n o r' else 0) ≤
-      2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P + (1 + Sm) * NL R ch FL lhat (nn n) (oo R FL Pl o) P := by
-  have h1 : (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR R ch FL Pl lhat n o r' else 0) =
-      ∑ y : (Σ mv : Mv T R ch FL, (kindM R ch FL mv).Ro), if partM R ch FL y.1 y.2 = P then
-        (1 + Fintype.card ((kindM R ch FL y.1).SlAt y.2)) * num R ch FL lhat (nn n) (oo R FL Pl o) y.1 else 0 := by
+    (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) ≤
+      2 * NR lhat (nn n) (oo o) P + (1 + Sm) * NL lhat (nn n) (oo o) P := by
+  have h1 : (∑ r' : (sys R FL Pl).R,
+      if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) =
+      ∑ y : (Σ mv : Mv R ch FL, (kindM FL mv).Ro), if partM y.1 y.2 = P then
+        (1 + Fintype.card ((kindM FL y.1).SlAt y.2)) * num lhat (nn n) (oo o) y.1 else 0 := by
     rw [← Equiv.sum_comp (eR R FL Pl)]
     refine Finset.sum_congr rfl fun r' _ => if_congr ?_ rfl rfl
     exact Pl.pt.injective.eq_iff
   rw [h1, Fintype.sum_sigma, Fintype.sum_sum_type]
   refine add_le_add ?_ ?_
-  · have h7 : (∑ x : {x : RM T m AA // okR T R ch x}, 2 * ∑ q : Fin 3, if tri T R ch x.1 q = P then
-        nR R ch FL lhat (nn n) (oo R FL Pl o) x.1 else 0) ≤ 2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P := by
+  · have h7 : (∑ x : {x : RM T m AA // okR R ch x}, 2 * ∑ q : Fin 3, if tri R ch x.1 q = P then
+        nR lhat (nn n) (oo o) x.1 else 0) ≤ 2 * NR lhat (nn n) (oo o) P := by
       rw [← Finset.mul_sum]
       refine Nat.mul_le_mul_left _ ?_
-      exact sum_sub_le (fun x => okR T R ch x) fun x => ∑ q : Fin 3, if tri T R ch x q = P then
-        nR R ch FL lhat (nn n) (oo R FL Pl o) x else 0
+      exact sum_sub_le (fun x => okR R ch x) fun x => ∑ q : Fin 3, if tri R ch x q = P then
+        nR lhat (nn n) (oo o) x else 0
     refine le_trans (Finset.sum_le_sum fun x _ => ?_) h7
     rw [Finset.mul_sum]
-    have h6 : nR R ch FL lhat (nn n) (oo R FL Pl o) x.1 = num R ch FL lhat (nn n) (oo R FL Pl o) (.inl x) := by
+    have h6 : nR lhat (nn n) (oo o) x.1 = num lhat (nn n) (oo o) (.inl x) := by
       unfold nR
       rw [dif_pos x.2]
     have h2 : ∀ (q : (relay F).Ro) (inst : Fintype ((relay F).SlAt q)), @Fintype.card _ inst ≤ 1 := fun q inst => by
@@ -59,8 +60,8 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
       exact le_of_eq Fintype.card_unit
     rw [h6]
     refine Finset.sum_le_sum (ι := (relay F).Ro) fun q _ => ?_
-    by_cases hq : partM R ch FL (.inl x) q = P
-    · rw [if_pos hq, if_pos (show tri T R ch x.1 q = P from hq)]
+    by_cases hq : partM (FL := FL) (.inl x) q = P
+    · rw [if_pos hq, if_pos (show tri R ch x.1 q = P from hq)]
       refine Nat.mul_le_mul_right _ ?_
       exact Nat.add_le_add_left (h2 q _) 1
     · rw [if_neg hq]
@@ -70,7 +71,7 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
     refine Finset.sum_le_sum fun l _ => ?_
     rw [Finset.mul_sum, ← Equiv.sum_comp (FL.ro l.2.2.2)]
     refine Finset.sum_le_sum (ι := (FL.L l.2.2.2).Ro) fun p _ => ?_
-    change (if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p)) = P then _ else 0) ≤ _
+    change (if nd l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p)) = P then _ else 0) ≤ _
     have h2 : ∀ (inst : Fintype ((FL.L l.2.2.2).SlAt p)), @Fintype.card _ inst ≤ Sm := fun inst =>
       (Fintype.card_le_of_injective (Subtype.val : (FL.L l.2.2.2).SlAt p → (FL.L l.2.2.2).Sl)
         Subtype.val_injective).trans (hSm _)
@@ -83,31 +84,31 @@ open Classical in
 and a constant times the loads at the chamber and below its children. -/
 theorem held_node_le
     -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-    (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
+    (hg : ∀ mv, GoodMv lhat (nn n) (oo o) mv)
     {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) {ℓf : ℕ}
-    (P : Nd T) (hini : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
+    (P : Nd T) (hini : ∀ a, P = nd (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
     heldN R FL Pl n o (Pl.pt P) +
-      (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR R ch FL Pl lhat n o r' else 0) ≤
+      (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) ≤
       isB ch P * (ℓf + 8 * m * lhat) + chanN R FL Pl (Pl.pt P) +
         (4 + (2 * Fintype.card T.Nr * FL.G₁ + 1 + Sm) * Fintype.card FL.Di) *
-          onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x
-            + 3 * chF (LfO R ch FL Pl lhat n o) j x)
-            (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
-  set Lf := LfO R ch FL Pl lhat n o with hLf
+          onN (fun j x => 8 * fb (LfO lhat n o) j x
+            + 3 * chF (LfO lhat n o) j x)
+            (∑ e : T.Ed J, LfO lhat n o J e) P := by
+  set Lf := LfO lhat n o with hLf
   set f : ∀ j, T.X j → ℕ := fun j x => 8 * fb Lf j x + 3 * chF Lf j x with hf
   set f0 := ∑ e : T.Ed J, Lf J e with hf0
   set c1 := 2 * Fintype.card T.Nr * FL.G₁ with hc1
   have a1 : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n (Pl.pt P) + chanN R FL Pl (Pl.pt P) +
-      2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P + c1 * NL R ch FL lhat (nn n) (oo R FL Pl o) P :=
+      2 * NR lhat (nn n) (oo o) P + c1 * NL lhat (nn n) (oo o) P :=
     held_le hg P
   have a2 := pads_node (R := R) (Pl := Pl) (lhat := lhat) (n := n) (o := o) hSm P
-  have a3 : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
+  have a3 : NR lhat (nn n) (oo o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
     NR_onN hg P
-  have a4 : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di * onN f f0 P :=
+  have a4 : NL lhat (nn n) (oo o) P ≤ Fintype.card FL.Di * onN f f0 P :=
     NL_onN hg P
   have a5 := initN_le (Pl := Pl) (n := n) (ℓf := ℓf) P hini
-  generalize NR R ch FL lhat (nn n) (oo R FL Pl o) P = NRv at a1 a2 a3
-  generalize NL R ch FL lhat (nn n) (oo R FL Pl o) P = NLv at a1 a2 a4
+  generalize NR lhat (nn n) (oo o) P = NRv at a1 a2 a3
+  generalize NL lhat (nn n) (oo o) P = NLv at a1 a2 a4
   have a6 : c1 * NLv ≤ c1 * (Fintype.card FL.Di * onN f f0 P) := Nat.mul_le_mul_left _ a4
   have a7 : (1 + Sm) * NLv ≤ (1 + Sm) * (Fintype.card FL.Di * onN f f0 P) := Nat.mul_le_mul_left _ a4
   linarith

@@ -17,12 +17,12 @@ open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
-  {o : NM R FL (ch := ch) → ℕ}
+  {o : NM R ch FL → ℕ}
 
 /-- The number of units of a batch. -/
 noncomputable def Bt (T : Tower h b J) (ch : Fin AA ↪ T.X 0) (lhat : ℕ)
     (n : Fin AA → Fin AA → ℕ) (a c : Fin AA) (γ : T.X 0) : ℕ :=
-  if Valid lhat n then ((range (n a c)).filter fun k => gam T ch a k = γ).card else 0
+  if Valid lhat n then ((range (n a c)).filter fun k => gam ch a k = γ).card else 0
 
 theorem Bt_le (a c : Fin AA) (γ : T.X 0) : Bt T ch lhat n a c γ ≤ n a c / Fintype.card (T.X 0) + 1 := by
   unfold Bt
@@ -36,7 +36,7 @@ theorem Bt_le (a c : Fin AA) (γ : T.X 0) : Bt T ch lhat n a c γ ≤ n a c / Fi
     · intro k hk k' hk' heq
       have h1 := (mem_filter.1 (mem_coe.1 hk)).2
       have h2 := (mem_filter.1 (mem_coe.1 hk')).2
-      have h3 : gam T ch a k = gam T ch a k' := h1.trans h2.symm
+      have h3 : gam ch a k = gam ch a k' := h1.trans h2.symm
       unfold gam at h3
       have h4 := (Fintype.equivFin (T.X 0)).symm.injective h3
       have h5 : k % Fintype.card (T.X 0) = k' % Fintype.card (T.X 0) := congrArg Fin.val h4
@@ -50,8 +50,11 @@ theorem bt_start (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) :
   unfold bt Bt
   by_cases hv : Valid lhat n
   · rw [if_pos hv]
-    have h1 : ∀ a' c', ((range (n a' c')).filter fun k => tgB T R ch a' c' k = .nxt (.start a c γ s)).card ≤
-        if a' = a ∧ c' = c then (if s.1 = 0 then ((range (n a c)).filter fun k => gam T ch a k = γ).card else 0) else 0 := by
+    have h1 : ∀ a' c',
+        ((range (n a' c')).filter fun k => tgB R ch a' c' k = .nxt (.start a c γ s)).card ≤
+        if a' = a ∧ c' = c then
+          (if s.1 = 0 then ((range (n a c)).filter fun k => gam ch a k = γ).card else 0)
+        else 0 := by
       intro a' c'
       by_cases hac : a' = a ∧ c' = c
       · obtain ⟨rfl, rfl⟩ := hac
@@ -85,9 +88,10 @@ theorem bt_start (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) :
     exact Nat.zero_le _
 
 theorem tgR_start {x : RM T m AA} {ν : Bool} {a c : Fin AA} {γ : T.X 0} {s : Fin (2 * m)}
-    (hx : tgR T R ch x ν = .nxt (.start a c γ s)) : ν = true ∧ ∃ s' : Fin (2 * m), x = .start a c γ s' ∧ s.1 = s'.1 + 1 := by
+    (hx : tgR R ch x ν = .nxt (.start a c γ s)) : ν = true ∧ ∃ s' : Fin (2 * m),
+        x = .start a c γ s' ∧ s.1 = s'.1 + 1 := by
   rcases x with ⟨a', c', γ', s'⟩ | ⟨j', i', e'⟩ | ⟨j', e', s'⟩ | e'
-  · have this : ∀ e' : Option (T.Ed 0), (edgeO T e' : Tg T m AA) ≠ .nxt (.start a c γ s) := by
+  · have this : ∀ e' : Option (T.Ed 0), (edgeO e' : Tg T m AA) ≠ .nxt (.start a c γ s) := by
       intro e' he
       cases e' <;> simp [edgeO] at he
     cases ν
@@ -112,14 +116,14 @@ theorem tgR_start {x : RM T m AA} {ν : Bool} {a c : Fin AA} {γ : T.X 0} {s : F
 section
 
 
-theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R ch (.start a c γ s)) :
-    num R ch FL lhat n o (.inl ⟨.start a c γ s, hx⟩) ≤ Bt T ch lhat n a c γ := by
+theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR R ch (.start a c γ s)) :
+    num lhat n o (.inl ⟨.start a c γ s, hx⟩) ≤ Bt T ch lhat n a c γ := by
   classical
   obtain ⟨s, hs⟩ := s
   induction s with
   | zero =>
-    have h1 : num R ch FL lhat n o (.inl ⟨.start a c γ ⟨0, hs⟩, hx⟩) ≤
-        load R ch FL lhat n o (.nxt (.start a c γ ⟨0, hs⟩)) := by
+    have h1 : num lhat n o (.inl ⟨.start a c γ ⟨0, hs⟩, hx⟩) ≤
+        load lhat n o (.nxt (.start a c γ ⟨0, hs⟩)) := by
       rw [num_eq, numF]
       split_ifs
       · exact le_rfl
@@ -137,11 +141,11 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R
         simp [tgM] at hν
   | succ s ih =>
     have hs0 : s < 2 * m := by omega
-    have hx0 : okR T R ch (.start a c γ ⟨s, hs0⟩) := by
+    have hx0 : okR R ch (.start a c γ ⟨s, hs0⟩) := by
       obtain ⟨h1, h2⟩ := hx
       exact ⟨h1, by simp only at h2 ⊢; omega⟩
-    have h1 : num R ch FL lhat n o (.inl ⟨.start a c γ ⟨s + 1, hs⟩, hx⟩) ≤
-        load R ch FL lhat n o (.nxt (.start a c γ ⟨s + 1, hs⟩)) := by
+    have h1 : num lhat n o (.inl ⟨.start a c γ ⟨s + 1, hs⟩, hx⟩) ≤
+        load lhat n o (.nxt (.start a c γ ⟨s + 1, hs⟩)) := by
       rw [num_eq, numF]
       split_ifs
       · exact le_rfl
@@ -151,7 +155,7 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR T R
       have := bt_start (R := R) (ch := ch) (lhat := lhat) (n := n) a c γ ⟨s + 1, hs⟩
       rw [if_neg (by simp)] at this
       omega
-    refine (load_le_sum {(⟨.inl ⟨.start a c γ ⟨s, hs0⟩, hx0⟩, true⟩ : NM R FL)} hbt ?_).trans ?_
+    refine (load_le_sum {(⟨.inl ⟨.start a c γ ⟨s, hs0⟩, hx0⟩, true⟩ : NM R ch FL)} hbt ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       -- `tgR_start` gives `ν = true`, `x = .start a c γ s'` and `s + 1 = s'.1 + 1`,
       -- so `s' = ⟨s, hs0⟩`
@@ -216,7 +220,7 @@ section
 
 
 /-- The load of an edge after the start. -/
-theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
+theorem load_start_le (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
     ∑ a, ∑ c, ∑ γ, if a = c then 0 else Bt T ch lhat n a c γ * (R.path (ch a) (ch c) γ).count e := by
   classical
   -- initial units
@@ -235,7 +239,8 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
           · rw [h1] at h3; simp at h3
           · exact h2 hac
       · simp only [if_neg hac]
-        rw [card_eq_sum_card_fiberwise (f := fun k => gam T ch a k) (fun _ _ => mem_coe.2 (mem_univ _))]
+        rw [card_eq_sum_card_fiberwise (f := fun k => gam ch a k)
+          (fun _ _ => mem_coe.2 (mem_univ _))]
         refine Finset.sum_le_sum fun γ _ => ?_
         by_cases hc : R.pl (ch a) (ch c) γ ≤ 1 ∧ (R.path (ch a) (ch c) γ)[0]? = some e
         · rw [if_pos hc, Nat.mul_one]
@@ -254,20 +259,22 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
     · rw [if_neg hv]
       exact Nat.zero_le _
   -- relays
-  have h2 : (∑ ν : NM R FL, if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv R ch FL lhat n o ν else 0) ≤
+  have h2 : (∑ ν : NM R ch FL, if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
       ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), if a = c then 0 else Bt T ch lhat n a c γ *
         ((if s.1 + 1 < R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1]? = some e then 1 else 0) +
         if s.1 + 2 = R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e then 1 else 0) := by
     -- only the relays of the start
-    have h3 : ∀ ν : NM R FL, (if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv R ch FL lhat n o ν else 0) ≤
-        ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), ((if ∃ hx : okR T R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, false⟩ ∧
+    have h3 : ∀ ν : NM R ch FL, (if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
+        ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m),
+            ((if ∃ hx : okR R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, false⟩ ∧
             (R.path (ch a) (ch c) γ)[s.1]? = some e then Bt T ch lhat n a c γ else 0) +
-          if ∃ hx : okR T R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
+          if ∃ hx : okR R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧
+              s.1 + 2 = R.pl (ch a) (ch c) γ ∧
             (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e then Bt T ch lhat n a c γ else 0) := by
       intro ν
       split_ifs with hν
       · rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
-        · change tgR T R ch x ν = .edge 0 e at hν
+        · change tgR R ch x ν = .edge 0 e at hν
           have hnum := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) ⟨x, hx⟩ ν
           rcases x with ⟨a, c, γ, s⟩ | ⟨j', i', e'⟩ | ⟨j', e', s'⟩ | e'
           · have hB := hnum.trans (num_start_le a c γ s hx)
@@ -278,7 +285,8 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
             refine le_trans ?_ (Finset.single_le_sum (f := fun γ => ∑ s : Fin (2 * m), _)
               (fun _ _ => Nat.zero_le _) (mem_univ γ))
             refine le_trans ?_ (Finset.single_le_sum (fun _ _ => Nat.zero_le _) (mem_univ s))
-            have hedge : ∀ e' : Option (T.Ed 0), (edgeO T e' : Tg T m AA) = .edge 0 e → e' = some e := by
+            have hedge : ∀ e' : Option (T.Ed 0), (edgeO e' : Tg T m AA) = .edge 0 e →
+                e' = some e := by
               intro e' he
               cases e' with
               | none => simp [edgeO] at he
@@ -294,8 +302,9 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
                 obtain ⟨-, h5⟩ := hx
                 have h6 := (R.pl_le (ch a) (ch c) γ).trans (R.length_path _ _ _)
                 omega
-              rw [if_pos (⟨hx, rfl, h4, hedge _ hν⟩ : ∃ hx : okR T R ch (.start a c γ s),
-                (⟨.inl ⟨.start a c γ s, _⟩, true⟩ : NM R FL) = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
+              rw [if_pos (⟨hx, rfl, h4, hedge _ hν⟩ : ∃ hx : okR R ch (.start a c γ s),
+                (⟨.inl ⟨.start a c γ s, _⟩, true⟩ : NM R ch FL) =
+                    ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
                 (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e)]
               exact hB.trans (Nat.le_add_left _ _)
           · simp [tgR] at hν
@@ -327,12 +336,13 @@ theorem load_start_le (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
     rw [Finset.sum_comm]
     refine Finset.sum_le_sum fun s _ => ?_
     rw [Finset.sum_add_distrib]
-    have sgl : ∀ (d : Bool) (P : Prop) [Decidable P] (v : ℕ), (∑ ν : NM R FL, if ∃ hx : okR T R ch (.start a c γ s),
+    have sgl : ∀ (d : Bool) (P : Prop) [Decidable P] (v : ℕ),
+        (∑ ν : NM R ch FL, if ∃ hx : okR R ch (.start a c γ s),
         ν = ⟨.inl ⟨.start a c γ s, hx⟩, d⟩ ∧ P then v else 0) ≤
-          if okR T R ch (.start a c γ s) ∧ P then v else 0 := by
+          if okR R ch (.start a c γ s) ∧ P then v else 0 := by
       intro d P _ v
-      by_cases hc : okR T R ch (.start a c γ s) ∧ P
-      · rw [if_pos hc, Finset.sum_eq_single (⟨.inl ⟨.start a c γ s, hc.1⟩, d⟩ : NM R FL)]
+      by_cases hc : okR R ch (.start a c γ s) ∧ P
+      · rw [if_pos hc, Finset.sum_eq_single (⟨.inl ⟨.start a c γ s, hc.1⟩, d⟩ : NM R ch FL)]
         · rw [if_pos ⟨hc.1, rfl, hc.2⟩]
         · intro ν _ hν
           rw [if_neg]
@@ -456,7 +466,7 @@ theorem batch_le (e : T.Ed 0) : (∑ a, ∑ c, ∑ γ, if a = c then 0 else
 
 /-- **Paper: Theorem thm:tree, Start.** "Every edge gets at most n₀ = 4L(N+M²) units": every edge of X^(0) gets at
 most Uu (N/|X^(0)| + 2AA), where Uu ≤ 2|X^(0)|L bounds the routes through an edge. -/
-theorem _root_.Paper.thm_tree_start (e : T.Ed 0) : load R ch FL lhat n o (.edge 0 e) ≤
+theorem _root_.Paper.thm_tree_start (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
     Uu * (lhat / Fintype.card (T.X 0) + 2 * AA) := (load_start_le e).trans (batch_le e)
 
 end
