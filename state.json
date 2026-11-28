@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T06:18:31.301669688Z",
+  "updated_at": "2026-11-28T06:20:37.893353765Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 1,
     "contributors": 2,
-    "ideas_open": 0
+    "ideas_open": 1
   },
   "leaderboard": [
     {
@@ -93,6 +93,20 @@
     }
   ],
   "ideas": [
+    {
+      "number": 201,
+      "title": "Idea: merge(Nc/Uni/EvThm3): one lemma for the pair and the call cases of the evaluator proof",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-28T06:14:09Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/201",
+      "technique": "merge",
+      "scope": "Nc/Uni/EvThm3"
+    },
     {
       "number": 199,
       "title": "Idea: restructure(Paper/Approximate): the hub decomposition over the Laurent polynomials; no second cut-off",
