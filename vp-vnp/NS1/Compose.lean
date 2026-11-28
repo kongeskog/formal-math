@@ -13,7 +13,7 @@ set_option linter.unusedSectionVars false
 
 namespace NS1
 
-open _root_.NS1.Tree
+open _root_.NS1.Tree Nc.Grp
 
 variable {A : Type} [CommRing A] {θ : List Bool → A}
 
@@ -54,12 +54,12 @@ def compC (G G' : Tree) : Fm := lett (app G .id) (foldF (stepC G') (.quote .nil)
 
 theorem wsum_foldW_pvs {f : Tree → Tree → List (A × Tree)} {xs : List Tree} {Inv : List Tree → Tree → Prop}
     (h : ∀ x ys σ, x ∈ xs → Inv (x :: ys) σ → (∀ q ∈ f x σ, Inv ys q.2) ∧ wsum (f x σ) (pvs θ) = pv θ x * pvs θ σ)
-    {σ : Tree} (hσ : Inv xs σ) : wsum (foldW f xs σ) (pvs θ) = (xs.map (pv θ)).prod * pvs θ σ := by
+    {σ : Tree} (hσ : Inv xs σ) : wsum (foldL f xs σ) (pvs θ) = (xs.map (pv θ)).prod * pvs θ σ := by
   induction xs generalizing σ with
-  | nil => simp [foldW]
+  | nil => simp [foldL]
   | cons x xs ih =>
     obtain ⟨h1, h2⟩ := h x xs σ List.mem_cons_self hσ
-    rw [foldW, wsum_bindW, wsum_congr (φ' := fun o => (xs.map (pv θ)).prod * pvs θ o) fun q hq =>
+    rw [foldL, wsum_bindW, wsum_congr (φ' := fun o => (xs.map (pv θ)).prod * pvs θ o) fun q hq =>
       ih (fun y ys σ hy => h y ys σ (List.mem_cons_of_mem _ hy)) (h1 q hq)]
     have h3 : wsum (f x σ) (fun o => (xs.map (pv θ)).prod * pvs θ o) = (xs.map (pv θ)).prod * wsum (f x σ) (pvs θ) := by
       unfold wsum
@@ -71,11 +71,11 @@ theorem wsum_foldW_pvs {f : Tree → Tree → List (A × Tree)} {xs : List Tree}
 
 theorem mem_foldW {f : Tree → Tree → List (A × Tree)} {xs : List Tree} {Inv : List Tree → Tree → Prop}
     (h : ∀ x ys σ, x ∈ xs → Inv (x :: ys) σ → ∀ q ∈ f x σ, Inv ys q.2) {σ : Tree} (hσ : Inv xs σ) :
-    ∀ q ∈ foldW f xs σ, Inv [] q.2 := by
+    ∀ q ∈ foldL f xs σ, Inv [] q.2 := by
   induction xs generalizing σ with
   | nil =>
     intro q hq
-    simp only [foldW, List.mem_singleton] at hq
+    simp only [foldL, List.mem_singleton] at hq
     subst hq
     exact hσ
   | cons x xs ih =>
@@ -126,7 +126,7 @@ theorem _root_.Paper.thm_cut_compose {τ s τ₁ s₁ P₁ t₁ τ₂ s₂ P₂ 
     · simp only [f, wsum, List.map_map, List.map_cons, List.map_nil, mul_one, flatMap_single,
         Function.comp_def, hd_cons, tl_cons]
   -- the fold
-  have hfold : ∀ q ∈ Q₁, Does θ (foldF (stepC G₂) (.quote .nil) .id) q.2 (foldW f q.2.toList .nil)
+  have hfold : ∀ q ∈ Q₁, Does θ (foldF (stepC G₂) (.quote .nil) .id) q.2 (foldL f q.2.toList .nil)
       (P₁ * (t₂ + 62 * P₂ + 100) + 30) := by
     intro q hq
     have hl : Gives θ .id q.2 (listT q.2.toList) 1 := by rw [listT_toList]; exact Gives.id _
@@ -144,15 +144,15 @@ theorem _root_.Paper.thm_cut_compose {τ s τ₁ s₁ P₁ t₁ τ₂ s₂ P₂ 
       subst hq
       exact hD₁)
     simpa [bindW] using this
-  refine ⟨bindW Q₁ fun o => foldW f o.toList .nil, ?_, ?_, ?_⟩
+  refine ⟨bindW Q₁ fun o => foldL f o.toList .nil, ?_, ?_, ?_⟩
   · rw [Fm.ofTree_code]
-    refine (hDz.lett (R := fun o => foldW f o.toList .nil) hfold).mono ?_
+    refine (hDz.lett (R := fun o => foldL f o.toList .nil) hfold).mono ?_
     have : P₁ * (t₂ + 62 * P₂ + 100) ≤ P₁ * (t₂ + 62 * P₂ + 110) := Nat.mul_le_mul_left _ (by omega)
     omega
   · intro p hp
     obtain ⟨q, hq, r, hr, h1, -⟩ := mem_bindW hp
     rw [h1]
-    have hinv : ∀ r ∈ foldW f q.2.toList .nil, (r.2.toList.length + ([] : List Tree).length * P₂ ≤ P₁ * P₂ ∧
+    have hinv : ∀ r ∈ foldL f q.2.toList .nil, (r.2.toList.length + ([] : List Tree).length * P₂ ≤ P₁ * P₂ ∧
         ∀ y ∈ r.2.toList, y.size ≤ s₂) ∧ ∀ y ∈ ([] : List Tree), y.size ≤ s₁ := by
       refine mem_foldW (f := f) (Inv := fun ys σ => (σ.toList.length + ys.length * P₂ ≤ P₁ * P₂ ∧
         ∀ y ∈ σ.toList, y.size ≤ s₂) ∧ ∀ y ∈ ys, y.size ≤ s₁) ?_ ?_
@@ -177,7 +177,7 @@ theorem _root_.Paper.thm_cut_compose {τ s τ₁ s₁ P₁ t₁ τ₂ s₂ P₂ 
     simpa using this
   · intro hp
     obtain ⟨hp1, hv⟩ := hv₁ hp
-    have hpiece : ∀ q ∈ Q₁, wsum (foldW f q.2.toList .nil) (pvs θ) = pvs θ q.2 := by
+    have hpiece : ∀ q ∈ Q₁, wsum (foldL f q.2.toList .nil) (pvs θ) = pvs θ q.2 := by
       intro q hq
       rw [wsum_foldW_pvs (θ := θ) (Inv := fun ys _ => ∀ y ∈ ys, y.size ≤ s₁ ∧ Plain θ τ₁ y)]
       · simp [pvs, toList]
@@ -196,7 +196,7 @@ theorem _root_.Paper.thm_cut_compose {τ s τ₁ s₁ P₁ t₁ τ₂ s₂ P₂ 
     · intro p hp' y hy
       obtain ⟨q, hq, r, hr, h1, -⟩ := mem_bindW hp'
       rw [h1] at hy
-      have hinv : ∀ r ∈ foldW f q.2.toList .nil, (∀ y ∈ r.2.toList, Plain θ τ₂ y) ∧
+      have hinv : ∀ r ∈ foldL f q.2.toList .nil, (∀ y ∈ r.2.toList, Plain θ τ₂ y) ∧
           ∀ y ∈ ([] : List Tree), y.size ≤ s₁ ∧ Plain θ τ₁ y := by
         refine mem_foldW (f := f) (Inv := fun ys σ => (∀ y ∈ σ.toList, Plain θ τ₂ y) ∧
           ∀ y ∈ ys, y.size ≤ s₁ ∧ Plain θ τ₁ y) ?_ ?_

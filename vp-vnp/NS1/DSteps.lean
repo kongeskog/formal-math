@@ -13,7 +13,7 @@ set_option linter.unusedSectionVars false
 
 namespace NS1
 
-open _root_.NS1.Tree
+open _root_.NS1.Tree Nc.Grp
 
 variable {A : Type} [CommRing A] {θ : List Bool → A}
 
@@ -274,28 +274,28 @@ theorem dstepsF_does (n : List Bool) (sts : List DStep) {wf : Fm} {x W : Tree} {
     obtain ⟨st', h1, h2⟩ := hF st
     rw [h2, hinj _ _ h1]
   have hsum : ∀ (sts : List DStep) (W : Tree) (Φ : (List Bool → Tree) → A),
-      wsum (foldW F (sts.map DStep.tree) W) (fun o => Φ (gets o)) = ((execAll (KT.val n) sts (gets W)).map Φ).sum := by
+      wsum (foldL F (sts.map DStep.tree) W) (fun o => Φ (gets o)) = ((execAll (KT.val n) sts (gets W)).map Φ).sum := by
     intro sts
     induction sts with
     | nil =>
       intro W Φ
-      simp [foldW, execAll]
+      simp [foldL, execAll]
     | cons st sts ih =>
       intro W Φ
-      rw [List.map_cons, foldW, wsum_bindW, sum_execAll_cons, ← hf3 st W, hF']
+      rw [List.map_cons, foldL, wsum_bindW, sum_execAll_cons, ← hf3 st W, hF']
       exact wsum_congr fun q _ => ih q.2 Φ
-  have hmem : ∀ (sts : List DStep) (W : Tree), ∀ q ∈ foldW F (sts.map DStep.tree) W,
+  have hmem : ∀ (sts : List DStep) (W : Tree), ∀ q ∈ foldL F (sts.map DStep.tree) W,
       gets q.2 ∈ execAll (KT.val n) sts (gets W) := by
     intro sts
     induction sts with
     | nil =>
       intro W q hq
-      simp only [List.map_nil, foldW, List.mem_singleton] at hq
+      simp only [List.map_nil, foldL, List.mem_singleton] at hq
       subst hq
       simp [execAll]
     | cons st sts ih =>
       intro W q hq
-      rw [List.map_cons, foldW] at hq
+      rw [List.map_cons, foldL] at hq
       obtain ⟨q1, hq1, r, hr, e, -⟩ := mem_bindW hq
       rw [hF'] at hq1
       rw [e, execAll, List.mem_flatMap]
