@@ -21,13 +21,13 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 /-- Relays that are targets exist. -/
-theorem nxt_ok_R {x y : RM T m AA} (hx : okR T R ch x) {ν : Bool} (he : tgR T R ch x ν = .nxt y) :
-    okR T R ch y ∧ inpR T y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
-  have hE : ∀ e : Option (T.Ed 0), (edgeO T e : Tg T m AA) ≠ .nxt y := by
+theorem nxt_ok_R {x y : RM T m AA} (hx : okR R ch x) {ν : Bool} (he : tgR R ch x ν = .nxt y) :
+    okR R ch y ∧ inpR y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
+  have hE : ∀ e : Option (T.Ed 0), (edgeO e : Tg T m AA) ≠ .nxt y := by
     intro e he
     cases e <;> simp [edgeO] at he
-  have mid : ∀ (j : Fin J) (e : T.Ed j) (s : Fin 4), s ≠ 0 → okR T R ch (.mid j e s) →
-      okR T R ch (.mid j e s) ∧ inpR T (.mid j e s : RM T m AA) = .nxt (.mid j e s) ∧
+  have mid : ∀ (j : Fin J) (e : T.Ed j) (s : Fin 4), s ≠ 0 → okR R ch (.mid j e s) →
+      okR R ch (.mid j e s) ∧ inpR (.mid j e s : RM T m AA) = .nxt (.mid j e s) ∧
         ∀ L : Tg T m AA → ℕ, ActR L (.mid j e s) := by
     intro j e s hs hok
     refine ⟨hok, ?_, fun L h0 => absurd h0 hs⟩
@@ -65,9 +65,9 @@ theorem nxt_ok_R {x y : RM T m AA} (hx : okR T R ch x) {ν : Bool} (he : tgR T R
       · simp [tgR] at he
   · simp [tgR] at he
 
-theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB T R ch a c k = .nxt y) :
-    okR T R ch y ∧ inpR T y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
-  have hE : ∀ e : Option (T.Ed 0), (edgeO T e : Tg T m AA) ≠ .nxt y := by
+theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB R ch a c k = .nxt y) :
+    okR R ch y ∧ inpR y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
+  have hE : ∀ e : Option (T.Ed 0), (edgeO e : Tg T m AA) ≠ .nxt y := by
     intro e he
     cases e <;> simp [edgeO] at he
   unfold tgB at he
@@ -75,7 +75,7 @@ theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB T R ch a c k
   · rw [if_pos hac] at he
     cases he
   · rw [if_neg hac] at he
-    by_cases hs : 0 < 2 * m ∧ 1 < R.pl (ch a) (ch c) (gam T ch a k)
+    by_cases hs : 0 < 2 * m ∧ 1 < R.pl (ch a) (ch c) (gam ch a k)
     · rw [dif_pos hs] at he
       have he := Tg.nxt.inj he
       subst he
@@ -115,7 +115,7 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
     (hd : tgU u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM lhat n o z := by
   classical
   set L := load lhat (nn n) (oo o) with hL
-  have one : ∀ x : RM T m AA, okR T R ch x → ActR L x → tgU u = inpR T x →
+  have one : ∀ x : RM T m AA, okR R ch x → ActR L x → tgU u = inpR x →
       ∃ z : ZM R FL (ch := ch), u ∈ consM lhat n o z := by
     intro x hx ha ht
     exact ⟨⟨.inl ⟨x, hx⟩, ()⟩, (consM_inl _ _ u).2 ⟨ha, hu, ht⟩⟩
@@ -132,7 +132,7 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
         · rw [ht]; exact hi
         · rw [hτ, inpR_mid, if_pos rfl]
       · exact one (.inn j i e) ht hi hτ
-  · have h1 : okR T R ch x ∧ inpR T x = .nxt x ∧ ∀ L : Tg T m AA → ℕ, ActR L x := by
+  · have h1 : okR R ch x ∧ inpR x = .nxt x ∧ ∀ L : Tg T m AA → ℕ, ActR L x := by
       cases u with
       | init a c k => exact nxt_ok_B hτ
       | new ν k =>
@@ -149,15 +149,15 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
       cases u with
       | init a c k =>
         exfalso
-        have hτ : tgB T R ch a c k = .seg j i ω q := hτ
+        have hτ : tgB R ch a c k = .seg j i ω q := hτ
         rcases tgB_cases (R := R) (ch := ch) a c k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at hτ <;> cases hτ
       | new ν k => exact seg_nondiag (ν := eN R FL Pl ν) hτ
     obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
-    obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv T FL)
-    have hd : Pick FL L (⟨j, i, ω, d⟩ : LMv T FL) := hd
-    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv T FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) := by
+    obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv FL)
+    have hd : Pick FL L (⟨j, i, ω, d⟩ : LMv FL) := hd
+    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv FL) := by
       rw [num_eq, numF, if_pos hd]
-    set t := tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) with ht
+    set t := tmin FL L (⟨j, i, ω, d⟩ : LMv FL) with ht
     have hfit := hd.1 q hq
     have hrk : rkU lhat n o u < L (.seg j i ω q) := by
       rw [hL, load_eq]
@@ -174,7 +174,7 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
     obtain ⟨e, -, he1, he2⟩ := exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr FL d)
       (fun a b hab => (Fintype.equivFin (FL.L d).Sl).injective (Fin.ext hab)) univ q hw
     have he2 : su d e = rkU lhat n o u / t := he2
-    refine ⟨⟨.inr ⟨j, i, ω, d⟩, e⟩, (consM_inr (⟨j, i, ω, d⟩ : LMv T FL) e u).2 ⟨hd, hu, ?_, ?_, ?_⟩⟩
+    refine ⟨⟨.inr ⟨j, i, ω, d⟩, e⟩, (consM_inr (⟨j, i, ω, d⟩ : LMv FL) e u).2 ⟨hd, hu, ?_, ?_, ?_⟩⟩
     · rw [hτ, he1]
     · rw [hnum, he2]
       exact Nat.div_mul_le_self _ _
@@ -183,7 +183,7 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
 
 /-- The units that are seen. -/
 theorem mem_seen_new {ν : (sys R FL Pl).N} {k : Fin U1} :
-    (Uid.new ν k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ↔ k ≤ o ν := by
+    (Uid.new ν k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k ≤ o ν := by
   unfold Plan.seenAt
   rw [mem_union, mem_biUnion]
   constructor
@@ -198,7 +198,7 @@ theorem mem_seen_new {ν : (sys R FL Pl).N} {k : Fin U1} :
     exact h1
 
 theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
-    (Uid.init a c k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ↔ k.1 < (n a c).1 := by
+    (Uid.init a c k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k.1 < (n a c).1 := by
   unfold Plan.seenAt
   rw [mem_union, mem_biUnion]
   constructor

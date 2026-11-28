@@ -32,7 +32,7 @@ noncomputable def oo (o : (sys R FL Pl).N → Fin U1) : NM R FL (ch := ch) → �
 
 /-- The target of a unit. -/
 noncomputable def tgU : Un R FL Pl U0 U1 → Tg T m AA
-  | .init a c k => tgB T R ch a c k
+  | .init a c k => tgB R ch a c k
   | .new ν _ => tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2
 
 variable (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1)
@@ -60,7 +60,7 @@ open Classical in
 /-- The units given at a slot. -/
 noncomputable def consM : ZM R FL (ch := ch) → Finset (Un R FL Pl U0 U1)
   | ⟨.inl x, _⟩ => if ActR (load lhat (nn n) (oo o)) x.1 then
-      (Al lhat n o).filter fun u => tgU u = inpR T x.1 else ∅
+      (Al lhat n o).filter fun u => tgU u = inpR x.1 else ∅
   | ⟨.inr l, e⟩ => if Pick FL (load lhat (nn n) (oo o)) l then
       (Al lhat n o).filter fun u => tgU u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) ∧
         su l.2.2.2 e * num lhat (nn n) (oo o) (.inr l) ≤ rkU lhat n o u ∧
@@ -154,16 +154,16 @@ theorem load_eq (τ : Tg T m AA) : load lhat (nn n) (oo o) τ =
 
 /-! Membership in the consumers of a slot; used by `Ok` and `Slp4`. -/
 
-theorem consM_inl (x : {x : RM T m AA // okR T R ch x}) (e : (kindM R ch FL (.inl x)).Sl) (u : Un R FL Pl U0 U1) :
+theorem consM_inl (x : {x : RM T m AA // okR R ch x}) (e : (kindM R ch FL (.inl x)).Sl) (u : Un R FL Pl U0 U1) :
     u ∈ consM lhat n o ⟨.inl x, e⟩ ↔ ActR (load lhat (nn n) (oo o)) x.1 ∧
-      AlU lhat n o u ∧ tgU u = inpR T x.1 := by
+      AlU lhat n o u ∧ tgU u = inpR x.1 := by
   classical
   rw [consM]
   split_ifs with ha
   · simp [mem_Al, ha]
   · simp [ha]
 
-theorem consM_inr (l : LMv T FL) (e : (kindM R ch FL (.inr l)).Sl) (u : Un R FL Pl U0 U1) :
+theorem consM_inr (l : LMv FL) (e : (kindM R ch FL (.inr l)).Sl) (u : Un R FL Pl U0 U1) :
     u ∈ consM lhat n o ⟨.inr l, e⟩ ↔ Pick FL (load lhat (nn n) (oo o)) l ∧
       AlU lhat n o u ∧ tgU u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) ∧
         su l.2.2.2 e * num lhat (nn n) (oo o) (.inr l) ≤ rkU lhat n o u ∧

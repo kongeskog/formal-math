@@ -66,7 +66,7 @@ theorem card_children {j : ℕ} (hj : j < J) (c' : T.X (j + 1)) :
   have h3 := T.host_inj hj _ (h1.trans h2.symm)
   exact (T.vx_co (imin Lf j)).1 (Prod.ext h3 heq)
 
-theorem nd_cases (ν : Nd T) : ν = none ∨ ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), ν = nd T j hj c := by
+theorem nd_cases (ν : Nd T) : ν = none ∨ ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), ν = nd hj c := by
   rcases ν with _ | ⟨j, c⟩
   · exact Or.inl rfl
   · exact Or.inr ⟨j.1, Nat.le_of_lt_succ j.2, c, rfl⟩
@@ -76,6 +76,6 @@ def onN (f : ∀ j, T.X j → ℕ) (f0 : ℕ) : Nd T → ℕ
   | none => f0
   | some ⟨j, c⟩ => f j.1 c
 
-theorem onN_nd (f : ∀ j, T.X j → ℕ) (f0 : ℕ) {j : ℕ} (hj : j ≤ J) (c : T.X j) : onN f f0 (nd T j hj c) = f j c := rfl
+theorem onN_nd (f : ∀ j, T.X j → ℕ) (f0 : ℕ) {j : ℕ} (hj : j ≤ J) (c : T.X j) : onN f f0 (nd hj c) = f j c := rfl
 
 end Nc.Tow

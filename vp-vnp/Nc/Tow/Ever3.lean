@@ -52,10 +52,10 @@ theorem paths_at (x : T.X 0) :
   have h1 : ∀ q : Q4 T m AA, ((if R.pn (ch q.1) (ch q.2.1) q.2.2.1 q.2.2.2 = x then nR lhat n o (stR q) else 0) +
       if R.pn (ch q.1) (ch q.2.1) q.2.2.1 (q.2.2.2 + 1) = x then nR lhat n o (stR q) else 0) ≤
       ∑ e : T.Ed 0, if T.e0 e = x ∨ T.e1 e = x then
-        (if okR T R ch (stR q) ∧ (R.path (ch q.1) (ch q.2.1) q.2.2.1)[q.2.2.2.1]? = some e then
+        (if okR R ch (stR q) ∧ (R.path (ch q.1) (ch q.2.1) q.2.2.1)[q.2.2.2.1]? = some e then
           nR lhat n o (stR q) else 0) else 0 := by
     rintro ⟨a, c, γ, s⟩
-    by_cases hx : okR T R ch (stR (a, c, γ, s))
+    by_cases hx : okR R ch (stR (a, c, γ, s))
     · obtain ⟨e, h2, h3, h4⟩ := R.exists_edge (ch a) (ch c) γ (s := s) (by have := hx.2; simp only at this; omega)
       have h6 : (T.e0 e = x ∨ T.e1 e = x) ↔ (R.pn (ch a) (ch c) γ s = x ∨ R.pn (ch a) (ch c) γ (s + 1) = x) := by
         have h7 : ∀ y z : T.X 0, (y = x ∨ z = x) ↔ x ∈ s(y, z) := fun y z => by
@@ -88,7 +88,7 @@ theorem paths_at (x : T.X 0) :
       rw [dif_pos (Nat.succ_pos J)]
       rfl
     rw [h2, ← Finset.sum_attach]
-    set S := univ.filter fun q : Q4 T m AA => okR T R ch (stR q) ∧
+    set S := univ.filter fun q : Q4 T m AA => okR R ch (stR q) ∧
       (R.path (ch q.1) (ch q.2.1) q.2.2.1)[q.2.2.2.1]? = some e with hS
     have h3 : ∀ q : {q // q ∈ S}, nR lhat n o (stR q.1) = alv lhat n o
         (⟨.inl ⟨stR q.1, (mem_filter.1 q.2).2.1⟩, false⟩ : NM R FL) := by
@@ -100,7 +100,7 @@ theorem paths_at (x : T.X 0) :
     refine sum_alv_le (.edge 0 e) S.attach
       (fun q => (⟨.inl ⟨stR q.1, (mem_filter.1 q.2).2.1⟩, false⟩ : NM R FL)) ?_ ?_
     · rintro ⟨⟨a, c, γ, s⟩, hq⟩ _ ⟨⟨a', c', γ', s'⟩, hq'⟩ _ hee
-      have h4 : (Sum.inl ⟨stR (a, c, γ, s), (mem_filter.1 hq).2.1⟩ : Mv T R ch FL) =
+      have h4 : (Sum.inl ⟨stR (a, c, γ, s), (mem_filter.1 hq).2.1⟩ : Mv R ch FL) =
           .inl ⟨stR (a', c', γ', s'), (mem_filter.1 hq').2.1⟩ := congrArg Sigma.fst hee
       have h5 := congrArg Subtype.val (Sum.inl_injective h4)
       simp only [stR, RM.start.injEq] at h5
@@ -109,7 +109,7 @@ theorem paths_at (x : T.X 0) :
       rfl
     · rintro ⟨⟨a, c, γ, s⟩, hq⟩ _
       have h4 := (mem_filter.1 hq).2.2
-      change edgeO T ((R.path (ch a) (ch c) γ)[s.1]?) = _
+      change edgeO ((R.path (ch a) (ch c) γ)[s.1]?) = _
       simp only at h4
       rw [h4]
       rfl
@@ -117,20 +117,20 @@ theorem paths_at (x : T.X 0) :
 
 open Classical in
 /-- **The start at a chamber.** -/
-theorem NR0_le (x : T.X 0) : NR0 lhat n o (nd T 0 (Nat.zero_le _) x) ≤
+theorem NR0_le (x : T.X 0) : NR0 lhat n o (nd (Nat.zero_le _) x) ≤
     (if ∃ c, ch c = x then 2 * m * lhat else 0) + fb (ldL lhat n o) 0 x := by
-  have h0 : ∀ a c γ (s : Fin (2 * m)), (∑ q : Fin 3, if tri T R ch (.start a c γ s) q = nd T 0 (Nat.zero_le _) x then
+  have h0 : ∀ a c γ (s : Fin (2 * m)), (∑ q : Fin 3, if tri R ch (.start a c γ s) q = nd (Nat.zero_le _) x then
       nR lhat n o (.start a c γ s) else 0) =
       ((if R.pn (ch a) (ch c) γ s = x then nR lhat n o (.start a c γ s) else 0) +
       if R.pn (ch a) (ch c) γ (s + 1) = x then nR lhat n o (.start a c γ s) else 0) +
       if ch c = x then nR lhat n o (.start a c γ s) else 0 := by
     intro a c γ s
     rw [Fin.sum_univ_three]
-    change ((if nd T 0 (Nat.zero_le _) (R.pn (ch a) (ch c) γ s) = nd T 0 (Nat.zero_le _) x then _ else 0) +
-      (if nd T 0 (Nat.zero_le _) (R.pn (ch a) (ch c) γ (s + 1)) = nd T 0 (Nat.zero_le _) x then _ else 0)) +
-      (if nd T 0 (Nat.zero_le _) (ch c) = nd T 0 (Nat.zero_le _) x then _ else 0) = _
+    change ((if nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ s) = nd (Nat.zero_le _) x then _ else 0) +
+      (if nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ (s + 1)) = nd (Nat.zero_le _) x then _ else 0)) +
+      (if nd (Nat.zero_le _) (ch c) = nd (Nat.zero_le _) x then _ else 0) = _
     simp only [nd_inj]
-  have h1 : NR0 lhat n o (nd T 0 (Nat.zero_le _) x) =
+  have h1 : NR0 lhat n o (nd (Nat.zero_le _) x) =
       (∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m),
         ((if R.pn (ch a) (ch c) γ s = x then nR lhat n o (.start a c γ s) else 0) +
         if R.pn (ch a) (ch c) γ (s + 1) = x then nR lhat n o (.start a c γ s) else 0)) +
@@ -161,7 +161,7 @@ theorem NR0_le (x : T.X 0) : NR0 lhat n o (nd T 0 (Nat.zero_le _) x) ≤
                   -- the batches between two base parties
                   unfold Bt
                   split_ifs
-                  · rw [← card_eq_sum_card_fiberwise (f := fun k => gam T ch a k)
+                  · rw [← card_eq_sum_card_fiberwise (f := fun k => gam ch a k)
                       (fun _ _ => mem_coe.2 (mem_univ _)), card_range]
                   · simp
         refine (Finset.sum_le_sum fun a _ => h3 a).trans ?_
@@ -191,7 +191,7 @@ theorem NR0_le (x : T.X 0) : NR0 lhat n o (nd T 0 (Nat.zero_le _) x) ≤
 
 omit hg in
 open Classical in
-theorem NR0_succ {j : ℕ} (hj : j + 1 ≤ J) (x : T.X (j + 1)) : NR0 lhat n o (nd T (j + 1) hj x) = 0 := by
+theorem NR0_succ {j : ℕ} (hj : j + 1 ≤ J) (x : T.X (j + 1)) : NR0 lhat n o (nd hj x) = 0 := by
   unfold NR0
   refine Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun γ _ =>
     Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun q _ => if_neg ?_
@@ -265,10 +265,10 @@ theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
 
 open Classical in
 /-- Law moves at a chamber. -/
-theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL lhat n o (nd T (k + 1) hk x) ≤
+theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL lhat n o (nd hk x) ≤
     Fintype.card FL.Di * fb (ldL lhat n o) (k + 1) x := by
-  have h1 : NL lhat n o (nd T (k + 1) hk x) = ∑ j : Fin J, ∑ y : T.X (j + 1),
-      if nd T (j + 1) j.2 y = nd T (k + 1) hk x then
+  have h1 : NL lhat n o (nd hk x) = ∑ j : Fin J, ∑ y : T.X (j + 1),
+      if nd j.2 y = nd hk x then
         ∑ i, ∑ d, num lhat n o (.inr ⟨j, i, T.vx i y, d⟩) else 0 := by
     unfold NL
     rw [Fintype.sum_sigma]
@@ -277,7 +277,7 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL lhat n o (nd
     have h2 : ∀ i, (∑ p : T.V (j + 1) i × FL.Di, ∑ f : T.Fl,
         if nd T (j + 1) j.2 (atv i p.1 f) = nd T (k + 1) hk x then
           num lhat n o (.inr ⟨j, i, p.1, p.2⟩) else 0) =
-        ∑ y : T.X (j + 1), if nd T (j + 1) j.2 y = nd T (k + 1) hk x then
+        ∑ y : T.X (j + 1), if nd j.2 y = nd hk x then
           ∑ d, num lhat n o (.inr ⟨j, i, T.vx i y, d⟩) else 0 := by
       intro i
       rw [← Equiv.sum_comp (Equiv.ofBijective _ (T.vx_co i)).symm,
@@ -306,7 +306,7 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL lhat n o (nd
 
 omit hg in
 open Classical in
-theorem NL_zero (x : T.X 0) : NL lhat n o (nd T 0 (Nat.zero_le _) x) = 0 := by
+theorem NL_zero (x : T.X 0) : NL lhat n o (nd (Nat.zero_le _) x) = 0 := by
   unfold NL
   exact Finset.sum_eq_zero fun l _ => Finset.sum_eq_zero fun f _ => if_neg (nd_ne (Nat.succ_ne_zero _))
 
@@ -326,7 +326,7 @@ variable
 include hg
 
 open Classical in
-theorem NR_zero (x : T.X 0) : NR lhat n o (nd T 0 (Nat.zero_le _) x) ≤
+theorem NR_zero (x : T.X 0) : NR lhat n o (nd (Nat.zero_le _) x) ≤
     (if ∃ c, ch c = x then 2 * m * lhat else 0) + 7 * fb (ldL lhat n o) 0 x := by
   refine (NR_le hg _).trans ?_
   have h1 := NR0_le hg x
@@ -334,7 +334,7 @@ theorem NR_zero (x : T.X 0) : NR lhat n o (nd T 0 (Nat.zero_le _) x) ≤
   have h3 := sum_level_zero (fun j y => 3 * chs (ldL lhat n o) j y +
     2 * fb (ldL lhat n o) (j + 1) y) x
   rw [h2, h3, if_neg nd_ne_none.symm]
-  have h4 : (∑ y : T.X J, if nd T J le_rfl y = nd T 0 (Nat.zero_le _) x then fb (ldL lhat n o) J y else 0) ≤
+  have h4 : (∑ y : T.X J, if nd le_rfl y = nd (Nat.zero_le _) x then fb (ldL lhat n o) J y else 0) ≤
       fb (ldL lhat n o) 0 x := by
     by_cases hJ : J = 0
     · subst hJ
@@ -359,7 +359,7 @@ theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR lhat n o (nd
   have h3 := sum_level_succ (fun j y => 3 * chs (ldL lhat n o) j y +
     2 * fb (ldL lhat n o) (j + 1) y) k hk x
   rw [h1, h2, h3, if_neg nd_ne_none.symm]
-  have h4 : (∑ y : T.X J, if nd T J le_rfl y = nd T (k + 1) hk x then fb (ldL lhat n o) J y else 0) ≤
+  have h4 : (∑ y : T.X J, if nd le_rfl y = nd hk x then fb (ldL lhat n o) J y else 0) ≤
       fb (ldL lhat n o) (k + 1) x := by
     by_cases hJ : J = k + 1
     · subst hJ
@@ -380,12 +380,12 @@ open Classical in
 theorem NR_none : NR lhat n o none ≤ ∑ e : T.Ed J, ldL lhat n o J e := by
   refine (NR_le hg _).trans ?_
   have h1 : NR0 lhat n o none = 0 := NR0_none
-  have h2 : (∑ j : Fin J, ∑ y : T.X j, if nd T j j.2.le y = none then 5 * fb (ldL lhat n o) j y else 0) = 0 :=
+  have h2 : (∑ j : Fin J, ∑ y : T.X j, if nd j.2.le y = none then 5 * fb (ldL lhat n o) j y else 0) = 0 :=
     Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun y _ => if_neg nd_ne_none
   have h3 : (∑ j : Fin J, ∑ y : T.X (j + 1), if nd T (j + 1) j.2 y = none then
       3 * chs (ldL lhat n o) j y + 2 * fb (ldL lhat n o) (j + 1) y else 0) = 0 :=
     Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun y _ => if_neg nd_ne_none
-  have h4 : (∑ y : T.X J, if nd T J le_rfl y = none then fb (ldL lhat n o) J y else 0) = 0 :=
+  have h4 : (∑ y : T.X J, if nd le_rfl y = none then fb (ldL lhat n o) J y else 0) = 0 :=
     Finset.sum_eq_zero fun y _ => if_neg nd_ne_none
   rw [h1, h2, h3, h4, if_pos rfl]
   omega

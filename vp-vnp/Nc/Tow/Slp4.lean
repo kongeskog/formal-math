@@ -44,7 +44,7 @@ def SeenU (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin 
   | .new ν k => k.1 ≤ (o ν).1
 
 theorem mem_cur (u : Un R FL Pl U0 U1) :
-    u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL)) ↔
+    u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv R ch FL)) ↔
       SeenU n o u ∧ ¬ ∃ z : ZM R FL, u ∈ consM lhat n o z := by
   classical
   unfold Plan.cur
@@ -99,13 +99,13 @@ theorem rng : Rng (nX nI) (oX oI : Inp → NM R FL (ch := ch) → ℕ) U0 U1 whe
 structure Units (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (oI : Inp → (sys R FL Pl).N → Fin U1) (lhat TM : ℕ)
     (H : Set (Inp → ℕ)) : Prop where
   cons : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H
-  num : ∀ mv : Mv T R ch FL, (fun x => num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  lt : ∀ (mv : Mv T R ch FL) (τ : Fin TM), ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  num : ∀ mv : Mv R ch FL, (fun x => num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  lt : ∀ (mv : Mv R ch FL) (τ : Fin TM), ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
   pad : ∀ (z : ZM R FL) (τ : Fin TM), ind (fun x => (consM lhat (nI x) (oI x) z).card ≤ τ.1 ∧
     τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) z.1) ∈ H
-  cur : ∀ u, ind (fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv T R ch FL))) ∈ H
-  good : ∀ mv : Mv T R ch FL, ind (fun x => GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  good' : ind (fun x => ∀ mv : Mv T R ch FL, GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  cur : ∀ u, ind (fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL))) ∈ H
+  good : ∀ mv : Mv R ch FL, ind (fun x => GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  good' : ind (fun x => ∀ mv : Mv R ch FL, GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
   valid : ind (fun x => Valid lhat (nn (nI x))) ∈ H
 
 theorem Units.weaken {H H' : Set (Inp → ℕ)} (hu : Units nI oI lhat TM H) (hH : H ⊆ H') : Units nI oI lhat TM H' :=
@@ -168,7 +168,7 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
 
 theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
     (hco : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H) (u : Un R FL Pl U0 U1) :
-    PY Dd H Y 4 fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv T R ch FL)) := by
+    PY Dd H Y 4 fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL)) := by
   have hY := hA.pos
   have h1 : PY Dd H Y 1 fun x => SeenU (nI x) (oI x) u := by
     rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
@@ -183,7 +183,7 @@ theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
     PY.exists_univ hA hB2.zm fun z => PY.base (hco z u)
   exact (PY.and hA (h1.mono hY (by omega)) (PY.not hA h2)).congr fun x => (mem_cur u).symm
 
-theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv T R ch FL) :
+theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv R ch FL) :
     PY Dd H Y 4 fun x => GoodMv lhat (nX nI x) (oX oI x) mv := by
   have hY := hA.pos
   rcases mv with y | l
@@ -212,7 +212,7 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
   have hzt : Fintype.card (ZM R FL (ch := ch) × Fin TM) ≤ Y ^ 2 := by
     rw [Fintype.card_prod, Fintype.card_fin, pow_two]
     exact Nat.mul_le_mul hB2.zm hB2.tm
-  have hmt : Fintype.card (Mv T R ch FL × Fin TM) ≤ Y ^ 2 := by
+  have hmt : Fintype.card (Mv R ch FL × Fin TM) ≤ Y ^ 2 := by
     rw [Fintype.card_prod, Fintype.card_fin, pow_two]
     exact Nat.mul_le_mul hB.mv hB2.tm
   have hzu : Fintype.card (ZM R FL (ch := ch) × Un R FL Pl U0 U1) ≤ Y ^ 2 := by
@@ -253,7 +253,7 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
       rw [smul_eq_mul, mul_one]
       exact hB2.un) (by omega)
   have a4 := a3.weaken u4
-  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv T R ch FL × Fin TM)
+  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv R ch FL × Fin TM)
     (fun q => ind fun x => q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1) (a := 1) (e := 2) hmt
     (fun q => PY.rel1 hA (fun s => q.2.1 < s) (CY.base (a4.num q.1))) (by omega)
   obtain ⟨H6, s6, u6, f6⟩ := s5.add hA (κ := ZM R FL × Fin TM)
@@ -264,10 +264,10 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
   have c6 : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H6 := fun z u => u6 (u5 (u4 (c3 z u)))
   have a6 := a4.weaken (u5.trans u6)
   obtain ⟨H7, s7, u7, f7⟩ := s6.add hA (κ := Un R FL Pl U0 U1)
-    (fun u => ind fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv T R ch FL)))
+    (fun u => ind fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL)))
     (a := 4) (e := 1) hun (fun u => py_cur hA hB hB2 a6 c6 u) (by omega)
   have a7 := a6.weaken u7
-  obtain ⟨H8, s8, u8, f8⟩ := s7.add hA (κ := Mv T R ch FL)
+  obtain ⟨H8, s8, u8, f8⟩ := s7.add hA (κ := Mv R ch FL)
     (fun mv => ind fun x => GoodMv lhat (nX nI x) (oX oI x) mv) (a := 4) (e := 1) (by simpa using hB.mv)
     (fun mv => py_good hA hB hB2 a7 mv) (by omega)
   obtain ⟨H9, s9, u9, f9⟩ := s8.add hA (κ := Unit)

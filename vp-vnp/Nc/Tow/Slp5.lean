@@ -59,7 +59,7 @@ theorem host_stage (hS : SY inp Y p c H) (hi : ∀ j i, ind (fun x => IsMin (L x
   have hc : Fintype.card (Σ j : Fin J, T.X j × T.X (j + 1)) ≤ Y ^ 2 := by
     rw [pow_two]
     refine le_trans (Fintype.card_le_of_injective (β := Nd T × Nd T)
-      (fun q => (nd T q.1 q.1.2.le q.2.1, nd T (q.1 + 1) q.1.2 q.2.2)) ?_) (by
+      (fun q => (nd q.1.2.le q.2.1, nd q.1.2 q.2.2)) ?_) (by
       rw [Fintype.card_prod]; exact Nat.mul_le_mul hB.nd hB.nd)
     rintro ⟨j, x, y⟩ ⟨j', x', y'⟩ he
     obtain ⟨h1, h2⟩ := Prod.mk.inj he

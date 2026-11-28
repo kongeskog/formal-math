@@ -53,7 +53,7 @@ theorem load_edge_le (j : Fin (J + 1)) (e : T.Ed j) :
   linarith
 
 /-- Numbers of units of law moves. -/
-theorem tmin_real_le (l : LMv T FL) : (tmin FL (load lhat n o) l : ℝ) ≤ 3 * b * kbar FL Uu AA lhat + 1 := by
+theorem tmin_real_le (l : LMv FL) : (tmin FL (load lhat n o) l : ℝ) ≤ 3 * b * kbar FL Uu AA lhat + 1 := by
   obtain ⟨j, i, ω, d⟩ := l
   have hbR : (0 : ℝ) < b := by exact_mod_cast T.b_pos
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
@@ -96,7 +96,7 @@ theorem tmin_real_le (l : LMv T FL) : (tmin FL (load lhat n o) l : ℝ) ≤ 3 * 
   have hk := kap_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH
     j.castSucc
   have h7 : 3 * b * T.kap nf ≤ 3 * b * kbar FL Uu AA lhat := mul_le_mul_of_nonneg_left hk (by positivity)
-  set t : ℝ := (tmin FL (load lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) : ℝ) with ht
+  set t : ℝ := (tmin FL (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) : ℝ) with ht
   set Q : ℝ := 3 * b * kbar FL Uu AA lhat with hQ
   have hQ0 : 0 ≤ Q := by
     have := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
@@ -107,7 +107,7 @@ theorem tmin_real_le (l : LMv T FL) : (tmin FL (load lhat n o) l : ℝ) ≤ 3 * 
   exact le_of_mul_le_mul_left h8 (by linarith)
 
 /-- **The numbers of units of the moves are bounded.** -/
-theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv T R ch FL) :
+theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
     num lhat n o mv ≤ capN FL U0 Uu AA lhat := by
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)

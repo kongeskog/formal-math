@@ -19,8 +19,8 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 /-- Active relays are determined by their targets. -/
-theorem inpR_unique {L : Tg T m AA → ℕ} {x x' : RM T m AA} (hx : okR T R ch x) (hx' : okR T R ch x')
-    (ha : ActR L x) (ha' : ActR L x') (he : inpR T x = inpR T x') : x = x' := by
+theorem inpR_unique {L : Tg T m AA → ℕ} {x x' : RM T m AA} (hx : okR R ch x) (hx' : okR R ch x')
+    (ha : ActR L x) (ha' : ActR L x') (he : inpR x = inpR x') : x = x' := by
   -- equal targets are edges of one stage, or one relay: the active type of an edge is unique
   -- (`isMin_eq`), `okR` excludes it for `inn`, and the last stage is not an earlier one
   rcases x with _ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e <;>
@@ -29,7 +29,7 @@ theorem inpR_unique {L : Tg T m AA → ℕ} {x x' : RM T m AA} (hx : okR T R ch 
     grind [isMin_eq, Fin.castSucc_lt_last]
 
 /-- A relay gives its units at an edge or at a relay, never at an end segment or at the root. -/
-theorem inpR_ne {x : RM T m AA} : inpR T x ≠ .done ∧ ∀ j i ω q, inpR T x ≠ .seg j i ω q := by
+theorem inpR_ne {x : RM T m AA} : inpR x ≠ .done ∧ ∀ j i ω q, inpR x ≠ .seg j i ω q := by
   cases x <;> simp [inpR]
   split_ifs <;> simp
 
@@ -39,7 +39,7 @@ variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U
 
 /-- The target of the units of a slot. -/
 def inpZ : ZM R FL (ch := ch) → Tg T m AA
-  | ⟨.inl x, _⟩ => inpR T x.1
+  | ⟨.inl x, _⟩ => inpR x.1
   | ⟨.inr l, e⟩ => .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e)
 
 -- `consM_inl` and `consM_inr` are in `Nc/Tow/Plan.lean`, next to `consM`, so that `Slp4` can use them too.
@@ -107,7 +107,7 @@ theorem card_consM (z : ZM R FL (ch := ch)) :
     · simp
 
 /-- A move that is earlier in time than the move at index `x` has a smaller index. -/
-theorem lt_of_time {mv : Mv T R ch FL} {x : Fin (Fintype.card (Mv T R ch FL))}
+theorem lt_of_time {mv : Mv R ch FL} {x : Fin (Fintype.card (Mv R ch FL))}
     (h : timeM R ch FL mv < timeM R ch FL (eE R FL x)) : (eE R FL).symm mv < x := by
   rw [← (eE R FL).symm_apply_apply x]
   exact (exists_mono_equiv (timeM R ch FL)).choose_spec _ _ h
@@ -151,8 +151,8 @@ theorem consM_congr (z : ZM R FL (ch := ch))
       exact ⟨(hal (h2 ▸ le_rfl)).2 h1, h2, h3⟩
 
 /-- The outcomes of the channels of a move agree if they agree on the channels of its index. -/
-theorem oo_congr {P : Fin (Fintype.card (Mv T R ch FL)) → Prop}
-    (ho : ∀ ν : (sys R FL Pl).N, P ν.1 → o ν = o' ν) {mv : Mv T R ch FL} (h : P ((eE R FL).symm mv))
+theorem oo_congr {P : Fin (Fintype.card (Mv R ch FL)) → Prop}
+    (ho : ∀ ν : (sys R FL Pl).N, P ν.1 → o ν = o' ν) {mv : Mv R ch FL} (h : P ((eE R FL).symm mv))
     (c) : oo o ⟨mv, c⟩ = oo o' ⟨mv, c⟩ := by
   unfold oo
   rw [ho]
@@ -218,7 +218,7 @@ theorem plan_ok {cap : ℕ}
         (hT R ch (tgU u)).map Pl.pt := by
       cases u with
       | init a c k =>
-        change _ = (hT R ch (tgB T R ch a c k)).map Pl.pt
+        change _ = (hT R ch (tgB R ch a c k)).map Pl.pt
         rw [← hB_eq (ch := ch) (R := R) hd, hB, Sym2.map_mk]
         simp only [Pl.pt_base]
         rfl
@@ -231,8 +231,8 @@ theorem plan_ok {cap : ℕ}
       rw [h2, zp_eq, zp_eq]
       generalize eZ R FL Pl z = w
       rcases w with ⟨⟨x, hx⟩ | l, e⟩
-      · change s(Pl.pt (tri T R ch x 0), Pl.pt (tri T R ch x 2)) = (hT R ch (inpR T x)).map Pl.pt
-        have h1 : hT R ch (inpR T x) = s(tri T R ch x 0, tri T R ch x 2) := by
+      · change s(Pl.pt (tri R ch x 0), Pl.pt (tri R ch x 2)) = (hT R ch (inpR x)).map Pl.pt
+        have h1 : hT R ch (inpR x) = s(tri R ch x 0, tri R ch x 2) := by
           rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e
           · rfl
           · rfl

@@ -62,7 +62,7 @@ theorem vN2_mono {n n' : Sym2 T.Fl → ℕ} (hn : ∀ q, n q ≤ n' q) : vN2 b n
   · positivity
 
 /-- Some number of units is enough. -/
-theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv T FL) : ∃ t d, Fits FL L (withD FL l d) t := by
+theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ t d, Fits FL L (withD FL l d) t := by
   have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
   obtain ⟨t, ht⟩ := exists_nat_ge (√(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) / FL.a₁)
   obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) t (by
@@ -70,12 +70,12 @@ theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv T FL) : ∃ t d, Fits FL L 
     linarith)
   exact ⟨t, d, hd⟩
 
-theorem tmin_spec (L : Tg T m AA → ℕ) (l : LMv T FL) : ∃ d, Fits FL L (withD FL l d) (tmin FL L l) := by
+theorem tmin_spec (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Fits FL L (withD FL l d) (tmin FL L l) := by
   obtain ⟨t, ht⟩ := exists_fits L l
   exact Nat.sInf_mem (s := {t | ∃ d, Fits FL L (withD FL l d) t}) ⟨t, ht⟩
 
 /-- A kind of law is chosen. -/
-theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv T FL) : ∃ d, Pick FL L (withD FL l d) := by
+theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick FL L (withD FL l d) := by
   classical
   obtain ⟨d0, hd0⟩ := tmin_spec L l
   obtain ⟨d, hd, hmin⟩ := exists_min_image (univ.filter fun d => Fits FL L (withD FL l d) (tmin FL L l))
@@ -109,7 +109,7 @@ theorem tmin_le (L : Tg T m AA → ℕ) (l : LMv T FL) {n' : Sym2 T.Fl → ℕ}
     push_cast at h2
     linarith [not_le.1 h2]
 
-theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv T FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) : tmin FL L l = 0 := by
+theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) : tmin FL L l = 0 := by
   have : (0 : ℕ) ∈ {t | ∃ d, Fits FL L (withD FL l d) t} := by
     refine ⟨l.2.2.2, fun q _ => ?_⟩
     change L (.seg l.1 l.2.1 l.2.2.1 q) ≤ _
@@ -119,7 +119,7 @@ theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv T FL} (hL : ∀ q, L (.seg l.
 
 section Stage
 
-theorem num_inr_le (l : LMv T FL) : num lhat n o (.inr l) ≤ tmin FL (load lhat n o) l := by
+theorem num_inr_le (l : LMv FL) : num lhat n o (.inr l) ≤ tmin FL (load lhat n o) l := by
   classical
   rw [num_eq, numF]
   split_ifs
@@ -127,7 +127,7 @@ theorem num_inr_le (l : LMv T FL) : num lhat n o (.inr l) ≤ tmin FL (load lhat
   · exact Nat.zero_le _
 
 
-theorem num_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
+theorem num_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
     ¬ Pick FL (load lhat n o) l) : num lhat n o (.inr l) = 0 := by
   classical
   rcases hl with hl | hl
@@ -136,7 +136,7 @@ theorem num_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc 
     omega
   · rw [num_eq, numF, if_neg hl]
 
-theorem alv_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
+theorem alv_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
     ¬ Pick FL (load lhat n o) l) (ν : (kindM R ch FL (.inr l)).Cn) :
     alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = 0 := by
   unfold alv
@@ -148,7 +148,7 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSu
     (he' : T.ty e' = i) : load lhat n o (.edge j.succ e') ≤
       ∑ e ∈ univ.filter (fun e : T.Ed j => T.πE e = e'), load lhat n o (.edge j.castSucc e) := by
   classical
-  have hx2 : ∀ e : T.Ed j, okR T R ch (.mid j e 2) :=
+  have hx2 : ∀ e : T.Ed j, okR R ch (.mid j e 2) :=
     fun e => ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
   refine (load_le_sum ((univ.filter fun e : T.Ed j => T.πE e = e').image
     fun e => (⟨.inl ⟨.mid j e 2, hx2 e⟩, false⟩ : NM R FL (ch := ch))) (bt_edge_succ j e') ?_).trans ?_
@@ -174,7 +174,7 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSu
     · exact Finset.sum_le_sum fun e _ => (alv_mid_le j e 2 (hx2 e) false).1
 
 /-- Alive units at a vertex. -/
-theorem alive_sq (l : LMv T FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
+theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
     FL.G₁ * (num lhat n o (.inr l)) ^ 2 := by
   classical
   set t := num lhat n o (.inr l) with ht
@@ -275,7 +275,7 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
         FL.G₁ * (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ) ^ 2 := by
       exact_mod_cast h5
     linarith [mul_le_mul_of_nonneg_right FL.G₁_le
-      (sq_nonneg (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ))]
+      (sq_nonneg (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ))]
   · intro ω
     exact tmin_le _ _ fun q => seg_le j i ω q
 

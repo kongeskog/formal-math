@@ -22,7 +22,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
 
 /-- Roles by their moves. -/
 noncomputable def eR (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') :
-    (sys R FL Pl).R ≃ Σ mv : Mv T R ch FL, (kindM R ch FL mv).Ro :=
+    (sys R FL Pl).R ≃ Σ mv : Mv R ch FL, (kindM R ch FL mv).Ro :=
   Equiv.sigmaCongrLeft (β := fun mv => (kindM R ch FL mv).Ro) (eE R FL)
 
 variable (lhat n o) in
@@ -36,18 +36,18 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
     (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) ≤
       2 * NR lhat (nn n) (oo o) P + (1 + Sm) * NL lhat (nn n) (oo o) P := by
   have h1 : (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) =
-      ∑ y : (Σ mv : Mv T R ch FL, (kindM R ch FL mv).Ro), if partM R ch FL y.1 y.2 = P then
+      ∑ y : (Σ mv : Mv R ch FL, (kindM R ch FL mv).Ro), if partM R ch FL y.1 y.2 = P then
         (1 + Fintype.card ((kindM R ch FL y.1).SlAt y.2)) * num lhat (nn n) (oo o) y.1 else 0 := by
     rw [← Equiv.sum_comp (eR R FL Pl)]
     refine Finset.sum_congr rfl fun r' _ => if_congr ?_ rfl rfl
     exact Pl.pt.injective.eq_iff
   rw [h1, Fintype.sum_sigma, Fintype.sum_sum_type]
   refine add_le_add ?_ ?_
-  · have h7 : (∑ x : {x : RM T m AA // okR T R ch x}, 2 * ∑ q : Fin 3, if tri T R ch x.1 q = P then
+  · have h7 : (∑ x : {x : RM T m AA // okR R ch x}, 2 * ∑ q : Fin 3, if tri R ch x.1 q = P then
         nR lhat (nn n) (oo o) x.1 else 0) ≤ 2 * NR lhat (nn n) (oo o) P := by
       rw [← Finset.mul_sum]
       refine Nat.mul_le_mul_left _ ?_
-      exact sum_sub_le (fun x => okR T R ch x) fun x => ∑ q : Fin 3, if tri T R ch x q = P then
+      exact sum_sub_le (fun x => okR R ch x) fun x => ∑ q : Fin 3, if tri R ch x q = P then
         nR lhat (nn n) (oo o) x else 0
     refine le_trans (Finset.sum_le_sum fun x _ => ?_) h7
     rw [Finset.mul_sum]
@@ -60,7 +60,7 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
     rw [h6]
     refine Finset.sum_le_sum (ι := (relay F).Ro) fun q _ => ?_
     by_cases hq : partM R ch FL (.inl x) q = P
-    · rw [if_pos hq, if_pos (show tri T R ch x.1 q = P from hq)]
+    · rw [if_pos hq, if_pos (show tri R ch x.1 q = P from hq)]
       refine Nat.mul_le_mul_right _ ?_
       exact Nat.add_le_add_left (h2 q _) 1
     · rw [if_neg hq]

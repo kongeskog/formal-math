@@ -22,7 +22,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
 
 /-- The outcome of a move is possible. -/
 def PossM (lhat : ℕ) (n : Fin AA → Fin AA → ℕ)
-    (o : NM R FL (ch := ch) → ℕ) (ub : ℕ) (mv : Mv T R ch FL) : Prop :=
+    (o : NM R FL (ch := ch) → ℕ) (ub : ℕ) (mv : Mv R ch FL) : Prop :=
   ∃ i : Fin (num lhat n o mv * ub) → (kindM R ch FL mv).I, ∀ ν,
     o ⟨mv, ν⟩ = (∑ k, ((kindM R ch FL mv).lam + (kindM R ch FL mv).len (i k) ν)) / ub
 
@@ -30,7 +30,7 @@ section
 
 variable {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ} {ub : ℕ}
 
-theorem poss_inl (hub : 0 < ub) {x : {x : RM T m AA // okR T R ch x}} (hp : PossM lhat n o ub (.inl x))
+theorem poss_inl (hub : 0 < ub) {x : {x : RM T m AA // okR R ch x}} (hp : PossM lhat n o ub (.inl x))
     (ν : (kindM R ch FL (.inl x)).Cn) : o ⟨.inl x, ν⟩ = num lhat n o (.inl x) := by
   obtain ⟨i, hi⟩ := hp
   rw [hi ν]
@@ -38,7 +38,7 @@ theorem poss_inl (hub : 0 < ub) {x : {x : RM T m AA // okR T R ch x}} (hp : Poss
   rw [Finset.sum_congr rfl fun k _ => h1 k, Finset.sum_const, card_univ, Fintype.card_fin, smul_eq_mul, Nat.mul_one]
   exact Nat.mul_div_cancel _ hub
 
-theorem poss_inr (hub : 0 < ub) {l : LMv T FL} (hp : PossM lhat n o ub (.inr l)) :
+theorem poss_inr (hub : 0 < ub) {l : LMv FL} (hp : PossM lhat n o ub (.inr l)) :
     GoodL o l (num lhat n o (.inr l)) := by
   obtain ⟨i, hi⟩ : ∃ i : Fin (num lhat n o (.inr l) * ub) → (FL.L l.2.2.2).I, ∀ ν : (FL.L l.2.2.2).Cn,
     o ⟨.inr l, ν⟩ = (∑ k, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν)) / ub := hp
@@ -80,7 +80,7 @@ theorem poss_inr (hub : 0 < ub) {l : LMv T FL} (hp : PossM lhat n o ub (.inr l))
   exact Nat.le_of_mul_le_mul_right h3 (by positivity)
 
 /-- Possible outcomes are good. -/
-theorem poss_good (hub : 0 < ub) {mv : Mv T R ch FL} (hp : PossM lhat n o ub mv) : GoodMv lhat n o mv := by
+theorem poss_good (hub : 0 < ub) {mv : Mv R ch FL} (hp : PossM lhat n o ub mv) : GoodMv lhat n o mv := by
   rcases mv with x | l
   · exact fun ν => poss_inl hub hp ν
   · refine ⟨poss_inr hub hp, fun ν => ?_⟩

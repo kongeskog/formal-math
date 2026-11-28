@@ -45,7 +45,7 @@ noncomputable abbrev LfO : ∀ j, T.Ed j → ℕ := ldL lhat (nn n) (oo o)
 variable (ch) in
 open Classical in
 /-- Is the node a base party? -/
-noncomputable def isB (P : Nd T) : ℕ := if ∃ a, P = nd T 0 (Nat.zero_le _) (ch a) then 1 else 0
+noncomputable def isB (P : Nd T) : ℕ := if ∃ a, P = nd (Nat.zero_le _) (ch a) then 1 else 0
 
 include hg in
 open Classical in
@@ -87,7 +87,7 @@ theorem NL_onN (P : Nd T) : NL lhat (nn n) (oo o) P ≤ Fintype.card FL.Di *
       linarith
 
 open Classical in
-theorem initN_le {ℓf : ℕ} (P : Nd T) (hP : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) →
+theorem initN_le {ℓf : ℕ} (P : Nd T) (hP : ∀ a, P = nd (Nat.zero_le _) (ch a) →
     ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) : initN (A' := A') n (Pl.pt P) ≤ isB ch P * ℓf := by
   unfold isB
   split_ifs with hB
