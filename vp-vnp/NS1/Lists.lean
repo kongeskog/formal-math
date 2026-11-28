@@ -53,6 +53,15 @@ end Fold
 
 end NS1
 
+/-!
+## Weighted lists of typed values
+
+Programs of the tree machine whose values are encodings of typed values. Lemmas on the weighted
+lists `bindW`, `wsum` of `NS1.Comp`. `Does.appT`, `Does.lettT`, `foldT`: composition and folds with
+typed values. The folds over trees after this block, `foldF_does` and `foldF_gives`, are the case
+where both encodings are `id`.
+-/
+
 namespace Nc.Grp
 
 open NS1 NS1.Tree
