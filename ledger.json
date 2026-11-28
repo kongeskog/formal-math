@@ -1,29 +1,9 @@
 {
-  "claims": {
-    "189": {
-      "login": "kongeskog",
-      "at": "2026-11-28T03:57:52Z"
-    },
-    "190": {
-      "login": "kongeskog",
-      "at": "2026-11-28T03:58:08Z"
-    },
-    "199": {
-      "login": "kongeskog",
-      "at": "2026-11-28T06:08:26Z"
-    }
-  },
+  "claims": {},
   "comments_seen_until": "2026-11-28T06:21:05Z",
-  "dispatched": {
-    "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc@4fba39c789bf2a88193eb8a82927012cb0224617@": "2026-11-28T06:34:57.960219436Z",
-    "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc@cd0b51f3ef0b86dbb2807ddcca6034ec5ecaf37a@": "2026-11-28T06:25:24.028095237Z"
-  },
-  "lines": {
-    "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc": []
-  },
-  "line_bases": {
-    "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc": "36c1c82c9165b6c9d80d16aa3df79b28ea036a0c"
-  },
+  "dispatched": {},
+  "lines": {},
+  "line_bases": {},
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],
@@ -35,8 +15,6 @@
   "judged": {},
   "told": [],
   "turn": null,
-  "turns_voided": {
-    "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc": 1
-  },
+  "turns_voided": {},
   "turns_lost": {}
 }

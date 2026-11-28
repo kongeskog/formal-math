@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T06:53:07.628597790Z",
+  "updated_at": "2026-11-28T07:10:37.409245716Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 0,
     "contributors": 2,
-    "ideas_open": 0
+    "ideas_open": 2
   },
   "leaderboard": [
     {
@@ -110,10 +110,10 @@
     {
       "number": 199,
       "title": "Idea: restructure(Paper/Approximate): the hub decomposition over the Laurent polynomials; no second cut-off",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T09:08:26Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 200,
       "result_delta": -1174,
       "created_at": "2026-11-28T06:04:13Z",
@@ -152,10 +152,10 @@
     {
       "number": 190,
       "title": "Idea: restructure(*): state explicit binders repeated within a file once in a variable block",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T06:58:08Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 192,
       "result_delta": -2235,
       "created_at": "2026-11-28T03:34:23Z",
@@ -166,10 +166,10 @@
     {
       "number": 189,
       "title": "Idea: shorten(*): grw for the remaining chains of monotone bound steps",
-      "status": "claimed",
+      "status": "open",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T06:57:52Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 195,
       "result_delta": -1716,
       "created_at": "2026-11-28T03:34:22Z",
@@ -1343,8 +1343,8 @@
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
-      "tokens": 5446,
-      "loc": 304
+      "tokens": 5455,
+      "loc": 305
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
