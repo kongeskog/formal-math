@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T06:45:16.261791719Z",
+  "updated_at": "2026-11-28T06:53:07.628597790Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "36c1c82c9165b6c9d80d16aa3df79b28ea036a0c",
-    "at": "2026-11-28T06:34:57.960219436Z",
+    "sha": "266b5fb03c4a281b2880e7df5f6438c52ac5e07d",
+    "at": "2026-11-28T06:53:07.628597790Z",
     "metrics": {
-      "tokens": 785728,
-      "loc": 51656,
-      "decls": 4253,
+      "tokens": 784554,
+      "loc": 51602,
+      "decls": 4252,
       "files": 312,
-      "bytes": 2971103,
-      "build_seconds": 234
+      "bytes": 2966899,
+      "build_seconds": 433
     }
   },
   "counts": {
-    "merged": 114,
+    "merged": 115,
     "rejected": 4,
-    "open": 1,
+    "open": 0,
     "contributors": 2,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 107,
+      "merged": 108,
       "attempts": 112,
-      "saved": 132569
+      "saved": 133743
     },
     {
       "login": "yidakra",
@@ -115,7 +115,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T09:08:26Z",
       "pr": 200,
-      "result_delta": null,
+      "result_delta": -1174,
       "created_at": "2026-11-28T06:04:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/199",
       "technique": "restructure",
@@ -1214,118 +1214,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 200,
-      "title": "restructure(Paper/Approximate): the hub decomposition over the Laurent polynomials; no second cut-off",
-      "author": "kongeskog",
-      "head_sha": "48b48a2bb4c8952fdbc6f8677312c7a411778ebc",
-      "base_sha": "2a36db834b5c285ab5621017c6f2cd99723ed57e",
-      "status": "stale",
-      "created_at": "2026-11-28T06:08:37Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 790389,
-        "loc": 51921,
-        "decls": 4267,
-        "files": 313,
-        "bytes": 2985492,
-        "build_seconds": 424
-      },
-      "base_metrics": {
-        "tokens": 791563,
-        "loc": 51975,
-        "decls": 4268,
-        "files": 313,
-        "bytes": 2989696,
-        "build_seconds": null
-      },
-      "delta": -1174,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "8 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pass"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pass"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pass"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pass",
-          "detail": "the added lines hold 775 characters of comments and strings"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 791563 → 790389 (-1174)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        }
-      ],
-      "idea": 199,
-      "url": "https://github.com/kongeskog/formal-math/pull/200",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46115240774",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper/Approximate"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",

@@ -32,21 +32,9 @@
     109,
     131
   ],
-  "judged": {
-    "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc": {
-      "at": "2026-11-28T06:09:56Z",
-      "names": null,
-      "on": [],
-      "contains": true,
-      "has_merged": null
-    }
-  },
+  "judged": {},
   "told": [],
-  "turn": {
-    "id": "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc",
-    "tree": "4fba39c789bf2a88193eb8a82927012cb0224617",
-    "at": "2026-11-28T06:34:57.960219436Z"
-  },
+  "turn": null,
   "turns_voided": {
     "200@48b48a2bb4c8952fdbc6f8677312c7a411778ebc": 1
   },
