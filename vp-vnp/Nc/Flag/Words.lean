@@ -15,14 +15,14 @@ namespace Nc.Flag
 
 open Nc.Tower (U SL2 lo hi x)
 
-variable {n : ℕ}
+variable {n : ℕ} (l : Len (U n))
 
 /-- The total length of the generators. -/
-noncomputable def Len.S (l : Len (U n)) : ℝ := ∑ j : Fin (n - 1), l.val (x n j)
+noncomputable def Len.S : ℝ := ∑ j : Fin (n - 1), l.val (x n j)
 
-theorem Len.S_nonneg (l : Len (U n)) : 0 ≤ l.S := sum_nonneg fun _ _ => l.nonneg _
+theorem Len.S_nonneg : 0 ≤ l.S := sum_nonneg fun _ _ => l.nonneg _
 
-theorem Len.x_le_S (l : Len (U n)) (j : Fin (n - 1)) : l.val (x n j) ≤ l.S :=
+theorem Len.x_le_S (j : Fin (n - 1)) : l.val (x n j) ≤ l.S :=
   single_le_sum (f := fun j => l.val (x n j)) (fun _ _ => l.nonneg _) (mem_univ j)
 
 theorem x_mul_apply (j : Fin (n - 1)) (A : U n) (i k : Fin n) :
@@ -63,13 +63,13 @@ theorem x_mul_x (j : Fin (n - 1)) : x n j * x n j = 1 := by
   · simp [h, Ne.symm h]
 
 /-- The sum of the lengths of the generators of types ≥ p. -/
-noncomputable def Len.T (l : Len (U n)) (p : ℕ) : ℝ :=
+noncomputable def Len.T (p : ℕ) : ℝ :=
   ∑ j ∈ univ.filter (fun j : Fin (n - 1) => p ≤ j.1), l.val (x n j)
 
-theorem Len.T_zero (l : Len (U n)) : l.T 0 = l.S := by
+theorem Len.T_zero : l.T 0 = l.S := by
   simp [Len.T, Len.S]
 
-theorem Len.T_succ (l : Len (U n)) (j : Fin (n - 1)) : l.T j.1 = l.T (j.1 + 1) + l.val (x n j) := by
+theorem Len.T_succ (j : Fin (n - 1)) : l.T j.1 = l.T (j.1 + 1) + l.val (x n j) := by
   unfold Len.T
   have : univ.filter (fun i : Fin (n - 1) => j.1 ≤ i.1) =
       insert j (univ.filter fun i : Fin (n - 1) => j.1 + 1 ≤ i.1) := by
@@ -78,7 +78,7 @@ theorem Len.T_succ (l : Len (U n)) (j : Fin (n - 1)) : l.T j.1 = l.T (j.1 + 1) +
     omega
   rw [this, sum_insert (by simp), add_comm]
 
-theorem exists_col_aux (l : Len (U n)) (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + k = a.1 →
+theorem exists_col_aux (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + k = a.1 →
     ∀ u : Fin n → F2, u a = 1 → (∀ i, a < i → u i = 0) → (∀ i : Fin n, i.1 < p → u i = 0) →
     ∃ c d : U n, (∀ i j : Fin n, (i.1 < p ∨ a ≤ i) → mat c i j = (1 : Matrix _ _ F2) i j) ∧
       (∀ i j : Fin n, (i.1 < p ∨ a ≤ i) → mat d i j = (1 : Matrix _ _ F2) i j) ∧
@@ -180,7 +180,7 @@ theorem exists_col_aux (l : Len (U n)) (a : Fin n) (k : ℕ) : ∀ p : ℕ, p + 
         · rw [Function.update_of_ne h, Matrix.one_apply_ne h, add_zero]
       · linarith
 
-theorem exists_col (l : Len (U n)) (a : Fin n) (u : Fin n → F2) (hua : u a = 1)
+theorem exists_col (a : Fin n) (u : Fin n → F2) (hua : u a = 1)
     (hu : ∀ i, a < i → u i = 0) :
     ∃ g : U n, (∀ i j : Fin n, a ≤ i → mat g i j = (1 : Matrix _ _ F2) i j) ∧
       (∀ i, mat g i a = u i) ∧ l.val g ≤ 2 * l.S := by
@@ -234,7 +234,7 @@ theorem refl_x (j : Fin (n - 1)) : refl (x n j) = x n (Fin.rev j) := by
   simp only [Fin.rev_inj, h1, h2, eq_comm (a := k), and_comm]
 
 /-- The reflected length. -/
-def Len.refl (l : Len (U n)) : Len (U n) where
+def Len.refl : Len (U n) where
   val A := l.val (Nc.Flag.refl A)
   one' := by rw [refl_one, l.one']
   inv' g := by rw [refl_inv, l.inv']
@@ -242,7 +242,7 @@ def Len.refl (l : Len (U n)) : Len (U n) where
     rw [refl_mul, add_comm]
     exact l.mul' _ _
 
-theorem Len.refl_S (l : Len (U n)) : l.refl.S = l.S := by
+theorem Len.refl_S : l.refl.S = l.S := by
   unfold Len.S
   rw [← Equiv.sum_comp Fin.revPerm]
   refine sum_congr rfl fun j _ => ?_
@@ -250,7 +250,7 @@ theorem Len.refl_S (l : Len (U n)) : l.refl.S = l.S := by
   rw [refl_x]
   simp
 
-theorem exists_row (l : Len (U n)) (b : Fin n) (φ : Fin n → F2) (hb : φ b = 1)
+theorem exists_row (b : Fin n) (φ : Fin n → F2) (hb : φ b = 1)
     (hφ : ∀ i, i < b → φ i = 0) :
     ∃ g : U n, (∀ i j : Fin n, j ≤ b → mat g i j = (1 : Matrix _ _ F2) i j) ∧
       (∀ j, mat g b j = φ j) ∧ l.val g ≤ 2 * l.S := by
@@ -264,7 +264,7 @@ theorem exists_row (l : Len (U n)) (b : Fin n) (φ : Fin n → F2) (hb : φ b = 
   · rw [Len.refl_S] at h3
     exact h3
 
-theorem lead_le (l : Len (U n)) (j : Fin (n - 1)) (u φ : Fin n → F2) (hu1 : u (lo j) = 1)
+theorem lead_le (j : Fin (n - 1)) (u φ : Fin n → F2) (hu1 : u (lo j) = 1)
     (hu : ∀ i, lo j < i → u i = 0) (hφ1 : φ (hi j) = 1) (hφ : ∀ i, i < hi j → φ i = 0)
     (A : U n) (hA : mat A = 1 + Matrix.vecMulVec u φ) : l.val A ≤ 9 * l.S := by
   obtain ⟨g, hg1, hg2, hg3⟩ := exists_col l (lo j) u hu1 hu
