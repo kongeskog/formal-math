@@ -19,7 +19,7 @@ open Finset Nc.G Unc
 variable {F : Type} [CommRing F] {h b D J m Uu AA U0 U1 : ℕ} {T : Tower h b D J}
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T}
 variable {Inp ι : Type} {Dd Y p c : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
-variable (hh : 0 < h) {L : Inp → Tg T m AA → ℕ}
+variable {L : Inp → Tg T m AA → ℕ}
 
 section Bounds
 
@@ -46,15 +46,15 @@ theorem fb_leS (x : Inp) {j : ℕ} (hj : j ≤ J) (c : T.X j) : fb (lev (L x)) j
 end Bounds
 
 /-- Parents, as bits. -/
-def HostOk (hh : 0 < h) (L : Inp → Tg T m AA → ℕ) (H : Set (Inp → ℕ)) : Prop :=
-  ∀ (j : ℕ) (_ : j < J) (c : T.X j) (c' : T.X (j + 1)), ind (fun x => hostj hh (lev (L x)) c = c') ∈ H
+def HostOk (L : Inp → Tg T m AA → ℕ) (H : Set (Inp → ℕ)) : Prop :=
+  ∀ (j : ℕ) (_ : j < J) (c : T.X j) (c' : T.X (j + 1)), ind (fun x => hostj (lev (L x)) c = c') ∈ H
 
 variable (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hL : ∀ x τ, L x τ ≤ Wb R ch FL U0 U1)
 include hA hB hL
 
 omit hL in
 theorem host_stage (hS : SY inp Y p c H) (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H) :
-    ∃ H', SY inp Y p (c + 1) H' ∧ H ⊆ H' ∧ HostOk hh L H' := by
+    ∃ H', SY inp Y p (c + 1) H' ∧ H ⊆ H' ∧ HostOk L H' := by
   classical
   have hY := hA.pos
   have hc : Fintype.card (Σ j : Fin J, T.X j × T.X (j + 1)) ≤ Y ^ 2 := by
@@ -73,7 +73,7 @@ theorem host_stage (hS : SY inp Y p c H) (hi : ∀ j i, ind (fun x => IsMin (L x
     simp only at e1 e2
     rw [e1, e2]
   obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Σ j : Fin J, T.X j × T.X (j + 1))
-    (fun q => ind fun x => hostj hh (lev (L x)) q.2.1 = q.2.2) (a := 2) (e := 2) hc (fun q => by
+    (fun q => ind fun x => hostj (lev (L x)) q.2.1 = q.2.2) (a := 2) (e := 2) hc (fun q => by
       have h1 : PY Dd H Y 2 fun x => ∃ i ∈ univ.filter
           (fun i => T.host i (T.vx i q.2.1) = q.2.2), IsMin (L x) q.1.castSucc i :=
         PY.exists_mem hA _ ((card_filter_le _ _).trans (by simpa using hB.h)) fun i _ => PY.base (hi _ _) hY
@@ -81,15 +81,14 @@ theorem host_stage (hS : SY inp Y p c H) (hi : ∀ j i, ind (fun x => IsMin (L x
       unfold hostj
       constructor
       · rintro ⟨i, hi, hm⟩
-        rw [isMin_iff hh] at hm
+        rw [isMin_iff] at hm
         subst hm
         exact (mem_filter.1 hi).2
       · intro he
-        exact ⟨imin hh (lev (L x)) q.1, mem_filter.2 ⟨mem_univ _, he⟩, (isMin_iff hh (L x) q.1.castSucc _).2 rfl⟩)
+        exact ⟨imin (lev (L x)) q.1, mem_filter.2 ⟨mem_univ _, he⟩, (isMin_iff (L x) q.1.castSucc _).2 rfl⟩)
     (by omega)
   exact ⟨H1, s1, u1, fun j hj c c' => f1 ⟨⟨j, hj⟩, c, c'⟩⟩
 
-omit hh in
 /-- The loads at the chambers. -/
 theorem fb_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) :
     ∃ H', SY inp Y p (c + 1) H' ∧ H ⊆ H' ∧ ∀ (j : ℕ) (_ : j ≤ J) (x' : T.X j),

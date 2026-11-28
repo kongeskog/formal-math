@@ -21,9 +21,9 @@ variable {Inp ι : Type} {Dd Y p c : ℕ} {inp : ι → Inp → Fin Dd} {H : Set
 
 section Loads
 
-variable {L : Inp → Tg T m AA → ℕ} (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hb : 0 < b)
+variable {L : Inp → Tg T m AA → ℕ} (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y)
   (hL : ∀ x τ, L x τ ≤ Wb R ch FL U0 U1)
-include hA hB hb hL
+include hA hB hL
 
 theorem sqs_le (x : Inp) (j : Fin (J + 1)) (i : Fin h) : sqs (L x) j i ≤ 2 * Y ^ 3 := by
   unfold sqs
@@ -51,9 +51,9 @@ theorem cy_sqs (hm : ∀ τ, (fun x => L x τ) ∈ H) (j : Fin (J + 1)) (i : Fin
       _ ≤ Y ^ 3 := Nat.pow_le_pow_right hY (by omega)
       _ ≤ 2 * Y ^ 3 := by omega
   · rw [← e x]
-    exact hA.lt_of_le3 (sqs_le hA hB hb hL x j i)
+    exact hA.lt_of_le3 (sqs_le hA hB hL x j i)
 
-omit hb hL in
+omit hL in
 theorem py_isMin (hq : ∀ j i, (fun x => sqs (L x) j i) ∈ H) (j : Fin (J + 1)) (i : Fin h) :
     PY Dd H Y 7 fun x => IsMin (L x) j i := by
   have hY := hA.pos
@@ -66,7 +66,7 @@ theorem py_isMin (hq : ∀ j i, (fun x => sqs (L x) j i) ∈ H) (j : Fin (J + 1)
   unfold IsMin
   simp
 
-omit hb hL in
+omit hL in
 theorem py_fits {s : Inp → ℕ} {a : ℕ} (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv T FL) (hs : CY Dd H Y a s) :
     PY Dd H Y (a + 3) fun x => Fits FL (L x) l (s x) := by
   classical
@@ -85,7 +85,7 @@ theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv T FL) : CY Dd H 
     refine PY.not hA (PY.exists_univ hA hB.di fun d => ?_)
     exact py_fits hA hB hm (withD FL l d) (CY.const s (hA.lt_of_le (mem_range.1 hs).le))
   have hlt : ∀ x, tmin FL (L x) l < Y := fun x =>
-    lt_of_lt_of_le (tmin_lt hb (fun τ => hL x τ) l) hB.tt
+    lt_of_lt_of_le (tmin_lt (fun τ => hL x τ) l) hB.tt
   have e : ∀ x, tmin FL (L x) l = ∑ s ∈ range Y, ind (fun x => ¬ ∃ d, Fits FL (L x) (withD FL l d) s) x := by
     intro x
     rw [tmin_sum (hlt x)]
@@ -96,7 +96,7 @@ theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv T FL) : CY Dd H 
   rw [← e x]
   exact hA.lt_of_le (hlt x).le
 
-omit hb hL in
+omit hL in
 theorem py_pick (hm : ∀ τ, (fun x => L x τ) ∈ H) (ht : ∀ l : LMv T FL, (fun x => tmin FL (L x) l) ∈ H) (l : LMv T FL) :
     PY Dd H Y 7 fun x => Pick FL (L x) l := by
   have hY := hA.pos
@@ -111,7 +111,7 @@ theorem py_pick (hm : ∀ τ, (fun x => L x τ) ∈ H) (ht : ∀ l : LMv T FL, (
   unfold Pick
   simp
 
-omit hb hL in
+omit hL in
 theorem py_actR (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H) (y : RM T m AA) :
     PY Dd H Y 0 fun x => ActR (L x) y := by
   have hY := hA.pos
@@ -136,7 +136,7 @@ theorem cy_numF (hm : ∀ τ, (fun x => L x τ) ∈ H) (hi : ∀ j i, ind (fun x
     unfold numF
     rfl
   · refine (CY.ite hA (PY.base (hp l) hY) (CY.base (ht l) hY) (CY.const 0 hA.zero_lt)
-      (fun x => hA.lt_of_le (lt_of_lt_of_le (tmin_lt hb (fun τ => hL x τ) l) hB.tt).le) fun _ => hA.zero_lt).congr
+      (fun x => hA.lt_of_le (lt_of_lt_of_le (tmin_lt (fun τ => hL x τ) l) hB.tt).le) fun _ => hA.zero_lt).congr
       fun x => ?_
     unfold numF
     rfl
@@ -149,7 +149,7 @@ structure Chosen (L : Inp → Tg T m AA → ℕ) (R : Routes T m Uu) (ch : Fin A
   pick : ∀ l : LMv T FL, ind (fun x => Pick FL (L x) l) ∈ H
   numF : ∀ mv : Mv T R ch FL, (fun x => numF R ch FL (L x) mv) ∈ H
 
-omit hA hB hb hL in
+omit hA hB hL in
 theorem Chosen.weaken {L : Inp → Tg T m AA → ℕ} {H H' : Set (Inp → ℕ)} (hc : Chosen L R ch FL H) (hH : H ⊆ H') :
     Chosen L R ch FL H' :=
   ⟨fun j i => hH (hc.isMin j i), fun l => hH (hc.tmin l), fun l => hH (hc.pick l), fun mv => hH (hc.numF mv)⟩
@@ -163,18 +163,18 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
     rw [pow_one]
     exact (Fintype.card_le_of_injective (fun l : LMv T FL => (Sum.inr l : Mv T R ch FL)) Sum.inr_injective).trans hB.mv
   obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Fin (J + 1) × Fin h) (fun q x => sqs (L x) q.1 q.2) (a := 3) (e := 2)
-    hjh (fun q => cy_sqs hA hB hb hL hm q.1 q.2) (by omega)
+    hjh (fun q => cy_sqs hA hB hL hm q.1 q.2) (by omega)
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (κ := Fin (J + 1) × Fin h) (fun q => ind fun x => IsMin (L x) q.1 q.2)
     (a := 7) (e := 2) hjh (fun q => py_isMin hA hB (fun j i => f1 (j, i)) q.1 q.2) (by omega)
   have m2 : ∀ τ, (fun x => L x τ) ∈ H2 := fun τ => u2 (u1 (hm τ))
   obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := LMv T FL) (fun l x => tmin FL (L x) l) (a := 8) (e := 1) hl
-    (fun l => cy_tmin hA hB hb hL m2 l) (by omega)
+    (fun l => cy_tmin hA hB hL m2 l) (by omega)
   have m3 : ∀ τ, (fun x => L x τ) ∈ H3 := fun τ => u3 (m2 τ)
   obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := LMv T FL) (fun l => ind fun x => Pick FL (L x) l) (a := 7) (e := 1) hl
     (fun l => py_pick hA hB m3 f3 l) (by omega)
   have m4 : ∀ τ, (fun x => L x τ) ∈ H4 := fun τ => u4 (m3 τ)
   obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv T R ch FL) (fun mv x => numF R ch FL (L x) mv) (a := 2) (e := 1)
-    (by simpa using hB.mv) (fun mv => cy_numF hA hB hb hL m4 (fun j i => u4 (u3 (f2 (j, i)))) (fun l => u4 (f3 l)) f4 mv)
+    (by simpa using hB.mv) (fun mv => cy_numF hA hB hL m4 (fun j i => u4 (u3 (f2 (j, i)))) (fun l => u4 (f3 l)) f4 mv)
     (by omega)
   exact ⟨H5, s5, u1.trans (u2.trans (u3.trans (u4.trans u5))), fun j i => u5 (u4 (u3 (f2 (j, i)))),
     fun l => u5 (u4 (f3 l)), fun l => u5 (f4 l), f5⟩
@@ -182,8 +182,8 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
 end Loads
 
 variable {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R FL (ch := ch) → ℕ} {lhat : ℕ}
-variable (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hR : Rng nx ox U0 U1) (hb : 0 < b)
-include hA hB hR hb
+variable (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hR : Rng nx ox U0 U1)
+include hA hB hR
 
 /-- The loop over time. -/
 theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
@@ -198,7 +198,7 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
   | succ t ih =>
     obtain ⟨H0, s0, u0, f0⟩ := ih
     obtain ⟨H1, s1, u1, f1, g1⟩ := ld_stage hA hB hR s0 (hs.weaken u0) f0
-    obtain ⟨H2, s2, u2, f2⟩ := pick_stage hA hB hb
+    obtain ⟨H2, s2, u2, f2⟩ := pick_stage hA hB
       (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s1 g1
     obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := Mv T R ch FL)
       (fun mv x => numS R ch FL lhat (nx x) (ox x) (t + 1) mv) (a := 0) (e := 1) (by simpa using hB.mv)
@@ -218,7 +218,7 @@ structure After (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R FL (
   alv : ∀ ν : NM R FL (ch := ch), (fun x => alv R ch FL lhat (nx x) (ox x) ν) ∈ H
   load : ∀ τ : Tg T m AA, (fun x => load R ch FL lhat (nx x) (ox x) τ) ∈ H
 
-omit hA hB hR hb in
+omit hA hB hR in
 theorem After.weaken {H H' : Set (Inp → ℕ)} (ha : After nx ox lhat H) (hH : H ⊆ H') : After nx ox lhat H' where
   toStat := ha.toStat.weaken hH
   toChosen := ha.toChosen.weaken hH
@@ -229,10 +229,10 @@ theorem After.weaken {H H' : Set (Inp → ℕ)} (ha : After nx ox lhat H) (hH : 
 theorem after_stage (hS : SY inp Y p c H) (hbs : Base nx ox H) :
     ∃ H', SY inp Y p (c + 11 + 8 * Y) H' ∧ After nx ox lhat H' := by
   obtain ⟨H1, s1, u1, f1⟩ := stat_stage hA hB hR hS hbs (lhat := lhat)
-  obtain ⟨H2, s2, u2, f2⟩ := num_stage hA hB hR hb s1 f1 (tend J m)
+  obtain ⟨H2, s2, u2, f2⟩ := num_stage hA hB hR s1 f1 (tend J m)
   obtain ⟨H3, s3, u3, f3, g3⟩ := ld_stage hA hB hR s2 (f1.weaken u2)
     (Nf := fun x => num R ch FL lhat (nx x) (ox x)) f2
-  obtain ⟨H4, s4, u4, f4⟩ := pick_stage (L := fun x => load R ch FL lhat (nx x) (ox x)) hA hB hb
+  obtain ⟨H4, s4, u4, f4⟩ := pick_stage (L := fun x => load R ch FL lhat (nx x) (ox x)) hA hB
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 g3
   refine ⟨H4, s4.le hA ?_, (f1.weaken (u2.trans (u3.trans u4))), f4,
     fun mv => u4 (u3 (f2 mv)), fun ν => u4 (f3 ν), fun τ => u4 (g3 τ)⟩

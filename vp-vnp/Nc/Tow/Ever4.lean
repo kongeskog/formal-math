@@ -98,11 +98,11 @@ variable {R FL Pl lhat n o}
 
 section
 
-variable (hb : 0 < b)
+variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
   (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
 
-include hb hg in
+include hg in
 /-- The outcome of a law move is not large. -/
 theorem law_le (l : LMv T FL) (ν : (FL.L l.2.2.2).Cn) :
     oo R FL Pl o ⟨.inr l, ν⟩ ≤ FL.G₁ * num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) := by
@@ -114,7 +114,7 @@ theorem law_le (l : LMv T FL) (ν : (FL.L l.2.2.2).Cn) :
       (fun _ _ => Nat.zero_le _) (mem_univ ν)
   have h3 : (oo R FL Pl o ⟨.inr l, ν⟩) ^ 2 ≤ FL.G₁ * t ^ 2 := by
     refine h2.trans (le_trans ?_ h1)
-    exact Nat.le_mul_of_pos_left _ hb
+    exact Nat.le_mul_of_pos_left _ T.b_pos
   have h4 : (oo R FL Pl o ⟨.inr l, ν⟩) ^ 2 ≤ (FL.G₁ * t) ^ 2 := by
     refine h3.trans ?_
     rw [mul_pow]
@@ -123,7 +123,7 @@ theorem law_le (l : LMv T FL) (ν : (FL.L l.2.2.2).Cn) :
     exact Nat.le_mul_self _
   exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h4
 
-include hb hg in
+include hg in
 open Classical in
 /-- The units of a law move at a node. -/
 theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d : Bool,
@@ -138,7 +138,7 @@ theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d 
         oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ FL.G₁ * S := by
     intro ν d
     split_ifs with hP
-    · refine (law_le hb hg l ν).trans (Nat.mul_le_mul_left _ ?_)
+    · refine (law_le hg l ν).trans (Nat.mul_le_mul_left _ ?_)
       refine le_trans ?_ (Finset.single_le_sum (f := fun f : T.Fl =>
         if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then t else 0) (fun _ _ => Nat.zero_le _)
         (mem_univ (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))))
@@ -153,7 +153,7 @@ theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d 
         rw [Fintype.card_congr (FL.cn l.2.2.2)]
         ring
 
-include hb hg
+include hg
 
 open Classical in
 /-- **The units that a party ever holds.** -/
@@ -216,7 +216,7 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
     · -- laws
       unfold NL
       rw [Finset.mul_sum]
-      exact Finset.sum_le_sum fun l _ => law_node hb hg l P
+      exact Finset.sum_le_sum fun l _ => law_node hg l P
   omega
 
 end

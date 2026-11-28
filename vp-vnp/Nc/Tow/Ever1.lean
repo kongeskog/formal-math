@@ -81,11 +81,11 @@ theorem sum_end {κ X : Type*} [Fintype κ] [Fintype X] [DecidableEq X] (w : κ 
 
 end Levels
 
-variable (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ)
+variable (Lf : ∀ j, T.Ed j → ℕ)
 
 open Classical in
 /-- Units between the children of a chamber and their parent. -/
-noncomputable def chs (j : ℕ) (x : T.X (j + 1)) : ℕ := ∑ c : T.X j, if hostj hh Lf c = x then fb Lf j c else 0
+noncomputable def chs (j : ℕ) (x : T.X (j + 1)) : ℕ := ∑ c : T.X j, if hostj Lf c = x then fb Lf j c else 0
 
 open Classical in
 theorem fb_eq (j : ℕ) (c : T.X j) : fb Lf j c = (∑ e, if T.e0 e = c then Lf j e else 0) +
@@ -126,7 +126,7 @@ theorem lev_succ (j : Fin J) (e : T.Ed (j + 1)) : load R ch FL lhat n o (.edge j
   rfl
 
 theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn j i e) ≤
-    if i = imin hh (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
+    if i = imin (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
@@ -134,22 +134,22 @@ theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn 
     exact lev_castSucc j e
   · rw [num_eq, numF, if_neg]
     intro ha
-    exact h1 ((isMin_iff hh _ j.castSucc i).1 ha)
+    exact h1 ((isMin_iff _ j.castSucc i).1 ha)
   · exact Nat.zero_le _
   · exact le_rfl
 
-theorem nR_mid (hb : 0 < b) (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
-    if T.ty e = imin hh (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
+theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
+    if T.ty e = imin (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
     refine h2.trans ((num_mid0 j e hx0).1.trans (le_of_eq ?_))
     exact lev_castSucc j e
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
     refine h2.trans (le_of_eq ?_)
     refine (num_mid0 j e hx0).2 fun hm => h1 ?_
-    exact (isMin_iff hh _ j.castSucc _).1 hm
+    exact (isMin_iff _ j.castSucc _).1 hm
   · exact Nat.zero_le _
   · exact le_rfl
 

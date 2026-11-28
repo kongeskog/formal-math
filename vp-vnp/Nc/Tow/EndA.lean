@@ -111,7 +111,7 @@ section Plan
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 /-- Alive units with a target are given. -/
-theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
+theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
     (hd : tgU R FL Pl u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
   classical
   set L := load R ch FL lhat (nn n) (oo R FL Pl o) with hL
@@ -126,7 +126,7 @@ theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n
     · intro e hτ
       exact one (.fin e) trivial trivial hτ
     · intro e hτ
-      obtain ⟨i, hi⟩ := exists_isMin hh L j.castSucc
+      obtain ⟨i, hi⟩ := exists_isMin L j.castSucc
       by_cases ht : T.ty e = i
       · refine one (.mid j e 0) ⟨fun h3 => absurd h3 (by decide), fun h3 => absurd h3 (by decide)⟩ (fun _ => ?_) ?_
         · rw [ht]; exact hi
@@ -210,14 +210,14 @@ theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
     simpa [seen0] using h1
 
 /-- **The current units in the end**: alive units between a node and its parent, and dead units. -/
-theorem cur_end (hh : 0 < h) {u : Un R FL Pl U0 U1}
+theorem cur_end {u : Un R FL Pl U0 U1}
     (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL))) :
     u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ∧
       (AlU R FL Pl lhat n o u → tgU R FL Pl u = .done) := by
   rw [Plan.cur, mem_sdiff] at hu
   refine ⟨hu.1, fun ha => ?_⟩
   by_contra hd
-  obtain ⟨z, hz⟩ := exists_cons hh ha hd
+  obtain ⟨z, hz⟩ := exists_cons ha hd
   apply hu.2
   unfold Plan.used
   rw [mem_biUnion]

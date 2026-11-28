@@ -47,6 +47,8 @@ noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (J
   co := cor
   vx_co := fun _ i => vert_cor_bijective _ i
   card_fl := card_U h
+  b_pos := by positivity
+  h_pos := by omega
   cN := fun ν => ν.1.2
   dN := fun ν => x h ν.1.1 * ν.1.2
   n_ne := fun ν e => x_ne_one ν.1.1 (by simpa using e.symm)

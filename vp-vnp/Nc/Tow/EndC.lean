@@ -131,7 +131,7 @@ theorem mem_AsU_init {a c : Fin AA} {kk : Fin U0} {s : Σ j : Fin (J + 1), T.X j
   rintro ⟨-, ν', k', he, -⟩
   cases he
 
-theorem card_AsU (hb : 0 < b) (hh : 0 < h) (s : Σ j : Fin (J + 1), T.X j) :
+theorem card_AsU (s : Σ j : Fin (J + 1), T.X j) :
     (AsU R FL Pl lhat n o s : Finset (Un R FL Pl U0 U1)).card ≤ fb (lev (load R ch FL lhat (nn n) (oo R FL Pl o))) s.1.1 s.2 := by
   classical
   obtain ⟨j, c⟩ := s
@@ -142,7 +142,7 @@ theorem card_AsU (hb : 0 < b) (hh : 0 < h) (s : Σ j : Fin (J + 1), T.X j) :
   have h2 : (∑ a, ∑ c', ∑ kk, if (Uid.init a c' kk : Un R FL Pl U0 U1) ∈ AsU R FL Pl lhat n o ⟨j, c⟩ then 1 else 0) = 0 :=
     Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c' _ => Finset.sum_eq_zero fun kk _ => if_neg mem_AsU_init
   rw [h2, Nat.zero_add]
-  refine le_trans ?_ (sum_child (n := nn n) (o := oo R FL Pl o) hb hh j.1
+  refine le_trans ?_ (sum_child (n := nn n) (o := oo R FL Pl o) j.1
     (Nat.le_of_lt_succ j.2) c)
   rw [← Equiv.sum_comp (eN R FL Pl)]
   refine Finset.sum_le_sum fun ν _ => ?_

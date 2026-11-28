@@ -202,17 +202,17 @@ theorem alg {C N y k : ℝ} (hC : 0 ≤ C) (hN : 0 ≤ N) (hy : 0 ≤ y) (hk : k
     C * N ^ 2 * Real.sq_sqrt (show (0 : ℝ) ≤ 8 by norm_num) -
     (y ^ 2 + 2 * √8 * N * y) * Real.sq_sqrt hC
 
-theorem vN2_nonneg (hb : 0 < b) (m : Sym2 T.Fl → ℕ) : 0 ≤ vN2 b m := by
-  have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast hb
+theorem vN2_nonneg (m : Sym2 T.Fl → ℕ) : 0 ≤ vN2 b m := by
+  have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   unfold vN2
   positivity
 
 /-- The norms of the loads of end segments. -/
-theorem end_norm {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fin h} {n : T.Ed j → ℕ} :
+theorem end_norm {j : ℕ} (hj : j < J) (hbD : b ≤ 2 * D) {i : Fin h} {n : T.Ed j → ℕ} :
     (Fintype.card (T.X (j + 1)) : ℝ) / b * ∑ ω, √(vN2 b (T.nEnd i n ω)) ^ 2 ≤
       8 * (Fintype.card (T.X j) / 2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2) := by
-  have hbR : (0 : ℝ) < b := by exact_mod_cast hb
-  have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast hb
+  have hbR : (0 : ℝ) < b := by exact_mod_cast T.b_pos
+  have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have hDb : (b : ℝ) ≤ 2 * D := by exact_mod_cast hbD
   have hcX : (Fintype.card (T.X j) : ℝ) = D * Fintype.card (T.X (j + 1)) := by exact_mod_cast T.card_X j hj
   rw [hcX]
@@ -222,7 +222,7 @@ theorem end_norm {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fi
   set x : ℝ := (Fintype.card (T.X (j + 1)) : ℝ) with hx
   have h1 : ∀ ω, √(vN2 b (T.nEnd i n ω)) ^ 2 ≤ (b : ℝ) ^ 2 / 2 * ∑ q : Sym2 T.Fl, (T.nEnd i n ω q : ℝ) ^ 2 := by
     intro ω
-    rw [Real.sq_sqrt (vN2_nonneg hb _)]
+    rw [Real.sq_sqrt (vN2_nonneg _)]
     unfold vN2
     have h2 : (∑ q : Sym2 T.Fl, if q.IsDiag then (0 : ℝ) else (T.nEnd i n ω q : ℝ) ^ 2) ≤
         ∑ q : Sym2 T.Fl, (T.nEnd i n ω q : ℝ) ^ 2 := by
@@ -250,7 +250,7 @@ theorem end_norm {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fi
     _ = _ := by ring
 
 /-- The new loads at the vertices. -/
-theorem other_le {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fin h}
+theorem other_le {j : ℕ} (hj : j < J) (hbD : b ≤ 2 * D) {i : Fin h}
     {n : T.Ed j → ℕ} {n' : T.Ed (j + 1) → ℕ} {C₁ a₁ N : ℝ} (hC : 0 ≤ C₁) (ha : 0 ≤ a₁) (hN0 : 0 ≤ N)
     (hN2 : N ^ 2 = Fintype.card (T.X j) / 2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2)
     (t : T.V (j + 1) i → ℕ)
@@ -260,8 +260,8 @@ theorem other_le {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fi
     Fintype.card (T.X (j + 1)) / 2 * ∑ e' ∈ univ.filter (fun e' => ¬ T.ty e' = i), (n' e' : ℝ) ^ 2 ≤
       C₁ * (√8 * N + a₁ * (Fintype.card (T.X (j + 1)) / b)) ^ 2 := by
   have hj' := Nat.succ_le_of_lt hj
-  have hbR : (0 : ℝ) < b := by exact_mod_cast hb
-  have hfsq := end_norm (T := T) (n := n) (i := i) hj hb hbD
+  have hbR : (0 : ℝ) < b := by exact_mod_cast T.b_pos
+  have hfsq := end_norm (T := T) (n := n) (i := i) hj hbD
   rw [← hN2] at hfsq
   set x : ℝ := (Fintype.card (T.X (j + 1)) : ℝ) with hx
   have hcV : (Fintype.card (T.V (j + 1) i) : ℝ) = x / b := by
@@ -311,7 +311,7 @@ theorem other_le {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fi
     _ ≤ _ := pow_le_pow_left₀ (Real.sqrt_nonneg _) h5 2
 
 /-- **One stage.** -/
-theorem load_step {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : Fin h}
+theorem load_step {j : ℕ} (hj : j < J) (hbD : b ≤ 2 * D) {i : Fin h}
     {n : T.Ed j → ℕ} {n' : T.Ed (j + 1) → ℕ} {C₁ a₁ ρ : ℝ} (hC : 0 ≤ C₁) (ha : 0 ≤ a₁) (hρ : 0 ≤ ρ)
     (hρ1 : 1 + 8 * C₁ ≤ ρ ^ 2 * h)
     (hi : (h : ℝ) * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 ≤ ∑ e, (n e : ℝ) ^ 2)
@@ -328,7 +328,7 @@ theorem load_step {j : ℕ} (hj : j < J) (hb : 0 < b) (hbD : b ≤ 2 * D) {i : F
     ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2)
   have hN2 := Real.sq_sqrt (mul_nonneg hA hP0)
   set N : ℝ := √(Fintype.card (T.X j) / 2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2) with hN
-  have hother := other_le hj hb hbD hC ha hN0 hN2 t hal ht
+  have hother := other_le hj hbD hC ha hN0 hN2 t hal ht
   have hm' : Fintype.card (T.X (j + 1)) / 2 *
       ∑ e' ∈ univ.filter (fun e' => T.ty e' = i), (n' e' : ℝ) ^ 2 ≤ N ^ 2 := by
     rw [hN2, hcX]

@@ -318,8 +318,6 @@ theorem num_mid0 (j : Fin J) (e : T.Ed j) (hx : okR T R ch (.mid j e 0)) :
   intro ha
   exact hn (ha rfl)
 
-variable (hb : 0 < b)
-include hb
 
 /-- The relays of an edge are given at most what is on the edge. -/
 theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)) :
@@ -385,7 +383,7 @@ theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
     alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load R ch FL lhat n o (.edge j.castSucc e) ∧
     (¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) →
       alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
-  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
+  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
   have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0
   have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) (⟨.mid j e s, hx⟩ : {x : RM T m AA // okR T R ch x}) ν
   refine ⟨h3.trans (h1.trans h2.1), fun hn => ?_⟩
@@ -400,7 +398,7 @@ theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load R ch FL lhat n o) 
   split_ifs with hν
   · obtain ⟨e, s, hx, h1, h2, -⟩ := seg_chan hν
     rw [h2]
-    exact (alv_mid_le hb j e s hx false).2 (by rw [h1]; exact hn)
+    exact (alv_mid_le j e s hx false).2 (by rw [h1]; exact hn)
   · rfl
 
 open Classical in
@@ -413,7 +411,7 @@ theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : ∑ ν ∈ segS (R := R)
   unfold segS
   split_ifs with hx
   · rw [Finset.sum_singleton]
-    exact (alv_mid_le hb j e s hx false).1
+    exact (alv_mid_le j e s hx false).1
   · rw [Finset.sum_empty]
     exact Nat.zero_le _
 
@@ -446,13 +444,13 @@ theorem seg_le (j : Fin J) (i : Fin h) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) :
       rw [Finset.sum_filter]
       refine Finset.sum_le_sum fun e _ => ?_
       split_ifs
-      · exact sum_segS hb j 1 e
+      · exact sum_segS j 1 e
       · exact le_rfl
     · refine (sum_biUnion_le' _ _ _).trans ?_
       rw [Finset.sum_filter]
       refine Finset.sum_le_sum fun e _ => ?_
       split_ifs
-      · exact sum_segS hb j 3 e
+      · exact sum_segS j 3 e
       · exact le_rfl
 
 end Mid
