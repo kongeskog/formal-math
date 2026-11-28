@@ -37,8 +37,6 @@ inductive Nm (K E pS : ℕ) (S N Id : Type) where
   | kR (a b : Fin (K + K))
   /-- keys of units read -/
   | kC (a b : Fin (K + K))
-  /-- instructions for diagonal units -/
-  | dg (a : Fin (K + K))
   /-- number of units as a digit -/
   | dn (a b : Fin (K + K))
   /-- outcome as a digit -/
@@ -108,8 +106,6 @@ structure Codes (S : Type) (M : Sys A (K + K + A') E) (U0 U1 D pS : ℕ) where
   rc_inj : Function.Injective rc
   /-- keys of copies of units -/
   key : Grp.Cell M U0 U1 → List Bool
-  /-- keys of second copies -/
-  dkey : Fin (K + K) × Fin U0 → List Bool
 
 variable {P : G.Plan M U0 U1} {grp : NN K U0 → (M.N → Fin U1) → Fin (K + K + A') → Fin mm}
 

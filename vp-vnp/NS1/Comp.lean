@@ -374,10 +374,6 @@ theorem app {p : Tree} (h : Gives θ F x o c) (h' : Gives θ (Fm.ofTree p) o o' 
 theorem lett (h : Gives θ F x o c) (h' : Gives θ G o o' d) : Gives θ (NS1.lett F G) x o' (c + d + 2) :=
   app (p := G.code) h (by rw [Fm.ofTree_code]; exact h')
 
-theorem letk (h : Gives θ F x o c) (h' : Gives θ G (.cons x o) o' d) :
-    Gives θ (NS1.lett (.cons .id F) G) x o' (c + d + 4) :=
-  (((id x).cons h).lett h').mono (by omega)
-
 theorem run {p y : Tree} {e : ℕ} (hF : Gives θ F x p c) (hG : Gives θ G x y d) (h : Gives θ (Fm.ofTree p) y o e) :
     Gives θ (.run F G) x o (c + d + e + 1) := Does.run hF hG h
 

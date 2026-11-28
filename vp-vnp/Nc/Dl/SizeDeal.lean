@@ -193,7 +193,6 @@ structure SizeHyp (X Lc : ℕ) : Prop where
   dc : ∀ d, (C.dc d).length ≤ Lc
   rc : ∀ d, (C.rc d).length ≤ Lc
   key : ∀ y, (C.key y).length ≤ Lc
-  dkey : ∀ y, (C.dkey y).length ≤ Lc
   hK1 : K + 1 ≤ X
   hK2 : K + K ≤ X
   hU0 : U0 + 1 ≤ X
@@ -317,22 +316,8 @@ theorem size_flagT (d : RowData (K + K)) : (flagT d).size ≤ 19 * (X * Lc) := b
 theorem size_kRT (a b : Fin (K + K)) (n : Fin (U0 + 1)) : (kRT C a b n).size ≤ 19 * (X * Lc) :=
   size_keysL H (length_filter_finRange ((Nat.le_succ _).trans H.hU0) _) fun _ => H.key _
 
-theorem size_kCT (a b : Fin (K + K)) (n : Fin (U0 + 1)) :
-    (kCT C a b n).size ≤ 19 * (X * Lc) := by
-  refine size_keysL H (length_filter_finRange ((Nat.le_succ _).trans H.hU0) _) fun k => ?_
-  split_ifs
-  · exact H.dkey _
-  · exact H.key _
-
-theorem size_dgT (a : Fin (K + K)) (n : Fin (U0 + 1)) : (dgT C a n).size ≤ 19 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4⟩ := H.facts
-  refine (size_listT_le (b := 8 * Lc + 9)
-    (length_filter_finRange ((Nat.le_succ _).trans H.hU0) _) fun k _ => ?_).trans ?_
-  · have k1 := size_bits (H.key (Fin.castAdd A' a, .init a a k))
-    have k2 := size_bits (H.dkey (a, k))
-    simp only [Grp.Ins.tree, Tree.size, size_num]
-    omega
-  · linarith
+theorem size_kCT (a b : Fin (K + K)) (n : Fin (U0 + 1)) : (kCT C a b n).size ≤ 19 * (X * Lc) :=
+  size_keysL H (length_filter_finRange ((Nat.le_succ _).trans H.hU0) _) fun _ => H.key _
 
 theorem size_chT (ν : M.N) (d : Bool) (j : Fin U1) : (chT C ν d j).size ≤ 19 * (X * Lc) :=
   size_keysL H (length_filter_finRange H.hU1 _) fun _ => H.key _
@@ -373,8 +358,7 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
   · rw [steps3, List.mem_map] at h
     obtain ⟨a, -, rfl⟩ := h
     refine size_pickS H (by rw [Finset.length_toList, Finset.card_univ, Fintype.card_fin]; exact H.hU0) fun n _ => ⟨?_, ?_⟩
-    · simp only [o3, List.length_cons]
-      split_ifs <;> simp
+    · simp [o3]
     · intro b hb
       simp only [o3, List.mem_cons] at hb
       rcases hb with rfl | rfl | rfl | hb
@@ -383,11 +367,7 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
       · have := hdt (digN hU0 n)
         simp only
         omega
-      · split_ifs at hb
-        · rw [List.mem_singleton] at hb
-          subst hb
-          exact size_dgT H ..
-        · simp at hb
+      · simp at hb
   · rw [steps4, List.mem_map] at h
     obtain ⟨ν, -, rfl⟩ := h
     refine size_pickS H (by rw [Finset.length_toList, Finset.card_univ, Fintype.card_fin]; exact H.hU1) fun j _ => ⟨by simp, ?_⟩
@@ -505,13 +485,6 @@ theorem size_baseTm (p : Fin (K + K)) : (baseTm C p).tree.size ≤ 120 * (X * Lc
     rw [size_num]
     omega
 
-theorem size_basesTm (p : Fin (K + K)) : (basesTm C p).tree.size ≤ 140 * (X * Lc) := by
-  obtain ⟨f1, f2, f3, f4⟩ := H.facts
-  have h1 := size_baseTm H p
-  have h2 := size_gN H (.dg p)
-  rw [basesTm, size_tmCons]
-  omega
-
 theorem length_allIds : (G.allIds (K + K) U0 M.N U1).length ≤ X := by
   rw [G.allIds, Finset.length_toList, Finset.card_univ]
   exact H.hId
@@ -596,13 +569,15 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
   have k1 := size_bits hbT
   have k2 := size_bits hbub
   have h1 := sum_le (l := (List.finRange (K + K)).map fun p =>
-      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (basesTm C p)) (f := fun t => t.tree.size) (n := X)
+      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (listTm [baseTm C p])) (f := fun t =>
+          t.tree.size) (n := X)
       (b := 170 * (X * Lc)) (by rw [List.length_map, List.length_finRange]; exact H.hK2)
       (List.forall_mem_map.2 fun p _ => by
         have a1 := size_bits (H.nm (.slp (tab.kgrp (Fin.castAdd A' p))))
-        have a2 := size_basesTm H p
+        have a2 := size_baseTm H p
         have a3 := hgt g
-        rw [size_ifTm]
+        rw [size_ifTm, size_listTm]
+        simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_singleton]
         omega)
   have h2 := sum_le (l := (Grp.allRoles M).map fun r =>
       ifTm (C.nm (.slp (tab.kgrp (M.rp r)))) (gt g) (listTm [roleTm C tab tg d1 r])) (f := fun t => t.tree.size) (n := X)
@@ -618,7 +593,8 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
       (b := 300 * (X * Lc)) (by rw [List.length_map]; exact length_allIds H)
       (List.forall_mem_map.2 fun id _ => size_endTm tab H hd1 hgt g id)
   have l1 : ((List.finRange (K + K)).map fun p =>
-      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (basesTm C p)).length ≤ X := by
+      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (listTm [baseTm C p])).length ≤ X :=
+          by
     rw [List.length_map, List.length_finRange]; exact H.hK2
   have l2 : ((Grp.allRoles M).map fun r =>
       ifTm (C.nm (.slp (tab.kgrp (M.rp r)))) (gt g) (listTm [roleTm C tab tg d1 r])).length ≤ X := by

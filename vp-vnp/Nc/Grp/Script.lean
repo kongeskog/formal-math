@@ -88,24 +88,23 @@ variable {F : Type} [CommRing F] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
 variable (qn : Q → ℕ) (cb : Option Γ → Fin c → Bool) {M : Sys F (K + K + A') E} (P : G.Plan M U0 U1)
   (q : Fin (K + 1) → Q) (x : Fin K → List Γ) (ρ : Option S → Fin (K + K) → RowData (K + K))
   (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (o : M.N → Fin U1) (grp : Fin (K + K + A') → Gr) (g : Gr)
-  (key : Cell M U0 U1 → List Bool) (dkey : Fin (K + K) × Fin U0 → List Bool) (tg : M.R → ℕ)
+  (key : Cell M U0 U1 → List Bool) (tg : M.R → ℕ)
 
-/-- The body of the instruction of a base party. `dkey`: keys of the second copies of the units from a party to
-itself. -/
+/-- The body of the instruction of a base party. The units from a party to itself are in both lists
+of keys. -/
 noncomputable def bodyOf (p : Fin (K + K)) : Body where
   flags := (univ : Finset (Option S)).toList.map fun s => (List.ofFn fun b => rowFlag (ρ s p) b).reverse
   kR := List.ofFn fun b => ((List.finRange U0).filter fun k => k.1 < (n p b).1).map fun k =>
     key (Fin.castAdd A' p, .init p b k)
   kC := List.ofFn fun b => ((List.finRange U0).filter fun k => k.1 < (n b p).1).map fun k =>
-    if b = p then dkey (p, k) else key (Fin.castAdd A' p, .init b p k)
+    key (Fin.castAdd A' p, .init b p k)
 
-/-- The instructions of a base party. -/
-noncomputable def baseIns (p : Fin (K + K)) : List Ins :=
+/-- The instruction of a base party. -/
+noncomputable def baseIns (p : Fin (K + K)) : Ins :=
   Fin.addCases (motive := fun _ => Ins)
-    (fun κ => .block (qn (q κ.castSucc)) (qn (q κ.succ)) (bodyOf ρ n key dkey (Fin.castAdd K κ)))
-    (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse (bodyOf ρ n key dkey (Fin.natAdd K κ))) p ::
-  ((List.finRange U0).filter fun k => k.1 < (n p p).1).map fun k =>
-    .both (key (Fin.castAdd A' p, .init p p k)) (dkey (p, k))
+    (fun κ => .block (qn (q κ.castSucc)) (qn (q κ.succ)) (bodyOf ρ n key (Fin.castAdd K κ)))
+    (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse (bodyOf ρ n key
+        (Fin.natAdd K κ))) p
 
 /-- The instruction of a role. -/
 noncomputable def roleIns (r : M.R) : Ins :=
@@ -126,7 +125,7 @@ noncomputable def endIns (b : G.Uid (K + K) U0 M.N U1 → UW ub) : List Ins :=
 
 /-- **The script of a group.** -/
 noncomputable def script (b : G.Uid (K + K) U0 M.N U1 → UW ub) : List Ins :=
-  (baseList (A' := A') grp g).flatMap (baseIns qn cb q x ρ n key dkey) ++
+  (baseList (A' := A') grp g).map (baseIns qn cb q x ρ n key) ++
   (roleList grp g M).map (roleIns P n o key tg) ++ endIns P n o grp g key b
 
 end group

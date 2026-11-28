@@ -39,7 +39,7 @@ variable {A : Type} [CommRing A] {S Q : Type} [Fintype S] [DecidableEq S] [Finty
 
 /-- **The cost of the templates**: they append lists of at most `X` members, so the cost is
 linear in the size. -/
-theorem cost_instTm (hst : Final C tab qn pt q ρ n o b st) (hU0X : U0 + 1 ≤ X) (g : Fin mm) :
+theorem cost_instTm (hU0X : U0 + 1 ≤ X) (g : Fin mm) :
     (instTm C tab tg bT bub gt d1 gp g).cost (byPath C.nm st) ≤
       (instTm C tab tg bT bub gt d1 gp g).tree.size * (62 * X + 250) := by
   have hX : 1 ≤ X := by omega
@@ -56,11 +56,8 @@ theorem cost_instTm (hst : Final C tab qn pt q ρ n o b st) (hU0X : U0 + 1 ≤ X
   · refine ⟨?_, ⟨?_, trivial⟩, trivial⟩
     · rw [expand_ifTm]
       split_ifs
-      · simp only [basesTm, Tm.expand, expand_gN, hst.dg, dgT, NS1.Tree.toList, toList_listT,
-          List.length_cons, List.length_map]
-        have := List.length_filter_le (fun k : Fin U0 => decide (k.1 < (n p p).1)) (List.finRange U0)
-        rw [List.length_finRange] at this
-        omega
+      · rw [expand_listTm, toList_listT]
+        simpa using hX
       · simp
     · have body : ∀ p, (bodyTm C p).Ok (byPath C.nm st) X := fun p =>
         ⟨names _ _, by rw [List.ofFn_eq_map]; exact names _ _,

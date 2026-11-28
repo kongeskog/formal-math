@@ -7,7 +7,7 @@ import Nc.Grp.StepBase
 import Nc.Grp.SumRole
 
 /-!
-# The step of a role
+# The instruction of a role
 -/
 
 set_option linter.unusedSectionVars false
@@ -21,8 +21,7 @@ variable {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq 
   {A' K E U0 U1 ub c T : ℕ} {Gr : Type} [DecidableEq Gr]
   {mu : Letter S Unit Γ → Matrix Q Q A} {cb : Option Γ → Fin c → Bool} {kinds : List (Σ L : G.Law A, L.Ro)}
   {M : Sys A (K + K + A') E} {P : G.Plan M U0 U1} {n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)}
-  {o : M.N → Fin U1} {grp : Fin (K + K + A') → Gr} {g : Gr}
-  {key : Cell M U0 U1 → List Bool} {tg : M.R → ℕ}
+  {o : M.N → Fin U1} {key : Cell M U0 U1 → List Bool} {tg : M.R → ℕ}
 
 /-- The keys of the new units of a channel. -/
 noncomputable def kNew (o : M.N → Fin U1) (key : Cell M U0 U1 → List Bool) (r : M.R) (ν : (M.kind r.1).CnAt r.2) :
@@ -34,94 +33,12 @@ theorem kNew_eq (r : M.R) (ν : (M.kind r.1).CnAt r.2) : kNew o key r ν =
   simp only [Nat.lt_succ_iff]
   rfl
 
-theorem length_kNew (r : M.R) (ν : (M.kind r.1).CnAt r.2) : (kNew o key r ν).length = (o ⟨r.1, ν.1⟩).1 + 1 := by
-  rw [kNew_eq, List.length_map, filter_finRange (by have := (o ⟨r.1, ν.1⟩).2; omega), List.length_ofFn]
-
-theorem mem_kNew {r : M.R} {ν : (M.kind r.1).CnAt r.2} {k : List Bool} :
-    k ∈ kNew o key r ν ↔ ∃ i : Fin U1, i ≤ o ⟨r.1, ν.1⟩ ∧ k = key (M.rp r, .new ⟨r.1, ν.1⟩ i) := by
-  simp only [kNew, List.mem_map, List.mem_filter, List.mem_finRange, true_and, decide_eq_true_eq]
-  constructor
-  · rintro ⟨i, hi, rfl⟩
-    exact ⟨i, hi, rfl⟩
-  · rintro ⟨i, hi, rfl⟩
-    exact ⟨i, hi, rfl⟩
-
-/-- What a role writes. -/
+/-- What a role compares. -/
 noncomputable def PN (o : M.N → Fin U1) (key : Cell M U0 U1 → List Bool) (r : M.R) {B : ℕ}
     (f : Fin B → Bk (M.kind r.1) r.2) : List (List (List Bool) × List Bool) :=
   (cnList (M.kind r.1) r.2).map fun ν => (kNew o key r ν, chS (M.kind r.1) r.2 f ν)
 
 theorem mem_cnList {L : G.Law A} {p : L.Ro} (ν : L.CnAt p) : ν ∈ cnList L p := Finset.mem_toList.2 (mem_univ ν)
-
-theorem mem_PN {r : M.R} {B : ℕ} {f : Fin B → Bk (M.kind r.1) r.2} {k : List Bool} :
-    k ∈ (PN o key r f).flatMap Prod.fst ↔ ∃ ν : (M.kind r.1).CnAt r.2, ∃ i : Fin U1, i ≤ o ⟨r.1, ν.1⟩ ∧
-      k = key (M.rp r, .new ⟨r.1, ν.1⟩ i) := by
-  rw [PN, List.flatMap_map, List.mem_flatMap]
-  constructor
-  · rintro ⟨ν, -, h⟩
-    exact ⟨ν, mem_kNew.1 h⟩
-  · rintro ⟨ν, h⟩
-    exact ⟨ν, mem_cnList ν, mem_kNew.2 h⟩
-
-theorem nodup_PN (hkey : Function.Injective key) (r : M.R) {B : ℕ} (f : Fin B → Bk (M.kind r.1) r.2) :
-    ((PN o key r f).flatMap Prod.fst).Nodup := by
-  rw [PN, List.flatMap_map, List.nodup_flatMap]
-  refine ⟨fun ν _ => ?_, (Finset.nodup_toList _).imp fun {ν ν'} hν => ?_⟩
-  · refine ((List.nodup_finRange _).filter _).map fun i j h => ?_
-    have := hkey h
-    simpa using this
-  · rw [Function.onFun, List.disjoint_left]
-    intro k hk1 hk2
-    obtain ⟨i, -, rfl⟩ := mem_kNew.1 hk1
-    obtain ⟨j, -, h⟩ := mem_kNew.1 hk2
-    have := hkey h
-    simp only [Prod.mk.injEq, true_and, G.Uid.new.injEq, Sigma.mk.injEq, heq_eq_eq] at this
-    exact hν (Subtype.ext this.1)
-
-/-- The contents after a role. -/
-theorem rep_role (hkey : Function.Injective key) {r : M.R} (hr : grp (M.rp r) = g) {B : ℕ}
-    (f : Fin B → Bk (M.kind r.1) r.2) {t : Tree} {σ : Cell M U0 U1 → UW ub} (h : Rep ub key t σ) :
-    Rep ub key (putsAll ub (PN o key r f) t)
-      (ovr ((dom n o grp g).filter fun c => c.1 = M.rp r ∧ isNewOf r.1 c.2 = true) (fun c => roleV ub r f c.2) σ) := by
-  refine ⟨h.1.putsAll, fun c' => ?_⟩
-  obtain ⟨a, id⟩ := c'
-  by_cases hc : (a, id) ∈ (dom n o grp g).filter fun c => c.1 = M.rp r ∧ isNewOf r.1 c.2 = true
-  · rw [ovr, if_pos hc]
-    obtain ⟨h1, h2, h3⟩ := mem_filter.1 hc
-    simp only at h2
-    subst h2
-    cases id with
-    | init _ _ _ => simp [isNewOf] at h3
-    | new ν k =>
-      simp only [isNewOf, decide_eq_true_eq] at h3
-      have hk := (G.Plan.new_mem_seenAt.1 (mem_dom.1 h1).2.1).2
-      obtain ⟨ν, rfl⟩ := exists_cnAt h3 (mem_dom.1 h1).2.2
-      simp only
-      rw [roleV_new]
-      have hmem : (kNew o key r ν, chS (M.kind r.1) r.2 f ν) ∈ PN o key r f :=
-        List.mem_map.2 ⟨ν, mem_cnList ν, rfl⟩
-      refine tget_putsAll (nodup_PN hkey r f) hmem ?_ t
-      simp only
-      rw [kNew_eq]
-      exact getElem_map_filter (by have := (o ⟨r.1, ν.1⟩).2; omega) _ k (Nat.lt_succ_of_le hk)
-  · rw [ovr, if_neg hc, ← h.2, tget_putsAll_not (nodup_PN hkey r f)]
-    rw [mem_PN]
-    rintro ⟨ν, i, hi, he⟩
-    have := hkey he
-    rw [this] at hc
-    exact hc (mem_filter.2 ⟨mem_dom.2 ⟨hr, G.Plan.new_mem_seenAt.2 ⟨r.1.2, hi⟩, holds_cnAt ν i⟩, rfl, by simp [isNewOf]⟩)
-
-theorem uwBits_ne_nil (hub : 0 < ub) (w : UW ub) : uwBits w ≠ [] ↔ w ≠ none := by
-  cases w with
-  | none => simp [uwBits]
-  | some w =>
-    have : (List.ofFn w).length ≠ 0 := by
-      rw [List.length_ofFn]
-      omega
-    simp only [uwBits, ne_eq, reduceCtorEq, not_false_eq_true, iff_true]
-    intro h
-    rw [h] at this
-    simp at this
 
 theorem getD_append_replicate (l : List Bool) (m k : ℕ) : (l ++ List.replicate m false).getD k false = l.getD k false := by
   rcases lt_or_ge k l.length with h | h
@@ -129,36 +46,51 @@ theorem getD_append_replicate (l : List Bool) (m k : ℕ) : (l ++ List.replicate
   · rw [List.getD_append_right _ _ _ _ h, List.getD_eq_default l _ h]
     simp
 
+/-- Choices in all blocks. -/
+def bkEquiv (L : Law A) (p : L.Ro) (B : ℕ) : (Fin B → Bk L p) ≃
+    Σ i : Fin B → L.I, ∀ k, ∀ ν : L.CnAt p, Fin (L.len (i k) ν) → Bool where
+  toFun f := ⟨fun k => (f k).1, fun k => (f k).2⟩
+  invFun z k := ⟨z.1 k, z.2 k⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
 open Classical in
-/-- **The step of a role.** -/
-theorem stepOK_role (hkey : Function.Injective key) (hub : 0 < ub) {r : M.R} (hr : grp (M.rp r) = g)
-    (hkind : kinds[tg r]? = some ⟨M.kind r.1, r.2⟩)
-    (htab : ∀ i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h) :
-    StepOK (S := S) θ T mu cb kinds key [roleIns P n o key tg r] (roleStep P n o grp g ub r) := by
-  intro t σ Ψ Ψ' hrep hΨ
-  rw [wsum_script_cons]
-  simp only [wsum_script_nil]
+/-- **The instruction of a role** sums to the table of the role at the contents of the trie. -/
+theorem wsum_roleIns (hub : 0 < ub) {r : M.R} (hkind : kinds[tg r]? = some ⟨M.kind r.1, r.2⟩)
+    (htab : ∀ i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h) {t : Tree} {σ : Cell M U0 U1 →
+        UW ub}
+    (h : Rep ub key t σ)
+    (hσ : ∀ (ν : (M.kind r.1).CnAt r.2) (k : Fin U1), (o ⟨r.1, ν.1⟩).1 < k.1 → σ (M.rp r, .new ⟨r.1,
+        ν.1⟩ k) = none) :
+    wsum (insSem (S := S) θ mu cb kinds T ub (roleIns P n o key tg r) t) (fun _ => 1) =
+      G.roleAt P n o r fun id => σ (M.rp r, id) := by
   rw [roleIns, insSem, hkind]
   simp only
   have hct : ∀ id, (tget (key (M.rp r, id)) t).path = uwBits (σ (M.rp r, id)) := by
     intro id
-    rw [hrep.2, path_ofBits]
+    rw [h, path_ofBits]
   have hpres : (∀ es ∈ (univ : Finset ((M.kind r.1).SlAt r.2)).toList.map (fun e =>
       ((P.ids n o ⟨r.1, e.1⟩).map fun id => key (M.rp r, id)).reverse), ∀ k ∈ es, (tget k t).path ≠ []) ↔
       ∀ e : (M.kind r.1).SlAt r.2, ∀ id ∈ P.ids n o ⟨r.1, e.1⟩, σ (M.rp r, id) ≠ none := by
     simp only [List.forall_mem_map, Finset.mem_toList, mem_univ, true_imp_iff, List.mem_reverse]
     refine forall_congr' fun e => forall₂_congr fun id _ => ?_
     rw [hct, uwBits_ne_nil hub]
+  rw [G.roleAt, G.role]
   by_cases hp : ∀ e : (M.kind r.1).SlAt r.2, ∀ id ∈ P.ids n o ⟨r.1, e.1⟩, σ (M.rp r, id) ≠ none
   swap
-  · rw [roleSem, if_neg fun h => hp (hpres.1 h), wsum_nil]
-    symm
-    refine Finset.sum_eq_zero fun f _ => ?_
-    have : (roleStep P n o grp g ub r).w f σ = 0 := if_neg fun h => hp h.1
-    rw [this, zero_mul]
-  rw [roleSem, if_pos (hpres.2 hp), wsum_bindW, wsum_role _ _ htab]
-  show _ = ∑ f : Fin (P.num n o r.1 * ub) → Bk (M.kind r.1) r.2, _
-  refine Finset.sum_congr rfl fun f _ => ?_
+  · rw [roleSem, if_neg fun h => hp (hpres.1 h), wsum_nil, if_neg hp]
+  rw [roleSem, if_pos (hpres.2 hp), wsum_bindW, wsum_role _ _ htab, if_pos hp]
+  have hsig := Finset.sum_sigma' (univ : Finset (Fin (P.num n o r.1 * ub) → (M.kind r.1).I)) (fun _
+      => univ)
+    (fun i (g : ∀ k, ∀ ν : (M.kind r.1).CnAt r.2, Fin ((M.kind r.1).len (i k) ν) → Bool) =>
+      if ∀ ν : (M.kind r.1).CnAt r.2, ChOk ⟨r.1, ν.1⟩ (o ⟨r.1, ν.1⟩).1
+          (chString (M.kind r.1).lab (fun j => (M.kind r.1).len j ν) i fun k => g k ν) (fun id => σ
+              (M.rp r, id))
+        then ∏ k : Fin (P.num n o r.1 * ub), (M.kind r.1).tab r.2 (i k) (fun e =>
+          (slotBits (P.num n o r.1) (P.ids n o ⟨r.1, e.1⟩) fun id => σ (M.rp r, id)).getD k false)
+              (g k) else 0)
+  rw [hsig, Finset.univ_sigma_univ]
+  refine Fintype.sum_equiv (bkEquiv (M.kind r.1) r.2 (P.num n o r.1 * ub)) _ _ fun f => ?_
   -- the streams
   have hins : ∀ e : (M.kind r.1).SlAt r.2, ∀ k : ℕ,
       ((((univ : Finset ((M.kind r.1).SlAt r.2)).toList.map (fun e =>
@@ -193,25 +125,26 @@ theorem stepOK_role (hkey : Function.Injective key) (hub : 0 < ub) {r : M.R} (hr
       simp
   simp only [hins]
   rw [hkeys, hstr, putsL_eq hub]
-  have hcnt : (∀ z ∈ PN o key r f, ucount ub z.2 = z.1.length) ↔
-      ∀ ν : (M.kind r.1).CnAt r.2, ucount ub (chS (M.kind r.1) r.2 f ν) = (o ⟨r.1, ν.1⟩).1 + 1 := by
-    rw [PN, List.forall_mem_map]
-    constructor
-    · intro h ν
-      rw [h ν (mem_cnList ν), length_kNew]
-    · intro h ν _
-      rw [h ν, length_kNew]
-  by_cases hc : ∀ ν : (M.kind r.1).CnAt r.2, ucount ub (chS (M.kind r.1) r.2 f ν) = (o ⟨r.1, ν.1⟩).1 + 1
-  · rw [if_pos (hcnt.2 hc)]
-    have hw : (roleStep P n o grp g ub r).w f σ = ∏ k, (M.kind r.1).tab r.2 (f k).1 (fun e =>
-        (slotBits (P.num n o r.1) (P.ids n o ⟨r.1, e.1⟩) fun id => σ (M.rp r, id)).getD k false) (f k).2 := if_pos ⟨hp, hc⟩
-    rw [hw]
-    simp only [encT, List.map_cons, List.map_nil, wsum_single]
-    congr 1
-    exact hΨ _ _ (rep_role hkey hr f hrep)
-  · rw [if_neg fun h => hc (hcnt.1 h)]
-    have hw : (roleStep P n o grp g ub r).w f σ = 0 := if_neg fun h => hc h.2
-    rw [hw, zero_mul]
-    simp
+  have hfit : FitsAll ub (PN o key r f) t ↔ ∀ ν : (M.kind r.1).CnAt r.2, ChOk ⟨r.1, ν.1⟩ (o ⟨r.1,
+      ν.1⟩).1
+      (chS (M.kind r.1) r.2 f ν) (fun id => σ (M.rp r, id)) := by
+    have hν : ∀ ν : (M.kind r.1).CnAt r.2, (ucount ub (chS (M.kind r.1) r.2 f ν) = (kNew o key r
+        ν).length ∧
+        Fits (kNew o key r ν) (fun i => uwBits (unitsOf ub (chS (M.kind r.1) r.2 f ν) i)) t) ↔
+        ChOk ⟨r.1, ν.1⟩ (o ⟨r.1, ν.1⟩).1 (chS (M.kind r.1) r.2 f ν) (fun id => σ (M.rp r, id)) := by
+      intro ν
+      rw [kNew_eq]
+      exact fits_iff hub h (by have := (o ⟨r.1, ν.1⟩).2; omega) (fun k => (M.rp r, .new ⟨r.1, ν.1⟩
+          k))
+        (fun k hk => hσ ν k hk) _
+    rw [FitsAll, PN, List.forall_mem_map]
+    exact ⟨fun h ν => (hν ν).1 (h ν (mem_cnList ν)), fun h ν _ => (hν ν).2 (h ν)⟩
+  by_cases hc : FitsAll ub (PN o key r f) t
+  · rw [if_pos hc]
+    simp only [encT, List.map_cons, List.map_nil, wsum_single, mul_one]
+    exact (if_pos (hfit.1 hc)).symm
+  · rw [if_neg hc]
+    simp only [encT, List.map_nil, wsum_nil, mul_zero]
+    exact (if_neg fun h => hc (hfit.2 h)).symm
 
 end Nc.Grp

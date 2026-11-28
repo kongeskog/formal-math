@@ -8,7 +8,7 @@ import Nc.Grp.GroupProg
 import Nc.Grp.SumSim
 
 /-!
-# Writing several strings
+# Comparing several strings; a script as the product of its instructions
 -/
 
 set_option linter.unusedSectionVars false
@@ -17,61 +17,23 @@ namespace Nc.Grp
 
 open NS1 NS1.Tree Finset
 
-/-- Write the units of several strings. -/
-def putsAll (ub : ℕ) : List (List (List Bool) × List Bool) → Tree → Tree
-  | [], t => t
-  | p :: r, t => putsAll ub r (putAll p.1 (fun i => uwBits (unitsOf ub p.2 i)) t)
+/-- The units of several strings are the contents at their keys. -/
+def FitsAll (ub : ℕ) (P : List (List (List Bool) × List Bool)) (t : Tree) : Prop :=
+  ∀ p ∈ P, ucount ub p.2 = p.1.length ∧ Fits p.1 (fun i => uwBits (unitsOf ub p.2 i)) t
 
+open Classical in
 theorem putsL_eq {ub : ℕ} (hub : 0 < ub) (P : List (List (List Bool) × List Bool)) (t : Tree) :
-    putsL ub (P.map Prod.fst) (P.map fun p => p.2 ++ [true]) t =
-      if ∀ p ∈ P, ucount ub p.2 = p.1.length then [putsAll ub P t] else [] := by
-  induction P generalizing t with
-  | nil => simp [putsL, putsAll]
+    putsL ub (P.map Prod.fst) (P.map fun p => p.2 ++ [true]) t = if FitsAll ub P t then [t] else []
+        := by
+  induction P with
+  | nil => simp [putsL, FitsAll]
   | cons p P ih =>
     rw [List.map_cons, List.map_cons, putsL, List.headD_cons, List.tail_cons, putL_eq hub]
-    by_cases hp : ucount ub p.2 = p.1.length
+    by_cases hp : ucount ub p.2 = p.1.length ∧ Fits p.1 (fun i => uwBits (unitsOf ub p.2 i)) t
     · rw [if_pos hp, List.flatMap_cons, List.flatMap_nil, List.append_nil, ih]
-      exact if_congr (by simp [hp]) rfl rfl
+      exact if_congr (by simp [FitsAll, hp]) rfl rfl
     · rw [if_neg hp, if_neg fun h => hp (h p List.mem_cons_self)]
       rfl
-
-theorem tget_putsAll_not {ub : ℕ} {P : List (List (List Bool) × List Bool)} (hP : (P.flatMap Prod.fst).Nodup)
-    {k : List Bool} (hk : k ∉ P.flatMap Prod.fst) (t : Tree) : tget k (putsAll ub P t) = tget k t := by
-  induction P generalizing t with
-  | nil => rfl
-  | cons p P ih =>
-    rw [List.flatMap_cons, List.nodup_append] at hP
-    rw [List.flatMap_cons, List.mem_append, not_or] at hk
-    rw [putsAll, ih hP.2.1 hk.2, tget_putAll _ hP.1, if_neg hk.1]
-
-theorem tget_putsAll {ub : ℕ} {P : List (List (List Bool) × List Bool)} (hP : (P.flatMap Prod.fst).Nodup)
-    {p : List (List Bool) × List Bool} (hp : p ∈ P) {i : ℕ} {k : List Bool} (hk : p.1[i]? = some k) (t : Tree) :
-    tget k (putsAll ub P t) = ofBits (uwBits (unitsOf ub p.2 i)) := by
-  induction P generalizing t with
-  | nil => simp at hp
-  | cons p' P ih =>
-    rw [List.flatMap_cons, List.nodup_append] at hP
-    rw [putsAll]
-    rcases List.mem_cons.1 hp with rfl | hp
-    · have hmem : k ∈ p.1 := List.mem_of_getElem? hk
-      have hnot : k ∉ P.flatMap Prod.fst := fun h => hP.2.2 k hmem k h rfl
-      rw [tget_putsAll_not hP.2.1 hnot, tget_putAll _ hP.1, if_pos hmem]
-      congr 3
-      obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.1 hk
-      exact hP.1.idxOf_getElem i hi
-    · exact ih hP.2.1 hp _
-
-theorem TOk.putAll {ub : ℕ} {keys : List (List Bool)} {u : ℕ → List Bool} (hu : ∀ i, (u i).length ≤ ub) {t : Tree}
-    (h : TOk ub t) : TOk ub (putAll keys u t) := by
-  induction keys generalizing u t with
-  | nil => exact h
-  | cons k ks ih => exact ih (fun i => hu (i + 1)) (h.tset k _ (hu 0))
-
-theorem TOk.putsAll {ub : ℕ} {P : List (List (List Bool) × List Bool)} {t : Tree} (h : TOk ub t) :
-    TOk ub (Grp.putsAll ub P t) := by
-  induction P generalizing t with
-  | nil => exact h
-  | cons p P ih => exact ih (h.putAll fun i => length_uwBits_le _)
 
 /-- The first numbers. -/
 theorem filter_finRange {U c : ℕ} (h : c ≤ U) :
@@ -117,14 +79,24 @@ theorem wsum_script_append (T ub : ℕ) (l l' : List Ins) (t : Tree) (Ψ : Tree 
         wsum (scriptSem θ mu cb kinds T ub l' t') Ψ :=
   foldL_append _ _ _ _ _
 
-/-- Several comparisons. -/
-theorem wsum_boths {ι : Type} (T ub : ℕ) (ks : List ι) (f g : ι → List Bool) (t : Tree) (Ψ : Tree → A) :
-    wsum (scriptSem (S := S) θ mu cb kinds T ub (ks.map fun k => Ins.both (f k) (g k)) t) Ψ =
-      if ∀ k ∈ ks, tget (f k) t = tget (g k) t then Ψ t else 0 := by
-  induction ks with
-  | nil => simp [wsum_script_nil]
-  | cons k ks ih =>
-    rw [List.map_cons, wsum_script_cons, insSem]
-    by_cases h : tget (f k) t = tget (g k) t <;> simp [h, wsum_nil, ih]
+/-- A list whose results are all `t`. -/
+theorem wsum_out {Q : List (A × Tree)} {t : Tree} (h : ∀ q ∈ Q, q.2 = t) (Ψ : Tree → A) :
+    wsum Q Ψ = wsum Q (fun _ => 1) * Ψ t := by
+  unfold wsum
+  rw [← List.sum_map_mul_right]
+  congr 1
+  refine List.map_congr_left fun q hq => ?_
+  rw [h q hq, mul_one]
+
+/-- The instructions do not change the trie: the sum of a script is the product of the sums of its
+instructions. -/
+theorem wsum_script_prod (T ub : ℕ) (l : List Ins) (t : Tree) (Ψ : Tree → A) :
+    wsum (scriptSem θ mu cb kinds T ub l t) Ψ =
+      (l.map fun i => wsum (insSem θ mu cb kinds T ub i t) fun _ => 1).prod * Ψ t := by
+  induction l with
+  | nil => rw [wsum_script_nil, List.map_nil, List.prod_nil, one_mul]
+  | cons i l ih =>
+    rw [wsum_script_cons, wsum_out (insSem_out mu cb kinds), ih, List.map_cons, List.prod_cons,
+        mul_assoc]
 
 end Nc.Grp

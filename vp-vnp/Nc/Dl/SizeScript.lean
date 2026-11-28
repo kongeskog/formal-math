@@ -60,13 +60,11 @@ theorem size_expand_instTm (hst : Final C tab qn pt q ρ n o b st) (H : SizeHyp 
   have hbody : ∀ p, (bodyTm C p).excess (byPath C.nm st) (19 * (X * Lc)) = 0 := fun p => by
     simp [bodyTm, gN, Tm.excess, excess_listTm, Function.comp_def, byPath_nm C.nm_inj, hst.flag,
       hst.kR, hst.kC, Nat.sub_eq_zero_of_le, size_flagT H, size_kRT H, size_kCT H]
-  have hbase : ∀ p, (basesTm C p).excess (byPath C.nm st) (19 * (X * Lc)) ≤ W := fun p => by
+  have hbase : ∀ p, (baseTm C p).excess (byPath C.nm st) (19 * (X * Lc)) ≤ W := fun p => by
     refine Fin.addCases (fun κ => ?_) (fun κ => ?_) p
-    · simp [basesTm, baseTm, gN, Tm.excess, byPath_nm C.nm_inj, hbody, hst.dg, hst.q,
-        Nat.sub_eq_zero_of_le, size_dgT H, en, H.hqn]
+    · simp [baseTm, gN, Tm.excess, byPath_nm C.nm_inj, hbody, hst.q, en, H.hqn]
     · have := hpt κ
-      simp only [basesTm, baseTm, gN, Fin.addCases_right, Tm.excess, byPath_nm C.nm_inj, hbody,
-        hst.dg, hst.part, Nat.sub_eq_zero_of_le, size_dgT H]
+      simp only [baseTm, gN, Fin.addCases_right, Tm.excess, byPath_nm C.nm_inj, hbody, hst.part]
       omega
   have hrole : ∀ r, (roleTm C tab tg d1 r).excess (byPath C.nm st) (19 * (X * Lc)) = 0 :=
     fun r => by

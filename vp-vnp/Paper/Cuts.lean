@@ -250,10 +250,9 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
     (pS := pc.steps) (S := S) (M := pc.sys) (Lc := Lc)
     (hX32 _ ((Nc.Dl.card_nm hK2 hSX (by omega) (by omega) (by omega) hcId).trans (by omega))) (hX32 _ (by omega))
     (hX32 _ (by omega)) (hX32 _ (by
-      rw [Fintype.card_sum, Fintype.card_prod, Fintype.card_prod, Fintype.card_fin, Fintype.card_fin, Fintype.card_fin]
+      rw [Fintype.card_prod, Fintype.card_fin]
       have g1 : (K + K + pc.A') * Fintype.card (Nc.G.Uid (K + K) pc.U0 pc.sys.N pc.U1) ≤ X * X :=
         Nat.mul_le_mul (by omega) hcId
-      have g2 : (K + K) * pc.U0 ≤ X * X := Nat.mul_le_mul (by omega) (by omega)
       omega))
   -- the bounds of the pieces, in units
   generalize hL : lg v ^ Cp = L
@@ -330,7 +329,7 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
       refine hCU τ z (K * T) hpl (le_trans ?_ hKTge)
       rw [← htU]
       exact Nat.mul_le_mul (Nat.mul_le_mul (by omega) (by omega)) (Nat.pow_le_pow_left (lg_mono (by omega)) 2))
-    htg pc.tab pc.ok (by rw [u4]; exact pc.ub_pos) (by rw [u2, u4]) l2 pc.U1_pos (by rw [t4]; exact hℓT)
+    htg pc.tab (by rw [u4]; exact pc.ub_pos) (by rw [u2, u4]) l2 pc.U1_pos (by rw [t4]; exact hℓT)
     (fun z hz => by
       rw [t4, u4]
       rw [pc.value i e' (fun _ => Nc.Dl.wordG b0 b1 z) ℓ hℓT (by rw [Nc.Dl.length_wordG]; exact hz.trans hsK)]
@@ -348,8 +347,9 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
         rw [List.getElem?_eq_none (not_lt.1 hlt)] at h1
         simp at h1
       omega) (by omega) hnums.mmX (by have := pc.c_le; omega) (fun q x ρ n o b g hx hn ho => by
-        have := hGtime pc.plan pc.ok q x ρ n o (pc.grp n o) g Cd.key Cd.dkey tg (Nc.Dl.bitsN Lc T).reverse
-          (Nc.Dl.bitsN Lc pc.ub).reverse b (Lc := Lc) (X := X) (ιb := ιb) (lh := pc.load) (ev := ev) hx hCd.key hCd.dkey
+        have := hGtime pc.plan pc.ok q x ρ n o (pc.grp n o) g Cd.key tg (Nc.Dl.bitsN Lc T).reverse
+          (Nc.Dl.bitsN Lc pc.ub).reverse b (Lc := Lc) (X := X) (ιb := ιb) (lh := pc.load) (ev := ev)
+              hx hCd.key
           t3.le u3.le hSX hK2 hcR hcId (fun y => by have := hlaw' y; omega) (fun y => by have := hlaw' y; omega)
           (hbase n o hn ho g) hnums.ιbX (fun p _ => (pc.tab_valid n).1 hn p) (hevle n o hn ho g)
         refine this.trans (le_of_eq ?_)

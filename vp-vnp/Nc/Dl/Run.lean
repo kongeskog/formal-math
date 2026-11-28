@@ -39,13 +39,8 @@ def kRT (a b : Fin (K + K)) (n : Fin (U0 + 1)) : Tree :=
 
 /-- Keys of units read. -/
 def kCT (a b : Fin (K + K)) (n : Fin (U0 + 1)) : Tree :=
-  listT (((List.finRange U0).filter fun k => k.1 < n.1).map fun k =>
-    ofBits (if a = b then C.dkey (b, k) else C.key (Fin.castAdd A' b, .init a b k)))
-
-/-- Instructions for the diagonal. -/
-def dgT (a : Fin (K + K)) (n : Fin (U0 + 1)) : Tree :=
-  listT (((List.finRange U0).filter fun k => k.1 < n.1).map fun k =>
-    (Grp.Ins.both (C.key (Fin.castAdd A' a, .init a a k)) (C.dkey (a, k))).tree)
+  listT (((List.finRange U0).filter fun k => k.1 < n.1).map fun k => ofBits (C.key (Fin.castAdd A'
+      b, .init a b k)))
 
 /-- Keys of new units. -/
 def chT (ν : M.N) (d : Bool) (j : Fin U1) : Tree :=
@@ -169,7 +164,6 @@ def own3 : NmT S M U0 U1 pS → Option (Fin (K + K) × Fin (K + K))
   | .kR a b => some (a, b)
   | .kC a b => some (a, b)
   | .dn a b => some (a, b)
-  | .dg a => some (a, a)
   | _ => none
 
 /-- Values of phase 3. -/
@@ -177,13 +171,11 @@ def v3 (n : Fin (K + K) × Fin (K + K) → Fin (U0 + 1)) : NmT S M U0 U1 pS → 
   | .kR a b => kRT C a b (n (a, b))
   | .kC a b => kCT C a b (n (a, b))
   | .dn a b => C.dt (digN hU0 (n (a, b)))
-  | .dg a => dgT C a (n (a, a))
   | _ => .nil
 
 /-- Options of phase 3. -/
 def o3 (a : Fin (K + K) × Fin (K + K)) (n : Fin (U0 + 1)) : List (NmT S M U0 U1 pS × Tree) :=
-  (.kR a.1 a.2, kRT C a.1 a.2 n) :: (.kC a.1 a.2, kCT C a.1 a.2 n) :: (.dn a.1 a.2, C.dt (digN hU0 n)) ::
-    if a.1 = a.2 then [(.dg a.1, dgT C a.1 n)] else []
+  [(.kR a.1 a.2, kRT C a.1 a.2 n), (.kC a.1 a.2, kCT C a.1 a.2 n), (.dn a.1 a.2, C.dt (digN hU0 n))]
 
 /-- Phase 3: numbers of units. -/
 noncomputable def steps3 : List DStep := (univ : Finset (Fin (K + K) × Fin (K + K))).toList.map fun a =>
@@ -207,22 +199,12 @@ theorem phase3 {st : NmT S M U0 U1 pS → Tree} (hz : st .zero = .nil) (Φ : (Li
     · exact ⟨rfl, rfl⟩
     · exact ⟨rfl, rfl⟩
     · exact ⟨rfl, rfl⟩
-    · split_ifs at hb with h
-      · rw [List.mem_singleton] at hb
-        subst hb
-        have h : a1 = a2 := h
-        subst h
-        exact ⟨rfl, rfl⟩
-      · simp at hb
+    · simp at hb
   · cases x <;> simp only [own3, reduceCtorEq, Option.some.injEq] at hx
     · subst hx
       exact ⟨_, List.mem_cons_self, rfl⟩
     · subst hx
       exact ⟨_, List.mem_cons_of_mem _ List.mem_cons_self, rfl⟩
-    · rename_i a0
-      subst hx
-      refine ⟨(.dg a0, dgT C a0 (f (a0, a0))), ?_, rfl⟩
-      simp [o3]
     · subst hx
       exact ⟨_, List.mem_cons_of_mem _ (List.mem_cons_of_mem _ List.mem_cons_self), rfl⟩
 
