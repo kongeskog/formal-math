@@ -33,61 +33,37 @@ theorem DM_eq_rankMean {k : ℕ} (f : Mt k → ℝ) (S : Finset (Fin k)) :
   rw [rankMean, ← mul_div_assoc, eq_div_iff hn.ne', mul_comm]
   exact card_mul_DM f S
 
-/-- A length contracts: "for every homomorphism τ from the additive group Mat_μ(F₂) into the group, the mean of |τW|²
-over rank μ is at most s² times that over rank 1". It is the project's Contr. -/
-theorem contracts_iff {G : Type} [Group G] (l : Len G) {μ : ℕ} (hμ : 1 ≤ μ) (s : ℝ) :
-    Contr l μ s ↔ ∀ τ : Mt μ → G, (∀ M N, τ (M + N) = τ M * τ N) →
-      rankMean (fun W => l.val (τ W)) μ ≤ s ^ 2 * rankMean (fun W => l.val (τ W)) 1 := by
-  have hg : (0 : ℝ) < (Fintype.card (GLM (Fin μ)) : ℝ) ^ 2 := by positivity
-  have key : ∀ (f : Mt μ → ℝ) (i : Fin μ),
-      DM f (dg univ) ≤ s ^ 2 * DM f (dg {i}) ↔ rankMean f μ ≤ s ^ 2 * rankMean f 1 := fun f i => by
-    rw [DM_eq_rankMean, DM_eq_rankMean, card_singleton, card_univ, Fintype.card_fin, mul_left_comm,
-      mul_le_mul_iff_right₀ hg]
-  exact ⟨fun h τ hτ => (key _ ⟨0, hμ⟩).1 (h τ hτ _), fun h τ hτ i => (key _ i).2 (h τ hτ)⟩
+/-- A length contracts if "for every homomorphism τ from the additive group Mat_μ(F₂) into the group,
+the mean of |τW|² over rank μ is at most s² times that over rank 1". This gives the project's Contr. -/
+theorem contracts_of_rankMean {G : Type} [Group G] (l : Len G) {μ : ℕ} (s : ℝ)
+    (h : ∀ τ : Mt μ → G, (∀ M N, τ (M + N) = τ M * τ N) →
+      rankMean (fun W => l.val (τ W)) μ ≤ s ^ 2 * rankMean (fun W => l.val (τ W)) 1) :
+    Contr l μ s := fun τ hτ i => by
+  rw [DM_eq_rankMean, DM_eq_rankMean, card_singleton, card_univ, Fintype.card_fin, mul_left_comm]
+  exact mul_le_mul_of_nonneg_left (h τ hτ) (by positivity)
 
-/-- A multiple of a contracting length contracts. -/
-theorem contracts_smul {G : Type} [Group G] (l l' : Len G) {μ : ℕ} (hμ : 1 ≤ μ) {s : ℝ} {c : ℝ}
-    (h : ∀ g, l'.val g = c * l.val g) (hl : Contr l μ s) : Contr l' μ s := by
-  refine (contracts_iff l' hμ s).2 fun τ hτ => ?_
-  have e : ∀ r, rankMean (fun W => l'.val (τ W)) r = c ^ 2 * rankMean (fun W => l.val (τ W)) r := fun r => by
-    simp only [rankMean, h, mul_pow, ← Finset.mul_sum, mul_div_assoc]
-  rw [e, e, mul_left_comm (s ^ 2)]
-  exact mul_le_mul_of_nonneg_left ((contracts_iff l hμ s).1 hl τ hτ) (sq_nonneg c)
-
-/-- The remark after the definition of contracting lengths: "If a map f sends a finite group into a price space, then
-|g| = (E_a|f(a)f(ga)|²)^(1/2) contracts: pull the price back along W ↦ f(τ(W)a) and average over a." -/
-theorem lengths_of_maps {K : Type} [Field K] {μ : ℕ} {s : ℝ} (hμ : 1 ≤ μ) (hs : 0 ≤ s)
+/-- The remark after the definition of contracting lengths: "If a map f sends a finite group into a
+price space, then |g| = (E_a|f(a)f(ga)|²)^(1/2) contracts: pull the price back along W ↦ f(τ(W)a)
+and average over a." Here with the sum for the mean: the length is the distance by which g moves f
+in L²(G, Y), and a multiple of a contracting length contracts. -/
+theorem lengths_of_maps {K : Type} [Field K] {μ : ℕ} {s : ℝ} (hs : 0 ≤ s)
     (hcase : ∀ w : Mt μ → Mt μ → ℝ, IsPrice K w → distAtRank w μ ≤ s * distAtRank w 1)
-    {G : Type} [Group G] [Fintype G] {Y : Type} [MetricSpace Y] (hY : IsPrice K fun a b : Y => dist a b)
-    (f : G → Y) :
-    ∃ l : Len G, (∀ g, l.val g = √((∑ a, dist (f a) (f (g * a)) ^ 2) / Fintype.card G)) ∧ Contr l μ s := by
-  have hc : (0 : ℝ) < Fintype.card G := by exact_mod_cast Fintype.card_pos
-  set l0 : Len G := (transAct G Y).len (WithLp.toLp 2 f) with hl0
-  have hl : ∀ g, l0.val g ^ 2 = ∑ a, dist (f a) (f (g * a)) ^ 2 := fun g => by
-    rw [hl0, IsoAct.len_val, transAct_dist]
-    exact sum_congr rfl fun a _ => by rw [dist_comm]
-  let l : Len G :=
-    { val := fun g => l0.val g / √(Fintype.card G : ℝ)
-      one' := by simp [l0.one']
-      inv' := fun g => by rw [l0.inv']
-      mul' := fun g g' => by
-        rw [← add_div]
-        exact div_le_div_of_nonneg_right (l0.mul' g g') (Real.sqrt_nonneg _) }
-  refine ⟨l, fun g => ?_, (contracts_iff l hμ s).2 fun τ hτ => ?_⟩
-  · rw [Real.sqrt_div' _ hc.le, ← hl, Real.sqrt_sq (l0.nonneg g)]
-  have e : ∀ r, rankMean (fun W => l.val (τ W)) r =
-      (∑ k : G, meanSq (fun a b => dist (f (τ a * k)) (f (τ b * k))) r) / Fintype.card G := by
+    {G : Type} [Group G] [Fintype G] {Y : Type} [MetricSpace Y]
+    (hY : IsPrice K fun a b : Y => dist a b) (f : G → Y) :
+    Contr ((transAct G Y).len (WithLp.toLp 2 f)) μ s := by
+  refine contracts_of_rankMean _ s fun τ hτ => ?_
+  have e : ∀ r, rankMean (fun W => ((transAct G Y).len (WithLp.toLp 2 f)).val (τ W)) r =
+      ∑ k : G, meanSq (fun a b => dist (f (τ a * k)) (f (τ b * k))) r := by
     intro r
-    have h1 : ∀ W, l.val (τ W) ^ 2 = l0.val (τ W) ^ 2 / Fintype.card G := fun W => by
-      show (l0.val (τ W) / √(Fintype.card G : ℝ)) ^ 2 = _
-      rw [div_pow, Real.sq_sqrt hc.le]
-    have h2 : ∀ (W a : Mt μ), ∑ k : G, dist (f (τ a * k)) (f (τ (a + W) * k)) ^ 2 = l0.val (τ W) ^ 2 := by
+    have h2 : ∀ (W a : Mt μ), ∑ k : G, dist (f (τ a * k)) (f (τ (a + W) * k)) ^ 2 =
+        ((transAct G Y).len (WithLp.toLp 2 f)).val (τ W) ^ 2 := by
       intro W a
-      rw [hl, ← Equiv.sum_comp (Equiv.mulLeft (τ a)) (fun k => dist (f k) (f (τ W * k)) ^ 2)]
+      rw [IsoAct.len_val, transAct_dist,
+        ← Equiv.sum_comp (Equiv.mulLeft (τ a)) (fun k => dist (f (τ W * k)) (f k) ^ 2)]
       refine sum_congr rfl fun k _ => ?_
-      rw [add_comm a W, hτ, mul_assoc]
+      rw [add_comm a W, hτ, mul_assoc, dist_comm]
       rfl
-    simp only [rankMean, meanSq, h1, ← Finset.sum_div]
+    simp only [rankMean, meanSq, ← Finset.sum_div]
     rw [Finset.sum_comm, sum_congr rfl fun a _ => Finset.sum_comm]
     simp only [h2, sum_const, card_univ, nsmul_eq_mul]
     field_simp
@@ -96,8 +72,8 @@ theorem lengths_of_maps {K : Type} [Field K] {μ : ℕ} {s : ℝ} (hμ : 1 ≤ �
     have := hcase _ (hY.comp fun a => f (τ a * k))
     rwa [distAtRank, distAtRank, Real.sqrt_le_left (mul_nonneg hs (Real.sqrt_nonneg _)), mul_pow,
       Real.sq_sqrt (meanSq_nonneg _ _)] at this
-  rw [e, e, ← mul_div_assoc]
-  exact div_le_div_of_nonneg_right ((sum_le_sum fun k _ => h3 k).trans_eq (mul_sum _ _ _).symm) hc.le
+  rw [e, e]
+  exact (sum_le_sum fun k _ => h3 k).trans_eq (mul_sum _ _ _).symm
 
 /-- The proof of Lemma lem:growth: "By Minkowski's inequality D(i+i′) ≤ D(i) + D(i′)." -/
 theorem lem_growth_minkowski {G : Type} [Group G] (l : Len G) {k : ℕ} (τ : Mt k → G)
