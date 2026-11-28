@@ -41,13 +41,6 @@ theorem card_X_le : ∀ j ≤ J, Fintype.card (T.X j) ≤ Fintype.card (T.X 0) :
     rw [T.card_X j (by omega)]
     exact Nat.le_mul_of_pos_left _ T.b_pos
 
-theorem two_card_ed {j : ℕ} : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
-  have h1 : Fintype.card (T.Ed j) = ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i).card := by
-    rw [← card_univ]
-    exact card_eq_sum_card_fiberwise (fun _ _ => mem_coe.2 (mem_univ _))
-  rw [h1, Finset.mul_sum, Finset.sum_congr rfl fun i _ => T.card_ed j i]
-  simp
-
 theorem card_ed_le {j : ℕ} (hj : j ≤ J) : Fintype.card (T.Ed j) ≤ h * Fintype.card (T.X 0) := by
   have h1 := two_card_ed (T := T) (j := j)
   have h2 : h * Fintype.card (T.X j) ≤ h * Fintype.card (T.X 0) :=

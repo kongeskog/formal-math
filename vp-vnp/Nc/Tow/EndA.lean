@@ -152,7 +152,7 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
         have hτ : tgB R ch a c k = .seg j i ω q := hτ
         rcases tgB_cases (R := R) (ch := ch) a c k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at hτ <;> cases hτ
       | new ν k => exact seg_nondiag (ν := eN ν) hτ
-    obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
+    obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp)
     obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv FL)
     have hd : Pick L (⟨j, i, ω, d⟩ : LMv FL) := hd
     have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv FL)) =

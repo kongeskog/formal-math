@@ -32,7 +32,7 @@ noncomputable def kindList (F : Type) [CommRing F] (laws : List (Law F)) : List 
   (relay F :: laws).flatMap fun L => (univ : Finset L.Ro).toList.map fun p => ⟨L, p⟩
 
 /-- The conditions on the tower and the laws, with one constant. -/
-structure TCst (FL : FlagLaws F T) (laws : List (Law F)) (c : ℕ) (ρ : ℝ) (q : ℕ) : Prop extends THypR FL ρ where
+structure TCst (FL : FlagLaws F T) (laws : List (Law F)) (c q : ℕ) : Prop extends THypR FL where
   h_le : h ≤ c
   b_le : b ≤ c
   nr_le : Fintype.card T.Nr ≤ c
@@ -42,10 +42,9 @@ structure TCst (FL : FlagLaws F T) (laws : List (Law F)) (c : ℕ) (ρ : ℝ) (q
   sl_le : ∀ d, Fintype.card (FL.L d).Sl ≤ c
   bot : Fintype.card (T.X J) ≤ c
   bot_pos : 0 < Fintype.card (T.X J)
-  cst : √h + √FL.C₁ * FL.a₁ ≤ c
-  inv : 1 / (1 - ρ) ≤ c
+  cst : 2 * h + 4 * FL.C₁ * FL.a₁ ≤ c
   pq : 2 ≤ q
-  pow : ρ ^ q * (b : ℝ) ≤ 1
+  pow : b ≤ 2 ^ q
   mem : ∀ d, FL.L d ∈ laws
   len : ∀ L ∈ laws, L.Le c ∧ L.lam ≤ c
 
@@ -57,17 +56,8 @@ def capB (c m X lh U0 : ℕ) : ℕ := U0 + 2 + 3 * c * kapB c m X lh
 
 section
 
-variable {FL : FlagLaws F T} {laws : List (Law F)} {c q U0 : ℕ} {ρ : ℝ} (hC : TCst FL laws c ρ q)
+variable {FL : FlagLaws F T} {laws : List (Law F)} {c q U0 : ℕ} (hC : TCst FL laws c q)
 include hC
-
-theorem TCst.D_two : 2 ≤ b := by
-  have h1 := hC.two
-  have h2 := hC.ρ_lt
-  have h3 := hC.ρ_pos
-  by_contra hcon
-  have h4 : b ≤ 1 := by omega
-  have h5 : (b : ℝ) ≤ 1 := by exact_mod_cast h4
-  nlinarith
 
 theorem TCst.X_pos : 0 < Fintype.card (T.X 0) := by
   have h1 := Tower.card_X_le (T := T) J le_rfl
@@ -76,57 +66,28 @@ theorem TCst.X_pos : 0 < Fintype.card (T.X 0) := by
 
 theorem TCst.c_pos : 1 ≤ c := T.h_pos.trans_le hC.h_le
 
-theorem kbar_kapB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) :
-    kbar FL Uu AA lh ≤ (kapB c m (Fintype.card (T.X 0)) lh : ℕ) := by
-  refine (kbar_le hm hUu hAA hC.X_pos).trans ?_
-  unfold kapB
-  push_cast
-  exact mul_le_mul_of_nonneg_right hC.cst (by positivity)
+/-- The norms at the start, for routes that use every edge at most `2 X₀ m` times. -/
+theorem kbar_kapB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m)
+    (hAA : AA ≤ Fintype.card (T.X 0)) : kbar FL Uu AA lh ≤ kapB c m (Fintype.card (T.X 0)) lh := by
+  have hX := hC.X_pos
+  unfold kbar kapB nhat
+  generalize Fintype.card (T.X 0) = X at *
+  have h1 : X * (lh / X) ≤ lh := Nat.mul_div_le lh X
+  have h2 : 1 ≤ m * (lh + 2 * X ^ 2) := Nat.mul_pos hm (by positivity)
+  calc X * (h * (Uu * (lh / X + 2 * AA)) + 4 * FL.C₁ * FL.a₁) ≤
+      X * (h * (2 * X * m * (lh / X + 2 * X)) + 4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) :=
+        Nat.mul_le_mul_left _ (Nat.add_le_add (by gcongr) (Nat.le_mul_of_pos_right _ h2))
+    _ = X * (h * (2 * m * (X * (lh / X) + 2 * X ^ 2)) + 4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) := by ring
+    _ ≤ X * (h * (2 * m * (lh + 2 * X ^ 2)) + 4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) := by gcongr
+    _ = (2 * h + 4 * FL.C₁ * FL.a₁) * (m * X * (lh + 2 * X ^ 2)) := by ring
+    _ ≤ _ := Nat.mul_le_mul_right _ hC.cst
 
 theorem capN_capB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) :
     capN FL U0 Uu AA lh ≤ capB c m (Fintype.card (T.X 0)) lh U0 := by
-  have h1 := kbar_kapB (lh := lh) hC hm hUu hAA
-  have h0 := kbar_nonneg Uu AA FL lh
   unfold capN capB
-  refine Nat.add_le_add_left (Nat.ceil_le.2 ?_) _
-  push_cast
-  have hb : (b : ℝ) ≤ c := by exact_mod_cast hC.b_le
-  calc 3 * (b : ℝ) * kbar FL Uu AA lh ≤ 3 * c * kbar FL Uu AA lh := by gcongr
-    _ ≤ _ := by gcongr
-
-theorem YhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) :
-    YhN FL Uu AA lh ρ ≤ 2 * c * kapB c m (Fintype.card (T.X 0)) lh * c := by
-  have h1 := kbar_kapB (lh := lh) hC hm hUu hAA
-  have h0 := kbar_nonneg Uu AA FL lh
-  unfold YhN
-  refine Nat.ceil_le.2 ?_
-  push_cast
-  have hρ : 0 < 1 - ρ := by have := hC.ρ_lt; linarith
-  have hh1 : (1 : ℝ) ≤ h := by exact_mod_cast T.h_pos
-  have hs : √(h : ℝ) ≤ c := by
-    have h2 : √(h : ℝ) ≤ h := by
-      rw [Real.sqrt_le_left (by linarith)]
-      nlinarith
-    exact h2.trans (by exact_mod_cast hC.h_le)
-  have hi := hC.inv
-  calc 2 * √(h : ℝ) * kbar FL Uu AA lh / (1 - ρ) = 2 * √(h : ℝ) * kbar FL Uu AA lh * (1 / (1 - ρ)) := by ring
-    _ ≤ 2 * c * kbar FL Uu AA lh * (1 / (1 - ρ)) := by gcongr
-    _ ≤ 2 * c * (kapB c m (Fintype.card (T.X 0)) lh : ℕ) * (1 / (1 - ρ)) := by gcongr
-    _ ≤ _ := by gcongr
-
-theorem BhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) :
-    BhN FL Uu AA lh ρ ^ q * Fintype.card (T.X 0) ≤ (2 * c * kapB c m (Fintype.card (T.X 0)) lh) ^ q := by
-  have h1 := kbar_kapB (lh := lh) hC hm hUu hAA
-  have h0 := kbar_nonneg Uu AA FL lh
-  have h2 := BhN_pow_le (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh) hC.ρ_pos hC.bot_pos
-    hC.pq hC.pow
-  have hh : (h : ℝ) ≤ c := by exact_mod_cast hC.h_le
-  have h3 : (2 * (h : ℝ)) ^ q * kbar FL Uu AA lh ^ q ≤
-      (2 * (c : ℝ)) ^ q * ((kapB c m (Fintype.card (T.X 0)) lh : ℕ) : ℝ) ^ q := by
-    gcongr
-  have h4 := h2.trans h3
-  rw [← mul_pow] at h4
-  exact_mod_cast h4
+  refine Nat.add_le_add_left ?_ _
+  calc 2 * b * kbar FL Uu AA lh ≤ 3 * c * kapB c m (Fintype.card (T.X 0)) lh :=
+    Nat.mul_le_mul (Nat.mul_le_mul (by norm_num) hC.b_le) (kbar_kapB hC hm hUu hAA)
 
 end
 
