@@ -17,7 +17,7 @@ open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
-  {o : NM R FL (ch := ch) → ℕ}
+  {o : NM R ch FL → ℕ}
 
 /-- The first index with the smallest value. -/
 theorem exists_im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : ∃ i, (∀ i', f i ≤ f i') ∧ ∀ i' < i, ¬ ∀ i'', f i' ≤ f i'' := by
@@ -140,7 +140,7 @@ theorem num_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.
 
 theorem alv_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
     ¬ Pick (load lhat n o) l) (ν : (kindM FL (.inr l)).Cn) :
-    alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = 0 := by
+    alv lhat n o (⟨.inr l, ν⟩ : NM R ch FL) = 0 := by
   unfold alv
   rw [num_inr_zero hb hl]
   exact alvN_zero hb _
@@ -153,7 +153,7 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSu
   have hx2 : ∀ e : T.Ed j, okR R ch (.mid j e 2) :=
     fun e => ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
   refine (load_le_sum ((univ.filter fun e : T.Ed j => T.πE e = e').image
-    fun e => (⟨.inl ⟨.mid j e 2, hx2 e⟩, false⟩ : NM R FL (ch := ch))) (bt_edge_succ j e') ?_).trans ?_
+    fun e => (⟨.inl ⟨.mid j e 2, hx2 e⟩, false⟩ : NM R ch FL)) (bt_edge_succ j e') ?_).trans ?_
   · rintro ⟨⟨x, hx⟩ | l, ν⟩ hν hne
     · obtain ⟨e, h1, h2, h3⟩ := tgR_edge_succ (x := x) (ν := ν) hν
       subst h1
@@ -176,23 +176,23 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSu
     · exact Finset.sum_le_sum fun e _ => (alv_mid_le hb j e 2 (hx2 e) false).1
 
 /-- Alive units at a vertex. -/
-theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
+theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R ch FL)) ^ 2 ≤
     FL.G₁ * (num lhat n o (.inr l)) ^ 2 := by
   classical
   set t := num lhat n o (.inr l) with ht
   by_cases hg : GoodL o l t
-  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = o ⟨.inr l, ν⟩ := by
+  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv lhat n o (⟨.inr l, ν⟩ : NM R ch FL) = o ⟨.inr l, ν⟩ := by
       intro ν
       rw [alv_inr, ← ht, if_pos hg]
     rw [Finset.sum_congr rfl fun ν _ => by rw [h1 ν]]
     exact hg
-  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) ≤ t := by
+  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv lhat n o (⟨.inr l, ν⟩ : NM R ch FL) ≤ t := by
       intro ν
       rw [alv_inr, ← ht, if_neg hg]
       exact min_le_right _ _
     obtain ⟨i0⟩ := FL.nonempty l.2.2.2
     have h2 := FL.L2 l.2.2.2 i0
-    have h3 : ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
+    have h3 : ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R ch FL)) ^ 2 ≤
         (∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len i0 ν) ^ 2) * t ^ 2 := by
       rw [Finset.sum_mul]
       refine Finset.sum_le_sum fun ν _ => ?_
@@ -209,9 +209,9 @@ theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (�
 theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
     (d : FL.Di) (hd : Pick (load lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
     load lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) ≤
-      alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch)) := by
+      alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R ch FL) := by
   classical
-  refine (load_le_sum {(⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch))} (bt_edge_succ j _) ?_).trans ?_
+  refine (load_le_sum {(⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R ch FL)} (bt_edge_succ j _) ?_).trans ?_
   · rintro ⟨⟨x, hx⟩ | l, ν'⟩ hν hne
     · exfalso
       obtain ⟨e, h1, h2, h3⟩ := tgR_edge_succ (x := x) (ν := ν') hν
@@ -263,7 +263,7 @@ theorem _root_.Paper.thm_tree_kappa (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} 
   · intro ω
     obtain ⟨d, hd⟩ := exists_pick (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)
     have h4 : ∑ ν : T.Nr, (load lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1)) ^ 2 ≤
-        ∑ ν : (FL.L d).Cn, (alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R FL (ch := ch))) ^ 2 := by
+        ∑ ν : (FL.L d).Cn, (alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R ch FL)) ^ 2 := by
       rw [← Equiv.sum_comp (FL.cn d)]
       refine Finset.sum_le_sum fun ν _ => Nat.pow_le_pow_left ?_ 2
       have := other_load_le hb j hi ω d hd (FL.cn d ν)

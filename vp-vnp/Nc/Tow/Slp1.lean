@@ -22,13 +22,13 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b
 variable (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T)
 
 /-- A bound for all loads. -/
-noncomputable def Wb (U0 U1 : ℕ) : ℕ := AA * AA * U0 + Fintype.card (NM R FL (ch := ch)) * U1
+noncomputable def Wb (U0 U1 : ℕ) : ℕ := AA * AA * U0 + Fintype.card (NM R ch FL) * U1
 
 /-- Bounds for the program. -/
 structure Bnd (U0 U1 Y : ℕ) : Prop where
   aa : AA * AA ≤ Y
   w : Wb R ch FL U0 U1 ≤ Y
-  nm : Fintype.card (NM R FL (ch := ch)) ≤ Y
+  nm : Fintype.card (NM R ch FL) ≤ Y
   mv : Fintype.card (Mv R ch FL) ≤ Y
   tg : Fintype.card (Tg T m AA) ≤ Y
   nd : Fintype.card (Nd T) ≤ Y
@@ -53,11 +53,11 @@ theorem u0 (a : Fin AA) : U0 ≤ Y := by
   have h3 : U0 ≤ AA * AA * U0 := Nat.le_mul_of_pos_left _ h2
   omega
 
-theorem u1 (ν : NM R FL (ch := ch)) : U1 ≤ Y := by
+theorem u1 (ν : NM R ch FL) : U1 ≤ Y := by
   have h1 := hB.w
   unfold Wb at h1
-  have h2 : 0 < Fintype.card (NM R FL (ch := ch)) := Fintype.card_pos_iff.2 ⟨ν⟩
-  have h3 : U1 ≤ Fintype.card (NM R FL (ch := ch)) * U1 := Nat.le_mul_of_pos_left _ h2
+  have h2 : 0 < Fintype.card (NM R ch FL) := Fintype.card_pos_iff.2 ⟨ν⟩
+  have h3 : U1 ≤ Fintype.card (NM R ch FL) * U1 := Nat.le_mul_of_pos_left _ h2
   omega
 
 theorem aa1 : AA ≤ Y := by
@@ -75,7 +75,7 @@ end Bnd
 
 section Bounds
 
-variable {lhat : ℕ} {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ}
+variable {lhat : ℕ} {n : Fin AA → Fin AA → ℕ} {o : NM R ch FL → ℕ}
 
 theorem bt_le (hn : ∀ a c, n a c ≤ U0) (τ : Tg T m AA) : bt R ch lhat n τ ≤ AA * AA * U0 := by
   unfold bt

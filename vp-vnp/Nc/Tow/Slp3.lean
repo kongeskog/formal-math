@@ -181,7 +181,7 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
 
 end Loads
 
-variable {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R FL (ch := ch) → ℕ} {lhat : ℕ}
+variable {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R ch FL → ℕ} {lhat : ℕ}
 variable (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hR : Rng nx ox U0 U1) (hb : 0 < b)
 include hA hB hR hb
 
@@ -211,11 +211,11 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
     exact ⟨H3, s3.le hA (by omega), u0.trans (u1.trans (u2.trans u3)), f3⟩
 
 /-- What is known after the loop. -/
-structure After (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R FL (ch := ch) → ℕ) (lhat : ℕ)
+structure After (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R ch FL → ℕ) (lhat : ℕ)
     (H : Set (Inp → ℕ)) : Prop extends Stat nx ox lhat H,
     Chosen (fun x => load lhat (nx x) (ox x)) R ch FL H where
   num : ∀ mv : Mv R ch FL, (fun x => num lhat (nx x) (ox x) mv) ∈ H
-  alv : ∀ ν : NM R FL (ch := ch), (fun x => alv lhat (nx x) (ox x) ν) ∈ H
+  alv : ∀ ν : NM R ch FL, (fun x => alv lhat (nx x) (ox x) ν) ∈ H
   load : ∀ τ : Tg T m AA, (fun x => load lhat (nx x) (ox x) τ) ∈ H
 
 omit hA hB hR hb in

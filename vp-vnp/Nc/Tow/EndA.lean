@@ -85,7 +85,7 @@ theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB R ch a c k =
 
 /-- End segments join different chambers. -/
 theorem seg_nondiag {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
-    {ν : NM R FL (ch := ch)} (hν : tgM ν.1 ν.2 = .seg j i ω q) : ¬ q.IsDiag := by
+    {ν : NM R ch FL} (hν : tgM ν.1 ν.2 = .seg j i ω q) : ¬ q.IsDiag := by
   have key : ∀ c : T.X j, T.host i (T.vx i c) ≠ T.π c → ¬ (s(T.co i (T.host i (T.vx i c)), T.co i c) : Sym2 T.Fl).IsDiag := by
     intro c hne hd
     rw [Sym2.mk_isDiag_iff] at hd
@@ -112,11 +112,11 @@ variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U
 
 /-- Alive units with a target are given. -/
 theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
-    (hd : tgU u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM lhat n o z := by
+    (hd : tgU u ≠ .done) : ∃ z : ZM R ch FL, u ∈ consM lhat n o z := by
   classical
   set L := load lhat (nn n) (oo o) with hL
   have one : ∀ x : RM T m AA, okR R ch x → ActR L x → tgU u = inpR x →
-      ∃ z : ZM R FL (ch := ch), u ∈ consM lhat n o z := by
+      ∃ z : ZM R ch FL, u ∈ consM lhat n o z := by
     intro x hx ha ht
     exact ⟨⟨.inl ⟨x, hx⟩, ()⟩, (consM_inl _ _ u).2 ⟨ha, hu, ht⟩⟩
   rcases hτ : tgU u with _ | ⟨j, e⟩ | x | ⟨j, i, ω, q⟩

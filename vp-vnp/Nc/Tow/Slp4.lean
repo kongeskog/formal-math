@@ -45,7 +45,7 @@ def SeenU (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin 
 
 theorem mem_cur (u : Un R FL Pl U0 U1) :
     u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv R ch FL)) ↔
-      SeenU n o u ∧ ¬ ∃ z : ZM R FL, u ∈ consM lhat n o z := by
+      SeenU n o u ∧ ¬ ∃ z : ZM R _ FL, u ∈ consM lhat n o z := by
   classical
   unfold Plan.cur
   rw [mem_sdiff]
@@ -81,7 +81,7 @@ variable {nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)} {oI : Inp → (sys R 
 
 /-- More bounds. -/
 structure Bnd2 (R : Routes T m Uu) (FL : FlagLaws F T) (Pl : Place T ch A') (U0 U1 Y TM : ℕ) : Prop where
-  zm : Fintype.card (ZM R FL (ch := ch)) ≤ Y
+  zm : Fintype.card (ZM R ch FL) ≤ Y
   un : Fintype.card (Un R FL Pl U0 U1) ≤ Y
   tm : TM ≤ Y
 
@@ -89,9 +89,9 @@ structure Bnd2 (R : Routes T m Uu) (FL : FlagLaws F T) (Pl : Place T ch A') (U0 
 def nX (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (x : Inp) : Fin AA → Fin AA → ℕ := nn (nI x)
 
 /-- The outcomes. -/
-noncomputable def oX (oI : Inp → (sys R FL Pl).N → Fin U1) (x : Inp) : NM R FL (ch := ch) → ℕ := oo (oI x)
+noncomputable def oX (oI : Inp → (sys R FL Pl).N → Fin U1) (x : Inp) : NM R ch FL → ℕ := oo (oI x)
 
-theorem rng : Rng (nX nI) (oX oI : Inp → NM R FL (ch := ch) → ℕ) U0 U1 where
+theorem rng : Rng (nX nI) (oX oI : Inp → NM R ch FL → ℕ) U0 U1 where
   n x a c := Nat.le_of_lt_succ (nI x a c).2
   o x _ := (oI x _).2.le
 
@@ -101,7 +101,7 @@ structure Units (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (oI : Inp → 
   cons : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H
   num : ∀ mv : Mv R ch FL, (fun x => num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
   lt : ∀ (mv : Mv R ch FL) (τ : Fin TM), ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  pad : ∀ (z : ZM R FL) (τ : Fin TM), ind (fun x => (consM lhat (nI x) (oI x) z).card ≤ τ.1 ∧
+  pad : ∀ (z : ZM R _ FL) (τ : Fin TM), ind (fun x => (consM lhat (nI x) (oI x) z).card ≤ τ.1 ∧
     τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) z.1) ∈ H
   cur : ∀ u, ind (fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL))) ∈ H
   good : ∀ mv : Mv R ch FL, ind (fun x => GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
@@ -145,7 +145,7 @@ theorem cy_rk (hal : ∀ u, ind (fun x => AlU lhat (nI x) (oI x) u) ∈ H) (u : 
 
 theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
     (hal : ∀ u, ind (fun x => AlU lhat (nI x) (oI x) u) ∈ H)
-    (hrk : ∀ u, (fun x => rkU lhat (nI x) (oI x) u) ∈ H) (z : ZM R FL (ch := ch)) (u : Un R FL Pl U0 U1) :
+    (hrk : ∀ u, (fun x => rkU lhat (nI x) (oI x) u) ∈ H) (z : ZM R ch FL) (u : Un R FL Pl U0 U1) :
     PY Dd H Y 5 fun x => u ∈ consM lhat (nI x) (oI x) z := by
   have hY := hA.pos
   rcases z with ⟨y | l, e⟩
@@ -188,7 +188,7 @@ theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv R ch FL) :
   rcases mv with y | l
   · have hc : Fintype.card (kindM FL (.inl y)).Cn ≤ Y := by
       refine (Fintype.card_le_of_injective
-        (fun ν : (kindM FL (.inl y)).Cn => (⟨Sum.inl y, ν⟩ : NM R FL)) ?_).trans hB.nm
+        (fun ν : (kindM FL (.inl y)).Cn => (⟨Sum.inl y, ν⟩ : NM R _ FL)) ?_).trans hB.nm
       intro ν ν' he
       exact eq_of_heq (Sigma.mk.inj he).2
     have h1 : PY Dd H Y 3 fun x => ∀ ν : (kindM FL (.inl y)).Cn, oX oI x ⟨.inl y, ν⟩ =
@@ -207,13 +207,13 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
     ∃ H', SY inp Y p (c + 9) H' ∧ H ⊆ H' ∧ Units nI oI lhat TM H' := by
   have hY := hA.pos
   have hun : Fintype.card (Un R FL Pl U0 U1) ≤ Y ^ 1 := by simpa using hB2.un
-  have hzt : Fintype.card (ZM R FL (ch := ch) × Fin TM) ≤ Y ^ 2 := by
+  have hzt : Fintype.card (ZM R ch FL × Fin TM) ≤ Y ^ 2 := by
     rw [Fintype.card_prod, Fintype.card_fin, pow_two]
     exact Nat.mul_le_mul hB2.zm hB2.tm
   have hmt : Fintype.card (Mv R ch FL × Fin TM) ≤ Y ^ 2 := by
     rw [Fintype.card_prod, Fintype.card_fin, pow_two]
     exact Nat.mul_le_mul hB.mv hB2.tm
-  have hzu : Fintype.card (ZM R FL (ch := ch) × Un R FL Pl U0 U1) ≤ Y ^ 2 := by
+  have hzu : Fintype.card (ZM R ch FL × Un R FL Pl U0 U1) ≤ Y ^ 2 := by
     rw [Fintype.card_prod, pow_two]
     exact Nat.mul_le_mul hB2.zm hB2.un
   obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Un R FL Pl U0 U1)
@@ -223,12 +223,12 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
     (fun u x => rkU lhat (nI x) (oI x) u) (a := 2) (e := 1) hun
     (fun u => cy_rk hA hB hB2 f1 u) (by omega)
   have a2 := ha.weaken (u1.trans u2)
-  obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := ZM R FL × Un R FL Pl U0 U1)
+  obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := ZM R _ FL × Un R FL Pl U0 U1)
     (fun q => ind fun x => q.2 ∈ consM lhat (nI x) (oI x) q.1) (a := 5) (e := 2) hzu
     (fun q => py_cons hA hB hB2 a2 (fun u => u2 (f1 u)) f2 q.1 q.2) (by omega)
   have a3 := a2.weaken u3
   have c3 : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H3 := fun z u => f3 (z, u)
-  obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := ZM R FL)
+  obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := ZM R _ FL)
     (fun z x => (consM lhat (nI x) (oI x) z).card) (a := 2) (e := 1) (by simpa using hB2.zm)
     (fun z => by
       classical
@@ -254,7 +254,7 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
   obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv R ch FL × Fin TM)
     (fun q => ind fun x => q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1) (a := 1) (e := 2) hmt
     (fun q => PY.rel1 hA (fun s => q.2.1 < s) (CY.base (a4.num q.1) hY)) (by omega)
-  obtain ⟨H6, s6, u6, f6⟩ := s5.add hA (κ := ZM R FL × Fin TM)
+  obtain ⟨H6, s6, u6, f6⟩ := s5.add hA (κ := ZM R _ FL × Fin TM)
     (fun q => ind fun x => (consM lhat (nI x) (oI x) q.1).card ≤ q.2.1 ∧
       q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1.1) (a := 2) (e := 2) hzt
     (fun q => PY.and hA (PY.rel1 hA (fun s => s ≤ q.2.1) (CY.base (u5 (f4 q.1)) hY))

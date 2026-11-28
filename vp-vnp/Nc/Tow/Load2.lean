@@ -17,7 +17,7 @@ open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
-  {o : NM R FL (ch := ch) → ℕ}
+  {o : NM R ch FL → ℕ}
 
 theorem alv_le_num (x : {x : RM T m AA // okR R ch x}) (ν : (kindM FL (.inl x)).Cn) :
     alv lhat n o ⟨.inl x, ν⟩ ≤ num lhat n o (.inl x) := by
@@ -28,11 +28,11 @@ theorem alv_le_num (x : {x : RM T m AA // okR R ch x}) (ν : (kindM FL (.inl x))
   · exact Nat.zero_le _
 
 theorem load_def (τ : Tg T m AA) : load lhat n o τ = bt R ch lhat n τ +
-    ∑ ν : NM R FL (ch := ch), if tgM ν.1 ν.2 = τ then alv lhat n o ν else 0 := rfl
+    ∑ ν : NM R ch FL, if tgM ν.1 ν.2 = τ then alv lhat n o ν else 0 := rfl
 
 /-- A load that comes from few channels. -/
-theorem load_le_sum {τ : Tg T m AA} (s : Finset (NM R FL (ch := ch))) (hbt : bt R ch lhat n τ = 0)
-    (hs : ∀ ν : NM R FL (ch := ch), tgM ν.1 ν.2 = τ → alv lhat n o ν ≠ 0 → ν ∈ s) :
+theorem load_le_sum {τ : Tg T m AA} (s : Finset (NM R ch FL)) (hbt : bt R ch lhat n τ = 0)
+    (hs : ∀ ν : NM R ch FL, tgM ν.1 ν.2 = τ → alv lhat n o ν ≠ 0 → ν ∈ s) :
     load lhat n o τ ≤ ∑ ν ∈ s, alv lhat n o ν := by
   rw [load_def, hbt, Nat.zero_add, ← Finset.sum_filter]
   rw [← Finset.sum_filter_ne_zero]
@@ -283,7 +283,7 @@ theorem nEnd_eq {j : ℕ} {i : Fin h} (n : T.Ed j → ℕ) (ω : T.V (j + 1) i) 
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq, if_pos (mem_univ _), if_pos (mem_univ _)]
 
 /-- The channels of end segments. -/
-theorem seg_chan {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} {ν : NM R FL (ch := ch)}
+theorem seg_chan {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} {ν : NM R ch FL}
     (hν : tgM ν.1 ν.2 = .seg j i ω q) : ∃ (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s)),
       T.ty e = i ∧ ν = ⟨.inl ⟨.mid j e s, hx⟩, false⟩ ∧
       ((s = 1 ∧ T.πV (T.vx i (T.e0 e)) = ω ∧ s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q) ∨
@@ -333,7 +333,7 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e
       (∀ x ν, okR R ch x → tgR R ch x ν = .nxt (.mid j e s) → x = y) →
       load lhat n o (.nxt (.mid j e s)) ≤ num lhat n o (.inl ⟨y, hy⟩) := by
     intro s y hy hxy
-    refine (load_le_sum {(⟨.inl ⟨y, hy⟩, true⟩ : NM R FL (ch := ch))} (bt_mid j e s) ?_).trans ?_
+    refine (load_le_sum {(⟨.inl ⟨y, hy⟩, true⟩ : NM R ch FL)} (bt_mid j e s) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       · obtain rfl := hxy x ν hx' hν
         have h1 : ν = true := (tgR_mid hν).1
@@ -382,9 +382,9 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e
     · exact h2.2
 
 theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s)) (ν : Bool) :
-    alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load lhat n o (.edge j.castSucc e) ∧
+    alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R ch FL) ≤ load lhat n o (.edge j.castSucc e) ∧
     (¬ IsMin (load lhat n o) j.castSucc (T.ty e) →
-      alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
+      alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R ch FL) = 0) := by
   obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
   have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0
   have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) (⟨.mid j e s, hx⟩ : {x : RM T m AA // okR R ch x}) ν
@@ -405,7 +405,7 @@ theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load lhat n o) j.castSu
 
 open Classical in
 /-- The channel of an end segment. -/
-noncomputable def segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : Finset (NM R FL (ch := ch)) :=
+noncomputable def segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : Finset (NM R ch FL) :=
   if hx : okR R ch (.mid j e s) then {⟨.inl ⟨.mid j e s, hx⟩, false⟩} else ∅
 
 theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : ∑ ν ∈ segS (R := R) (ch := ch) (FL := FL) j s e, alv lhat n o ν ≤

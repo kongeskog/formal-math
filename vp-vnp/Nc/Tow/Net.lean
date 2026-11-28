@@ -270,18 +270,20 @@ noncomputable def sys : Sys F (AA + A') (Fintype.card (Mv R ch FL)) where
   part x p := Pl.pt (partM (eE R FL x) p)
   inj x := Pl.pt.injective.comp (partM_inj FL _)
 
+variable (ch) in
 /-- Channels by their moves. -/
 abbrev NM := Σ mv : Mv R ch FL, (kindM FL mv).Cn
 
+variable (ch) in
 /-- Slots by their moves. -/
 abbrev ZM := Σ mv : Mv R ch FL, (kindM FL mv).Sl
 
 /-- Channels by their moves. -/
-noncomputable def eN : (sys R FL Pl).N ≃ NM R FL (ch := ch) :=
+noncomputable def eN : (sys R FL Pl).N ≃ NM R ch FL :=
   Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Cn) (eE R FL)
 
 /-- Slots by their moves. -/
-noncomputable def eZ : (sys R FL Pl).Z ≃ ZM R FL (ch := ch) :=
+noncomputable def eZ : (sys R FL Pl).Z ≃ ZM R ch FL :=
   Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Sl) (eE R FL)
 
 theorem eN_fst (ν : (sys R FL Pl).N) : (eN R FL Pl ν).1 = eE R FL ν.1 := rfl

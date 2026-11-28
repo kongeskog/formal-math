@@ -17,7 +17,7 @@ open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
-  {o : NM R FL (ch := ch) → ℕ}
+  {o : NM R ch FL → ℕ}
 
 /-- The number of units of a batch. -/
 noncomputable def Bt (T : Tower h b D J) (ch : Fin AA ↪ T.X 0) (lhat : ℕ) (n : Fin AA → Fin AA → ℕ) (a c : Fin AA)
@@ -153,7 +153,7 @@ theorem num_start_le (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) (hx : okR R c
       have := bt_start (R := R) (ch := ch) (lhat := lhat) (n := n) a c γ ⟨s + 1, hs⟩
       rw [if_neg (by simp)] at this
       omega
-    refine (load_le_sum {(⟨.inl ⟨.start a c γ ⟨s, hs0⟩, hx0⟩, true⟩ : NM R FL)} hbt ?_).trans ?_
+    refine (load_le_sum {(⟨.inl ⟨.start a c γ ⟨s, hs0⟩, hx0⟩, true⟩ : NM R _ FL)} hbt ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       -- `tgR_start` gives `ν = true`, `x = .start a c γ s'` and `s + 1 = s'.1 + 1`,
       -- so `s' = ⟨s, hs0⟩`
@@ -258,12 +258,12 @@ theorem load_start_le (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
     · rw [if_neg hv]
       exact Nat.zero_le _
   -- relays
-  have h2 : (∑ ν : NM R FL, if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
+  have h2 : (∑ ν : NM R _ FL, if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
       ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), if a = c then 0 else Bt T ch lhat n a c γ *
         ((if s.1 + 1 < R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1]? = some e then 1 else 0) +
         if s.1 + 2 = R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e then 1 else 0) := by
     -- only the relays of the start
-    have h3 : ∀ ν : NM R FL, (if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
+    have h3 : ∀ ν : NM R _ FL, (if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
         ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), ((if ∃ hx : okR R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, false⟩ ∧
             (R.path (ch a) (ch c) γ)[s.1]? = some e then Bt T ch lhat n a c γ else 0) +
           if ∃ hx : okR R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
@@ -299,7 +299,7 @@ theorem load_start_le (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
                 have h6 := (R.pl_le (ch a) (ch c) γ).trans (R.length_path _ _ _)
                 omega
               rw [if_pos (⟨hx, rfl, h4, hedge _ hν⟩ : ∃ hx : okR R ch (.start a c γ s),
-                (⟨.inl ⟨.start a c γ s, _⟩, true⟩ : NM R FL) = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
+                (⟨.inl ⟨.start a c γ s, _⟩, true⟩ : NM R _ FL) = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧
                 (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e)]
               exact hB.trans (Nat.le_add_left _ _)
           · simp [tgR] at hν
@@ -331,12 +331,12 @@ theorem load_start_le (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
     rw [Finset.sum_comm]
     refine Finset.sum_le_sum fun s _ => ?_
     rw [Finset.sum_add_distrib]
-    have sgl : ∀ (d : Bool) (P : Prop) [Decidable P] (v : ℕ), (∑ ν : NM R FL, if ∃ hx : okR R ch (.start a c γ s),
+    have sgl : ∀ (d : Bool) (P : Prop) [Decidable P] (v : ℕ), (∑ ν : NM R _ FL, if ∃ hx : okR R ch (.start a c γ s),
         ν = ⟨.inl ⟨.start a c γ s, hx⟩, d⟩ ∧ P then v else 0) ≤
           if okR R ch (.start a c γ s) ∧ P then v else 0 := by
       intro d P _ v
       by_cases hc : okR R ch (.start a c γ s) ∧ P
-      · rw [if_pos hc, Finset.sum_eq_single (⟨.inl ⟨.start a c γ s, hc.1⟩, d⟩ : NM R FL)]
+      · rw [if_pos hc, Finset.sum_eq_single (⟨.inl ⟨.start a c γ s, hc.1⟩, d⟩ : NM R _ FL)]
         · rw [if_pos ⟨hc.1, rfl, hc.2⟩]
         · intro ν _ hν
           rw [if_neg]

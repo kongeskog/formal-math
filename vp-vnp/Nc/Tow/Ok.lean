@@ -38,14 +38,14 @@ section Plan
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 /-- The target of the units of a slot. -/
-def inpZ : ZM R FL (ch := ch) → Tg T m AA
+def inpZ : ZM R ch FL → Tg T m AA
   | ⟨.inl x, _⟩ => inpR x.1
   | ⟨.inr l, e⟩ => .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e)
 
 -- `consM_inl` and `consM_inr` are in `Nc/Tow/Plan.lean`, next to `consM`, so that `Slp4` can use them too.
 
 /-- A unit consumed at the slot `z` is allowed, and its target is the slot's target. -/
-theorem consM_al {z : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u ∈ consM lhat n o z) :
+theorem consM_al {z : ZM R ch FL} {u : Un R FL Pl U0 U1} (hu : u ∈ consM lhat n o z) :
     AlU lhat n o u ∧ tgU u = inpZ z := by
   rcases z with ⟨x | l, e⟩
   · exact ((consM_inl x e u).1 hu).2
@@ -53,7 +53,7 @@ theorem consM_al {z : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u ∈ con
     exact ⟨this.1, this.2.1⟩
 
 /-- A unit is given at one slot at most. -/
-theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u ∈ consM lhat n o z)
+theorem consM_unique {z z' : ZM R ch FL} {u : Un R FL Pl U0 U1} (hu : u ∈ consM lhat n o z)
     (hu' : u ∈ consM lhat n o z') : z = z' := by
   rcases z with ⟨x | l, e⟩ <;> rcases z' with ⟨x' | l', e'⟩
   · obtain ⟨h1, -, h2⟩ := (consM_inl x e u).1 hu
@@ -91,7 +91,7 @@ theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u 
     rfl
 
 /-- The number of units of a slot. -/
-theorem card_consM (z : ZM R FL (ch := ch)) :
+theorem card_consM (z : ZM R ch FL) :
     (consM lhat n o z : Finset (Un R FL Pl U0 U1)).card ≤ num lhat (nn n) (oo o) z.1 := by
   classical
   rcases z with ⟨x | l, e⟩
@@ -117,7 +117,7 @@ section Causal
 variable {o' : (sys R FL Pl).N → Fin U1} {t : ℕ}
 
 /-- The units given at a slot depend only on the outcomes of earlier moves. -/
-theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
+theorem consM_congr (hb : 0 < b) (z : ZM R ch FL)
     (hag : ∀ mv' : Mv R ch FL, timeM mv' < timeM z.1 →
       ∀ c, oo o ⟨mv', c⟩ = oo o' ⟨mv', c⟩) :
     (consM lhat n o z : Finset (Un R FL Pl U0 U1)) = consM lhat n o' z := by
