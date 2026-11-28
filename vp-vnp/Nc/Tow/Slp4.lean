@@ -120,7 +120,7 @@ theorem py_al (ha : After (nX nI) (oX oI) lhat H) (u : Un R FL Pl U0 U1) :
   rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
   · exact PY.and hA (PY.base ha.valid)
       (PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c)))
-  · exact PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.alv (eN R FL Pl ν)))
+  · exact PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.alv (eN ν)))
 
 theorem cy_rk (hal : ∀ u, ind (fun x => AlU lhat (nI x) (oI x) u) ∈ H) (u : Un R FL Pl U0 U1) :
     CY Dd H Y 2 fun x => rkU lhat (nI x) (oI x) u := by
@@ -173,8 +173,8 @@ theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
   have h1 : PY Dd H Y 1 fun x => SeenU (nI x) (oI x) u := by
     rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
     · exact PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c))
-    · refine (PY.rel1 hA (fun s => k.1 ≤ s) (CY.base (ha.o (eN R FL Pl ν)))).congr fun x => ?_
-      have : oX oI x (eN R FL Pl ν) = (oI x ν).1 := by
+    · refine (PY.rel1 hA (fun s => k.1 ≤ s) (CY.base (ha.o (eN ν)))).congr fun x => ?_
+      have : oX oI x (eN ν) = (oI x ν).1 := by
         unfold oX oo
         rw [Equiv.symm_apply_apply]
       rw [this]
