@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T06:14:21.146452673Z",
+  "updated_at": "2026-11-28T06:15:54.534911165Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 1,
     "contributors": 2,
-    "ideas_open": 1
+    "ideas_open": 0
   },
   "leaderboard": [
     {
@@ -110,7 +110,7 @@
     {
       "number": 197,
       "title": "Idea: restructure(Nc/Dl): the cost of a step or template depends only on its size; the state invariant goes",
-      "status": "open",
+      "status": "done",
       "author": "kongeskog",
       "claimed_by": null,
       "lease_expires": null,
@@ -1341,14 +1341,14 @@
       "loc": 639
     },
     {
+      "path": "vp-vnp/NS1/DSteps.lean",
+      "tokens": 8205,
+      "loc": 548
+    },
+    {
       "path": "vp-vnp/Paper/Gauges.lean",
       "tokens": 7226,
       "loc": 473
-    },
-    {
-      "path": "vp-vnp/NS1/DSteps.lean",
-      "tokens": 6869,
-      "loc": 417
     },
     {
       "path": "vp-vnp/Paper/Crossing.lean",
