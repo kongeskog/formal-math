@@ -119,7 +119,7 @@ theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv T FL} (hL : ∀ q, L (.seg l.
 
 section Stage
 
-theorem num_inr_le (l : LMv T FL) : num R ch FL lhat n o (.inr l) ≤ tmin FL (load R ch FL lhat n o) l := by
+theorem num_inr_le (l : LMv T FL) : num lhat n o (.inr l) ≤ tmin FL (load lhat n o) l := by
   classical
   rw [num_eq, numF]
   split_ifs
@@ -127,8 +127,8 @@ theorem num_inr_le (l : LMv T FL) : num R ch FL lhat n o (.inr l) ≤ tmin FL (l
   · exact Nat.zero_le _
 
 
-theorem num_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load R ch FL lhat n o) l.1.castSucc l.2.1 ∨
-    ¬ Pick FL (load R ch FL lhat n o) l) : num R ch FL lhat n o (.inr l) = 0 := by
+theorem num_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
+    ¬ Pick FL (load lhat n o) l) : num lhat n o (.inr l) = 0 := by
   classical
   rcases hl with hl | hl
   · have h1 : tmin FL (load R ch FL lhat n o) l = 0 := tmin_zero fun q => seg_zero hl _ q
@@ -136,17 +136,17 @@ theorem num_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load R ch FL lhat n o) l.1.c
     omega
   · rw [num_eq, numF, if_neg hl]
 
-theorem alv_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load R ch FL lhat n o) l.1.castSucc l.2.1 ∨
-    ¬ Pick FL (load R ch FL lhat n o) l) (ν : (kindM R ch FL (.inr l)).Cn) :
-    alv R ch FL lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = 0 := by
+theorem alv_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
+    ¬ Pick FL (load lhat n o) l) (ν : (kindM R ch FL (.inr l)).Cn) :
+    alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = 0 := by
   unfold alv
   rw [num_inr_zero hl]
   exact alvN_zero _
 
 /-- Loads on middle segments. -/
-theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o) j.castSucc i) (e' : T.Ed (j + 1))
-    (he' : T.ty e' = i) : load R ch FL lhat n o (.edge j.succ e') ≤
-      ∑ e ∈ univ.filter (fun e : T.Ed j => T.πE e = e'), load R ch FL lhat n o (.edge j.castSucc e) := by
+theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i) (e' : T.Ed (j + 1))
+    (he' : T.ty e' = i) : load lhat n o (.edge j.succ e') ≤
+      ∑ e ∈ univ.filter (fun e : T.Ed j => T.πE e = e'), load lhat n o (.edge j.castSucc e) := by
   classical
   have hx2 : ∀ e : T.Ed j, okR T R ch (.mid j e 2) :=
     fun e => ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
@@ -174,23 +174,23 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o) 
     · exact Finset.sum_le_sum fun e _ => (alv_mid_le j e 2 (hx2 e) false).1
 
 /-- Alive units at a vertex. -/
-theorem alive_sq (l : LMv T FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv R ch FL lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
-    FL.G₁ * (num R ch FL lhat n o (.inr l)) ^ 2 := by
+theorem alive_sq (l : LMv T FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
+    FL.G₁ * (num lhat n o (.inr l)) ^ 2 := by
   classical
-  set t := num R ch FL lhat n o (.inr l) with ht
-  by_cases hg : GoodL R ch FL o l t
-  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv R ch FL lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = o ⟨.inr l, ν⟩ := by
+  set t := num lhat n o (.inr l) with ht
+  by_cases hg : GoodL o l t
+  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = o ⟨.inr l, ν⟩ := by
       intro ν
       rw [alv_inr, ← ht, if_pos hg]
     rw [Finset.sum_congr rfl fun ν _ => by rw [h1 ν]]
     exact hg
-  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv R ch FL lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) ≤ t := by
+  · have h1 : ∀ ν : (FL.L l.2.2.2).Cn, alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) ≤ t := by
       intro ν
       rw [alv_inr, ← ht, if_neg hg]
       exact min_le_right _ _
     obtain ⟨i0⟩ := FL.nonempty l.2.2.2
     have h2 := FL.L2 l.2.2.2 i0
-    have h3 : ∑ ν : (FL.L l.2.2.2).Cn, (alv R ch FL lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
+    have h3 : ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch))) ^ 2 ≤
         (∑ ν : (FL.L l.2.2.2).Cn, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len i0 ν) ^ 2) * t ^ 2 := by
       rw [Finset.sum_mul]
       refine Finset.sum_le_sum fun ν _ => ?_
@@ -224,7 +224,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       have hj : j' = j := Fin.succ_injective _ h1
       subst hj
       have h3 := eq_of_heq h2
-      have hmin : IsMin (load R ch FL lhat n o) j'.castSucc i' := by
+      have hmin : IsMin (load lhat n o) j'.castSucc i' := by
         by_contra hcon
         exact hne (alv_inr_zero (Or.inl hcon) ν')
       obtain rfl : i' = i := firstMin_eq hmin hi
@@ -233,7 +233,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       simp only [Prod.mk.injEq] at h5
       obtain ⟨h6, h7⟩ := h5
       subst h6
-      have hpk : Pick FL (load R ch FL lhat n o) ⟨j', i', ω', d'⟩ := by
+      have hpk : Pick FL (load lhat n o) ⟨j', i', ω', d'⟩ := by
         by_contra hcon
         exact hne (alv_inr_zero (Or.inr hcon) ν')
       have hdd : d' = d := pick_eq _ (l := ⟨j', i', ω', d'⟩) hpk hd
@@ -275,7 +275,7 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
         FL.G₁ * (tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ) ^ 2 := by
       exact_mod_cast h5
     linarith [mul_le_mul_of_nonneg_right FL.G₁_le
-      (sq_nonneg (tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ))]
+      (sq_nonneg (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ))]
   · intro ω
     exact tmin_le _ _ fun q => seg_le j i ω q
 

@@ -335,7 +335,7 @@ noncomputable def treePar (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL
 
 /-- The load at a party: the number of units between it and its parent. -/
 noncomputable def treeUp (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (p : Fin (AA + A')) : ℕ :=
-  onN (fb (lev (load R ch FL N (nn n) (oo R FL Pl o)))) 0 (Pl.pt.symm p)
+  onN (fb (lev (load N (nn n) (oo R FL Pl o)))) 0 (Pl.pt.symm p)
 
 variable {R FL Pl}
 
@@ -374,7 +374,7 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
       (R.pl_pos (fun e => hne (ch.injective e)) _)).1 hdone
   | new ν kk =>
     have hko := mem_seen_new.1 hseen
-    have halv : alv R ch FL N (nn n) (oo R FL Pl o) (eN R FL Pl ν) = (o ν).1 := by
+    have halv : alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν) = (o ν).1 := by
       rw [alv_good _ (hp _)]
       unfold oo
       rw [Equiv.symm_apply_apply]
@@ -385,7 +385,7 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
       have e : kk = o ν := Fin.ext (by omega)
       rw [e]
     have hA : AlU R FL Pl N n o (Uid.new ν kk : Un R FL Pl N U1) := by
-      change kk.1 < alv R ch FL N (nn n) (oo R FL Pl o) (eN R FL Pl ν)
+      change kk.1 < alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν)
       rw [halv]
       exact hlt
     have hdone : tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .done := hal hA
@@ -398,12 +398,12 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
     rw [e0, e1]
     have hmem : ∀ s, IsCh R ch FL (eN R FL Pl ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU R FL Pl N n o s :=
       fun s hs => mem_AsU_new.2 ⟨hA, hs⟩
-    have hal' : alv R ch FL N (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≠ 0 := by omega
+    have hal' : alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≠ 0 := by omega
     revert hdone hal' hmem
     generalize eN R FL Pl ν = w
     intro hdone hmem hal'
     rcases w with ⟨⟨x, hx⟩ | l, β⟩
-    · have hnum : num R ch FL N (nn n) (oo R FL Pl o) (.inl ⟨x, hx⟩) ≠ 0 := by
+    · have hnum : num N (nn n) (oo R FL Pl o) (.inl ⟨x, hx⟩) ≠ 0 := by
         have := alv_le_num (lhat := N) (n := nn n) (o := oo R FL Pl o) (FL := FL) ⟨x, hx⟩ β
         omega
       obtain ⟨j, hj, c, h1, h2⟩ := done_hold hx (β := β) hdone hnum
@@ -465,7 +465,7 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
   obtain ⟨H3, s3, u3, f3⟩ :=
     host_stage (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
     (fun j i => u2 (f1.isMin j i))
-  obtain ⟨H4, s4, u4, f4⟩ := fb_stage (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB
+  obtain ⟨H4, s4, u4, f4⟩ := fb_stage (L := fun x => load lhat (nX nI x) (oX oI x)) hA hB
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 (fun τ => u3 (u2 (f1.load τ)))
   refine ⟨H4, ?_, (f2.weaken u3).weaken u4, fun j hj c c' => u4 (f3 j hj c c'), f4⟩
   refine SlpN.le hA.zero_lt ?_ s4
@@ -797,8 +797,8 @@ theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
             treeUp R FL Pl n o q) +
         (if (p : ℕ) < AA then (1 + 8 * m) * N else 0) +
         2 * ((deadU R FL Pl N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
-  have hgd : ∀ mv, GoodMv R ch FL N (nn n) (oo R FL Pl o) mv := fun mv => by
-    have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
+  have hgd : ∀ mv, GoodMv N (nn n) (oo R FL Pl o) mv := fun mv => by
+    have h1 : GoodMv N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨P, rfl⟩ := Pl.pt.surjective p
   have h0 := held_node_le

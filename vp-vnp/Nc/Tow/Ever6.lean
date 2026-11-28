@@ -40,7 +40,7 @@ variable
 
 variable (R ch FL Pl lhat n o) in
 /-- The loads. -/
-noncomputable abbrev LfO : ∀ j, T.Ed j → ℕ := ldL R ch FL lhat (nn n) (oo R FL Pl o)
+noncomputable abbrev LfO : ∀ j, T.Ed j → ℕ := ldL lhat (nn n) (oo R FL Pl o)
 
 variable (ch) in
 open Classical in

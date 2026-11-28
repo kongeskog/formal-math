@@ -146,9 +146,9 @@ theorem stat_stage (hS : SY inp Y p c H) (hb : Base nx ox H) :
 
 /-- Alive units from numbers of units. -/
 theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ} (hN : ∀ mv, (fun x => Nf x mv) ∈ H)
-    (ν : NM R FL (ch := ch)) : CY Dd H Y 3 fun x => alvN R ch FL (ox x) ν (Nf x ν.1) := by
+    (ν : NM R FL (ch := ch)) : CY Dd H Y 3 fun x => alvN (ox x) ν (Nf x ν.1) := by
   have hY := hA.pos
-  have hlt : ∀ x, alvN R ch FL (ox x) ν (Nf x ν.1) ≤ Y := fun x =>
+  have hlt : ∀ x, alvN (ox x) ν (Nf x ν.1) ≤ Y := fun x =>
     ((alvN_le _ _).trans (hR.o x ν)).trans (hB.u1 ν)
   rcases ν with ⟨y | l, ν⟩
   · refine CY.mono hY (a := 1) ((CY.op hA (fun s t => if s = t then t else 0) (CY.base (hs.o _))
@@ -170,9 +170,9 @@ theorem cy_ld (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ}
     CY Dd H Y 3 fun x => ld R ch FL lhat (nx x) (ox x) (Nf x) τ := by
   have hle : ∀ x, ld R ch FL lhat (nx x) (ox x) (Nf x) τ ≤ Y := fun x =>
     (ld_le (hR.n x) (hR.o x) _ _).trans hB.w
-  have e : ∀ x, ld R ch FL lhat (nx x) (ox x) (Nf x) τ = bt R ch lhat (nx x) τ +
+  have e : ∀ x, ld lhat (nx x) (ox x) (Nf x) τ = bt R ch lhat (nx x) τ +
       ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM R ch FL ν.1 ν.2 = τ),
-        alvN R ch FL (ox x) ν (Nf x ν.1) := by
+        alvN (ox x) ν (Nf x ν.1) := by
     intro x
     rw [Finset.sum_filter]
     rfl
@@ -192,13 +192,13 @@ theorem cy_ld (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ}
 /-- Alive units and loads. -/
 theorem ld_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ}
     (hN : ∀ mv, (fun x => Nf x mv) ∈ H) : ∃ H', SY inp Y p (c + 2) H' ∧ H ⊆ H' ∧
-      (∀ ν : NM R FL, (fun x => alvN R ch FL (ox x) ν (Nf x ν.1)) ∈ H') ∧
-      ∀ τ, (fun x => ld R ch FL lhat (nx x) (ox x) (Nf x) τ) ∈ H' := by
+      (∀ ν : NM R FL, (fun x => alvN (ox x) ν (Nf x ν.1)) ∈ H') ∧
+      ∀ τ, (fun x => ld lhat (nx x) (ox x) (Nf x) τ) ∈ H' := by
   obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := NM R FL)
-    (fun ν x => alvN R ch FL (ox x) ν (Nf x ν.1)) (a := 3) (e := 1) (by simpa using hB.nm)
+    (fun ν x => alvN (ox x) ν (Nf x ν.1)) (a := 3) (e := 1) (by simpa using hB.nm)
     (fun ν => cy_alvN hA hB hR hs hN ν) (by omega)
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (κ := Tg T m AA)
-    (fun τ x => ld R ch FL lhat (nx x) (ox x) (Nf x) τ) (a := 3) (e := 1) (by simpa using hB.tg)
+    (fun τ x => ld lhat (nx x) (ox x) (Nf x) τ) (a := 3) (e := 1) (by simpa using hB.tg)
     (fun τ => cy_ld hA hB hR (hs.weaken u1) f1 τ) (by omega)
   exact ⟨H2, s2, u1.trans u2, fun ν => u2 (f1 ν), f2⟩
 

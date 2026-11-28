@@ -51,7 +51,7 @@ theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e 
 
 /-- A chamber and its parent hold the units of a channel without target. -/
 theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R ch x β = .done)
-    (hne : num R ch FL lhat n o (.inl ⟨x, hx⟩) ≠ 0) :
+    (hne : num lhat n o (.inl ⟨x, hx⟩) ≠ 0) :
     ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), chd x β = some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ ∧
       hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
         s(nd T j hj c, parN (lev (load R ch FL lhat n o)) j c) := by
@@ -148,7 +148,7 @@ def OfEd (j : Fin J) (e : T.Ed j) (x : RM T m AA) : Prop := (∃ i, x = .inn j i
 /-- At most one channel of an edge and an end has alive units. -/
 theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx : okR T R ch x) (hx' : okR T R ch x')
     (h1 : OfEd j e x) (h1' : OfEd j e x') (hd : tgR T R ch x β = .done) (hd' : tgR T R ch x' β = .done)
-    (hn : num R ch FL lhat n o (.inl ⟨x, hx⟩) ≠ 0) (hn' : num R ch FL lhat n o (.inl ⟨x', hx'⟩) ≠ 0) : x = x' := by
+    (hn : num lhat n o (.inl ⟨x, hx⟩) ≠ 0) (hn' : num lhat n o (.inl ⟨x', hx'⟩) ≠ 0) : x = x' := by
   have mm : ∀ s s' : Fin 4, okR T R ch (.mid j e s) → okR T R ch (.mid j e s') → tgR T R ch (.mid j e s : RM T m AA) β = .done →
       tgR T R ch (.mid j e s' : RM T m AA) β = .done → s = s' := by
     intro s s' hs hs' h2 h2'
@@ -194,10 +194,10 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
 open Classical in
 /-- The alive units of an edge at one end. -/
 theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : Finset (NM R FL)).filter (fun ν =>
-      alv R ch FL lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR T R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR T R ch x.1 β = .done ∧ OfEd j e x.1),
-      alv R ch FL lhat n o ν ≤ load R ch FL lhat n o (.edge j.castSucc e) := by
-  have hnz : ∀ (x : {x : RM T m AA // okR T R ch x}), alv R ch FL lhat n o (⟨.inl x, β⟩ : NM R FL) ≠ 0 →
-      num R ch FL lhat n o (.inl x) ≠ 0 := by
+      alv lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR T R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR T R ch x.1 β = .done ∧ OfEd j e x.1),
+      alv lhat n o ν ≤ load lhat n o (.edge j.castSucc e) := by
+  have hnz : ∀ (x : {x : RM T m AA // okR T R ch x}), alv lhat n o (⟨.inl x, β⟩ : NM R FL) ≠ 0 →
+      num lhat n o (.inl x) ≠ 0 := by
     intro x hx
     have := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) x β
     omega
@@ -223,15 +223,15 @@ open Classical in
 using that an edge has at most one end at the given chamber. -/
 private theorem sum_child_of_cover (j : Fin (J + 1)) (c : T.X j)
     (C : T.Ed j → Bool → Finset (NM R FL (ch := ch)))
-    (bound : ∀ e β, ∑ ν ∈ C e β, alv R ch FL lhat n o ν ≤ load R ch FL lhat n o (.edge j e))
-    (cover : ∀ ν, IsCh R ch FL ν ⟨j, c⟩ → alv R ch FL lhat n o ν ≠ 0 →
+    (bound : ∀ e β, ∑ ν ∈ C e β, alv lhat n o ν ≤ load lhat n o (.edge j e))
+    (cover : ∀ ν, IsCh R ch FL ν ⟨j, c⟩ → alv lhat n o ν ≠ 0 →
       ∃ (e : T.Ed j) (β : Bool), (if β then T.e1 e else T.e0 e) = c ∧ ν ∈ C e β) :
-    (∑ ν, if IsCh R ch FL ν ⟨j, c⟩ then alv R ch FL lhat n o ν else 0) ≤
-      ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then load R ch FL lhat n o (.edge j e) else 0 := by
+    (∑ ν, if IsCh R ch FL ν ⟨j, c⟩ then alv lhat n o ν else 0) ≤
+      ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then load lhat n o (.edge j e) else 0 := by
   let ends (β : Bool) := (univ.filter fun e : T.Ed j =>
     (if β then T.e1 e else T.e0 e) = c).biUnion fun e => C e β
-  have hall (ν : NM R FL) : (if IsCh R ch FL ν ⟨j, c⟩ then alv R ch FL lhat n o ν else 0) ≤
-      if ν ∈ ends false ∪ ends true then alv R ch FL lhat n o ν else 0 := by
+  have hall (ν : NM R FL) : (if IsCh R ch FL ν ⟨j, c⟩ then alv lhat n o ν else 0) ≤
+      if ν ∈ ends false ∪ ends true then alv lhat n o ν else 0 := by
     split_ifs with hch hmem
     · exact le_rfl
     · by_contra! hpos
@@ -258,10 +258,10 @@ private theorem sum_child_of_cover (j : Fin (J + 1)) (c : T.X j)
 open Classical in
 /-- **The alive units between a chamber and its parent.** -/
 theorem sum_child (j : ℕ) (hj : j ≤ J) (c : T.X j) : (∑ ν : NM R FL,
-      if IsCh R ch FL ν ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ then alv R ch FL lhat n o ν else 0) ≤
-    fb (lev (load R ch FL lhat n o)) j c := by
-  have e1 : fb (lev (load R ch FL lhat n o)) j c = ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then
-      load R ch FL lhat n o (.edge ⟨j, Nat.lt_succ_of_le hj⟩ e) else 0 := by
+      if IsCh R ch FL ν ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ then alv lhat n o ν else 0) ≤
+    fb (lev (load lhat n o)) j c := by
+  have e1 : fb (lev (load lhat n o)) j c = ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then
+      load lhat n o (.edge ⟨j, Nat.lt_succ_of_le hj⟩ e) else 0 := by
     unfold fb Tower.bet lev
     refine Finset.sum_congr rfl fun e _ => ?_
     rw [dif_pos (Nat.lt_succ_of_le hj)]

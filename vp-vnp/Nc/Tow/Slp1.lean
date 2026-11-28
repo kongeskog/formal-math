@@ -89,7 +89,7 @@ theorem bt_le (hn : ∀ a c, n a c ≤ U0) (τ : Tg T m AA) : bt R ch lhat n τ 
   · exact Nat.zero_le _
 
 theorem ld_le (hn : ∀ a c, n a c ≤ U0) (ho : ∀ ν, o ν ≤ U1) (N : Mv T R ch FL → ℕ) (τ : Tg T m AA) :
-    ld R ch FL lhat n o N τ ≤ Wb R ch FL U0 U1 := by
+    ld lhat n o N τ ≤ Wb R ch FL U0 U1 := by
   unfold ld Wb
   refine add_le_add (bt_le hn τ) ?_
   refine (Finset.sum_le_card_nsmul _ _ U1 fun ν _ => ?_).trans (by simp)

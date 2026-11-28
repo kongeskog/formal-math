@@ -126,7 +126,7 @@ theorem py_actR (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H) (y : RM T m
 
 theorem cy_numF (hm : ∀ τ, (fun x => L x τ) ∈ H) (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H)
     (ht : ∀ l : LMv T FL, (fun x => tmin FL (L x) l) ∈ H) (hp : ∀ l : LMv T FL, ind (fun x => Pick FL (L x) l) ∈ H)
-    (mv : Mv T R ch FL) : CY Dd H Y 2 fun x => numF R ch FL (L x) mv := by
+    (mv : Mv T R ch FL) : CY Dd H Y 2 fun x => numF (L x) mv := by
   classical
   rcases mv with y | l
   · refine (CY.ite hA (py_actR hA hB hi y.1) (CY.base (hm (inpR T y.1))) (CY.const 0 hA.zero_lt)
@@ -146,7 +146,7 @@ structure Chosen (L : Inp → Tg T m AA → ℕ) (R : Routes T m Uu) (ch : Fin A
   isMin : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H
   tmin : ∀ l : LMv T FL, (fun x => tmin FL (L x) l) ∈ H
   pick : ∀ l : LMv T FL, ind (fun x => Pick FL (L x) l) ∈ H
-  numF : ∀ mv : Mv T R ch FL, (fun x => numF R ch FL (L x) mv) ∈ H
+  numF : ∀ mv : Mv T R ch FL, (fun x => numF (L x) mv) ∈ H
 
 omit hA hB hL in
 theorem Chosen.weaken {L : Inp → Tg T m AA → ℕ} {H H' : Set (Inp → ℕ)} (hc : Chosen L R ch FL H) (hH : H ⊆ H') :
@@ -191,7 +191,7 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
       ∀ mv : Mv T R ch FL, (fun x => numS R ch FL lhat (nx x) (ox x) t mv) ∈ H' := by
   induction t with
   | zero =>
-    obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Mv T R ch FL) (fun mv x => numS R ch FL lhat (nx x) (ox x) 0 mv)
+    obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Mv T R ch FL) (fun mv x => numS lhat (nx x) (ox x) 0 mv)
       (a := 0) (e := 1) (by simpa using hB.mv) (fun mv => CY.const 0 hA.zero_lt) (by omega)
     exact ⟨H1, s1, u1, f1⟩
   | succ t ih =>
@@ -200,7 +200,7 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
     obtain ⟨H2, s2, u2, f2⟩ := pick_stage hA hB
       (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s1 g1
     obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := Mv T R ch FL)
-      (fun mv x => numS R ch FL lhat (nx x) (ox x) (t + 1) mv) (a := 0) (e := 1) (by simpa using hB.mv)
+      (fun mv x => numS lhat (nx x) (ox x) (t + 1) mv) (a := 0) (e := 1) (by simpa using hB.mv)
       (fun mv => by
         by_cases ht : timeM R ch FL mv = t
         · refine (CY.base (f2.numF mv)).congr fun x => ?_
@@ -212,10 +212,10 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
 /-- What is known after the loop. -/
 structure After (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R FL (ch := ch) → ℕ) (lhat : ℕ)
     (H : Set (Inp → ℕ)) : Prop extends Stat nx ox lhat H,
-    Chosen (fun x => load R ch FL lhat (nx x) (ox x)) R ch FL H where
-  num : ∀ mv : Mv T R ch FL, (fun x => num R ch FL lhat (nx x) (ox x) mv) ∈ H
-  alv : ∀ ν : NM R FL (ch := ch), (fun x => alv R ch FL lhat (nx x) (ox x) ν) ∈ H
-  load : ∀ τ : Tg T m AA, (fun x => load R ch FL lhat (nx x) (ox x) τ) ∈ H
+    Chosen (fun x => load lhat (nx x) (ox x)) R ch FL H where
+  num : ∀ mv : Mv T R ch FL, (fun x => num lhat (nx x) (ox x) mv) ∈ H
+  alv : ∀ ν : NM R FL (ch := ch), (fun x => alv lhat (nx x) (ox x) ν) ∈ H
+  load : ∀ τ : Tg T m AA, (fun x => load lhat (nx x) (ox x) τ) ∈ H
 
 omit hA hB hR in
 theorem After.weaken {H H' : Set (Inp → ℕ)} (ha : After nx ox lhat H) (hH : H ⊆ H') : After nx ox lhat H' where

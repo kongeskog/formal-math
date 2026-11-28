@@ -105,23 +105,23 @@ section Num
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
-variable (R ch FL lhat n o) in
+variable (lhat n o) in
 open Classical in
 /-- The number of units given in a relay (0 if the relay does not exist). -/
-noncomputable def nR (x : RM T m AA) : ℕ := if hx : okR T R ch x then num R ch FL lhat n o (.inl ⟨x, hx⟩) else 0
+noncomputable def nR (x : RM T m AA) : ℕ := if hx : okR T R ch x then num lhat n o (.inl ⟨x, hx⟩) else 0
 
-variable (R ch FL lhat n o) in
+variable (lhat n o) in
 /-- The loads of the edges. -/
-noncomputable abbrev ldL : ∀ j, T.Ed j → ℕ := lev (load R ch FL lhat n o)
+noncomputable abbrev ldL : ∀ j, T.Ed j → ℕ := lev (load lhat n o)
 
-theorem lev_castSucc (j : Fin J) (e : T.Ed j) : load R ch FL lhat n o (.edge j.castSucc e) =
-    ldL R ch FL lhat n o j e := by
+theorem lev_castSucc (j : Fin J) (e : T.Ed j) : load lhat n o (.edge j.castSucc e) =
+    ldL lhat n o j e := by
   unfold ldL lev
   rw [dif_pos (Nat.lt_succ_of_lt j.2)]
   rfl
 
-theorem lev_succ (j : Fin J) (e : T.Ed (j + 1)) : load R ch FL lhat n o (.edge j.succ e) =
-    ldL R ch FL lhat n o (j + 1) e := by
+theorem lev_succ (j : Fin J) (e : T.Ed (j + 1)) : load lhat n o (.edge j.succ e) =
+    ldL lhat n o (j + 1) e := by
   unfold ldL lev
   rw [dif_pos (Nat.succ_lt_succ j.2)]
   rfl
@@ -154,7 +154,7 @@ theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid 
   · exact Nat.zero_le _
   · exact le_rfl
 
-theorem nR_fin (e : T.Ed J) : nR R ch FL lhat n o (.fin e) ≤ ldL R ch FL lhat n o J e := by
+theorem nR_fin (e : T.Ed J) : nR lhat n o (.fin e) ≤ ldL lhat n o J e := by
   classical
   unfold nR
   split_ifs with hx
