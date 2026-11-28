@@ -84,9 +84,8 @@ theorem bitsB_does (n : ℕ) : ∀ (w : List Bool) (acc : List Bool), KT.val w =
   induction n with
   | zero =>
     intro w acc hw
-    have hnz := Gives.app (p := nzB.code) (Gives.cons (Gives.quote (θ := θ) nzB.code
-      (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))) (Gives.id _).tl.hd)
-      (o' := bit (decide (KT.val w ≠ 0))) (d := 20 * w.length + 10) (by rw [Fm.ofTree_code]; exact nzB_gives w)
+    have hnz := Gives.lett (Gives.cons (Gives.quote (θ := θ) nzB.code
+      (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))) (Gives.id _).tl.hd) (nzB_gives w)
     have e : bit (decide (KT.val w ≠ 0)) = .nil := by simp [hw, bit]
     rw [e] at hnz
     refine ⟨_, (Does.ite_false hnz (Gives.id _).tl.tl).mono (by omega), ?_, ?_⟩
@@ -98,9 +97,8 @@ theorem bitsB_does (n : ℕ) : ∀ (w : List Bool) (acc : List Bool), KT.val w =
       simp [allBits]
   | succ n ih =>
     intro w acc hw
-    have hnz := Gives.app (p := nzB.code) (Gives.cons (Gives.quote (θ := θ) nzB.code
-      (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))) (Gives.id _).tl.hd)
-      (o' := bit (decide (KT.val w ≠ 0))) (d := 20 * w.length + 10) (by rw [Fm.ofTree_code]; exact nzB_gives w)
+    have hnz := Gives.lett (Gives.cons (Gives.quote (θ := θ) nzB.code
+      (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))) (Gives.id _).tl.hd) (nzB_gives w)
     have e : bit (decide (KT.val w ≠ 0)) ≠ .nil := by
       have : KT.val w ≠ 0 := by omega
       simp [this, bit, one]
@@ -109,20 +107,15 @@ theorem bitsB_does (n : ℕ) : ∀ (w : List Bool) (acc : List Bool), KT.val w =
     obtain ⟨k, hk, hdw⟩ := DW_some (θ := θ) h1
     have hd : Gives θ (app DW.code (.cons (.quote DW.code) (.hd (.tl .id))))
         (.cons bitsB.code (.cons (ofBits w) (ofBits acc))) (ofBits w') (1 + 3 + 1 + 20 * w.length + 2) :=
-      Gives.app (p := DW.code) (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) (by
-        rw [Fm.ofTree_code]
-        exact (Does.of_dt hdw).mono hk)
+      Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) ((Does.of_dt hdw).mono hk)
     have hl : w'.length = w.length := length_decw h1
     obtain ⟨Q1, d1, q1, v1⟩ := ih w' (true :: acc) (by omega)
     obtain ⟨Q0, d0, q0, v0⟩ := ih w' (false :: acc) (by omega)
-    have d1' : Does θ (Fm.ofTree bitsB.code) (.cons bitsB.code (.cons (ofBits w') (.cons one (ofBits acc)))) Q1
-        ((n + 1) * (60 * w.length + 100)) := by rw [Fm.ofTree_code, ← hl]; exact d1
-    have d0' : Does θ (Fm.ofTree bitsB.code) (.cons bitsB.code (.cons (ofBits w') (.cons .nil (ofBits acc)))) Q0
-        ((n + 1) * (60 * w.length + 100)) := by rw [Fm.ofTree_code, ← hl]; exact d0
-    have r1 := Does.run (Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))).hd
-      (Gives.cons (Gives.id _).hd (Gives.cons hd (Gives.cons (Gives.quote one _) (Gives.id _).tl.tl))) d1'
-    have r0 := Does.run (Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))).hd
-      (Gives.cons (Gives.id _).hd (Gives.cons hd (Gives.cons (Gives.quote .nil _) (Gives.id _).tl.tl))) d0'
+    rw [hl] at d1 d0
+    have r1 := Does.self ((Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))).hd.cons
+      (Gives.cons hd (Gives.cons (Gives.quote one _) (Gives.id _).tl.tl))) d1
+    have r0 := Does.self ((Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))).hd.cons
+      (Gives.cons hd (Gives.cons (Gives.quote .nil _) (Gives.id _).tl.tl))) d0
     refine ⟨Q1 ++ Q0, (Does.ite_true hnz e (Does.either r1 r0)).mono ?_, ?_, ?_⟩
     · have : max (2 + (2 + (1 + 3 + 1 + 20 * w.length + 2 + (1 + 3 + 1) + 1) + 1) + (n + 1) * (60 * w.length + 100) + 1)
           (2 + (2 + (1 + 3 + 1 + 20 * w.length + 2 + (1 + 3 + 1) + 1) + 1) + (n + 1) * (60 * w.length + 100) + 1) =
@@ -146,19 +139,7 @@ theorem bitsF_does (n : List Bool) (x : Tree) : ∃ Q, Does θ (bitsF n) x Q ((K
     (∀ q ∈ Q, ∃ u ∈ allBits (KT.val n), q.2 = ofBits u.reverse) ∧
     ∀ φ : Tree → A, wsum Q φ = ((allBits (KT.val n)).map fun u => φ (ofBits u.reverse)).sum := by
   obtain ⟨Q, d, h1, h2⟩ := bitsB_does (θ := θ) (KT.val n) n [] rfl
-  have h := Does.app (p := bitsB.code) (R := fun _ => Q) (Gives.quote (θ := θ) (.cons bitsB.code (.cons (ofBits n) .nil)) x)
-    (by
-      intro q hq
-      rw [List.mem_singleton] at hq
-      subst hq
-      rw [Fm.ofTree_code]
-      exact d)
-  refine ⟨Q, (h.congr ?_ fun φ => ?_).mono (by omega), ?_, ?_⟩
-  · intro p hp
-    obtain ⟨q, hq, r, hr, h3, h4⟩ := mem_bindW hp
-    exact ⟨r, hr, h3.symm⟩
-  · rw [wsum_bindW]
-    simp
+  refine ⟨Q, (Does.of_gives (Gives.quote (.cons bitsB.code (.cons (ofBits n) .nil)) x) d).mono (by omega), ?_, ?_⟩
   · intro q hq
     obtain ⟨u, hu, h⟩ := h1 q hq
     exact ⟨u, hu, by simpa using h⟩
