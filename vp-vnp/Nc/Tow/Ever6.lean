@@ -36,12 +36,12 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b
 
 variable (hh : 0 < h) (hb : 0 < b)
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-  (hg : ∀ mv, GoodMv lhat (nn n) (oo R FL Pl o) mv)
+  (hg : ∀ mv, GoodMv lhat (nn n) (oo o) mv)
   (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f)
 
-variable (R ch FL Pl lhat n o) in
+variable (lhat n o) in
 /-- The loads. -/
-noncomputable abbrev LfO : ∀ j, T.Ed j → ℕ := ldL lhat (nn n) (oo R FL Pl o)
+noncomputable abbrev LfO : ∀ j, T.Ed j → ℕ := ldL lhat (nn n) (oo o)
 
 variable (ch) in
 open Classical in
@@ -50,9 +50,9 @@ noncomputable def isB (P : Nd T) : ℕ := if ∃ a, P = nd T 0 (Nat.zero_le _) (
 
 include hh hb hg in
 open Classical in
-theorem NR_onN (P : Nd T) : NR lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) +
-    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF hh (LfO R ch FL Pl lhat n o) j x)
-      (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
+theorem NR_onN (P : Nd T) : NR lhat (nn n) (oo o) P ≤ isB ch P * (2 * m * lhat) +
+    onN (fun j x => 8 * fb (LfO lhat n o) j x + 3 * chF hh (LfO lhat n o) j x)
+      (∑ e : T.Ed J, LfO lhat n o J e) P := by
   rcases nd_cases P with rfl | ⟨j, hj, c, rfl⟩
   · exact (NR_none hh hb hg).trans (Nat.le_add_left _ _)
   · rw [onN_nd]
@@ -72,9 +72,9 @@ theorem NR_onN (P : Nd T) : NR lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * 
 
 include hh hb hg hnr in
 open Classical in
-theorem NL_onN (P : Nd T) : NL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di *
-    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF hh (LfO R ch FL Pl lhat n o) j x)
-      (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
+theorem NL_onN (P : Nd T) : NL lhat (nn n) (oo o) P ≤ Fintype.card FL.Di *
+    onN (fun j x => 8 * fb (LfO lhat n o) j x + 3 * chF hh (LfO lhat n o) j x)
+      (∑ e : T.Ed J, LfO lhat n o J e) P := by
   rcases nd_cases P with rfl | ⟨j, hj, c, rfl⟩
   · rw [NL_none]
     exact Nat.zero_le _
