@@ -24,20 +24,19 @@ noncomputable def capN (FL : FlagLaws F T) (U0 Uu AA lhat : ℕ) : ℕ := U0 + 2
 
 section
 
-variable {ρ : ℝ} (hρ : 0 < ρ) (hρ' : ρ ≤ 1)
-  (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h) (hρD : 2 ≤ ρ * D)
+variable {ρ : ℝ} (hH : THypR FL ρ)
 
-include hρ hρ' hρ1 hρD
+include hH
 
 theorem kap_le_kbar (j : Fin (J + 1)) : T.kap (lds R ch FL lhat n o j) ≤ kbar FL Uu AA lhat := by
-  refine (kap_le' hρ hρ1 hρD j).trans ?_
-  exact mul_le_of_le_one_left kbar_nonneg (pow_le_one₀ hρ.le hρ')
+  refine (kap_le' hH j).trans ?_
+  exact mul_le_of_le_one_left kbar_nonneg (pow_le_one₀ hH.ρ_pos.le hH.ρ_lt.le)
 
 /-- Loads of edges. -/
 theorem load_edge_le (j : Fin (J + 1)) (e : T.Ed j) :
     (load R ch FL lhat n o (.edge j e) : ℝ) ≤ 2 * kbar FL Uu AA lhat := by
   have hX : 0 < Fintype.card (T.X j.1) := Fintype.card_pos_iff.2 ⟨T.e0 e⟩
-  have hk := kap_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ' hρ1 hρD j
+  have hk := kap_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
   have hk0 : 0 ≤ T.kap (lds R ch FL lhat n o j) := Tower.kap_nonneg _
   have h1 := Tower.sum_sq_eq hX (lds R ch FL lhat n o j)
   have h2 : (load R ch FL lhat n o (.edge j e) : ℝ) ^ 2 ≤ ∑ e, (lds R ch FL lhat n o j e : ℝ) ^ 2 :=
@@ -94,7 +93,7 @@ theorem tmin_real_le (l : LMv T FL) : (tmin FL (load R ch FL lhat n o) l : ℝ) 
     exact h7.trans h10
   have h6 : √(vN2 b (T.nEnd i nf ω)) ≤ 3 * b * T.kap nf :=
     (abs_le_of_sq_le_sq' h5 (by positivity)).2
-  have hk := kap_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ' hρ1 hρD
+  have hk := kap_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH
     j.castSucc
   have h7 : 3 * b * T.kap nf ≤ 3 * b * kbar FL Uu AA lhat := mul_le_mul_of_nonneg_left hk (by positivity)
   set t : ℝ := (tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) : ℝ) with ht
@@ -115,8 +114,7 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv T R ch FL) :
   have hceil : (3 * (b : ℝ) * kbar FL Uu AA lhat) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := Nat.le_ceil _
   have hedge : ∀ (j : Fin (J + 1)) (e : T.Ed j), load R ch FL lhat n o (.edge j e) ≤ capN FL U0 Uu AA lhat := by
     intro j e
-    have h1 := load_edge_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ' hρ1
-      hρD j e
+    have h1 := load_edge_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j e
     have h2 : (load R ch FL lhat n o (.edge j e) : ℝ) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := by
       refine h1.trans (le_trans ?_ hceil)
       nlinarith
@@ -135,8 +133,7 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv T R ch FL) :
       exact h1.trans ((num_mid0 j e hx0).1.trans (hedge j.castSucc e))
     · exact (num_inl _).trans (hedge (Fin.last J) e)
   · have h1 := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
-    have h2 := tmin_real_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ' hρ1
-      hρD l
+    have h2 := tmin_real_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH l
     have h3 : (tmin FL (load R ch FL lhat n o) l : ℝ) ≤ ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
       push_cast
       linarith
@@ -159,10 +156,9 @@ theorem geom_le {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : ρ < 1) (k : ℕ) : ∑ j �
 
 section
 
-variable {ρ : ℝ} (hρ : 0 < ρ) (hρ' : ρ < 1)
-  (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h) (hρD : 2 ≤ ρ * D)
+variable {ρ : ℝ} (hH : THypR FL ρ)
 
-include hρ hρ' hρ1 hρD in
+include hH in
 /-- All units between nodes and their parents. -/
 theorem sum_bet_le_YhN : ∑ j : Fin (J + 1), ∑ c, T.bet (lds R ch FL lhat n o j) c ≤ YhN FL Uu AA lhat ρ := by
   have h1 : ((∑ j : Fin (J + 1), ∑ c, T.bet (lds R ch FL lhat n o j) c : ℕ) : ℝ) ≤
@@ -172,20 +168,18 @@ theorem sum_bet_le_YhN : ∑ j : Fin (J + 1), ∑ c, T.bet (lds R ch FL lhat n o
     calc ∑ j : Fin (J + 1), ((∑ c, T.bet (lds R ch FL lhat n o j) c : ℕ) : ℝ) ≤
         ∑ j : Fin (J + 1), 2 * √h * kbar FL Uu AA lhat * ρ ^ j.1 := by
           refine Finset.sum_le_sum fun j _ => ?_
-          have := sum_bet_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ1
-            hρD j
+          have := sum_bet_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
           linarith
       _ = 2 * √h * kbar FL Uu AA lhat * ∑ j ∈ range (J + 1), ρ ^ j := by
           rw [← Finset.mul_sum, Finset.sum_range]
       _ ≤ 2 * √h * kbar FL Uu AA lhat * (1 / (1 - ρ)) :=
-          mul_le_mul_of_nonneg_left (geom_le hρ.le hρ' _) (by positivity)
+          mul_le_mul_of_nonneg_left (geom_le hH.ρ_pos.le hH.ρ_lt _) (by positivity)
       _ = _ := by ring
   exact_mod_cast h1.trans (le_YhN ρ)
 
-omit hρ' in
-include hρ in
+omit hH in
 /-- **The gain of the tower.** -/
-theorem bhat_pow_le (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hpq : 2 ≤ q)
+theorem bhat_pow_le (hρ : 0 < ρ) (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hpq : 2 ≤ q)
     (hgain : ρ ^ q * (D : ℝ) ≤ 1) :
     bhat FL Uu AA lhat ρ ^ q * (Fintype.card (T.X 0) : ℝ) ≤ (2 * (h : ℝ)) ^ q * kbar FL Uu AA lhat ^ q := by
   have hD := T.D_pos

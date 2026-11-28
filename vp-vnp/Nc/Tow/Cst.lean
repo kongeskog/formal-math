@@ -27,13 +27,6 @@ open NS1 (lg)
 
 variable {F : Type} [CommRing F] {h b D J m Uu : ℕ} {T : Tower h b D J}
 
-/-- The conditions on the tower and the laws. -/
-structure THypR (FL : FlagLaws F T) (ρ : ℝ) : Prop where
-  ρ_pos : 0 < ρ
-  ρ_lt : ρ < 1
-  gain : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h
-  two : 2 ≤ ρ * D
-
 /-- The roles of the relay and of finitely many laws. -/
 noncomputable def kindList (F : Type) [CommRing F] (laws : List (Law F)) : List (Σ L : Law F, L.Ro) :=
   (relay F :: laws).flatMap fun L => (univ : Finset L.Ro).toList.map fun p => ⟨L, p⟩

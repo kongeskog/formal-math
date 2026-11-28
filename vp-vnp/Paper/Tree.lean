@@ -681,7 +681,7 @@ theorem tree_node_le (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
     rw [Sym2.mem_iff] at h2
     exact h2.imp Eq.symm Eq.symm
   refine card_biUnion_le.trans ((Finset.sum_le_sum fun s _ => (card_AsU s).trans
-    (fb_le hH.ρ_pos hH.gain hH.two _ (Nat.le_of_lt_succ s.1.2) _)).trans ?_)
+    (fb_le hH _ (Nat.le_of_lt_succ s.1.2) _)).trans ?_)
   rw [Finset.sum_const, smul_eq_mul]
   refine Nat.mul_le_mul_right _ ?_
   calc S.card ≤ ({p} ∪ univ.filter fun v => v ≠ Pl.pt none ∧ treePar R FL Pl n o v = p : Finset _).card := by
@@ -707,7 +707,7 @@ theorem tree_up_node (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1)) 
     rcases nd_cases (Pl.pt.symm q) with e | ⟨j, hj, x, e⟩
     · simp [treeUp, e, onN]
     · simp only [treeUp, e, onN_nd]
-      exact fb_le hH.ρ_pos hH.gain hH.two j hj x
+      exact fb_le hH j hj x
   rw [add_mul, one_mul, add_comm]
   refine Nat.add_le_add ((Finset.sum_le_sum fun q _ => h1 q).trans ?_) (h1 p)
   rw [Finset.sum_const, smul_eq_mul]
@@ -724,7 +724,7 @@ theorem tree_up_total (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1))
   simp only [onN, Nat.zero_add]
   rw [Fintype.sum_sigma, Fin.sum_univ_eq_sum_range
     (fun j => ∑ x : T.X j, fb (lev (load R ch FL N (nn n) (oo R FL Pl o))) j x) (J + 1)]
-  exact sum_fb_le hH.ρ_pos hH.ρ_lt hH.gain hH.two
+  exact sum_fb_le hH
 
 /-- The loads at a chamber and below its children are those at the party and its children. -/
 theorem onN_le_up (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (P : Nd T) :
@@ -835,7 +835,7 @@ theorem tree_value (hH : THypR FL ρ) (hℓ : 1 ≤ ℓ) {cap : ℕ} (hcap : cap
           (fun a => partyTab (Tow.plan R FL Pl N N U1) n o (startTab (sys R FL Pl) U1 n tab a) a) p w
       else 0 := by
   have hok : (Tow.plan R FL Pl N N U1).Ok (capN FL N Uu AA N) :=
-    plan_ok_cap hH.ρ_pos hH.ρ_lt hH.gain hH.two
+    plan_ok_cap hH
   have hgood : ∀ n o x, (Tow.plan R FL Pl N N U1).Poss n o ℓ x → (Tow.plan R FL Pl N N U1).good n o x :=
     fun n o x => thm_tree_poss_good hℓ n o x
   have hkl : ∀ x, ((sys R FL Pl).kind x).Le c ∧ ((sys R FL Pl).kind x).lam ≤ c := by
@@ -1192,7 +1192,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     kinds := fun x => ?_
     U1_pos := by rw [hU1]; exact Nat.succ_pos _
     cap := capN FL N Uu AA N
-    ok := plan_ok_cap hH.ρ_pos hH.ρ_lt hH.gain hH.two
+    ok := plan_ok_cap hH
     up := treeUp R FL Pl
     edge := fun n hv o hg u hu => ?_
     node_le := fun n hv o hg p => ?_
