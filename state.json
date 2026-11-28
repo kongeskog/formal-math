@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T04:38:02.392788638Z",
+  "updated_at": "2026-11-28T04:44:24.113005635Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "bd3c9059b77d0b54e7c736e4db6a73ddfb664df8",
-    "at": "2026-11-28T04:27:02.189221805Z",
+    "sha": "f9ea90c626406b2d365c918294e31035b135af6e",
+    "at": "2026-11-28T04:44:24.113005635Z",
     "metrics": {
-      "tokens": 804550,
-      "loc": 52125,
+      "tokens": 802369,
+      "loc": 52138,
       "decls": 4270,
       "files": 314,
-      "bytes": 3026163,
-      "build_seconds": 359
+      "bytes": 3020717,
+      "build_seconds": 389
     }
   },
   "counts": {
-    "merged": 108,
+    "merged": 109,
     "rejected": 4,
-    "open": 3,
+    "open": 2,
     "contributors": 2,
     "ideas_open": 1
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 101,
+      "merged": 102,
       "attempts": 108,
-      "saved": 113747
+      "saved": 115928
     },
     {
       "login": "yidakra",
@@ -101,7 +101,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T06:57:41Z",
       "pr": 193,
-      "result_delta": null,
+      "result_delta": -2181,
       "created_at": "2026-11-28T03:52:00Z",
       "url": "https://github.com/kongeskog/formal-math/issues/191",
       "technique": "restructure",
@@ -1173,120 +1173,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 193,
-      "title": "restructure(Nc/Tow): facts that hold for the one tower are fields of Tower, not hypotheses",
-      "author": "kongeskog",
-      "head_sha": "7e37381f50db9b6e7e7be927917ecfdc4ff31adc",
-      "base_sha": "50f849a6c9dbd201f0a92ad22aa0eb9f70c1e557",
-      "status": "stale",
-      "created_at": "2026-11-28T04:10:49Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 804604,
-        "loc": 52086,
-        "decls": 4270,
-        "files": 314,
-        "bytes": 3025124,
-        "build_seconds": 342
-      },
-      "base_metrics": {
-        "tokens": 806785,
-        "loc": 52073,
-        "decls": 4270,
-        "files": 314,
-        "bytes": 3030570,
-        "build_seconds": null
-      },
-      "delta": -2181,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "38 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pass"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pass"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pass"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pass",
-          "detail": "the added lines hold 159 characters of comments and strings"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 806785 → 804604 (-2181)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        }
-      ],
-      "idea": 191,
-      "url": "https://github.com/kongeskog/formal-math/pull/193",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46106319215",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Nc/Tow",
-      "warnings": [
-        "touches files reserved by idea #190 (claimed by @kongeskog): `vp-vnp/Nc/Tower/Tower.lean`; coordinate there or expect to merge main after it lands",
-        "touches files reserved by idea #189 (claimed by @kongeskog): `vp-vnp/Paper/Pieces.lean`, `vp-vnp/Paper/Tree.lean`; coordinate there or expect to merge main after it lands"
-      ]
-    },
     {
       "pr": 194,
       "title": "restructure(NS1): state a program's call of itself once; one run rule and one fold",
