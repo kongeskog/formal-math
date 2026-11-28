@@ -20,13 +20,9 @@ field of characteristic p, gives one of the same size with constants in KK[ε,ε
 constants are cut off, and the argument of Lemma lem:transfer is applied to their coefficients. -/
 theorem lem_transfer_approx (p : ℕ) [CharP F p] [CharP KK p] (q : MvPolynomial X ℤ) {s : ℕ}
     (h : Approximates (MvPolynomial.map (Int.castRingHom F) q) s) :
-    ∃ P : MvPolynomial X (LaurentPolynomial KK), Computes P s ∧
-      ∀ d : X →₀ ℕ, (∀ i : ℤ, i < 0 → (coeff d P).coeff i = 0) ∧
-        (coeff d P).coeff 0 = coeff d (MvPolynomial.map (Int.castRingHom KK) q) := by
-  suffices main : ∃ P : MvPolynomial X (LaurentPolynomial KK), Computes P s ∧ ∀ (d : X →₀ ℕ) (i : ℤ), i ≤ 0 →
-      (coeff d P).coeff i = if i = 0 then coeff d (MvPolynomial.map (Int.castRingHom KK) q) else 0 by
-    -- `main` at `i < 0` and at `i = 0`
-    grind
+    ∃ P : MvPolynomial X (LaurentPolynomial KK), Computes P s ∧ ∀ (d : X →₀ ℕ) (i : ℤ), i ≤ 0 →
+      (coeff d P).coeff i =
+        if i = 0 then coeff d (MvPolynomial.map (Int.castRingHom KK) q) else 0 := by
   obtain ⟨T, _, _, ⟨f⟩, ⟨g⟩⟩ := exists_common_ring F KK p
   obtain ⟨P₀, hP₀, hc₀⟩ := h.exists_laurentPolynomial
   obtain ⟨l, hl, k, hk, e⟩ := Computes.map (AddMonoidAlgebra.mapRingHom ℤ f) hP₀

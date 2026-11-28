@@ -23,7 +23,8 @@ open Finset
 
 namespace Ten
 
-variable {K : Type} [Field K] {I J : Type} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
+variable {K : Type} [CommRing K] {I J : Type} [Fintype I] [DecidableEq I] [Fintype J]
+  [DecidableEq J]
 variable {V : Type} [Fintype V] [DecidableEq V]
 
 /-- Contraction with one tensor. The legs of t are at vertices (the leg l at ρ l), every vertex v is

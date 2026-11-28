@@ -203,7 +203,7 @@ noncomputable def strEquiv (ℓ : ℕ) : Fin (2 ^ ℓ) ≃ (Fin ℓ → Bool) :=
   (Fintype.equivFinOfCardEq (by simp)).symm
 
 /-- The tensor of f_{k,ℓ} on the ends: the product of the wires of dimension 2^ℓ on the pairs. -/
-noncomputable def fklTen (K : Type) [Field K] (k ℓ : ℕ) : Ten K (End k) :=
+noncomputable def fklTen (K : Type) [CommRing K] (k ℓ : ℕ) : Ten K (End k) :=
   Ten.outer fun _ : Pr k => Ten.unit K (Fin 2) (2 ^ ℓ)
 
 /-- The strings at the tables for an entry of the tensor. -/
@@ -237,8 +237,8 @@ def hubOf {I : Type} {k : ℕ} (hub : Finset (Fin k) → Bool → I) (S : Finset
   hub S (decide (endNode a.1 a.2 ∈ S))
 
 /-- The product of the wires from the ends to their hubs for S and a wire of dimension L between the hubs. -/
-noncomputable def hubTen (K : Type) [Field K] {I : Type} [Fintype I] [DecidableEq I] {k : ℕ} (ℓ L : ℕ)
-    (π : End k → I) (hub : Finset (Fin k) → Bool → I) (S : Finset (Fin k)) : Ten K I :=
+noncomputable def hubTen (K : Type) [CommRing K] {I : Type} [Fintype I] [DecidableEq I] {k : ℕ}
+    (ℓ L : ℕ) (π : End k → I) (hub : Finset (Fin k) → Bool → I) (S : Finset (Fin k)) : Ten K I :=
   Ten.prod (fun a => Ten.wire K (2 ^ ℓ) (π a) (hubOf hub S a)) * Ten.wire K L (hub S true) (hub S false)
 
 /-- What the set S costs: ℓ times the wires from the ends to their hubs, and the wire between the hubs. -/
@@ -261,8 +261,8 @@ theorem hubTen_price {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I]
 /-- "By Lemma lem:balanced the tensor of f_{k,ℓ} is a sum of at most 2^k tensors, one for each S, each of which Lemma
 lem:hubs leads through ±o_S with a wire of dimension L between them." (At most 2^k: card_bal_le.) The tensor here is that of the part linear in
 each block of any polynomial with L gates. -/
-theorem prop_flat_lower_sum {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I] {k : ℕ} (hk : 2 ≤ k)
-    {ℓ L : ℕ} {P : MvPolynomial (Fin k × Ix k ℓ) K} (hP : Computes P L) (π : End k → I)
+theorem prop_flat_lower_sum {K : Type} [CommRing K] {I : Type} [Fintype I] [DecidableEq I] {k : ℕ}
+    (hk : 2 ≤ k) {ℓ L : ℕ} {P : MvPolynomial (Fin k × Ix k ℓ) K} (hP : Computes P L) (π : End k → I)
     (hub : Finset (Fin k) → Bool → I) :
     Ten.SumRestr (Ten.push π ((fklTen K k ℓ).withVal fun z => cf univ P (tables z)))
       fun S : bal (univ : Finset (Fin k)) => hubTen K ℓ L π hub S := by

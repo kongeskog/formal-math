@@ -79,78 +79,40 @@ theorem lem_few_approx {K : Type} [Field K] {V : Type} [Fintype V] [DecidableEq 
     (M := univ.sup' univ_nonempty fun j => φ.F (T j)) (fun j => Finset.le_sup' (fun j => φ.F (T j)) (mem_univ j))
   rwa [Fintype.card_fin] at this
 
-/-- "Cut the constants off": finitely many series can be replaced by Laurent polynomials so that the products of
-n of them keep the coefficients of ε^i, i ≤ 0. -/
-theorem exists_cut_off {K : Type} [Field K] {ι V : Type} [Fintype ι] [Fintype V] (c : ι → LaurentSeries K) :
-    ∃ q : ι → LaurentPolynomial K, ∀ (w : V → ι) (i : ℤ), i ≤ 0 →
-      (∏ p, laurentToSeries K (q (w p))).coeff i = (∏ p, c (w p)).coeff i := by
-  classical
-  let Δ : ℤ := ((univ.sup fun a => (c a).order.natAbs : ℕ) : ℤ)
-  have hΔ : 0 ≤ Δ := Int.natCast_nonneg _
-  have hc : ∀ a, ∀ i < -Δ, (c a).coeff i = 0 := fun a i hi => HahnSeries.coeff_eq_zero_of_lt_order (by
-    have : (c a).order.natAbs ≤ univ.sup fun a => (c a).order.natAbs :=
-      Finset.le_sup (f := fun a => (c a).order.natAbs) (mem_univ a)
-    omega)
-  let N : ℤ := (Fintype.card V : ℤ) * Δ + 1
-  choose q hq using fun a => exists_laurentPolynomial_coeff (c a) N
-  have hN : -Δ ≤ N := by
-    have : 0 ≤ (Fintype.card V : ℤ) * Δ := by positivity
-    omega
-  refine ⟨q, fun w i hi => ?_⟩
-  have key : ∀ S : Finset V,
-      (∀ i < -(S.card : ℤ) * Δ, (∏ p ∈ S, c (w p)).coeff i = 0) ∧
-      (∀ i < -(S.card : ℤ) * Δ, (∏ p ∈ S, laurentToSeries K (q (w p))).coeff i = 0) ∧
-      ∀ i < N - (S.card : ℤ) * Δ, (∏ p ∈ S, laurentToSeries K (q (w p)) - ∏ p ∈ S, c (w p)).coeff i = 0 := by
-    intro S
-    induction S using Finset.induction_on with
-    | empty =>
-      simp only [card_empty, Nat.cast_zero, neg_zero, zero_mul, prod_empty, sub_self, HahnSeries.coeff_zero,
-        implies_true, and_true]
-      exact ⟨fun i hi => by simp [HahnSeries.coeff_one, hi.ne], fun i hi => by simp [HahnSeries.coeff_one, hi.ne]⟩
-    | insert a S ha ih =>
-      obtain ⟨hC, hQ, hD⟩ := ih
-      have hqa : ∀ i < -Δ, (laurentToSeries K (q (w a))).coeff i = 0 := fun i hi => by
-        rw [coeff_laurentToSeries, hq (w a) i (by omega)]
-        exact hc _ i hi
-      have hd : ∀ i < N, (laurentToSeries K (q (w a)) - c (w a)).coeff i = 0 := fun i hi => by
-        rw [HahnSeries.coeff_sub, coeff_laurentToSeries, hq (w a) i hi, sub_self]
-      simp only [prod_insert ha, card_insert_of_notMem ha, Nat.cast_add, Nat.cast_one]
-      refine ⟨fun i hi => coeff_mul_eq_zero (hc (w a)) hC (by linarith), fun i hi => coeff_mul_eq_zero hqa hQ (by linarith),
-        fun i hi => ?_⟩
-      rw [show laurentToSeries K (q (w a)) * (∏ p ∈ S, laurentToSeries K (q (w p))) - c (w a) * ∏ p ∈ S, c (w p) =
-        (laurentToSeries K (q (w a)) - c (w a)) * (∏ p ∈ S, laurentToSeries K (q (w p))) +
-          c (w a) * (∏ p ∈ S, laurentToSeries K (q (w p)) - ∏ p ∈ S, c (w p)) by ring, HahnSeries.coeff_add,
-        coeff_mul_eq_zero hd hQ (by linarith), coeff_mul_eq_zero (hc (w a)) hD (by linarith), add_zero]
-  have h := (key univ).2.2 i (by rw [card_univ]; omega)
-  rwa [HahnSeries.coeff_sub, sub_eq_zero] at h
-
-/-- A wire over the Laurent series is the one over k. -/
-theorem wire_series {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I] (n : ℕ) (p q : I)
+/-- A wire over the Laurent polynomials is the one over k. -/
+theorem wire_laurent {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I] (n : ℕ) (p q : I)
     (y : ∀ r, (Ten.wire K n p q).ι r) :
-    (Ten.wire (LaurentSeries K) n p q).val y = HahnSeries.C ((Ten.wire K n p q).val y) := by
+    (Ten.wire (LaurentPolynomial K) n p q).val y =
+      LaurentPolynomial.C ((Ten.wire K n p q).val y) := by
   unfold Ten.wire Ten.push Ten.unit
   dsimp only
   split_ifs <;> simp
 
-/-- The hub tensors over the Laurent series are those over k. -/
-theorem hubTen_series {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I] {k ℓ L : ℕ} (π : End k → I)
-    (hub : Finset (Fin k) → Bool → I) (S : Finset (Fin k)) (y : ∀ p, (hubTen K ℓ L π hub S).ι p) :
-    (hubTen (LaurentSeries K) ℓ L π hub S).val y = HahnSeries.C ((hubTen K ℓ L π hub S).val y) := by
-  show (∏ a, (Ten.wire (LaurentSeries K) (2 ^ ℓ) (π a) (hubOf hub S a)).val fun p => (y p).1 a) *
-      (Ten.wire (LaurentSeries K) L (hub S true) (hub S false)).val (fun p => (y p).2) =
-    HahnSeries.C ((∏ a, (Ten.wire K (2 ^ ℓ) (π a) (hubOf hub S a)).val fun p => (y p).1 a) *
+/-- The hub tensors over the Laurent polynomials are those over k. -/
+theorem hubTen_laurent {K : Type} [Field K] {I : Type} [Fintype I] [DecidableEq I] {k ℓ L : ℕ}
+    (π : End k → I) (hub : Finset (Fin k) → Bool → I) (S : Finset (Fin k))
+    (y : ∀ p, (hubTen K ℓ L π hub S).ι p) :
+    (hubTen (LaurentPolynomial K) ℓ L π hub S).val y =
+      LaurentPolynomial.C ((hubTen K ℓ L π hub S).val y) := by
+  show (∏ a, (Ten.wire (LaurentPolynomial K) (2 ^ ℓ) (π a) (hubOf hub S a)).val
+        fun p => (y p).1 a) *
+      (Ten.wire (LaurentPolynomial K) L (hub S true) (hub S false)).val (fun p => (y p).2) =
+    LaurentPolynomial.C ((∏ a, (Ten.wire K (2 ^ ℓ) (π a) (hubOf hub S a)).val fun p => (y p).1 a) *
       (Ten.wire K L (hub S true) (hub S false)).val fun p => (y p).2)
   rw [map_mul, map_prod]
-  exact congrArg₂ (· * ·) (Finset.prod_congr rfl fun a _ => wire_series (2 ^ ℓ) (π a) (hubOf hub S a) fun p => (y p).1 a)
-    (wire_series L (hub S true) (hub S false) fun p => (y p).2)
+  exact congrArg₂ (· * ·)
+    (Finset.prod_congr rfl fun a _ => wire_laurent (2 ^ ℓ) (π a) (hubOf hub S a) fun p => (y p).1 a)
+    (wire_laurent L (hub S true) (hub S false) fun p => (y p).2)
 
-/-- "So Proposition prop:flat-rate holds for approximating circuits: cut the constants off, and note that Lemma
-lem:balanced holds over every commutative ring." -/
+/-- "So Proposition prop:flat-rate holds for approximating circuits: cut the constants off, and note
+that Lemma lem:balanced holds over every commutative ring." Here the constants are cut off already:
+the circuit is over KK[ε,ε⁻¹], and the hub decomposition is made over that ring. -/
 theorem flat_rate_approximating {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk : 2 ≤ k) {ℓ s : ℕ}
-    (hℓ : 100 * √k ≤ (ℓ : ℝ)) (hcomp : Approximates (fkl K k ℓ) s) :
+    (hℓ : 100 * √k ≤ (ℓ : ℝ)) {Q : MvPolynomial (Fin k × Ix k ℓ) (LaurentPolynomial K)}
+    (hQ : Computes Q s) (hQf : ∀ (d : Fin k × Ix k ℓ →₀ ℕ) (i : ℤ), i ≤ 0 →
+      (coeff d Q).coeff i = if i = 0 then coeff d (fkl K k ℓ) else 0) :
     (ℓ : ℝ) * (k * √k) / 14 ≤ Real.logb 2 s := by
   classical
-  obtain ⟨Q, hQ, hQf⟩ := hcomp
   have hs : 1 ≤ s := by
     obtain ⟨l, -, a, ha, -⟩ := hQ
     omega
@@ -161,46 +123,25 @@ theorem flat_rate_approximating {K : Type} [Field K] (hK : Flat K) {k : ℕ} (hk
   let π : End k → RPt k := Sum.inl
   let T : Fin (Fintype.card (bal (univ : Finset (Fin k)))) → Ten K (RPt k) := fun j =>
     hubTen K ℓ s π hubPt (balEnum k j).1
-  -- the hub decomposition over the Laurent series: the coefficient of an entry is a sum over the
-  -- balanced sets of the hub tensors over k, with functionals in k((ε))
+  -- the hub decomposition over the Laurent polynomials: the coefficient of an entry is a sum over
+  -- the balanced sets of the hub tensors over k, with functionals in k[ε,ε⁻¹]
   obtain ⟨M, hM⟩ := (prop_flat_lower_sum hk hQ π hubPt).reindex (balEnum k)
-  -- and with the functionals cut off
-  obtain ⟨q, hq⟩ := exists_cut_off (V := RPt k)
-    fun e : Σ j, Σ p : RPt k, (Ten.push π (fklTen K k ℓ)).ι p × (T j).ι p => M e.1 e.2.1 e.2.2.1 e.2.2.2
   refine someSetPays_of_few φ hs (lem_few_approx φ _ _ (fklTen_onEnds K k ℓ) T
-    (fun j p a b => q ⟨j, p, a, b⟩) fun x i hi => ?_)
-  -- the cut-off functionals give the same coefficients of ε^i, i ≤ 0
-  have hterm : ∀ (j) (y : ∀ p, (T j).ι p), (laurentToSeries K ((∏ p, q ⟨j, p, x p, y p⟩) *
-      LaurentPolynomial.C ((T j).val y))).coeff i =
-        ((∏ p, M j p (x p) (y p)) * HahnSeries.C ((T j).val y)).coeff i := by
-    intro j y
-    have eC : laurentToSeries K (LaurentPolynomial.C ((T j).val y)) = HahnSeries.C ((T j).val y) := by
-      ext n
-      rw [coeff_laurentToSeries, ← LaurentPolynomial.single_eq_C, AddMonoidAlgebra.coeff_single, HahnSeries.C_apply,
-        HahnSeries.coeff_single, Finsupp.single_apply]
-      simp only [eq_comm]
-      congr
-    rw [map_mul, map_prod, eC, mul_comm _ (HahnSeries.C _), mul_comm _ (HahnSeries.C _),
-      HahnSeries.C_mul_eq_smul, HahnSeries.C_mul_eq_smul, HahnSeries.coeff_smul, HahnSeries.coeff_smul,
-      hq (fun p => ⟨j, p, x p, y p⟩) i hi]
+    (fun j p a b => M j p a b) fun x i hi => ?_)
   have e : (Ten.push π (fklTen K k ℓ)).val x = cf univ (fkl K k ℓ) (tables fun a => x (π a) ⟨a, rfl⟩) :=
     fklTen_val K fun a => x (π a) ⟨a, rfl⟩
-  have hx : (cf univ Q (tables fun a => x (π a) ⟨a, rfl⟩)) =
-      ∑ j, ∑ y : ∀ p, (T j).ι p, (∏ p, M j p (x p) (y p)) * HahnSeries.C ((T j).val y) :=
+  have hx : cf univ Q (tables fun a => x (π a) ⟨a, rfl⟩) =
+      ∑ j, ∑ y : ∀ p, (T j).ι p, (∏ p, M j p (x p) (y p)) * LaurentPolynomial.C ((T j).val y) :=
     (hM x).trans (Finset.sum_congr rfl fun j _ => Fintype.sum_equiv (Equiv.refl _) _ _ fun y =>
-      congrArg₂ (· * ·) rfl (hubTen_series (K := K) π hubPt _ _))
-  rw [e, ← coeff_laurentToSeries]
-  refine Eq.trans ?_ (hQf (mono univ (tables fun a => x (π a) ⟨a, rfl⟩)) i hi)
-  rw [show coeff (mono univ (tables fun a => x (π a) ⟨a, rfl⟩)) Q = cf univ Q (tables fun a => x (π a) ⟨a, rfl⟩) from rfl,
-    hx]
-  simp only [map_sum, HahnSeries.coeff_sum]
-  exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun y _ => hterm j y
+      congrArg₂ (· * ·) rfl (hubTen_laurent (K := K) π hubPt _ _))
+  rw [e, ← hx]
+  exact hQf (mono univ (tables fun a => x (π a) ⟨a, rfl⟩)) i hi
 
 /-- Both cases over KK, for circuits with constants in KK[ε,ε⁻¹]. -/
 theorem approx_rate_closed {K : Type} [Field K] {G : ∀ S, MvPolynomial (Fin S × Fin S) K} {κ : ℕ}
     (hG : GridComplete K G κ) :
     ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, ∀ P : MvPolynomial (Fin m × Fin m) (LaurentPolynomial K), Computes P s →
-      (∀ d, (∀ i : ℤ, i < 0 → (coeff d P).coeff i = 0) ∧ (coeff d P).coeff 0 = coeff d (G m)) →
+      (∀ (d) (i : ℤ), i ≤ 0 → (coeff d P).coeff i = if i = 0 then coeff d (G m) else 0) →
       (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
   obtain ⟨m₀, h⟩ : ∃ m₀ : ℕ, ∀ m ≥ m₀, ∀ s, Approximates (G m) s →
       (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
@@ -218,15 +159,12 @@ theorem approx_rate_closed {K : Type} [Field K] {G : ∀ S, MvPolynomial (Fin S 
     obtain ⟨E, hE, he⟩ := clauses_of_complete hG fklLits (fklLits_ne hk hℓ) fklLits_occ (fklWt K)
       (fun κ => Or.inl ⟨κ.1, rfl⟩) (S := m)
       (le_trans (le_trans (Nat.mul_le_mul_left _ (fklLits_count hk)) (le_of_eq (by ring))) hm)
-    have hap : Approximates (fkl K k ℓ) (5 * s) :=
-      he.trans (lem_fkl_perm_clauseSum K k ℓ) ▸ hs.substitute_affine E hE
-    refine rate_pow hk ?_ (flat_rate_approximating hF hk hℓk hap)
-    obtain ⟨Q, ⟨l, -, a, ha, -⟩, -⟩ := hap
+    obtain ⟨Q, hQ, hQf⟩ := (show Approximates (fkl K k ℓ) (5 * s) from
+      he.trans (lem_fkl_perm_clauseSum K k ℓ) ▸ hs.substitute_affine E hE).exists_laurentPolynomial
+    refine rate_pow hk ?_ (flat_rate_approximating hF hk hℓk hQ hQf)
+    obtain ⟨l, -, a, ha, -⟩ := hQ
     omega
-  refine ⟨m₀, fun m hm s P hP hc => h m hm s (Approximates.of_laurentPolynomial hP fun d i hi => ?_)⟩
-  rcases eq_or_lt_of_le hi with rfl | hlt
-  · rw [if_pos rfl, (hc d).2]
-  · rw [if_neg hlt.ne, (hc d).1 i hlt]
+  exact ⟨m₀, fun m hm s P hP hc => h m hm s (Approximates.of_laurentPolynomial hP hc)⟩
 
 /-- **Paper: Theorem thm:approx.** "The theorem on all fields holds for circuits that approximate HC_m, respectively
 PERM_m. In particular VNP is not contained in the closure of VP over every field." -/
@@ -242,7 +180,8 @@ theorem thm_approx :
     obtain ⟨K, _, _, _⟩ := exists_closed p hp
     obtain ⟨M₁, h1⟩ := approx_rate_closed (gridComplete_hc K)
     obtain ⟨M₂, h2⟩ : ∃ M₂ : ℕ, p ≠ 2 → ∀ m ≥ M₂, ∀ s, ∀ P : MvPolynomial (Fin m × Fin m) (LaurentPolynomial K),
-        Computes P s → (∀ d, (∀ i : ℤ, i < 0 → (coeff d P).coeff i = 0) ∧ (coeff d P).coeff 0 = coeff d (genPerm K m)) →
+        Computes P s → (∀ (d) (i : ℤ), i ≤ 0 →
+          (coeff d P).coeff i = if i = 0 then coeff d (genPerm K m) else 0) →
         (2 : ℝ) ^ (Real.logb 2 m ^ (4 / 3 : ℝ) / 1600 ^ 2) < s := by
       by_cases hne : p = 2
       · exact ⟨0, fun h => absurd hne h⟩

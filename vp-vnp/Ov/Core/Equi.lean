@@ -20,7 +20,8 @@ open Finset
 
 namespace Ten
 
-variable {K : Type} [Field K] {I J : Type} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
+variable {K : Type} [CommRing K] {I J : Type} [Fintype I] [DecidableEq I] [Fintype J]
+  [DecidableEq J]
 
 /-- Every tensor is equivalent to itself. -/
 theorem Equi.refl (t : Ten K I) : Equi t t := ⟨Restr.refl t, Restr.refl t⟩
