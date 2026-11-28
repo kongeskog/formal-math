@@ -67,18 +67,6 @@ theorem card_cutUnits_le {n : NN K U0} {o : M.N → Fin U1} {bd : ℕ}
   refine (Finset.sum_le_sum fun g _ => h g).trans ?_
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
 
-theorem card_cutAt_le {n : NN K U0} {o : M.N → Fin U1} {bd : ℕ} {g : Fin mm}
-    (h : ((P.cur n o E).filter (Nc.Plus.OneIn (G.hold0 M.np) (G.hold1 M.np) (grp n o) g)).card ≤ bd) :
-    (cutAt P n o (grp n o) g).card ≤ bd := by
-  classical
-  refine (Finset.card_le_card fun id hid => ?_).trans h
-  unfold cutAt at hid
-  obtain ⟨-, h1, h2, h3⟩ := Finset.mem_filter.1 hid
-  refine Finset.mem_filter.2 ⟨h1, ?_⟩
-  rcases h3 with h3 | h3
-  · exact Or.inl ⟨h3, fun h4 => h2 (h3.trans h4.symm)⟩
-  · exact Or.inr ⟨fun h4 => h2 (h4.trans h3.symm), h3⟩
-
 open Classical in
 /-- **Paper: Theorem thm:onecut, the program G.** "Every choice in the formula is guessed exactly once"; script
 size and time: G cuts, with numbers. -/
@@ -121,7 +109,7 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
       tab.valid n → (∀ x, P.good n o x) →
       grpT bT bub (Grp.script qn cb P q x ρ n o (grp n o) g C.key C.dkey tg b) ≤ tB) :
     ∃ G : Tree, G.size ≤ (dealC + 3000) * (X * Lc) ^ 4 ∧ CutD θ τ s (κ * tB)
-      (X + 1 + (200 * X ^ 3 * Lc + ιb * ℓ * (4 * c + 2) + bd * (4 * Grp.bval bub))) mm
+      (14800 * (X * Lc) ^ 4 + ιb * ℓ * (4 * c + 2) + bd * (4 * Grp.bval bub)) mm
       (dealB Lc X K mm (Grp.bval bub) (mm * bd) (11 * X ^ 2) s) G := by
   classical
   have : Nonempty (Fin U1) := ⟨⟨0, hU1p⟩⟩
@@ -164,25 +152,21 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
     obtain ⟨h1, h2⟩ := hGR P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key C.dkey tg bT bub b hC.inj hub hP hx hρ'
       hkind
     refine ⟨?_, ?_, h2⟩
-    · have hsz := size_scriptT (qn := qn) (cb := cb) (P := P) (q := q) (x := parts ℓ (wordG b0 b1 z)) (ρ := ρ) (n := n)
-        (o := o) (grp := grp n o) (g := g) (key := C.key) (dkey := C.dkey) (tg := tg) (X := X) (Lc := Lc) (by omega) hLc
-        (by omega) (by omega) hU1X hS hId hR hSl hCn hC.key hC.dkey hqn (fun r => by have := htg r; omega) (hnum n o) hbT hbub b
-      have hparts : (∑ κ ∈ univ.filter (fun κ : Fin K => grp n o (Fin.castAdd A' (Fin.natAdd K κ)) = g),
-          (parts ℓ (wordG b0 b1 z) κ).length) ≤ ιb * ℓ := by
-        refine (Finset.sum_le_card_nsmul _ _ ℓ fun κ _ => length_parts_le _ _ _).trans ?_
-        rw [smul_eq_mul]
-        refine Nat.mul_le_mul_right _ ?_
-        refine le_trans ?_ (hbase n o hn ho g)
-        refine Finset.card_le_card_of_injOn (Fin.natAdd K) ?_ ?_
-        · intro κ hκ
-          simpa using hκ
-        · intro κ _ κ' _ h
-          simpa using h
-      have hcut := card_cutAt_le (hbdle n o hn ho g)
-      have e1 := Nat.mul_le_mul_right (4 * c + 2) hparts
-      have e2 := Nat.mul_le_mul_right (4 * Grp.bval bub) hcut
-      simp only [Tree.size]
-      omega
+    · -- the script is the expansion of its template in a final state
+      obtain ⟨st, hst, -⟩ := sum_allSteps (ub := Grp.bval bub) C tab
+        (ptT cb (parts ℓ (wordG b0 b1 z))) qn i e hU0D hU1D hK
+      rw [← expand_scriptTm (tg := tg) (hst q ρ n o b) hd1 hgt (fun κ => rfl)
+        (fun id hid hne => (hb id).2 (Finset.mem_filter.2 ⟨hid, hne⟩)) g]
+      refine (size_expand_instTm (W := ℓ * (4 * c + 2)) (hst q ρ n o b) hH hd1 hgt (hnum n o)
+        (fun κ => ?_) (fun id hid hne => (hb id).2 (Finset.mem_filter.2 ⟨hid, hne⟩)) g
+        (size_instTm tab hH (hdts _) (fun g => hdts _) hbT hbub hgp g)).trans ?_
+      · rw [ptT, ← List.map_reverse]
+        exact Sz.size_listT_le (by rw [List.length_reverse]; exact length_parts_le _ _ κ)
+          fun a _ => by simpa using size_ofBits (List.ofFn (cb (some a)))
+      · have e1 := Nat.mul_le_mul_right (ℓ * (4 * c + 2)) (hbase n o hn ho g)
+        have e2 := Nat.mul_le_mul_right (4 * Grp.bval bub) (hbdle n o hn ho g)
+        rw [Nat.mul_assoc]
+        omega
     · exact ⟨h1.1, fun r hr => (h1.2 r hr).trans
         (Nat.mul_le_mul_left κ (htB q _ ρ n o b g hx hn ho))⟩
 

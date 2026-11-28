@@ -37,6 +37,14 @@ theorem len_le_size : ∀ t : Tree, t.len ≤ t.size
   | .nil => Nat.zero_le _
   | .cons _ b => by have := len_le_size b; simp only [len, size]; omega
 
+theorem size_listT_append_le (x y : Tree) :
+    (listT (x.toList ++ y.toList)).size ≤ x.size + y.size := by
+  induction x with
+  | nil => simp [toList, listT_toList]
+  | cons a b _ ih =>
+    simp only [toList, List.cons_append, listT, size]
+    omega
+
 /-- Choosing and making the assignments of an option costs no more than the options are large. -/
 theorem sum_opts_le : ∀ t : Tree,
     20 * t.toList.length +
@@ -509,6 +517,42 @@ theorem cost_le {σ : List Bool → Tree} {L : ℕ} :
     have := cost_le b h.2.2
     have := h.1
     simp only [cost, tree, size, Nat.add_mul]
+    omega
+
+/-- By how much the values that the expansion reads are larger than `B`, in all. -/
+def excess (σ : List Bool → Tree) (B : ℕ) : Tm → ℕ
+  | get p => (σ p).size - B
+  | cons a b => a.excess σ B + b.excess σ B
+  | ifeq p t a b => if σ p = t then a.excess σ B else b.excess σ B
+  | app a b => a.excess σ B + b.excess σ B
+  | c _ => 0
+
+/-- The size of an expansion is linear in the size of the template: a value that is read counts
+with `B`, and with what it has more. -/
+theorem size_expand_le (σ : List Bool → Tree) (B : ℕ) :
+    ∀ t : Tm, (t.expand σ).size ≤ t.tree.size * (B + 1) + t.excess σ B
+  | c t => by
+    have := Nat.le_mul_of_pos_right t.size (Nat.le_add_left 1 B)
+    simp only [expand, tree, size, excess, Nat.add_mul]
+    omega
+  | get p => by
+    simp only [expand, tree, size, excess, Nat.add_mul, Nat.one_mul]
+    omega
+  | cons a b => by
+    have := size_expand_le σ B a
+    have := size_expand_le σ B b
+    simp only [expand, tree, size, excess, Nat.add_mul, Nat.one_mul]
+    omega
+  | ifeq p t a b => by
+    have := size_expand_le σ B a
+    have := size_expand_le σ B b
+    simp only [expand, tree, size, excess, Nat.add_mul]
+    split_ifs <;> omega
+  | app a b => by
+    have := size_expand_le σ B a
+    have := size_expand_le σ B b
+    have := size_listT_append_le (a.expand σ) (b.expand σ)
+    simp only [expand, tree, size, excess, Nat.add_mul]
     omega
 
 end Tm
