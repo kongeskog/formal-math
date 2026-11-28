@@ -140,6 +140,7 @@ and with what the text says on the places: γ_0 is at x (at v on the second shee
 G(n²,j) "has distance 0 from its copy on the other sheet". -/
 structure IsFan (K : Type) [Field K] (w : Y → Y → ℝ) (x : Bool → Y) (m z : Y) (D : ℝ) (T n : ℕ)
     (d : FanPts Y → FanPts Y → ℝ) : Prop where
+  n_pos : (0 : ℝ) < n
   price : IsPrice K d
   old : ∀ a b, d (old a) (old b) = w a b
   γ_zero : ∀ b, d (γ b 0) (FanPts.old (x b)) = 0
@@ -188,7 +189,7 @@ theorem thm_cn_fan (hw : IsPrice K w) (x : Bool → Y) (m z : Y) {D : ℝ} (hD :
     intro j hj
     rw [sub_nonneg, div_le_one (by positivity)]
     exact_mod_cast hj
-  refine ⟨w2, hw2, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨w2, hn', hw2, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro a b
     show w2 (Sum.inl (Sum.inl a)) (Sum.inl (Sum.inl b)) = w a b
     rw [e2, e1]
@@ -268,31 +269,31 @@ variable {x : Bool → Y} {m z : Y} {D : ℝ} {T n : ℕ} {d : FanPts Y → FanP
   (F : IsFan K w x m z D T n d)
 include F
 
-theorem D_nonneg (hn : 0 < n) : 0 ≤ D := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
-  have h := (F.price.nonneg _ _).trans (F.γ_step true 0 (by positivity))
+theorem D_nonneg : 0 ≤ D := by
+  have hn' := F.n_pos
+  have h := (F.price.nonneg _ _).trans (F.γ_step true 0 (by exact_mod_cast pow_pos hn' 2))
   have h2 := mul_nonneg h (sq_nonneg (n : ℝ))
   rwa [div_mul_cancel₀ _ (by positivity)] at h2
 
-theorem γ_le (hn : 0 < n) (b : Bool) (i i' : ℕ) (hi : i ≤ n ^ 2) (hi' : i' ≤ n ^ 2) :
+theorem γ_le (b : Bool) (i i' : ℕ) (hi : i ≤ n ^ 2) (hi' : i' ≤ n ^ 2) :
     (n : ℝ) ^ 2 * d (γ b i) (γ b i') ≤ |(i : ℝ) - i'| * D := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn' := F.n_pos
   have h := dist_chain_le F.price (γ b) (F.γ_step b) i i' hi hi'
   refine (mul_le_mul_of_nonneg_left h (by positivity)).trans (le_of_eq ?_)
   field_simp
 
-theorem G_i_le (hn : 0 < n) (b : Bool) (i i' j : ℕ) (hi : i ≤ n ^ 2) (hi' : i' ≤ n ^ 2)
+theorem G_i_le (b : Bool) (i i' j : ℕ) (hi : i ≤ n ^ 2) (hi' : i' ≤ n ^ 2)
     (hj : j ≤ n ^ 2 * T) :
     (n : ℝ) ^ 2 * d (G b i j) (G b i' j) ≤ (1 - j / (n ^ 2 * T)) * (|(i : ℝ) - i'| * D) := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn' := F.n_pos
   have h := dist_chain_le F.price (fun i => G b i j) (fun i hi => F.G_step_i b i j hi hj) i i' hi hi'
   refine (mul_le_mul_of_nonneg_left h (by positivity)).trans (le_of_eq ?_)
   field_simp
 
-theorem G_j_le (hn : 0 < n) (b : Bool) (i j j' : ℕ) (hj : j ≤ n ^ 2 * T)
+theorem G_j_le (b : Bool) (i j j' : ℕ) (hj : j ≤ n ^ 2 * T)
     (hj' : j' ≤ n ^ 2 * T) :
     (n : ℝ) ^ 2 * d (G b i j) (G b i j') ≤ |(j : ℝ) - j'| / T * d (FanPts.old z) (γ b i) := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn' := F.n_pos
   have h := dist_chain_le F.price (G b i) (F.G_step_j b i) j j' hj hj'
   refine (mul_le_mul_of_nonneg_left h (by positivity)).trans (le_of_eq ?_)
   field_simp
@@ -304,18 +305,18 @@ theorem z_γ_zero (b : Bool) : d (FanPts.old z) (γ b 0) = w z (x b) := by
   rw [F.price.symm, dist_congr_of_zero F.price (F.γ_zero b), F.price.symm, F.old]
 
 /-- "As L_i ≤ D + |zm| …" -/
-theorem z_γ_le (hn : 0 < n) (b : Bool) (i : ℕ) (hi : i ≤ n ^ 2) :
+theorem z_γ_le (b : Bool) (i : ℕ) (hi : i ≤ n ^ 2) :
     d (FanPts.old z) (γ b i) ≤ D + w z m := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn' := F.n_pos
   have h1 := F.price.triangle (FanPts.old z) (γ b (n ^ 2)) (γ b i)
   rw [F.z_γ_last] at h1
-  have h3 := F.γ_le hn b (n ^ 2) i le_rfl hi
+  have h3 := F.γ_le b (n ^ 2) i le_rfl hi
   have h4 : |((n ^ 2 : ℕ) : ℝ) - i| ≤ (n : ℝ) ^ 2 := by
     have : (i : ℝ) ≤ (n : ℝ) ^ 2 := by exact_mod_cast hi
     push_cast
     rw [abs_of_nonneg (by linarith)]
     linarith [(Nat.cast_nonneg i : (0 : ℝ) ≤ i)]
-  have h5 := h3.trans (mul_le_mul_of_nonneg_right h4 (F.D_nonneg hn))
+  have h5 := h3.trans (mul_le_mul_of_nonneg_right h4 (F.D_nonneg))
   have h6 := le_of_mul_le_mul_left h5 (by positivity)
   linarith
 
@@ -324,19 +325,19 @@ theorem fanDist_price : IsPrice K (fanDist d T n) :=
   (F.price.comp (fanPt T n)).smul (by positivity)
 
 /-- "… we may take Λ = 2D + |zm|." -/
-theorem lipschitz (hT : 0 < T) (hn : 0 < n) (b : Bool) (P h : ℤ × ℤ) :
+theorem lipschitz (hT : 0 < T) (b : Bool) (P h : ℤ × ℤ) :
     fanDist d T n (b, P) (b, P + h) ≤ (2 * D + w z m) * (|(h.1 : ℝ)| + |(h.2 : ℝ)|) := by
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn' := F.n_pos
   have hT' : (0 : ℝ) < T := by exact_mod_cast hT
   have hT1 : (1 : ℝ) ≤ T := by exact_mod_cast hT
-  have hD0 := F.D_nonneg hn
+  have hD0 := F.D_nonneg
   have h1 := F.price.triangle (fanPt T n (b, P))
     (G b (cl (n ^ 2) (P + h).1) (cl (n ^ 2 * T) (P.1 + P.2 + n))) (fanPt T n (b, P + h))
-  have h2 := F.G_i_le hn b (cl (n ^ 2) P.1) (cl (n ^ 2) (P + h).1) (cl (n ^ 2 * T) (P.1 + P.2 + n))
+  have h2 := F.G_i_le b (cl (n ^ 2) P.1) (cl (n ^ 2) (P + h).1) (cl (n ^ 2 * T) (P.1 + P.2 + n))
     (cl_le _ _) (cl_le _ _) (cl_le _ _)
-  have h3 := F.G_j_le hn b (cl (n ^ 2) (P + h).1) (cl (n ^ 2 * T) (P.1 + P.2 + n))
+  have h3 := F.G_j_le b (cl (n ^ 2) (P + h).1) (cl (n ^ 2 * T) (P.1 + P.2 + n))
     (cl (n ^ 2 * T) ((P + h).1 + (P + h).2 + n)) (cl_le _ _) (cl_le _ _)
-  have h4 := F.z_γ_le hn b (cl (n ^ 2) (P + h).1) (cl_le _ _)
+  have h4 := F.z_γ_le b (cl (n ^ 2) (P + h).1) (cl_le _ _)
   have h5 := cl_sub (n ^ 2) P.1 (P + h).1
   have h6 := cl_sub (n ^ 2 * T) (P.1 + P.2 + n) ((P + h).1 + (P + h).2 + n)
   have h7 : |(P.1 : ℝ) - (P + h).1| = |(h.1 : ℝ)| := by
@@ -387,14 +388,14 @@ theorem fanLen_last (b : Bool) : fanLen d z n b (n ^ 2) = w z m := by
 theorem fanLen_nonneg (b : Bool) (i : ℤ) : 0 ≤ fanLen d z n b i :=
   F.price.nonneg _ _
 
-theorem fanLen_le (hn : 0 < n) (b : Bool) (i : ℤ) : fanLen d z n b i ≤ D + w z m :=
-  F.z_γ_le hn b _ (cl_le _ _)
+theorem fanLen_le (b : Bool) (i : ℤ) : fanLen d z n b i ≤ D + w z m :=
+  F.z_γ_le b _ (cl_le _ _)
 
-theorem fanLen_step (hn : 0 < n) (b : Bool) (i : ℤ) :
+theorem fanLen_step (b : Bool) (i : ℤ) :
     |(n : ℝ) ^ 2 * (fanLen d z n b (i + 1) - fanLen d z n b i)| ≤ D := by
-  have h1 := F.γ_le hn b (cl (n ^ 2) i) (cl (n ^ 2) (i + 1)) (cl_le _ _) (cl_le _ _)
+  have h1 := F.γ_le b (cl (n ^ 2) i) (cl (n ^ 2) (i + 1)) (cl_le _ _) (cl_le _ _)
   have h2 : |((cl (n ^ 2) i : ℕ) : ℝ) - (cl (n ^ 2) (i + 1) : ℕ)| * D ≤ D := by
-    calc _ ≤ 1 * D := mul_le_mul_of_nonneg_right (cl_succ _ i) (F.D_nonneg hn)
+    calc _ ≤ 1 * D := mul_le_mul_of_nonneg_right (cl_succ _ i) (F.D_nonneg)
       _ = D := one_mul D
   have h3 := F.price.triangle (FanPts.old z) (γ b (cl (n ^ 2) i)) (γ b (cl (n ^ 2) (i + 1)))
   have h4 := F.price.triangle (FanPts.old z) (γ b (cl (n ^ 2) (i + 1))) (γ b (cl (n ^ 2) i))
@@ -471,13 +472,13 @@ theorem fanW_price (n : ℕ) : IsPrice K (fanW d T n) :=
 theorem fanWs_lip (hT : 0 < T) :
     Lip (fanWs d T) (2 * D + w z m) :=
   -- "As L_i ≤ D + |zm|, we may take Λ = 2D + |zm|."
-  lem_means_lip (fanW_price hd) fun n => (hd n).lipschitz hT (max_one_pos n)
+  lem_means_lip (fanW_price hd) fun n => (hd n).lipschitz hT
 
 theorem fan_w_nonneg (a b : Y) : 0 ≤ w a b := by
   rw [← (hd 0).old]
   exact (hd 0).price.nonneg _ _
 
-theorem fan_D_nonneg : 0 ≤ D := (hd 0).D_nonneg (max_one_pos 0)
+theorem fan_D_nonneg : 0 ≤ D := (hd 0).D_nonneg
 
 theorem fanP_sub_le (n : ℕ) (b : Bool) (P P' : ℤ × ℤ) :
     (n : ℝ) ^ 2 * (fanP d x T n b P - fanP d x T n b P') ≤ fanWs d T n b P P' := by
@@ -493,14 +494,14 @@ theorem fanL_step (n : ℕ) (b : Bool) (i : ℤ) :
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simpa using fan_D_nonneg hd
   · have : |((max n 1 : ℕ) : ℝ) ^ 2 * (fanL d z n b (i + 1) - fanL d z n b i)| ≤ D :=
-      (hd n).fanLen_step (max_one_pos n) b i
+      (hd n).fanLen_step b i
     rwa [max_eq_left hn] at this
 
 theorem fanL_nonneg (n : ℕ) (b : Bool) (i : ℤ) :
     0 ≤ fanL d z n b i := (hd n).fanLen_nonneg b i
 
 theorem fanL_le (n : ℕ) (b : Bool) (i : ℤ) :
-    fanL d z n b i ≤ D + w z m := (hd n).fanLen_le (max_one_pos n) b i
+    fanL d z n b i ≤ D + w z m := (hd n).fanLen_le b i
 
 theorem fanL_bd : Bd fun n b i _ => fanL d z n b i := by
   refine ⟨D + w z m, fun n b i k => ?_⟩
@@ -612,7 +613,7 @@ theorem thm_cn_ii (hT : 2 ≤ T) :
     rw [h2]
     unfold fanWs fanW
     rw [e, fanDist, fanPt_mk, fanPt_mk, show (i : ℤ) + 1 + (k - 1) + n = i + k + n by ring]
-    have h6 := F.G_i_le (e ▸ max_one_pos n) b (cl (n ^ 2) i) (cl (n ^ 2) (i + 1))
+    have h6 := F.G_i_le b (cl (n ^ 2) i) (cl (n ^ 2) (i + 1))
       (cl (n ^ 2 * T) (i + k + n)) (cl_le _ _) (cl_le _ _) (cl_le _ _)
     rw [cl_window (by positivity) k1] at h6
     refine h6.trans ?_
@@ -670,7 +671,7 @@ theorem thm_cn_iii (hT : 2 ≤ T) :
     simp only [Pi.smul_apply, smul_eq_mul, hθ]
     unfold fanWs fanW fanL
     rw [e]
-    have h6 := F.G_j_le (e ▸ max_one_pos n) b (cl (n ^ 2) i) (cl (n ^ 2 * T) (i + k + n))
+    have h6 := F.G_j_le b (cl (n ^ 2) i) (cl (n ^ 2 * T) (i + k + n))
       (cl (n ^ 2 * T) (i + (k + 1) + n)) (cl_le _ _) (cl_le _ _)
     rw [cl_window (by positivity) (by linarith), cl_window (by positivity) (by linarith)] at h6
     rw [fanDist, fanLen, fanPt_mk, fanPt_mk]
@@ -851,7 +852,7 @@ theorem thm_cn_end (hT : 2 ≤ T)
     1 / T * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2) - 4 * (1 / T : ℝ) ^ 2 * D * (D + w z m) ≤
       D ^ 2 * (-(1 / T) + (1 / T : ℝ) ^ 2) + (1 / T : ℝ) ^ 2 * fanΛ₂ d z := by
   have hT0 : 0 < T := by omega
-  have par := lem_means_norm (fanW_price hd) fun n => (hd n).lipschitz hT0 (max_one_pos n)
+  have par := lem_means_norm (fanW_price hd) fun n => (hd n).lipschitz hT0
   have s1 := thm_cn_i hd hT hxx
   have s2 := thm_cn_ii hd hT
   have s3 := thm_cn_iii hd hT
