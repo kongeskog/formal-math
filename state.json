@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T15:47:15.271645943Z",
+  "updated_at": "2026-11-28T15:48:51.870529593Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 124,
     "rejected": 4,
-    "open": 1,
+    "open": 2,
     "contributors": 2,
-    "ideas_open": 3
+    "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 117,
-      "attempts": 122,
+      "attempts": 123,
       "saved": 164743
     },
     {
@@ -96,11 +96,11 @@
     {
       "number": 223,
       "title": "Idea: restructure(Paper/Lengths): a map into a price space gives the length of the action on L²; no rescaling",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
-      "pr": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-28T18:48:02Z",
+      "pr": 224,
       "result_delta": null,
       "created_at": "2026-11-28T15:46:20Z",
       "url": "https://github.com/kongeskog/formal-math/issues/223",
@@ -1455,6 +1455,93 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Paper/Laws"
+    },
+    {
+      "pr": 224,
+      "title": "restructure(Paper/Lengths): a map into a price space gives the length of the action on L²; no rescaling",
+      "author": "kongeskog",
+      "head_sha": "d406b46dd149f6b6655e3f2b4d6db765e2b0835d",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-28T15:48:06Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "added_lines",
+          "label": "Added lines are clean",
+          "status": "pending"
+        },
+        {
+          "key": "deleted_names",
+          "label": "No deleted name still mentioned",
+          "status": "pending"
+        },
+        {
+          "key": "conduct",
+          "label": "Automation within the stated limits",
+          "status": "pending"
+        },
+        {
+          "key": "comments",
+          "label": "Added text within limits",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        }
+      ],
+      "idea": 223,
+      "url": "https://github.com/kongeskog/formal-math/pull/224",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper/Lengths"
     }
   ],
   "top_files": [
