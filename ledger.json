@@ -18,9 +18,15 @@
     }
   },
   "comments_seen_until": "2026-11-28T03:58:08Z",
-  "dispatched": {},
-  "lines": {},
-  "line_bases": {},
+  "dispatched": {
+    "193@7e37381f50db9b6e7e7be927917ecfdc4ff31adc@533638710a7d68fb4c15184882da5239fee6475c@": "2026-11-28T04:27:02.189221805Z"
+  },
+  "lines": {
+    "193@7e37381f50db9b6e7e7be927917ecfdc4ff31adc": []
+  },
+  "line_bases": {
+    "193@7e37381f50db9b6e7e7be927917ecfdc4ff31adc": "bd3c9059b77d0b54e7c736e4db6a73ddfb664df8"
+  },
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],
@@ -30,13 +36,6 @@
     131
   ],
   "judged": {
-    "192@a9db9bb02282e935cefc901dedf6b276f6b1ef92": {
-      "at": "2026-11-28T04:11:47Z",
-      "names": null,
-      "on": [],
-      "contains": true,
-      "has_merged": null
-    },
     "193@7e37381f50db9b6e7e7be927917ecfdc4ff31adc": {
       "at": "2026-11-28T04:11:49Z",
       "names": null,
@@ -53,7 +52,11 @@
     }
   },
   "told": [],
-  "turn": null,
+  "turn": {
+    "id": "193@7e37381f50db9b6e7e7be927917ecfdc4ff31adc",
+    "tree": "533638710a7d68fb4c15184882da5239fee6475c",
+    "at": "2026-11-28T04:27:02.189221805Z"
+  },
   "turns_voided": {},
   "turns_lost": {}
 }
