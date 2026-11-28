@@ -21,7 +21,15 @@
     109,
     131
   ],
-  "judged": {},
+  "judged": {
+    "198@726d92efeb8f082fb39579046147f8cb35105dc3": {
+      "at": "2026-11-28T06:03:13Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    }
+  },
   "told": [],
   "turn": null,
   "turns_voided": {},
