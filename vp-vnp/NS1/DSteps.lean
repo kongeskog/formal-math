@@ -28,6 +28,87 @@ theorem gets_tset (W : Tree) (p : List Bool) (v : Tree) : gets (tset p v W) = Fu
 theorem gets_assign (W o : Tree) : gets (assignT W o) = assignS (gets W) o :=
   funext ((show RepW W (gets W) from fun _ => rfl).assign o)
 
+theorem size_tget_le : ∀ (p : List Bool) (t : Tree), (tget p t).size ≤ t.size
+  | [], t => size_hd_le t
+  | true :: p, t => (size_tget_le p _).trans ((size_tl_le _).trans (size_tl_le t))
+  | false :: p, t => (size_tget_le p _).trans ((size_hd_le _).trans (size_tl_le t))
+
+theorem len_le_size : ∀ t : Tree, t.len ≤ t.size
+  | .nil => Nat.zero_le _
+  | .cons _ b => by have := len_le_size b; simp only [len, size]; omega
+
+/-- Choosing and making the assignments of an option costs no more than the options are large. -/
+theorem sum_opts_le : ∀ t : Tree,
+    20 * t.toList.length +
+      (t.toList.map fun o => (o.toList.map fun y => 60 * y.hd.len + 80).sum).sum ≤ 100 * t.size
+  | .nil => Nat.zero_le _
+  | .cons o t => by
+    have h : ∀ o : Tree, (o.toList.map fun y => 60 * y.hd.len + 80).sum ≤ 80 * o.size := fun o => by
+      induction o with
+      | nil => exact Nat.zero_le _
+      | cons y o _ ih =>
+        have := (len_le_size y.hd).trans (size_hd_le y)
+        simp only [toList, List.map_cons, List.sum_cons, size]
+        omega
+    have := h o
+    have := sum_opts_le t
+    simp only [toList, List.map_cons, List.sum_cons, List.length_cons, size]
+    omega
+
+/-- Read a value, stopping where the trie ends. The argument is (this program, (path, trie)). -/
+def getT : Fm := .ite (.tl (.tl .id))
+  (.ite (.hd (.tl .id))
+    (.ite (.hd (.hd (.tl .id)))
+      (.run (.hd .id) (.cons (.hd .id) (.cons (.tl (.hd (.tl .id))) (.tl (.tl (.tl (.tl .id)))))))
+      (.run (.hd .id) (.cons (.hd .id) (.cons (.tl (.hd (.tl .id))) (.hd (.tl (.tl (.tl .id))))))))
+    (.hd (.tl (.tl .id))))
+  (.tl (.tl .id))
+
+theorem getT_gives (p t : Tree) :
+    Gives θ getT (.cons getT.code (.cons p t)) (tget p.path t) (30 * t.size) := by
+  induction p generalizing t with
+  | nil =>
+    cases t with
+    | nil => exact ((Gives.id _).tl.tl.ite_false (Gives.id _).tl.tl).mono (by simp [size])
+    | cons v w =>
+      exact ((Gives.id _).tl.tl.ite_true (by simp)
+        ((Gives.id _).tl.hd.ite_false (Gives.id _).tl.tl.hd)).mono (by simp only [size]; omega)
+  | cons a p _ ih =>
+    cases t with
+    | nil =>
+      rw [tget_nil]
+      exact ((Gives.id _).tl.tl.ite_false (Gives.id _).tl.tl).mono (by simp [size])
+    | cons v w =>
+      have h1 := size_hd_le w
+      have h2 := size_tl_le w
+      by_cases ha : a = .nil
+      · subst ha
+        refine Does.mono (Gives.ite_true (Gives.id _).tl.tl (by simp)
+          (Gives.ite_true (Gives.id _).tl.hd (by simp)
+          (Gives.ite_false (Gives.id _).tl.hd.hd (Does.self
+            ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl.tl.hd))
+            (ih _))))) ?_
+        simp only [size, tl_cons]
+        omega
+      · have e : tget (Tree.cons a p).path (.cons v w) = tget p.path w.tl := by
+          simp [path, ha, tget]
+        rw [e]
+        refine Does.mono (Gives.ite_true (Gives.id _).tl.tl (by simp)
+          (Gives.ite_true (Gives.id _).tl.hd (by simp)
+          (Gives.ite_true (Gives.id _).tl.hd.hd (by simpa using ha) (Does.self
+            ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl.tl.tl))
+            (ih _))))) ?_
+        simp only [size, tl_cons]
+        omega
+
+/-- Read a value of a table: `p` gives the path, `t` the table. -/
+def getTF (p t : Fm) : Fm := app getT.code (.cons (.quote getT.code) (.cons p t))
+
+theorem getTF_gives {pf tf : Fm} {x p t : Tree} {cp ct : ℕ} (hp : Gives θ pf x p cp)
+    (ht : Gives θ tf x t ct) :
+    Gives θ (getTF pf tf) x (tget p.path t) (cp + ct + 30 * t.size + 10) :=
+  (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons hp ht)) (getT_gives p t)).mono (by omega)
+
 /-- Steps. -/
 inductive DStep where
   /-- choose an option (a list of assignments) from the list that the table has at the value of `p` -/
@@ -57,11 +138,30 @@ def exec (m : ℕ) : DStep → (List Bool → Tree) → List (List Bool → Tree
 
 /-- A bound for the cost. `mb`: the number of digits of `m`. -/
 def cost (m mb : ℕ) : DStep → (List Bool → Tree) → ℕ
-  | pick p tab, σ => 30 * p.length + 30 * (σ p).len + 20 * (tget (σ p).path tab).toList.length +
-      ((tget (σ p).path tab).toList.map fun o => (o.toList.map fun y => 60 * y.hd.len + 80).sum).sum + 200
-  | op p q dst _, σ => 30 * p.length + 30 * q.length + 60 * dst.length + 30 * (σ p).len + 30 * (σ q).len + 200
+  | pick p tab, _ => 30 * p.length + 130 * tab.size + 200
+  | op p q dst φ, _ => 30 * p.length + 30 * q.length + 60 * dst.length + 60 * φ.size + 200
   | bits p dst, σ => 30 * p.length + 60 * dst.length + (if σ p = .nil then 0 else (m + 1) * (60 * mb + 100)) + 200
   | check p, _ => 30 * p.length + 100
+
+/-- A step that guesses no bits costs no more than it is large, whatever the state. -/
+theorem cost_le {st : DStep} (h : ∀ p dst, st ≠ bits p dst) (m mb : ℕ) (σ : List Bool → Tree) :
+    st.cost m mb σ ≤ 130 * st.tree.size + 200 := by
+  cases st with
+  | bits p dst => exact absurd rfl (h p dst)
+  | pick p tab =>
+    have := len_ofBits p ▸ len_le_size (ofBits p)
+    simp only [cost, tree, size]
+    omega
+  | op p q dst φ =>
+    have := len_ofBits p ▸ len_le_size (ofBits p)
+    have := len_ofBits q ▸ len_le_size (ofBits q)
+    have := len_ofBits dst ▸ len_le_size (ofBits dst)
+    simp only [cost, tree, size]
+    omega
+  | check p =>
+    have := len_ofBits p ▸ len_le_size (ofBits p)
+    simp only [cost, tree, size]
+    omega
 
 end DStep
 
@@ -81,11 +181,11 @@ def dstepF (n : List Bool) : Fm := .ite (.hd (.hd .id))
         (.tl .id)))
     -- op
     (setF (.hd (.tl (.tl (.tl (.hd .id)))))
-      (getF (getF (.hd (.tl (.tl (.hd .id)))) (.tl .id))
-        (getF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.tl (.tl (.hd .id)))))))
+      (getTF (getF (.hd (.tl (.tl (.hd .id)))) (.tl .id))
+        (getTF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.tl (.tl (.hd .id)))))))
       (.tl .id)))
   -- pick
-  (lett (.cons .id (pickF (getF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.hd .id))))))
+  (lett (.cons .id (pickF (getTF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.hd .id))))))
     (assignF (.tl .id) (.tl (.hd .id))))
 
 theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
@@ -172,12 +272,14 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       have := getF_gives (Gives.id (θ := θ) (.cons (DStep.op p q dst φ).tree W)).hd.tl.tl.hd (Gives.id _).tl
       simp only [DStep.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at this ⊢
       exact this
-    have hφ := getF_gives hq (getF_gives hp (Gives.id (θ := θ) (.cons (DStep.op p q dst φ).tree W)).hd.tl.tl.tl.tl)
+    have hφ := getTF_gives hq
+      (getTF_gives hp (Gives.id (θ := θ) (.cons (DStep.op p q dst φ).tree W)).hd.tl.tl.tl.tl)
     have hs := setF_gives (Gives.id (θ := θ) (.cons (DStep.op p q dst φ).tree W)).hd.tl.tl.tl.hd hφ (Gives.id _).tl
     simp only [DStep.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at hs
     refine ⟨[(1, tset dst (tget (tget q W).path (tget (tget p W).path φ)) W)], (Does.ite_true (Gives.id _).hd.hd
       (by simp) (Does.ite_false (Gives.id _).hd.hd.tl hs)).mono ?_, ?_, fun Φ => ?_⟩
-    · simp only [DStep.cost, gets]
+    · have := size_tget_le (tget p W).path φ
+      simp only [DStep.cost]
       omega
     · intro r hr
       rw [List.mem_singleton] at hr
@@ -192,10 +294,11 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       have := getF_gives (Gives.id (θ := θ) (.cons (DStep.pick p tab).tree W)).hd.tl.hd (Gives.id _).tl
       simp only [DStep.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at this ⊢
       exact this
-    have hl := getF_gives hp (Gives.id (θ := θ) (.cons (DStep.pick p tab).tree W)).hd.tl.tl
+    have hl := getTF_gives hp (Gives.id (θ := θ) (.cons (DStep.pick p tab).tree W)).hd.tl.tl
     obtain ⟨opts, ho⟩ := exists_eq (a' := (tget (tget p W).path tab).toList)
-    have hl' : Gives θ (getF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.hd .id)))) (.cons (DStep.pick p tab).tree W)
-        (listT opts) (4 + 2 + 30 * p.length + 20 + 4 + 30 * (tget p W).len + 20) := by
+    have hl' : Gives θ (getTF (getF (.hd (.tl (.hd .id))) (.tl .id)) (.tl (.tl (.hd .id))))
+        (.cons (DStep.pick p tab).tree W) (listT opts)
+        (4 + 2 + 30 * p.length + 20 + 4 + 30 * tab.size + 10) := by
       rw [ho, listT_toList]
       exact hl
     have hpk := pickF_does hl'
@@ -211,7 +314,10 @@ theorem dstepF_does (n : List Bool) (st : DStep) (W : Tree) : ∃ Q,
       omega
     refine ⟨_, (Does.ite_false (Gives.id _).hd.hd (Does.letk (R := fun o => [(1, assignT W o)]) hpk hs)).mono ?_, ?_,
       fun Φ => ?_⟩
-    · simp only [DStep.cost, gets, ← ho]
+    · have h1 := sum_opts_le (tget (tget p W).path tab)
+      have h2 := size_tget_le (tget p W).path tab
+      rw [← ho] at h1
+      simp only [DStep.cost]
       omega
     · intro r hr
       obtain ⟨q1, hq1, r', hr', e, -⟩ := mem_bindW hr
@@ -364,8 +470,46 @@ def cost (σ : List Bool → Tree) : Tm → ℕ
   | c _ => 20
   | get p => 30 * p.length + 50
   | cons a b => a.cost σ + b.cost σ + 100
-  | ifeq p _ a b => 30 * p.length + 60 * (σ p).size + (if σ p = .nil then 0 else 0) + a.cost σ + b.cost σ + 200
+  | ifeq p t a b => 30 * p.length + 60 * t.size + a.cost σ + b.cost σ + 200
   | app a b => a.cost σ + b.cost σ + 62 * (a.expand σ).toList.length + 250
+
+/-- Every list that the template appends another one to has at most `L` members. -/
+def Ok (σ : List Bool → Tree) (L : ℕ) : Tm → Prop
+  | cons a b => a.Ok σ L ∧ b.Ok σ L
+  | ifeq _ _ a b => a.Ok σ L ∧ b.Ok σ L
+  | app a b => (a.expand σ).toList.length ≤ L ∧ a.Ok σ L ∧ b.Ok σ L
+  | _ => True
+
+/-- The cost of a template is linear in its size. -/
+theorem cost_le {σ : List Bool → Tree} {L : ℕ} :
+    ∀ t : Tm, t.Ok σ L → t.cost σ ≤ t.tree.size * (62 * L + 250)
+  | c t, _ => by
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
+  | get p, _ => by
+    have := len_ofBits p ▸ len_le_size (ofBits p)
+    have := Nat.mul_le_mul_left (ofBits p).size (Nat.le_add_left 250 (62 * L))
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
+  | cons a b, h => by
+    have := cost_le a h.1
+    have := cost_le b h.2
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
+  | ifeq p t a b, h => by
+    have := len_ofBits p ▸ len_le_size (ofBits p)
+    have := Nat.mul_le_mul_left (ofBits p).size (Nat.le_add_left 250 (62 * L))
+    have := Nat.mul_le_mul_left t.size (Nat.le_add_left 250 (62 * L))
+    have := cost_le a h.1
+    have := cost_le b h.2
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
+  | app a b, h => by
+    have := cost_le a h.2.1
+    have := cost_le b h.2.2
+    have := h.1
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
 
 end Tm
 
@@ -381,7 +525,8 @@ def tmB : Fm := .ite (.hd (.hd (.tl .id)))
     (.ite (.tl (.tl (.hd (.hd (.tl .id)))))
       (.ite (.tl (.tl (.tl (.hd (.hd (.tl .id))))))
         (appF (tmRec (.hd (.tl (.hd (.tl .id))))) (tmRec (.tl (.tl (.hd (.tl .id))))))
-        (.ite (eqF (getF (.hd (.tl (.hd (.tl .id)))) (.tl (.tl .id))) (.hd (.tl (.tl (.hd (.tl .id))))))
+        (.ite (eqF (.hd (.tl (.tl (.hd (.tl .id)))))
+            (getF (.hd (.tl (.hd (.tl .id)))) (.tl (.tl .id))))
           (tmRec (.hd (.tl (.tl (.tl (.hd (.tl .id))))))) (tmRec (.tl (.tl (.tl (.tl (.hd (.tl .id)))))))))
       (.cons (tmRec (.hd (.tl (.hd (.tl .id))))) (tmRec (.tl (.tl (.hd (.tl .id)))))))
     (getF (.tl (.hd (.tl .id))) (.tl (.tl .id))))
@@ -416,27 +561,29 @@ theorem tmB_gives (t : Tm) (W : Tree) :
     have hb := tmRec_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.tl.tl.tl ihb
     have hg := getF_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.hd (Gives.id _).tl.tl
     simp only [Tm.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at hg
-    have he := eqF_gives hg (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.tl.hd
+    have he := eqF_gives
+      (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.tl.hd hg
+    rw [show (Tree.cons tmB.code (.cons (Tm.ifeq p t a b).tree W)).tl.hd.tl.tl.hd = t from
+      rfl] at he
     have e0 : (Tm.ifeq p t a b).expand (gets W) = if tget p W = t then a.expand (gets W) else b.expand (gets W) := rfl
-    have hc : (Tm.ifeq p t a b).cost (gets W) = 30 * p.length + 60 * (tget p W).size + (if gets W p = .nil then 0 else 0) +
-      a.cost (gets W) + b.cost (gets W) + 200 := rfl
-    have hc0 : (if gets W p = .nil then 0 else 0) = 0 := by split_ifs <;> rfl
+    have hc : (Tm.ifeq p t a b).cost (gets W) =
+        30 * p.length + 60 * t.size + a.cost (gets W) + b.cost (gets W) + 200 := rfl
     rw [e0]
     by_cases h : tget p W = t
     · rw [if_pos h]
-      have hb' : bit (decide (tget p W = t)) ≠ .nil := by simp [h, bit, one]
+      have hb' : bit (decide (t = tget p W)) ≠ .nil := by simp [h, bit, one]
       refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
         (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp)
         ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_false (Gives.ite_true he hb' ha))))).mono ?_
-      rw [hc, hc0]
+      rw [hc]
       omega
     · rw [if_neg h]
-      have hb' : bit (decide (tget p W = t)) = .nil := by simp [h, bit]
-      rw [show (Tree.cons tmB.code (.cons (Tm.ifeq p t a b).tree W)).tl.hd.tl.tl.hd = t from rfl, hb'] at he
+      have hb' : bit (decide (t = tget p W)) = .nil := by simp [Ne.symm h, bit]
+      rw [hb'] at he
       refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
         (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp)
         ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_false (Gives.ite_false he hb))))).mono ?_
-      rw [hc, hc0]
+      rw [hc]
       omega
   | app a b iha ihb =>
     have ha := tmRec_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.app a b).tree W))).tl.hd.tl.hd iha
