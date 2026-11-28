@@ -56,7 +56,6 @@ omit hL in
 theorem host_stage (hS : SY inp Y p c H) (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H) :
     ∃ H', SY inp Y p (c + 1) H' ∧ H ⊆ H' ∧ HostOk L H' := by
   classical
-  have hY := hA.pos
   have hc : Fintype.card (Σ j : Fin J, T.X j × T.X (j + 1)) ≤ Y ^ 2 := by
     rw [pow_two]
     refine le_trans (Fintype.card_le_of_injective (β := Nd T × Nd T)
@@ -76,7 +75,7 @@ theorem host_stage (hS : SY inp Y p c H) (hi : ∀ j i, ind (fun x => IsMin (L x
     (fun q => ind fun x => hostj (lev (L x)) q.2.1 = q.2.2) (a := 2) (e := 2) hc (fun q => by
       have h1 : PY Dd H Y 2 fun x => ∃ i ∈ univ.filter
           (fun i => T.host i (T.vx i q.2.1) = q.2.2), IsMin (L x) q.1.castSucc i :=
-        PY.exists_mem hA _ ((card_filter_le _ _).trans (by simpa using hB.h)) fun i _ => PY.base (hi _ _) hY
+        PY.exists_mem hA _ ((card_filter_le _ _).trans (by simpa using hB.h)) fun i _ => PY.base (hi _ _)
       refine h1.congr fun x => ?_
       unfold hostj
       constructor
@@ -108,7 +107,7 @@ theorem fb_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) :
         refine Finset.sum_congr rfl fun e _ => ?_
         rw [dif_pos q.1.2]
       refine CY.congr ?_ fun x => (e x).symm
-      refine CY.sum hA _ ((card_filter_le _ _).trans (hB.ed q.1)) (fun e _ => CY.base (hm _) hY) fun x => ?_
+      refine CY.sum hA _ ((card_filter_le _ _).trans (hB.ed q.1)) (fun e _ => CY.base (hm _)) fun x => ?_
       rw [← e]
       refine hA.lt_of_le3 ((fb_leS hA hB hL x (Nat.le_of_lt_succ q.1.2) q.2).trans ?_)
       have : Y ^ 2 ≤ Y ^ 3 := Nat.pow_le_pow_right hY (by omega)

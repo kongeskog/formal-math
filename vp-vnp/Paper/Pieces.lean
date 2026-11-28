@@ -462,16 +462,16 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
         unfold pieceFin
         split_ifs with h <;> simp [h]
       refine CY.congr ?_ fun x => (e x).symm
-      exact CY.op1 hA (fun a => if a < pieceNum TT k then a else 0) (CY.base (f1 p) hA.pos) fun x => by
+      exact CY.op1 hA (fun a => if a < pieceNum TT k then a else 0) (CY.base (f1 p)) fun x => by
         refine lt_of_eq_of_lt (e x).symm ?_
         exact hA.lt_of_le ((pieceFin TT k x.1 x.2 p).2.le.trans hnum)) (by omega)
   obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (fun id => ind fun x : Dl.NN K N × (TT.sys.N → Fin TT.U1) =>
       id ∈ TT.plan.cur x.1 x.2 TT.E ∧
         pieceFin TT k x.1 x.2 (hold0 TT.sys.np id) ≠ pieceFin TT k x.1 x.2 (hold1 TT.sys.np id)) (a := 2) (e := 1)
     (by rw [pow_one]; exact d6.trans hMY) (fun id => by
-      refine (PY.congr (PY.and hA ((PY.base (u2 (u1 (Or.inl (p2 id)))) hA.pos).mono hA.pos (show 0 ≤ 1 by omega))
-        (PY.rel hA (fun a c => a ≠ c) (CY.base (f2 (hold0 TT.sys.np id)) hA.pos)
-          (CY.base (f2 (hold1 TT.sys.np id)) hA.pos))) fun x => ?_).toCY
+      refine (PY.congr (PY.and hA (PY.base (u2 (u1 (Or.inl (p2 id)))))
+        (PY.rel hA (fun a c => a ≠ c) (CY.base (f2 (hold0 TT.sys.np id)))
+          (CY.base (f2 (hold1 TT.sys.np id))))) fun x => ?_).toCY
       exact and_congr_right fun _ => not_congr Fin.val_inj) (by omega)
   have hin' : ∀ i, (fun x => (inp i x : ℕ)) ∈ H3 := fun i => u3 (u2 (u1 (Or.inr ⟨i, rfl⟩)))
   obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (fun p : Fin (K + K) => ind fun x : Dl.NN K N × (TT.sys.N → Fin TT.U1) =>
@@ -484,8 +484,8 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
       have h1 : CY (Y ^ 4) H3 Y 3 fun x : Dl.NN K N × (TT.sys.N → Fin TT.U1) =>
           ∑ c ∈ univ, ((x.1 p c).val + (x.1 c p).val) := by
         refine CY.sum hA univ (by simpa using hKY) (fun c _ => CY.op hA (fun a b => a + b)
-          ((CY.base (hin' (.inl (p, c))) hA.pos).congr fun x => i1 p c x)
-          ((CY.base (hin' (.inl (c, p))) hA.pos).congr fun x => i1 c p x)
+          ((CY.base (hin' (.inl (p, c)))).congr fun x => i1 p c x)
+          ((CY.base (hin' (.inl (c, p)))).congr fun x => i1 c p x)
           fun x => hA.lt_of_le3 ((hb x c).trans ?_)) fun x => hA.lt_of_le3 ?_
         · exact Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) _)
         · calc ∑ c ∈ univ, ((x.1 p c).val + (x.1 c p).val) ≤ ∑ _c : Fin (K + K), 2 * Y :=
@@ -497,7 +497,7 @@ theorem prop_pieces_program (k : ℕ) {Y : ℕ} (hY : 16 ≤ Y) (hMY : (M * N) ^
       exact (PY.rel1 hA (fun a => a ≤ N) h1).toCY) (by omega)
   obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (fun _ : Unit => ind fun x : Dl.NN K N × (TT.sys.N → Fin TT.U1) =>
       ∀ p, ∑ c, ((x.1 p c).val + (x.1 c p).val) ≤ N) (a := 2) (e := 1) (by rw [Fintype.card_unit, pow_one]; omega)
-    (fun _ => (PY.forall_univ hA (by simpa using hKY) fun p => PY.base (f4 p) hA.pos).toCY) (by omega)
+    (fun _ => (PY.forall_univ hA (by simpa using hKY) fun p => PY.base (f4 p)).toCY) (by omega)
   have hsteps : p₀ + (0 + 2 * TT.depth + 9 + 1 + 1 + 1 + 1) * Y ^ 12 ≤ Y ^ 15 := by
     have h1 : p₀ ≤ 2 * Y := by
       rw [← hp₀, Fintype.card_sum, Fintype.card_prod, Fintype.card_fin]

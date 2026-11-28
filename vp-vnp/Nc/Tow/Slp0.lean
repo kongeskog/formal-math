@@ -84,7 +84,7 @@ end Alph
 
 namespace CY
 
-theorem base {f : Inp → ℕ} (hf : f ∈ H) (_hY : 0 < Y) : CY D H Y 0 f :=
+theorem base {f : Inp → ℕ} {a : ℕ} (hf : f ∈ H) : CY D H Y a f :=
   Cost.mono (Cost.base hf) (Nat.zero_le _)
 
 theorem const (c : ℕ) (hc : c < D) : CY D H Y 0 fun _ => c := by
@@ -140,7 +140,7 @@ end CY
 
 namespace PY
 
-theorem base {P : Inp → Prop} (hP : ind P ∈ H) (hY : 0 < Y) : PY D H Y 0 P := CY.base hP hY
+theorem base {P : Inp → Prop} {a : ℕ} (hP : ind P ∈ H) : PY D H Y a P := CY.base hP
 
 section
 

@@ -117,15 +117,13 @@ include hA hB hB2
 
 theorem py_al (ha : After (nX nI) (oX oI) lhat H) (u : Un R FL Pl U0 U1) :
     PY Dd H Y 2 fun x => AlU R FL Pl lhat (nI x) (oI x) u := by
-  have hY := hA.pos
   rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
-  · exact PY.and hA ((PY.base ha.valid hY).mono hY (Nat.zero_le 1))
-      (PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c) hY))
-  · exact (PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.alv (eN R FL Pl ν)) hY)).mono hY (by omega)
+  · exact PY.and hA (PY.base ha.valid)
+      (PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c)))
+  · exact PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.alv (eN R FL Pl ν)))
 
 theorem cy_rk (hal : ∀ u, ind (fun x => AlU R FL Pl lhat (nI x) (oI x) u) ∈ H) (u : Un R FL Pl U0 U1) :
     CY Dd H Y 2 fun x => rkU R FL Pl lhat (nI x) (oI x) u := by
-  have hY := hA.pos
   have e : ∀ x, rkU R FL Pl lhat (nI x) (oI x) u =
       ∑ v ∈ univ.filter (fun v : Un R FL Pl U0 U1 => tgU R FL Pl v = tgU R FL Pl u ∧ ix R FL Pl v < ix R FL Pl u),
         ind (fun x => AlU R FL Pl lhat (nI x) (oI x) v) x := by
@@ -138,7 +136,7 @@ theorem cy_rk (hal : ∀ u, ind (fun x => AlU R FL Pl lhat (nI x) (oI x) u) ∈ 
     · rw [ind_false (P := fun x => AlU R FL Pl lhat (nI x) (oI x) v) hv,
         ind_false (P := fun _ : Unit => AlU R FL Pl lhat (nI x) (oI x) v) hv]
   refine CY.congr ?_ fun x => (e x).symm
-  refine CY.sum hA _ ((card_filter_le _ _).trans hB2.un) (fun v _ => CY.base (hal v) hY) fun x => hA.lt_of_le ?_
+  refine CY.sum hA _ ((card_filter_le _ _).trans hB2.un) (fun v _ => CY.base (hal v)) fun x => hA.lt_of_le ?_
   refine (Finset.sum_le_card_nsmul _ _ 1 fun v _ => ind_le _ _).trans ?_
   rw [smul_eq_mul, mul_one]
   exact (card_filter_le _ _).trans hB2.un
@@ -150,17 +148,17 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
   have hY := hA.pos
   rcases z with ⟨y | l, e⟩
   · have h1 : PY Dd H Y 0 fun x => ActR (load R ch FL lhat (nX nI x) (oX oI x)) y.1 := py_actR hA hB ha.isMin y.1
-    have h2 := PY.and hA (h1.mono hY (Nat.zero_le 1)) (PY.and hA (PY.base (hal u) hY)
+    have h2 := PY.and hA (h1.mono hY (Nat.zero_le 1)) (PY.and hA (PY.base (hal u))
       (PY.const hA (tgU R FL Pl u = inpR T y.1)))
     exact (h2.congr fun x => (consM_inl y e u).symm).mono hY (by omega)
-  · have h1 : PY Dd H Y 0 fun x => Pick FL (load R ch FL lhat (nX nI x) (oX oI x)) l := PY.base (ha.pick l) hY
+  · have h1 : PY Dd H Y 0 fun x => Pick FL (load R ch FL lhat (nX nI x) (oX oI x)) l := PY.base (ha.pick l)
     have h3 : PY Dd H Y 1 fun x => su FL l.2.2.2 e * Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inr l) ≤
         rkU R FL Pl lhat (nI x) (oI x) u :=
-      PY.rel hA (fun s t => su FL l.2.2.2 e * s ≤ t) (CY.base (ha.num (.inr l)) hY) (CY.base (hrk u) hY)
+      PY.rel hA (fun s t => su FL l.2.2.2 e * s ≤ t) (CY.base (ha.num (.inr l))) (CY.base (hrk u))
     have h4 : PY Dd H Y 1 fun x => rkU R FL Pl lhat (nI x) (oI x) u <
         (su FL l.2.2.2 e + 1) * Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inr l) :=
-      PY.rel hA (fun s t => t < (su FL l.2.2.2 e + 1) * s) (CY.base (ha.num (.inr l)) hY) (CY.base (hrk u) hY)
-    have h5 := PY.and hA (h1.mono hY (Nat.zero_le 4)) (PY.and hA ((PY.base (hal u) hY).mono hY (Nat.zero_le 3))
+      PY.rel hA (fun s t => t < (su FL l.2.2.2 e + 1) * s) (CY.base (ha.num (.inr l))) (CY.base (hrk u))
+    have h5 := PY.and hA (h1.mono hY (Nat.zero_le 4)) (PY.and hA (PY.base (hal u))
       (PY.and hA ((PY.const hA (tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e))).mono hY (Nat.zero_le 2))
         (PY.and hA h3 h4)))
     exact h5.congr fun x => (consM_inr l e u).symm
@@ -171,15 +169,15 @@ theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
   have hY := hA.pos
   have h1 : PY Dd H Y 1 fun x => SeenU (nI x) (oI x) u := by
     rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
-    · exact PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c) hY)
-    · refine (PY.rel1 hA (fun s => k.1 ≤ s) (CY.base (ha.o (eN R FL Pl ν)) hY)).congr fun x => ?_
+    · exact PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c))
+    · refine (PY.rel1 hA (fun s => k.1 ≤ s) (CY.base (ha.o (eN R FL Pl ν)))).congr fun x => ?_
       have : oX oI x (eN R FL Pl ν) = (oI x ν).1 := by
         unfold oX oo
         rw [Equiv.symm_apply_apply]
       rw [this]
       exact Iff.rfl
   have h2 : PY Dd H Y 2 fun x => ∃ z, u ∈ consM R FL Pl lhat (nI x) (oI x) z :=
-    PY.exists_univ hA hB2.zm fun z => PY.base (hco z u) hY
+    PY.exists_univ hA hB2.zm fun z => PY.base (hco z u)
   exact (PY.and hA (h1.mono hY (by omega)) (PY.not hA h2)).congr fun x => (mem_cur u).symm
 
 theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv T R ch FL) :
@@ -193,19 +191,18 @@ theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv T R ch FL) :
       exact eq_of_heq (Sigma.mk.inj he).2
     have h1 : PY Dd H Y 3 fun x => ∀ ν : (kindM R ch FL (.inl y)).Cn, oX oI x ⟨.inl y, ν⟩ =
         Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inl y) :=
-      PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s = t) (CY.base (ha.o _) hY) (CY.base (ha.num _) hY)
+      PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s = t) (CY.base (ha.o _)) (CY.base (ha.num _))
     exact h1.mono hY (by omega)
   · have hc : Fintype.card (kindM R ch FL (.inr l)).Cn ≤ Y := card_cn hB l
     have h1 : PY Dd H Y 1 fun x => GoodL R ch FL (oX oI x) l (Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inr l)) :=
-      PY.rel hA (fun q t => b * q ≤ FL.G₁ * t ^ 2) (CY.base (ha.q l) hY) (CY.base (ha.num (.inr l)) hY)
+      PY.rel hA (fun q t => b * q ≤ FL.G₁ * t ^ 2) (CY.base (ha.q l)) (CY.base (ha.num (.inr l)))
     have h2 : PY Dd H Y 3 fun x => ∀ ν : (kindM R ch FL (.inr l)).Cn,
         Tow.num R ch FL lhat (nX nI x) (oX oI x) (.inr l) ≤ oX oI x ⟨.inr l, ν⟩ :=
-      PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s ≤ t) (CY.base (ha.num _) hY) (CY.base (ha.o _) hY)
+      PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s ≤ t) (CY.base (ha.num _)) (CY.base (ha.o _))
     exact PY.and hA (h1.mono hY (by omega)) h2
 
 theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
     ∃ H', SY inp Y p (c + 9) H' ∧ H ⊆ H' ∧ Units nI oI lhat TM H' := by
-  have hY := hA.pos
   have hun : Fintype.card (Un R FL Pl U0 U1) ≤ Y ^ 1 := by simpa using hB2.un
   have hzt : Fintype.card (ZM R FL (ch := ch) × Fin TM) ≤ Y ^ 2 := by
     rw [Fintype.card_prod, Fintype.card_fin, pow_two]
@@ -246,19 +243,19 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
         ext u
         simp
       refine CY.congr ?_ fun x => (e x).symm
-      refine CY.sum hA univ hB2.un (fun u _ => CY.base (c3 z u) hY) fun x => hA.lt_of_le ?_
+      refine CY.sum hA univ hB2.un (fun u _ => CY.base (c3 z u)) fun x => hA.lt_of_le ?_
       refine (Finset.sum_le_card_nsmul _ _ 1 fun v _ => ind_le _ _).trans ?_
       rw [smul_eq_mul, mul_one]
       exact hB2.un) (by omega)
   have a4 := a3.weaken u4
   obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv T R ch FL × Fin TM)
     (fun q => ind fun x => q.2.1 < Tow.num R ch FL lhat (nX nI x) (oX oI x) q.1) (a := 1) (e := 2) hmt
-    (fun q => PY.rel1 hA (fun s => q.2.1 < s) (CY.base (a4.num q.1) hY)) (by omega)
+    (fun q => PY.rel1 hA (fun s => q.2.1 < s) (CY.base (a4.num q.1))) (by omega)
   obtain ⟨H6, s6, u6, f6⟩ := s5.add hA (κ := ZM R FL × Fin TM)
     (fun q => ind fun x => (consM R FL Pl lhat (nI x) (oI x) q.1).card ≤ q.2.1 ∧
       q.2.1 < Tow.num R ch FL lhat (nX nI x) (oX oI x) q.1.1) (a := 2) (e := 2) hzt
-    (fun q => PY.and hA (PY.rel1 hA (fun s => s ≤ q.2.1) (CY.base (u5 (f4 q.1)) hY))
-      (PY.rel1 hA (fun s => q.2.1 < s) (CY.base (u5 (a4.num q.1.1)) hY))) (by omega)
+    (fun q => PY.and hA (PY.rel1 hA (fun s => s ≤ q.2.1) (CY.base (u5 (f4 q.1))))
+      (PY.rel1 hA (fun s => q.2.1 < s) (CY.base (u5 (a4.num q.1.1))))) (by omega)
   have c6 : ∀ z u, ind (fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) ∈ H6 := fun z u => u6 (u5 (u4 (c3 z u)))
   have a6 := a4.weaken (u5.trans u6)
   obtain ⟨H7, s7, u7, f7⟩ := s6.add hA (κ := Un R FL Pl U0 U1)
@@ -270,7 +267,7 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
     (fun mv => py_good hA hB hB2 a7 mv) (by omega)
   obtain ⟨H9, s9, u9, f9⟩ := s8.add hA (κ := Unit)
     (fun _ => ind fun x => ∀ mv, GoodMv R ch FL lhat (nX nI x) (oX oI x) mv) (a := 2) (e := 0) (by simp)
-    (fun _ => PY.forall_univ hA hB.mv fun mv => PY.base (f8 mv) hY) (by omega)
+    (fun _ => PY.forall_univ hA hB.mv fun mv => PY.base (f8 mv)) (by omega)
   have v79 := u8.trans u9
   refine ⟨H9, s9, ?_, ⟨fun z u => v79 (u7 (c6 z u)), fun mv => v79 (a7.num mv), fun mv τ => v79 (u7 (u6 (f5 (mv, τ)))),
     fun z τ => v79 (u7 (f6 (z, τ))), fun u => v79 (f7 u), fun mv => u9 (f8 mv), f9 (), v79 a7.valid⟩⟩
