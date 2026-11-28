@@ -21,13 +21,13 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 /-- Relays that are targets exist. -/
-theorem nxt_ok_R {x y : RM T m AA} (hx : okR T R ch x) {ν : Bool} (he : tgR T R ch x ν = .nxt y) :
-    okR T R ch y ∧ inpR T y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
-  have hE : ∀ e : Option (T.Ed 0), (edgeO T e : Tg T m AA) ≠ .nxt y := by
+theorem nxt_ok_R {x y : RM T m AA} (hx : okR R ch x) {ν : Bool} (he : tgR R ch x ν = .nxt y) :
+    okR R ch y ∧ inpR y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
+  have hE : ∀ e : Option (T.Ed 0), (edgeO e : Tg T m AA) ≠ .nxt y := by
     intro e he
     cases e <;> simp [edgeO] at he
-  have mid : ∀ (j : Fin J) (e : T.Ed j) (s : Fin 4), s ≠ 0 → okR T R ch (.mid j e s) →
-      okR T R ch (.mid j e s) ∧ inpR T (.mid j e s : RM T m AA) = .nxt (.mid j e s) ∧
+  have mid : ∀ (j : Fin J) (e : T.Ed j) (s : Fin 4), s ≠ 0 → okR R ch (.mid j e s) →
+      okR R ch (.mid j e s) ∧ inpR (.mid j e s : RM T m AA) = .nxt (.mid j e s) ∧
         ∀ L : Tg T m AA → ℕ, ActR L (.mid j e s) := by
     intro j e s hs hok
     refine ⟨hok, ?_, fun L h0 => absurd h0 hs⟩
@@ -65,9 +65,9 @@ theorem nxt_ok_R {x y : RM T m AA} (hx : okR T R ch x) {ν : Bool} (he : tgR T R
       · simp [tgR] at he
   · simp [tgR] at he
 
-theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB T R ch a c k = .nxt y) :
-    okR T R ch y ∧ inpR T y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
-  have hE : ∀ e : Option (T.Ed 0), (edgeO T e : Tg T m AA) ≠ .nxt y := by
+theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB R ch a c k = .nxt y) :
+    okR R ch y ∧ inpR y = .nxt y ∧ ∀ L : Tg T m AA → ℕ, ActR L y := by
+  have hE : ∀ e : Option (T.Ed 0), (edgeO e : Tg T m AA) ≠ .nxt y := by
     intro e he
     cases e <;> simp [edgeO] at he
   unfold tgB at he
@@ -75,7 +75,7 @@ theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB T R ch a c k
   · rw [if_pos hac] at he
     cases he
   · rw [if_neg hac] at he
-    by_cases hs : 0 < 2 * m ∧ 1 < R.pl (ch a) (ch c) (gam T ch a k)
+    by_cases hs : 0 < 2 * m ∧ 1 < R.pl (ch a) (ch c) (gam ch a k)
     · rw [dif_pos hs] at he
       have he := Tg.nxt.inj he
       subst he
@@ -85,7 +85,7 @@ theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB T R ch a c k
 
 /-- End segments join different chambers. -/
 theorem seg_nondiag {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
-    {ν : NM R FL (ch := ch)} (hν : tgM R ch FL ν.1 ν.2 = .seg j i ω q) : ¬ q.IsDiag := by
+    {ν : NM R ch FL} (hν : tgM ν.1 ν.2 = .seg j i ω q) : ¬ q.IsDiag := by
   have key : ∀ c : T.X j, T.host i (T.vx i c) ≠ T.π c → ¬ (s(T.co i (T.host i (T.vx i c)), T.co i c) : Sym2 T.Fl).IsDiag := by
     intro c hne hd
     rw [Sym2.mk_isDiag_iff] at hd
@@ -111,15 +111,15 @@ section Plan
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 /-- Alive units with a target are given. -/
-theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
-    (hd : tgU R FL Pl u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
+theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
+    (hd : tgU u ≠ .done) : ∃ z : ZM R ch FL, u ∈ consM lhat n o z := by
   classical
-  set L := load R ch FL lhat (nn n) (oo R FL Pl o) with hL
-  have one : ∀ x : RM T m AA, okR T R ch x → ActR L x → tgU R FL Pl u = inpR T x →
-      ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
+  set L := load lhat (nn n) (oo o) with hL
+  have one : ∀ x : RM T m AA, okR R ch x → ActR L x → tgU u = inpR x →
+      ∃ z : ZM R ch FL, u ∈ consM lhat n o z := by
     intro x hx ha ht
     exact ⟨⟨.inl ⟨x, hx⟩, ()⟩, (consM_inl _ _ u).2 ⟨ha, hu, ht⟩⟩
-  rcases hτ : tgU R FL Pl u with _ | ⟨j, e⟩ | x | ⟨j, i, ω, q⟩
+  rcases hτ : tgU u with _ | ⟨j, e⟩ | x | ⟨j, i, ω, q⟩
   · exact absurd hτ hd
   · revert e
     refine Fin.lastCases ?_ (fun j => ?_) j
@@ -132,13 +132,13 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
         · rw [ht]; exact hi
         · rw [hτ, inpR_mid, if_pos rfl]
       · exact one (.inn j i e) ht hi hτ
-  · have h1 : okR T R ch x ∧ inpR T x = .nxt x ∧ ∀ L : Tg T m AA → ℕ, ActR L x := by
+  · have h1 : okR R ch x ∧ inpR x = .nxt x ∧ ∀ L : Tg T m AA → ℕ, ActR L x := by
       cases u with
       | init a c k => exact nxt_ok_B hτ
       | new ν k =>
-        have hτ : tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .nxt x := hτ
+        have hτ : tgM (eN ν).1 (eN ν).2 = .nxt x := hτ
         revert hτ
-        generalize eN R FL Pl ν = w
+        generalize eN ν = w
         intro hτ
         rcases w with ⟨⟨y, hy⟩ | l, w⟩
         · exact nxt_ok_R hy hτ
@@ -149,32 +149,34 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
       cases u with
       | init a c k =>
         exfalso
-        have hτ : tgB T R ch a c k = .seg j i ω q := hτ
+        have hτ : tgB R ch a c k = .seg j i ω q := hτ
         rcases tgB_cases (R := R) (ch := ch) a c k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at hτ <;> cases hτ
-      | new ν k => exact seg_nondiag (ν := eN R FL Pl ν) hτ
+      | new ν k => exact seg_nondiag (ν := eN ν) hτ
     obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
-    obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv T FL)
-    have hd : Pick FL L (⟨j, i, ω, d⟩ : LMv T FL) := hd
-    have hnum : num R ch FL lhat (nn n) (oo R FL Pl o) (.inr (⟨j, i, ω, d⟩ : LMv T FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) := by
+    obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv FL)
+    have hd : Pick L (⟨j, i, ω, d⟩ : LMv FL) := hd
+    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv FL)) =
+        tmin L (⟨j, i, ω, d⟩ : LMv FL) := by
       rw [num_eq, numF, if_pos hd]
-    set t := tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) with ht
+    set t := tmin L (⟨j, i, ω, d⟩ : LMv FL) with ht
     have hfit := hd.1 q hq
-    have hrk : rkU R FL Pl lhat n o u < L (.seg j i ω q) := by
+    have hrk : rkU lhat n o u < L (.seg j i ω q) := by
       rw [hL, load_eq]
-      have := rk_lt (idx := ix R FL Pl) (key := tgU R FL Pl) (mem_Al.2 hu)
+      have := rk_lt (idx := ix) (key := tgU) (mem_Al.2 hu)
       rw [hτ] at this
       exact this
-    have hlt : rkU R FL Pl lhat n o u < slo FL d q * t := lt_of_lt_of_le hrk hfit
+    have hlt : rkU lhat n o u < slo d q * t := lt_of_lt_of_le hrk hfit
     have htpos : 0 < t := by
       rcases Nat.eq_zero_or_pos t with h0 | h0
       · rw [h0, Nat.mul_zero] at hlt
         exact absurd hlt (Nat.not_lt_zero _)
       · exact h0
-    have hw : rkU R FL Pl lhat n o u / t < slo FL d q := Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hlt)
-    obtain ⟨e, -, he1, he2⟩ := exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr FL d)
+    have hw : rkU lhat n o u / t < slo d q := Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hlt)
+    obtain ⟨e, -, he1, he2⟩ :=
+      exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr d)
       (fun a b hab => (Fintype.equivFin (FL.L d).Sl).injective (Fin.ext hab)) univ q hw
-    have he2 : su FL d e = rkU R FL Pl lhat n o u / t := he2
-    refine ⟨⟨.inr ⟨j, i, ω, d⟩, e⟩, (consM_inr (⟨j, i, ω, d⟩ : LMv T FL) e u).2 ⟨hd, hu, ?_, ?_, ?_⟩⟩
+    have he2 : su d e = rkU lhat n o u / t := he2
+    refine ⟨⟨.inr ⟨j, i, ω, d⟩, e⟩, (consM_inr (⟨j, i, ω, d⟩ : LMv FL) e u).2 ⟨hd, hu, ?_, ?_, ?_⟩⟩
     · rw [hτ, he1]
     · rw [hnum, he2]
       exact Nat.div_mul_le_self _ _
@@ -183,7 +185,8 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
 
 /-- The units that are seen. -/
 theorem mem_seen_new {ν : (sys R FL Pl).N} {k : Fin U1} :
-    (Uid.new ν k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ↔ k ≤ o ν := by
+    (Uid.new ν k : Un R FL Pl U0 U1) ∈
+        Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k ≤ o ν := by
   unfold Plan.seenAt
   rw [mem_union, mem_biUnion]
   constructor
@@ -198,7 +201,8 @@ theorem mem_seen_new {ν : (sys R FL Pl).N} {k : Fin U1} :
     exact h1
 
 theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
-    (Uid.init a c k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ↔ k.1 < (n a c).1 := by
+    (Uid.init a c k : Un R FL Pl U0 U1) ∈
+        Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k.1 < (n a c).1 := by
   unfold Plan.seenAt
   rw [mem_union, mem_biUnion]
   constructor
@@ -211,9 +215,9 @@ theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
 
 /-- **The current units in the end**: alive units between a node and its parent, and dead units. -/
 theorem cur_end {u : Un R FL Pl U0 U1}
-    (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL))) :
-    u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ∧
-      (AlU R FL Pl lhat n o u → tgU R FL Pl u = .done) := by
+    (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv R ch FL))) :
+    u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ∧
+      (AlU lhat n o u → tgU u = .done) := by
   rw [Plan.cur, mem_sdiff] at hu
   refine ⟨hu.1, fun ha => ?_⟩
   by_contra hd
@@ -221,8 +225,8 @@ theorem cur_end {u : Un R FL Pl U0 U1}
   apply hu.2
   unfold Plan.used
   rw [mem_biUnion]
-  refine ⟨(eZ R FL Pl).symm z, mem_filter.2 ⟨mem_univ _, ((eZ R FL Pl).symm z).1.2⟩, ?_⟩
-  change u ∈ consM R FL Pl lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
+  refine ⟨eZ.symm z, mem_filter.2 ⟨mem_univ _, (eZ.symm z).1.2⟩, ?_⟩
+  change u ∈ consM lhat n o (eZ (eZ.symm z))
   rw [Equiv.apply_symm_apply]
   exact hz
 

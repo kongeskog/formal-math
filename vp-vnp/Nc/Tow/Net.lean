@@ -25,24 +25,24 @@ variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ}
 abbrev Nd (T : Tower h b J) := Option (Σ j : Fin (J + 1), T.X j)
 
 /-- The node of a chamber. -/
-def nd (T : Tower h b J) (j : ℕ) (hj : j ≤ J) (c : T.X j) : Nd T :=
+def nd {T : Tower h b J} {j : ℕ} (hj : j ≤ J) (c : T.X j) : Nd T :=
   some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩
 
 theorem nd_inj {T : Tower h b J} {j : ℕ} {hj hj' : j ≤ J} {c c' : T.X j} :
-    nd T j hj c = nd T j hj' c' ↔ c = c' := by
+    nd hj c = nd hj' c' ↔ c = c' := by
   unfold nd
   rw [Option.some_inj, Sigma.mk.injEq]
   simp
 
 theorem nd_ne {T : Tower h b J} {j j' : ℕ} (hjj : j ≠ j') {hj : j ≤ J} {hj' : j' ≤ J}
     {c : T.X j} {c' : T.X j'} :
-    nd T j hj c ≠ nd T j' hj' c' := by
+    nd hj c ≠ nd hj' c' := by
   unfold nd
   rw [Ne, Option.some_inj, Sigma.mk.injEq]
   rintro ⟨h1, -⟩
   exact hjj (congrArg Fin.val h1)
 
-theorem nd_ne_none {T : Tower h b J} {j : ℕ} {hj : j ≤ J} {c : T.X j} : nd T j hj c ≠ none := by
+theorem nd_ne_none {T : Tower h b J} {j : ℕ} {hj : j ≤ J} {c : T.X j} : nd hj c ≠ none := by
   unfold nd; exact Option.some_ne_none _
 
 /-- Names of relays. -/
@@ -73,36 +73,38 @@ noncomputable instance (T : Tower h b J) (m AA : ℕ) : DecidableEq (Tg T m AA) 
 
 section
 
-variable (T : Tower h b J) (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0)
+variable {T : Tower h b J} (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0)
 
 /-- The host of an end of an edge. -/
 abbrev hst {j : ℕ} (i : Fin h) (c : T.X j) : T.X (j + 1) := T.host i (T.vx i c)
 
 /-- The three parties of a relay. -/
 def tri : RM T m AA → Fin 3 → Nd T
-  | .start a c γ s => ![nd T 0 (Nat.zero_le _) (R.pn (ch a) (ch c) γ s), nd T 0 (Nat.zero_le _) (R.pn (ch a) (ch c) γ (s + 1)),
-      nd T 0 (Nat.zero_le _) (ch c)]
-  | .inn j i e => ![nd T j j.2.le (T.e0 e), nd T (j + 1) j.2 (hst T i (T.e0 e)), nd T j j.2.le (T.e1 e)]
+  | .start a c γ s => ![nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ s),
+      nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ (s + 1)),
+      nd (Nat.zero_le _) (ch c)]
+  | .inn j i e => ![nd j.2.le (T.e0 e), nd j.2 (hst i (T.e0 e)), nd j.2.le (T.e1 e)]
   | .mid j e s =>
-    let H := nd T (j + 1) j.2 (hst T (T.ty e) (T.e0 e))
-    let H' := nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e))
-    let p := nd T (j + 1) j.2 (T.π (T.e0 e))
-    let p' := nd T (j + 1) j.2 (T.π (T.e1 e))
-    ![![nd T j j.2.le (T.e0 e), H, p, p'] s, ![H, p, p', H'] s, nd T j j.2.le (T.e1 e)]
-  | .fin e => ![nd T J le_rfl (T.e0 e), none, nd T J le_rfl (T.e1 e)]
+    let H := nd j.2 (hst (T.ty e) (T.e0 e))
+    let H' := nd j.2 (hst (T.ty e) (T.e1 e))
+    let p := nd j.2 (T.π (T.e0 e))
+    let p' := nd j.2 (T.π (T.e1 e))
+    ![![nd j.2.le (T.e0 e), H, p, p'] s, ![H, p, p', H'] s, nd j.2.le (T.e1 e)]
+  | .fin e => ![nd le_rfl (T.e0 e), none, nd le_rfl (T.e1 e)]
 
 /-- The relay exists. -/
 def okR : RM T m AA → Prop
   | .start a c γ s => a ≠ c ∧ s.1 + 1 < R.pl (ch a) (ch c) γ
   | .inn _ i e => T.ty e ≠ i
-  | .mid _ e s => (s = 1 → hst T (T.ty e) (T.e0 e) ≠ T.π (T.e0 e)) ∧ (s = 3 → T.π (T.e1 e) ≠ hst T (T.ty e) (T.e1 e))
+  | .mid _ e s => (s = 1 → hst (T.ty e) (T.e0 e) ≠ T.π (T.e0 e)) ∧
+      (s = 3 → T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e))
   | .fin _ => True
 
 theorem inj3 {α : Type*} {x y z : α} (h1 : x ≠ y) (h2 : x ≠ z) (h3 : y ≠ z) : Function.Injective ![x, y, z] := by
   intro i j hij
   fin_cases i <;> fin_cases j <;> simp_all
 
-variable {T R ch}
+variable {R ch}
 
 theorem π_ne {j : ℕ} (e : T.Ed j) : T.π (T.e0 e) ≠ T.π (T.e1 e) := by
   intro heq
@@ -111,7 +113,7 @@ theorem π_ne {j : ℕ} (e : T.Ed j) : T.π (T.e0 e) ≠ T.π (T.e1 e) := by
   have := T.e_ne (T.πE e)
   rcases h1 with ⟨h2, h3⟩ | ⟨h2, h3⟩ <;> exact this (h2.trans h3.symm)
 
-theorem tri_inj {x : RM T m AA} (hx : okR T R ch x) : Function.Injective (tri T R ch x) := by
+theorem tri_inj {x : RM T m AA} (hx : okR R ch x) : Function.Injective (tri R ch x) := by
   rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e
   · obtain ⟨-, h2⟩ := hx
     refine inj3 ?_ ?_ ?_
@@ -125,26 +127,26 @@ theorem tri_inj {x : RM T m AA} (hx : okR T R ch x) : Function.Injective (tri T 
   · exact inj3 (nd_ne (by omega)) (by rw [Ne, nd_inj]; exact T.e_ne e) (nd_ne (by omega))
   · refine inj3 ?_ ?_ ?_
     · fin_cases s
-      · change nd T j j.2.le (T.e0 e) ≠ nd T (j + 1) j.2 (hst T (T.ty e) (T.e0 e))
+      · change nd j.2.le (T.e0 e) ≠ nd j.2 (hst (T.ty e) (T.e0 e))
         exact nd_ne (by omega)
-      · change nd T (j + 1) j.2 (hst T (T.ty e) (T.e0 e)) ≠ nd T (j + 1) j.2 (T.π (T.e0 e))
+      · change nd j.2 (hst (T.ty e) (T.e0 e)) ≠ nd j.2 (T.π (T.e0 e))
         rw [Ne, nd_inj]
         exact hx.1 rfl
-      · change nd T (j + 1) j.2 (T.π (T.e0 e)) ≠ nd T (j + 1) j.2 (T.π (T.e1 e))
+      · change nd j.2 (T.π (T.e0 e)) ≠ nd j.2 (T.π (T.e1 e))
         rw [Ne, nd_inj]
         exact π_ne e
-      · change nd T (j + 1) j.2 (T.π (T.e1 e)) ≠ nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e))
+      · change nd j.2 (T.π (T.e1 e)) ≠ nd j.2 (hst (T.ty e) (T.e1 e))
         rw [Ne, nd_inj]
         exact hx.2 rfl
     · fin_cases s
-      · change nd T j j.2.le (T.e0 e) ≠ nd T j j.2.le (T.e1 e)
+      · change nd j.2.le (T.e0 e) ≠ nd j.2.le (T.e1 e)
         rw [Ne, nd_inj]
         exact T.e_ne e
       all_goals exact nd_ne (hj := j.2) (by omega)
     · fin_cases s <;> exact nd_ne (hj := j.2) (by omega)
   · exact inj3 nd_ne_none (by rw [Ne, nd_inj]; exact T.e_ne e) nd_ne_none.symm
 
-variable (T R ch)
+variable (R ch)
 
 /-- An edge of stage 0, if there is one. -/
 def edgeO : Option (T.Ed 0) → Tg T m AA
@@ -154,18 +156,22 @@ def edgeO : Option (T.Ed 0) → Tg T m AA
 open Classical in
 /-- Targets of the channels of relays. -/
 noncomputable def tgR : RM T m AA → Bool → Tg T m AA
-  | .start a c γ s, false => edgeO T ((R.path (ch a) (ch c) γ)[s.1]?)
+  | .start a c γ s, false => edgeO ((R.path (ch a) (ch c) γ)[s.1]?)
   | .start a c γ s, true =>
     if hs : s.1 + 1 < 2 * m ∧ s.1 + 2 < R.pl (ch a) (ch c) γ then .nxt (.start a c γ ⟨s.1 + 1, hs.1⟩)
-    else edgeO T ((R.path (ch a) (ch c) γ)[s.1 + 1]?)
+    else edgeO ((R.path (ch a) (ch c) γ)[s.1 + 1]?)
   | .inn _ _ _, _ => .done
   | .mid j e s, false =>
-    ![.done, .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e0 e))) s(T.co (T.ty e) (hst T (T.ty e) (T.e0 e)), T.co (T.ty e) (T.e0 e)),
+    ![.done,
+      .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e0 e)))
+        s(T.co (T.ty e) (hst (T.ty e) (T.e0 e)), T.co (T.ty e) (T.e0 e)),
       .edge j.succ (T.πE e),
-      .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e1 e))) s(T.co (T.ty e) (hst T (T.ty e) (T.e1 e)), T.co (T.ty e) (T.e1 e))] s
+      .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e1 e))) s(T.co (T.ty e) (hst (T.ty e) (T.e1 e)),
+          T.co (T.ty e) (T.e1 e))] s
   | .mid j e s, true =>
-    ![if hst T (T.ty e) (T.e0 e) ≠ T.π (T.e0 e) then .nxt (.mid j e 1) else .nxt (.mid j e 2),
-      .nxt (.mid j e 2), if T.π (T.e1 e) ≠ hst T (T.ty e) (T.e1 e) then .nxt (.mid j e 3) else .done, .done] s
+    ![if hst (T.ty e) (T.e0 e) ≠ T.π (T.e0 e) then .nxt (.mid j e 1) else .nxt (.mid j e 2),
+      .nxt (.mid j e 2), if T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e) then .nxt (.mid j e 3) else .done,
+          .done] s
   | .fin _, _ => .done
 
 /-- The target whose units are given in a relay. -/
@@ -190,22 +196,23 @@ open Classical in
 /-- The target of an initial unit. -/
 noncomputable def tgB (a c : Fin AA) (k : ℕ) : Tg T m AA :=
   if a = c then .done
-  else if hs : 0 < 2 * m ∧ 1 < R.pl (ch a) (ch c) (gam T ch a k) then .nxt (.start a c (gam T ch a k) ⟨0, hs.1⟩)
-  else edgeO T ((R.path (ch a) (ch c) (gam T ch a k))[0]?)
+  else if hs : 0 < 2 * m ∧ 1 <
+      R.pl (ch a) (ch c) (gam ch a k) then .nxt (.start a c (gam ch a k) ⟨0, hs.1⟩)
+  else edgeO ((R.path (ch a) (ch c) (gam ch a k))[0]?)
 
 /-- Names of law moves. -/
 abbrev LMv (FL : FlagLaws F T) := Σ j : Fin J, Σ i : Fin h, T.V (j + 1) i × FL.Di
 
 /-- Moves. -/
-abbrev Mv (FL : FlagLaws F T) := {x : RM T m AA // okR T R ch x} ⊕ LMv T FL
+abbrev Mv (FL : FlagLaws F T) := {x : RM T m AA // okR R ch x} ⊕ LMv FL
 
-noncomputable instance (FL : FlagLaws F T) : Fintype (Mv T R ch FL) := by
+noncomputable instance (FL : FlagLaws F T) : Fintype (Mv R ch FL) := by
   classical exact inferInstance
 
-variable {T}
+variable {R ch}
 
 /-- The law of a move. -/
-def kindM (FL : FlagLaws F T) : Mv T R ch FL → Law F
+def kindM (FL : FlagLaws F T) : Mv R ch FL → Law F
   | .inl _ => relay F
   | .inr l => FL.L l.2.2.2
 
@@ -225,11 +232,11 @@ theorem atv_eq {j : ℕ} (i : Fin h) (c : T.X j) : atv i (T.vx i c) (T.co i c) =
   (Equiv.ofBijective _ (T.vx_co i)).symm_apply_apply c
 
 /-- The parties of a move. -/
-noncomputable def partM (FL : FlagLaws F T) : (mv : Mv T R ch FL) → (kindM R ch FL mv).Ro → Nd T
-  | .inl x => fun p => tri T R ch x.1 p
-  | .inr l => fun p => nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p))
+noncomputable def partM {FL : FlagLaws F T} : (mv : Mv R ch FL) → (kindM FL mv).Ro → Nd T
+  | .inl x => fun p => tri R ch x.1 p
+  | .inr l => fun p => nd l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p))
 
-theorem partM_inj (FL : FlagLaws F T) (mv : Mv T R ch FL) : Function.Injective (partM R ch FL mv) := by
+theorem partM_inj (FL : FlagLaws F T) (mv : Mv R ch FL) : Function.Injective (partM mv) := by
   rcases mv with x | l
   · exact tri_inj x.2
   · intro p q hpq
@@ -240,13 +247,13 @@ theorem partM_inj (FL : FlagLaws F T) (mv : Mv T R ch FL) : Function.Injective (
     exact (FL.ro l.2.2.2).injective h2
 
 /-- Times of moves. -/
-def timeM (FL : FlagLaws F T) : Mv T R ch FL → ℕ
-  | .inl x => timeR T x.1
+def timeM {FL : FlagLaws F T} : Mv R ch FL → ℕ
+  | .inl x => timeR x.1
   | .inr l => 2 * m + 6 * l.1 + 4
 
 /-- Targets of channels. -/
-noncomputable def tgM (FL : FlagLaws F T) : (mv : Mv T R ch FL) → (kindM R ch FL mv).Cn → Tg T m AA
-  | .inl x => fun ν => tgR T R ch x.1 ν
+noncomputable def tgM {FL : FlagLaws F T} : (mv : Mv R ch FL) → (kindM FL mv).Cn → Tg T m AA
+  | .inl x => fun ν => tgR R ch x.1 ν
   | .inr l => fun ν => .edge l.1.succ ((T.nr l.2.1).symm (l.2.2.1, FL.cn l.2.2.2 ν)).1
 
 end
@@ -255,7 +262,7 @@ end
 structure Place (T : Tower h b J) (ch : Fin AA ↪ T.X 0) (A' : ℕ) where
   /-- the party of a node -/
   pt : Nd T ≃ Fin (AA + A')
-  pt_base : ∀ a, pt (nd T 0 (Nat.zero_le _) (ch a)) = Fin.castAdd A' a
+  pt_base : ∀ a, pt (nd (Nat.zero_le _) (ch a)) = Fin.castAdd A' a
 
 section Sys
 
@@ -263,38 +270,42 @@ variable {T : Tower h b J} (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : Fla
   (Pl : Place T ch A')
 
 /-- The order of the moves. -/
-noncomputable def eE : Fin (Fintype.card (Mv T R ch FL)) ≃ Mv T R ch FL :=
-  (exists_mono_equiv (timeM R ch FL)).choose
+noncomputable def eE : Fin (Fintype.card (Mv R ch FL)) ≃ Mv R ch FL :=
+  (exists_mono_equiv timeM).choose
 
 /-- The system of moves. -/
-noncomputable def sys : Sys F (AA + A') (Fintype.card (Mv T R ch FL)) where
-  kind x := kindM R ch FL (eE R FL x)
-  part x p := Pl.pt (partM R ch FL (eE R FL x) p)
-  inj x := Pl.pt.injective.comp (partM_inj R ch FL _)
+noncomputable def sys : Sys F (AA + A') (Fintype.card (Mv R ch FL)) where
+  kind x := kindM FL (eE R FL x)
+  part x p := Pl.pt (partM (eE R FL x) p)
+  inj x := Pl.pt.injective.comp (partM_inj FL _)
 
+variable (ch) in
 /-- Channels by their moves. -/
-abbrev NM := Σ mv : Mv T R ch FL, (kindM R ch FL mv).Cn
+abbrev NM := Σ mv : Mv R ch FL, (kindM FL mv).Cn
 
+variable (ch) in
 /-- Slots by their moves. -/
-abbrev ZM := Σ mv : Mv T R ch FL, (kindM R ch FL mv).Sl
+abbrev ZM := Σ mv : Mv R ch FL, (kindM FL mv).Sl
 
+variable {R FL Pl} in
 /-- Channels by their moves. -/
-noncomputable def eN : (sys R FL Pl).N ≃ NM R FL (ch := ch) :=
-  Equiv.sigmaCongrLeft (β := fun mv => (kindM R ch FL mv).Cn) (eE R FL)
+noncomputable def eN : (sys R FL Pl).N ≃ NM R ch FL :=
+  Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Cn) (eE R FL)
 
+variable {R FL Pl} in
 /-- Slots by their moves. -/
-noncomputable def eZ : (sys R FL Pl).Z ≃ ZM R FL (ch := ch) :=
-  Equiv.sigmaCongrLeft (β := fun mv => (kindM R ch FL mv).Sl) (eE R FL)
+noncomputable def eZ : (sys R FL Pl).Z ≃ ZM R ch FL :=
+  Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Sl) (eE R FL)
 
-theorem eN_fst (ν : (sys R FL Pl).N) : (eN R FL Pl ν).1 = eE R FL ν.1 := rfl
+theorem eN_fst (ν : (sys R FL Pl).N) : (eN ν).1 = eE R FL ν.1 := rfl
 
-theorem eZ_fst (z : (sys R FL Pl).Z) : (eZ R FL Pl z).1 = eE R FL z.1 := rfl
+theorem eZ_fst (z : (sys R FL Pl).Z) : (eZ z).1 = eE R FL z.1 := rfl
 
 theorem np_eq (ν : (sys R FL Pl).N) (d : Bool) : (sys R FL Pl).np ν d =
-    Pl.pt (partM R ch FL (eN R FL Pl ν).1 ((kindM R ch FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 d)) := rfl
+    Pl.pt (partM (eN ν).1 ((kindM FL (eN ν).1).cnEnd (eN ν).2 d)) := rfl
 
 theorem zp_eq (z : (sys R FL Pl).Z) (d : Bool) : (sys R FL Pl).zp z d =
-    Pl.pt (partM R ch FL (eZ R FL Pl z).1 ((kindM R ch FL (eZ R FL Pl z).1).slEnd (eZ R FL Pl z).2 d)) := rfl
+    Pl.pt (partM (eZ z).1 ((kindM FL (eZ z).1).slEnd (eZ z).2 d)) := rfl
 
 end Sys
 
