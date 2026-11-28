@@ -403,7 +403,6 @@ theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
           sum_le_sum fun q _ => by split_ifs; exacts [sq_nonneg _, le_rfl]
         have h3 : (0 : ℝ) ≤ ∑ q : Sym2 (U h), if q.IsDiag then 0 else (n q : ℝ) ^ 2 :=
           sum_nonneg fun q _ => by split_ifs <;> positivity
-        have hb : (1 : ℝ) ≤ ((2 ^ ee h : ℕ) : ℝ) := by exact_mod_cast Nat.one_le_two_pow
         rw [hcard, Real.sqrt_le_left (by positivity)]
         calc _ ≤ ((2 ^ ee h : ℕ) : ℝ) ^ 2 / 2 * ∑ q, (n q : ℝ) ^ 2 :=
               mul_le_mul (by rw [pow_two]; gcongr; linarith) h2 h3 (by positivity)

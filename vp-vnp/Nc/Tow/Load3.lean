@@ -72,13 +72,10 @@ theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick L (withD 
 theorem tmin_sq_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
     (hn' : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) ≤ n' q) :
     FL.a₁ ^ 2 * tmin L l ^ 2 ≤ b ^ 2 * ∑ q, n' q ^ 2 + 2 * FL.a₁ ^ 2 := by
-  obtain h0 | ⟨t, ht⟩ : tmin L l = 0 ∨ ∃ t, tmin L l = t + 1 := by
-    rcases Nat.eq_zero_or_pos (tmin L l) with h0 | h0
-    · exact Or.inl h0
-    · exact Or.inr ⟨tmin L l - 1, by omega⟩
-  · rw [h0]
-    exact (Nat.zero_le _).trans' (by simp)
-  · have h1 : ¬ ∃ d, Fits L (withD l d) t := by
+  cases ht : tmin L l with
+  | zero => simp
+  | succ t =>
+    have h1 : ¬ ∃ d, Fits L (withD l d) t := by
       intro hcon
       have := Nat.sInf_le (s := {t | ∃ d, Fits L (withD l d) t}) hcon
       change tmin L l ≤ _ at this
@@ -87,7 +84,6 @@ theorem tmin_sq_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
       not_le.1 fun hcon => h1 (FL.L1 _ _ hcon)
     have h3 : b ^ 2 * ∑ q, L (.seg l.1 l.2.1 l.2.2.1 q) ^ 2 ≤ b ^ 2 * ∑ q, n' q ^ 2 :=
       Nat.mul_le_mul_left _ (Finset.sum_le_sum fun q _ => Nat.pow_le_pow_left (hn' q) 2)
-    rw [ht]
     calc FL.a₁ ^ 2 * (t + 1) ^ 2 ≤ FL.a₁ ^ 2 * (2 * (t ^ 2 + 1 ^ 2)) :=
           Nat.mul_le_mul_left _ add_sq_le
       _ = 2 * (FL.a₁ * t) ^ 2 + 2 * FL.a₁ ^ 2 := by ring

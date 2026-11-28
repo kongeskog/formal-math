@@ -105,48 +105,34 @@ theorem kap_le : ∀ j : ℕ, ∀ hj : j < J + 1,
   | zero =>
     intro hj
     have h1 : ∑ e : T.Ed 0, lds lhat n o 0 e ^ 2 ≤
-        h * Fintype.card (T.X 0) * nhat T Uu AA lhat ^ 2 := by
+        h ^ 2 * Fintype.card (T.X 0) * nhat T Uu AA lhat ^ 2 := by
       refine (Finset.sum_le_card_nsmul _ _ _ fun e _ =>
         Nat.pow_le_pow_left (Paper.thm_tree_start e) 2).trans ?_
       rw [smul_eq_mul, card_univ]
-      exact Nat.mul_le_mul_right _ ((Nat.le_mul_of_pos_left _ two_pos).trans Tower.two_card_ed.le)
-    have h2 : h ≤ h ^ 2 := Nat.le_self_pow two_ne_zero h
-    have h3 : FL.C₁ ≤ FL.C₁ ^ 2 := Nat.le_self_pow two_ne_zero _
+      exact Nat.mul_le_mul_right _ ((Nat.le_mul_of_pos_left _ two_pos).trans
+        (Tower.two_card_ed.le.trans (Nat.mul_le_mul_right _ (Nat.le_self_pow two_ne_zero h))))
     unfold kbar
-    calc _ ≤ Fintype.card (T.X 0) * (h * Fintype.card (T.X 0) * nhat T Uu AA lhat ^ 2) +
-          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X 0) ^ 2 := by
+    calc _ ≤ Fintype.card (T.X 0) * (h ^ 2 * Fintype.card (T.X 0) * nhat T Uu AA lhat ^ 2) +
+          8 * FL.C₁ ^ 2 * (2 * FL.a₁ ^ 2) * Fintype.card (T.X 0) ^ 2 := by
           rw [pow_zero, one_mul]
           gcongr
-          exact h1
-      _ = Fintype.card (T.X 0) ^ 2 * (h * nhat T Uu AA lhat ^ 2 + 16 * FL.C₁ * FL.a₁ ^ 2) := by ring
-      _ ≤ Fintype.card (T.X 0) ^ 2 * (h ^ 2 * nhat T Uu AA lhat ^ 2 + 16 * FL.C₁ ^ 2 * FL.a₁ ^ 2 +
-          2 * (h * nhat T Uu AA lhat) * (4 * FL.C₁ * FL.a₁)) := by
-          refine Nat.mul_le_mul_left _ (le_trans ?_ (Nat.le_add_right _ _))
-          gcongr
+          exacts [h1, Nat.le_self_pow two_ne_zero _]
+      _ ≤ _ + Fintype.card (T.X 0) ^ 2 * (2 * (h * nhat T Uu AA lhat) * (4 * FL.C₁ * FL.a₁)) :=
+          Nat.le_add_right _ _
       _ = _ := by ring
   | succ j ih =>
     intro hj
-    have h1 := ih (by omega)
-    have h2 := Paper.thm_tree_kappa (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH.gain
-      ⟨j, by omega⟩
-    have h3 : 5 ≤ b ^ 2 := (Nat.pow_le_pow_left hH.three 2).trans' (by norm_num)
-    refine le_trans ?_ h1
+    have h2 : 4 * (Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j + 1, hj⟩ e ^ 2) ≤
+        Fintype.card (T.X j) * ∑ e, lds lhat n o ⟨j, by omega⟩ e ^ 2 +
+          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X (j + 1)) ^ 2 :=
+      Paper.thm_tree_kappa hH.gain ⟨j, by omega⟩
+    have h3 := Nat.mul_le_mul_left (8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X (j + 1)) ^ 2)
+      ((Nat.pow_le_pow_left hH.three 2).trans' (show 5 ≤ 3 ^ 2 by norm_num))
+    refine le_trans ?_ (ih (by omega))
     rw [pow_succ, mul_assoc]
     refine Nat.mul_le_mul_left _ ?_
-    rw [T.card_X j (by omega)]
-    calc _ = 4 * (Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j + 1, hj⟩ e ^ 2) +
-          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (4 * Fintype.card (T.X (j + 1)) ^ 2) := by ring
-      _ ≤ b * Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j, by omega⟩ e ^ 2 +
-          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X (j + 1)) ^ 2 +
-          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (4 * Fintype.card (T.X (j + 1)) ^ 2) := by
-          refine Nat.add_le_add_right ?_ _
-          rw [← T.card_X j (by omega)]
-          exact h2
-      _ = b * Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j, by omega⟩ e ^ 2 +
-          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (5 * Fintype.card (T.X (j + 1)) ^ 2) := by ring
-      _ ≤ b * Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j, by omega⟩ e ^ 2 +
-          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (b ^ 2 * Fintype.card (T.X (j + 1)) ^ 2) := by gcongr
-      _ = _ := by ring
+    rw [T.card_X j (by omega)] at h2 ⊢
+    linarith
 
 include hH in
 /-- The squares of the loads of a stage. -/
