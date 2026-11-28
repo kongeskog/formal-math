@@ -1051,13 +1051,8 @@ theorem thm_poincare {K : Type} [Field K] (hK : Contracting K) :
   have hb : (0 : ℝ) < Fintype.card (U (l * u)) := by exact_mod_cast Fintype.card_pos
   obtain ⟨Y, hYm, hYc, f, hY, hf⟩ := prop_space hw
   have hCN : Cat.CN (PiLp 2 fun _ : U (l * u) => Y) := lem_toolkit_e _
-  have hA : ∀ z : PiLp 2 fun _ : U (l * u) => Y, Contr ((transAct (U (l * u)) Y).len z) μ s := by
-    intro z
-    obtain ⟨len, hlen, hcon⟩ := lengths_of_maps (by omega) (by linarith) hcase hY (fun k => z k)
-    refine contracts_smul len _ (by omega) (c := √(Fintype.card (U (l * u)) : ℝ)) (fun g => ?_) hcon
-    rw [hlen, Real.sqrt_div' _ hb.le, mul_div_cancel₀ _ (Real.sqrt_pos.2 hb).ne', IsoAct.len_val,
-      ← Real.sqrt_sq (dist_nonneg (y := (transAct (U (l * u)) Y).act g z)), transAct_dist]
-    exact congrArg _ (sum_congr rfl fun k _ => by rw [dist_comm])
+  have hA : ∀ z : PiLp 2 fun _ : U (l * u) => Y, Contr ((transAct (U (l * u)) Y).len z) μ s :=
+    fun z => lengths_of_maps (by linarith) hcase hY fun k => z k
   have h1 := thm_poincare_action (transAct (U (l * u)) Y) hμ hs hA hu hl rfl hC (WithLp.toLp 2 f)
   have h2 : ∀ g : U (l * u), dist (WithLp.toLp 2 f : PiLp 2 fun _ : U (l * u) => Y)
       ((transAct (U (l * u)) Y).act g (WithLp.toLp 2 f)) ^ 2 = ∑ k, w k (g * k) ^ 2 := by
