@@ -114,12 +114,12 @@ variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U
 theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
     (hd : tgU R FL Pl u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
   classical
-  set L := load lhat (nn n) (oo R FL Pl o) with hL
-  have one : ∀ x : RM T m AA, okR T R ch x → ActR L x → tgU R FL Pl u = inpR T x →
-      ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
+  set L := load lhat (nn n) (oo o) with hL
+  have one : ∀ x : RM T m AA, okR T R ch x → ActR L x → tgU u = inpR T x →
+      ∃ z : ZM R FL (ch := ch), u ∈ consM lhat n o z := by
     intro x hx ha ht
     exact ⟨⟨.inl ⟨x, hx⟩, ()⟩, (consM_inl _ _ u).2 ⟨ha, hu, ht⟩⟩
-  rcases hτ : tgU R FL Pl u with _ | ⟨j, e⟩ | x | ⟨j, i, ω, q⟩
+  rcases hτ : tgU u with _ | ⟨j, e⟩ | x | ⟨j, i, ω, q⟩
   · exact absurd hτ hd
   · revert e
     refine Fin.lastCases ?_ (fun j => ?_) j
@@ -155,25 +155,25 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
     obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
     obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv T FL)
     have hd : Pick FL L (⟨j, i, ω, d⟩ : LMv T FL) := hd
-    have hnum : num lhat (nn n) (oo R FL Pl o) (.inr (⟨j, i, ω, d⟩ : LMv T FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) := by
+    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv T FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) := by
       rw [num_eq, numF, if_pos hd]
     set t := tmin FL L (⟨j, i, ω, d⟩ : LMv T FL) with ht
     have hfit := hd.1 q hq
-    have hrk : rkU R FL Pl lhat n o u < L (.seg j i ω q) := by
+    have hrk : rkU lhat n o u < L (.seg j i ω q) := by
       rw [hL, load_eq]
-      have := rk_lt (idx := ix R FL Pl) (key := tgU R FL Pl) (mem_Al.2 hu)
+      have := rk_lt (idx := ix) (key := tgU) (mem_Al.2 hu)
       rw [hτ] at this
       exact this
-    have hlt : rkU R FL Pl lhat n o u < slo FL d q * t := lt_of_lt_of_le hrk hfit
+    have hlt : rkU lhat n o u < slo FL d q * t := lt_of_lt_of_le hrk hfit
     have htpos : 0 < t := by
       rcases Nat.eq_zero_or_pos t with h0 | h0
       · rw [h0, Nat.mul_zero] at hlt
         exact absurd hlt (Nat.not_lt_zero _)
       · exact h0
-    have hw : rkU R FL Pl lhat n o u / t < slo FL d q := Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hlt)
+    have hw : rkU lhat n o u / t < slo FL d q := Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hlt)
     obtain ⟨e, -, he1, he2⟩ := exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr FL d)
       (fun a b hab => (Fintype.equivFin (FL.L d).Sl).injective (Fin.ext hab)) univ q hw
-    have he2 : su FL d e = rkU R FL Pl lhat n o u / t := he2
+    have he2 : su d e = rkU lhat n o u / t := he2
     refine ⟨⟨.inr ⟨j, i, ω, d⟩, e⟩, (consM_inr (⟨j, i, ω, d⟩ : LMv T FL) e u).2 ⟨hd, hu, ?_, ?_, ?_⟩⟩
     · rw [hτ, he1]
     · rw [hnum, he2]
@@ -213,7 +213,7 @@ theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
 theorem cur_end {u : Un R FL Pl U0 U1}
     (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL))) :
     u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ∧
-      (AlU R FL Pl lhat n o u → tgU R FL Pl u = .done) := by
+      (AlU lhat n o u → tgU u = .done) := by
   rw [Plan.cur, mem_sdiff] at hu
   refine ⟨hu.1, fun ha => ?_⟩
   by_contra hd
@@ -222,7 +222,7 @@ theorem cur_end {u : Un R FL Pl U0 U1}
   unfold Plan.used
   rw [mem_biUnion]
   refine ⟨(eZ R FL Pl).symm z, mem_filter.2 ⟨mem_univ _, ((eZ R FL Pl).symm z).1.2⟩, ?_⟩
-  change u ∈ consM R FL Pl lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
+  change u ∈ consM lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
   rw [Equiv.apply_symm_apply]
   exact hz
 

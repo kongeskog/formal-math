@@ -38,9 +38,9 @@ variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
   (hg : ∀ mv, GoodMv lhat (nn n) (oo R FL Pl o) mv)
 
-variable (R ch FL Pl lhat n o) in
+variable (lhat n o) in
 /-- The loads. -/
-noncomputable abbrev LfO : ∀ j, T.Ed j → ℕ := ldL lhat (nn n) (oo R FL Pl o)
+noncomputable abbrev LfO : ∀ j, T.Ed j → ℕ := ldL lhat (nn n) (oo o)
 
 variable (ch) in
 open Classical in

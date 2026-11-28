@@ -22,15 +22,15 @@ section Mem
 
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
-theorem rkU_sum (u : Un R FL Pl U0 U1) : rkU R FL Pl lhat n o u =
-    ∑ v ∈ univ.filter (fun v : Un R FL Pl U0 U1 => tgU R FL Pl v = tgU R FL Pl u ∧ ix R FL Pl v < ix R FL Pl u),
-      ind (fun _ : Unit => AlU R FL Pl lhat n o v) () := by
+theorem rkU_sum (u : Un R FL Pl U0 U1) : rkU lhat n o u =
+    ∑ v ∈ univ.filter (fun v : Un R FL Pl U0 U1 => tgU v = tgU u ∧ ix v < ix u),
+      ind (fun _ : Unit => AlU lhat n o v) () := by
   classical
-  have h1 : ∀ v, ind (fun _ : Unit => AlU R FL Pl lhat n o v) () = if AlU R FL Pl lhat n o v then 1 else 0 := by
+  have h1 : ∀ v, ind (fun _ : Unit => AlU lhat n o v) () = if AlU lhat n o v then 1 else 0 := by
     intro v
-    by_cases hv : AlU R FL Pl lhat n o v
-    · rw [if_pos hv, ind_true (P := fun _ : Unit => AlU R FL Pl lhat n o v) hv]
-    · rw [if_neg hv, ind_false (P := fun _ : Unit => AlU R FL Pl lhat n o v) hv]
+    by_cases hv : AlU lhat n o v
+    · rw [if_pos hv, ind_true (P := fun _ : Unit => AlU lhat n o v) hv]
+    · rw [if_neg hv, ind_false (P := fun _ : Unit => AlU lhat n o v) hv]
   rw [Finset.sum_congr rfl fun v _ => h1 v, ← Finset.card_filter, Finset.filter_filter]
   unfold rkU rk
   congr 1
@@ -45,7 +45,7 @@ def SeenU (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin 
 
 theorem mem_cur (u : Un R FL Pl U0 U1) :
     u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL)) ↔
-      SeenU n o u ∧ ¬ ∃ z : ZM R FL, u ∈ consM R FL Pl lhat n o z := by
+      SeenU n o u ∧ ¬ ∃ z : ZM R FL, u ∈ consM lhat n o z := by
   classical
   unfold Plan.cur
   rw [mem_sdiff]
@@ -70,7 +70,7 @@ theorem mem_cur (u : Un R FL Pl U0 U1) :
       exact ⟨eZ R FL Pl z, hz⟩
     · rintro ⟨z, hz⟩
       refine ⟨(eZ R FL Pl).symm z, mem_filter.2 ⟨mem_univ _, ((eZ R FL Pl).symm z).1.2⟩, ?_⟩
-      change u ∈ consM R FL Pl lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
+      change u ∈ consM lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
       rw [Equiv.apply_symm_apply]
       exact hz
 
@@ -89,7 +89,7 @@ structure Bnd2 (R : Routes T m Uu) (FL : FlagLaws F T) (Pl : Place T ch A') (U0 
 def nX (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (x : Inp) : Fin AA → Fin AA → ℕ := nn (nI x)
 
 /-- The outcomes. -/
-noncomputable def oX (oI : Inp → (sys R FL Pl).N → Fin U1) (x : Inp) : NM R FL (ch := ch) → ℕ := oo R FL Pl (oI x)
+noncomputable def oX (oI : Inp → (sys R FL Pl).N → Fin U1) (x : Inp) : NM R FL (ch := ch) → ℕ := oo (oI x)
 
 theorem rng : Rng (nX nI) (oX oI : Inp → NM R FL (ch := ch) → ℕ) U0 U1 where
   n x a c := Nat.le_of_lt_succ (nI x a c).2
@@ -98,14 +98,14 @@ theorem rng : Rng (nX nI) (oX oI : Inp → NM R FL (ch := ch) → ℕ) U0 U1 whe
 /-- What is known about units. -/
 structure Units (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (oI : Inp → (sys R FL Pl).N → Fin U1) (lhat TM : ℕ)
     (H : Set (Inp → ℕ)) : Prop where
-  cons : ∀ z u, ind (fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) ∈ H
-  num : ∀ mv : Mv T R ch FL, (fun x => num lhat (nn (nI x)) (oo R FL Pl (oI x)) mv) ∈ H
-  lt : ∀ (mv : Mv T R ch FL) (τ : Fin TM), ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo R FL Pl (oI x)) mv) ∈ H
-  pad : ∀ (z : ZM R FL) (τ : Fin TM), ind (fun x => (consM R FL Pl lhat (nI x) (oI x) z).card ≤ τ.1 ∧
-    τ.1 < Tow.num lhat (nn (nI x)) (oo R FL Pl (oI x)) z.1) ∈ H
+  cons : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H
+  num : ∀ mv : Mv T R ch FL, (fun x => num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  lt : ∀ (mv : Mv T R ch FL) (τ : Fin TM), ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  pad : ∀ (z : ZM R FL) (τ : Fin TM), ind (fun x => (consM lhat (nI x) (oI x) z).card ≤ τ.1 ∧
+    τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) z.1) ∈ H
   cur : ∀ u, ind (fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv T R ch FL))) ∈ H
-  good : ∀ mv : Mv T R ch FL, ind (fun x => GoodMv lhat (nn (nI x)) (oo R FL Pl (oI x)) mv) ∈ H
-  good' : ind (fun x => ∀ mv : Mv T R ch FL, GoodMv lhat (nn (nI x)) (oo R FL Pl (oI x)) mv) ∈ H
+  good : ∀ mv : Mv T R ch FL, ind (fun x => GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  good' : ind (fun x => ∀ mv : Mv T R ch FL, GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
   valid : ind (fun x => Valid lhat (nn (nI x))) ∈ H
 
 theorem Units.weaken {H H' : Set (Inp → ℕ)} (hu : Units nI oI lhat TM H) (hH : H ⊆ H') : Units nI oI lhat TM H' :=
@@ -130,11 +130,11 @@ theorem cy_rk (hal : ∀ u, ind (fun x => AlU R FL Pl lhat (nI x) (oI x) u) ∈ 
     intro x
     rw [rkU_sum]
     refine Finset.sum_congr rfl fun v _ => ?_
-    by_cases hv : AlU R FL Pl lhat (nI x) (oI x) v
-    · rw [ind_true (P := fun x => AlU R FL Pl lhat (nI x) (oI x) v) hv,
-        ind_true (P := fun _ : Unit => AlU R FL Pl lhat (nI x) (oI x) v) hv]
-    · rw [ind_false (P := fun x => AlU R FL Pl lhat (nI x) (oI x) v) hv,
-        ind_false (P := fun _ : Unit => AlU R FL Pl lhat (nI x) (oI x) v) hv]
+    by_cases hv : AlU lhat (nI x) (oI x) v
+    · rw [ind_true (P := fun x => AlU lhat (nI x) (oI x) v) hv,
+        ind_true (P := fun _ : Unit => AlU lhat (nI x) (oI x) v) hv]
+    · rw [ind_false (P := fun x => AlU lhat (nI x) (oI x) v) hv,
+        ind_false (P := fun _ : Unit => AlU lhat (nI x) (oI x) v) hv]
   refine CY.congr ?_ fun x => (e x).symm
   refine CY.sum hA _ ((card_filter_le _ _).trans hB2.un) (fun v _ => CY.base (hal v))
     fun x => hA.lt_of_le ?_
@@ -143,9 +143,9 @@ theorem cy_rk (hal : ∀ u, ind (fun x => AlU R FL Pl lhat (nI x) (oI x) u) ∈ 
   exact (card_filter_le _ _).trans hB2.un
 
 theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
-    (hal : ∀ u, ind (fun x => AlU R FL Pl lhat (nI x) (oI x) u) ∈ H)
-    (hrk : ∀ u, (fun x => rkU R FL Pl lhat (nI x) (oI x) u) ∈ H) (z : ZM R FL (ch := ch)) (u : Un R FL Pl U0 U1) :
-    PY Dd H Y 5 fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z := by
+    (hal : ∀ u, ind (fun x => AlU lhat (nI x) (oI x) u) ∈ H)
+    (hrk : ∀ u, (fun x => rkU lhat (nI x) (oI x) u) ∈ H) (z : ZM R FL (ch := ch)) (u : Un R FL Pl U0 U1) :
+    PY Dd H Y 5 fun x => u ∈ consM lhat (nI x) (oI x) z := by
   have hY := hA.pos
   rcases z with ⟨y | l, e⟩
   · have h1 : PY Dd H Y 0 fun x => ActR (load lhat (nX nI x) (oX oI x)) y.1 := py_actR hA hB ha.isMin y.1
@@ -167,7 +167,7 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
     exact h5.congr fun x => (consM_inr l e u).symm
 
 theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
-    (hco : ∀ z u, ind (fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) ∈ H) (u : Un R FL Pl U0 U1) :
+    (hco : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H) (u : Un R FL Pl U0 U1) :
     PY Dd H Y 4 fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv T R ch FL)) := by
   have hY := hA.pos
   have h1 : PY Dd H Y 1 fun x => SeenU (nI x) (oI x) u := by
@@ -219,30 +219,30 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
     rw [Fintype.card_prod, pow_two]
     exact Nat.mul_le_mul hB2.zm hB2.un
   obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Un R FL Pl U0 U1)
-    (fun u => ind fun x => AlU R FL Pl lhat (nI x) (oI x) u) (a := 2) (e := 1) hun
+    (fun u => ind fun x => AlU lhat (nI x) (oI x) u) (a := 2) (e := 1) hun
     (fun u => py_al hA hB hB2 ha u) (by omega)
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (κ := Un R FL Pl U0 U1)
-    (fun u x => rkU R FL Pl lhat (nI x) (oI x) u) (a := 2) (e := 1) hun
+    (fun u x => rkU lhat (nI x) (oI x) u) (a := 2) (e := 1) hun
     (fun u => cy_rk hA hB hB2 f1 u) (by omega)
   have a2 := ha.weaken (u1.trans u2)
   obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := ZM R FL × Un R FL Pl U0 U1)
-    (fun q => ind fun x => q.2 ∈ consM R FL Pl lhat (nI x) (oI x) q.1) (a := 5) (e := 2) hzu
+    (fun q => ind fun x => q.2 ∈ consM lhat (nI x) (oI x) q.1) (a := 5) (e := 2) hzu
     (fun q => py_cons hA hB hB2 a2 (fun u => u2 (f1 u)) f2 q.1 q.2) (by omega)
   have a3 := a2.weaken u3
-  have c3 : ∀ z u, ind (fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) ∈ H3 := fun z u => f3 (z, u)
+  have c3 : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H3 := fun z u => f3 (z, u)
   obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := ZM R FL)
-    (fun z x => (consM R FL Pl lhat (nI x) (oI x) z).card) (a := 2) (e := 1) (by simpa using hB2.zm)
+    (fun z x => (consM lhat (nI x) (oI x) z).card) (a := 2) (e := 1) (by simpa using hB2.zm)
     (fun z => by
       classical
-      have e : ∀ x, (consM R FL Pl lhat (nI x) (oI x) z).card =
-          ∑ u ∈ univ, ind (fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) x := by
+      have e : ∀ x, (consM lhat (nI x) (oI x) z).card =
+          ∑ u ∈ univ, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) x := by
         intro x
-        have h1 : ∀ u, ind (fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) x =
-            if u ∈ consM R FL Pl lhat (nI x) (oI x) z then 1 else 0 := by
+        have h1 : ∀ u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) x =
+            if u ∈ consM lhat (nI x) (oI x) z then 1 else 0 := by
           intro u
-          by_cases hu : u ∈ consM R FL Pl lhat (nI x) (oI x) z
-          · rw [if_pos hu, ind_true (P := fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) hu]
-          · rw [if_neg hu, ind_false (P := fun x => u ∈ consM R FL Pl lhat (nI x) (oI x) z) hu]
+          by_cases hu : u ∈ consM lhat (nI x) (oI x) z
+          · rw [if_pos hu, ind_true (P := fun x => u ∈ consM lhat (nI x) (oI x) z) hu]
+          · rw [if_neg hu, ind_false (P := fun x => u ∈ consM lhat (nI x) (oI x) z) hu]
         rw [Finset.sum_congr rfl fun u _ => h1 u, ← Finset.card_filter]
         congr 1
         ext u
@@ -257,7 +257,7 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
     (fun q => ind fun x => q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1) (a := 1) (e := 2) hmt
     (fun q => PY.rel1 hA (fun s => q.2.1 < s) (CY.base (a4.num q.1))) (by omega)
   obtain ⟨H6, s6, u6, f6⟩ := s5.add hA (κ := ZM R FL × Fin TM)
-    (fun q => ind fun x => (consM R FL Pl lhat (nI x) (oI x) q.1).card ≤ q.2.1 ∧
+    (fun q => ind fun x => (consM lhat (nI x) (oI x) q.1).card ≤ q.2.1 ∧
       q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1.1) (a := 2) (e := 2) hzt
     (fun q => PY.and hA (PY.rel1 hA (fun s => s ≤ q.2.1) (CY.base (u5 (f4 q.1))))
       (PY.rel1 hA (fun s => q.2.1 < s) (CY.base (u5 (a4.num q.1.1))))) (by omega)

@@ -335,7 +335,7 @@ noncomputable def treePar (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL
 
 /-- The load at a party: the number of units between it and its parent. -/
 noncomputable def treeUp (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (p : Fin (AA + A')) : ℕ :=
-  onN (fb (lev (load N (nn n) (oo R FL Pl o)))) 0 (Pl.pt.symm p)
+  onN (fb (lev (load N (nn n) (oo o)))) 0 (Pl.pt.symm p)
 
 variable {R FL Pl}
 
@@ -350,8 +350,8 @@ theorem valid_of (n : Fin AA → Fin AA → Fin (N + 1)) (h : ∀ a, ∑ c, ((n 
 theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
     (hv : Valid N (nn n)) {o : (sys R FL Pl).N → Fin U1} (hg : ∀ x, (plan R FL Pl N N U1).good n o x)
     {u : Un R FL Pl N U1} (hu : u ∈ (plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)))
-    (hd : u ∉ deadU R FL Pl N o) (hloop : hold0 (sys R FL Pl).np u ≠ hold1 (sys R FL Pl).np u) :
-    ∃ s : Σ j : Fin (J + 1), T.X j, u ∈ AsU R FL Pl N n o s ∧
+    (hd : u ∉ deadU N o) (hloop : hold0 (sys R FL Pl).np u ≠ hold1 (sys R FL Pl).np u) :
+    ∃ s : Σ j : Fin (J + 1), T.X j, u ∈ AsU N n o s ∧
       s(hold0 (sys R FL Pl).np u, hold1 (sys R FL Pl).np u) =
         s(Pl.pt (some s), treePar R FL Pl n o (Pl.pt (some s))) := by
   classical
@@ -374,7 +374,7 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
       (R.pl_pos (fun e => hne (ch.injective e)) _)).1 hdone
   | new ν kk =>
     have hko := mem_seen_new.1 hseen
-    have halv : alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν) = (o ν).1 := by
+    have halv : alv N (nn n) (oo o) (eN R FL Pl ν) = (o ν).1 := by
       rw [alv_good _ (hp _)]
       unfold oo
       rw [Equiv.symm_apply_apply]
@@ -384,8 +384,8 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
       rw [Fin.le_def] at hko
       have e : kk = o ν := Fin.ext (by omega)
       rw [e]
-    have hA : AlU R FL Pl N n o (Uid.new ν kk : Un R FL Pl N U1) := by
-      change kk.1 < alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν)
+    have hA : AlU N n o (Uid.new ν kk : Un R FL Pl N U1) := by
+      change kk.1 < alv N (nn n) (oo o) (eN R FL Pl ν)
       rw [halv]
       exact hlt
     have hdone : tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .done := hal hA
@@ -396,15 +396,15 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
         Pl.pt (partM R ch FL (eN R FL Pl ν).1 ((kindM R ch FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 true)) :=
       np_eq R FL Pl ν true
     rw [e0, e1]
-    have hmem : ∀ s, IsCh R ch FL (eN R FL Pl ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU R FL Pl N n o s :=
+    have hmem : ∀ s, IsCh R ch FL (eN R FL Pl ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU N n o s :=
       fun s hs => mem_AsU_new.2 ⟨hA, hs⟩
-    have hal' : alv N (nn n) (oo R FL Pl o) (eN R FL Pl ν) ≠ 0 := by omega
+    have hal' : alv N (nn n) (oo o) (eN R FL Pl ν) ≠ 0 := by omega
     revert hdone hal' hmem
     generalize eN R FL Pl ν = w
     intro hdone hmem hal'
     rcases w with ⟨⟨x, hx⟩ | l, β⟩
-    · have hnum : num N (nn n) (oo R FL Pl o) (.inl ⟨x, hx⟩) ≠ 0 := by
-        have := alv_le_num (lhat := N) (n := nn n) (o := oo R FL Pl o) (FL := FL) ⟨x, hx⟩ β
+    · have hnum : num N (nn n) (oo o) (.inl ⟨x, hx⟩) ≠ 0 := by
+        have := alv_le_num (lhat := N) (n := nn n) (o := oo o) (FL := FL) ⟨x, hx⟩ β
         omega
       obtain ⟨j, hj, c, h1, h2⟩ := done_hold hx (β := β) hdone hnum
       refine ⟨⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩, hmem _ ⟨⟨x, hx⟩, β, rfl, hdone, h1⟩, ?_⟩
@@ -669,7 +669,7 @@ theorem tree_node_le (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
     (hv : Valid N (nn n)) {o : (sys R FL Pl).N → Fin U1} (hg : ∀ x, (Tow.plan R FL Pl N N U1).good n o x)
     (hb : b ≤ c) (hX : Fintype.card (T.X J) ≤ c) (p : Fin (AA + A')) :
     ((cutUnits (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) id
-      ((Tow.plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)) \ deadU R FL Pl N o)).filter
+      ((Tow.plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)) \ deadU N o)).filter
       (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card ≤ (c + 1) * BhN FL Uu AA N ρ := by
   let S := (univ : Finset (Σ j : Fin (J + 1), T.X j)).filter fun s =>
     Pl.pt (some s) = p ∨ treePar R FL Pl n o (Pl.pt (some s)) = p
@@ -744,7 +744,7 @@ theorem onN_le_up (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N �
       ∑ x ∈ s, fb (LfO R ch FL Pl N n o) j x ≤ ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧
         treePar R FL Pl n o q = Pl.pt P), treeUp R FL Pl n o q := by
     intro j hj s hs
-    have e1 : ∀ x, treeUp R FL Pl n o (Pl.pt (nd T j hj x)) = fb (LfO R ch FL Pl N n o) j x := fun x => by
+    have e1 : ∀ x, treeUp R FL Pl n o (Pl.pt (nd T j hj x)) = fb (LfO N n o) j x := fun x => by
       simp only [treeUp, Equiv.symm_apply_apply, onN_nd]
 
     rw [← Finset.sum_congr rfl fun x _ => e1 x,
@@ -759,12 +759,12 @@ theorem onN_le_up (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N �
   · have h1 := kids J le_rfl univ fun x _ => by
       unfold parN
       rw [dif_neg (by omega)]
-    have h2 := T.sum_bet (LfO R ch FL Pl N n o J)
-    have h3 : ∑ x, fb (LfO R ch FL Pl N n o) J x = ∑ x, T.bet (LfO R ch FL Pl N n o J) x := rfl
+    have h2 := T.sum_bet (LfO N n o J)
+    have h3 : ∑ x, fb (LfO N n o) J x = ∑ x, T.bet (LfO N n o J) x := rfl
     simp only [onN]
     omega
   · rw [onN_nd]
-    have e1 : treeUp R FL Pl n o (Pl.pt (nd T j hj x)) = fb (LfO R ch FL Pl N n o) j x := by
+    have e1 : treeUp R FL Pl n o (Pl.pt (nd T j hj x)) = fb (LfO N n o) j x := by
       simp only [treeUp, Equiv.symm_apply_apply, onN_nd]
 
     rw [e1]
@@ -796,9 +796,9 @@ theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
           ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl n o q = p),
             treeUp R FL Pl n o q) +
         (if (p : ℕ) < AA then (1 + 8 * m) * N else 0) +
-        2 * ((deadU R FL Pl N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
-  have hgd : ∀ mv, GoodMv N (nn n) (oo R FL Pl o) mv := fun mv => by
-    have h1 : GoodMv N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
+        2 * ((deadU N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
+  have hgd : ∀ mv, GoodMv N (nn n) (oo o) mv := fun mv => by
+    have h1 : GoodMv N (nn n) (oo o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨P, rfl⟩ := Pl.pt.surjective p
   have h0 := held_node_le
@@ -812,7 +812,7 @@ theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
     · simp
     · simp
   have h3 : chanN R FL Pl (Pl.pt P) ≤
-      2 * ((deadU R FL Pl N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) (Pl.pt P))).card := by
+      2 * ((deadU N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) (Pl.pt P))).card := by
     unfold deadU chanN
     rw [Finset.filter_image, card_image_of_injective _ (fun ν ν' e => (Uid.new.inj e).1), card_filter, Finset.mul_sum]
     refine Finset.sum_le_sum fun ν _ => ?_
