@@ -3,10 +3,10 @@ Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
-import Nc.Dl.Bd1
+import Nc.Dl.Cut
 
 /-!
-# Bounds for the last steps and the templates
+# Bounds for the steps: the first guess no bits, the last only the contents of the cut units
 -/
 
 set_option linter.unusedSectionVars false
@@ -19,6 +19,38 @@ variable {A : Type} [CommRing A] {S Q : Type} [Fintype S] [DecidableEq S] [Finty
   {K A' E U0 U1 ub mm D pS : ℕ} {M : Sys A (K + K + A') E} {P : G.Plan M U0 U1}
   {grp : NN K U0 → (M.N → Fin U1) → Fin (K + K + A') → Fin mm} (C : Codes S M U0 U1 D pS) {m mb : ℕ}
   (tab : SlpTab P grp D pS) (pt : Fin K → Tree) (qn : Q → ℕ) (i e : Q) (hU0 : U0 < D) (hU1 : U1 ≤ D)
+
+/-- The steps 1 to 8 guess no bits, so each costs no more than it is large (`DStep.cost_le`). -/
+theorem steps18_ne_bits : ∀ st ∈ steps18 C tab qn i e hU0 hU1, ∀ p dst, st ≠ .bits p dst := by
+  intro st hst p dst
+  simp only [steps18, List.mem_append] at hst
+  rcases hst with h | h | h | h | (h | h | h) | h
+  · rw [steps1, List.mem_map] at h
+    obtain ⟨a, -, rfl⟩ := h
+    nofun
+  · rw [steps2, List.mem_map] at h
+    obtain ⟨a, -, rfl⟩ := h
+    nofun
+  · rw [steps3, List.mem_map] at h
+    obtain ⟨a, -, rfl⟩ := h
+    nofun
+  · rw [steps4, List.mem_map] at h
+    obtain ⟨a, -, rfl⟩ := h
+    nofun
+  · rw [steps5, List.mem_map] at h
+    obtain ⟨a, -, rfl⟩ := h
+    unfold rowStep
+    split_ifs <;> nofun
+  · rw [steps6, List.mem_map] at h
+    obtain ⟨k, -, rfl⟩ := h
+    unfold slpStep
+    split_ifs <;> nofun
+  · rw [steps7, List.mem_map] at h
+    obtain ⟨a, -, rfl⟩ := h
+    rcases a with y | c | id <;> nofun
+  · rw [steps8, List.map_append, List.mem_append, List.map_map, List.map_map, List.mem_map,
+      List.mem_map] at h
+    rcases h with ⟨a, -, rfl⟩ | ⟨c, -, rfl⟩ <;> nofun
 
 /-- The states after the steps 1 to 8. -/
 theorem mem_steps18 (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] {σ : List Bool → Tree}
