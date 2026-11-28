@@ -30,7 +30,7 @@ noncomputable def hT (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) : Tg T m AA →
   | .done => s(none, none)
   | .edge j e => s(nd T j (Nat.le_of_lt_succ j.2) (T.e0 e), nd T j (Nat.le_of_lt_succ j.2) (T.e1 e))
   | .nxt x => s(tri T R ch x 0, tri T R ch x 2)
-  | .seg j i ω q => q.map fun f => nd T (j + 1) j.2 (atv j.2 i ω f)
+  | .seg j i ω q => q.map fun f => nd T (j + 1) j.2 (atv i ω f)
 
 theorem edgeO_hold {c c' γ : T.X 0} {s : ℕ} (hs : s < R.pl c c' γ) :
     (edgeO T ((R.path c c' γ)[s]?) : Tg T m AA) ≠ .done ∧
@@ -67,15 +67,15 @@ theorem hB_eq {a c : Fin AA} {k : ℕ} (hd : tgB T R ch a c k ≠ .done) : hB ch
       rfl
 
 theorem seg_hold {j : ℕ} (hj : j < J) (i : Fin h) (c : T.X j) :
-    (s(T.co i (hst T i c), T.co i c) : Sym2 T.Fl).map (fun f => nd T (j + 1) hj (atv hj i (T.πV (T.vx i c)) f)) =
+    (s(T.co i (hst T i c), T.co i c) : Sym2 T.Fl).map (fun f => nd T (j + 1) hj (atv i (T.πV (T.vx i c)) f)) =
       s(nd T (j + 1) hj (hst T i c), nd T (j + 1) hj (T.π c)) := by
   rw [Sym2.map_mk]
-  have h1 : atv hj i (T.πV (T.vx i c)) (T.co i (hst T i c)) = hst T i c := by
+  have h1 : atv i (T.πV (T.vx i c)) (T.co i (hst T i c)) = hst T i c := by
     rw [← T.host_vx hj i (T.vx i c)]
-    exact atv_eq hj i _
-  have h2 : atv hj i (T.πV (T.vx i c)) (T.co i c) = T.π c := by
-    rw [← T.π_vx hj i c, ← T.π_co hj i c]
-    exact atv_eq hj i _
+    exact atv_eq i _
+  have h2 : atv i (T.πV (T.vx i c)) (T.co i c) = T.π c := by
+    rw [← T.π_vx i c, ← T.π_co i c]
+    exact atv_eq i _
   simp only [h1, h2]
 
 /-- Units of channels. -/
@@ -115,7 +115,7 @@ theorem hN_eq (ν : NM R FL) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) : hN ν = hT
         fin_cases s
         · exact absurd rfl hd
         · exact (seg_hold j.2 (T.ty e) (T.e0 e)).symm
-        · have h1 := T.π_ends j.2 e
+        · have h1 := T.π_ends e
           have h2 := congrArg (Sym2.map (nd T (j + 1) j.2)) h1
           simp only [Sym2.map_mk] at h2
           exact h2.symm
@@ -141,23 +141,23 @@ theorem hN_eq (ν : NM R FL) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) : hN ν = hT
             exact absurd rfl hd
         · exact absurd rfl hd
     · exact absurd rfl hd
-  · change s(nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).c ν))),
-      nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).d ν)))) = _
-    set p := (T.nr l.1.2 l.2.1).symm (l.2.2.1, FL.cn l.2.2.2 ν) with hp
-    have hp2 : T.nr l.1.2 l.2.1 p = (l.2.2.1, FL.cn l.2.2.2 ν) := by rw [hp, Equiv.apply_symm_apply]
-    have h0 := T.nr_vx0 l.1.2 l.2.1 p
-    have h1 := T.nr_vx1 l.1.2 l.2.1 p
-    have h2 := T.nr_co l.1.2 l.2.1 p
+  · change s(nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).c ν))),
+      nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).d ν)))) = _
+    set p := (T.nr l.2.1).symm (l.2.2.1, FL.cn l.2.2.2 ν) with hp
+    have hp2 : T.nr l.2.1 p = (l.2.2.1, FL.cn l.2.2.2 ν) := by rw [hp, Equiv.apply_symm_apply]
+    have h0 := T.nr_vx0 l.2.1 p
+    have h1 := T.nr_vx1 l.2.1 p
+    have h2 := T.nr_co l.2.1 p
     rw [hp2] at h0 h1 h2
     have h3 := (FL.ends l.2.2.2 ν).trans h2.symm
-    have h4 := congrArg (Sym2.map fun f => nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f)) h3
+    have h4 := congrArg (Sym2.map fun f => nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f)) h3
     simp only [Sym2.map_mk] at h4
     rw [h4]
-    have e1 : atv l.1.2 l.2.1 l.2.2.1 (T.co l.2.1 (T.e0 p.1)) = T.e0 p.1 := by
-      have := atv_eq l.1.2 l.2.1 (T.e0 p.1)
+    have e1 : atv l.2.1 l.2.2.1 (T.co l.2.1 (T.e0 p.1)) = T.e0 p.1 := by
+      have := atv_eq l.2.1 (T.e0 p.1)
       rwa [h0] at this
-    have e2 : atv l.1.2 l.2.1 l.2.2.1 (T.co l.2.1 (T.e1 p.1)) = T.e1 p.1 := by
-      have := atv_eq l.1.2 l.2.1 (T.e1 p.1)
+    have e2 : atv l.2.1 l.2.2.1 (T.co l.2.1 (T.e1 p.1)) = T.e1 p.1 := by
+      have := atv_eq l.2.1 (T.e1 p.1)
       rwa [h1] at this
     rw [e1, e2]
     rfl

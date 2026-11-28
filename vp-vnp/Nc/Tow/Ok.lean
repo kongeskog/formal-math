@@ -243,9 +243,9 @@ theorem plan_ok {cap : ℕ}
           · rfl
         rw [h1, Sym2.map_mk]
       · change s(Pl.pt (nd T (l.1 + 1) l.1.2
-            (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
+            (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
           Pl.pt (nd T (l.1 + 1) l.1.2
-            (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
+            (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
         simp only [inpZ, hT, pr, Sym2.map_mk]
     rw [← h4, Sym2.eq_iff] at h3
     exact h3.imp id And.symm

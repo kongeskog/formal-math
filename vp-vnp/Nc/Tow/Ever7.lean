@@ -70,7 +70,7 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
     refine Finset.sum_le_sum fun l _ => ?_
     rw [Finset.mul_sum, ← Equiv.sum_comp (FL.ro l.2.2.2)]
     refine Finset.sum_le_sum (ι := (FL.L l.2.2.2).Ro) fun p _ => ?_
-    change (if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 p)) = P then _ else 0) ≤ _
+    change (if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p)) = P then _ else 0) ≤ _
     have h2 : ∀ (inst : Fintype ((FL.L l.2.2.2).SlAt p)), @Fintype.card _ inst ≤ Sm := fun inst =>
       (Fintype.card_le_of_injective (Subtype.val : (FL.L l.2.2.2).SlAt p → (FL.L l.2.2.2).Sl)
         Subtype.val_injective).trans (hSm _)

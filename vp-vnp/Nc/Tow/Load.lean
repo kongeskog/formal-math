@@ -44,7 +44,7 @@ theorem kap_sq {j : ℕ} (n : T.Ed j → ℕ) :
   Real.sq_sqrt (mul_nonneg (by positivity) (Finset.sum_nonneg fun e _ => sq_nonneg _))
 
 theorem card_V {j : ℕ} (hj : j ≤ J) (i : Fin h) : Fintype.card (T.V j i) * b = Fintype.card (T.X j) := by
-  rw [Fintype.card_of_bijective (T.vx_co hj i), Fintype.card_prod, T.card_fl]
+  rw [Fintype.card_of_bijective (T.vx_co i), Fintype.card_prod, T.card_fl]
 
 /-- Cauchy–Schwarz for a sum over few elements. -/
 theorem sq_sum_le {κ : Type*} (s : Finset κ) (f : κ → ℝ) {k : ℕ} (hk : s.card ≤ k) :
@@ -79,12 +79,12 @@ theorem mid_le (hj : j < J) {n' : T.Ed (j + 1) → ℕ}
     constructor
     · intro hh
       refine ⟨?_, hh⟩
-      rw [← T.π_ty hj e, hh]
+      rw [← T.π_ty e, hh]
       exact (mem_filter.1 he').2
     · exact fun hh => hh.2
   · intro e he
     simp only [mem_filter, mem_univ, true_and] at he ⊢
-    rw [T.π_ty hj e, he]
+    rw [T.π_ty e, he]
 
 /-- Units at chambers. -/
 theorem sum_be_sq (hj : j ≤ J) : ∑ c, (T.be i n c : ℝ) ^ 2 ≤
@@ -98,7 +98,7 @@ theorem sum_be_sq (hj : j ≤ J) : ∑ c, (T.be i n c : ℝ) ^ 2 ≤
       push_cast
       rfl
     rw [e1, ← Finset.sum_filter]
-    simpa only [Nat.cast_one, one_mul] using sq_sum_le _ _ (T.deg j hj c i)
+    simpa only [Nat.cast_one, one_mul] using sq_sum_le _ _ (T.deg j c i)
   refine (Finset.sum_le_sum fun c _ => h1 c).trans ?_
   rw [Finset.sum_comm]
   have h2 : ∀ e : T.Ed j, (∑ c, if T.ty e = i ∧ (T.e0 e = c ∨ T.e1 e = c) then (n e : ℝ) ^ 2 else 0) =
@@ -142,12 +142,12 @@ theorem card_two (hj : j < J) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) :
         have hv := (mem_filter.1 (mem_coe.1 hc)).2.1
         have hv' := (mem_filter.1 (mem_coe.1 hc')).2.1
         have hh : T.host i (T.vx i c) = T.host i (T.vx i c') := by
-          apply (T.vx_co (Nat.succ_le_of_lt hj) i).1
+          apply (T.vx_co i).1
           simp only [Prod.mk.injEq]
           refine ⟨?_, heq.1⟩
           rw [T.host_vx hj, T.host_vx hj, hv, hv']
         have hvx := T.host_inj hj i hh
-        apply (T.vx_co hj.le i).1
+        apply (T.vx_co i).1
         simp only [Prod.mk.injEq]
         exact ⟨hvx, heq.2⟩
     exact h1.trans card_le_two
@@ -254,7 +254,7 @@ theorem other_le {j : ℕ} (hj : j < J) {i : Fin h}
     {n : T.Ed j → ℕ} {n' : T.Ed (j + 1) → ℕ} {C₁ a₁ N : ℝ} (hC : 0 ≤ C₁) (ha : 0 ≤ a₁) (hN0 : 0 ≤ N)
     (hN2 : N ^ 2 = Fintype.card (T.X j) / 2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2)
     (t : T.V (j + 1) i → ℕ)
-    (hal : ∀ ω, b / 2 * ∑ ν, (n' ((T.nr (Nat.succ_le_of_lt hj) i).symm (ω, ν)).1 : ℝ) ^ 2 ≤
+    (hal : ∀ ω, b / 2 * ∑ ν, (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2 ≤
       C₁ * a₁ ^ 2 * (t ω : ℝ) ^ 2)
     (ht : ∀ ω, a₁ * t ω ≤ √(vN2 b (T.nEnd i n ω)) + a₁) :
     Fintype.card (T.X (j + 1)) / 2 * ∑ e' ∈ univ.filter (fun e' => ¬ T.ty e' = i), (n' e' : ℝ) ^ 2 ≤
@@ -269,26 +269,26 @@ theorem other_le {j : ℕ} (hj : j < J) {i : Fin h}
   have hxb : 0 ≤ x / b := by positivity
   set f : T.V (j + 1) i → ℝ := fun ω => √(vN2 b (T.nEnd i n ω)) with hf
   have e1 : ∑ e' ∈ univ.filter (fun e' : T.Ed (j + 1) => ¬ T.ty e' = i), (n' e' : ℝ) ^ 2 =
-      ∑ ω, ∑ ν, (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2 := by
-    rw [← Fintype.sum_prod_type' (f := fun ω ν => (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2)]
-    rw [← Equiv.sum_comp (T.nr hj' i) (fun p => (n' ((T.nr hj' i).symm p).1 : ℝ) ^ 2)]
+      ∑ ω, ∑ ν, (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2 := by
+    rw [← Fintype.sum_prod_type' (f := fun ω ν => (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2)]
+    rw [← Equiv.sum_comp (T.nr i) (fun p => (n' ((T.nr i).symm p).1 : ℝ) ^ 2)]
     simp only [Equiv.symm_apply_apply]
     exact (Finset.sum_subtype (univ.filter fun e' : T.Ed (j + 1) => ¬ T.ty e' = i) (p := fun e' => T.ty e' ≠ i)
       (by simp) fun e' => (n' e' : ℝ) ^ 2)
   rw [e1]
-  have h1 : ∀ ω, b / 2 * ∑ ν, (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2 ≤ C₁ * (f ω + a₁) ^ 2 := by
+  have h1 : ∀ ω, b / 2 * ∑ ν, (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2 ≤ C₁ * (f ω + a₁) ^ 2 := by
     intro ω
     refine (hal ω).trans ?_
     have h2 : (a₁ * (t ω : ℝ)) ^ 2 ≤ (f ω + a₁) ^ 2 :=
       pow_le_pow_left₀ (mul_nonneg ha (Nat.cast_nonneg _)) (ht ω) 2
     calc C₁ * a₁ ^ 2 * (t ω : ℝ) ^ 2 = C₁ * (a₁ * (t ω : ℝ)) ^ 2 := by ring
       _ ≤ _ := mul_le_mul_of_nonneg_left h2 hC
-  have h3 : x / 2 * ∑ ω, ∑ ν, (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2 =
-      x / b * ∑ ω, b / 2 * ∑ ν, (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2 := by
+  have h3 : x / 2 * ∑ ω, ∑ ν, (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2 =
+      x / b * ∑ ω, b / 2 * ∑ ν, (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2 := by
     rw [← Finset.mul_sum]
     field_simp
   rw [h3]
-  have h4 : x / b * ∑ ω, b / 2 * ∑ ν, (n' ((T.nr hj' i).symm (ω, ν)).1 : ℝ) ^ 2 ≤
+  have h4 : x / b * ∑ ω, b / 2 * ∑ ν, (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2 ≤
       C₁ * (x / b * ∑ ω, (f ω + a₁) ^ 2) := by
     calc _ ≤ x / b * ∑ ω, C₁ * (f ω + a₁) ^ 2 :=
           mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun ω _ => h1 ω) hxb
@@ -317,7 +317,7 @@ theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
     (hi : (h : ℝ) * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 ≤ ∑ e, (n e : ℝ) ^ 2)
     (hmid : ∀ e', T.ty e' = i → n' e' ≤ ∑ e ∈ univ.filter (fun e => T.πE e = e'), n e)
     (t : T.V (j + 1) i → ℕ)
-    (hal : ∀ ω, b / 2 * ∑ ν, (n' ((T.nr (Nat.succ_le_of_lt hj) i).symm (ω, ν)).1 : ℝ) ^ 2 ≤
+    (hal : ∀ ω, b / 2 * ∑ ν, (n' ((T.nr i).symm (ω, ν)).1 : ℝ) ^ 2 ≤
       C₁ * a₁ ^ 2 * (t ω : ℝ) ^ 2)
     (ht : ∀ ω, a₁ * t ω ≤ √(vN2 b (T.nEnd i n ω)) + a₁) :
     T.kap n' ≤ ρ * T.kap n + √C₁ * a₁ / b * Fintype.card (T.X (j + 1)) := by

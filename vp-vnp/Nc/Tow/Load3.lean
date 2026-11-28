@@ -164,7 +164,7 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o) 
       have hj : j' = j := Fin.succ_injective _ h1
       subst hj
       have h3 := eq_of_heq h2
-      have h4 := ((T.nr j'.2 i').symm (ω, FL.cn d ν)).2
+      have h4 := ((T.nr i').symm (ω, FL.cn d ν)).2
       rw [h3, he'] at h4
       refine hne (alv_inr_zero (Or.inl fun hcon => ?_) ν)
       have : IsMin (load R ch FL lhat n o) j'.castSucc i' := hcon
@@ -206,7 +206,7 @@ theorem alive_sq (l : LMv T FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv R ch FL l
 /-- Loads on the edges at vertices. -/
 theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
     (d : FL.Di) (hd : Pick FL (load R ch FL lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
-    load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) ≤
+    load R ch FL lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) ≤
       alv R ch FL lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch)) := by
   classical
   refine (load_le_sum {(⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch))} (bt_edge_succ j _) ?_).trans ?_
@@ -216,8 +216,8 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
       subst h1
       refine hne ((alv_mid_le j e 2 hx ν').2 fun hcon => ?_)
       have h4 : T.ty e = i := firstMin_eq hcon hi
-      have h5 := ((T.nr j.2 i).symm (ω, ν)).2
-      rw [← h3, T.π_ty j.2, h4] at h5
+      have h5 := ((T.nr i).symm (ω, ν)).2
+      rw [← h3, T.π_ty, h4] at h5
       exact h5 rfl
     · obtain ⟨j', i', ω', d'⟩ := l
       obtain ⟨h1, h2⟩ := Tg.edge.inj hν
@@ -228,8 +228,8 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
         by_contra hcon
         exact hne (alv_inr_zero (Or.inl hcon) ν')
       obtain rfl : i' = i := firstMin_eq hmin hi
-      have h4 : (T.nr j'.2 i').symm (ω', FL.cn d' ν') = (T.nr j'.2 i').symm (ω, ν) := Subtype.ext h3
-      have h5 := (T.nr j'.2 i').symm.injective h4
+      have h4 : (T.nr i').symm (ω', FL.cn d' ν') = (T.nr i').symm (ω, ν) := Subtype.ext h3
+      have h5 := (T.nr i').symm.injective h4
       simp only [Prod.mk.injEq] at h5
       obtain ⟨h6, h7⟩ := h5
       subst h6
@@ -260,7 +260,7 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
     exact mid_load_le j hi e' he'
   · intro ω
     obtain ⟨d, hd⟩ := exists_pick (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)
-    have h4 : ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1)) ^ 2 ≤
+    have h4 : ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1)) ^ 2 ≤
         ∑ ν : (FL.L d).Cn, (alv R ch FL lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R FL (ch := ch))) ^ 2 := by
       rw [← Equiv.sum_comp (FL.cn d)]
       refine Finset.sum_le_sum fun ν _ => Nat.pow_le_pow_left ?_ 2
@@ -270,7 +270,7 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
     have h5 := (Nat.mul_le_mul_left b h4).trans ((alive_sq _).trans
       (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv T FL)) 2)))
     have h6 : (b : ℝ) * ∑ ν : T.Nr,
-          (load R ch FL lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
+          (load R ch FL lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
         FL.G₁ * (tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ) ^ 2 := by
       exact_mod_cast h5
     linarith [mul_le_mul_of_nonneg_right FL.G₁_le

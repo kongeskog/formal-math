@@ -45,13 +45,13 @@ structure Tower (h b J : ℕ) where
   e_ne : ∀ {j} (e : Ed j), e0 e ≠ e1 e
   /-- the type of an edge -/
   ty : ∀ {j}, Ed j → Fin h
-  card_ed : ∀ j ≤ J, ∀ i, 2 * (univ.filter fun e : Ed j => ty e = i).card = Fintype.card (X j)
-  deg : ∀ j ≤ J, ∀ (c : X j) i, (univ.filter fun e : Ed j => ty e = i ∧ (e0 e = c ∨ e1 e = c)).card ≤ 1
+  card_ed : ∀ j i, 2 * (univ.filter fun e : Ed j => ty e = i).card = Fintype.card (X j)
+  deg : ∀ j (c : X j) i, (univ.filter fun e : Ed j => ty e = i ∧ (e0 e = c ∨ e1 e = c)).card ≤ 1
   /-- the vertex of a chamber -/
   vx : ∀ {j} i, X j → V j i
   /-- the place of a chamber at its vertex -/
   co : ∀ {j} (i : Fin h), X j → Fl
-  vx_co : ∀ {j}, j ≤ J → ∀ i, Function.Bijective fun c : X j => (vx i c, co i c)
+  vx_co : ∀ {j} i, Function.Bijective fun c : X j => (vx i c, co i c)
   card_fl : Fintype.card Fl = b
   b_pos : 0 < b
   h_pos : 0 < h
@@ -62,23 +62,23 @@ structure Tower (h b J : ℕ) where
   n_ne : ∀ ν, cN ν ≠ dN ν
   near : ∀ f, ∃ ν, cN ν = f ∨ dN ν = f
   /-- the edges of types other than `i` are the near pairs at the vertices of type `i` -/
-  nr : ∀ {j}, j ≤ J → ∀ i, {e : Ed j // ty e ≠ i} ≃ V j i × Nr
-  nr_vx0 : ∀ {j} (hj : j ≤ J) i (e : {e : Ed j // ty e ≠ i}), vx i (e0 e.1) = (nr hj i e).1
-  nr_vx1 : ∀ {j} (hj : j ≤ J) i (e : {e : Ed j // ty e ≠ i}), vx i (e1 e.1) = (nr hj i e).1
-  nr_co : ∀ {j} (hj : j ≤ J) i (e : {e : Ed j // ty e ≠ i}),
-    s(co i (e0 e.1), co i (e1 e.1)) = s(cN (nr hj i e).2, dN (nr hj i e).2)
+  nr : ∀ {j} i, {e : Ed j // ty e ≠ i} ≃ V j i × Nr
+  nr_vx0 : ∀ {j} i (e : {e : Ed j // ty e ≠ i}), vx i (e0 e.1) = (nr i e).1
+  nr_vx1 : ∀ {j} i (e : {e : Ed j // ty e ≠ i}), vx i (e1 e.1) = (nr i e).1
+  nr_co : ∀ {j} i (e : {e : Ed j // ty e ≠ i}),
+    s(co i (e0 e.1), co i (e1 e.1)) = s(cN (nr i e).2, dN (nr i e).2)
   /-- the covering -/
   π : ∀ {j}, X j → X (j + 1)
   /-- the covering on edges -/
   πE : ∀ {j}, Ed j → Ed (j + 1)
   /-- the covering on vertices -/
   πV : ∀ {j} {i}, V j i → V (j + 1) i
-  π_ends : ∀ {j}, j < J → ∀ e : Ed j, s(e0 (πE e), e1 (πE e)) = s(π (e0 e), π (e1 e))
-  π_ty : ∀ {j}, j < J → ∀ e : Ed j, ty (πE e) = ty e
+  π_ends : ∀ {j} (e : Ed j), s(e0 (πE e), e1 (πE e)) = s(π (e0 e), π (e1 e))
+  π_ty : ∀ {j} (e : Ed j), ty (πE e) = ty e
   card_X : ∀ j < J, Fintype.card (X j) = b * Fintype.card (X (j + 1))
   fibre : ∀ {j}, j < J → ∀ ē : Ed (j + 1), (univ.filter fun e : Ed j => πE e = ē).card ≤ b
-  π_vx : ∀ {j}, j < J → ∀ i (c : X j), vx i (π c) = πV (vx i c)
-  π_co : ∀ {j}, j < J → ∀ i (c : X j), co i (π c) = co i c
+  π_vx : ∀ {j} i (c : X j), vx i (π c) = πV (vx i c)
+  π_co : ∀ {j} i (c : X j), co i (π c) = co i c
   /-- hosts -/
   host : ∀ {j} i, V j i → X (j + 1)
   host_inj : ∀ {j}, j < J → ∀ i, Function.Injective (host i : V j i → X (j + 1))

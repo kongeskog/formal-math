@@ -62,7 +62,7 @@ theorem card_children {j : ℕ} (hj : j < J) (c' : T.X (j + 1)) :
   have h1 := (mem_filter.1 (mem_coe.1 hc)).2
   have h2 := (mem_filter.1 (mem_coe.1 hc'')).2
   have h3 := T.host_inj hj _ (h1.trans h2.symm)
-  exact (T.vx_co hj.le (imin Lf j)).1 (Prod.ext h3 heq)
+  exact (T.vx_co (imin Lf j)).1 (Prod.ext h3 heq)
 
 theorem nd_cases (ν : Nd T) : ν = none ∨ ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), ν = nd T j hj c := by
   rcases ν with _ | ⟨j, c⟩

@@ -127,20 +127,20 @@ include hg in
 open Classical in
 /-- The units of a law move at a node. -/
 theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d : Bool,
-    if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
+    if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
       oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ 2 * Fintype.card T.Nr * FL.G₁ *
-    ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then
+    ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then
       num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) else 0 := by
   set t := num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) with ht
-  set S := ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then t else 0 with hS
+  set S := ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then t else 0 with hS
   have h5 : ∀ (ν : (FL.L l.2.2.2).Cn) (d : Bool),
-      (if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
+      (if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
         oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ FL.G₁ * S := by
     intro ν d
     split_ifs with hP
     · refine (law_le hg l ν).trans (Nat.mul_le_mul_left _ ?_)
       refine le_trans ?_ (Finset.single_le_sum (f := fun f : T.Fl =>
-        if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then t else 0) (fun _ _ => Nat.zero_le _)
+        if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then t else 0) (fun _ _ => Nat.zero_le _)
         (mem_univ (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))))
       simp only [hP, if_true]
       exact le_rfl

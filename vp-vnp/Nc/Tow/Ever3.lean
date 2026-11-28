@@ -213,7 +213,7 @@ variable (R ch FL lhat n o) in
 open Classical in
 /-- The number of units given in law moves at a node. -/
 noncomputable def NL (P : Nd T) : ℕ := ∑ l : LMv T FL, ∑ f : T.Fl,
-  if nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 f) = P then num R ch FL lhat n o (.inr l) else 0
+  if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then num R ch FL lhat n o (.inr l) else 0
 
 variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
@@ -233,11 +233,11 @@ theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
         if GoodL R ch FL o l (num R ch FL lhat n o (.inr l)) then o ⟨.inr l, ν'⟩ else
           min (o ⟨.inr l, ν'⟩) (num R ch FL lhat n o (.inr l)) := rfl
     rw [h2, if_pos (hg (.inr l)).1]
-  set p := (T.nr j.2 i).symm (T.vx i x, ν) with hp
-  have hp2 : T.nr j.2 i p = (T.vx i x, ν) := by rw [hp, Equiv.apply_symm_apply]
-  have v0 := T.nr_vx0 j.2 i p
-  have v1 := T.nr_vx1 j.2 i p
-  have v2 := T.nr_co j.2 i p
+  set p := (T.nr i).symm (T.vx i x, ν) with hp
+  have hp2 : T.nr i p = (T.vx i x, ν) := by rw [hp, Equiv.apply_symm_apply]
+  have v0 := T.nr_vx0 i p
+  have v1 := T.nr_vx1 i p
+  have v2 := T.nr_co i p
   rw [hp2] at v0 v1 v2
   have hend : T.e0 p.1 = x ∨ T.e1 p.1 = x := by
     have h3 : T.co i x ∈ s(T.co i (T.e0 p.1), T.co i (T.e1 p.1)) := by
@@ -247,10 +247,10 @@ theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
       · exact Or.inr hν.symm
     rw [Sym2.mem_iff] at h3
     rcases h3 with h3 | h3
-    · exact Or.inl ((T.vx_co j.2 i).1 (Prod.ext v0 h3.symm))
-    · exact Or.inr ((T.vx_co j.2 i).1 (Prod.ext v1 h3.symm))
+    · exact Or.inl ((T.vx_co i).1 (Prod.ext v0 h3.symm))
+    · exact Or.inr ((T.vx_co i).1 (Prod.ext v1 h3.symm))
   have htg : tgM R ch FL (⟨.inr l, ν'⟩ : NM R FL).1 ν' = .edge j.succ p.1 := by
-    change Tg.edge j.succ ((T.nr j.2 i).symm (T.vx i x, FL.cn d ν')).1 = _
+    change Tg.edge j.succ ((T.nr i).symm (T.vx i x, FL.cn d ν')).1 = _
     rw [hν', Equiv.apply_symm_apply]
   have h4 := sum_alv_le (lhat := lhat) (n := n) (o := o) (.edge j.succ p.1) ({()} : Finset Unit)
     (fun _ => (⟨.inr l, ν'⟩ : NM R FL)) (fun _ _ _ _ _ => rfl) (fun _ _ => htg)
@@ -275,16 +275,16 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL R ch FL lhat
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Fintype.sum_sigma]
     have h2 : ∀ i, (∑ p : T.V (j + 1) i × FL.Di, ∑ f : T.Fl,
-        if nd T (j + 1) j.2 (atv j.2 i p.1 f) = nd T (k + 1) hk x then
+        if nd T (j + 1) j.2 (atv i p.1 f) = nd T (k + 1) hk x then
           num R ch FL lhat n o (.inr ⟨j, i, p.1, p.2⟩) else 0) =
         ∑ y : T.X (j + 1), if nd T (j + 1) j.2 y = nd T (k + 1) hk x then
           ∑ d, num R ch FL lhat n o (.inr ⟨j, i, T.vx i y, d⟩) else 0 := by
       intro i
-      rw [← Equiv.sum_comp (Equiv.ofBijective _ (T.vx_co j.2 i)).symm, Fintype.sum_prod_type, Fintype.sum_prod_type]
+      rw [← Equiv.sum_comp (Equiv.ofBijective _ (T.vx_co i)).symm, Fintype.sum_prod_type, Fintype.sum_prod_type]
       refine Finset.sum_congr rfl fun ω _ => ?_
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun f _ => ?_
-      have h3 : (Equiv.ofBijective _ (T.vx_co j.2 i)).symm (ω, f) = atv j.2 i ω f := rfl
+      have h3 : (Equiv.ofBijective _ (T.vx_co i)).symm (ω, f) = atv i ω f := rfl
       rw [h3, atv_vx]
       split_ifs
       · rfl

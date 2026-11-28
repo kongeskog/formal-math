@@ -29,7 +29,7 @@ theorem card_ed_real (hj : j ≤ J) : (Fintype.card (T.Ed j) : ℝ) = h * (Finty
     rw [← card_univ]
     exact card_eq_sum_card_fiberwise (fun _ _ => mem_coe.2 (mem_univ _))
   have h2 : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
-    rw [h1, Finset.mul_sum, Finset.sum_congr rfl fun i _ => T.card_ed j hj i]
+    rw [h1, Finset.mul_sum, Finset.sum_congr rfl fun i _ => T.card_ed j i]
     simp
   have h3 : (2 : ℝ) * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by exact_mod_cast h2
   linarith
@@ -48,7 +48,7 @@ theorem card_at (hj : j ≤ J) (c : T.X j) : (univ.filter fun e : T.Ed j => T.e0
     simp only [mem_filter, mem_univ, true_and]
     exact and_comm
   rw [h1]
-  calc _ ≤ ∑ _i : Fin h, 1 := Finset.sum_le_sum fun i _ => T.deg j hj c i
+  calc _ ≤ ∑ _i : Fin h, 1 := Finset.sum_le_sum fun i _ => T.deg j c i
     _ = h := by simp
 
 theorem sum_sq_eq (hX : 0 < Fintype.card (T.X j)) (n : T.Ed j → ℕ) :

@@ -104,7 +104,7 @@ variable {T R ch}
 
 theorem π_ne {j : ℕ} (hj : j < J) (e : T.Ed j) : T.π (T.e0 e) ≠ T.π (T.e1 e) := by
   intro heq
-  have h1 := T.π_ends hj e
+  have h1 := T.π_ends e
   rw [heq, Sym2.eq_iff] at h1
   have := T.e_ne (T.πE e)
   rcases h1 with ⟨h2, h3⟩ | ⟨h2, h3⟩ <;> exact this (h2.trans h3.symm)
@@ -208,30 +208,30 @@ def kindM (FL : FlagLaws F T) : Mv T R ch FL → Law F
   | .inr l => FL.L l.2.2.2
 
 /-- A chamber of a vertex. -/
-noncomputable def atv {j : ℕ} (hj : j ≤ J) (i : Fin h) (ω : T.V j i) (f : T.Fl) : T.X j :=
-  (Equiv.ofBijective _ (T.vx_co hj i)).symm (ω, f)
+noncomputable def atv {j : ℕ} (i : Fin h) (ω : T.V j i) (f : T.Fl) : T.X j :=
+  (Equiv.ofBijective _ (T.vx_co i)).symm (ω, f)
 
-theorem atv_vx {j : ℕ} (hj : j ≤ J) (i : Fin h) (ω : T.V j i) (f : T.Fl) : T.vx i (atv hj i ω f) = ω := by
-  have := (Equiv.ofBijective _ (T.vx_co hj i)).apply_symm_apply (ω, f)
+theorem atv_vx {j : ℕ} (i : Fin h) (ω : T.V j i) (f : T.Fl) : T.vx i (atv i ω f) = ω := by
+  have := (Equiv.ofBijective _ (T.vx_co i)).apply_symm_apply (ω, f)
   exact congrArg Prod.fst this
 
-theorem atv_co {j : ℕ} (hj : j ≤ J) (i : Fin h) (ω : T.V j i) (f : T.Fl) : T.co i (atv hj i ω f) = f := by
-  have := (Equiv.ofBijective _ (T.vx_co hj i)).apply_symm_apply (ω, f)
+theorem atv_co {j : ℕ} (i : Fin h) (ω : T.V j i) (f : T.Fl) : T.co i (atv i ω f) = f := by
+  have := (Equiv.ofBijective _ (T.vx_co i)).apply_symm_apply (ω, f)
   exact congrArg Prod.snd this
 
-theorem atv_eq {j : ℕ} (hj : j ≤ J) (i : Fin h) (c : T.X j) : atv hj i (T.vx i c) (T.co i c) = c :=
-  (Equiv.ofBijective _ (T.vx_co hj i)).symm_apply_apply c
+theorem atv_eq {j : ℕ} (i : Fin h) (c : T.X j) : atv i (T.vx i c) (T.co i c) = c :=
+  (Equiv.ofBijective _ (T.vx_co i)).symm_apply_apply c
 
 /-- The parties of a move. -/
 noncomputable def partM (FL : FlagLaws F T) : (mv : Mv T R ch FL) → (kindM R ch FL mv).Ro → Nd T
   | .inl x => fun p => tri T R ch x.1 p
-  | .inr l => fun p => nd T (l.1 + 1) l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 p))
+  | .inr l => fun p => nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p))
 
 theorem partM_inj (FL : FlagLaws F T) (mv : Mv T R ch FL) : Function.Injective (partM R ch FL mv) := by
   rcases mv with x | l
   · exact tri_inj x.2
   · intro p q hpq
-    have h1 : atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 p) = atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 q) :=
+    have h1 : atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 p) = atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 q) :=
       (nd_inj (hj := l.1.2) (hj' := l.1.2)).1 hpq
     have h2 := congrArg (T.co l.2.1) h1
     rw [atv_co, atv_co] at h2
@@ -245,7 +245,7 @@ def timeM (FL : FlagLaws F T) : Mv T R ch FL → ℕ
 /-- Targets of channels. -/
 noncomputable def tgM (FL : FlagLaws F T) : (mv : Mv T R ch FL) → (kindM R ch FL mv).Cn → Tg T m AA
   | .inl x => fun ν => tgR T R ch x.1 ν
-  | .inr l => fun ν => .edge l.1.succ ((T.nr l.1.2 l.2.1).symm (l.2.2.1, FL.cn l.2.2.2 ν)).1
+  | .inr l => fun ν => .edge l.1.succ ((T.nr l.2.1).symm (l.2.2.1, FL.cn l.2.2.2 ν)).1
 
 end
 

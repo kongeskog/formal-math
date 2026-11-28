@@ -82,7 +82,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
     · refine ⟨j.1, j.2.le, T.e1 e, rfl, ?_⟩
       rw [hpar]
       have h1 : T.vx i (T.e0 e) = T.vx i (T.e1 e) := by
-        rw [T.nr_vx0 j.2.le i ⟨e, hx⟩, T.nr_vx1 j.2.le i ⟨e, hx⟩]
+        rw [T.nr_vx0 i ⟨e, hx⟩, T.nr_vx1 i ⟨e, hx⟩]
       have h2 : hst T i (T.e0 e) = hst T i (T.e1 e) := by
         unfold hst
         rw [h1]

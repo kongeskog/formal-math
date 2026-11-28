@@ -90,12 +90,12 @@ theorem seg_nondiag {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
     intro c hne hd
     rw [Sym2.mk_isDiag_iff] at hd
     apply hne
-    apply (T.vx_co (Nat.succ_le_of_lt j.2) i).1
+    apply (T.vx_co i).1
     refine Prod.ext ?_ ?_
     · simp only
-      rw [T.host_vx j.2, T.π_vx j.2]
+      rw [T.host_vx j.2, T.π_vx]
     · simp only
-      rw [hd, T.π_co j.2]
+      rw [hd, T.π_co]
   obtain ⟨e, s, hx, h1, -, h3⟩ := seg_chan hν
   subst h1
   rcases h3 with ⟨h5, -, h7⟩ | ⟨h5, -, h7⟩
