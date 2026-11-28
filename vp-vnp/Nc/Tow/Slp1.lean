@@ -103,41 +103,20 @@ theorem fits_mono {L : Tg T m AA → ℕ} {l : LMv FL} {s t : ℕ} (hst : s ≤ 
 /-- The number of units at a vertex is not large. -/
 theorem tmin_lt {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R ch FL U0 U1) (l : LMv FL) :
     tmin L l < b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1 + 2 := by
-  set w := Wb R ch FL U0 U1 with hw
-  set s := Fintype.card (Sym2 T.Fl) with hs
-  have h1 := tmin_le L l (n' := fun _ => w) fun q => hL _
-  have hN : vN2 b (fun _ : Sym2 T.Fl => w) ≤ ((b * s * w : ℕ) : ℝ) ^ 2 := by
-    unfold vN2
-    have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
-    have e1 : (∑ q : Sym2 T.Fl, if q.IsDiag then (0 : ℝ) else ((w : ℕ) : ℝ) ^ 2) ≤ s * (w : ℝ) ^ 2 := by
-      refine (Finset.sum_le_card_nsmul _ _ ((w : ℝ) ^ 2) fun q _ => ?_).trans (by simp [hs])
-      split_ifs
-      · positivity
-      · exact le_rfl
-    have e2 : ((b : ℝ) * (b - 1) / 2) ≤ (b : ℝ) ^ 2 := by nlinarith
-    have e3 : (0 : ℝ) ≤ (b : ℝ) * (b - 1) / 2 := by
-      have : (0 : ℝ) ≤ b - 1 := by linarith
-      positivity
-    have e4 : (s : ℝ) ≤ (s : ℝ) ^ 2 := by
-      rcases Nat.eq_zero_or_pos s with h0 | h0
-      · rw [h0]; simp
-      · have : (1 : ℝ) ≤ s := by exact_mod_cast h0
-        nlinarith
-    calc _ ≤ ((b : ℝ) * (b - 1) / 2) * (s * (w : ℝ) ^ 2) := mul_le_mul_of_nonneg_left e1 e3
-      _ ≤ (b : ℝ) ^ 2 * ((s : ℝ) ^ 2 * (w : ℝ) ^ 2) := by
-          refine mul_le_mul e2 (mul_le_mul_of_nonneg_right e4 (by positivity)) (by positivity) (by positivity)
-      _ = _ := by push_cast; ring
-  have h2 : √(vN2 b fun _ : Sym2 T.Fl => w) ≤ ((b * s * w : ℕ) : ℝ) := by
-    rw [show ((b * s * w : ℕ) : ℝ) = √(((b * s * w : ℕ) : ℝ) ^ 2) from (Real.sqrt_sq (Nat.cast_nonneg _)).symm]
-    exact Real.sqrt_le_sqrt hN
-  have ha : (1 : ℝ) ≤ FL.a₁ := by exact_mod_cast FL.a₁_pos
-  have h3 : (tmin L l : ℝ) ≤ (b * s * w : ℕ) + 1 := by
-    by_contra hcon
-    push Not at hcon
-    have h4 : (FL.a₁ : ℝ) * ((b * s * w : ℕ) + 1) < FL.a₁ * tmin L l :=
-      mul_lt_mul_of_pos_left hcon (by linarith)
-    nlinarith
-  have h4 : tmin L l ≤ b * s * w + 1 := by exact_mod_cast h3
+  have h1 := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q))
+    (b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1) (by
+    calc _ ≤ b ^ 2 * ∑ _q : Sym2 T.Fl, Wb R ch FL U0 U1 ^ 2 :=
+          Nat.mul_le_mul_left _ (Finset.sum_le_sum fun q _ => Nat.pow_le_pow_left (hL _) 2)
+      _ = b ^ 2 * (Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1 ^ 2) := by simp
+      _ ≤ b ^ 2 * (Fintype.card (Sym2 T.Fl) ^ 2 * Wb R ch FL U0 U1 ^ 2) := by
+          gcongr
+          exact Nat.le_self_pow two_ne_zero _
+      _ = (b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1) ^ 2 := by ring
+      _ ≤ (FL.a₁ * (b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1)) ^ 2 :=
+          Nat.pow_le_pow_left (Nat.le_mul_of_pos_left _ FL.a₁_pos) 2
+      _ ≤ _ := Nat.le_mul_of_pos_left _ two_pos)
+  have h2 := Nat.sInf_le (s := {t | ∃ d, Fits L (withD l d) t}) h1
+  change tmin L l ≤ _ at h2
   omega
 
 /-- The number of units at a vertex, as a sum. -/
