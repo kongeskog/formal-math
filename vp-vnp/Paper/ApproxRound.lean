@@ -211,10 +211,7 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
   have hnds : ∀ n ≤ 2 * α + 1, n * (K'.nds + 1) + 1 ≤ K'.nds * (4 * α + 5) := by
     intro n hn
     have h1 := KT.nds_pos K'
-    calc n * (K'.nds + 1) + 1 ≤ (2 * α + 1) * (K'.nds + K'.nds) + K'.nds :=
-          Nat.add_le_add (Nat.mul_le_mul hn (by omega)) h1
-      _ = K'.nds * (4 * α + 3) := by ring
-      _ ≤ _ := Nat.mul_le_mul_left _ (by omega)
+    linarith only [h1, Nat.mul_le_mul_right (K'.nds + 1) hn, Nat.mul_le_mul_left α h1]
   have hK' : K'.nds ≤ u ^ (h * α) := (Nat.le_mul_of_pos_right _ (by omega)).trans hK
   obtain ⟨Γ, hΓ⟩ : ∃ Γ, Γ = 2 ^ (3 * X) * M' := ⟨_, rfl⟩
   rw [← hΓ]
@@ -300,14 +297,17 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
         obtain ⟨f, hf⟩ : ∃ f, e = f + 15 := ⟨e - 15, by omega⟩
         obtain ⟨g, hg⟩ : ∃ g, e + 11 = g + 16 * h := ⟨e + 11 - 16 * h, by omega⟩
         have hJX : J + 1 ≤ X := by omega
+        have hbJ : ∀ c, c * X ^ 2 ≤ 1000 * X ^ 3 → c * (nB * (J + 1)) ≤ u ^ (h * α + 1 + 1) :=
+          fun c hc => by
+            have := pbig (h * α + 1)
+            grw [hJX, mul_left_comm, (hb c hc).1]
+            omega
         obtain ⟨e', he'⟩ : ∃ e', e = e' + 1 := ⟨e - 1, by omega⟩
         have hpos := ppos (16 * h - 16)
         have hLP : (u ^ (16 * h - 16) + 30) * u ^ g + 10 ≤ u ^ (e - 4) := by
           have h1 : (u ^ (16 * h - 16) + 30) * u ^ g ≤ 31 * u ^ (e - 5) := by
-            calc (u ^ (16 * h - 16) + 30) * u ^ g ≤ (31 * u ^ (16 * h - 16)) * u ^ g :=
-                  Nat.mul_le_mul_right _ (by omega)
-              _ = 31 * u ^ (16 * h - 16 + g) := by rw [pow_add]; ring
-              _ = _ := by congr 2; omega
+            grw [show u ^ (16 * h - 16) + 30 ≤ 31 * u ^ (16 * h - 16) by omega, mul_assoc,
+              ← pow_add, show 16 * h - 16 + g = e - 5 by omega]
           have h2 := pbig (e - 5)
           have h3 := ppos (e - 5)
           rw [show e - 5 + 1 = e - 4 by omega] at h2
@@ -319,11 +319,9 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
           ?_⟩
         · -- the exponent of the rescaling
           have h1 : nB ≤ 2 ^ J := by
-            calc nB ≤ nB * (1 * X) := Nat.le_mul_of_pos_right _ (by omega)
-              _ ≤ 2 * u ^ (h * α + 1) := (hb 1 (by omega)).1
-              _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
-              _ ≤ u ^ (e + 8) := pow_le_pow hu1 (by omega)
-              _ ≤ 2 ^ J := hJ.le
+            have := (hbJ 1 (by omega)).trans ((Nat.pow_le_pow_right hu1 (by omega)).trans hJ.le)
+            rw [one_mul, mul_add_one] at this
+            omega
           calc nB * 2 ^ J * (2 ^ B * M) + 1 ≤
                 2 ^ J * 2 ^ J * (2 ^ B * M) + 2 ^ J * 2 ^ J * (2 ^ B * M) := by
                 refine Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ h1)) ?_
@@ -337,13 +335,8 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
           have m1 : 60 * (K.ht + B + J + 1) + 42 + 2 ≤ u := by
             have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
             omega
-          have m2 : 40 * (nB * (J + 1)) ≤ u ^ (e + 8) := by
-            calc 40 * (nB * (J + 1)) ≤ 40 * (nB * X) :=
-                  Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
-              _ = nB * (40 * X) := by ring
-              _ ≤ 2 * u ^ (h * α + 1) := (hb 40 (by omega)).1
-              _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
-              _ ≤ u ^ (e + 8) := pow_le_pow hu1 (by omega)
+          have m2 : 40 * (nB * (J + 1)) ≤ u ^ (e + 8) :=
+            (hbJ 40 (by omega)).trans (pow_le_pow hu1 (by omega))
           have m3 : 80 ≤ u ^ (e + 8) := by
             have h7 : 2000 * u ^ (e + 7) ≤ u ^ (e + 8) := pbig (e + 7)
             have := ppos (e + 7)
@@ -356,20 +349,14 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
             _ = u ^ (e + 9) := (pow_succ' u (e + 8)).symm
         · -- size of the plain instances
           rw [← hnB, ← hsW]
-          have m1 : sW + 3 ≤ u ^ (α * (16 * h - 32)) := by
-            calc sW + 3 ≤ u ^ 1 := by rw [pow_one]; omega
-              _ ≤ _ := pow_le_pow hu1 (by omega)
+          have m1 : sW + 3 ≤ u ^ (α * (16 * h - 32)) :=
+            (show sW + 3 ≤ u by omega).trans (Nat.le_self_pow (by omega) u)
           have m2 : p.size ≤ u ^ (α * (16 * h - 32)) := hps.trans (pow_le_pow hu1 (by
             have : 4 * h * α = 4 * (h * α) := by ring
             omega))
           have m3 : (u ^ α) ^ (16 * h - 32) = u ^ (α * (16 * h - 32)) := by rw [← pow_mul]
-          have m4 : 4 * (nB * (J + 1)) ≤ u ^ (α * (16 * h - 32)) := by
-            calc 4 * (nB * (J + 1)) ≤ 4 * (nB * X) :=
-                  Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
-              _ = nB * (4 * X) := by ring
-              _ ≤ 2 * u ^ (h * α + 1) := (hb 4 (by omega)).1
-              _ ≤ u ^ (h * α + 1 + 1) := by have := pbig (h * α + 1); omega
-              _ ≤ _ := pow_le_pow hu1 (by omega)
+          have m4 : 4 * (nB * (J + 1)) ≤ u ^ (α * (16 * h - 32)) :=
+            (hbJ 4 (by omega)).trans (pow_le_pow hu1 (by omega))
           have := pbig (α * (16 * h - 32))
           rw [m3]
           omega
@@ -405,20 +392,13 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
             · refine Nat.mul_le_mul_left _ ((Nat.mul_le_mul_right _ e8).trans ?_)
               rw [Nat.mul_comm]
               exact h10.2.trans h3
-            · refine le_trans ?_ (h40.trans h3)
-              calc 40 * (nB' * (J + 1)) ≤ 40 * (nB' * X) :=
-                    Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hJX)
-                _ = nB' * (40 * X) := by ring
+            · grw [hJX, mul_left_comm, h40, h3]
           have m2 : u ^ f ≤ u ^ e' := pow_le_pow hu1 (by omega)
           have m3 : (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10) ≤
               u ^ e' := by
-            calc (60 * (K'.ht + B' + J + 1) + 42) * ((u ^ (16 * h - 16) + 30) * u ^ g + 10)
-                ≤ u * u ^ (e - 4) := by
-                  refine Nat.mul_le_mul ?_ hLP
-                  have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
-                  omega
-              _ = u ^ (e - 4 + 1) := (pow_succ' u _).symm
-              _ ≤ u ^ e' := pow_le_pow hu1 (by omega)
+            have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
+            grw [hLP, ← Nat.pow_le_pow_right hu1 (show e - 4 + 1 ≤ e' by omega), pow_succ',
+              show 60 * (K'.ht + B' + J + 1) + 42 ≤ u by omega]
           have m4 : 200 ≤ u ^ e' := by
             obtain ⟨e'', he''⟩ : ∃ e'', e' = e'' + 1 := ⟨e' - 1, by omega⟩
             have := pbig e''
@@ -443,8 +423,7 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
               (fun i hi => (show id i ≤ B₀ + J from hi.le))).trans ?_
             refine le_trans (Nat.mul_le_mul_left _ (Nat.mul_le_mul (show J + 1 ≤ X by omega)
               (show 4 * (pre.length + K₀.ht + (B₀ + J)) + 400 ≤ 44 * X by omega))) ?_
-            calc (K₀.expand B₀).nds * (X * (44 * X)) = (K₀.expand B₀).nds * (44 * X * X) := by ring
-              _ ≤ _ := s4
+            exact (by ring : _ = _).trans_le s4
           have sg := s3 K B [false] hK (by simp) (by omega)
           have sg' := s3 K' B' [true] hK' (by simp) (by omega)
           have s6 : 2 * sW + sU + 2000 ≤ 3 * u ^ (16 * h) := by
@@ -468,8 +447,8 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
         omega
       · exact hk3.imp fun c hc => hc.mono (Nat.pow_le_pow_right hΓ1 (Nat.le_succ n))
       · refine hM.map fun c hc => (hc.rescale r).mono ?_
-        calc r * M' ≤ 2 ^ (3 * X) * Γ ^ n * M' := Nat.mul_le_mul_right _ hr
-          _ = Γ ^ (n + 1) := by rw [pow_succ, hΓ]; ring
+        grw [hr, pow_succ, hΓ]
+        exact (by ring : _ = _).le
   obtain ⟨K, p, -, hps, hk1, hk2, hk3, hk4, hp⟩ := rounds (2 * α + 1) le_rfl
   refine ⟨K, p, hp (by omega), ?_, hk1.trans (hnds _ le_rfl), hk2, hk3, hk4⟩
   rw [← pow_mul, show α * (4 * h) = 4 * h * α by ring]
