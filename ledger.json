@@ -7,9 +7,13 @@
     "225": {
       "login": "kongeskog",
       "at": "2026-11-28T16:03:40Z"
+    },
+    "227": {
+      "login": "kongeskog",
+      "at": "2026-11-28T16:13:25Z"
     }
   },
-  "comments_seen_until": "2026-11-28T16:03:40Z",
+  "comments_seen_until": "2026-11-28T16:13:25Z",
   "dispatched": {
     "224@d406b46dd149f6b6655e3f2b4d6db765e2b0835d@18c317e7c08530636bc830f2609bd2fd6b05da06@": "2026-11-28T16:01:52.566266350Z"
   },
@@ -28,15 +32,15 @@
     131
   ],
   "judged": {
-    "224@d406b46dd149f6b6655e3f2b4d6db765e2b0835d": {
-      "at": "2026-11-28T15:49:05Z",
+    "226@4700be7fe24f39af455d7b5f8fcd1474524db9bb": {
+      "at": "2026-11-28T16:04:56Z",
       "names": null,
       "on": [],
       "contains": true,
       "has_merged": null
     },
-    "226@4700be7fe24f39af455d7b5f8fcd1474524db9bb": {
-      "at": "2026-11-28T16:04:56Z",
+    "228@9c5e460d29c5ced9f4fb8b1a4101658885ca0c2b": {
+      "at": "2026-11-28T16:14:50Z",
       "names": null,
       "on": [],
       "contains": true,
@@ -44,11 +48,7 @@
     }
   },
   "told": [],
-  "turn": {
-    "id": "224@d406b46dd149f6b6655e3f2b4d6db765e2b0835d",
-    "tree": "18c317e7c08530636bc830f2609bd2fd6b05da06",
-    "at": "2026-11-28T16:01:52.566266350Z"
-  },
+  "turn": null,
   "turns_voided": {},
   "turns_lost": {}
 }

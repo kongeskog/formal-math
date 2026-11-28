@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T16:13:07.690900735Z",
+  "updated_at": "2026-11-28T16:14:21.539457081Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "8b52c195b0f96030cf0d03379ffe5ee8801995f0",
-    "at": "2026-11-28T15:55:33.180482731Z",
+    "sha": "21475cc36c2c14d6f1322558c6ad2bd95e8d9f6b",
+    "at": "2026-11-28T16:14:21.539457081Z",
     "metrics": {
-      "tokens": 752765,
-      "loc": 49658,
-      "decls": 4167,
+      "tokens": 752110,
+      "loc": 49629,
+      "decls": 4166,
       "files": 312,
-      "bytes": 2865768,
-      "build_seconds": 209
+      "bytes": 2863676,
+      "build_seconds": 162
     }
   },
   "counts": {
-    "merged": 125,
+    "merged": 126,
     "rejected": 4,
     "open": 2,
     "contributors": 2,
-    "ideas_open": 3
+    "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 118,
-      "attempts": 124,
-      "saved": 165532
+      "merged": 119,
+      "attempts": 125,
+      "saved": 166187
     },
     {
       "login": "yidakra",
@@ -96,11 +96,11 @@
     {
       "number": 227,
       "title": "Idea: restructure(Paper/Means): one definition of the homogeneous seminorm; Lemma means as it is read",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
-      "pr": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-28T19:13:25Z",
+      "pr": 228,
       "result_delta": null,
       "created_at": "2026-11-28T16:12:28Z",
       "url": "https://github.com/kongeskog/formal-math/issues/227",
@@ -129,7 +129,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T18:48:02Z",
       "pr": 224,
-      "result_delta": null,
+      "result_delta": -655,
       "created_at": "2026-11-28T15:46:20Z",
       "url": "https://github.com/kongeskog/formal-math/issues/223",
       "technique": "restructure",
@@ -1398,116 +1398,6 @@
   ],
   "open": [
     {
-      "pr": 224,
-      "title": "restructure(Paper/Lengths): a map into a price space gives the length of the action on L²; no rescaling",
-      "author": "kongeskog",
-      "head_sha": "d406b46dd149f6b6655e3f2b4d6db765e2b0835d",
-      "base_sha": "d663e5f40824a1620802338ddd406a35ea259375",
-      "status": "stale",
-      "created_at": "2026-11-28T15:48:06Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 752899,
-        "loc": 49675,
-        "decls": 4166,
-        "files": 312,
-        "bytes": 2866113,
-        "build_seconds": 238
-      },
-      "base_metrics": {
-        "tokens": 753554,
-        "loc": 49704,
-        "decls": 4167,
-        "files": 312,
-        "bytes": 2868205,
-        "build_seconds": null
-      },
-      "delta": -655,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "2 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pass"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pass"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pass"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pass",
-          "detail": "the added lines hold 562 characters of comments and strings"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 753554 → 752899 (-655)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        }
-      ],
-      "idea": 223,
-      "url": "https://github.com/kongeskog/formal-math/pull/224",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46161770643",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper/Lengths"
-    },
-    {
       "pr": 226,
       "title": "restructure(Paper/Crossing): prove the crossing inequality as it is read; one limit, no compactness",
       "author": "kongeskog",
@@ -1593,6 +1483,93 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Paper/Crossing"
+    },
+    {
+      "pr": 228,
+      "title": "restructure(Paper/Means): one definition of the homogeneous seminorm; Lemma means as it is read",
+      "author": "kongeskog",
+      "head_sha": "9c5e460d29c5ced9f4fb8b1a4101658885ca0c2b",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-28T16:13:28Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "added_lines",
+          "label": "Added lines are clean",
+          "status": "pending"
+        },
+        {
+          "key": "deleted_names",
+          "label": "No deleted name still mentioned",
+          "status": "pending"
+        },
+        {
+          "key": "conduct",
+          "label": "Automation within the stated limits",
+          "status": "pending"
+        },
+        {
+          "key": "comments",
+          "label": "Added text within limits",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        }
+      ],
+      "idea": 227,
+      "url": "https://github.com/kongeskog/formal-math/pull/228",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper/Means"
     }
   ],
   "top_files": [
