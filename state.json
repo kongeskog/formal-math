@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T13:59:18.631311880Z",
+  "updated_at": "2026-11-28T14:09:55.803474299Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -96,10 +96,10 @@
     {
       "number": 212,
       "title": "Idea: restructure(Nc/Tow/Load): the ends of a segment are given by edge ends",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T16:30:32Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 214,
       "result_delta": -535,
       "created_at": "2026-11-28T13:19:00Z",
@@ -1406,11 +1406,6 @@
       "loc": 353
     },
     {
-      "path": "vp-vnp/Nc/Tow/Load2.lean",
-      "tokens": 5505,
-      "loc": 413
-    },
-    {
       "path": "vp-vnp/Paper/Prices.lean",
       "tokens": 5455,
       "loc": 305
@@ -1449,6 +1444,11 @@
       "path": "vp-vnp/Nc/Hc/Segments.lean",
       "tokens": 4992,
       "loc": 372
+    },
+    {
+      "path": "vp-vnp/Nc/Tower/Inst.lean",
+      "tokens": 4992,
+      "loc": 341
     }
   ]
 }
