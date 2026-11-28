@@ -376,7 +376,7 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
       (R.pl_pos (fun e => hne (ch.injective e)) _)).1 hdone
   | new ν kk =>
     have hko := mem_seen_new.1 hseen
-    have halv : alv N (nn n) (oo o) (eN R FL Pl ν) = (o ν).1 := by
+    have halv : alv N (nn n) (oo o) (eN ν) = (o ν).1 := by
       rw [alv_good _ (hp _)]
       unfold oo
       rw [Equiv.symm_apply_apply]
@@ -387,22 +387,22 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
       have e : kk = o ν := Fin.ext (by omega)
       rw [e]
     have hA : AlU N n o (Uid.new ν kk : Un R FL Pl N U1) := by
-      change kk.1 < alv N (nn n) (oo o) (eN R FL Pl ν)
+      change kk.1 < alv N (nn n) (oo o) (eN ν)
       rw [halv]
       exact hlt
-    have hdone : tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .done := hal hA
+    have hdone : tgM (eN ν).1 (eN ν).2 = .done := hal hA
     have e0 : hold0 (sys R FL Pl).np (Uid.new ν kk : Un R FL Pl N U1) =
-        Pl.pt (partM (eN R FL Pl ν).1 ((kindM FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 false)) :=
+        Pl.pt (partM (eN ν).1 ((kindM FL (eN ν).1).cnEnd (eN ν).2 false)) :=
       np_eq R FL Pl ν false
     have e1 : hold1 (sys R FL Pl).np (Uid.new ν kk : Un R FL Pl N U1) =
-        Pl.pt (partM (eN R FL Pl ν).1 ((kindM FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 true)) :=
+        Pl.pt (partM (eN ν).1 ((kindM FL (eN ν).1).cnEnd (eN ν).2 true)) :=
       np_eq R FL Pl ν true
     rw [e0, e1]
-    have hmem : ∀ s, IsCh (eN R FL Pl ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU N n o s :=
+    have hmem : ∀ s, IsCh (eN ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU N n o s :=
       fun s hs => mem_AsU_new.2 ⟨hA, hs⟩
-    have hal' : alv N (nn n) (oo o) (eN R FL Pl ν) ≠ 0 := by omega
+    have hal' : alv N (nn n) (oo o) (eN ν) ≠ 0 := by omega
     revert hdone hal' hmem
-    generalize eN R FL Pl ν = w
+    generalize eN ν = w
     intro hdone hmem hal'
     rcases w with ⟨⟨x, hx⟩ | l, β⟩
     · have hnum : num N (nn n) (oo o) (.inl ⟨x, hx⟩) ≠ 0 := by
@@ -433,7 +433,7 @@ theorem thm_tree_poss_good (hℓ : 0 < ℓ) (n : Fin AA → Fin AA → Fin (N + 
   refine poss_good hℓ ?_
   obtain ⟨ι, hι⟩ := hp
   refine ⟨ι, fun ν => ?_⟩
-  have h1 : (eN R FL Pl).symm ⟨eE R FL x, ν⟩ = ⟨x, ν⟩ := by
+  have h1 : (eN (Pl := Pl)).symm ⟨eE R FL x, ν⟩ = ⟨x, ν⟩ := by
     rw [Equiv.symm_apply_eq]
     rfl
   unfold oo
@@ -890,8 +890,8 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
   have p7 := pw 7 (by omega)
   have p1 : V ≤ V ^ 9 := Nat.le_self_pow (by norm_num) V
   have hA : Alph (Y ^ 4) Y := ⟨by omega, le_rfl⟩
-  have hNM : Fintype.card (NM R ch FL) = Fintype.card (sys R FL Pl).N := Fintype.card_congr (eN R FL Pl).symm
-  have hZM : Fintype.card (ZM R ch FL) = Fintype.card (sys R FL Pl).Z := Fintype.card_congr (eZ R FL Pl).symm
+  have hNM : Fintype.card (NM R ch FL) = Fintype.card (sys R FL Pl).N := Fintype.card_congr (eN (Pl := Pl)).symm
+  have hZM : Fintype.card (ZM R ch FL) = Fintype.card (sys R FL Pl).Z := Fintype.card_congr (eZ (Pl := Pl)).symm
   have hWb : Wb R ch FL N U1 = Fintype.card (Un R FL Pl N U1) := by
     rw [card_Un]
     unfold Wb
@@ -942,7 +942,7 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
     -- the three cases of `key`, reordered
     grind
   · exact fun u => Or.inr (Or.inr (f1.cur u))
-  · exact fun z u => Or.inr (Or.inr (f1.cons (eZ R FL Pl z) u))
+  · exact fun z u => Or.inr (Or.inr (f1.cons (eZ z) u))
   · exact fun y => Or.inr (Or.inr (f1.num (eE R FL y)))
   · intro p
     unfold treeUp

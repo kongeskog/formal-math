@@ -136,9 +136,9 @@ theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
       cases u with
       | init a c k => exact nxt_ok_B hτ
       | new ν k =>
-        have hτ : tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .nxt x := hτ
+        have hτ : tgM (eN ν).1 (eN ν).2 = .nxt x := hτ
         revert hτ
-        generalize eN R FL Pl ν = w
+        generalize eN ν = w
         intro hτ
         rcases w with ⟨⟨y, hy⟩ | l, w⟩
         · exact nxt_ok_R hy hτ
@@ -151,7 +151,7 @@ theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
         exfalso
         have hτ : tgB R ch a c k = .seg j i ω q := hτ
         rcases tgB_cases (R := R) (ch := ch) a c k with h1 | ⟨hm, h1⟩ | ⟨e', -, h1, -⟩ <;> rw [h1] at hτ <;> cases hτ
-      | new ν k => exact seg_nondiag (ν := eN R FL Pl ν) hτ
+      | new ν k => exact seg_nondiag (ν := eN ν) hτ
     obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
     obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv FL)
     have hd : Pick L (⟨j, i, ω, d⟩ : LMv FL) := hd
@@ -221,8 +221,8 @@ theorem cur_end (hh : 0 < h) {u : Un R FL Pl U0 U1}
   apply hu.2
   unfold Plan.used
   rw [mem_biUnion]
-  refine ⟨(eZ R FL Pl).symm z, mem_filter.2 ⟨mem_univ _, ((eZ R FL Pl).symm z).1.2⟩, ?_⟩
-  change u ∈ consM lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
+  refine ⟨(eZ (Pl := Pl)).symm z, mem_filter.2 ⟨mem_univ _, ((eZ (Pl := Pl)).symm z).1.2⟩, ?_⟩
+  change u ∈ consM lhat n o (eZ ((eZ (Pl := Pl)).symm z))
   rw [Equiv.apply_symm_apply]
   exact hz
 

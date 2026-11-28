@@ -278,23 +278,25 @@ variable (ch) in
 /-- Slots by their moves. -/
 abbrev ZM := Σ mv : Mv R ch FL, (kindM FL mv).Sl
 
+variable {R FL Pl} in
 /-- Channels by their moves. -/
 noncomputable def eN : (sys R FL Pl).N ≃ NM R ch FL :=
   Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Cn) (eE R FL)
 
+variable {R FL Pl} in
 /-- Slots by their moves. -/
 noncomputable def eZ : (sys R FL Pl).Z ≃ ZM R ch FL :=
   Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Sl) (eE R FL)
 
-theorem eN_fst (ν : (sys R FL Pl).N) : (eN R FL Pl ν).1 = eE R FL ν.1 := rfl
+theorem eN_fst (ν : (sys R FL Pl).N) : (eN ν).1 = eE R FL ν.1 := rfl
 
-theorem eZ_fst (z : (sys R FL Pl).Z) : (eZ R FL Pl z).1 = eE R FL z.1 := rfl
+theorem eZ_fst (z : (sys R FL Pl).Z) : (eZ z).1 = eE R FL z.1 := rfl
 
 theorem np_eq (ν : (sys R FL Pl).N) (d : Bool) : (sys R FL Pl).np ν d =
-    Pl.pt (partM (eN R FL Pl ν).1 ((kindM FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 d)) := rfl
+    Pl.pt (partM (eN ν).1 ((kindM FL (eN ν).1).cnEnd (eN ν).2 d)) := rfl
 
 theorem zp_eq (z : (sys R FL Pl).Z) (d : Bool) : (sys R FL Pl).zp z d =
-    Pl.pt (partM (eZ R FL Pl z).1 ((kindM FL (eZ R FL Pl z).1).slEnd (eZ R FL Pl z).2 d)) := rfl
+    Pl.pt (partM (eZ z).1 ((kindM FL (eZ z).1).slEnd (eZ z).2 d)) := rfl
 
 end Sys
 

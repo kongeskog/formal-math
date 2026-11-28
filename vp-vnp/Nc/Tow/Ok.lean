@@ -127,10 +127,10 @@ theorem consM_congr (hb : 0 < b) (z : ZM R ch FL)
     cases u with
     | init a c k => exact Iff.rfl
     | new ν k =>
-      have h1 : timeM (eN R FL Pl ν).1 < timeM z.1 :=
-        (tg_time (eN R FL Pl ν)).trans_le hu
-      change k.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ↔
-        k.1 < alv lhat (nn n) (oo o') (eN R FL Pl ν)
+      have h1 : timeM (eN ν).1 < timeM z.1 :=
+        (tg_time (eN ν)).trans_le hu
+      change k.1 < alv lhat (nn n) (oo o) (eN ν) ↔
+        k.1 < alv lhat (nn n) (oo o') (eN ν)
       unfold alv
       rw [num_congr hb fun mv' hmv' c => hag mv' (hmv'.trans h1) c,
         alvN_congr (fun c => hag _ h1 c)]
@@ -185,15 +185,15 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
       | new ν k =>
         right
         refine ⟨ν.1, mem_filter.2 ⟨mem_univ _, ?_⟩, ?_⟩
-        · have h4 : tgTime (inpZ (eZ R FL Pl z)) ≤ timeM (eZ R FL Pl z).1 := by
-            rcases eZ R FL Pl z with ⟨x | l, e⟩
+        · have h4 : tgTime (inpZ (eZ z)) ≤ timeM (eZ z).1 := by
+            rcases eZ z with ⟨x | l, e⟩
             · exact inp_time x.1
             · exact le_rfl
-          have h5 := (tg_time (eN R FL Pl ν)).trans_le ((congrArg tgTime h2).le.trans h4)
+          have h5 := (tg_time (eN ν)).trans_le ((congrArg tgTime h2).le.trans h4)
           simpa [eN_fst] using lt_of_time h5
         · simp only [newUnits, mem_filter, mem_univ, true_and, decide_eq_true_eq]
-          have h3 : k.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) := h1
-          have h4 : alv lhat (nn n) (oo o) (eN R FL Pl ν) ≤ (o ν).1 := by
+          have h3 : k.1 < alv lhat (nn n) (oo o) (eN ν) := h1
+          have h4 : alv lhat (nn n) (oo o) (eN ν) ≤ (o ν).1 := by
             refine (alvN_le _ _).trans ?_
             unfold oo
             rw [Equiv.symm_apply_apply]
@@ -202,16 +202,16 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
     · intro hmem
       obtain ⟨z', hz', hu'⟩ := mem_biUnion.1 hmem
       have hlt := (mem_filter.1 hz').2
-      have hu' : u ∈ consM lhat n o (eZ R FL Pl z') := hu'
-      rw [(eZ R FL Pl).injective (consM_unique hu hu')] at hlt
+      have hu' : u ∈ consM lhat n o (eZ z') := hu'
+      rw [(eZ (Pl := Pl)).injective (consM_unique hu hu')] at hlt
       exact lt_irrefl _ hlt
   hold n o z u hu := by
     -- both pairs are the ends of the target of the unit, put in place
-    have hu : u ∈ consM lhat n o (eZ R FL Pl z) := hu
+    have hu : u ∈ consM lhat n o (eZ z) := hu
     obtain ⟨-, h2⟩ := consM_al hu
     have hd : tgU u ≠ .done := by
       rw [h2]
-      rcases eZ R FL Pl z with ⟨x | l, e⟩
+      rcases eZ z with ⟨x | l, e⟩
       · exact inpR_ne.1
       · simp [inpZ]
     have h3 : s(hold0 (sys R FL Pl).np u, hold1 (sys R FL Pl).np u) =
@@ -223,13 +223,13 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
         simp only [Pl.pt_base]
         rfl
       | new ν k =>
-        change _ = (hT R ch (tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2)).map Pl.pt
-        rw [← hN_eq (eN R FL Pl ν) hd, hN, Sym2.map_mk]
+        change _ = (hT R ch (tgM (eN ν).1 (eN ν).2)).map Pl.pt
+        rw [← hN_eq (eN ν) hd, hN, Sym2.map_mk]
         rfl
     have h4 : s((sys R FL Pl).zp z false, (sys R FL Pl).zp z true) =
         (hT R ch (tgU u)).map Pl.pt := by
       rw [h2, zp_eq, zp_eq]
-      generalize eZ R FL Pl z = w
+      generalize eZ z = w
       rcases w with ⟨⟨x, hx⟩ | l, e⟩
       · change s(Pl.pt (tri R ch x 0), Pl.pt (tri R ch x 2)) = (hT R ch (inpR x)).map Pl.pt
         have h1 : hT R ch (inpR x) = s(tri R ch x 0, tri R ch x 2) := by
@@ -249,7 +249,7 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
         simp only [inpZ, hT, pr, Sym2.map_mk]
     rw [← h4, Sym2.eq_iff] at h3
     exact h3.imp id And.symm
-  card n o z := card_consM (eZ R FL Pl z)
+  card n o z := card_consM (eZ z)
   cap n o x := hcap n o _
 
 end Plan

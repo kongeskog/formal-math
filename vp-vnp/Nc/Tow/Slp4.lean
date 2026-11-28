@@ -67,10 +67,10 @@ theorem mem_cur (u : Un R FL Pl U0 U1) :
     rw [mem_biUnion]
     constructor
     · rintro ⟨z, -, hz⟩
-      exact ⟨eZ R FL Pl z, hz⟩
+      exact ⟨eZ z, hz⟩
     · rintro ⟨z, hz⟩
-      refine ⟨(eZ R FL Pl).symm z, mem_filter.2 ⟨mem_univ _, ((eZ R FL Pl).symm z).1.2⟩, ?_⟩
-      change u ∈ consM lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
+      refine ⟨(eZ (Pl := Pl)).symm z, mem_filter.2 ⟨mem_univ _, ((eZ (Pl := Pl)).symm z).1.2⟩, ?_⟩
+      change u ∈ consM lhat n o (eZ ((eZ (Pl := Pl)).symm z))
       rw [Equiv.apply_symm_apply]
       exact hz
 
@@ -121,7 +121,7 @@ theorem py_al (ha : After (nX nI) (oX oI) lhat H) (u : Un R FL Pl U0 U1) :
   rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
   · exact PY.and hA ((PY.base ha.valid hY).mono hY (Nat.zero_le 1))
       (PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c) hY))
-  · exact (PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.alv (eN R FL Pl ν)) hY)).mono hY (by omega)
+  · exact (PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.alv (eN ν)) hY)).mono hY (by omega)
 
 theorem cy_rk (hal : ∀ u, ind (fun x => AlU lhat (nI x) (oI x) u) ∈ H) (u : Un R FL Pl U0 U1) :
     CY Dd H Y 2 fun x => rkU lhat (nI x) (oI x) u := by
@@ -172,8 +172,8 @@ theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
   have h1 : PY Dd H Y 1 fun x => SeenU (nI x) (oI x) u := by
     rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
     · exact PY.rel1 hA (fun s => k.1 < s) (CY.base (ha.n a c) hY)
-    · refine (PY.rel1 hA (fun s => k.1 ≤ s) (CY.base (ha.o (eN R FL Pl ν)) hY)).congr fun x => ?_
-      have : oX oI x (eN R FL Pl ν) = (oI x ν).1 := by
+    · refine (PY.rel1 hA (fun s => k.1 ≤ s) (CY.base (ha.o (eN ν)) hY)).congr fun x => ?_
+      have : oX oI x (eN ν) = (oI x ν).1 := by
         unfold oX oo
         rw [Equiv.symm_apply_apply]
       rw [this]
