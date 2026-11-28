@@ -3,9 +3,13 @@
     "217": {
       "login": "kongeskog",
       "at": "2026-11-28T14:39:15Z"
+    },
+    "219": {
+      "login": "kongeskog",
+      "at": "2026-11-28T14:47:46Z"
     }
   },
-  "comments_seen_until": "2026-11-28T14:39:15Z",
+  "comments_seen_until": "2026-11-28T14:47:46Z",
   "dispatched": {},
   "lines": {},
   "line_bases": {},
@@ -22,6 +26,15 @@
       "at": "2026-11-28T14:40:15Z",
       "names": null,
       "on": [],
+      "contains": true,
+      "has_merged": null
+    },
+    "220@d9042e5990ee32ef62e9fa8510495398ca61a7f1": {
+      "at": "2026-11-28T14:49:19Z",
+      "names": 218,
+      "on": [
+        "218@897f8ecbb243c4615abc2e308cc6705b9cd1af3f"
+      ],
       "contains": true,
       "has_merged": null
     }
