@@ -33,8 +33,9 @@ theorem DM_eq_rankMean {k : ℕ} (f : Mt k → ℝ) (S : Finset (Fin k)) :
   rw [rankMean, ← mul_div_assoc, eq_div_iff hn.ne', mul_comm]
   exact card_mul_DM f S
 
-/-- A length contracts if "for every homomorphism τ from the additive group Mat_μ(F₂) into the group,
-the mean of |τW|² over rank μ is at most s² times that over rank 1". This gives the project's Contr. -/
+/-- A length contracts if "for every homomorphism τ from the additive group Mat_μ(F₂) into the
+group, the mean of |τW|² over rank μ is at most s² times that over rank 1". This gives the
+project's Contr. -/
 theorem contracts_of_rankMean {G : Type} [Group G] (l : Len G) {μ : ℕ} (s : ℝ)
     (h : ∀ τ : Mt μ → G, (∀ M N, τ (M + N) = τ M * τ N) →
       rankMean (fun W => l.val (τ W)) μ ≤ s ^ 2 * rankMean (fun W => l.val (τ W)) 1) :
