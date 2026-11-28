@@ -139,7 +139,7 @@ theorem sum_le_one {κ : Type*} (s : Finset κ) (f : κ → ℕ) (B : ℕ) (h1 :
     (by simpa using Nat.mul_le_mul_right B (Finset.card_le_one.2 h1))
 
 /-- The channel is between the chamber `s` and its parent. -/
-def IsCh (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T) (ν : NM R FL (ch := ch)) (s : Σ j : Fin (J + 1), T.X j) : Prop :=
+def IsCh (ν : NM R FL (ch := ch)) (s : Σ j : Fin (J + 1), T.X j) : Prop :=
   ∃ (x : {x : RM T m AA // okR R ch x}) (β : Bool), ν = ⟨.inl x, β⟩ ∧ tgR R ch x.1 β = .done ∧ chd x.1 β = some s
 
 /-- The relay belongs to an edge. -/
@@ -225,13 +225,13 @@ using that an edge has at most one end at the given chamber. -/
 private theorem sum_child_of_cover (j : Fin (J + 1)) (c : T.X j)
     (C : T.Ed j → Bool → Finset (NM R FL (ch := ch)))
     (bound : ∀ e β, ∑ ν ∈ C e β, alv lhat n o ν ≤ load lhat n o (.edge j e))
-    (cover : ∀ ν, IsCh R ch FL ν ⟨j, c⟩ → alv lhat n o ν ≠ 0 →
+    (cover : ∀ ν, IsCh ν ⟨j, c⟩ → alv lhat n o ν ≠ 0 →
       ∃ (e : T.Ed j) (β : Bool), (if β then T.e1 e else T.e0 e) = c ∧ ν ∈ C e β) :
-    (∑ ν, if IsCh R ch FL ν ⟨j, c⟩ then alv lhat n o ν else 0) ≤
+    (∑ ν, if IsCh ν ⟨j, c⟩ then alv lhat n o ν else 0) ≤
       ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then load lhat n o (.edge j e) else 0 := by
   let ends (β : Bool) := (univ.filter fun e : T.Ed j =>
     (if β then T.e1 e else T.e0 e) = c).biUnion fun e => C e β
-  have hall (ν : NM R FL) : (if IsCh R ch FL ν ⟨j, c⟩ then alv lhat n o ν else 0) ≤
+  have hall (ν : NM R FL) : (if IsCh ν ⟨j, c⟩ then alv lhat n o ν else 0) ≤
       if ν ∈ ends false ∪ ends true then alv lhat n o ν else 0 := by
     split_ifs with hch hmem
     · exact le_rfl
@@ -259,7 +259,7 @@ private theorem sum_child_of_cover (j : Fin (J + 1)) (c : T.X j)
 open Classical in
 /-- **The alive units between a chamber and its parent.** -/
 theorem sum_child (j : ℕ) (hj : j ≤ J) (c : T.X j) : (∑ ν : NM R FL,
-      if IsCh R ch FL ν ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ then alv lhat n o ν else 0) ≤
+      if IsCh ν ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ then alv lhat n o ν else 0) ≤
     fb (lev (load lhat n o)) j c := by
   have e1 : fb (lev (load lhat n o)) j c = ∑ e : T.Ed j, if T.e0 e = c ∨ T.e1 e = c then
       load lhat n o (.edge ⟨j, Nat.lt_succ_of_le hj⟩ e) else 0 := by

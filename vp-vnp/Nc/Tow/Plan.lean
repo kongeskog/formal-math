@@ -33,7 +33,7 @@ noncomputable def oo (o : (sys R FL Pl).N → Fin U1) : NM R FL (ch := ch) → �
 /-- The target of a unit. -/
 noncomputable def tgU : Un R FL Pl U0 U1 → Tg T m AA
   | .init a c k => tgB R ch a c k
-  | .new ν _ => tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2
+  | .new ν _ => tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2
 
 variable (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1)
 
@@ -54,15 +54,15 @@ noncomputable def rkU (u : Un R FL Pl U0 U1) : ℕ := rk (ix) (tgU) (Al lhat n o
 
 /-- The number of a slot among those of its pair. -/
 noncomputable def su (d : FL.Di) (e : (FL.L d).Sl) : ℕ :=
-  rk (fun e => (Fintype.equivFin (FL.L d).Sl e).1) (pr FL d) univ e
+  rk (fun e => (Fintype.equivFin (FL.L d).Sl e).1) (pr d) univ e
 
 open Classical in
 /-- The units given at a slot. -/
 noncomputable def consM : ZM R FL (ch := ch) → Finset (Un R FL Pl U0 U1)
   | ⟨.inl x, _⟩ => if ActR (load lhat (nn n) (oo o)) x.1 then
       (Al lhat n o).filter fun u => tgU u = inpR x.1 else ∅
-  | ⟨.inr l, e⟩ => if Pick FL (load lhat (nn n) (oo o)) l then
-      (Al lhat n o).filter fun u => tgU u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) ∧
+  | ⟨.inr l, e⟩ => if Pick (load lhat (nn n) (oo o)) l then
+      (Al lhat n o).filter fun u => tgU u = .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e) ∧
         su l.2.2.2 e * num lhat (nn n) (oo o) (.inr l) ≤ rkU lhat n o u ∧
         rkU lhat n o u < (su l.2.2.2 e + 1) * num lhat (nn n) (oo o) (.inr l) else ∅
 
@@ -129,13 +129,13 @@ theorem load_eq (τ : Tg T m AA) : load lhat (nn n) (oo o) τ =
       refine Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun k _ => if_neg ?_
       rintro ⟨⟨h1, -⟩, -⟩
       exact hv h1
-  · rw [← Equiv.sum_comp (eN R FL Pl) fun ν : NM R FL (ch := ch) => if tgM R ch FL ν.1 ν.2 = τ then
+  · rw [← Equiv.sum_comp (eN R FL Pl) fun ν : NM R FL (ch := ch) => if tgM ν.1 ν.2 = τ then
       alvN (oo o) ν (num lhat (nn n) (oo o) ν.1) else 0]
     refine Finset.sum_congr rfl fun ν _ => ?_
     have hle : alv lhat (nn n) (oo o) (eN R FL Pl ν) ≤ U1 := by
       refine (alvN_le _ _).trans ?_
       exact (o _).2.le
-    by_cases hν : tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2 = τ
+    by_cases hν : tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2 = τ
     · rw [if_pos hν]
       have e2 : (∑ k : Fin U1, if AlU lhat n o (.new ν k) ∧ tgU (.new ν k : Un R FL Pl U0 U1) = τ
           then 1 else 0) = ((univ : Finset (Fin U1)).filter fun k => k.1 <
@@ -154,7 +154,7 @@ theorem load_eq (τ : Tg T m AA) : load lhat (nn n) (oo o) τ =
 
 /-! Membership in the consumers of a slot; used by `Ok` and `Slp4`. -/
 
-theorem consM_inl (x : {x : RM T m AA // okR R ch x}) (e : (kindM R ch FL (.inl x)).Sl) (u : Un R FL Pl U0 U1) :
+theorem consM_inl (x : {x : RM T m AA // okR R ch x}) (e : (kindM FL (.inl x)).Sl) (u : Un R FL Pl U0 U1) :
     u ∈ consM lhat n o ⟨.inl x, e⟩ ↔ ActR (load lhat (nn n) (oo o)) x.1 ∧
       AlU lhat n o u ∧ tgU u = inpR x.1 := by
   classical
@@ -163,9 +163,9 @@ theorem consM_inl (x : {x : RM T m AA // okR R ch x}) (e : (kindM R ch FL (.inl 
   · simp [mem_Al, ha]
   · simp [ha]
 
-theorem consM_inr (l : LMv FL) (e : (kindM R ch FL (.inr l)).Sl) (u : Un R FL Pl U0 U1) :
-    u ∈ consM lhat n o ⟨.inr l, e⟩ ↔ Pick FL (load lhat (nn n) (oo o)) l ∧
-      AlU lhat n o u ∧ tgU u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) ∧
+theorem consM_inr (l : LMv FL) (e : (kindM FL (.inr l)).Sl) (u : Un R FL Pl U0 U1) :
+    u ∈ consM lhat n o ⟨.inr l, e⟩ ↔ Pick (load lhat (nn n) (oo o)) l ∧
+      AlU lhat n o u ∧ tgU u = .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e) ∧
         su l.2.2.2 e * num lhat (nn n) (oo o) (.inr l) ≤ rkU lhat n o u ∧
         rkU lhat n o u < (su l.2.2.2 e + 1) * num lhat (nn n) (oo o) (.inr l) := by
   classical

@@ -21,7 +21,7 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J}
 
 /-- Alive units of some channels with a target. -/
 theorem sum_alv_le {κ : Type*} (τ : Tg T m AA) (s : Finset κ) (f : κ → NM R FL)
-    (hf : Set.InjOn f s) (hτ : ∀ x ∈ s, tgM R ch FL (f x).1 (f x).2 = τ) :
+    (hf : Set.InjOn f s) (hτ : ∀ x ∈ s, tgM (f x).1 (f x).2 = τ) :
     ∑ x ∈ s, alv lhat n o (f x) ≤ load lhat n o τ := by
   classical
   rw [load_def]
@@ -30,7 +30,7 @@ theorem sum_alv_le {κ : Type*} (τ : Tg T m AA) (s : Finset κ) (f : κ → NM 
     (Finset.sum_image hf).symm
   rw [h1]
   calc ∑ ν ∈ s.image f, alv lhat n o ν =
-      ∑ ν ∈ s.image f, if tgM R ch FL ν.1 ν.2 = τ then alv lhat n o ν else 0 := by
+      ∑ ν ∈ s.image f, if tgM ν.1 ν.2 = τ then alv lhat n o ν else 0 := by
         refine Finset.sum_congr rfl fun ν hν => ?_
         obtain ⟨x, hx, rfl⟩ := mem_image.1 hν
         rw [if_pos (hτ x hx)]

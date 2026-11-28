@@ -22,8 +22,8 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b
 
 /-- Roles by their moves. -/
 noncomputable def eR (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') :
-    (sys R FL Pl).R ≃ Σ mv : Mv R ch FL, (kindM R ch FL mv).Ro :=
-  Equiv.sigmaCongrLeft (β := fun mv => (kindM R ch FL mv).Ro) (eE R FL)
+    (sys R FL Pl).R ≃ Σ mv : Mv R ch FL, (kindM FL mv).Ro :=
+  Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Ro) (eE R FL)
 
 variable (lhat n o) in
 /-- Units of zeros and counts of a role. -/
@@ -36,8 +36,8 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
     (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) ≤
       2 * NR lhat (nn n) (oo o) P + (1 + Sm) * NL lhat (nn n) (oo o) P := by
   have h1 : (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) =
-      ∑ y : (Σ mv : Mv R ch FL, (kindM R ch FL mv).Ro), if partM R ch FL y.1 y.2 = P then
-        (1 + Fintype.card ((kindM R ch FL y.1).SlAt y.2)) * num lhat (nn n) (oo o) y.1 else 0 := by
+      ∑ y : (Σ mv : Mv R ch FL, (kindM FL mv).Ro), if partM y.1 y.2 = P then
+        (1 + Fintype.card ((kindM FL y.1).SlAt y.2)) * num lhat (nn n) (oo o) y.1 else 0 := by
     rw [← Equiv.sum_comp (eR R FL Pl)]
     refine Finset.sum_congr rfl fun r' _ => if_congr ?_ rfl rfl
     exact Pl.pt.injective.eq_iff
@@ -59,7 +59,7 @@ theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P :
       exact le_of_eq Fintype.card_unit
     rw [h6]
     refine Finset.sum_le_sum (ι := (relay F).Ro) fun q _ => ?_
-    by_cases hq : partM R ch FL (.inl x) q = P
+    by_cases hq : partM (FL := FL) (.inl x) q = P
     · rw [if_pos hq, if_pos (show tri R ch x.1 q = P from hq)]
       refine Nat.mul_le_mul_right _ ?_
       exact Nat.add_le_add_left (h2 q _) 1

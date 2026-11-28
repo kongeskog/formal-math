@@ -200,6 +200,8 @@ abbrev Mv (FL : FlagLaws F T) := {x : RM T m AA // okR R ch x} ⊕ LMv FL
 noncomputable instance (FL : FlagLaws F T) : Fintype (Mv R ch FL) := by
   classical exact inferInstance
 
+variable {R ch}
+
 /-- The law of a move. -/
 def kindM (FL : FlagLaws F T) : Mv R ch FL → Law F
   | .inl _ => relay F
@@ -221,11 +223,11 @@ theorem atv_eq {j : ℕ} (hj : j ≤ J) (i : Fin h) (c : T.X j) : atv hj i (T.vx
   (Equiv.ofBijective _ (T.vx_co hj i)).symm_apply_apply c
 
 /-- The parties of a move. -/
-noncomputable def partM (FL : FlagLaws F T) : (mv : Mv R ch FL) → (kindM R ch FL mv).Ro → Nd T
+noncomputable def partM {FL : FlagLaws F T} : (mv : Mv R ch FL) → (kindM FL mv).Ro → Nd T
   | .inl x => fun p => tri R ch x.1 p
   | .inr l => fun p => nd l.1.2 (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 p))
 
-theorem partM_inj (FL : FlagLaws F T) (mv : Mv R ch FL) : Function.Injective (partM R ch FL mv) := by
+theorem partM_inj (FL : FlagLaws F T) (mv : Mv R ch FL) : Function.Injective (partM mv) := by
   rcases mv with x | l
   · exact tri_inj x.2
   · intro p q hpq
@@ -236,12 +238,12 @@ theorem partM_inj (FL : FlagLaws F T) (mv : Mv R ch FL) : Function.Injective (pa
     exact (FL.ro l.2.2.2).injective h2
 
 /-- Times of moves. -/
-def timeM (FL : FlagLaws F T) : Mv R ch FL → ℕ
+def timeM {FL : FlagLaws F T} : Mv R ch FL → ℕ
   | .inl x => timeR x.1
   | .inr l => 2 * m + 6 * l.1 + 4
 
 /-- Targets of channels. -/
-noncomputable def tgM (FL : FlagLaws F T) : (mv : Mv R ch FL) → (kindM R ch FL mv).Cn → Tg T m AA
+noncomputable def tgM {FL : FlagLaws F T} : (mv : Mv R ch FL) → (kindM FL mv).Cn → Tg T m AA
   | .inl x => fun ν => tgR R ch x.1 ν
   | .inr l => fun ν => .edge l.1.succ ((T.nr l.1.2 l.2.1).symm (l.2.2.1, FL.cn l.2.2.2 ν)).1
 
@@ -260,37 +262,37 @@ variable {T : Tower h b D J} (R : Routes T m Uu) {ch : Fin AA ↪ T.X 0} (FL : F
 
 /-- The order of the moves. -/
 noncomputable def eE : Fin (Fintype.card (Mv R ch FL)) ≃ Mv R ch FL :=
-  (exists_mono_equiv (timeM R ch FL)).choose
+  (exists_mono_equiv timeM).choose
 
 /-- The system of moves. -/
 noncomputable def sys : Sys F (AA + A') (Fintype.card (Mv R ch FL)) where
-  kind x := kindM R ch FL (eE R FL x)
-  part x p := Pl.pt (partM R ch FL (eE R FL x) p)
-  inj x := Pl.pt.injective.comp (partM_inj R ch FL _)
+  kind x := kindM FL (eE R FL x)
+  part x p := Pl.pt (partM (eE R FL x) p)
+  inj x := Pl.pt.injective.comp (partM_inj FL _)
 
 /-- Channels by their moves. -/
-abbrev NM := Σ mv : Mv R ch FL, (kindM R ch FL mv).Cn
+abbrev NM := Σ mv : Mv R ch FL, (kindM FL mv).Cn
 
 /-- Slots by their moves. -/
-abbrev ZM := Σ mv : Mv R ch FL, (kindM R ch FL mv).Sl
+abbrev ZM := Σ mv : Mv R ch FL, (kindM FL mv).Sl
 
 /-- Channels by their moves. -/
 noncomputable def eN : (sys R FL Pl).N ≃ NM R FL (ch := ch) :=
-  Equiv.sigmaCongrLeft (β := fun mv => (kindM R ch FL mv).Cn) (eE R FL)
+  Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Cn) (eE R FL)
 
 /-- Slots by their moves. -/
 noncomputable def eZ : (sys R FL Pl).Z ≃ ZM R FL (ch := ch) :=
-  Equiv.sigmaCongrLeft (β := fun mv => (kindM R ch FL mv).Sl) (eE R FL)
+  Equiv.sigmaCongrLeft (β := fun mv => (kindM FL mv).Sl) (eE R FL)
 
 theorem eN_fst (ν : (sys R FL Pl).N) : (eN R FL Pl ν).1 = eE R FL ν.1 := rfl
 
 theorem eZ_fst (z : (sys R FL Pl).Z) : (eZ R FL Pl z).1 = eE R FL z.1 := rfl
 
 theorem np_eq (ν : (sys R FL Pl).N) (d : Bool) : (sys R FL Pl).np ν d =
-    Pl.pt (partM R ch FL (eN R FL Pl ν).1 ((kindM R ch FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 d)) := rfl
+    Pl.pt (partM (eN R FL Pl ν).1 ((kindM FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 d)) := rfl
 
 theorem zp_eq (z : (sys R FL Pl).Z) (d : Bool) : (sys R FL Pl).zp z d =
-    Pl.pt (partM R ch FL (eZ R FL Pl z).1 ((kindM R ch FL (eZ R FL Pl z).1).slEnd (eZ R FL Pl z).2 d)) := rfl
+    Pl.pt (partM (eZ R FL Pl z).1 ((kindM FL (eZ R FL Pl z).1).slEnd (eZ R FL Pl z).2 d)) := rfl
 
 end Sys
 

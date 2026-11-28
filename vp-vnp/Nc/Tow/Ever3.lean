@@ -252,7 +252,7 @@ theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
     rcases h3 with h3 | h3
     · exact Or.inl ((T.vx_co j.2 i).1 (Prod.ext v0 h3.symm))
     · exact Or.inr ((T.vx_co j.2 i).1 (Prod.ext v1 h3.symm))
-  have htg : tgM R ch FL (⟨.inr l, ν'⟩ : NM R FL).1 ν' = .edge j.succ p.1 := by
+  have htg : tgM (⟨.inr l, ν'⟩ : NM R FL (ch := ch)).1 ν' = .edge j.succ p.1 := by
     change Tg.edge j.succ ((T.nr j.2 i).symm (T.vx i x, FL.cn d ν')).1 = _
     rw [hν', Equiv.apply_symm_apply]
   have h4 := sum_alv_le (lhat := lhat) (n := n) (o := o) (.edge j.succ p.1) ({()} : Finset Unit)

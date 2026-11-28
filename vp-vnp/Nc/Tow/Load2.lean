@@ -19,7 +19,7 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R 
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
-theorem alv_le_num (x : {x : RM T m AA // okR R ch x}) (ν : (kindM R ch FL (.inl x)).Cn) :
+theorem alv_le_num (x : {x : RM T m AA // okR R ch x}) (ν : (kindM FL (.inl x)).Cn) :
     alv lhat n o ⟨.inl x, ν⟩ ≤ num lhat n o (.inl x) := by
   unfold alv
   rw [alvN_inl]
@@ -28,11 +28,11 @@ theorem alv_le_num (x : {x : RM T m AA // okR R ch x}) (ν : (kindM R ch FL (.in
   · exact Nat.zero_le _
 
 theorem load_def (τ : Tg T m AA) : load lhat n o τ = bt R ch lhat n τ +
-    ∑ ν : NM R FL (ch := ch), if tgM R ch FL ν.1 ν.2 = τ then alv lhat n o ν else 0 := rfl
+    ∑ ν : NM R FL (ch := ch), if tgM ν.1 ν.2 = τ then alv lhat n o ν else 0 := rfl
 
 /-- A load that comes from few channels. -/
 theorem load_le_sum {τ : Tg T m AA} (s : Finset (NM R FL (ch := ch))) (hbt : bt R ch lhat n τ = 0)
-    (hs : ∀ ν : NM R FL (ch := ch), tgM R ch FL ν.1 ν.2 = τ → alv lhat n o ν ≠ 0 → ν ∈ s) :
+    (hs : ∀ ν : NM R FL (ch := ch), tgM ν.1 ν.2 = τ → alv lhat n o ν ≠ 0 → ν ∈ s) :
     load lhat n o τ ≤ ∑ ν ∈ s, alv lhat n o ν := by
   rw [load_def, hbt, Nat.zero_add, ← Finset.sum_filter]
   rw [← Finset.sum_filter_ne_zero]
@@ -284,7 +284,7 @@ theorem nEnd_eq {j : ℕ} {i : Fin h} (n : T.Ed j → ℕ) (ω : T.V (j + 1) i) 
 
 /-- The channels of end segments. -/
 theorem seg_chan {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} {ν : NM R FL (ch := ch)}
-    (hν : tgM R ch FL ν.1 ν.2 = .seg j i ω q) : ∃ (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s)),
+    (hν : tgM ν.1 ν.2 = .seg j i ω q) : ∃ (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s)),
       T.ty e = i ∧ ν = ⟨.inl ⟨.mid j e s, hx⟩, false⟩ ∧
       ((s = 1 ∧ T.πV (T.vx i (T.e0 e)) = ω ∧ s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q) ∨
       (s = 3 ∧ T.πV (T.vx i (T.e1 e)) = ω ∧ s(T.co i (T.host i (T.vx i (T.e1 e))), T.co i (T.e1 e)) = q)) := by

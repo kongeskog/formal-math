@@ -62,7 +62,7 @@ theorem vN2_mono {n n' : Sym2 T.Fl → ℕ} (hb : 0 < b) (hn : ∀ q, n q ≤ n'
   · positivity
 
 /-- Some number of units is enough. -/
-theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ t d, Fits FL L (withD FL l d) t := by
+theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ t d, Fits L (withD l d) t := by
   have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
   obtain ⟨t, ht⟩ := exists_nat_ge (√(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) / FL.a₁)
   obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) t (by
@@ -70,15 +70,15 @@ theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ t d, Fits FL L (w
     linarith)
   exact ⟨t, d, hd⟩
 
-theorem tmin_spec (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Fits FL L (withD FL l d) (tmin FL L l) := by
+theorem tmin_spec (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Fits L (withD l d) (tmin L l) := by
   obtain ⟨t, ht⟩ := exists_fits L l
-  exact Nat.sInf_mem (s := {t | ∃ d, Fits FL L (withD FL l d) t}) ⟨t, ht⟩
+  exact Nat.sInf_mem (s := {t | ∃ d, Fits L (withD l d) t}) ⟨t, ht⟩
 
 /-- A kind of law is chosen. -/
-theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick FL L (withD FL l d) := by
+theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick L (withD l d) := by
   classical
   obtain ⟨d0, hd0⟩ := tmin_spec L l
-  obtain ⟨d, hd, hmin⟩ := exists_min_image (univ.filter fun d => Fits FL L (withD FL l d) (tmin FL L l))
+  obtain ⟨d, hd, hmin⟩ := exists_min_image (univ.filter fun d => Fits L (withD l d) (tmin L l))
     (fun d => Fintype.equivFin FL.Di d) ⟨d0, mem_filter.2 ⟨mem_univ _, hd0⟩⟩
   refine ⟨d, (mem_filter.1 hd).2, fun d' hd' hf => ?_⟩
   have := hmin d' (mem_filter.2 ⟨mem_univ _, hf⟩)
@@ -87,19 +87,19 @@ theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick FL L (wit
 /-- The number of units at a vertex is small. -/
 theorem tmin_le (hb : 0 < b) (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
     (hn' : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) ≤ n' q) :
-    (FL.a₁ : ℝ) * tmin FL L l ≤ √(vN2 b n') + FL.a₁ := by
+    (FL.a₁ : ℝ) * tmin L l ≤ √(vN2 b n') + FL.a₁ := by
   have ha : (0 : ℝ) < FL.a₁ := by exact_mod_cast FL.a₁_pos
-  rcases Nat.eq_zero_or_pos (tmin FL L l) with h0 | h0
+  rcases Nat.eq_zero_or_pos (tmin L l) with h0 | h0
   · rw [h0]
     have := Real.sqrt_nonneg (vN2 b n')
     simp only [Nat.cast_zero, mul_zero]
     linarith
-  · have h1 : ¬ ∃ d, Fits FL L (withD FL l d) (tmin FL L l - 1) := by
+  · have h1 : ¬ ∃ d, Fits L (withD l d) (tmin L l - 1) := by
       intro hcon
-      have := Nat.sInf_le (s := {t | ∃ d, Fits FL L (withD FL l d) t}) hcon
-      change tmin FL L l ≤ _ at this
+      have := Nat.sInf_le (s := {t | ∃ d, Fits L (withD l d) t}) hcon
+      change tmin L l ≤ _ at this
       omega
-    have h2 : ¬ √(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) ≤ (FL.a₁ : ℝ) * (tmin FL L l - 1 : ℕ) := by
+    have h2 : ¬ √(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) ≤ (FL.a₁ : ℝ) * (tmin L l - 1 : ℕ) := by
       intro hcon
       obtain ⟨d, hd⟩ := FL.L1 _ _ hcon
       exact h1 ⟨d, hd⟩
@@ -109,8 +109,8 @@ theorem tmin_le (hb : 0 < b) (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.F
     push_cast at h2
     linarith [not_le.1 h2]
 
-theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) : tmin FL L l = 0 := by
-  have : (0 : ℕ) ∈ {t | ∃ d, Fits FL L (withD FL l d) t} := by
+theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) : tmin L l = 0 := by
+  have : (0 : ℕ) ∈ {t | ∃ d, Fits L (withD l d) t} := by
     refine ⟨l.2.2.2, fun q _ => ?_⟩
     change L (.seg l.1 l.2.1 l.2.2.1 q) ≤ _
     rw [hL]
@@ -119,7 +119,7 @@ theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv FL} (hL : ∀ q, L (.seg l.1 
 
 section Stage
 
-theorem num_inr_le (l : LMv FL) : num lhat n o (.inr l) ≤ tmin FL (load lhat n o) l := by
+theorem num_inr_le (l : LMv FL) : num lhat n o (.inr l) ≤ tmin (load lhat n o) l := by
   classical
   rw [num_eq, numF]
   split_ifs
@@ -130,16 +130,16 @@ variable (hb : 0 < b)
 include hb
 
 theorem num_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
-    ¬ Pick FL (load lhat n o) l) : num lhat n o (.inr l) = 0 := by
+    ¬ Pick (load lhat n o) l) : num lhat n o (.inr l) = 0 := by
   classical
   rcases hl with hl | hl
-  · have h1 : tmin FL (load lhat n o) l = 0 := tmin_zero fun q => seg_zero hb hl _ q
+  · have h1 : tmin (load lhat n o) l = 0 := tmin_zero fun q => seg_zero hb hl _ q
     have := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     omega
   · rw [num_eq, numF, if_neg hl]
 
 theorem alv_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.2.1 ∨
-    ¬ Pick FL (load lhat n o) l) (ν : (kindM R ch FL (.inr l)).Cn) :
+    ¬ Pick (load lhat n o) l) (ν : (kindM FL (.inr l)).Cn) :
     alv lhat n o (⟨.inr l, ν⟩ : NM R FL (ch := ch)) = 0 := by
   unfold alv
   rw [num_inr_zero hb hl]
@@ -207,7 +207,7 @@ theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (�
 
 /-- Loads on the edges at vertices. -/
 theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
-    (d : FL.Di) (hd : Pick FL (load lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
+    (d : FL.Di) (hd : Pick (load lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
     load lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) ≤
       alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch)) := by
   classical
@@ -235,10 +235,10 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.cast
       simp only [Prod.mk.injEq] at h5
       obtain ⟨h6, h7⟩ := h5
       subst h6
-      have hpk : Pick FL (load lhat n o) ⟨j', i', ω', d'⟩ := by
+      have hpk : Pick (load lhat n o) ⟨j', i', ω', d'⟩ := by
         by_contra hcon
         exact hne (alv_inr_zero hb (Or.inr hcon) ν')
-      have hdd : d' = d := pick_eq _ (l := ⟨j', i', ω', d'⟩) hpk hd
+      have hdd : d' = d := pick_eq (l := ⟨j', i', ω', d'⟩) hpk hd
       subst hdd
       have h8 : ν' = (FL.cn d').symm ν := by
         rw [← h7]
@@ -256,7 +256,7 @@ theorem _root_.Paper.thm_tree_kappa (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} 
   obtain ⟨i, hi⟩ := exists_isMin hh (load lhat n o) j.castSucc
   obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
   refine Tower.load_step j.2 hb hbD FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
-    (fun ω => tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)) ?_ ?_
+    (fun ω => tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)) ?_ ?_
   · exact isMin_le hi
   · intro e' he'
     exact mid_load_le hb j hi e' he'
@@ -273,10 +273,10 @@ theorem _root_.Paper.thm_tree_kappa (hh : 0 < h) (hbD : b ≤ 2 * D) {ρ : ℝ} 
       (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv FL)) 2)))
     have h6 : (b : ℝ) * ∑ ν : T.Nr,
           (load lhat n o (.edge j.succ ((T.nr j.2 i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
-        FL.G₁ * (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ) ^ 2 := by
+        FL.G₁ * (tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ) ^ 2 := by
       exact_mod_cast h5
     linarith [mul_le_mul_of_nonneg_right FL.G₁_le
-      (sq_nonneg (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ))]
+      (sq_nonneg (tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ))]
   · intro ω
     exact tmin_le hb _ _ fun q => seg_le hb j i ω q
 

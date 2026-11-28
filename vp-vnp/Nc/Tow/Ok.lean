@@ -40,7 +40,7 @@ variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U
 /-- The target of the units of a slot. -/
 def inpZ : ZM R FL (ch := ch) → Tg T m AA
   | ⟨.inl x, _⟩ => inpR x.1
-  | ⟨.inr l, e⟩ => .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e)
+  | ⟨.inr l, e⟩ => .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e)
 
 -- `consM_inl` and `consM_inr` are in `Nc/Tow/Plan.lean`, next to `consM`, so that `Slp4` can use them too.
 
@@ -79,7 +79,7 @@ theorem consM_unique {z z' : ZM R FL (ch := ch)} {u : Un R FL Pl U0 U1} (hu : u 
     have := eq_of_heq hω
     subst this
     -- the direction is the first one that fits, for both slots
-    have hd : d = d' := pick_eq _ (l := ⟨j, i, ω, d⟩) h1 h1'
+    have hd : d = d' := pick_eq (l := ⟨j, i, ω, d⟩) h1 h1'
     subst hd
     -- the slot is the rank of the unit divided by the number of units
     have hs : su d e = su d e' :=
@@ -102,15 +102,15 @@ theorem card_consM (z : ZM R FL (ch := ch)) :
   · rw [consM]
     split_ifs with ha
     · refine (card_rk_le (ix_inj (R := R) (FL := FL) (Pl := Pl)) (Al lhat n o)
-        (Tg.seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e) : Tg T m AA) _ _).trans ?_
+        (Tg.seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e) : Tg T m AA) _ _).trans ?_
       rw [Nat.add_mul, Nat.one_mul, Nat.add_sub_cancel_left]
     · simp
 
 /-- A move that is earlier in time than the move at index `x` has a smaller index. -/
 theorem lt_of_time {mv : Mv R ch FL} {x : Fin (Fintype.card (Mv R ch FL))}
-    (h : timeM R ch FL mv < timeM R ch FL (eE R FL x)) : (eE R FL).symm mv < x := by
+    (h : timeM mv < timeM (eE R FL x)) : (eE R FL).symm mv < x := by
   rw [← (eE R FL).symm_apply_apply x]
-  exact (exists_mono_equiv (timeM R ch FL)).choose_spec _ _ h
+  exact (exists_mono_equiv (timeM)).choose_spec _ _ h
 
 section Causal
 
@@ -118,16 +118,16 @@ variable {o' : (sys R FL Pl).N → Fin U1} {t : ℕ}
 
 /-- The units given at a slot depend only on the outcomes of earlier moves. -/
 theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
-    (hag : ∀ mv' : Mv R ch FL, timeM R ch FL mv' < timeM R ch FL z.1 →
+    (hag : ∀ mv' : Mv R ch FL, timeM mv' < timeM z.1 →
       ∀ c, oo o ⟨mv', c⟩ = oo o' ⟨mv', c⟩) :
     (consM lhat n o z : Finset (Un R FL Pl U0 U1)) = consM lhat n o' z := by
   -- whether a unit that is due by then is allowed
-  have hal {u : Un R FL Pl U0 U1} (hu : tgTime (tgU u) ≤ timeM R ch FL z.1) :
+  have hal {u : Un R FL Pl U0 U1} (hu : tgTime (tgU u) ≤ timeM z.1) :
       AlU lhat n o u ↔ AlU lhat n o' u := by
     cases u with
     | init a c k => exact Iff.rfl
     | new ν k =>
-      have h1 : timeM R ch FL (eN R FL Pl ν).1 < timeM R ch FL z.1 :=
+      have h1 : timeM (eN R FL Pl ν).1 < timeM z.1 :=
         (tg_time (eN R FL Pl ν)).trans_le hu
       change k.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ↔
         k.1 < alv lhat (nn n) (oo o') (eN R FL Pl ν)
@@ -138,7 +138,7 @@ theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
   rcases z with ⟨x | l, e⟩
   · rw [consM_inl, consM_inl, actR_congr fun τ hτ => load_congr hb hτ hag]
     exact and_congr_right fun _ => and_congr_left fun h => hal (h ▸ inp_time x.1)
-  · have hrk (hu : tgU u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e)) :
+  · have hrk (hu : tgU u = .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e)) :
         rkU lhat n o u = rkU lhat n o' u := by
       unfold rkU
       exact rk_congr fun v hv =>
@@ -185,7 +185,7 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
       | new ν k =>
         right
         refine ⟨ν.1, mem_filter.2 ⟨mem_univ _, ?_⟩, ?_⟩
-        · have h4 : tgTime (inpZ (eZ R FL Pl z)) ≤ timeM R ch FL (eZ R FL Pl z).1 := by
+        · have h4 : tgTime (inpZ (eZ R FL Pl z)) ≤ timeM (eZ R FL Pl z).1 := by
             rcases eZ R FL Pl z with ⟨x | l, e⟩
             · exact inp_time x.1
             · exact le_rfl
@@ -223,7 +223,7 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
         simp only [Pl.pt_base]
         rfl
       | new ν k =>
-        change _ = (hT R ch (tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2)).map Pl.pt
+        change _ = (hT R ch (tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2)).map Pl.pt
         rw [← hN_eq (eN R FL Pl ν) hd, hN, Sym2.map_mk]
         rfl
     have h4 : s((sys R FL Pl).zp z false, (sys R FL Pl).zp z true) =

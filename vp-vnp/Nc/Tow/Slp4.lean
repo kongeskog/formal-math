@@ -153,7 +153,7 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
     have h2 := PY.and hA (h1.mono hY (Nat.zero_le 1)) (PY.and hA (PY.base (hal u) hY)
       (PY.const hA (tgU u = inpR y.1)))
     exact (h2.congr fun x => (consM_inl y e u).symm).mono hY (by omega)
-  · have h1 : PY Dd H Y 0 fun x => Pick FL (load lhat (nX nI x) (oX oI x)) l := PY.base (ha.pick l) hY
+  · have h1 : PY Dd H Y 0 fun x => Pick (load lhat (nX nI x) (oX oI x)) l := PY.base (ha.pick l) hY
     have h3 : PY Dd H Y 1 fun x => su l.2.2.2 e * Tow.num lhat (nX nI x) (oX oI x) (.inr l) ≤
         rkU lhat (nI x) (oI x) u :=
       PY.rel hA (fun s t => su l.2.2.2 e * s ≤ t) (CY.base (ha.num (.inr l)) hY) (CY.base (hrk u) hY)
@@ -161,7 +161,7 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
         (su l.2.2.2 e + 1) * Tow.num lhat (nX nI x) (oX oI x) (.inr l) :=
       PY.rel hA (fun s t => t < (su l.2.2.2 e + 1) * s) (CY.base (ha.num (.inr l)) hY) (CY.base (hrk u) hY)
     have h5 := PY.and hA (h1.mono hY (Nat.zero_le 4)) (PY.and hA ((PY.base (hal u) hY).mono hY (Nat.zero_le 3))
-      (PY.and hA ((PY.const hA (tgU u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e))).mono hY (Nat.zero_le 2))
+      (PY.and hA ((PY.const hA (tgU u = .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e))).mono hY (Nat.zero_le 2))
         (PY.and hA h3 h4)))
     exact h5.congr fun x => (consM_inr l e u).symm
 
@@ -186,19 +186,19 @@ theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv R ch FL) :
     PY Dd H Y 4 fun x => GoodMv lhat (nX nI x) (oX oI x) mv := by
   have hY := hA.pos
   rcases mv with y | l
-  · have hc : Fintype.card (kindM R ch FL (.inl y)).Cn ≤ Y := by
+  · have hc : Fintype.card (kindM FL (.inl y)).Cn ≤ Y := by
       refine (Fintype.card_le_of_injective
-        (fun ν : (kindM R ch FL (.inl y)).Cn => (⟨Sum.inl y, ν⟩ : NM R FL)) ?_).trans hB.nm
+        (fun ν : (kindM FL (.inl y)).Cn => (⟨Sum.inl y, ν⟩ : NM R FL)) ?_).trans hB.nm
       intro ν ν' he
       exact eq_of_heq (Sigma.mk.inj he).2
-    have h1 : PY Dd H Y 3 fun x => ∀ ν : (kindM R ch FL (.inl y)).Cn, oX oI x ⟨.inl y, ν⟩ =
+    have h1 : PY Dd H Y 3 fun x => ∀ ν : (kindM FL (.inl y)).Cn, oX oI x ⟨.inl y, ν⟩ =
         Tow.num lhat (nX nI x) (oX oI x) (.inl y) :=
       PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s = t) (CY.base (ha.o _) hY) (CY.base (ha.num _) hY)
     exact h1.mono hY (by omega)
-  · have hc : Fintype.card (kindM R ch FL (.inr l)).Cn ≤ Y := card_cn hB l
+  · have hc : Fintype.card (FL.L l.2.2.2).Cn ≤ Y := card_cn hB l
     have h1 : PY Dd H Y 1 fun x => GoodL (oX oI x) l (Tow.num lhat (nX nI x) (oX oI x) (.inr l)) :=
       PY.rel hA (fun q t => b * q ≤ FL.G₁ * t ^ 2) (CY.base (ha.q l) hY) (CY.base (ha.num (.inr l)) hY)
-    have h2 : PY Dd H Y 3 fun x => ∀ ν : (kindM R ch FL (.inr l)).Cn,
+    have h2 : PY Dd H Y 3 fun x => ∀ ν : (kindM FL (.inr l)).Cn,
         Tow.num lhat (nX nI x) (oX oI x) (.inr l) ≤ oX oI x ⟨.inr l, ν⟩ :=
       PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s ≤ t) (CY.base (ha.num _) hY) (CY.base (ha.o _) hY)
     exact PY.and hA (h1.mono hY (by omega)) h2

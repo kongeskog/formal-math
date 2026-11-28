@@ -258,12 +258,12 @@ theorem load_start_le (e : T.Ed 0) : load lhat n o (.edge 0 e) ≤
     · rw [if_neg hv]
       exact Nat.zero_le _
   -- relays
-  have h2 : (∑ ν : NM R FL, if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
+  have h2 : (∑ ν : NM R FL, if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
       ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), if a = c then 0 else Bt T ch lhat n a c γ *
         ((if s.1 + 1 < R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1]? = some e then 1 else 0) +
         if s.1 + 2 = R.pl (ch a) (ch c) γ ∧ (R.path (ch a) (ch c) γ)[s.1 + 1]? = some e then 1 else 0) := by
     -- only the relays of the start
-    have h3 : ∀ ν : NM R FL, (if tgM R ch FL ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
+    have h3 : ∀ ν : NM R FL, (if tgM ν.1 ν.2 = .edge 0 e then alv lhat n o ν else 0) ≤
         ∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), ((if ∃ hx : okR R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, false⟩ ∧
             (R.path (ch a) (ch c) γ)[s.1]? = some e then Bt T ch lhat n a c γ else 0) +
           if ∃ hx : okR R ch (.start a c γ s), ν = ⟨.inl ⟨.start a c γ s, hx⟩, true⟩ ∧ s.1 + 2 = R.pl (ch a) (ch c) γ ∧

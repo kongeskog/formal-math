@@ -23,18 +23,18 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b
 /-- The outcome of a move is possible. -/
 def PossM (lhat : ℕ) (n : Fin AA → Fin AA → ℕ)
     (o : NM R FL (ch := ch) → ℕ) (ub : ℕ) (mv : Mv R ch FL) : Prop :=
-  ∃ i : Fin (num lhat n o mv * ub) → (kindM R ch FL mv).I, ∀ ν,
-    o ⟨mv, ν⟩ = (∑ k, ((kindM R ch FL mv).lam + (kindM R ch FL mv).len (i k) ν)) / ub
+  ∃ i : Fin (num lhat n o mv * ub) → (kindM FL mv).I, ∀ ν,
+    o ⟨mv, ν⟩ = (∑ k, ((kindM FL mv).lam + (kindM FL mv).len (i k) ν)) / ub
 
 section
 
 variable {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ} {ub : ℕ}
 
 theorem poss_inl (hub : 0 < ub) {x : {x : RM T m AA // okR R ch x}} (hp : PossM lhat n o ub (.inl x))
-    (ν : (kindM R ch FL (.inl x)).Cn) : o ⟨.inl x, ν⟩ = num lhat n o (.inl x) := by
+    (ν : (kindM FL (.inl x)).Cn) : o ⟨.inl x, ν⟩ = num lhat n o (.inl x) := by
   obtain ⟨i, hi⟩ := hp
   rw [hi ν]
-  have h1 : ∀ k, ((kindM R ch FL (.inl x)).lam + (kindM R ch FL (.inl x)).len (i k) ν) = 1 := fun _ => rfl
+  have h1 : ∀ k, ((kindM FL (.inl x)).lam + (kindM FL (.inl x)).len (i k) ν) = 1 := fun _ => rfl
   rw [Finset.sum_congr rfl fun k _ => h1 k, Finset.sum_const, card_univ, Fintype.card_fin, smul_eq_mul, Nat.mul_one]
   exact Nat.mul_div_cancel _ hub
 
@@ -108,11 +108,11 @@ open Classical in
 noncomputable def AsU (lhat : ℕ)
     (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) (s : Σ j : Fin (J + 1), T.X j) : Finset (Un R FL Pl U0 U1) :=
   univ.filter fun u => ∃ (ν : (sys R FL Pl).N) (kk : Fin U1), u = Uid.new ν kk ∧
-    kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ∧ IsCh R ch FL (eN R FL Pl ν) s
+    kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ∧ IsCh (eN R FL Pl ν) s
 
 theorem mem_AsU_new {ν : (sys R FL Pl).N} {kk : Fin U1} {s : Σ j : Fin (J + 1), T.X j} :
     (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o s ↔
-      kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ∧ IsCh R ch FL (eN R FL Pl ν) s := by
+      kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ∧ IsCh (eN R FL Pl ν) s := by
   classical
   unfold AsU
   rw [mem_filter]
@@ -147,7 +147,7 @@ theorem card_AsU (hb : 0 < b) (hh : 0 < h) (s : Σ j : Fin (J + 1), T.X j) :
   rw [← Equiv.sum_comp (eN R FL Pl)]
   refine Finset.sum_le_sum fun ν _ => ?_
   have hle : alv lhat (nn n) (oo o) (eN R FL Pl ν) ≤ U1 := (alvN_le _ _).trans (o _).2.le
-  by_cases hc : IsCh R ch FL (eN R FL Pl ν) ⟨j, c⟩
+  by_cases hc : IsCh (eN R FL Pl ν) ⟨j, c⟩
   · refine le_trans ?_ (le_of_eq (if_pos hc).symm)
     calc (∑ kk : Fin U1, if (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0) ≤
         ∑ kk : Fin U1, if kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) then 1 else 0 := by

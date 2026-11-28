@@ -390,15 +390,15 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
       change kk.1 < alv N (nn n) (oo o) (eN R FL Pl ν)
       rw [halv]
       exact hlt
-    have hdone : tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .done := hal hA
+    have hdone : tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .done := hal hA
     have e0 : hold0 (sys R FL Pl).np (Uid.new ν kk : Un R FL Pl N U1) =
-        Pl.pt (partM R ch FL (eN R FL Pl ν).1 ((kindM R ch FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 false)) :=
+        Pl.pt (partM (eN R FL Pl ν).1 ((kindM FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 false)) :=
       np_eq R FL Pl ν false
     have e1 : hold1 (sys R FL Pl).np (Uid.new ν kk : Un R FL Pl N U1) =
-        Pl.pt (partM R ch FL (eN R FL Pl ν).1 ((kindM R ch FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 true)) :=
+        Pl.pt (partM (eN R FL Pl ν).1 ((kindM FL (eN R FL Pl ν).1).cnEnd (eN R FL Pl ν).2 true)) :=
       np_eq R FL Pl ν true
     rw [e0, e1]
-    have hmem : ∀ s, IsCh R ch FL (eN R FL Pl ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU N n o s :=
+    have hmem : ∀ s, IsCh (eN R FL Pl ν) s → (Uid.new ν kk : Un R FL Pl N U1) ∈ AsU N n o s :=
       fun s hs => mem_AsU_new.2 ⟨hA, hs⟩
     have hal' : alv N (nn n) (oo o) (eN R FL Pl ν) ≠ 0 := by omega
     revert hdone hal' hmem
@@ -410,8 +410,8 @@ theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
         omega
       obtain ⟨j, hj, c, h1, h2⟩ := done_hold hb hh hx (β := β) hdone hnum
       refine ⟨⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩, hmem _ ⟨⟨x, hx⟩, β, rfl, hdone, h1⟩, ?_⟩
-      have h3 : s(partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β false),
-          partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
+      have h3 : s(partM (.inl ⟨x, hx⟩) ((kindM FL (.inl ⟨x, hx⟩)).cnEnd β false),
+          partM (.inl ⟨x, hx⟩) ((kindM FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
           s(nd hj c, parN hh (lev (load N (nn n) (oo o))) j c) := h2
       have h4 := congrArg (Sym2.map Pl.pt) h3
       simp only [Sym2.map_mk] at h4
@@ -842,7 +842,7 @@ theorem tree_value (hH : THypR FL ρ) (hℓ : 1 ≤ ℓ) {cap : ℕ} (hcap : cap
     fun n o x => thm_tree_poss_good hℓ n o x
   have hkl : ∀ x, ((sys R FL Pl).kind x).Le c ∧ ((sys R FL Pl).kind x).lam ≤ c := by
     intro x
-    change (kindM R ch FL (eE R FL x)).Le c ∧ (kindM R ch FL (eE R FL x)).lam ≤ c
+    change (kindM FL (eE R FL x)).Le c ∧ (kindM FL (eE R FL x)).lam ≤ c
     rcases eE R FL x with y | l
     · exact ⟨⟨fun _ _ => hc⟩, Nat.zero_le _⟩
     · exact hlen _
@@ -1224,7 +1224,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
           omega
       _ = ((c + 3) * M) ^ 57 := by rw [← pow_add]
       _ ≤ M ^ C := const_pow_le hM (by omega)
-  · change if (eE R FL x).isRight = true then kindM R ch FL (eE R FL x) ∈ laws else kindM R ch FL (eE R FL x) = relay F
+  · change if (eE R FL x).isRight = true then kindM FL (eE R FL x) ∈ laws else kindM FL (eE R FL x) = relay F
     rcases eE R FL x with y | l
     · simp [kindM]
     · simp only [Sum.isRight_inr, if_true]

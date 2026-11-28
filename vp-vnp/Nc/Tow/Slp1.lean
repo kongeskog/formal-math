@@ -97,12 +97,12 @@ theorem ld_le (hn : ∀ a c, n a c ≤ U0) (ho : ∀ ν, o ν ≤ U1) (N : Mv R 
   · exact (alvN_le _ _).trans (ho ν)
   · exact Nat.zero_le _
 
-theorem fits_mono {L : Tg T m AA → ℕ} {l : LMv FL} {s t : ℕ} (hst : s ≤ t) (hs : Fits FL L l s) :
-    Fits FL L l t := fun q hq => (hs q hq).trans (Nat.mul_le_mul_left _ hst)
+theorem fits_mono {L : Tg T m AA → ℕ} {l : LMv FL} {s t : ℕ} (hst : s ≤ t) (hs : Fits L l s) :
+    Fits L l t := fun q hq => (hs q hq).trans (Nat.mul_le_mul_left _ hst)
 
 /-- The number of units at a vertex is not large. -/
 theorem tmin_lt (hb : 0 < b) {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R ch FL U0 U1) (l : LMv FL) :
-    tmin FL L l < b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1 + 2 := by
+    tmin L l < b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1 + 2 := by
   set w := Wb R ch FL U0 U1 with hw
   set s := Fintype.card (Sym2 T.Fl) with hs
   have h1 := tmin_le hb L l (n' := fun _ => w) fun q => hL _
@@ -131,32 +131,32 @@ theorem tmin_lt (hb : 0 < b) {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R
     rw [show ((b * s * w : ℕ) : ℝ) = √(((b * s * w : ℕ) : ℝ) ^ 2) from (Real.sqrt_sq (Nat.cast_nonneg _)).symm]
     exact Real.sqrt_le_sqrt hN
   have ha : (1 : ℝ) ≤ FL.a₁ := by exact_mod_cast FL.a₁_pos
-  have h3 : (tmin FL L l : ℝ) ≤ (b * s * w : ℕ) + 1 := by
+  have h3 : (tmin L l : ℝ) ≤ (b * s * w : ℕ) + 1 := by
     by_contra hcon
     push Not at hcon
-    have h4 : (FL.a₁ : ℝ) * ((b * s * w : ℕ) + 1) < FL.a₁ * tmin FL L l :=
+    have h4 : (FL.a₁ : ℝ) * ((b * s * w : ℕ) + 1) < FL.a₁ * tmin L l :=
       mul_lt_mul_of_pos_left hcon (by linarith)
     nlinarith
-  have h4 : tmin FL L l ≤ b * s * w + 1 := by exact_mod_cast h3
+  have h4 : tmin L l ≤ b * s * w + 1 := by exact_mod_cast h3
   omega
 
 /-- The number of units at a vertex, as a sum. -/
-theorem tmin_sum {L : Tg T m AA → ℕ} {l : LMv FL} {B : ℕ} (hlt : tmin FL L l < B) :
-    tmin FL L l = ∑ s ∈ range B, ind (fun _ : Unit => ¬ ∃ d, Fits FL L (withD FL l d) s) () := by
+theorem tmin_sum {L : Tg T m AA → ℕ} {l : LMv FL} {B : ℕ} (hlt : tmin L l < B) :
+    tmin L l = ∑ s ∈ range B, ind (fun _ : Unit => ¬ ∃ d, Fits L (withD l d) s) () := by
   classical
-  have h1 : ∀ s, (ind (fun _ : Unit => ¬ ∃ d, Fits FL L (withD FL l d) s) ()) = if s < tmin FL L l then 1 else 0 := by
+  have h1 : ∀ s, (ind (fun _ : Unit => ¬ ∃ d, Fits L (withD l d) s) ()) = if s < tmin L l then 1 else 0 := by
     intro s
-    by_cases hs : s < tmin FL L l
+    by_cases hs : s < tmin L l
     · rw [if_pos hs, ind_true]
       intro hd
-      have h3 : tmin FL L l ≤ s := Nat.sInf_le hd
+      have h3 : tmin L l ≤ s := Nat.sInf_le hd
       omega
     · rw [if_neg hs, ind_false]
       intro hn
       obtain ⟨d, hd⟩ := tmin_spec L l
       exact hn ⟨d, fits_mono (not_lt.1 hs) hd⟩
   rw [Finset.sum_congr rfl fun s _ => h1 s, ← Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one]
-  have h2 : (range B).filter (fun s => s < tmin FL L l) = range (tmin FL L l) := by
+  have h2 : (range B).filter (fun s => s < tmin L l) = range (tmin L l) := by
     ext s
     simp only [mem_filter, mem_range]
     omega
