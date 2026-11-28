@@ -77,8 +77,10 @@ theorem kbar_kapB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T
   calc X * (h * (Uu * (lh / X + 2 * AA)) + 4 * FL.C₁ * FL.a₁) ≤
       X * (h * (2 * X * m * (lh / X + 2 * X)) + 4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) :=
         Nat.mul_le_mul_left _ (Nat.add_le_add (by gcongr) (Nat.le_mul_of_pos_right _ h2))
-    _ = X * (h * (2 * m * (X * (lh / X) + 2 * X ^ 2)) + 4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) := by ring
-    _ ≤ X * (h * (2 * m * (lh + 2 * X ^ 2)) + 4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) := by gcongr
+    _ = X * (h * (2 * m * (X * (lh / X) + 2 * X ^ 2)) +
+          4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) := by ring
+    _ ≤ X * (h * (2 * m * (lh + 2 * X ^ 2)) + 4 * FL.C₁ * FL.a₁ * (m * (lh + 2 * X ^ 2))) := by
+        gcongr
     _ = (2 * h + 4 * FL.C₁ * FL.a₁) * (m * X * (lh + 2 * X ^ 2)) := by ring
     _ ≤ _ := Nat.mul_le_mul_right _ hC.cst
 

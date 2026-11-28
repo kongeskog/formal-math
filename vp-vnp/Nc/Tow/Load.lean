@@ -8,8 +8,9 @@ import Nc.Tow.Defs
 /-!
 # Loads in a tower: one stage
 
-The sum of the squares of the loads, times the number of chambers, falls by the factor 4 in every stage, up to a
-small error. Everything is a natural number: the squares of the norms are carried, not the norms.
+The sum of the squares of the loads, times the number of chambers, falls by the factor 4 in every
+stage, up to a small error. Everything is a natural number: the squares of the norms are carried,
+not the norms.
 -/
 
 namespace Nc.Tow
@@ -34,7 +35,8 @@ theorem card_V {j : ℕ} (i : Fin h) : Fintype.card (T.V j i) * b = Fintype.card
   rw [Fintype.card_of_bijective (T.vx_co i), Fintype.card_prod, T.card_fl]
 
 theorem two_card_ed {j : ℕ} : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
-  have h1 : Fintype.card (T.Ed j) = ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i).card := by
+  have h1 : Fintype.card (T.Ed j) =
+      ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i).card := by
     rw [← card_univ]
     exact card_eq_sum_card_fiberwise (fun _ _ => mem_coe.2 (mem_univ _))
   rw [h1, Finset.mul_sum, Finset.sum_congr rfl fun i _ => T.card_ed j i]
@@ -172,8 +174,9 @@ theorem sum_end_sq (hj : j < J) :
 
 end Stage
 
-/-- **One stage.** The loads `n'` of the next stage: on the edges of the chosen type `i` what the edges above
-them carried (`hmid`), on the others what the laws at the vertices give for the end segments there (`hal`). -/
+/-- **One stage.** The loads `n'` of the next stage: on the edges of the chosen type `i` what the
+edges above them carried (`hmid`), on the others what the laws at the vertices give for the end
+segments there (`hal`). -/
 theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
     {n : T.Ed j → ℕ} {n' : T.Ed (j + 1) → ℕ} {C₁ E : ℕ} (hg : 4 * (1 + 8 * C₁) ≤ h)
     (hi : h * ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2 ≤ ∑ e, n e ^ 2)
@@ -187,8 +190,8 @@ theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
     rw [← Fintype.sum_prod_type' (f := fun ω ν => n' ((T.nr i).symm (ω, ν)).1 ^ 2)]
     rw [← Equiv.sum_comp (T.nr i) (fun p => n' ((T.nr i).symm p).1 ^ 2)]
     simp only [Equiv.symm_apply_apply]
-    exact (Finset.sum_subtype (univ.filter fun e' : T.Ed (j + 1) => ¬ T.ty e' = i) (p := fun e' => T.ty e' ≠ i)
-      (by simp) fun e' => n' e' ^ 2)
+    exact (Finset.sum_subtype (univ.filter fun e' : T.Ed (j + 1) => ¬ T.ty e' = i)
+      (p := fun e' => T.ty e' ≠ i) (by simp) fun e' => n' e' ^ 2)
   have hm := mid_le hj hmid
   -- the end segments of all vertices are at most four times the loads of the type
   have h1 : b * ∑ ω, ∑ ν, n' ((T.nr i).symm (ω, ν)).1 ^ 2 ≤
@@ -196,7 +199,8 @@ theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
         Fintype.card (T.V (j + 1) i) * E) := by
     rw [Finset.mul_sum]
     refine (Finset.sum_le_sum fun ω _ => hal ω).trans ?_
-    rw [← Finset.mul_sum, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, card_univ, smul_eq_mul]
+    rw [← Finset.mul_sum, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, card_univ,
+      smul_eq_mul]
     exact Nat.mul_le_mul_left _ (Nat.add_le_add_right (Nat.mul_le_mul_left _
       ((sum_end_sq hj).trans (Nat.mul_le_mul_left 2 sum_be_sq))) _)
   rw [← Finset.sum_filter_add_sum_filter_not univ (fun e' : T.Ed (j + 1) => T.ty e' = i), e1,

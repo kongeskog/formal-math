@@ -48,8 +48,9 @@ theorem isMin_le {L : Tg T m AA → ℕ} {j : Fin (J + 1)} {i : Fin h} (hi : IsM
 
 /-- Some number of units is enough. -/
 theorem exists_fits (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ t d, Fits L (withD l d) t := by
-  obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) _ ((Nat.le_mul_of_pos_left _ FL.a₁_pos).trans
-    ((Nat.le_self_pow two_ne_zero _).trans (Nat.le_mul_of_pos_left _ two_pos)))
+  obtain ⟨d, hd⟩ := FL.L1 (fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) _
+    ((Nat.le_mul_of_pos_left _ FL.a₁_pos).trans
+      ((Nat.le_self_pow two_ne_zero _).trans (Nat.le_mul_of_pos_left _ two_pos)))
   exact ⟨_, d, hd⟩
 
 theorem tmin_spec (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Fits L (withD l d) (tmin L l) := by
@@ -66,7 +67,8 @@ theorem exists_pick (L : Tg T m AA → ℕ) (l : LMv FL) : ∃ d, Pick L (withD 
   have := hmin d' (mem_filter.2 ⟨mem_univ _, hf⟩)
   exact absurd hd' (not_lt.2 this)
 
-/-- The number of units at a vertex is small: one unit less does not fit, and `t² ≤ 2 (t - 1)² + 2`. -/
+/-- The number of units at a vertex is small: one unit less does not fit, and
+`t² ≤ 2 (t - 1)² + 2`. -/
 theorem tmin_sq_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
     (hn' : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) ≤ n' q) :
     FL.a₁ ^ 2 * tmin L l ^ 2 ≤ b ^ 2 * ∑ q, n' q ^ 2 + 2 * FL.a₁ ^ 2 := by
@@ -86,7 +88,8 @@ theorem tmin_sq_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
     have h3 : b ^ 2 * ∑ q, L (.seg l.1 l.2.1 l.2.2.1 q) ^ 2 ≤ b ^ 2 * ∑ q, n' q ^ 2 :=
       Nat.mul_le_mul_left _ (Finset.sum_le_sum fun q _ => Nat.pow_le_pow_left (hn' q) 2)
     rw [ht]
-    calc FL.a₁ ^ 2 * (t + 1) ^ 2 ≤ FL.a₁ ^ 2 * (2 * (t ^ 2 + 1 ^ 2)) := Nat.mul_le_mul_left _ add_sq_le
+    calc FL.a₁ ^ 2 * (t + 1) ^ 2 ≤ FL.a₁ ^ 2 * (2 * (t ^ 2 + 1 ^ 2)) :=
+          Nat.mul_le_mul_left _ add_sq_le
       _ = 2 * (FL.a₁ * t) ^ 2 + 2 * FL.a₁ ^ 2 := by ring
       _ ≤ _ := Nat.add_le_add_right (h2.le.trans h3) _
 
@@ -232,8 +235,9 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.cast
   · rw [Finset.sum_singleton]
 
 /-- **Paper: Theorem thm:tree, One stage.** "κ_{j+1} ≤ κ_j/2 + c'|X^(j+1)|", as squares: with
-`K_j = |X^(j)| ∑ n_e²` (twice the square of κ_j), `4 K_{j+1} ≤ K_j + 16 C₁ a₁² |X^(j+1)|²`, where `4 (1 + 8C₁) ≤ h`.
-The sum of two squares is bounded by `(u + v)² ≤ 2u² + 2v²` in place of the triangle inequality. -/
+`K_j = |X^(j)| ∑ n_e²` (twice the square of κ_j), `4 K_{j+1} ≤ K_j + 16 C₁ a₁² |X^(j+1)|²`, where
+`4 (1 + 8C₁) ≤ h`. The square of a sum is bounded by `(u + v)² ≤ 2u² + 2v²` in place of the
+triangle inequality. -/
 theorem _root_.Paper.thm_tree_kappa (hg : 4 * (1 + 8 * FL.C₁) ≤ h) (j : Fin J) :
     4 * (Fintype.card (T.X (j + 1)) * ∑ e : T.Ed (j + 1), load lhat n o (.edge j.succ e) ^ 2) ≤
       Fintype.card (T.X j) * ∑ e : T.Ed j, load lhat n o (.edge j.castSucc e) ^ 2 +
@@ -241,7 +245,8 @@ theorem _root_.Paper.thm_tree_kappa (hg : 4 * (1 + 8 * FL.C₁) ≤ h) (j : Fin 
   classical
   obtain ⟨i, hi⟩ := exists_isMin (load lhat n o) j.castSucc
   obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp)
-  refine Tower.load_step j.2 (i := i) hg (isMin_le hi) (fun e' he' => mid_load_le j hi e' he') fun ω => ?_
+  refine Tower.load_step j.2 (i := i) hg (isMin_le hi) (fun e' he' => mid_load_le j hi e' he')
+    fun ω => ?_
   obtain ⟨d, hd⟩ := exists_pick (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)
   have h4 : ∑ ν : T.Nr, (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1)) ^ 2 ≤
       ∑ ν : (FL.L d).Cn, (alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R ch FL)) ^ 2 := by

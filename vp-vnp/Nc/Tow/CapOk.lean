@@ -52,8 +52,9 @@ theorem sum_fb_le :
 theorem fb_mul_le {q g : ℕ} (hq : 2 ≤ q) (hb : b ≤ 2 ^ q) (hg : g ^ q ≤ Fintype.card (T.X 0))
     (j : ℕ) (hj : j ≤ J) (c : T.X j) :
     fb (lev (load lhat n o)) j c * g ≤ h * kbar FL Uu AA lhat := by
-  refine le_trans (le_of_eq ?_) (bet_mul_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH hq hb hg
-    ⟨j, Nat.lt_succ_of_le hj⟩ c)
+  refine le_trans (le_of_eq ?_)
+    (bet_mul_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH hq hb hg
+      ⟨j, Nat.lt_succ_of_le hj⟩ c)
   unfold fb
   have := lev_eq (load lhat n o) ⟨j, Nat.lt_succ_of_le hj⟩
   rw [this]

@@ -106,8 +106,9 @@ structure VLaws (F : Type) [CommRing F] {Fl Nr : Type} [Fintype Fl] [DecidableEq
   G₁ : ℕ
   G₁_le : G₁ ≤ 2 * C₁ * a₁ ^ 2
   /-- every load is below one of finitely many -/
-  L1 : ∀ (n : Sym2 Fl → ℕ) (t : ℕ), b ^ 2 * ∑ q, n q ^ 2 ≤ 2 * (a₁ * t) ^ 2 → ∃ d, ∀ q : Sym2 Fl, ¬ q.IsDiag →
-    n q ≤ (univ.filter fun e : (L d).Sl => s(ro d ((L d).a e), ro d ((L d).b e)) = q).card * t
+  L1 : ∀ (n : Sym2 Fl → ℕ) (t : ℕ), b ^ 2 * ∑ q, n q ^ 2 ≤ 2 * (a₁ * t) ^ 2 →
+    ∃ d, ∀ q : Sym2 Fl, ¬ q.IsDiag →
+      n q ≤ (univ.filter fun e : (L d).Sl => s(ro d ((L d).a e), ro d ((L d).b e)) = q).card * t
   /-- the strings are short -/
   L2 : ∀ d i, b * ∑ ν, ((L d).lam + (L d).len i ν) ^ 2 ≤ G₁
 

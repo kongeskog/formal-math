@@ -633,7 +633,8 @@ open Classical in
 /-- The loads at one node, with the gain `g` of the tower. -/
 theorem tree_up_node (hH : THypR FL) {r g : ℕ} (hr : 2 ≤ r) (hbr : b ≤ 2 ^ r)
     (hg : g ^ r ≤ Fintype.card (T.X 0)) (n : Fin AA → Fin AA → Fin (N + 1))
-    (o : (sys R FL Pl).N → Fin U1) (hb : b ≤ c) (hX : Fintype.card (T.X J) ≤ c) (p : Fin (AA + A')) :
+    (o : (sys R FL Pl).N → Fin U1) (hb : b ≤ c) (hX : Fintype.card (T.X J) ≤ c)
+    (p : Fin (AA + A')) :
     (treeUp R FL Pl n o p + ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl n o q = p),
       treeUp R FL Pl n o q) * g ≤ (c + 1) * (h * kbar FL Uu AA N) := by
   have h1 : ∀ q, treeUp R FL Pl n o q * g ≤ h * kbar FL Uu AA N := fun q => by
@@ -649,7 +650,8 @@ theorem tree_up_node (hH : THypR FL) {r g : ℕ} (hr : 2 ≤ r) (hbr : b ≤ 2 ^
   split_ifs at this <;> omega
 
 /-- All loads. -/
-theorem tree_up_total (hH : THypR FL) (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) :
+theorem tree_up_total (hH : THypR FL) (n : Fin AA → Fin AA → Fin (N + 1))
+    (o : (sys R FL Pl).N → Fin U1) :
     ∑ p, treeUp R FL Pl n o p ≤ 4 * (h * kbar FL Uu AA N) := by
   rw [← Equiv.sum_comp Pl.pt]
   simp only [treeUp, Equiv.symm_apply_apply]
@@ -936,7 +938,8 @@ theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
   obtain ⟨c, k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15⟩ : ∃ c : ℕ, h ≤ c ∧ 2 ^ ee h ≤ c ∧ 3 ≤ c ∧
       Fintype.card (NN h) ≤ c ∧ VL.G₁ ≤ c ∧ Fintype.card VL.Di ≤ c ∧ Fintype.card (Sym2 (U h)) ≤ c ∧
       ∑ d, Fintype.card (VL.L d).Sl ≤ c ∧ ∑ d, ∑ i, ∑ ν, (VL.L d).len i ν ≤ c ∧ ∑ d, (VL.L d).lam ≤ c ∧
-      2 * h + 4 * VL.C₁ * VL.a₁ ≤ c ∧ S * 2 ^ ee h ≤ c ∧ g 0 ≤ c ∧ 2 ^ (h ^ 2 - 1) ≤ c ∧ C + 1 ≤ c := by
+      2 * h + 4 * VL.C₁ * VL.a₁ ≤ c ∧ S * 2 ^ ee h ≤ c ∧ g 0 ≤ c ∧ 2 ^ (h ^ 2 - 1) ≤ c ∧
+      C + 1 ≤ c := by
     let l : List ℕ := [h, 2 ^ ee h, 3, Fintype.card (NN h), VL.G₁, Fintype.card VL.Di, Fintype.card (Sym2 (U h)),
       ∑ d, Fintype.card (VL.L d).Sl, ∑ d, ∑ i, ∑ ν, (VL.L d).len i ν, ∑ d, (VL.L d).lam,
       2 * h + 4 * VL.C₁ * VL.a₁, S * 2 ^ ee h, g 0, 2 ^ (h ^ 2 - 1), C + 1]
@@ -1063,7 +1066,8 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       calc (c + 1) * cKap c + 7 ≤ (2 * c + 1) * cKap c + 7 := by gcongr; omega
         _ ≤ C := by rw [mul_comm (2 * c + 1)]; omega
     calc (c + 1) * (h * kbar FL Uu AA N) ≤ (c + 1) * (2 * c * kapB c m (Fintype.card (T.X 0)) N) :=
-          Nat.mul_le_mul_left _ (hk.trans (by rw [Nat.mul_assoc]; exact Nat.le_mul_of_pos_left _ two_pos))
+          Nat.mul_le_mul_left _
+            (hk.trans (by rw [Nat.mul_assoc]; exact Nat.le_mul_of_pos_left _ two_pos))
       _ ≤ (c + 1) * (cKap c * (lg M ^ 7 * M * (N + M ^ 2))) := Nat.mul_le_mul_left _ hkap
       _ = (c + 1) * (cKap c * lg M ^ 7) * (M * (N + M ^ 2)) := by ring
       _ ≤ lg M ^ C * (M * (N + M ^ 2)) := Nat.mul_le_mul_right _ h3

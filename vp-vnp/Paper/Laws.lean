@@ -406,7 +406,7 @@ theorem exists_laws {K : Type} [Field K] (hK : Contracting K) :
         have hb : (1 : ℝ) ≤ ((2 ^ ee h : ℕ) : ℝ) := by exact_mod_cast Nat.one_le_two_pow
         rw [hcard, Real.sqrt_le_left (by positivity)]
         calc _ ≤ ((2 ^ ee h : ℕ) : ℝ) ^ 2 / 2 * ∑ q, (n q : ℝ) ^ 2 :=
-              mul_le_mul (by nlinarith) h2 h3 (by positivity)
+              mul_le_mul (by rw [pow_two]; gcongr; linarith) h2 h3 (by positivity)
           _ ≤ _ := by linarith)
       L2 := hL2 }, (by omega : 4 * (1 + 8 * (4 * C₀)) ≤ h)⟩
 

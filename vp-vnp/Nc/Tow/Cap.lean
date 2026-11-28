@@ -63,7 +63,8 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
             Finset.single_le_sum (f := fun ω => ∑ q, T.nEnd i (lds lhat n o j.castSucc) ω q ^ 2)
               (fun _ _ => Nat.zero_le _) (mem_univ ω)
         _ ≤ _ := (Tower.sum_end_sq j.2).trans (Nat.mul_le_mul_left 2 (Tower.sum_be_sq.trans
-            (Nat.mul_le_mul_left 2 ((Finset.sum_le_sum_of_subset (subset_univ _)).trans (hS j.castSucc)))))
+            (Nat.mul_le_mul_left 2
+              ((Finset.sum_le_sum_of_subset (subset_univ _)).trans (hS j.castSucc)))))
     have h2 := FL.L1 (fun q => load lhat n o (.seg j i ω q)) (2 * b * kbar FL Uu AA lhat) (by
       calc _ ≤ b ^ 2 * (2 * (2 * kbar FL Uu AA lhat ^ 2)) := Nat.mul_le_mul_left _ h1
         _ = (2 * b * kbar FL Uu AA lhat) ^ 2 := by ring
@@ -74,7 +75,8 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
       (withD (⟨j, i, ω, d⟩ : LMv FL) d') t}) h2).trans (Nat.le_add_left _ _))
 
 /-- All units between nodes and their parents. -/
-theorem sum_bet_le : ∑ j : Fin (J + 1), ∑ c, T.bet (lds lhat n o j) c ≤ 4 * (h * kbar FL Uu AA lhat) := by
+theorem sum_bet_le :
+    ∑ j : Fin (J + 1), ∑ c, T.bet (lds lhat n o j) c ≤ 4 * (h * kbar FL Uu AA lhat) := by
   calc _ ≤ ∑ j : Fin (J + 1), 2 * (h * kbar FL Uu AA lhat) / 2 ^ j.1 :=
         Finset.sum_le_sum fun j _ => (Nat.le_div_iff_mul_le (pow_pos two_pos _)).2
           ((Nat.mul_comm _ _).le.trans (sum_bet_le_kbar hH j))
