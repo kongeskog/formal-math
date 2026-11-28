@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T05:20:11.166211308Z",
+  "updated_at": "2026-11-28T05:21:21.545971564Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "0118e054712ed2d743935998d80a0e8de23ffb5e",
-    "at": "2026-11-28T05:04:06.749547417Z",
+    "sha": "8e77c4f9c07985fb3387272fc9f7d12e9ff24df2",
+    "at": "2026-11-28T05:21:21.545971564Z",
     "metrics": {
-      "tokens": 798093,
-      "loc": 51946,
+      "tokens": 796377,
+      "loc": 51846,
       "decls": 4268,
       "files": 313,
-      "bytes": 3005943,
-      "build_seconds": 561
+      "bytes": 3000302,
+      "build_seconds": 446
     }
   },
   "counts": {
-    "merged": 110,
+    "merged": 111,
     "rejected": 4,
-    "open": 2,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 103,
+      "merged": 104,
       "attempts": 109,
-      "saved": 120204
+      "saved": 121920
     },
     {
       "login": "yidakra",
@@ -129,7 +129,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T06:57:52Z",
       "pr": 195,
-      "result_delta": null,
+      "result_delta": -1716,
       "created_at": "2026-11-28T03:34:22Z",
       "url": "https://github.com/kongeskog/formal-math/issues/189",
       "technique": "shorten",
@@ -1173,119 +1173,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 195,
-      "title": "shorten(Paper): grw for the chains of monotone bound steps in four files",
-      "author": "kongeskog",
-      "head_sha": "8ef54d6d8bc07d2102b8c2124293ae920e6e6689",
-      "base_sha": "bd3c9059b77d0b54e7c736e4db6a73ddfb664df8",
-      "status": "stale",
-      "created_at": "2026-11-28T04:37:03Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 802834,
-        "loc": 52025,
-        "decls": 4270,
-        "files": 314,
-        "bytes": 3020522,
-        "build_seconds": 182
-      },
-      "base_metrics": {
-        "tokens": 804550,
-        "loc": 52125,
-        "decls": 4270,
-        "files": 314,
-        "bytes": 3026163,
-        "build_seconds": null
-      },
-      "delta": -1716,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "4 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pass"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pass"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pass"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pass",
-          "detail": "the added lines hold 0 characters of comments and strings"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 804550 → 802834 (-1716)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        }
-      ],
-      "idea": 189,
-      "url": "https://github.com/kongeskog/formal-math/pull/195",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46108384359",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "shorten",
-      "scope": "Paper",
-      "warnings": [
-        "touches files reserved by idea #187 (claimed by @kongeskog): `vp-vnp/Paper/Tree.lean`; coordinate there or expect to merge main after it lands"
-      ]
-    },
     {
       "pr": 196,
       "title": "restructure(Nc/Tow): context arguments fixed by a later argument's type become implicit",
