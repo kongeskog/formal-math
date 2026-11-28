@@ -21,13 +21,13 @@ variable {h b J : ℕ} (T : Tower h b J)
 
 namespace Tower
 
-/-- The units of type `i` at a chamber. -/
-def be {j : ℕ} (i : Fin h) (n : T.Ed j → ℕ) (c : T.X j) : ℕ :=
-  ∑ e, if T.ty e = i ∧ (T.e0 e = c ∨ T.e1 e = c) then n e else 0
-
-/-- The number of end segments on the pair `q` of the vertex `ω`. -/
+/-- The number of end segments on the pair `q` of the vertex `ω`: the loads of the edges of type
+`i`, once for either end whose segment to its host lies on `q` at `ω`. -/
 def nEnd {j : ℕ} (i : Fin h) (n : T.Ed j → ℕ) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) : ℕ :=
-  ∑ c : T.X j, if T.πV (T.vx i c) = ω ∧ s(T.co i (T.host i (T.vx i c)), T.co i c) = q then T.be i n c else 0
+  (∑ e, if T.ty e = i ∧ T.πV (T.vx i (T.e0 e)) = ω ∧
+      s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q then n e else 0) +
+    ∑ e, if T.ty e = i ∧ T.πV (T.vx i (T.e1 e)) = ω ∧
+      s(T.co i (T.host i (T.vx i (T.e1 e))), T.co i (T.e1 e)) = q then n e else 0
 
 variable {T}
 
@@ -86,38 +86,6 @@ theorem mid_le (hj : j < J) {n' : T.Ed (j + 1) → ℕ}
     simp only [mem_filter, mem_univ, true_and] at he ⊢
     rw [T.π_ty e, he]
 
-/-- Units at chambers. -/
-theorem sum_be_sq : ∑ c, T.be i n c ^ 2 ≤ 2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2 := by
-  have h1 : ∀ c, T.be i n c ^ 2 ≤
-      ∑ e, if T.ty e = i ∧ (T.e0 e = c ∨ T.e1 e = c) then n e ^ 2 else 0 := by
-    intro c
-    unfold be
-    rw [← Finset.sum_filter, ← Finset.sum_filter]
-    simpa only [one_mul] using sq_sum_le _ n (T.deg j c i)
-  refine (Finset.sum_le_sum fun c _ => h1 c).trans ?_
-  rw [Finset.sum_comm]
-  have h2 : ∀ e : T.Ed j, (∑ c, if T.ty e = i ∧ (T.e0 e = c ∨ T.e1 e = c) then n e ^ 2 else 0) =
-      if T.ty e = i then 2 * n e ^ 2 else 0 := by
-    intro e
-    by_cases ht : T.ty e = i
-    · rw [if_pos ht]
-      have h3 : ∀ c, (if T.ty e = i ∧ (T.e0 e = c ∨ T.e1 e = c) then n e ^ 2 else 0) =
-          (if T.e0 e = c then n e ^ 2 else 0) + if T.e1 e = c then n e ^ 2 else 0 := by
-        intro c
-        have hne := T.e_ne e
-        by_cases h0 : T.e0 e = c
-        · have h1 : ¬ T.e1 e = c := fun hh => hne (h0.trans hh.symm)
-          simp [ht, h0, h1]
-        · by_cases h1 : T.e1 e = c <;> simp [ht, h0, h1]
-      rw [Finset.sum_congr rfl fun c _ => h3 c, Finset.sum_add_distrib]
-      simp
-      ring
-    · rw [if_neg ht]
-      exact Finset.sum_eq_zero fun c _ => if_neg fun hh => ht hh.1
-  rw [Finset.sum_congr rfl fun e _ => h2 e, Finset.sum_filter, Finset.mul_sum]
-  refine le_of_eq (Finset.sum_congr rfl fun e _ => ?_)
-  split_ifs <;> ring
-
 /-- A pair of a vertex carries the end segments of at most two chambers. -/
 theorem card_two (hj : j < J) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) :
     (univ.filter fun c : T.X j => T.πV (T.vx i c) = ω ∧
@@ -147,30 +115,64 @@ theorem card_two (hj : j < J) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) :
         exact ⟨hvx, heq.2⟩
     exact h1.trans card_le_two
 
-/-- Loads of end segments. -/
-theorem sum_end_sq (hj : j < J) :
-    ∑ ω, ∑ q : Sym2 T.Fl, T.nEnd i n ω q ^ 2 ≤ 2 * ∑ c, T.be i n c ^ 2 := by
-  have h1 : ∀ ω q, T.nEnd i n ω q ^ 2 ≤ 2 * ∑ c : T.X j, if T.πV (T.vx i c) = ω ∧
-      s(T.co i (T.host i (T.vx i c)), T.co i c) = q then T.be i n c ^ 2 else 0 := by
+/-- Loads of end segments: a pair of a vertex carries at most two ends of edges of type `i`. -/
+theorem sum_end_sq (hj : j < J) : ∑ ω, ∑ q : Sym2 T.Fl, T.nEnd i n ω q ^ 2 ≤
+    2 * (2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2) := by
+  classical
+  -- the edges with the end `f e` on the pair `q` of `ω`
+  let F : (T.Ed j → T.X j) → T.V (j + 1) i → Sym2 T.Fl → Finset (T.Ed j) := fun f ω q =>
+    univ.filter fun e => T.ty e = i ∧ T.πV (T.vx i (f e)) = ω ∧
+      s(T.co i (T.host i (T.vx i (f e))), T.co i (f e)) = q
+  -- an edge of type `i` is determined by one of its ends
+  have key : ∀ e e' : T.Ed j, T.ty e = i → T.ty e' = i → ∀ c, (T.e0 e = c ∨ T.e1 e = c) →
+      (T.e0 e' = c ∨ T.e1 e' = c) → e = e' := fun e e' he he' c hc hc' =>
+    Finset.card_le_one.1 (T.deg j c i) e (mem_filter.2 ⟨mem_univ _, he, hc⟩) e'
+      (mem_filter.2 ⟨mem_univ _, he', hc'⟩)
+  have hc : ∀ ω q, ((F T.e0 ω q).disjSum (F T.e1 ω q)).card ≤ 2 := by
     intro ω q
+    refine (card_le_card_of_injOn (Sum.elim T.e0 T.e1) ?_ ?_).trans (card_two hj ω q)
+    · rintro (e | e) he
+      · exact mem_coe.2 (mem_filter.2 ⟨mem_univ _,
+          (mem_filter.1 (inl_mem_disjSum.1 (mem_coe.1 he))).2.2⟩)
+      · exact mem_coe.2 (mem_filter.2 ⟨mem_univ _,
+          (mem_filter.1 (inr_mem_disjSum.1 (mem_coe.1 he))).2.2⟩)
+    · rintro (e | e) he (e' | e') he' heq
+      · rw [key e e' (mem_filter.1 (inl_mem_disjSum.1 (mem_coe.1 he))).2.1
+          (mem_filter.1 (inl_mem_disjSum.1 (mem_coe.1 he'))).2.1 _ (Or.inl rfl) (Or.inl heq.symm)]
+      · have := key e e' (mem_filter.1 (inl_mem_disjSum.1 (mem_coe.1 he))).2.1
+          (mem_filter.1 (inr_mem_disjSum.1 (mem_coe.1 he'))).2.1 _ (Or.inl rfl) (Or.inr heq.symm)
+        subst this
+        exact absurd heq (T.e_ne e)
+      · have := key e e' (mem_filter.1 (inr_mem_disjSum.1 (mem_coe.1 he))).2.1
+          (mem_filter.1 (inl_mem_disjSum.1 (mem_coe.1 he'))).2.1 _ (Or.inr rfl) (Or.inl heq.symm)
+        subst this
+        exact absurd heq.symm (T.e_ne e)
+      · rw [key e e' (mem_filter.1 (inr_mem_disjSum.1 (mem_coe.1 he))).2.1
+          (mem_filter.1 (inr_mem_disjSum.1 (mem_coe.1 he'))).2.1 _ (Or.inr rfl) (Or.inr heq.symm)]
+  have h1 : ∀ ω q, T.nEnd i n ω q ^ 2 ≤
+      2 * (∑ e ∈ F T.e0 ω q, n e ^ 2 + ∑ e ∈ F T.e1 ω q, n e ^ 2) := by
+    intro ω q
+    have := sq_sum_le _ (Sum.elim n n) (hc ω q)
+    rw [sum_disjSum, sum_disjSum] at this
     unfold nEnd
     rw [← Finset.sum_filter, ← Finset.sum_filter]
-    exact sq_sum_le _ _ (card_two hj ω q)
+    exact this
   refine (Finset.sum_le_sum fun ω _ => Finset.sum_le_sum fun q _ => h1 ω q).trans ?_
-  simp only [← Finset.mul_sum]
-  refine Nat.mul_le_mul_left _ (le_of_eq ?_)
-  have e2 : ∀ ω, (∑ q : Sym2 T.Fl, ∑ c : T.X j, if T.πV (T.vx i c) = ω ∧
-      s(T.co i (T.host i (T.vx i c)), T.co i c) = q then T.be i n c ^ 2 else 0) =
-      ∑ c : T.X j, if T.πV (T.vx i c) = ω then T.be i n c ^ 2 else 0 := by
-    intro ω
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    by_cases hω : T.πV (T.vx i c) = ω
-    · simp [hω]
-    · simp [hω]
-  rw [Finset.sum_congr rfl fun ω _ => e2 ω, Finset.sum_comm]
-  refine Finset.sum_congr rfl fun c _ => ?_
-  simp
+  -- every end of an edge of type `i` is on one pair of one vertex
+  have h2 : ∀ f : T.Ed j → T.X j, ∑ ω, ∑ q, ∑ e ∈ F f ω q, n e ^ 2 =
+      ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2 := by
+    intro f
+    simp only [F, Finset.sum_filter]
+    rw [Finset.sum_congr rfl fun ω _ => Finset.sum_comm, Finset.sum_comm]
+    refine Finset.sum_congr rfl fun e _ => ?_
+    by_cases ht : T.ty e = i
+    · rw [Finset.sum_eq_single (T.πV (T.vx i (f e)))
+        (fun ω _ hω => Finset.sum_eq_zero fun q _ => if_neg fun h => hω h.2.1.symm)
+        fun h => absurd (mem_univ _) h]
+      simp [ht]
+    · simp [ht]
+  simp only [← Finset.mul_sum, Finset.sum_add_distrib, h2]
+  exact le_of_eq (by ring)
 
 end Stage
 
@@ -202,7 +204,7 @@ theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
     rw [← Finset.mul_sum, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, card_univ,
       smul_eq_mul]
     exact Nat.mul_le_mul_left _ (Nat.add_le_add_right (Nat.mul_le_mul_left _
-      ((sum_end_sq hj).trans (Nat.mul_le_mul_left 2 sum_be_sq))) _)
+      (sum_end_sq hj)) _)
   rw [← Finset.sum_filter_add_sum_filter_not univ (fun e' : T.Ed (j + 1) => T.ty e' = i), e1,
     T.card_X j hj, ← card_V (T := T) (j := j + 1) i]
   generalize ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2 = P at hi hm h1

@@ -62,9 +62,8 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
         _ ≤ ∑ ω, ∑ q, T.nEnd i (lds lhat n o j.castSucc) ω q ^ 2 :=
             Finset.single_le_sum (f := fun ω => ∑ q, T.nEnd i (lds lhat n o j.castSucc) ω q ^ 2)
               (fun _ _ => Nat.zero_le _) (mem_univ ω)
-        _ ≤ _ := (Tower.sum_end_sq j.2).trans (Nat.mul_le_mul_left 2 (Tower.sum_be_sq.trans
-            (Nat.mul_le_mul_left 2
-              ((Finset.sum_le_sum_of_subset (subset_univ _)).trans (hS j.castSucc)))))
+        _ ≤ _ := (Tower.sum_end_sq j.2).trans (Nat.mul_le_mul_left 2 (Nat.mul_le_mul_left 2
+            ((Finset.sum_le_sum_of_subset (subset_univ _)).trans (hS j.castSucc))))
     have h2 := FL.L1 (fun q => load lhat n o (.seg j i ω q)) (2 * b * kbar FL Uu AA lhat) (by
       calc _ ≤ b ^ 2 * (2 * (2 * kbar FL Uu AA lhat ^ 2)) := Nat.mul_le_mul_left _ h1
         _ = (2 * b * kbar FL Uu AA lhat) ^ 2 := by ring
