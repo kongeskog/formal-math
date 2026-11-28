@@ -12,8 +12,8 @@ import Nc.Acc.CompK
 
 The budgets of the outer program are guessed and their constants named exactly. The constants of
 the inner program are rescaled by ε ↦ ε^r, with r above every exponent in the outer weights. To give
-the rescaled constants names of their own the round guesses budgets for all inner calls at once and
-runs the plain instance of the list program with these budgets (`rebF`).
+the rescaled constants names of their own the round goes through the names of the value of the list
+program and writes `true` in front of each (`renF`).
 -/
 
 set_option linter.unusedSectionVars false
@@ -28,85 +28,79 @@ section Programs
 
 variable {R : Type} [CommRing R] [Algebra A R] {κ : List Bool → R} {S : Set (List Bool)}
 
-theorem gt_map {R' : Type} [CommRing R'] (f : R → R') (ν : ℕ → ℕ) (J B : ℕ) (K : KT R) (pre : List Bool) :
-    gt ν J B (K.map f) pre = gt ν J B K pre := by
-  induction K generalizing pre with
-  | none => rfl
-  | leaf c => rfl
-  | node l r ihl ihr => simp only [KT.map, gt, ihl, ihr]
+/-- Put a name, with `true` in front, before the names so far; the argument is (name, names). -/
+def preF : Fm := node (leaf (.cons (.quote one) (.hd .id))) (.tl .id)
 
-theorem nds_expand_map {R' : Type} [CommRing R'] (f : R → R') (B : ℕ) (K : KT R) :
-    ((K.map f).expand B).nds = (K.expand B).nds := by
-  induction K with
-  | none => rfl
-  | leaf c => simp only [KT.map, KT.expand, KT.nds_comb]
-  | node l r ihl ihr => simp only [KT.map, KT.expand, KT.nds, ihl, ihr]
+/-- The names of a list, each with `true` in front, before the names `acc`. -/
+def preT (xs : List Tree) (acc : Tree) : Tree :=
+  xs.foldl (fun acc x => .cons (.cons (.cons (.cons one x) (.cons .nil .nil)) acc) .nil) acc
 
-/-- Guess budgets with `g`; run the plain instance of the program `P` on the argument with these
-budgets. -/
-def rebF (g : Fm) (P : Tree) : Fm := guessF g (app UF.code (ZE (.quote P)))
+theorem names_preT (xs : List Tree) (acc : Tree) :
+    names (preT xs acc) = (xs.reverse.map fun x => true :: x.path) ++ names acc := by
+  induction xs generalizing acc with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [preT, List.foldl_cons, ← preT, ih, names, names]
+    simp [path, one]
 
-/-- The universal program on a plain instance: its value is the plain sum. -/
-theorem UF_kv {y : Tree} {τ : ℕ} (hy : Plain θ τ y) : KV θ κ S UF y
-    (algebraMap A R (pv θ y)) (τ + 9) := by
-  refine ⟨_, UF_ev hy.1.ev, ?_, ?_⟩
-  · intro r hr
-    obtain ⟨s, hs, rfl⟩ := List.mem_map.1 hr
-    have := hy.2 s hs
-    simp only [Tree.size, names]
-    exact ⟨by omega, by simp⟩
-  · simp [val, wt, names, pv, pval, map_list_sum, Function.comp_def]
-
-/-- **The weight of a budget times the plain sum of its instance**, summed over the budgets. -/
-theorem rebF_kv {g : Fm} {P z : Tree} {cg τ : ℕ} {lg : List (Run A)}
-    {Q : List (Bt × R)} (hg : Ev θ g z lg)
-    (rg : List.Forall₂ (RelG κ (· ∈ S) cg) lg Q) (hP : ∀ q ∈ Q, Plain θ τ (zq P z q.1)) :
-    KV θ κ S (rebF g P) z (Q.map fun q => q.2 * algebraMap A R (pv θ (zq P z q.1))).sum
-        (2 * cg + τ + 40) := by
-  refine (guess_kv (ω := fun e => algebraMap A R (pv θ (.cons WN.code (.cons P (.cons z e)))))
-      (d := τ + 21) hg rg
-    fun q hq u hu => ?_).mono (by omega)
-  have hZ : Gives θ (ZE (.quote P)) (.cons z u) (zq P z q.1) 10 := by
-    simpa [zq, ZE, hu] using (Gives.quote (θ := θ) WN.code (.cons z u)).cons
-      ((Gives.quote P _).cons ((Gives.id _).hd.cons (Gives.id _).tl.hd))
-  exact (KV.app_gives (d := τ + 9) hZ (by rw [Fm.ofTree_code]; exact UF_kv (hP q hq))).mono
-    (by omega)
-
-/-- **A program with renamed constants**: with the names `pre ++ p` for the images under `f` of its constants. -/
-theorem renamed_kv (f : R →ₐ[A] R) {K : KT R} {B J : ℕ} {pre : List Bool} {P z : Tree}
-    {T L : ℕ} {l : List (Run A)}
-    (hP : Ev θ (Fm.ofTree P) z l)
-    (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T ∧ ∀ p ∈ names r.out, K.InB B p) (hJ : T < 2 ^ J)
-    (hS : ∀ p, K.InB (B + J) p →
-      κ (pre ++ p) = f (K.lk p) ∧ pre ++ p ∈ S ∧ (pre ++ p).length ≤ L) :
-    KV θ κ S (rebF (gt id J B K pre) P) z (f (val K.lk l))
-      (2 * (((4 * L + 48) * J + 80) * (K.expand B).nds) +
-        (60 * (K.ht + B + J + 1) + 42) * T +
-        40 * ((K.expand B).nds * (J + 1)) + 120) := by
-  obtain ⟨lg, eg, rg⟩ := gt_ev (θ := θ) (ν := id) (J := J) (B := B) (L := L) (κ := κ)
-    (P := (· ∈ S)) z (K.map f) pre
-    (fun p hp i hi => by
-      have h1 : K.InB (B + J) (p ++ KT.pw i) := (KT.inB_map f _ K _).1 (hp.inB hi)
-      obtain ⟨h2, h3, h4⟩ := hS _ h1
-      exact ⟨h2.trans (KT.lk_map (f : R →+* R) K _).symm, h3, h4⟩)
-  rw [gt_map] at eg
-  have hn : ((K.map f).expand B).nds = (K.expand B).nds := nds_expand_map f B K
-  rw [hn] at rg
-  -- Lemma lem:postpone
-  obtain ⟨hsum, hze⟩ := Paper.lem_postpone P z hJ hP.hl
-    (by rw [hP.evl]; exact fun r hr => (hT r hr).1)
-    ((K.map f).expand B) (K.map f).lk (by
-      rw [hP.evl]
-      exact fun r hr p hp => KT.lookup_expand ((KT.inB_map f _ K p).2 ((hT r hr).2 p hp)))
-  have h2 := KT.ht_expand B (K.map f)
-  rw [KT.ht_map] at h2
-  refine ((rebF_kv eg rg hze).mono ?_).congr ?_
-  · rw [hn]
-    have := Nat.mul_le_mul_right T (show 60 * (((K.map f).expand B).ht + J + 1) + 42 ≤
-      60 * (K.ht + B + J + 1) + 42 by omega)
+theorem size_preT (xs : List Tree) (acc : Tree) :
+    (preT xs acc).size = acc.size + (xs.map fun x => x.size + 11).sum := by
+  induction xs generalizing acc with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [preT, List.foldl_cons, ← preT, ih]
+    simp only [Tree.size, one, List.map_cons, List.sum_cons]
     omega
-  · rw [← val_map f K l, ← hP.evl, hsum]
-    rfl
+
+/-- The names of a value, each with `true` in front. -/
+def renF : Fm := foldF preF (.quote .nil)
+  (app flatB.code (.cons (.quote flatB.code) (.cons .id (.quote .nil))))
+
+theorem renF_gives (o : Tree) : Gives θ renF o (preT (nmT o) .nil)
+    (40 * o.size + ((nmT o).map fun _ => 11 + 30).sum + 29) := by
+  have hl := Gives.lett (Gives.cons (Gives.quote (θ := θ) flatB.code o)
+    (Gives.cons (Gives.id o) (Gives.quote (listT []) o))) (flatB_gives o [])
+  rw [List.append_nil] at hl
+  exact (foldF_gives (Inv := fun _ _ => True) (d := fun _ => 11) (Gives.quote .nil o) hl
+    (fun x _ σ _ _ => ⟨Gives.cons (Gives.cons (Gives.cons (Gives.cons (Gives.quote one _)
+      (Gives.id _).hd) (Gives.quote _ _)) (Gives.id _).tl) (Gives.quote .nil _), trivial⟩)
+    trivial).mono (by omega)
+
+/-- **A program with renamed constants**: its names with `true` in front name the images under
+`f` of its constants. A pass over the value writes the new names. -/
+theorem renamed_kv (f : R →ₐ[A] R) {κ₀ : List Bool → R} {S₀ : Set (List Bool)} {F : Fm} {x : Tree}
+    {w : R} {c : ℕ} (h : KV θ κ₀ S₀ F x w c)
+    (hS : ∀ p ∈ S₀, κ (true :: p) = f (κ₀ p) ∧ true :: p ∈ S) :
+    KV θ κ S (lett F renF) x (f w) (54 * c + 40) := by
+  obtain ⟨l, e1, e2, e3⟩ := h
+  refine ((KV.app_ev (p := renF.code) (c := c) (d := 53 * c + 32)
+    (ω := fun s => f ((names s.out).map κ₀).prod) e1
+    (fun s hs => (Nat.le_add_right _ _).trans (e2 s hs).1) fun s hs => ?_).mono (by omega)).congr ?_
+  · have hn : names (preT (nmT s.out) .nil) = (nmT s.out).reverse.map fun x => true :: x.path := by
+      rw [names_preT, names, List.append_nil]
+    have hm : ∀ x ∈ nmT s.out, x.path ∈ S₀ := fun x hx =>
+      (e2 s hs).2 _ (by rw [names_eq]; exact List.mem_map_of_mem hx)
+    rw [Fm.ofTree_code]
+    refine ((KV.gives (renF_gives s.out) fun p hp => ?_).mono ?_).congr ?_
+    · rw [hn] at hp
+      obtain ⟨y, hy, rfl⟩ := List.mem_map.1 hp
+      exact (hS _ (hm y (List.mem_reverse.1 hy))).2
+    · have key : ((nmT s.out).map fun _ => 11 + 30).sum +
+          ((nmT s.out).map fun x => x.size + 11).sum ≤ 13 * s.out.size := by
+        rw [← List.sum_map_add]
+        calc _ ≤ ((nmT s.out).map fun x => 13 * (x.size + 4)).sum :=
+              List.sum_le_sum fun x _ => by omega
+          _ = 13 * ((nmT s.out).map fun x => x.size + 4).sum := by rw [List.sum_map_mul_left]
+          _ ≤ _ := Nat.mul_le_mul_left _ (sum_nmT_le _)
+      have := (e2 s hs).1
+      rw [size_preT]
+      simp only [Tree.size]
+      omega
+    · rw [hn, names_eq, List.map_map, List.map_map, map_list_prod, List.map_map,
+        List.map_reverse, List.prod_reverse]
+      exact congrArg List.prod (List.map_congr_left fun y hy => (hS _ (hm y hy)).1)
+  · rw [← e3, val, map_list_sum, List.map_map]
+    exact congrArg List.sum (List.map_congr_left fun s _ => by simp [wt])
 
 end Programs
 
@@ -190,9 +184,10 @@ theorem rescale_cstL (r : ℕ) (e : E) : rescale A r (cstL (A := A) e) = cstL (A
   simp only [rescale, AddMonoidAlgebra.mapDomainAlgHom_apply, AddMonoidHom.coe_mulLeft]
   rw [AddMonoidAlgebra.mapDomain_single, mul_zero]
 
-/-- The program of a round: outer budgets with the names that begin with 0, inner ones with those that begin with 1. -/
-def roundA {R : Type} (K : KT R) (B : ℕ) (K' : KT R) (B' J : ℕ) (D G p : Tree) : Fm :=
-  stepA (rebF (gt id J B' K' [true]) (LP D).code) (LP D).code G p (gt id J B K [false])
+/-- The program of a round: the names of the outer budgets begin with 0, those of the inner
+program are renamed to begin with 1. -/
+def roundA {R : Type} (K : KT R) (B J : ℕ) (D G p : Tree) : Fm :=
+  stepA (lett (.run (.hd .id) .id) renF) (LP D).code G p (gt id J B K [false])
 
 end Round
 
