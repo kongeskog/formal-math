@@ -24,16 +24,6 @@ namespace Tower
 
 variable {j : ℕ}
 
-theorem card_ed_real : (Fintype.card (T.Ed j) : ℝ) = h * (Fintype.card (T.X j) / 2) := by
-  have h1 : Fintype.card (T.Ed j) = ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i).card := by
-    rw [← card_univ]
-    exact card_eq_sum_card_fiberwise (fun _ _ => mem_coe.2 (mem_univ _))
-  have h2 : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
-    rw [h1, Finset.mul_sum, Finset.sum_congr rfl fun i _ => T.card_ed j i]
-    simp
-  have h3 : (2 : ℝ) * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by exact_mod_cast h2
-  linarith
-
 /-- Units at a chamber. -/
 def bet (n : T.Ed j → ℕ) (c : T.X j) : ℕ := ∑ e, if T.e0 e = c ∨ T.e1 e = c then n e else 0
 
@@ -51,33 +41,12 @@ theorem card_at (c : T.X j) : (univ.filter fun e : T.Ed j => T.e0 e = c ∨ T.e1
   calc _ ≤ ∑ _i : Fin h, 1 := Finset.sum_le_sum fun i _ => T.deg j c i
     _ = h := by simp
 
-theorem sum_sq_eq (hX : 0 < Fintype.card (T.X j)) (n : T.Ed j → ℕ) :
-    ∑ e, (n e : ℝ) ^ 2 = 2 / Fintype.card (T.X j) * T.kap n ^ 2 := by
-  rw [kap_sq]
-  field_simp
-
 /-- Units at a chamber. -/
-theorem bet_le (n : T.Ed j → ℕ) (c : T.X j) :
-    (T.bet n c : ℝ) ≤ √(2 * h / Fintype.card (T.X j)) * T.kap n := by
-  have hX : 0 < Fintype.card (T.X j) := Fintype.card_pos_iff.2 ⟨c⟩
-  have e1 : (T.bet n c : ℝ) = ∑ e ∈ univ.filter (fun e : T.Ed j => T.e0 e = c ∨ T.e1 e = c), (n e : ℝ) := by
-    unfold bet
-    rw [Finset.sum_filter]
-    push_cast
-    rfl
-  have h1 : (T.bet n c : ℝ) ^ 2 ≤ 2 * h / Fintype.card (T.X j) * T.kap n ^ 2 := by
-    rw [e1]
-    refine (sq_sum_le _ _ (T.card_at c)).trans ?_
-    have h2 : ∑ e ∈ univ.filter (fun e : T.Ed j => T.e0 e = c ∨ T.e1 e = c), (n e : ℝ) ^ 2 ≤ ∑ e, (n e : ℝ) ^ 2 :=
-      Finset.sum_le_sum_of_subset_of_nonneg (subset_univ _) fun _ _ _ => sq_nonneg _
-    rw [sum_sq_eq hX] at h2
-    calc (h : ℝ) * _ ≤ h * (2 / Fintype.card (T.X j) * T.kap n ^ 2) :=
-          mul_le_mul_of_nonneg_left h2 (by positivity)
-      _ = _ := by field_simp
-  have h0 : 0 ≤ √(2 * h / Fintype.card (T.X j)) * T.kap n := mul_nonneg (Real.sqrt_nonneg _) (kap_nonneg n)
-  refine (abs_le_of_sq_le_sq' ?_ h0).2
-  rw [mul_pow, Real.sq_sqrt (by positivity)]
-  exact h1
+theorem bet_sq_le (n : T.Ed j → ℕ) (c : T.X j) : T.bet n c ^ 2 ≤ h * ∑ e, n e ^ 2 := by
+  unfold bet
+  rw [← Finset.sum_filter]
+  exact (sq_sum_le _ _ (T.card_at c)).trans
+    (Nat.mul_le_mul_left _ (Finset.sum_le_sum_of_subset (subset_univ _)))
 
 theorem sum_bet (n : T.Ed j → ℕ) : ∑ c, T.bet n c = 2 * ∑ e, n e := by
   unfold bet
@@ -96,27 +65,10 @@ theorem sum_bet (n : T.Ed j → ℕ) : ∑ c, T.bet n c = 2 * ∑ e, n e := by
   ring
 
 /-- All units of a stage. -/
-theorem sum_bet_le (n : T.Ed j → ℕ) :
-    ((∑ c, T.bet n c : ℕ) : ℝ) ≤ 2 * (√h * T.kap n) := by
-  rw [sum_bet]
-  push_cast
-  refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
-  rcases Nat.eq_zero_or_pos (Fintype.card (T.X j)) with hX | hX
-  · have h1 := card_ed_real (T := T) (j := j)
-    rw [hX] at h1
-    have h2 : Fintype.card (T.Ed j) = 0 := by
-      have : (Fintype.card (T.Ed j) : ℝ) = 0 := by rw [h1]; simp
-      exact_mod_cast this
-    have : IsEmpty (T.Ed j) := Fintype.card_eq_zero_iff.1 h2
-    rw [Finset.univ_eq_empty, Finset.sum_empty]
-    exact mul_nonneg (Real.sqrt_nonneg _) (kap_nonneg n)
-  have h0 : 0 ≤ √h * T.kap n := mul_nonneg (Real.sqrt_nonneg _) (kap_nonneg n)
-  refine (abs_le_of_sq_le_sq' ?_ h0).2
-  rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg h)]
-  have h1 := sq_sum_le_card_mul_sum_sq (s := (univ : Finset (T.Ed j))) (f := fun e => (n e : ℝ))
-  rw [card_univ, sum_sq_eq hX, card_ed_real] at h1
-  refine h1.trans (le_of_eq ?_)
-  field_simp
+theorem sum_bet_sq_le (n : T.Ed j → ℕ) :
+    (∑ c, T.bet n c) ^ 2 ≤ 2 * (h * (Fintype.card (T.X j) * ∑ e, n e ^ 2)) := by
+  rw [sum_bet, mul_pow, ← Nat.mul_assoc h, ← two_card_ed]
+  exact (Nat.mul_le_mul_left _ (sq_sum_le univ n card_univ.le)).trans (le_of_eq (by ring))
 
 end Tower
 
@@ -127,145 +79,124 @@ noncomputable def lds (lhat : ℕ) (n : Fin AA → Fin AA → ℕ)
 /-- The bound for the loads after the start. -/
 def nhat (T : Tower h b J) (Uu AA lhat : ℕ) : ℕ := Uu * (lhat / Fintype.card (T.X 0) + 2 * AA)
 
-/-- The bound for the norms. -/
-noncomputable def kbar (FL : FlagLaws F T) (Uu AA lhat : ℕ) : ℝ :=
-  √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat + √FL.C₁ * FL.a₁ / b * Fintype.card (T.X 0)
+/-- The bound for the norms: the squares of the loads of a stage, times the number of its chambers, add up to at
+most the square of this number. -/
+def kbar (FL : FlagLaws F T) (Uu AA lhat : ℕ) : ℕ :=
+  Fintype.card (T.X 0) * (h * nhat T Uu AA lhat + 4 * FL.C₁ * FL.a₁)
 
-/-- The conditions on `ρ`: against the number of types, the degree and the laws. -/
-structure THypR (FL : FlagLaws F T) (ρ : ℝ) : Prop where
-  ρ_pos : 0 < ρ
-  ρ_lt : ρ < 1
-  gain : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h
-  two : 2 ≤ ρ * b
+/-- The conditions against the number of types, the degree and the laws; the factor of a stage is 1/2. -/
+structure THypR (FL : FlagLaws F T) : Prop where
+  gain : 4 * (1 + 8 * FL.C₁) ≤ h
+  three : 3 ≤ b
 
 section
 
-variable {ρ : ℝ} (hH : THypR FL ρ)
-
-variable (FL Uu AA lhat) in
-theorem kbar_nonneg : 0 ≤ kbar FL Uu AA lhat := by
-  unfold kbar
-  have := Real.sqrt_nonneg FL.C₁
-  positivity
-
-theorem kap_zero_le : T.kap (lds lhat n o 0) ≤
-    √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by
-  have h1 : ∀ e : T.Ed 0, (lds lhat n o 0 e : ℝ) ^ 2 ≤ (nhat T Uu AA lhat : ℝ) ^ 2 := by
-    intro e
-    refine pow_le_pow_left₀ (Nat.cast_nonneg _) ?_ 2
-    exact_mod_cast Paper.thm_tree_start e
-  have h0 : 0 ≤ √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by positivity
-  refine (abs_le_of_sq_le_sq' ?_ h0).2
-  rw [Tower.kap_sq, mul_pow, mul_pow, Real.sq_sqrt (Nat.cast_nonneg h)]
-  have h2 : ∑ e : T.Ed 0, (lds lhat n o 0 e : ℝ) ^ 2 ≤
-      Fintype.card (T.Ed 0) * (nhat T Uu AA lhat : ℝ) ^ 2 := by
-    refine (Finset.sum_le_sum fun e _ => h1 e).trans (le_of_eq ?_)
-    rw [Finset.sum_const, card_univ, nsmul_eq_mul]
-  rw [Tower.card_ed_real] at h2
-  have hA : (0 : ℝ) ≤ Fintype.card (T.X 0) / 2 := by positivity
-  refine (mul_le_mul_of_nonneg_left h2 hA).trans (le_of_eq ?_)
-  ring
+variable (hH : THypR FL)
 
 include hH in
-/-- **The norms of the loads.** -/
-theorem kap_le : ∀ j : ℕ, ∀ hj : j < J + 1, T.kap (lds lhat n o ⟨j, hj⟩) +
-    √FL.C₁ * FL.a₁ / b * Fintype.card (T.X j) ≤ ρ ^ j * kbar FL Uu AA lhat := by
+/-- **The norms of the loads**, as squares: `K_j + 16 C₁ a₁² |X^(j)|²` falls by the factor 4 in every stage. -/
+theorem kap_le : ∀ j : ℕ, ∀ hj : j < J + 1, 4 ^ j * (Fintype.card (T.X j) * ∑ e, lds lhat n o ⟨j, hj⟩ e ^ 2 +
+    8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X j) ^ 2) ≤ kbar FL Uu AA lhat ^ 2 := by
   intro j
   induction j with
   | zero =>
     intro hj
-    have h1 := kap_zero_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o)
-    rw [pow_zero, one_mul]
+    have h1 : ∑ e : T.Ed 0, lds lhat n o 0 e ^ 2 ≤ h * Fintype.card (T.X 0) * nhat T Uu AA lhat ^ 2 := by
+      refine (Finset.sum_le_card_nsmul _ _ _ fun e _ => Nat.pow_le_pow_left (Paper.thm_tree_start e) 2).trans ?_
+      rw [smul_eq_mul, card_univ]
+      exact Nat.mul_le_mul_right _ ((Nat.le_mul_of_pos_left _ two_pos).trans Tower.two_card_ed.le)
+    have h2 : h ≤ h ^ 2 := Nat.le_self_pow two_ne_zero h
+    have h3 : FL.C₁ ≤ FL.C₁ ^ 2 := Nat.le_self_pow two_ne_zero _
     unfold kbar
-    exact add_le_add h1 le_rfl
+    calc _ ≤ Fintype.card (T.X 0) * (h * Fintype.card (T.X 0) * nhat T Uu AA lhat ^ 2) +
+          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X 0) ^ 2 := by
+          rw [pow_zero, one_mul]
+          gcongr
+          exact h1
+      _ = Fintype.card (T.X 0) ^ 2 * (h * nhat T Uu AA lhat ^ 2 + 16 * FL.C₁ * FL.a₁ ^ 2) := by ring
+      _ ≤ Fintype.card (T.X 0) ^ 2 * (h ^ 2 * nhat T Uu AA lhat ^ 2 + 16 * FL.C₁ ^ 2 * FL.a₁ ^ 2 +
+          2 * (h * nhat T Uu AA lhat) * (4 * FL.C₁ * FL.a₁)) := by
+          refine Nat.mul_le_mul_left _ (le_trans ?_ (Nat.le_add_right _ _))
+          gcongr
+      _ = _ := by ring
   | succ j ih =>
     intro hj
     have h1 := ih (by omega)
-    have hjJ : j < J := by omega
-    have h2 := Paper.thm_tree_kappa (R := R) (ch := ch) (FL := FL)
-      (lhat := lhat) (n := n) (o := o) hH.ρ_pos.le hH.gain ⟨j, hjJ⟩
-    have hcX : (Fintype.card (T.X j) : ℝ) = b * Fintype.card (T.X (j + 1)) := by
-      exact_mod_cast T.card_X j hjJ
-    set c : ℝ := √FL.C₁ * FL.a₁ / b with hc
-    have hc0 : 0 ≤ c := by
-      have := Real.sqrt_nonneg FL.C₁
-      positivity
-    have hX0 : (0 : ℝ) ≤ Fintype.card (T.X (j + 1)) := Nat.cast_nonneg _
-    have h3 : T.kap (lds lhat n o ⟨j + 1, hj⟩) ≤ ρ * T.kap (lds lhat n o ⟨j, by omega⟩) +
-        c * Fintype.card (T.X (j + 1)) := h2
-    have h4 := mul_le_mul_of_nonneg_left h1 hH.ρ_pos.le
-    rw [hcX] at h4
-    have h5 : 2 * (c * Fintype.card (T.X (j + 1))) ≤ ρ * b * (c * Fintype.card (T.X (j + 1))) :=
-      mul_le_mul_of_nonneg_right hH.two (mul_nonneg hc0 hX0)
-    rw [pow_succ]
-    linarith
+    have h2 := Paper.thm_tree_kappa (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH.gain ⟨j, by omega⟩
+    have h3 : 5 ≤ b ^ 2 := (Nat.pow_le_pow_left hH.three 2).trans' (by norm_num)
+    refine le_trans ?_ h1
+    rw [pow_succ, mul_assoc]
+    refine Nat.mul_le_mul_left _ ?_
+    rw [T.card_X j (by omega)]
+    calc _ = 4 * (Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j + 1, hj⟩ e ^ 2) +
+          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (4 * Fintype.card (T.X (j + 1)) ^ 2) := by ring
+      _ ≤ b * Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j, by omega⟩ e ^ 2 +
+          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * Fintype.card (T.X (j + 1)) ^ 2 +
+          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (4 * Fintype.card (T.X (j + 1)) ^ 2) := by
+          refine Nat.add_le_add_right ?_ _
+          rw [← T.card_X j (by omega)]
+          exact h2
+      _ = b * Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j, by omega⟩ e ^ 2 +
+          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (5 * Fintype.card (T.X (j + 1)) ^ 2) := by ring
+      _ ≤ b * Fintype.card (T.X (j + 1)) * ∑ e, lds lhat n o ⟨j, by omega⟩ e ^ 2 +
+          8 * FL.C₁ * (2 * FL.a₁ ^ 2) * (b ^ 2 * Fintype.card (T.X (j + 1)) ^ 2) := by gcongr
+      _ = _ := by ring
 
 include hH in
-theorem kap_le' (j : Fin (J + 1)) : T.kap (lds lhat n o j) ≤ ρ ^ j.1 * kbar FL Uu AA lhat := by
-  have h1 := kap_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j.1 j.2
-  have : 0 ≤ √FL.C₁ * FL.a₁ / b * Fintype.card (T.X j.1) := by
-    have := Real.sqrt_nonneg FL.C₁
-    positivity
-  linarith
-
-theorem card_X_pow : ∀ j ≤ J, (Fintype.card (T.X 0) : ℝ) = (b : ℝ) ^ j * Fintype.card (T.X j) := by
-  intro j
-  induction j with
-  | zero => intro _; simp
-  | succ j ih =>
-    intro hj
-    rw [ih (by omega)]
-    have : (Fintype.card (T.X j) : ℝ) = b * Fintype.card (T.X (j + 1)) := by
-      exact_mod_cast T.card_X j (by omega)
-    rw [this, pow_succ]
-    ring
-
-theorem sqrt_pow' {x : ℝ} (hx : 0 ≤ x) (j : ℕ) : √(x ^ j) = √x ^ j := by
-  induction j with
-  | zero => simp
-  | succ j ih => rw [pow_succ, pow_succ, Real.sqrt_mul (pow_nonneg hx j), ih]
-
-/-- The bound for the units between a node and its parent. -/
-noncomputable def bhat (FL : FlagLaws F T) (Uu AA lhat : ℕ) (ρ : ℝ) : ℝ :=
-  √(2 * h / Fintype.card (T.X 0)) * (max 1 (√b * ρ)) ^ J * kbar FL Uu AA lhat
+/-- The squares of the loads of a stage. -/
+theorem sum_sq_le (j : Fin (J + 1)) : ∑ e, lds lhat n o j e ^ 2 ≤ kbar FL Uu AA lhat ^ 2 := by
+  rcases isEmpty_or_nonempty (T.Ed j) with he | ⟨⟨e⟩⟩
+  · rw [Finset.univ_eq_empty, Finset.sum_empty]
+    exact Nat.zero_le _
+  · have hX : 0 < Fintype.card (T.X j) := Fintype.card_pos_iff.2 ⟨T.e0 e⟩
+    refine le_trans ?_ (kap_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH j.1 j.2)
+    exact (Nat.le_mul_of_pos_left _ hX).trans
+      ((Nat.le_add_right _ _).trans (Nat.le_mul_of_pos_left _ (pow_pos four_pos _)))
 
 include hH in
-/-- **Units between a node and its parent.** -/
-theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
-    (T.bet (lds lhat n o j) c : ℝ) ≤ bhat FL Uu AA lhat ρ := by
-  have hX : 0 < Fintype.card (T.X j.1) := Fintype.card_pos_iff.2 ⟨c⟩
-  have hDpos := T.b_pos
-  have hjJ : j.1 ≤ J := Nat.le_of_lt_succ j.2
-  have h1 := T.bet_le (lds lhat n o j) c
-  have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
-  have h0 := card_X_pow (T := T) j.1 hjJ
-  have hk := kbar_nonneg Uu AA FL lhat
-  have e1 : √(2 * h / Fintype.card (T.X j.1)) = √(2 * h / Fintype.card (T.X 0)) * √b ^ j.1 := by
-    rw [h0, ← sqrt_pow' (by positivity : (0 : ℝ) ≤ b), ← Real.sqrt_mul (by positivity)]
-    congr 1
-    field_simp
-  refine h1.trans ?_
-  rw [e1]
-  calc √(2 * h / Fintype.card (T.X 0)) * √b ^ j.1 * T.kap (lds lhat n o j) ≤
-      √(2 * h / Fintype.card (T.X 0)) * √b ^ j.1 * (ρ ^ j.1 * kbar FL Uu AA lhat) :=
-        mul_le_mul_of_nonneg_left h2 (by positivity)
-    _ = √(2 * h / Fintype.card (T.X 0)) * (√b * ρ) ^ j.1 * kbar FL Uu AA lhat := by
-        rw [mul_pow]; ring
-    _ ≤ √(2 * h / Fintype.card (T.X 0)) * (max 1 (√b * ρ)) ^ J * kbar FL Uu AA lhat := by
-        refine mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _)) hk
-        calc (√b * ρ) ^ j.1 ≤ (max 1 (√b * ρ)) ^ j.1 :=
-            pow_le_pow_left₀ (mul_nonneg (Real.sqrt_nonneg _) hH.ρ_pos.le) (le_max_right _ _) _
-          _ ≤ _ := pow_le_pow_right₀ (le_max_left _ _) hjJ
+/-- **Units between a node and its parent**, with the gain `g` of the tower: `g ^ q` is at most the number of
+chambers, where the degree `b` is at most `2 ^ q`. -/
+theorem bet_mul_le {q g : ℕ} (hq : 2 ≤ q) (hb : b ≤ 2 ^ q) (hg : g ^ q ≤ Fintype.card (T.X 0))
+    (j : Fin (J + 1)) (c : T.X j) : T.bet (lds lhat n o j) c * g ≤ h * kbar FL Uu AA lhat := by
+  have hX : 0 < Fintype.card (T.X j) := Fintype.card_pos_iff.2 ⟨c⟩
+  have h1 := kap_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH j.1 j.2
+  -- the gain: `g² ≤ 4 ^ j |X^(j)|`
+  have h3 : (g ^ 2) ^ q ≤ (4 ^ j.1 * Fintype.card (T.X j)) ^ q := by
+    calc (g ^ 2) ^ q = (g ^ q) ^ 2 := pow_right_comm _ _ _
+      _ ≤ (b ^ j.1 * Fintype.card (T.X j)) ^ 2 :=
+          Nat.pow_le_pow_left (hg.trans (Tower.card_X_pow j.1 (Nat.le_of_lt_succ j.2)).le) 2
+      _ = (b ^ 2) ^ j.1 * Fintype.card (T.X j) ^ 2 := by ring
+      _ ≤ (4 ^ q) ^ j.1 * Fintype.card (T.X j) ^ q :=
+          Nat.mul_le_mul (Nat.pow_le_pow_left
+            ((Nat.pow_le_pow_left hb 2).trans (pow_right_comm 2 q 2).le) _) (Nat.pow_le_pow_right hX hq)
+      _ = _ := by ring
+  have h4 := (Nat.pow_le_pow_iff_left (by omega)).1 h3
+  refine (Nat.pow_le_pow_iff_left two_ne_zero).1 ?_
+  calc (T.bet (lds lhat n o j) c * g) ^ 2 = T.bet (lds lhat n o j) c ^ 2 * g ^ 2 := mul_pow _ _ _
+    _ ≤ h * (∑ e, lds lhat n o j e ^ 2) * (4 ^ j.1 * Fintype.card (T.X j)) :=
+        Nat.mul_le_mul (T.bet_sq_le _ c) h4
+    _ = h * (4 ^ j.1 * (Fintype.card (T.X j) * ∑ e, lds lhat n o j e ^ 2)) := by ring
+    _ ≤ h ^ 2 * kbar FL Uu AA lhat ^ 2 :=
+        Nat.mul_le_mul (Nat.le_self_pow two_ne_zero h)
+          ((Nat.mul_le_mul_left _ (Nat.le_add_right _ _)).trans h1)
+    _ = _ := (mul_pow _ _ _).symm
 
 include hH in
 /-- **Units of a stage.** -/
 theorem sum_bet_le_kbar (j : Fin (J + 1)) :
-    ((∑ c, T.bet (lds lhat n o j) c : ℕ) : ℝ) ≤ 2 * √h * ρ ^ j.1 * kbar FL Uu AA lhat := by
-  have h1 := T.sum_bet_le (lds lhat n o j)
-  have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
-  refine h1.trans ?_
-  have := mul_le_mul_of_nonneg_left h2 (by positivity : 0 ≤ 2 * √h)
-  linarith
+    2 ^ j.1 * ∑ c, T.bet (lds lhat n o j) c ≤ 2 * (h * kbar FL Uu AA lhat) := by
+  have h1 := kap_le (R := R) (ch := ch) (lhat := lhat) (n := n) (o := o) hH j.1 j.2
+  refine (Nat.pow_le_pow_iff_left two_ne_zero).1 ?_
+  calc (2 ^ j.1 * ∑ c, T.bet (lds lhat n o j) c) ^ 2 = 4 ^ j.1 * (∑ c, T.bet (lds lhat n o j) c) ^ 2 := by
+        rw [mul_pow, pow_right_comm]
+        rfl
+    _ ≤ 4 ^ j.1 * (2 * (h * (Fintype.card (T.X j) * ∑ e, lds lhat n o j e ^ 2))) :=
+        Nat.mul_le_mul_left _ (T.sum_bet_sq_le _)
+    _ = 2 * h * (4 ^ j.1 * (Fintype.card (T.X j) * ∑ e, lds lhat n o j e ^ 2)) := by ring
+    _ ≤ (2 * h) ^ 2 * kbar FL Uu AA lhat ^ 2 :=
+        Nat.mul_le_mul (Nat.le_self_pow two_ne_zero _)
+          ((Nat.mul_le_mul_left _ (Nat.le_add_right _ _)).trans h1)
+    _ = _ := by ring
 
 end
 
