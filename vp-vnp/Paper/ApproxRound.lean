@@ -318,7 +318,9 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
           ?_⟩
         · -- the exponent of the rescaling
           have h1 : nB ≤ 2 ^ J := by
-            linarith [(hbJ 1 (by omega)).trans ((Nat.pow_le_pow_right hu1 (by omega)).trans hJ.le), Nat.zero_le (nB * J)]
+            have := (hbJ 1 (by omega)).trans ((Nat.pow_le_pow_right hu1 (by omega)).trans hJ.le)
+            rw [one_mul, mul_add_one] at this
+            omega
           calc nB * 2 ^ J * (2 ^ B * M) + 1 ≤
                 2 ^ J * 2 ^ J * (2 ^ B * M) + 2 ^ J * 2 ^ J * (2 ^ B * M) := by
                 refine Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ h1)) ?_
@@ -337,7 +339,12 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
             have h7 : 2000 * u ^ (e + 7) ≤ u ^ (e + 8) := pbig (e + 7)
             have := ppos (e + 7)
             omega
-          linarith [Nat.mul_le_mul_right (u ^ (e + 8)) m1, pow_succ' u (e + 8)]
+          calc (60 * (K.ht + B + J + 1) + 42) * u ^ (e + 8) + 40 * (nB * (J + 1)) + 80
+              ≤ (60 * (K.ht + B + J + 1) + 42 + 2) * u ^ (e + 8) := by
+                have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 2 (u ^ (e + 8))
+                omega
+            _ ≤ u * u ^ (e + 8) := Nat.mul_le_mul_right _ m1
+            _ = u ^ (e + 9) := (pow_succ' u (e + 8)).symm
         · -- size of the plain instances
           rw [← hnB, ← hsW]
           have m1 : sW + 3 ≤ u ^ (α * (16 * h - 32)) :=

@@ -72,7 +72,7 @@ theorem prop_approx_acc_step {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (hC : �
   generalize hX : B + (2 * 5 + 2) * (J + 1) + K.ht + K.ht + 10 = X
   have hX6 : X ≤ 3 * (2 * cB) * l ^ 3 := by omega
   obtain ⟨K', D', hD', hs', hn', hh', hsp, hth⟩ := prop_approx_acc_next hh (α := 5) le_rfl (hC u hu) hcs hI.acc
-    (by grw [hI.nds, ← pow_le_pow hu1 (show 2 ≤ h * 5 by omega)]; nlinarith)
+    (by grw [hI.nds, ← pow_le_pow hu1 (show 2 ≤ h * 5 by omega), pow_two, show 4 * 5 + 5 ≤ u by omega])
     (hI.size.trans (pow_le_pow hu1 (by omega))) hI.span (Nat.two_pow_pos _) (J := J) (by
       have : 16 * h * 5 + 1 = 80 * h + 1 := by ring
       rw [this, ← hJ, Nat.mul_comm (80 * h + 1) l, pow_mul, ← hl]

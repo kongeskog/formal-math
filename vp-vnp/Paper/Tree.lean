@@ -615,7 +615,7 @@ theorem tree_nums {c M N X J m : ℕ} (hc : 1 ≤ c) (hM : 2 ≤ M) (hN : 1 ≤ 
   have h2 : capB c m X N N ≤ G ^ 18 := by
     unfold capB
     have e1 : G ≤ G ^ 17 := Nat.le_self_pow (by norm_num) _
-    grw [h1, hNG, show 3 * c ≤ G * G by nlinarith]
+    grw [h1, hNG, Nat.mul_le_mul (show 3 ≤ G by omega) (show c ≤ G by omega)]
     linarith [Nat.mul_le_mul_right (G ^ 17) (show 3 ≤ G by omega)]
   grw [h2, show c ≤ G by omega]
   linarith [Nat.mul_le_mul_right (G ^ 19) (show 3 ≤ G by omega), p 20 30 (by norm_num),
