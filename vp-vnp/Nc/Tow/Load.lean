@@ -175,13 +175,13 @@ end Stage
 /-- **One stage.** The loads `n'` of the next stage: on the edges of the chosen type `i` what the edges above
 them carried (`hmid`), on the others what the laws at the vertices give for the end segments there (`hal`). -/
 theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
-    {n : T.Ed j → ℕ} {n' : T.Ed (j + 1) → ℕ} {C₁ D : ℕ} (hg : 4 * (1 + 8 * C₁) ≤ h)
+    {n : T.Ed j → ℕ} {n' : T.Ed (j + 1) → ℕ} {C₁ E : ℕ} (hg : 4 * (1 + 8 * C₁) ≤ h)
     (hi : h * ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2 ≤ ∑ e, n e ^ 2)
     (hmid : ∀ e', T.ty e' = i → n' e' ≤ ∑ e ∈ univ.filter (fun e => T.πE e = e'), n e)
     (hal : ∀ ω, b * ∑ ν, n' ((T.nr i).symm (ω, ν)).1 ^ 2 ≤
-      2 * C₁ * b ^ 2 * ∑ q, T.nEnd i n ω q ^ 2 + D) :
+      2 * C₁ * (b ^ 2 * ∑ q, T.nEnd i n ω q ^ 2 + E)) :
     4 * (Fintype.card (T.X (j + 1)) * ∑ e', n' e' ^ 2) ≤
-      Fintype.card (T.X j) * ∑ e, n e ^ 2 + 4 * D * Fintype.card (T.X (j + 1)) ^ 2 := by
+      Fintype.card (T.X j) * ∑ e, n e ^ 2 + 8 * C₁ * E * Fintype.card (T.X (j + 1)) ^ 2 := by
   have e1 : ∑ e' ∈ univ.filter (fun e' : T.Ed (j + 1) => ¬ T.ty e' = i), n' e' ^ 2 =
       ∑ ω, ∑ ν, n' ((T.nr i).symm (ω, ν)).1 ^ 2 := by
     rw [← Fintype.sum_prod_type' (f := fun ω ν => n' ((T.nr i).symm (ω, ν)).1 ^ 2)]
@@ -192,13 +192,13 @@ theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
   have hm := mid_le hj hmid
   -- the end segments of all vertices are at most four times the loads of the type
   have h1 : b * ∑ ω, ∑ ν, n' ((T.nr i).symm (ω, ν)).1 ^ 2 ≤
-      8 * C₁ * b ^ 2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2 +
-        Fintype.card (T.V (j + 1) i) * D := by
+      2 * C₁ * (b ^ 2 * (2 * (2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2)) +
+        Fintype.card (T.V (j + 1) i) * E) := by
     rw [Finset.mul_sum]
     refine (Finset.sum_le_sum fun ω _ => hal ω).trans ?_
-    rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, card_univ, smul_eq_mul]
-    have h2 := (sum_end_sq (T := T) (n := n) (i := i) hj).trans (Nat.mul_le_mul_left 2 sum_be_sq)
-    exact Nat.add_le_add_right ((Nat.mul_le_mul_left _ h2).trans (le_of_eq (by ring))) _
+    rw [← Finset.mul_sum, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, card_univ, smul_eq_mul]
+    exact Nat.mul_le_mul_left _ (Nat.add_le_add_right (Nat.mul_le_mul_left _
+      ((sum_end_sq hj).trans (Nat.mul_le_mul_left 2 sum_be_sq))) _)
   rw [← Finset.sum_filter_add_sum_filter_not univ (fun e' : T.Ed (j + 1) => T.ty e' = i), e1,
     T.card_X j hj, ← card_V (T := T) (j := j + 1) i]
   generalize ∑ e ∈ univ.filter (fun e => T.ty e = i), n e ^ 2 = P at hi hm h1
@@ -207,9 +207,9 @@ theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
   generalize ∑ ω, ∑ ν, n' ((T.nr i).symm (ω, ν)).1 ^ 2 = So at h1 ⊢
   have hv : v ≤ v * b := Nat.le_mul_of_pos_right _ T.b_pos
   calc 4 * (v * b * (Si + So)) = 4 * (v * b * Si) + 4 * (v * (b * So)) := by ring
-    _ ≤ 4 * (v * b * (b * P)) + 4 * (v * (8 * C₁ * b ^ 2 * P + v * D)) := by gcongr
-    _ = b * (v * b) * (4 * (1 + 8 * C₁) * P) + 4 * D * v ^ 2 := by ring
-    _ ≤ b * (v * b) * ∑ e, n e ^ 2 + 4 * D * (v * b) ^ 2 := by
+    _ ≤ 4 * (v * b * (b * P)) + 4 * (v * (2 * C₁ * (b ^ 2 * (2 * (2 * P)) + v * E))) := by gcongr
+    _ = b * (v * b) * (4 * (1 + 8 * C₁) * P) + 8 * C₁ * E * v ^ 2 := by ring
+    _ ≤ b * (v * b) * ∑ e, n e ^ 2 + 8 * C₁ * E * (v * b) ^ 2 := by
         gcongr
         exact (Nat.mul_le_mul_right _ hg).trans hi
 
