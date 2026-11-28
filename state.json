@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T15:48:51.870529593Z",
+  "updated_at": "2026-11-28T15:55:33.180482731Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "d663e5f40824a1620802338ddd406a35ea259375",
-    "at": "2026-11-28T15:08:56.529077355Z",
+    "sha": "8b52c195b0f96030cf0d03379ffe5ee8801995f0",
+    "at": "2026-11-28T15:55:33.180482731Z",
     "metrics": {
-      "tokens": 753554,
-      "loc": 49704,
+      "tokens": 752765,
+      "loc": 49658,
       "decls": 4167,
       "files": 312,
-      "bytes": 2868205,
-      "build_seconds": 86
+      "bytes": 2865768,
+      "build_seconds": 209
     }
   },
   "counts": {
-    "merged": 124,
+    "merged": 125,
     "rejected": 4,
-    "open": 2,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 117,
+      "merged": 118,
       "attempts": 123,
-      "saved": 164743
+      "saved": 165532
     },
     {
       "login": "yidakra",
@@ -115,7 +115,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T18:42:01Z",
       "pr": 222,
-      "result_delta": null,
+      "result_delta": -789,
       "created_at": "2026-11-28T15:40:33Z",
       "url": "https://github.com/kongeskog/formal-math/issues/221",
       "technique": "restructure",
@@ -1369,93 +1369,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 222,
-      "title": "restructure(Paper/Laws): the laws take the Poincaré inequality as proved; clauses as the towers read them",
-      "author": "kongeskog",
-      "head_sha": "48502f60453484ab9200491120f3f34ba1d882b7",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-28T15:42:13Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pending"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pending"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pending"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        }
-      ],
-      "idea": 221,
-      "url": "https://github.com/kongeskog/formal-math/pull/222",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "Paper/Laws"
-    },
     {
       "pr": 224,
       "title": "restructure(Paper/Lengths): a map into a price space gives the length of the action on L²; no rescaling",
