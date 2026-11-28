@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T14:55:54.582656695Z",
+  "updated_at": "2026-11-28T14:57:34.037409395Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -110,10 +110,10 @@
     {
       "number": 217,
       "title": "Idea: restructure(NS1/ApproxExtract): back to exact values by a fold over the names of the value",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T17:39:15Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 218,
       "result_delta": -1665,
       "created_at": "2026-11-28T14:36:30Z",
@@ -1345,7 +1345,7 @@
       "pr": 220,
       "title": "restructure(NS1/ApproxRound): a round renames the constants of D by a pass over the names of the value",
       "author": "kongeskog",
-      "head_sha": "e5b84cc54dd6ac214f765e0d57a8b083a46d5e58",
+      "head_sha": "266d9441e5e3b604212b74820819b4153e635ef6",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-28T14:48:24Z",
@@ -1426,10 +1426,7 @@
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
-      "scope": "NS1/ApproxRound",
-      "warnings": [
-        "touches files reserved by idea #217 (claimed by @kongeskog): `vp-vnp/NS1/ApproxBack.lean`, `vp-vnp/NS1/ApproxExtract.lean`; coordinate there or expect to merge main after it lands"
-      ]
+      "scope": "NS1/ApproxRound"
     }
   ],
   "top_files": [
@@ -1459,11 +1456,6 @@
       "loc": 703
     },
     {
-      "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 8961,
-      "loc": 546
-    },
-    {
       "path": "vp-vnp/NS1/Lists.lean",
       "tokens": 8790,
       "loc": 558
@@ -1479,19 +1471,24 @@
       "loc": 586
     },
     {
-      "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 8484,
-      "loc": 490
-    },
-    {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
       "tokens": 8111,
       "loc": 584
     },
     {
+      "path": "vp-vnp/Paper/ApproxScales.lean",
+      "tokens": 8035,
+      "loc": 471
+    },
+    {
       "path": "vp-vnp/Nc/Grp/GroupProg.lean",
       "tokens": 7883,
       "loc": 484
+    },
+    {
+      "path": "vp-vnp/Paper/ApproxRound.lean",
+      "tokens": 7806,
+      "loc": 466
     },
     {
       "path": "vp-vnp/Paper/Gauges.lean",
