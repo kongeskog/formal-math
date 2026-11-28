@@ -8,10 +8,10 @@ import NS1.Eval
 /-!
 # Constants are postponed
 
-A program names the constants it wants in its value, a tree of names (`names`). `WN` applied to
-(program, (argument, budgets)) has, as plain weighted sum, the sum of the weights of the runs whose
-values name the constants exactly as the given budgets prescribe. Summed over all budgets with the
-powers of the constants this is the value of the program.
+A program names the constants it wants in its value, a tree of names (`names`). `WN`
+(`NS1/Util.lean`) applied to (program, (argument, budgets)) has, as plain weighted sum, the sum of
+the weights of the runs whose values name the constants exactly as the given budgets prescribe.
+Summed over all budgets with the powers of the constants this is the value of the program.
 -/
 
 set_option linter.unusedSectionVars false

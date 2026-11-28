@@ -91,8 +91,8 @@ theorem extF_kv {κ : List Bool → E} {S : Set (List Bool)} {P z : Tree} {g : F
 /-- The sizes of the fixed programs of the extraction. -/
 def xcst : ℕ := combF.code.size + 2 * nzB.code.size + UF.code.size + WN.code.size + 1000
 
-theorem xcst_def : xcst = combF.code.size + 2 * nzB.code.size + UF.code.size + WN.code.size + 1000 :=
-  rfl
+theorem xcst_def :
+    xcst = combF.code.size + 2 * nzB.code.size + UF.code.size + WN.code.size + 1000 := rfl
 
 theorem size_chT {n C : ℕ} {f : List Bool → Fm} (h : ∀ w : List Bool, w.length = n → (f w).code.size ≤ C) :
     (chT n f).code.size + 31 ≤ 2 ^ n * (C + 31) := by

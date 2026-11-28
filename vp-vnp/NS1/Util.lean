@@ -68,6 +68,28 @@ end Word
 
 section Take
 
+/-- `DW` subtracts 1 from a number, or has no value. -/
+theorem DW_does (w : List Bool) : Does θ DW (.cons DW.code (ofBits w))
+    ((decw w).toList.map fun w' => (1, ofBits w')) (20 * w.length) := by
+  induction w with
+  | nil => exact ⟨[], Ev.ite_false (Dt.tl (Dt.id _)) (.fail _), by simp, by simp [decw]⟩
+  | cons b w ih =>
+    cases b with
+    | true =>
+      exact Does.mono ((Gives.id _).tl.ite_true (by simp [ofBits]) ((Gives.id _).tl.hd.ite_true
+        (by simp [ofBits, bit, one]) (Gives.cons (Gives.quote .nil _) (Gives.id _).tl.tl)))
+        (by simp only [List.length_cons]; omega)
+    | false =>
+      refine ((Does.ite_true (Gives.id _).tl (by simp [ofBits]) (Does.ite_false
+        (Gives.id _).tl.hd (Does.cons (Gives.quote one _) (Does.self ((Gives.id _).hd.cons
+          (Gives.id _).tl.tl) ih)))).replace ?_).mono (by simp only [List.length_cons]; omega)
+      cases h : decw w <;> simp [decw, h, ofBits, bit]
+
+theorem DW_gives {w w' : List Bool} (h : decw w = some w') :
+    Gives θ DW (.cons DW.code (ofBits w)) (ofBits w') (20 * w.length) := by
+  have := DW_does (θ := θ) w
+  rwa [h] at this
+
 /-- Is a number not 0? The argument is (this program, number). -/
 def nzB : Fm := .ite (.tl .id) (.ite (.hd (.tl .id)) (.quote one) (.run (.hd .id) (.cons (.hd .id) (.tl (.tl .id)))))
   (.quote .nil)
@@ -134,11 +156,9 @@ theorem takeB_gives (w : List Bool) (acc l : List Tree) :
     · have e : bit (decide (KT.val w ≠ 0)) ≠ .nil := by
         have : KT.val w ≠ 0 := by omega
         simp [this, bit, one]
-      obtain ⟨k, hk, hdw⟩ := DW_some (θ := θ) h1
       have hd : Gives θ (app DW.code (.cons (.quote DW.code) (.hd (.tl .id))))
           (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l))))) (ofBits w') (1 + 3 + 1 + 20 * w.length + 2) :=
-        Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd)
-          ((Does.of_dt hdw).mono hk)
+        Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) (DW_gives h1)
       have hl : w'.length = w.length := length_decw h1
       have ih' := ih w' (a :: acc)
       rw [hl] at ih'
@@ -185,15 +205,6 @@ theorem Bt.tget_enc (t : Bt) (p : List Bool) : ∃ w, tget p t.enc = ofBits w �
         refine ⟨w, h1, h2.trans (by simp only [Bt.ht]; omega), ?_⟩
         have := congrArg (Option.map fun e => Tree.cons .nil (.cons e r.enc)) h3
         simpa [Bt.dec, Bt.enc, tset, Function.comp_def] using this
-
-/-- `DW` subtracts 1 from a number, or has no value. -/
-theorem DW_does (w : List Bool) : Does θ DW (.cons DW.code (ofBits w))
-    ((decw w).toList.map fun w' => (1, ofBits w')) (20 * w.length) := by
-  cases h : decw w with
-  | none => exact ⟨[], DW_none h, by simp, by simp⟩
-  | some w' =>
-    obtain ⟨k, hk, hd⟩ := DW_some (θ := θ) h
-    exact (Does.of_dt hd).mono hk
 
 /-- A list of trees has at least two nodes for every element. -/
 theorem two_len_lt (x : Tree) : 2 * x.len < x.size := by
@@ -334,9 +345,9 @@ argument is ((program, (argument, budget)), tree of names). -/
 def CK : Fm := lett (.cons (.quote AZ.code) (foldF DC (.tl (.tl (.hd .id)))
   (app flatB.code (.cons (.quote flatB.code) (.cons (.tl .id) (.quote .nil)))))) AZ
 
-/-- `CK` has a value if the names of `o` use up the budget `t`. The time `(60 H + 41) |o|`: 40 per
-node to list the names, and for a name `x` at most `45 |x| + 20 H + 100`, which is at most
-`(60 H + 1) (|x| + 4)` if `H` is not 0. -/
+/-- `CK` has a value if the names of `o` use up the budget `t`. The time: 40 for every node of `o`
+to list the names, and for a name `x` at most `45 |x| + 20 (H + 1) + 100`, which is at most
+`(60 (H + 1) + 1) (|x| + 4)`; the names, with four more nodes each, fit into `o` (`sum_nmT_le`). -/
 theorem CK_does {H : ℕ} (a o : Tree) {t : Bt} (ha : a.tl.tl = t.enc) (ht : t.ht ≤ H + 1) :
     Does θ CK (.cons a o) (bindW ((Bt.decAll (names o) t).toList.map fun t' => (1, t'))
       fun t' => if t'.zero then [(1, t'.zo)] else [])
@@ -384,8 +395,8 @@ def WN : Fm := lett (.cons .id (.run (.hd .id) (.hd (.tl .id)))) CK
 def zq (p z : Tree) (t : Bt) : Tree := .cons WN.code (.cons p (.cons z t.enc))
 
 /-- **Postponing**: the instances that arise from budgets are plain, and their sums are those of
-the runs that use up the budgets. The time `(60 H + 42) T`: `T` for the program, and `60 H + 41`
-per node of its value (`CK_does`), which has at most `T` nodes too. -/
+the runs that use up the budgets. The time `(60 (H + 1) + 42) T`: `T` for the program, and
+`60 (H + 1) + 41` per node of its value (`CK_does`), which has at most `T` nodes too. -/
 theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ}
     (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T) {t : Bt} (ht : t.ht ≤ H + 1)
     (hτ : (60 * (H + 1) + 42) * T + 40 * t.nds + 80 ≤ τ) :

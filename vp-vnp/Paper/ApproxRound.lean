@@ -133,7 +133,8 @@ theorem prop_approx_acc_round {H u v : ℕ} {K' : KT E[T;T⁻¹]} {B' : ℕ} {D 
     have diff : ∀ q ∈ L₀, OrdGE 1 (S1 q - S2 q) := by
       intro q hq
       rw [hL₀] at hq
-      have pl : Plain θ τ' (zq p z q.1) := Plain.of_le (hze q hq) ((Nat.add_le_add_right (Nat.add_le_add_right
+      have pl : Plain θ τ' (zq p z q.1) :=
+        Plain.of_le (hze q hq) ((Nat.add_le_add_right (Nat.add_le_add_right
         (Nat.mul_le_mul_right _
           (show 60 * ((K.expand B).ht + J + 1) + 42 ≤ 60 * (K.ht + B + J + 1) + 42 by
           have := KT.ht_expand B K

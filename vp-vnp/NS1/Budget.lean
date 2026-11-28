@@ -118,15 +118,6 @@ theorem ht_nds_dec {p : List Bool} {t t' : Bt} (h : dec p t = some t') :
         obtain ⟨v, hv, rfl⟩ := h
         simp [ht, nds, ihl hv]
 
-theorem decAll_append (b b' : List (List Bool)) (t : Bt) : decAll (b ++ b') t = (decAll b t).bind (decAll b') := by
-  induction b generalizing t with
-  | nil => rfl
-  | cons p b ih =>
-    simp only [List.cons_append, decAll, Option.bind_assoc]
-    congr 1
-    funext t
-    exact ih t
-
 theorem ht_nds_decAll {b : List (List Bool)} {t t' : Bt} (h : decAll b t = some t') :
     t'.ht = t.ht ∧ t'.nds = t.nds := by
   induction b generalizing t with

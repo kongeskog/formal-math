@@ -34,8 +34,8 @@ theorem lem_postpone (p z : Tree) {T J : ℕ} (hJ : T < 2 ^ J) (hh : Hl θ (Fm.o
     (hc : ∀ r ∈ evl θ (Fm.ofTree p) z, r.cost + r.out.size ≤ T) (L : KT R) (κ : List Bool → R)
     (hκ : ∀ r ∈ evl θ (Fm.ofTree p) z, ∀ n ∈ names r.out, κ n = L.lookup n) :
     val κ (evl θ (Fm.ofTree p) z) = ((L.budg J).map fun e => e.2 * algebraMap A R (pv θ (postponed p z e.1))).sum ∧
-      ∀ e ∈ L.budg J,
-        Plain θ ((60 * (L.ht + J + 1) + 42) * T + 40 * (L.nds * (J + 1)) + 80) (postponed p z e.1) := by
+      ∀ e ∈ L.budg J, Plain θ ((60 * (L.ht + J + 1) + 42) * T + 40 * (L.nds * (J + 1)) + 80)
+        (postponed p z e.1) := by
   have hp := fun e (he : e ∈ L.budg J) => zq_plain hh.ev hc (KT.ht_nds_budg he).1
     (Nat.add_le_add_right (Nat.add_le_add_left (Nat.mul_le_mul_left 40 (KT.ht_nds_budg he).2) _) 80)
   refine ⟨?_, fun e he => (hp e he).1⟩
