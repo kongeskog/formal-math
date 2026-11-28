@@ -20,7 +20,7 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R 
 
 /-- The parent of a chamber, as a node. -/
 noncomputable def parN (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) (j : ℕ) (c : T.X j) : Nd T :=
-  if hj : j + 1 ≤ J then nd T (j + 1) hj (hostj hh Lf c) else none
+  if hj : j + 1 ≤ J then nd hj (hostj hh Lf c) else none
 
 /-- The chamber below: which end of the edge of a relay. -/
 def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
@@ -30,7 +30,7 @@ def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
   | _, _ => none
 
 variable (hb : 0 < b) (hh : 0 < h)
-theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i e)) (hne : num lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
+theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR R ch (.inn j i e)) (hne : num lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
     i = imin hh (lev (load lhat n o)) j.1 := by
   classical
   rw [num_eq, numF] at hne
@@ -40,7 +40,7 @@ theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i 
 
 include hb hh
 
-theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s))
+theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s))
     (hne : num lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
     T.ty e = imin hh (lev (load lhat n o)) j.1 := by
   obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
@@ -51,13 +51,13 @@ theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e 
   omega
 
 /-- A chamber and its parent hold the units of a channel without target. -/
-theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R ch x β = .done)
+theorem done_hold {x : RM T m AA} (hx : okR R ch x) {β : Bool} (hd : tgR R ch x β = .done)
     (hne : num lhat n o (.inl ⟨x, hx⟩) ≠ 0) :
     ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), chd x β = some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ ∧
       hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
-        s(nd T j hj c, parN hh (lev (load lhat n o)) j c) := by
+        s(nd hj c, parN hh (lev (load lhat n o)) j c) := by
   have e0 : ∀ β : Bool, hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
-      if β then s(tri T R ch x 1, tri T R ch x 2) else s(tri T R ch x 0, tri T R ch x 1) := by
+      if β then s(tri R ch x 1, tri R ch x 2) else s(tri R ch x 0, tri R ch x 1) := by
     intro β
     cases β <;> rfl
   rw [e0]
@@ -72,7 +72,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       exact (edgeO_hold (R := R) (ch := ch) (AA := AA) (m := m) (c := ch a) (c' := ch c) (γ := γ) (s := s.1 + 1) hs).1 hd
   · have hi := num_inn hh j i e hx hne
     have hjJ := j.2
-    have hpar : ∀ c : T.X j.1, parN hh (lev (load lhat n o)) j.1 c = nd T (j + 1) j.2 (hst T i c) := by
+    have hpar : ∀ c : T.X j.1, parN hh (lev (load lhat n o)) j.1 c = nd j.2 (hst i c) := by
       intro c
       unfold parN
       rw [dif_pos (by omega : j.1 + 1 ≤ J), hi]
@@ -85,14 +85,14 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       rw [hpar]
       have h1 : T.vx i (T.e0 e) = T.vx i (T.e1 e) := by
         rw [T.nr_vx0 j.2.le i ⟨e, hx⟩, T.nr_vx1 j.2.le i ⟨e, hx⟩]
-      have h2 : hst T i (T.e0 e) = hst T i (T.e1 e) := by
+      have h2 : hst i (T.e0 e) = hst i (T.e1 e) := by
         unfold hst
         rw [h1]
-      change s(nd T (j + 1) j.2 (hst T i (T.e0 e)), nd T j j.2.le (T.e1 e)) = _
+      change s(nd j.2 (hst i (T.e0 e)), nd j.2.le (T.e1 e)) = _
       rw [h2, Sym2.eq_swap]
   · have hi := num_mid hb hh j e s hx hne
     have hjJ := j.2
-    have hpar : ∀ c : T.X j.1, parN hh (lev (load lhat n o)) j.1 c = nd T (j + 1) j.2 (hst T (T.ty e) c) := by
+    have hpar : ∀ c : T.X j.1, parN hh (lev (load lhat n o)) j.1 c = nd j.2 (hst (T.ty e) c) := by
       intro c
       unfold parN
       rw [dif_pos (by omega : j.1 + 1 ≤ J), hi]
@@ -114,9 +114,9 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       · simp only [tgR, Fin.reduceFinMk, Matrix.cons_val] at hd
         split_ifs at hd with hq
         rw [not_not] at hq
-        change s(nd T (j + 1) j.2 (T.π (T.e1 e)), nd T j j.2.le (T.e1 e)) = _
+        change s(nd j.2 (T.π (T.e1 e)), nd j.2.le (T.e1 e)) = _
         rw [hq, Sym2.eq_swap]
-      · change s(nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e)), nd T j j.2.le (T.e1 e)) = _
+      · change s(nd j.2 (hst (T.ty e) (T.e1 e)), nd j.2.le (T.e1 e)) = _
         rw [Sym2.eq_swap]
   · have hpar : ∀ c : T.X J, parN hh (lev (load lhat n o)) J c = none := by
       intro c
@@ -128,7 +128,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       rfl
     · refine ⟨J, le_rfl, T.e1 e, rfl, ?_⟩
       rw [hpar]
-      change s(none, nd T J le_rfl (T.e1 e)) = _
+      change s(none, nd le_rfl (T.e1 e)) = _
       rw [Sym2.eq_swap]
 
 omit hb hh in
@@ -140,20 +140,20 @@ theorem sum_le_one {κ : Type*} (s : Finset κ) (f : κ → ℕ) (B : ℕ) (h1 :
 
 /-- The channel is between the chamber `s` and its parent. -/
 def IsCh (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T) (ν : NM R FL (ch := ch)) (s : Σ j : Fin (J + 1), T.X j) : Prop :=
-  ∃ (x : {x : RM T m AA // okR T R ch x}) (β : Bool), ν = ⟨.inl x, β⟩ ∧ tgR T R ch x.1 β = .done ∧ chd x.1 β = some s
+  ∃ (x : {x : RM T m AA // okR R ch x}) (β : Bool), ν = ⟨.inl x, β⟩ ∧ tgR R ch x.1 β = .done ∧ chd x.1 β = some s
 
 /-- The relay belongs to an edge. -/
 def OfEd (j : Fin J) (e : T.Ed j) (x : RM T m AA) : Prop := (∃ i, x = .inn j i e) ∨ ∃ s, x = .mid j e s
 
 /-- At most one channel of an edge and an end has alive units. -/
-theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx : okR T R ch x) (hx' : okR T R ch x')
-    (h1 : OfEd j e x) (h1' : OfEd j e x') (hd : tgR T R ch x β = .done) (hd' : tgR T R ch x' β = .done)
+theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx : okR R ch x) (hx' : okR R ch x')
+    (h1 : OfEd j e x) (h1' : OfEd j e x') (hd : tgR R ch x β = .done) (hd' : tgR R ch x' β = .done)
     (hn : num lhat n o (.inl ⟨x, hx⟩) ≠ 0) (hn' : num lhat n o (.inl ⟨x', hx'⟩) ≠ 0) : x = x' := by
-  have mm : ∀ s s' : Fin 4, okR T R ch (.mid j e s) → okR T R ch (.mid j e s') → tgR T R ch (.mid j e s : RM T m AA) β = .done →
-      tgR T R ch (.mid j e s' : RM T m AA) β = .done → s = s' := by
+  have mm : ∀ s s' : Fin 4, okR R ch (.mid j e s) → okR R ch (.mid j e s') → tgR R ch (.mid j e s : RM T m AA) β = .done →
+      tgR R ch (.mid j e s' : RM T m AA) β = .done → s = s' := by
     intro s s' hs hs' h2 h2'
     cases β
-    · have h0 : ∀ s : Fin 4, tgR T R ch (.mid j e s : RM T m AA) false = .done → s = 0 := by
+    · have h0 : ∀ s : Fin 4, tgR R ch (.mid j e s : RM T m AA) false = .done → s = 0 := by
         intro s hs
         fin_cases s
         · rfl
@@ -161,8 +161,8 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
         · simp [tgR] at hs
         · simp [tgR] at hs
       rw [h0 s h2, h0 s' h2']
-    · have h0 : ∀ s : Fin 4, tgR T R ch (.mid j e s : RM T m AA) true = .done → okR T R ch (.mid j e s) →
-          (s = 2 ∧ T.π (T.e1 e) = hst T (T.ty e) (T.e1 e)) ∨ (s = 3 ∧ T.π (T.e1 e) ≠ hst T (T.ty e) (T.e1 e)) := by
+    · have h0 : ∀ s : Fin 4, tgR R ch (.mid j e s : RM T m AA) true = .done → okR R ch (.mid j e s) →
+          (s = 2 ∧ T.π (T.e1 e) = hst (T.ty e) (T.e1 e)) ∨ (s = 3 ∧ T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e)) := by
         intro s hs hok
         fin_cases s
         · exfalso
@@ -194,9 +194,9 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
 open Classical in
 /-- The alive units of an edge at one end. -/
 theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : Finset (NM R FL)).filter (fun ν =>
-      alv lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR T R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR T R ch x.1 β = .done ∧ OfEd j e x.1),
+      alv lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR R ch x.1 β = .done ∧ OfEd j e x.1),
       alv lhat n o ν ≤ load lhat n o (.edge j.castSucc e) := by
-  have hnz : ∀ (x : {x : RM T m AA // okR T R ch x}), alv lhat n o (⟨.inl x, β⟩ : NM R FL) ≠ 0 →
+  have hnz : ∀ (x : {x : RM T m AA // okR R ch x}), alv lhat n o (⟨.inl x, β⟩ : NM R FL) ≠ 0 →
       num lhat n o (.inl x) ≠ 0 := by
     intro x hx
     have := alv_le_num (lhat := lhat) (n := n) (o := o) (FL := FL) x β

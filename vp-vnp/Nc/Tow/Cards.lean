@@ -96,7 +96,7 @@ section Moves
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'}
 
 theorem card_LMv_le (hD : 0 < D) (hb : 0 < b) :
-    Fintype.card (LMv T FL) ≤ lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) := by
+    Fintype.card (LMv FL) ≤ lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) := by
   simp only [Fintype.card_sigma, Fintype.card_prod]
   unfold lmN
   calc ∑ j : Fin J, ∑ i : Fin h, Fintype.card (T.V (j + 1) i) * Fintype.card FL.Di ≤
@@ -106,11 +106,11 @@ theorem card_LMv_le (hD : 0 < D) (hb : 0 < b) :
     _ = _ := by simp
 
 /-- Sums over moves. -/
-theorem sum_mv_le (f : Mv T R ch FL → ℕ) {a : ℕ} {g : LMv T FL → ℕ} (h1 : ∀ x, f (.inl x) ≤ a)
+theorem sum_mv_le (f : Mv R ch FL → ℕ) {a : ℕ} {g : LMv FL → ℕ} (h1 : ∀ x, f (.inl x) ≤ a)
     (h2 : ∀ l, f (.inr l) ≤ g l) : ∑ mv, f mv ≤ Fintype.card (RM T m AA) * a + ∑ l, g l := by
-  have hinj : Function.Injective (Sum.map Subtype.val id : Mv T R ch FL → RM T m AA ⊕ LMv T FL) :=
+  have hinj : Function.Injective (Sum.map Subtype.val id : Mv R ch FL → RM T m AA ⊕ LMv FL) :=
     Function.Injective.sumMap Subtype.val_injective Function.injective_id
-  have h3 : ∀ mv : Mv T R ch FL, f mv ≤ Sum.elim (fun _ => a) g (Sum.map Subtype.val id mv) := by
+  have h3 : ∀ mv : Mv R ch FL, f mv ≤ Sum.elim (fun _ => a) g (Sum.map Subtype.val id mv) := by
     rintro (x | l)
     · exact h1 x
     · exact h2 l
@@ -118,9 +118,9 @@ theorem sum_mv_le (f : Mv T R ch FL → ℕ) {a : ℕ} {g : LMv T FL → ℕ} (h
   rw [Fintype.sum_sum_type]
   simp
 
-theorem sum_moves (f : Mv T R ch FL → ℕ) : ∑ x, f (eE R FL x) = ∑ mv, f mv := Equiv.sum_comp (eE R FL) f
+theorem sum_moves (f : Mv R ch FL → ℕ) : ∑ x, f (eE R FL x) = ∑ mv, f mv := Equiv.sum_comp (eE R FL) f
 
-theorem card_Mv_le (hD : 0 < D) (hb : 0 < b) : Fintype.card (Mv T R ch FL) ≤
+theorem card_Mv_le (hD : 0 < D) (hb : 0 < b) : Fintype.card (Mv R ch FL) ≤
     rmN h m J AA (Fintype.card (T.X 0)) + lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) := by
   have h1 := sum_mv_le (R := R) (ch := ch) (FL := FL) (fun _ => 1) (a := 1) (g := fun _ => 1) (fun _ => le_rfl)
     fun _ => le_rfl
@@ -130,7 +130,7 @@ theorem card_Mv_le (hD : 0 < D) (hb : 0 < b) : Fintype.card (Mv T R ch FL) ≤
 /-- Channels. -/
 theorem card_N_le (hD : 0 < D) : Fintype.card (sys R FL Pl).N ≤ rmN h m J AA (Fintype.card (T.X 0)) * 2 +
     J * (h * (h * Fintype.card (T.X 0) * Fintype.card FL.Di)) := by
-  have e : Fintype.card (sys R FL Pl).N = ∑ mv : Mv T R ch FL, Fintype.card (kindM R ch FL mv).Cn := by
+  have e : Fintype.card (sys R FL Pl).N = ∑ mv : Mv R ch FL, Fintype.card (kindM R ch FL mv).Cn := by
     rw [Fintype.card_sigma]
     exact sum_moves fun mv => Fintype.card (kindM R ch FL mv).Cn
   rw [e]
@@ -138,7 +138,7 @@ theorem card_N_le (hD : 0 < D) : Fintype.card (sys R FL Pl).N ≤ rmN h m J AA (
   · exact le_of_eq (Fintype.card_congr (Equiv.refl Bool))
   · exact le_of_eq (Fintype.card_congr (FL.cn l.2.2.2))
   · refine Nat.add_le_add (Nat.mul_le_mul_right _ (card_RM_le hD)) ?_
-    have h1 : ∑ _l : LMv T FL, Fintype.card T.Nr =
+    have h1 : ∑ _l : LMv FL, Fintype.card T.Nr =
         ∑ j : Fin J, ∑ i : Fin h, Fintype.card (T.V (j + 1) i) * Fintype.card T.Nr * Fintype.card FL.Di := by
       rw [Finset.sum_const, card_univ, smul_eq_mul, Fintype.card_sigma, Finset.sum_mul]
       refine Finset.sum_congr rfl fun j _ => ?_
@@ -156,7 +156,7 @@ theorem card_N_le (hD : 0 < D) : Fintype.card (sys R FL Pl).N ≤ rmN h m J AA (
 theorem card_Z_le (hD : 0 < D) (hb : 0 < b) {S : ℕ} (hS : ∀ d, Fintype.card (FL.L d).Sl ≤ S) :
     Fintype.card (sys R FL Pl).Z ≤ rmN h m J AA (Fintype.card (T.X 0)) +
       lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) * S := by
-  have e : Fintype.card (sys R FL Pl).Z = ∑ mv : Mv T R ch FL, Fintype.card (kindM R ch FL mv).Sl := by
+  have e : Fintype.card (sys R FL Pl).Z = ∑ mv : Mv R ch FL, Fintype.card (kindM R ch FL mv).Sl := by
     rw [Fintype.card_sigma]
     exact sum_moves fun mv => Fintype.card (kindM R ch FL mv).Sl
   rw [e]
@@ -168,7 +168,7 @@ theorem card_Z_le (hD : 0 < D) (hb : 0 < b) {S : ℕ} (hS : ∀ d, Fintype.card 
 /-- Roles. -/
 theorem card_R_le (hD : 0 < D) (hb : 0 < b) : Fintype.card (sys R FL Pl).R ≤
     rmN h m J AA (Fintype.card (T.X 0)) * 3 + lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) * b := by
-  have e : Fintype.card (sys R FL Pl).R = ∑ mv : Mv T R ch FL, Fintype.card (kindM R ch FL mv).Ro := by
+  have e : Fintype.card (sys R FL Pl).R = ∑ mv : Mv R ch FL, Fintype.card (kindM R ch FL mv).Ro := by
     rw [Fintype.card_sigma]
     exact sum_moves fun mv => Fintype.card (kindM R ch FL mv).Ro
   rw [e]
@@ -228,7 +228,7 @@ theorem cards_le (hD : 0 < D) (hb : 0 < b) (hV : 1 ≤ V) (hh : h ≤ V) (hm : m
     (hS : ∀ d, Fintype.card (FL.L d).Sl ≤ V) (hU0 : U0 ≤ V) (hU1 : U1 ≤ V) :
     Fintype.card (sys R FL Pl).N ≤ 17 * V ^ 6 ∧ Fintype.card (sys R FL Pl).Z ≤ 9 * V ^ 5 ∧
       Fintype.card (sys R FL Pl).R ≤ 25 * V ^ 5 ∧ Fintype.card (Un R FL Pl U0 U1) ≤ 18 * V ^ 7 ∧
-      Fintype.card (Mv T R ch FL) ≤ 9 * V ^ 5 ∧ Fintype.card (Nd T) ≤ 3 * V ^ 2 := by
+      Fintype.card (Mv R ch FL) ≤ 9 * V ^ 5 ∧ Fintype.card (Nd T) ≤ 3 * V ^ 2 := by
   have h1 := rmN_le (X0 := Fintype.card (T.X 0)) hV hh hm hJ hAA hX
   have h2 := lmN_le (X0 := Fintype.card (T.X 0)) hh hJ hX hdd
   have p45 : V ^ 4 ≤ V ^ 5 := Nat.pow_le_pow_right hV (by norm_num)
