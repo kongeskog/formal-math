@@ -364,8 +364,47 @@ def cost (σ : List Bool → Tree) : Tm → ℕ
   | c _ => 20
   | get p => 30 * p.length + 50
   | cons a b => a.cost σ + b.cost σ + 100
-  | ifeq p _ a b => 30 * p.length + 60 * (σ p).size + (if σ p = .nil then 0 else 0) + a.cost σ + b.cost σ + 200
+  | ifeq p t a b => 30 * p.length + 60 * t.size + a.cost σ + b.cost σ + 200
   | app a b => a.cost σ + b.cost σ + 62 * (a.expand σ).toList.length + 250
+
+/-- Every list that the template appends another one to has at most `L` members. -/
+def Ok (σ : List Bool → Tree) (L : ℕ) : Tm → Prop
+  | cons a b => a.Ok σ L ∧ b.Ok σ L
+  | ifeq _ _ a b => a.Ok σ L ∧ b.Ok σ L
+  | app a b => (a.expand σ).toList.length ≤ L ∧ a.Ok σ L ∧ b.Ok σ L
+  | _ => True
+
+theorem length_le_size (p : List Bool) : p.length ≤ (ofBits p).size := by
+  induction p with
+  | nil => exact Nat.zero_le _
+  | cons b p ih => simp only [ofBits, size, List.length_cons]; omega
+
+/-- The cost of a template is linear in its size. -/
+theorem cost_le {σ : List Bool → Tree} {L : ℕ} : ∀ t : Tm, t.Ok σ L → t.cost σ ≤ t.tree.size * (62 * L + 250)
+  | c t, _ => by
+    simp only [cost, tree, size]
+    nlinarith [size_pos t]
+  | get p, _ => by
+    have := length_le_size p
+    simp only [cost, tree, size]
+    nlinarith
+  | cons a b, h => by
+    have := cost_le a h.1
+    have := cost_le b h.2
+    simp only [cost, tree, size]
+    nlinarith
+  | ifeq p t a b, h => by
+    have := length_le_size p
+    have := cost_le a h.1
+    have := cost_le b h.2
+    simp only [cost, tree, size]
+    nlinarith
+  | app a b, h => by
+    have := cost_le a h.2.1
+    have := cost_le b h.2.2
+    have := h.1
+    simp only [cost, tree, size]
+    nlinarith
 
 end Tm
 
@@ -381,7 +420,7 @@ def tmB : Fm := .ite (.hd (.hd (.tl .id)))
     (.ite (.tl (.tl (.hd (.hd (.tl .id)))))
       (.ite (.tl (.tl (.tl (.hd (.hd (.tl .id))))))
         (appF (tmRec (.hd (.tl (.hd (.tl .id))))) (tmRec (.tl (.tl (.hd (.tl .id))))))
-        (.ite (eqF (getF (.hd (.tl (.hd (.tl .id)))) (.tl (.tl .id))) (.hd (.tl (.tl (.hd (.tl .id))))))
+        (.ite (eqF (.hd (.tl (.tl (.hd (.tl .id))))) (getF (.hd (.tl (.hd (.tl .id)))) (.tl (.tl .id))))
           (tmRec (.hd (.tl (.tl (.tl (.hd (.tl .id))))))) (tmRec (.tl (.tl (.tl (.tl (.hd (.tl .id)))))))))
       (.cons (tmRec (.hd (.tl (.hd (.tl .id))))) (tmRec (.tl (.tl (.hd (.tl .id)))))))
     (getF (.tl (.hd (.tl .id))) (.tl (.tl .id))))
@@ -416,27 +455,27 @@ theorem tmB_gives (t : Tm) (W : Tree) :
     have hb := tmRec_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.tl.tl.tl ihb
     have hg := getF_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.hd (Gives.id _).tl.tl
     simp only [Tm.tree, hd_cons, tl_cons, path_ofBits, len_ofBits] at hg
-    have he := eqF_gives hg (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.tl.hd
+    have he := eqF_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.ifeq p t a b).tree W))).tl.hd.tl.tl.hd hg
+    rw [show (Tree.cons tmB.code (.cons (Tm.ifeq p t a b).tree W)).tl.hd.tl.tl.hd = t from rfl] at he
     have e0 : (Tm.ifeq p t a b).expand (gets W) = if tget p W = t then a.expand (gets W) else b.expand (gets W) := rfl
-    have hc : (Tm.ifeq p t a b).cost (gets W) = 30 * p.length + 60 * (tget p W).size + (if gets W p = .nil then 0 else 0) +
-      a.cost (gets W) + b.cost (gets W) + 200 := rfl
-    have hc0 : (if gets W p = .nil then 0 else 0) = 0 := by split_ifs <;> rfl
+    have hc : (Tm.ifeq p t a b).cost (gets W) = 30 * p.length + 60 * t.size + a.cost (gets W) + b.cost (gets W) + 200 :=
+      rfl
     rw [e0]
     by_cases h : tget p W = t
     · rw [if_pos h]
-      have hb' : bit (decide (tget p W = t)) ≠ .nil := by simp [h, bit, one]
+      have hb' : bit (decide (t = tget p W)) ≠ .nil := by simp [h, bit, one]
       refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
         (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp)
         ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_false (Gives.ite_true he hb' ha))))).mono ?_
-      rw [hc, hc0]
+      rw [hc]
       omega
     · rw [if_neg h]
-      have hb' : bit (decide (tget p W = t)) = .nil := by simp [h, bit]
-      rw [show (Tree.cons tmB.code (.cons (Tm.ifeq p t a b).tree W)).tl.hd.tl.tl.hd = t from rfl, hb'] at he
+      have hb' : bit (decide (t = tget p W)) = .nil := by simp [Ne.symm h, bit]
+      rw [hb'] at he
       refine ((Gives.id _).tl.hd.hd.ite_true (by simp) ((Gives.id _).tl.hd.hd.tl.ite_true
         (by simp) ((Gives.id _).tl.hd.hd.tl.tl.ite_true (by simp)
         ((Gives.id _).tl.hd.hd.tl.tl.tl.ite_false (Gives.ite_false he hb))))).mono ?_
-      rw [hc, hc0]
+      rw [hc]
       omega
   | app a b iha ihb =>
     have ha := tmRec_gives (Gives.id (θ := θ) (.cons tmB.code (.cons (Tm.app a b).tree W))).tl.hd.tl.hd iha

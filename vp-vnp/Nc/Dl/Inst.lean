@@ -150,8 +150,8 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
   refine deal_cut C tab qn tg bT bub nl nub gt d1 GROUP.code cb b0 b1 i e hU0D hU1D hK hd1 hgt hU
     hval ?_ ?_
   · intro z hz
-    exact deal_does hK hnl hnub hnll hnubl hC.nm hC.dc hC.rc hLc hQ hrow hU0X hU1X hS (by omega) hId hSlAt hCnAt hR
-      (length_steps18_le hQ hS hK1 hN hpS hE hId) (fun n o hn ho => card_cutUnits_le (hbdle n o hn ho)) z hz
+    exact deal_does hK hnl hnub hnll hnubl hC.nm hC.dc hC.rc hLc hQ hrow hU0X hU1X hId
+      (size_instTm tab hH (hdts _) (fun g => hdts _) hbT hbub hgp) (length_steps18_le hQ hS hK1 hN hpS hE hId) (fun n o hn ho => card_cutUnits_le (hbdle n o hn ho)) z hz
   · intro z hz q ρ n o b g hρ hn ho hb
     have hx : ∀ κ : Fin K, (parts ℓ (wordG b0 b1 z) κ).length ≤ Grp.bval bT := fun κ => (length_parts_le _ _ _).trans hℓ
     have hρ' : ∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2 := by

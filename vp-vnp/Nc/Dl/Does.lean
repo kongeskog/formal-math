@@ -23,8 +23,7 @@ variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
   {b0 b1 : Γ} {i e : Q} {hU0 : U0 < D} {hU1 : U1 ≤ D} {Lc X : ℕ}
 
 /-- The bound for the cost of a template. -/
-def tmB' (Lc X : ℕ) : ℕ := X * (3 * (X * (30 * Lc + 150)) + 360 * Lc + 62 * X + 2000) +
-  X * (X * (X * (270 * Lc + 700) + 120) + X * (30 * Lc + 150) + 300 * Lc + 1500) + X * (2000 * Lc + 5000) + 1000
+def tmB' (Lc X : ℕ) : ℕ := 740 * (X * Lc) ^ 3 * (62 * X + 250)
 
 /-- The bound for the cost of the dealing program: `s` is the size of the argument, `bd` bounds the number of cut
 units. -/
@@ -36,9 +35,8 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
     (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ d, (C.dc d).length ≤ Lc)
     (hrc : ∀ d, (C.rc d).length ≤ Lc) (hLc : 1 ≤ Lc) (hXQ : Fintype.card Q + 1 ≤ X)
     (hXr : Fintype.card (RowData (K + K)) ≤ X) (hU0X : U0 + 1 ≤ X) (hXU1 : U1 ≤ X)
-    (hS : Fintype.card (Option S) ≤ X) (hK2 : K + K ≤ X) (hId : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X)
-    (hSl : ∀ r : M.R, Fintype.card ((M.kind r.1).SlAt r.2) ≤ X)
-    (hCn : ∀ r : M.R, Fintype.card ((M.kind r.1).CnAt r.2) ≤ X) (hR : Fintype.card M.R ≤ X)
+    (hId : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X)
+    (hsz : ∀ g, (instTm C tab tg bT bub gt d1 gp g).tree.size ≤ 740 * (X * Lc) ^ 3)
     {bd nS : ℕ} (hnS : (steps18 C tab qn i e hU0 hU1).length ≤ nS)
     (hbd : ∀ n o, tab.valid n → (∀ x, P.good n o x) →
       (cutUnits (G.hold0 M.np) (G.hold1 M.np) (grp n o) (P.cur n o E)).card ≤ bd) {s : ℕ} (z : Tree) (hz : z.size ≤ s) :
@@ -83,7 +81,7 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
         rw [hnub] at hσ hσ'
         exact ⟨σ, hσ, hσ'⟩
       obtain ⟨q, ρ, n, o, b, st, h2, h3, h4, h5, hfin, rfl⟩ := mem_execAll C tab qn i e hU0 hU1 hK hmem
-      exact cost_instTm hfin hnm hdc hS hK2 hId hU0X hSl hCn hR g
+      exact (cost_instTm hfin hU0X g).trans (Nat.mul_le_mul_right _ (hsz g))
   have := dealF_does (θ := θ) (lT cb b0) (lT cb b1) ((List.finRange K).map fun κ => C.nm (.part κ)) nl nub
     (steps18 C tab qn i e hU0 hU1) (steps9 C) ((List.finRange mm).map (instTm C tab tg bT bub gt d1 gp)) z (Ln := Lc)
     (fun p hp => by

@@ -144,14 +144,16 @@ theorem deal : dealB Lc X K mm ub (mm * bd) (4 * (X * X) + 10 * X) s * v ^ 256 �
       (4 * (X * X) + 10 * X) * (stepB Lc X + 30) + X * (90 * Lc + 230) + mm * (tmB' Lc X + 60) +
       300) * v ^ 256 ≤ τ * k := by
     grw [← Nat.le_mul_of_pos_right τ (by omega : 0 < k), ← h.X6,
-      ← h.Xm_le (show 4 ≤ 6 by norm_num) (show 4 ≤ 20 by norm_num), h.K_X, h.mmX]
+      ← h.Xm_le (show 5 ≤ 6 by norm_num) (show 5 ≤ 20 by norm_num), h.K_X, h.mmX]
     gcongr ?_ * _
-    have f : ∀ i ≤ 4, X ^ i * (Lc + 1) ≤ X ^ 4 * m ∧ X ^ i ≤ X ^ 4 := fun i hi =>
-      ⟨Nat.mul_le_mul (h.Xpow hi) hL, h.Xpow hi⟩
+    have f : ∀ i j, i ≤ 5 → j ≤ 3 → X ^ i * m ^ j ≤ X ^ 5 * m ^ 3 := fun i j hi hj =>
+      Nat.mul_le_mul (h.Xpow hi) (h.mpow hj)
     unfold stepB tmB'
-    linarith [(f 1 (by norm_num)).1, (f 2 (by norm_num)).1, (f 3 (by norm_num)).1, (f 4 le_rfl).1,
-      (f 0 (by norm_num)).2, (f 1 (by norm_num)).2, (f 2 (by norm_num)).2, (f 3 (by norm_num)).2,
-      Nat.mul_le_mul_left (X ^ 4) hm1, h.mc (X ^ 4) 1 4 10000 (by norm_num) (by norm_num)]
+    grw [show Lc ≤ m by omega]
+    linarith [f 0 0 (by norm_num) (by norm_num), f 1 0 (by norm_num) (by norm_num), f 1 1 (by norm_num) (by norm_num),
+      f 2 0 (by norm_num) (by norm_num), f 2 1 (by norm_num) (by norm_num), f 3 0 (by norm_num) (by norm_num),
+      f 3 1 (by norm_num) (by norm_num), f 4 3 (by norm_num) le_rfl,
+      h.mc (X ^ 5) 3 4 10000 (by norm_num) (by norm_num), h.mc (X ^ 5) 4 5 10000 (by norm_num) (by norm_num)]
   unfold dealB
   linarith [Nat.mul_le_mul_left (s * v ^ 256) (show 60 * Lc + 160 ≤ m ^ 10 by
       nlinarith [h.mpow (show 2 ≤ 10 by norm_num)]),
