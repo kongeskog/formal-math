@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T15:55:33.180482731Z",
+  "updated_at": "2026-11-28T15:57:44.556454104Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 1,
     "contributors": 2,
-    "ideas_open": 2
+    "ideas_open": 3
   },
   "leaderboard": [
     {
@@ -94,6 +94,20 @@
   ],
   "ideas": [
     {
+      "number": 225,
+      "title": "Idea: restructure(Paper/Crossing): prove the crossing inequality as it is read; one limit, no compactness",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-28T15:56:41Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/225",
+      "technique": "restructure",
+      "scope": "Paper/Crossing"
+    },
+    {
       "number": 223,
       "title": "Idea: restructure(Paper/Lengths): a map into a price space gives the length of the action on L²; no rescaling",
       "status": "claimed",
@@ -110,10 +124,10 @@
     {
       "number": 221,
       "title": "Idea: restructure(Paper/Laws): the laws take the Poincaré inequality as proved; clauses as the towers read them",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T18:42:01Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 222,
       "result_delta": -789,
       "created_at": "2026-11-28T15:40:33Z",
@@ -1549,11 +1563,6 @@
       "loc": 397
     },
     {
-      "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 6042,
-      "loc": 373
-    },
-    {
       "path": "vp-vnp/Paper/Rate.lean",
       "tokens": 5842,
       "loc": 353
@@ -1572,6 +1581,11 @@
       "path": "vp-vnp/Nc/Tow/Load0.lean",
       "tokens": 5398,
       "loc": 422
+    },
+    {
+      "path": "vp-vnp/Paper/Laws.lean",
+      "tokens": 5253,
+      "loc": 327
     },
     {
       "path": "vp-vnp/Paper/Means.lean",
