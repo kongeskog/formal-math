@@ -48,19 +48,12 @@ theorem wordB_gives (t0 t1 z : Tree) (acc : List Tree) :
     refine ((Gives.id _).tl.hd.ite_false (Gives.cons (Gives.quote t0 _) (Gives.id _).tl.tl)).mono ?_
     simp [Tree.size]
   | cons a b iha ihb =>
-    have hb : Gives θ (Fm.ofTree (wordB t0 t1).code) (.cons (wordB t0 t1).code (.cons b (listT acc)))
-        (listT (wordT t0 t1 b ++ acc)) (60 * b.size) := by rw [Fm.ofTree_code]; exact ihb acc
-    have ha : Gives θ (Fm.ofTree (wordB t0 t1).code) (.cons (wordB t0 t1).code (.cons a (listT (wordT t0 t1 b ++ acc))))
-        (listT (wordT t0 t1 a ++ (wordT t0 t1 b ++ acc))) (60 * a.size) := by rw [Fm.ofTree_code]; exact iha _
-    have r1 := Gives.run (Gives.id (θ := θ) (.cons (wordB t0 t1).code (.cons (.cons a b) (listT acc)))).hd
-      (Gives.cons (Gives.id _).hd (Gives.cons (Gives.id _).tl.hd.tl (Gives.id _).tl.tl)) hb
-    have r2 := Gives.run (Gives.id (θ := θ) (.cons (wordB t0 t1).code (.cons (.cons a b) (listT acc)))).hd
-      (Gives.cons (Gives.id _).hd (Gives.cons (Gives.id _).tl.hd.hd r1)) ha
-    have h := Gives.ite_true (H := .cons (.quote t0) (.tl (.tl .id)))
-      (Gives.id (θ := θ) (.cons (wordB t0 t1).code (.cons (.cons a b) (listT acc)))).tl.hd (by simp)
-      (Gives.cons (Gives.quote t1 _) r2)
     rw [wordT, List.cons_append, List.append_assoc]
-    refine Gives.mono h ?_
+    refine Does.mono ((Gives.id _).tl.hd.ite_true (by simp) (Gives.cons (Gives.quote t1 _)
+      (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.hd.cons
+        (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl))
+          (ihb acc))))
+        (iha _)))) ?_
     simp only [Tree.size]
     omega
 
@@ -68,8 +61,8 @@ theorem wordF_gives {t0 t1 : Tree} {zf : Fm} {x z : Tree} {cz : ℕ} (hz : Gives
     Gives θ (wordF t0 t1 zf) x (listT (wordT t0 t1 z)) (cz + 60 * z.size + 10) := by
   have h := wordB_gives (θ := θ) t0 t1 z []
   rw [List.append_nil] at h
-  refine (Gives.app (p := (wordB t0 t1).code) (Gives.cons (Gives.quote _ _) (Gives.cons hz (Gives.quote (listT []) _)))
-    (by rw [Fm.ofTree_code]; exact h)).mono (by omega)
+  exact (Gives.lett (Gives.cons (Gives.quote _ _)
+    (Gives.cons hz (Gives.quote (listT []) _))) h).mono (by omega)
 
 end Word
 
@@ -95,14 +88,11 @@ theorem nzB_gives (w : List Bool) :
       simp only [List.length_cons]
       omega
     | false =>
-      have ih' : Gives θ (Fm.ofTree nzB.code) (.cons nzB.code (ofBits w)) (bit (decide (KT.val w ≠ 0)))
-          (20 * w.length + 10) := by rw [Fm.ofTree_code]; exact ih
-      have r := Gives.run (Gives.id (θ := θ) (.cons nzB.code (ofBits (false :: w)))).hd
-        (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl) ih'
       have e : decide (KT.val (false :: w) ≠ 0) = decide (KT.val w ≠ 0) := by
         simp [KT.val]
       rw [e]
-      refine ((Gives.id _).tl.ite_true (by simp [ofBits]) ((Gives.id _).tl.hd.ite_false r)).mono ?_
+      refine Does.mono ((Gives.id _).tl.ite_true (by simp [ofBits]) ((Gives.id _).tl.hd.ite_false
+        (Does.self ((Gives.id _).hd.cons (Gives.id _).tl.tl) ih))) ?_
       simp only [List.length_cons]
       omega
 
@@ -128,9 +118,9 @@ theorem takeB_gives (w : List Bool) (acc l : List Tree) :
     simp only [List.length_nil, zero_add, one_mul]
     omega
   | cons a l ih =>
-    have hnz := Gives.app (p := nzB.code) (Gives.cons (Gives.quote (θ := θ) nzB.code
-      (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l)))))) (Gives.id _).tl.hd)
-      (o' := bit (decide (KT.val w ≠ 0))) (d := 20 * w.length + 10) (by rw [Fm.ofTree_code]; exact nzB_gives w)
+    have hnz := Gives.lett (Gives.cons (Gives.quote (θ := θ) nzB.code
+      (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l))))))
+      (Gives.id _).tl.hd) (nzB_gives w)
     rcases decw_val w with ⟨h1, h2⟩ | ⟨w', h1, h2⟩
     · have e : bit (decide (KT.val w ≠ 0)) = .nil := by simp [h2, bit]
       rw [e] at hnz
@@ -147,18 +137,14 @@ theorem takeB_gives (w : List Bool) (acc l : List Tree) :
       obtain ⟨k, hk, hdw⟩ := DW_some (θ := θ) h1
       have hd : Gives θ (app DW.code (.cons (.quote DW.code) (.hd (.tl .id))))
           (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l))))) (ofBits w') (1 + 3 + 1 + 20 * w.length + 2) :=
-        Gives.app (p := DW.code) (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) (by
-          rw [Fm.ofTree_code]
-          exact (Does.of_dt hdw).mono hk)
+        Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd)
+          ((Does.of_dt hdw).mono hk)
       have hl : w'.length = w.length := length_decw h1
-      have ih' : Gives θ (Fm.ofTree takeB.code) (.cons takeB.code (.cons (ofBits w') (.cons (listT (a :: acc)) (listT l))))
-          (.cons (listT ((l.take (KT.val w')).reverse ++ (a :: acc))) (listT (l.drop (KT.val w'))))
-          (((l.take (KT.val w')).length + 1) * (60 * w.length + 100)) := by
-        rw [Fm.ofTree_code, ← hl]
-        exact ih w' (a :: acc)
-      have r := Gives.run (Gives.id (θ := θ) (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l)))))).hd
-        (Gives.cons (Gives.id _).hd (Gives.cons hd (Gives.cons (Gives.cons (Gives.id _).tl.tl.tl.hd (Gives.id _).tl.tl.hd)
-          (Gives.id _).tl.tl.tl.tl))) ih'
+      have ih' := ih w' (a :: acc)
+      rw [hl] at ih'
+      have r := Does.self ((Gives.id (θ := θ) (.cons takeB.code (.cons (ofBits w) (.cons (listT acc)
+        (listT (a :: l)))))).hd.cons (Gives.cons hd (Gives.cons (Gives.cons (Gives.id _).tl.tl.tl.hd
+          (Gives.id _).tl.tl.hd) (Gives.id _).tl.tl.tl.tl))) ih'
       have := ((Gives.id (θ := θ) (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l)))))).tl.tl.tl.ite_true
         (H := .tl (.tl .id)) (by simp [listT]) (hnz.ite_true (H := .tl (.tl .id)) e r))
       rw [h2, List.take_succ_cons, List.drop_succ_cons, List.reverse_cons, List.append_assoc, List.singleton_append]

@@ -26,21 +26,14 @@ theorem pairB_gives (l : List Tree) :
   induction l using pairL.induct with
   | case1 => exact ((Gives.id _).tl.ite_false (Gives.quote .nil _)).mono (by norm_num)
   | case2 a =>
-    have h0 : Gives θ (Fm.ofTree pairB.code) (.cons pairB.code (listT [])) (listT (pairL [])) 40 := by
-      rw [Fm.ofTree_code]
-      exact ((Gives.id _).tl.ite_false (Gives.quote .nil _)).mono (by norm_num)
-    have h := (Gives.id (θ := θ) (.cons pairB.code (listT [a]))).tl.ite_true (H := .quote .nil) (by simp [listT])
+    exact Does.mono ((Gives.id _).tl.ite_true (by simp [listT])
       (Gives.cons (Gives.cons (Gives.id _).tl.hd (Gives.id _).tl.tl.hd)
-        (Gives.run (Gives.id _).hd (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl.tl) h0))
-    exact h.mono (by simp)
+        (Does.self ((Gives.id _).hd.cons (Gives.id _).tl.tl.tl) ((Gives.id _).tl.ite_false
+          (Gives.quote .nil _))))) (by simp)
   | case3 a b l ih =>
-    have h0 : Gives θ (Fm.ofTree pairB.code) (.cons pairB.code (listT l)) (listT (pairL l)) (40 * (l.length + 1)) := by
-      rw [Fm.ofTree_code]
-      exact ih
-    have h := (Gives.id (θ := θ) (.cons pairB.code (listT (a :: b :: l)))).tl.ite_true (H := .quote .nil)
-      (by simp [listT]) (Gives.cons (Gives.cons (Gives.id _).tl.hd (Gives.id _).tl.tl.hd)
-        (Gives.run (Gives.id _).hd (Gives.cons (Gives.id _).hd (Gives.id _).tl.tl.tl) h0))
-    refine h.mono ?_
+    refine Does.mono ((Gives.id _).tl.ite_true (by simp [listT])
+      (Gives.cons (Gives.cons (Gives.id _).tl.hd (Gives.id _).tl.tl.hd)
+        (Does.self ((Gives.id _).hd.cons (Gives.id _).tl.tl.tl) ih))) ?_
     simp only [List.length_cons]
     omega
 
@@ -58,9 +51,7 @@ theorem pairsF_gives (m : ℕ) {l : Fm} {x : Tree} {xs : List Tree} {c : ℕ} (h
   induction m generalizing l xs c with
   | zero => simpa [pairsF] using hl
   | succ m ih =>
-    have h := Gives.app (p := pairB.code) (Gives.cons (Gives.quote pairB.code x) hl) (by
-      rw [Fm.ofTree_code]
-      exact pairB_gives xs)
+    have h := Gives.lett (Gives.cons (Gives.quote pairB.code x) hl) (pairB_gives xs)
     have h2 := ih h
     rw [Function.iterate_succ_apply]
     refine h2.mono ?_
@@ -93,10 +84,8 @@ def pairTree (m : ℕ) (z : Tree) : Tree := (listT (pairL^[m] (wordT lt0 lt1 z +
 
 theorem treeF_gives (m : ℕ) (z : Tree) :
     Gives θ (treeF m) z (pairTree m z) (60 * z.size + m * (40 * (z.size + 2) + 10) + 12) := by
-  have h0 := Gives.app (p := (wordB lt0 lt1).code) (Gives.cons (Gives.quote (θ := θ) (wordB lt0 lt1).code z)
-    (Gives.cons (Gives.id z) (Gives.quote (listT [lt2]) z))) (by
-      rw [Fm.ofTree_code]
-      exact wordB_gives lt0 lt1 z [lt2])
+  have h0 := Gives.lett (Gives.cons (Gives.quote (θ := θ) (wordB lt0 lt1).code z)
+    (Gives.cons (Gives.id z) (Gives.quote (listT [lt2]) z))) (wordB_gives lt0 lt1 z [lt2])
   have h := (pairsF_gives m h0).hd
   rw [List.length_append, length_wordT, List.length_singleton] at h
   have e : m * (40 * (z.size + 1 + 1) + 10) = m * (40 * (z.size + 2) + 10) := rfl
