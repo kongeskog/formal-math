@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T10:52:32.259619382Z",
+  "updated_at": "2026-11-28T11:05:25.255364661Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -96,10 +96,10 @@
     {
       "number": 207,
       "title": "Idea: restructure(Nc/Grp): GROUP guesses the contents of all cells first, then every instruction compares",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T13:38:55Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 208,
       "result_delta": -5881,
       "created_at": "2026-11-28T10:05:53Z",
@@ -1310,8 +1310,13 @@
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",
-      "tokens": 8334,
-      "loc": 606
+      "tokens": 8111,
+      "loc": 584
+    },
+    {
+      "path": "vp-vnp/Nc/Grp/GroupProg.lean",
+      "tokens": 7883,
+      "loc": 484
     },
     {
       "path": "vp-vnp/Paper/Gauges.lean",
@@ -1322,11 +1327,6 @@
       "path": "vp-vnp/Paper/Crossing.lean",
       "tokens": 6673,
       "loc": 377
-    },
-    {
-      "path": "vp-vnp/Nc/Grp/GroupProg.lean",
-      "tokens": 6485,
-      "loc": 396
     },
     {
       "path": "vp-vnp/Nc/G/PlayThm.lean",
@@ -1350,13 +1350,8 @@
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 6128,
+      "tokens": 6093,
       "loc": 397
-    },
-    {
-      "path": "vp-vnp/Nc/Grp/StepBase.lean",
-      "tokens": 6063,
-      "loc": 366
     },
     {
       "path": "vp-vnp/Paper/Laws.lean",
@@ -1367,11 +1362,6 @@
       "path": "vp-vnp/Paper/Rate.lean",
       "tokens": 5842,
       "loc": 353
-    },
-    {
-      "path": "vp-vnp/Nc/Grp/GrpTime.lean",
-      "tokens": 5528,
-      "loc": 332
     },
     {
       "path": "vp-vnp/Nc/Tow/Load2.lean",
@@ -1394,19 +1384,29 @@
       "loc": 314
     },
     {
-      "path": "vp-vnp/NS1/Comp.lean",
-      "tokens": 5242,
-      "loc": 318
-    },
-    {
       "path": "vp-vnp/Paper/Means.lean",
       "tokens": 5228,
       "loc": 292
     },
     {
+      "path": "vp-vnp/Nc/Grp/Group.lean",
+      "tokens": 5183,
+      "loc": 342
+    },
+    {
+      "path": "vp-vnp/NS1/Comp.lean",
+      "tokens": 5171,
+      "loc": 315
+    },
+    {
       "path": "vp-vnp/Paper/Toolkit.lean",
       "tokens": 5005,
       "loc": 317
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Ever2.lean",
+      "tokens": 4998,
+      "loc": 348
     }
   ]
 }
