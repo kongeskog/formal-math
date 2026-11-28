@@ -484,29 +484,32 @@ def Ok (σ : List Bool → Tree) (L : ℕ) : Tm → Prop
 theorem cost_le {σ : List Bool → Tree} {L : ℕ} :
     ∀ t : Tm, t.Ok σ L → t.cost σ ≤ t.tree.size * (62 * L + 250)
   | c t, _ => by
-    simp only [cost, tree, size]
-    nlinarith [size_pos t]
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
   | get p, _ => by
     have := len_ofBits p ▸ len_le_size (ofBits p)
-    simp only [cost, tree, size]
-    nlinarith
+    have := Nat.mul_le_mul_left (ofBits p).size (Nat.le_add_left 250 (62 * L))
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
   | cons a b, h => by
     have := cost_le a h.1
     have := cost_le b h.2
-    simp only [cost, tree, size]
-    nlinarith
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
   | ifeq p t a b, h => by
     have := len_ofBits p ▸ len_le_size (ofBits p)
+    have := Nat.mul_le_mul_left (ofBits p).size (Nat.le_add_left 250 (62 * L))
+    have := Nat.mul_le_mul_left t.size (Nat.le_add_left 250 (62 * L))
     have := cost_le a h.1
     have := cost_le b h.2
-    simp only [cost, tree, size]
-    nlinarith
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
   | app a b, h => by
     have := cost_le a h.2.1
     have := cost_le b h.2.2
     have := h.1
-    simp only [cost, tree, size]
-    nlinarith
+    simp only [cost, tree, size, Nat.add_mul]
+    omega
 
 end Tm
 
