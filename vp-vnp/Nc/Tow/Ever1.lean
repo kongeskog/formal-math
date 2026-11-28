@@ -99,17 +99,6 @@ theorem fb_eq (j : ℕ) (c : T.X j) : fb Lf j c = (∑ e, if T.e0 e = c then Lf 
     simp [h0, h1]
   · by_cases h1 : T.e1 e = c <;> simp [h0, h1]
 
-open Classical in
-theorem chs_eq (j : ℕ) (x : T.X (j + 1)) : chs hh Lf j x =
-    (∑ e, if hostj hh Lf (T.e0 e) = x then Lf j e else 0) + ∑ e, if hostj hh Lf (T.e1 e) = x then Lf j e else 0 := by
-  unfold chs
-  rw [sum_end (fun e => T.e0 e) (fun c => hostj hh Lf c = x), sum_end (fun e => T.e1 e) (fun c => hostj hh Lf c = x),
-    ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun c _ => ?_
-  split_ifs
-  · exact fb_eq Lf j c
-  · rfl
-
 section Num
 
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
@@ -134,11 +123,6 @@ theorem lev_succ (j : Fin J) (e : T.Ed (j + 1)) : load R ch FL lhat n o (.edge j
     ldL R ch FL lhat n o (j + 1) e := by
   unfold ldL lev
   rw [dif_pos (Nat.succ_lt_succ j.2)]
-  rfl
-
-theorem lev_last (e : T.Ed J) : load R ch FL lhat n o (.edge (Fin.last J) e) = ldL R ch FL lhat n o J e := by
-  unfold ldL lev
-  rw [dif_pos (Nat.lt_succ_self J)]
   rfl
 
 theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn j i e) ≤
@@ -174,7 +158,9 @@ theorem nR_fin (e : T.Ed J) : nR R ch FL lhat n o (.fin e) ≤ ldL R ch FL lhat 
   unfold nR
   split_ifs with hx
   · refine (num_inl _).trans (le_of_eq ?_)
-    exact lev_last e
+    unfold ldL lev
+    rw [dif_pos (Nat.lt_succ_self J)]
+    rfl
   · exact Nat.zero_le _
 
 end Num

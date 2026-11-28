@@ -344,7 +344,13 @@ theorem NR_le (P : Nd T) : NR R ch FL lhat n o P ≤ NR0 R ch FL lhat n o P +
       sum_end (fun e : T.Ed j => hostj hh Lf (T.e1 e)) (fun x => nd T (j + 1) j.2 x = P), ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun x _ => ?_
     split_ifs
-    · exact chs_eq hh Lf j x
+    · unfold chs
+      rw [sum_end (fun e => T.e0 e) (fun c => hostj hh Lf c = x),
+        sum_end (fun e => T.e1 e) (fun c => hostj hh Lf c = x), ← Finset.sum_add_distrib]
+      refine Finset.sum_congr rfl fun c _ => ?_
+      split_ifs
+      · exact fb_eq Lf j c
+      · rfl
     · rfl
   have hall : (∑ j, ∑ i, ∑ e, ∑ q : Fin 3, if tri T R ch (.inn j i e) q = P then nR R ch FL lhat n o (.inn j i e) else 0) +
       (∑ j, ∑ e, ∑ s, ∑ q : Fin 3, if tri T R ch (.mid j e s) q = P then nR R ch FL lhat n o (.mid j e s) else 0) ≤

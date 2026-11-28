@@ -186,8 +186,8 @@ theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l
     · have ok4 := ok3.nx (θ := θ) (.inr (.inl ⟨(), hp⟩)) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)
       have h4 := readName (θ := θ) hθ (S := m (f r)) (B := Bd (f r)) r.out ⟨[], hp⟩
         (nx θ σ3 (.inr (.inl ⟨(), hp⟩)) (σ1.regs 4) (σ1.regs 0) (σ1.regs 0)) ok4 rfl ?_ ?_
-      · have h5 := sumTo_rule ok3 hfr (.inr (.inl ⟨(), hp⟩)) (by rw [hm3]; exact dif_pos hp) (by rw [hm3]; simp)
-          (by rw [hm3]; simp) (by rw [hm3]; rfl) rfl h4
+      · have h5 := sumTo_rule ok3 hm3 hfr (.inr (.inl ⟨(), hp⟩)) (dif_pos hp) (by simp) (by simp)
+          rfl rfl h4
         have hw : (rule θ supp (.inr (.inl ⟨(), hp⟩))).wt = 1 := rfl
         rw [hw, one_mul] at h5
         refine h5.mono ?_
@@ -206,8 +206,7 @@ theorem EvOK.theta (hθ : ∀ q, q ∉ supp → θ q = 0) {a : Fm} {x : Tree} {l
         have := not_pre hp hθ r.out.path
         simpa using this
       rw [hz, zero_mul]
-      exact sumTo_stuck ok3 hfr (by rw [hm3]; exact dif_neg hp) (by rw [hm3]; simp) (by rw [hm3]; simp)
-        (by rw [hm3]; simp) _
+      exact sumTo_stuck ok3 hm3 hfr (dif_neg hp) (by simp) (by simp) (by simp) _
 
 /-- **The machine evaluates all formulas.** -/
 theorem evOK (hθ : ∀ q, q ∉ supp → θ q = 0) {F : Fm} {x : Tree} {l : List (Run A)} (h : Ev θ F x l) : EvOK θ supp F x l := by

@@ -68,13 +68,14 @@ theorem wtA (r : Ra) : (ruleA r : RD A (Nm supp)).wt = 1 := by
   | _ => rfl
 
 /-- A forced step with a rule without names. -/
-theorem sumTo_ruleA {σ : St supp} (hσ : OKs σ) {κ : Kd} {p q s : ℕ}
-    (hrec : (κ, ![σ.regs (laM σ.mode), p, q, s]) ∈ σ.heap) (r : Ra) (hr : nextR supp σ.mode κ = some (.inl r))
-    (hm : σ.mode ≠ .P) (hd : ¬ (σ.mode = .D 7 ∧ κ = .N)) (hs : (ruleA r : RD A (Nm supp)).src = σ.mode)
+theorem sumTo_ruleA {σ : St supp} (hσ : OKs σ) {md : Md (Nm supp)} (hm : σ.mode = md) {κ : Kd}
+    {p q s : ℕ} (hrec : (κ, ![σ.regs (laM σ.mode), p, q, s]) ∈ σ.heap) (r : Ra)
+    (hr : nextR supp md κ = some (.inl r))
+    (hP : md ≠ .P) (hd : ¬ (md = .D 7 ∧ κ = .N)) (hs : (ruleA r : RD A (Nm supp)).src = md)
     (hk : (ruleA r : RD A (Nm supp)).lk = κ)
     {S : A} {B : ℤ} (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) p q s) S B) :
     Mach.SumTo (UM θ supp) σ S (B + 1) := by
-  have h1 := sumTo_rule hσ hrec (.inl r) hr hm hd hs hk h
+  have h1 := sumTo_rule hσ hm hrec (.inl r) hr hP hd hs hk h
   have h2 : (rule θ supp (.inl r)).wt = 1 := wtA r
   rw [h2, one_mul] at h1
   exact h1
@@ -121,8 +122,8 @@ theorem dchain {S : A} {B : ℤ} (o : Tree) : ∀ (j : ℕ) (hj : j < 11) (σ : 
         simp only [Tree.len]
         omega) a3 (a4.trans rfl) (a5.trans rfl) (a6.trans rfl) (fun _ hc => a7 (heap_nx σ _ _ _ _ hc))
         (a8.trans inpA))
-    have h3 := sumTo_ruleA hσ (heap_laM hm h1 rfl hrec) (.dc ⟨j, hj'⟩)
-      (by rw [hm]; exact dif_pos hj') (by rw [hm]; simp) (by simp) (by rw [hm]; rfl) rfl h2
+    have h3 := sumTo_ruleA hσ hm (heap_laM hm h1 rfl hrec) (.dc ⟨j, hj'⟩)
+      (dif_pos hj') (by simp) (by simp) rfl rfl h2
     refine h3.mono ?_
     simp only [Tree.len]
     push_cast
@@ -144,12 +145,10 @@ theorem dstuck {B : ℤ} (o : Tree) : ∀ (j : ℕ) (hj : j < 11) (σ : St supp)
     by_cases hj' : j < 10
     · have h2 := ih (B := B - 1) (j + 1) (by omega) (nx θ σ (.inl (.dc ⟨j, hj'⟩)) p q s) q (hσ.nx _ _ _ _) rfl rfl
         (hq.mono (heap_nx σ _ _ _ _)) (by omega)
-      have h3 := sumTo_ruleA hσ hrec' (.dc ⟨j, hj'⟩) (by rw [hm]; exact dif_pos hj') (by rw [hm]; simp) (by simp)
-        (by rw [hm]; rfl) rfl h2
+      have h3 := sumTo_ruleA hσ hm hrec' (.dc ⟨j, hj'⟩) (dif_pos hj') (by simp) (by simp) rfl rfl
+        h2
       exact h3.mono (by omega)
-    · refine sumTo_stuck hσ hrec' ?_ (by rw [hm]; simp) (by simp) (by rw [hm]; simp) B
-      rw [hm]
-      exact dif_neg hj'
+    · exact sumTo_stuck hσ hm hrec' (dif_neg hj') (by simp) (by simp) (by simp) B
 
 /-- From a formula to its opcode. -/
 theorem toOp {S : A} {B : ℤ} {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .E) {o a : Tree}
@@ -164,19 +163,9 @@ theorem toOp {S : A} {B : ℤ} {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .E)
         (fun _ hc => a7 (heap_nx σ _ _ _ _ hc)) (a8.trans inpA)
       rw [a4]
       exact (hq.mono (heap_nx σ _ _ _ _)).mono a7)
-  have h3 := sumTo_ruleA hσ (heap_laM hm rfl rfl hrec) .ec (by rw [hm]; rfl) (by rw [hm]; simp)
-    (by simp) (by rw [hm]; rfl) rfl h2
+  have h3 := sumTo_ruleA hσ hm (heap_laM hm rfl rfl hrec) .ec rfl (by simp) (by simp) rfl rfl h2
   refine h3.mono ?_
   omega
-
-theorem noOp {B : ℤ} {σ : St supp} (hσ : OKs σ) (hm : σ.mode = .E) {o a : Tree}
-    (hr : Rep σ.heap (σ.regs 1) (.cons o a)) (hl : 11 ≤ o.len) : Mach.SumTo (UM θ supp) σ 0 B := by
-  obtain ⟨p, q, s, hrec, hp, hq⟩ := hr
-  have h2 := dstuck (θ := θ) (B := B - 1) o 0 (by omega) (nx θ σ (.inl .ec) p q s) p (hσ.nx _ _ _ _) rfl rfl
-    (hp.mono (heap_nx σ _ _ _ _)) (by omega)
-  have h3 := sumTo_ruleA hσ (heap_laM hm rfl rfl hrec) .ec (by rw [hm]; rfl) (by rw [hm]; simp)
-    (by simp) (by rw [hm]; rfl) rfl h2
-  exact h3.mono (by omega)
 
 /-- The bound for the lengths of names. -/
 def Lm (supp : Finset (List Bool)) : ℕ := supp.sup List.length
@@ -197,8 +186,8 @@ theorem readName (hθ : ∀ q, q ∉ supp → θ q = 0) {S : A} {B : ℤ} (w : T
     intro p σ hσ hm hr hk
     have h0 : σ.regs 1 = 0 := hr
     have h2 := hk (nx θ σ (.inr (.inr (.inl p))) 0 0 0) 0 (hσ.nx _ _ _ _) rfl hσ.r0 rfl (heap_nx σ _ _ _ _) rfl rfl
-    have h3 := sumTo_rule hσ (heap_laM hm h0 rfl hσ.nil) (.inr (.inr (.inl p))) (by rw [hm]; rfl)
-      (by rw [hm]; simp) (by rw [hm]; simp) (by rw [hm]; rfl) rfl h2
+    have h3 := sumTo_rule hσ hm (heap_laM hm h0 rfl hσ.nil) (.inr (.inr (.inl p))) rfl
+      (by simp) (by simp) rfl rfl h2
     have hw : (rule θ supp (.inr (.inr (.inl p)))).wt = θ p.1 := rfl
     rw [hw] at h3
     simp only [Tree.path, List.append_nil]
@@ -227,8 +216,7 @@ theorem readName (hθ : ∀ q, q ∉ supp → θ q = 0) {S : A} {B : ℤ} (w : T
           · exact dif_pos hp
         have h2 := ih ⟨_, hp⟩ (nx θ σ1 (.inr (.inr (.inr (.inr ⟨(p, ⟨_, hp⟩, bt), rfl⟩)))) x1 x2 x3) (hσ1.nx _ _ _ _) rfl
           (hb1.mono (heap_nx σ1 _ _ _ _)) (KS.heap (fun _ hc => heap_nx σ1 _ _ _ _ (heap_nx σ _ _ _ _ hc)) hk)
-        have h3 := sumTo_rule hσ1 hrec1 _ hnext (by change Md.TB p ≠ .P; simp)
-          (by rintro ⟨h, -⟩; exact absurd h (by change Md.TB p ≠ .D 7; simp)) rfl rfl h2
+        have h3 := sumTo_rule hσ1 (md := .TB p) rfl hrec1 _ hnext (by simp) (by simp) rfl rfl h2
         have hw : (rule θ supp (.inr (.inr (.inr (.inr ⟨(p, ⟨_, hp⟩, bt), rfl⟩))))).wt = 1 := rfl
         rw [hw, one_mul] at h3
         rw [hsplit]
@@ -238,14 +226,12 @@ theorem readName (hθ : ∀ q, q ∉ supp → θ q = 0) {S : A} {B : ℤ} (w : T
         omega
       · have hz : θ (p.1 ++ bt :: b.path) = 0 := by rw [hsplit]; exact not_pre hp hθ _
         rw [hz, zero_mul]
-        refine sumTo_stuck hσ1 hrec1 ?_ (by change Md.TB p ≠ .P; simp)
-          (by rintro ⟨h, -⟩; exact absurd h (by change Md.TB p ≠ .D 7; simp)) (by change Md.TB p ≠ .Z; simp) _
-        change nextR supp (.TB p) (kb bt) = none
+        refine sumTo_stuck hσ1 (md := .TB p) rfl hrec1 ?_ (by simp) (by simp) (by simp) _
         cases bt
         · exact dif_neg hp
         · exact dif_neg hp
-    have h3 := sumTo_rule hσ (heap_laM hm rfl rfl hrec) (.inr (.inr (.inr (.inl p))))
-      (by rw [hm]; rfl) (by rw [hm]; simp) (by simp) (by rw [hm]; rfl) rfl key
+    have h3 := sumTo_rule hσ hm (heap_laM hm rfl rfl hrec) (.inr (.inr (.inr (.inl p))))
+      rfl (by simp) (by simp) rfl rfl key
     have hw : (rule θ supp (.inr (.inr (.inr (.inl p))))).wt = 1 := rfl
     rw [hw, one_mul] at h3
     exact h3.mono (by linarith)

@@ -21,15 +21,6 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J}
 
 section Start
 
-/-- The batches between two base parties. -/
-theorem sum_Bt (a c : Fin AA) : ∑ γ, Bt T ch lhat n a c γ = if Valid lhat n then n a c else 0 := by
-  classical
-  unfold Bt
-  split_ifs
-  · rw [← card_eq_sum_card_fiberwise (f := fun k => gam T ch a k) (fun _ _ => mem_coe.2 (mem_univ _)),
-      card_range]
-  · simp
-
 variable (hb : 0 < b)
 include hb
 
@@ -169,7 +160,12 @@ theorem NR0_le (x : T.X 0) : NR0 R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
                 by_cases hac : a = c
                 · simp [hac]
                 · simp only [if_neg hac]
-                  exact sum_Bt a c
+                  -- the batches between two base parties
+                  unfold Bt
+                  split_ifs
+                  · rw [← card_eq_sum_card_fiberwise (f := fun k => gam T ch a k)
+                      (fun _ _ => mem_coe.2 (mem_univ _)), card_range]
+                  · simp
         refine (Finset.sum_le_sum fun a _ => h3 a).trans ?_
         rw [← Finset.mul_sum]
         refine Nat.mul_le_mul_left _ ?_

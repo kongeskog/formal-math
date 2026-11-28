@@ -121,8 +121,7 @@ theorem dstep {σ : St supp} (hσ : OKs σ) {c : Fin 11} (hm : σ.mode = .D c) (
     (hr : nextR supp (.D c) .N = some (.inl r)) (hc : c ≠ 7) (hs : (ruleA r : RD A (Nm supp)).src = .D c)
     (hk : (ruleA r : RD A (Nm supp)).lk = .N) {S : A} {B : ℤ}
     (h : Mach.SumTo (UM θ supp) (nx θ σ (.inl r) 0 0 0) S (B - 1)) : Mach.SumTo (UM θ supp) σ S B := by
-  have h2 := sumTo_ruleA hσ (heap_laM hm h1 rfl hσ.nil) r (by rw [hm]; exact hr) (by rw [hm]; simp)
-    (by rw [hm]; simp [hc]) (by rw [hm]; exact hs) hk h
+  have h2 := sumTo_ruleA hσ hm (heap_laM hm h1 rfl hσ.nil) r hr (by simp) (by simp [hc]) hs hk h
   exact h2.mono (by omega)
 
 theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
@@ -137,8 +136,8 @@ theorem EvOK.quote (c0 x : Tree) : EvOK θ supp (.quote c0) x [.det 1 c0] := by
   · have h0 : σ.regs 1 = 0 := hc
     have h2 := hk (nx θ σ (.inl .en) 0 0 0) 0 (ok.nx _ _ _ _) rfl h0 rfl (heap_nx σ _ _ _ _)
       inpA rfl
-    exact (sumTo_ruleA ok (heap_laM hm h0 rfl ok.nil) .en (by rw [hm]; rfl) (by rw [hm]; simp)
-      (by rw [hm]; simp) (by rw [hm]; rfl) rfl h2).mono (by linarith)
+    exact (sumTo_ruleA ok hm (heap_laM hm h0 rfl ok.nil) .en rfl (by simp) (by simp) rfl rfl
+      h2).mono (by linarith)
   · refine toOp (c := 0) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
     refine dstep ok1 hm1 h11 .d0 rfl (by decide) rfl rfl ?_
     refine (hk (nx θ σ1 (.inl .d0) 0 0 0) (σ1.regs 2) (ok1.nx _ _ _ _) rfl rfl h14
@@ -164,21 +163,23 @@ theorem EvOK.id (x : Tree) : EvOK θ supp .id x [.det 1 x] := by
 /-- The machine fails on `fail`. A formula is `fail` when its opcode is 8, or 10, which no formula
 uses any more and which reads as `fail`, or larger than 10. The machine has a step for each of the
 opcodes up to 10, and stops at both 8 and 10, but through different rules of its table, so the two
-cases are proved apart; larger opcodes are not read as opcodes at all (`noOp`). -/
+cases are proved apart; larger opcodes are not read as opcodes at all (`dstuck`). -/
 theorem EvOK.fail (x : Tree) : EvOK θ supp .fail x [] := by
   intro σ hσ m Bd B h
   obtain ⟨ok, hm, ⟨c, hc, hF⟩, hx⟩ := hσ
   rw [tot_nil]
   obtain ⟨o, a, rfl, hl | hl | hl⟩ := inv_fail hF
   · refine toOp (c := 8) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
-    exact sumTo_stuck ok1 (heap_laM hm1 h11 rfl ok1.nil) (by rw [hm1]; rfl) (by rw [hm1]; simp)
-      (by rw [hm1]; simp) (by rw [hm1]; simp) _
+    exact sumTo_stuck ok1 hm1 (heap_laM hm1 h11 rfl ok1.nil) rfl (by simp) (by simp) (by simp) _
   · refine toOp (c := 10) ok hm hc hl fun σ1 ok1 hm1 h11 h12 h13 h14 hh1 hi1 => ?_
-    exact sumTo_stuck ok1 (heap_laM hm1 h11 rfl ok1.nil) (by rw [hm1]; rfl) (by rw [hm1]; simp) (by
-        rw [hm1]
+    exact sumTo_stuck ok1 hm1 (heap_laM hm1 h11 rfl ok1.nil) rfl (by simp) (by
         rintro ⟨h, -⟩
         injection h with h
-        exact absurd h (by decide)) (by rw [hm1]; simp) _
-  · exact noOp ok hm hc hl
+        exact absurd h (by decide)) (by simp) _
+  · obtain ⟨p, q, s, hrec, hp, -⟩ := hc
+    have h2 := dstuck (θ := θ) (B := B - 1) o 0 (by omega) (nx θ σ (.inl .ec) p q s) p
+      (ok.nx _ _ _ _) rfl rfl (hp.mono (heap_nx σ _ _ _ _)) (by omega)
+    exact (sumTo_ruleA ok hm (heap_laM hm rfl rfl hrec) .ec rfl (by simp) (by simp) rfl rfl
+      h2).mono (by omega)
 
 end Nc.Uni
