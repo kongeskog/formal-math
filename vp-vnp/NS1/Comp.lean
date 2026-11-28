@@ -401,4 +401,10 @@ theorem Does.of_gives {F G : Fm} {x o : Tree} {Q : List (A × Tree)} {c d : ℕ}
     exact h')
   simpa [bindW] using this
 
+/-- A program calls itself: its argument is (this program, data). -/
+theorem Does.self {B G : Fm} {z y : Tree} {Q : List (A × Tree)} {c d : ℕ}
+    (hG : Gives θ G (.cons B.code z) (.cons B.code y) c) (h : Does θ B (.cons B.code y) Q d) :
+    Does θ (.run (.hd .id) G) (.cons B.code z) Q (c + d + 3) :=
+  (Does.run (Gives.id _).hd hG (by rw [hd_cons, Fm.ofTree_code]; exact h)).mono (by omega)
+
 end NS1
