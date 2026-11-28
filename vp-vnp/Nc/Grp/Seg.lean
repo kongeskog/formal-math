@@ -165,8 +165,7 @@ theorem segClose_does (hsep : sep.length ≤ c) (h1 : ∀ f' fs', fs = f' :: fs'
       exact (Gives.cons (Gives.id _).hd (Gives.cons sgFs_gives.hd (Gives.cons (Gives.quote _ _) (Gives.cons e1
         (Gives.cons sgFs_gives.tl (Gives.cons eA (Gives.cons sgRest_gives
           (Gives.cons sgCur_gives sgOut_gives)))))))).mono (by omega)
-    have e3 := Does.run (Gives.id (θ := θ) (.cons (segB sep).code (segS f tk cur (f' :: fs') as rest out))).hd e2
-      (show Does θ (Fm.ofTree (segB sep).code) _ _ _ by rw [Fm.ofTree_code]; exact h1 f' fs' rfl)
+    have e3 := Does.self e2 (h1 f' fs' rfl)
     have hne : listT ((f' :: fs').map num) ≠ .nil := by simp [listT]
     exact (Does.ite_true sgFs_gives hne e3).mono (by omega)
 
@@ -186,8 +185,7 @@ theorem segTake_does (hc : ∀ a ∈ rest, a.length ≤ c) (h2 : ∀ a r, rest =
       refine (Gives.cons (Gives.id _).hd (Gives.cons sgF_gives (Gives.cons (Gives.quote _ _) (Gives.cons e1
         (Gives.cons sgFs_gives (Gives.cons sgAs_gives (Gives.cons sgRest_gives.tl sgOut_gives))))))).mono ?_
       omega
-    have e3 := Does.run (Gives.id (θ := θ) (.cons (segB sep).code (segS f tk cur fs as (a :: r) out))).hd e2
-      (show Does θ (Fm.ofTree (segB sep).code) _ _ _ by rw [Fm.ofTree_code]; exact h2 a r rfl)
+    have e3 := Does.self e2 (h2 a r rfl)
     have hne : listT ((a :: r).map ofBits) ≠ .nil := by simp [listT]
     exact (Does.ite_true sgRest_gives hne e3).mono (by omega)
 

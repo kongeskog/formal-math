@@ -389,8 +389,7 @@ def tmB : Fm := .ite (.hd (.hd (.tl .id)))
 theorem tmRec_gives {t : Fm} {x s W o : Tree} {ct d : ℕ} (ht : Gives θ t (.cons tmB.code (.cons x W)) s ct)
     (h : Gives θ tmB (.cons tmB.code (.cons s W)) o d) :
     Gives θ (tmRec t) (.cons tmB.code (.cons x W)) o (ct + d + 15) := by
-  refine (Gives.run (Gives.id (θ := θ) (.cons tmB.code (.cons x W))).hd (Gives.cons (Gives.id _).hd
-    (Gives.cons ht (Gives.id _).tl.tl)) (by rw [hd_cons, Fm.ofTree_code]; exact h)).mono (by omega)
+  exact (Does.self ((Gives.id _).hd.cons (Gives.cons ht (Gives.id _).tl.tl)) h).mono (by omega)
 
 theorem tmB_gives (t : Tm) (W : Tree) :
     Gives θ tmB (.cons tmB.code (.cons t.tree W)) (t.expand (gets W)) (t.cost (gets W)) := by
@@ -455,9 +454,7 @@ def tmF (t w : Fm) : Fm := app tmB.code (.cons (.quote tmB.code) (.cons t w))
 
 theorem tmF_gives {tf wf : Fm} {x W : Tree} {ct cw : ℕ} {t : Tm} (ht : Gives θ tf x t.tree ct) (hw : Gives θ wf x W cw) :
     Gives θ (tmF tf wf) x (t.expand (gets W)) (ct + cw + t.cost (gets W) + 10) := by
-  refine (Gives.app (p := tmB.code) (Gives.cons (Gives.quote _ _) (Gives.cons ht hw)) (by
-    rw [Fm.ofTree_code]
-    exact tmB_gives t W)).mono (by omega)
+  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons ht hw)) (tmB_gives t W)).mono (by omega)
 
 /-- Fill in all templates of a list. -/
 def tmsF (ts : List Tm) (w : Fm) : Fm := mapF (tmF (.tl .id) (.hd .id)) w (.quote (listT (ts.map Tm.tree)))
