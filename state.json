@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T14:53:41.676415215Z",
+  "updated_at": "2026-11-28T14:54:49.341192192Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1432,7 +1432,7 @@
       "pr": 220,
       "title": "restructure(NS1/ApproxRound): a round renames the constants of D by a pass over the names of the value",
       "author": "kongeskog",
-      "head_sha": "d9042e5990ee32ef62e9fa8510495398ca61a7f1",
+      "head_sha": "e5b84cc54dd6ac214f765e0d57a8b083a46d5e58",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-28T14:48:24Z",
