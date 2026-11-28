@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T04:55:57.689089778Z",
+  "updated_at": "2026-11-28T05:04:06.749547417Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "f9ea90c626406b2d365c918294e31035b135af6e",
-    "at": "2026-11-28T04:44:24.113005635Z",
+    "sha": "0118e054712ed2d743935998d80a0e8de23ffb5e",
+    "at": "2026-11-28T05:04:06.749547417Z",
     "metrics": {
-      "tokens": 802369,
-      "loc": 52138,
-      "decls": 4270,
-      "files": 314,
-      "bytes": 3020717,
-      "build_seconds": 389
+      "tokens": 798093,
+      "loc": 51946,
+      "decls": 4268,
+      "files": 313,
+      "bytes": 3005943,
+      "build_seconds": 561
     }
   },
   "counts": {
-    "merged": 109,
+    "merged": 110,
     "rejected": 4,
-    "open": 2,
+    "open": 1,
     "contributors": 2,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 102,
+      "merged": 103,
       "attempts": 108,
-      "saved": 115928
+      "saved": 120204
     },
     {
       "login": "yidakra",
@@ -143,7 +143,7 @@
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T06:57:37Z",
       "pr": 194,
-      "result_delta": null,
+      "result_delta": -4276,
       "created_at": "2026-11-28T03:10:53Z",
       "url": "https://github.com/kongeskog/formal-math/issues/188",
       "technique": "restructure",
@@ -1173,116 +1173,6 @@
     }
   ],
   "open": [
-    {
-      "pr": 194,
-      "title": "restructure(NS1): state a program's call of itself once; one run rule and one fold",
-      "author": "kongeskog",
-      "head_sha": "e2c95c82ec4322243dc64ce52f66851487a8e1b2",
-      "base_sha": "50f849a6c9dbd201f0a92ad22aa0eb9f70c1e557",
-      "status": "stale",
-      "created_at": "2026-11-28T04:20:43Z",
-      "decided_at": null,
-      "metrics": {
-        "tokens": 802509,
-        "loc": 51881,
-        "decls": 4268,
-        "files": 313,
-        "bytes": 3015796,
-        "build_seconds": 273
-      },
-      "base_metrics": {
-        "tokens": 806785,
-        "loc": 52073,
-        "decls": 4270,
-        "files": 314,
-        "bytes": 3030570,
-        "build_seconds": null
-      },
-      "delta": -4276,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "quota",
-          "label": "Within the open-change limit",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pass"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pass",
-          "detail": "16 files changed"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pass"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pass"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pass"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pass"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pass"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pass",
-          "detail": "the added lines hold 1321 characters of comments and strings"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pass",
-          "detail": "tokens 806785 → 802509 (-4276)"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pass"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pass"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending",
-          "detail": "Main moved; re-verifying on the new main"
-        }
-      ],
-      "idea": 188,
-      "url": "https://github.com/kongeskog/formal-math/pull/194",
-      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46107102100",
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "NS1"
-    },
     {
       "pr": 195,
       "title": "shorten(Paper): grw for the chains of monotone bound steps in four files",
