@@ -15,12 +15,12 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ} {o : NM R FL (ch := ch) → ℕ}
 
 /-- The parent of a chamber, as a node. -/
-noncomputable def parN (hh : 0 < h) (Lf : ∀ j, T.Ed j → ℕ) (j : ℕ) (c : T.X j) : Nd T :=
-  if hj : j + 1 ≤ J then nd T (j + 1) hj (hostj hh Lf c) else none
+noncomputable def parN (Lf : ∀ j, T.Ed j → ℕ) (j : ℕ) (c : T.X j) : Nd T :=
+  if hj : j + 1 ≤ J then nd T (j + 1) hj (hostj Lf c) else none
 
 /-- The chamber below: which end of the edge of a relay. -/
 def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
@@ -29,24 +29,23 @@ def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
   | .fin e, β => some ⟨Fin.last J, if β then T.e1 e else T.e0 e⟩
   | _, _ => none
 
-variable (hb : 0 < b) (hh : 0 < h)
 theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i e)) (hne : num R ch FL lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
-    i = imin hh (lev (load R ch FL lhat n o)) j.1 := by
+    i = imin (lev (load R ch FL lhat n o)) j.1 := by
   classical
   rw [num_eq, numF] at hne
   split_ifs at hne with ha
-  · exact (isMin_iff hh _ j.castSucc i).1 ha
+  · exact (isMin_iff _ j.castSucc i).1 ha
   · exact absurd rfl hne
 
-include hb hh
 
 theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s))
     (hne : num R ch FL lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
-    T.ty e = imin hh (lev (load R ch FL lhat n o)) j.1 := by
-  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
+    T.ty e = imin (lev (load R ch FL lhat n o)) j.1 := by
+  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
   have h2 := (num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0).2
   by_contra hcon
-  have h3 : ¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) := fun hm => hcon ((isMin_iff hh _ j.castSucc _).1 hm)
+  have h3 : ¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) :=
+    fun hm => hcon ((isMin_iff _ j.castSucc _).1 hm)
   have := h2 h3
   omega
 
@@ -55,7 +54,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
     (hne : num R ch FL lhat n o (.inl ⟨x, hx⟩) ≠ 0) :
     ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), chd x β = some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ ∧
       hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
-        s(nd T j hj c, parN hh (lev (load R ch FL lhat n o)) j c) := by
+        s(nd T j hj c, parN (lev (load R ch FL lhat n o)) j c) := by
   have e0 : ∀ β : Bool, hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
       if β then s(tri T R ch x 1, tri T R ch x 2) else s(tri T R ch x 0, tri T R ch x 1) := by
     intro β
@@ -70,9 +69,10 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
     · simp only [tgR] at hd
       split_ifs at hd
       exact (edgeO_hold (R := R) (ch := ch) (AA := AA) (m := m) (c := ch a) (c' := ch c) (γ := γ) (s := s.1 + 1) hs).1 hd
-  · have hi := num_inn hh j i e hx hne
+  · have hi := num_inn j i e hx hne
     have hjJ := j.2
-    have hpar : ∀ c : T.X j.1, parN hh (lev (load R ch FL lhat n o)) j.1 c = nd T (j + 1) j.2 (hst T i c) := by
+    have hpar : ∀ c : T.X j.1, parN (lev (load R ch FL lhat n o)) j.1 c =
+        nd T (j + 1) j.2 (hst T i c) := by
       intro c
       unfold parN
       rw [dif_pos (by omega : j.1 + 1 ≤ J), hi]
@@ -84,15 +84,16 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
     · refine ⟨j.1, j.2.le, T.e1 e, rfl, ?_⟩
       rw [hpar]
       have h1 : T.vx i (T.e0 e) = T.vx i (T.e1 e) := by
-        rw [T.nr_vx0 j.2.le i ⟨e, hx⟩, T.nr_vx1 j.2.le i ⟨e, hx⟩]
+        rw [T.nr_vx0 i ⟨e, hx⟩, T.nr_vx1 i ⟨e, hx⟩]
       have h2 : hst T i (T.e0 e) = hst T i (T.e1 e) := by
         unfold hst
         rw [h1]
       change s(nd T (j + 1) j.2 (hst T i (T.e0 e)), nd T j j.2.le (T.e1 e)) = _
       rw [h2, Sym2.eq_swap]
-  · have hi := num_mid hb hh j e s hx hne
+  · have hi := num_mid j e s hx hne
     have hjJ := j.2
-    have hpar : ∀ c : T.X j.1, parN hh (lev (load R ch FL lhat n o)) j.1 c = nd T (j + 1) j.2 (hst T (T.ty e) c) := by
+    have hpar : ∀ c : T.X j.1, parN (lev (load R ch FL lhat n o)) j.1 c =
+        nd T (j + 1) j.2 (hst T (T.ty e) c) := by
       intro c
       unfold parN
       rw [dif_pos (by omega : j.1 + 1 ≤ J), hi]
@@ -118,7 +119,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
         rw [hq, Sym2.eq_swap]
       · change s(nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e)), nd T j j.2.le (T.e1 e)) = _
         rw [Sym2.eq_swap]
-  · have hpar : ∀ c : T.X J, parN hh (lev (load R ch FL lhat n o)) J c = none := by
+  · have hpar : ∀ c : T.X J, parN (lev (load R ch FL lhat n o)) J c = none := by
       intro c
       unfold parN
       rw [dif_neg (by omega)]
@@ -131,7 +132,6 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       change s(none, nd T J le_rfl (T.e1 e)) = _
       rw [Sym2.eq_swap]
 
-omit hb hh in
 /-- A sum over at most one element. -/
 theorem sum_le_one {κ : Type*} (s : Finset κ) (f : κ → ℕ) (B : ℕ) (h1 : ∀ x ∈ s, ∀ y ∈ s, x = y) (h2 : ∀ x ∈ s, f x ≤ B) :
     ∑ x ∈ s, f x ≤ B :=
@@ -180,14 +180,14 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
       · exact absurd b2 a2
       · rw [a1, b1]
   rcases h1 with ⟨i, rfl⟩ | ⟨s, rfl⟩ <;> rcases h1' with ⟨i', rfl⟩ | ⟨s', rfl⟩
-  · rw [num_inn hh j i e hx hn, num_inn hh j i' e hx' hn']
+  · rw [num_inn j i e hx hn, num_inn j i' e hx' hn']
   · exfalso
-    have a1 := num_inn hh j i e hx hn
-    have a2 := num_mid hb hh j e s' hx' hn'
+    have a1 := num_inn j i e hx hn
+    have a2 := num_mid j e s' hx' hn'
     exact hx (a2.trans a1.symm)
   · exfalso
-    have a1 := num_inn hh j i' e hx' hn'
-    have a2 := num_mid hb hh j e s hx hn
+    have a1 := num_inn j i' e hx' hn'
+    have a2 := num_mid j e s hx hn
     exact hx' (a2.trans a1.symm)
   · rw [mm s s' hx hx' hd hd']
 
@@ -205,7 +205,7 @@ theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : F
   · intro ν hν ν' hν'
     obtain ⟨-, h0, ⟨x, hx⟩, rfl, h2, h3⟩ := mem_filter.1 hν
     obtain ⟨-, h0', ⟨x', hx'⟩, rfl, h2', h3'⟩ := mem_filter.1 hν'
-    have : x = x' := ofEd_unique hb hh hx hx' h3 h3' h2 h2' (hnz _ h0) (hnz _ h0')
+    have : x = x' := ofEd_unique hx hx' h3 h3' h2 h2' (hnz _ h0) (hnz _ h0')
     subst this
     rfl
   · intro ν hν
@@ -216,10 +216,9 @@ theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : F
       exact (alv_le_num _ _).trans (num_inl _)
     · simp only at h3
       subst h3
-      exact (alv_mid_le hb j e s hx β).1
+      exact (alv_mid_le j e s hx β).1
 
 open Classical in
-omit hb hh in
 /-- A nonzero unit at the chamber lies at an incident edge end. Sum the end bounds,
 using that an edge has at most one end at the given chamber. -/
 private theorem sum_child_of_cover (j : Fin (J + 1)) (c : T.X j)
@@ -269,7 +268,7 @@ theorem sum_child (j : ℕ) (hj : j ≤ J) (c : T.X j) : (∑ ν : NM R FL,
   rw [e1]
   rcases hj.lt_or_eq with h1 | h1
   · let i : Fin J := ⟨j, h1⟩
-    refine sum_child_of_cover i.castSucc c _ (sum_edge_end hb hh i) ?_
+    refine sum_child_of_cover i.castSucc c _ (sum_edge_end i) ?_
     rintro ν ⟨x, β, rfl, hd, hc⟩ h0
     have hex : ∃ e : T.Ed i, OfEd i e x.1 ∧ (if β then T.e1 e else T.e0 e) = c := by
       obtain ⟨x, hx⟩ := x

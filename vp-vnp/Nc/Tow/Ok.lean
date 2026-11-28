@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 /-- Active relays are determined by their targets. -/
@@ -117,7 +117,7 @@ section Causal
 variable {o' : (sys R FL Pl).N → Fin U1} {t : ℕ}
 
 /-- The units given at a slot depend only on the outcomes of earlier moves. -/
-theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
+theorem consM_congr (z : ZM R FL (ch := ch))
     (hag : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL z.1 →
       ∀ c, oo R FL Pl o ⟨mv', c⟩ = oo R FL Pl o' ⟨mv', c⟩) :
     (consM R FL Pl lhat n o z : Finset (Un R FL Pl U0 U1)) = consM R FL Pl lhat n o' z := by
@@ -132,18 +132,18 @@ theorem consM_congr (hb : 0 < b) (z : ZM R FL (ch := ch))
       change k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o) (eN R FL Pl ν) ↔
         k.1 < alv R ch FL lhat (nn n) (oo R FL Pl o') (eN R FL Pl ν)
       unfold alv
-      rw [num_congr hb fun mv' hmv' c => hag mv' (hmv'.trans h1) c,
+      rw [num_congr fun mv' hmv' c => hag mv' (hmv'.trans h1) c,
         alvN_congr (fun c => hag _ h1 c)]
   ext u
   rcases z with ⟨x | l, e⟩
-  · rw [consM_inl, consM_inl, actR_congr fun τ hτ => load_congr hb hτ hag]
+  · rw [consM_inl, consM_inl, actR_congr fun τ hτ => load_congr hτ hag]
     exact and_congr_right fun _ => and_congr_left fun h => hal (h ▸ inp_time x.1)
   · have hrk (hu : tgU R FL Pl u = .seg l.1 l.2.1 l.2.2.1 (pr FL l.2.2.2 e)) :
         rkU R FL Pl lhat n o u = rkU R FL Pl lhat n o' u := by
       unfold rkU
       exact rk_congr fun v hv =>
         mem_Al.trans ((hal ((hv.trans hu).symm ▸ le_rfl)).trans mem_Al.symm)
-    rw [consM_inr, consM_inr, pick_congr fun q => load_congr hb le_rfl hag, num_congr hb hag]
+    rw [consM_inr, consM_inr, pick_congr fun q => load_congr le_rfl hag, num_congr hag]
     refine and_congr_right fun _ => ⟨fun ⟨h1, h2, h3⟩ => ?_, fun ⟨h1, h2, h3⟩ => ?_⟩
     · rw [hrk h2] at h3
       exact ⟨(hal (h2 ▸ le_rfl)).1 h1, h2, h3⟩
@@ -162,13 +162,13 @@ theorem oo_congr {P : Fin (Fintype.card (Mv T R ch FL)) → Prop}
 end Causal
 
 /-- **The plan obeys the rules.** -/
-theorem plan_ok (hb : 0 < b) {cap : ℕ}
+theorem plan_ok {cap : ℕ}
     (hcap : ∀ (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) mv,
       num R ch FL lhat (nn n) (oo R FL Pl o) mv ≤ cap) : (plan R FL Pl lhat U0 U1).Ok cap where
-  causal n o o' z ho := consM_congr hb _ fun mv h => oo_congr (P := (· < z.1)) ho (lt_of_time h)
-  causal' n o o' x ho := num_congr hb fun mv h => oo_congr (P := (· < x)) ho (lt_of_time h)
+  causal n o o' z ho := consM_congr _ fun mv h => oo_congr (P := (· < z.1)) ho (lt_of_time h)
+  causal' n o o' x ho := num_congr fun mv h => oo_congr (P := (· < x)) ho (lt_of_time h)
   causal'' n o o' x ho :=
-    good_congr hb (fun mv h => oo_congr (P := (· < x)) (fun ν h' => ho ν h'.le) (lt_of_time h))
+    good_congr (fun mv h => oo_congr (P := (· < x)) (fun ν h' => ho ν h'.le) (lt_of_time h))
       (oo_congr (P := (· ≤ x)) ho (by simp))
   sub n o z u hu := by
     -- units that are given are current: seen before the move, and not given at an earlier slot
@@ -243,9 +243,9 @@ theorem plan_ok (hb : 0 < b) {cap : ℕ}
           · rfl
         rw [h1, Sym2.map_mk]
       · change s(Pl.pt (nd T (l.1 + 1) l.1.2
-            (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
+            (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).a e)))),
           Pl.pt (nd T (l.1 + 1) l.1.2
-            (atv l.1.2 l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
+            (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).b e))))) = _
         simp only [inpZ, hT, pr, Sym2.map_mk]
     rw [← h4, Sym2.eq_iff] at h3
     exact h3.imp id And.symm

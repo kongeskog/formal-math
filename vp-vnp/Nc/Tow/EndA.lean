@@ -17,7 +17,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 /-- Relays that are targets exist. -/
@@ -90,12 +90,12 @@ theorem seg_nondiag {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
     intro c hne hd
     rw [Sym2.mk_isDiag_iff] at hd
     apply hne
-    apply (T.vx_co (Nat.succ_le_of_lt j.2) i).1
+    apply (T.vx_co i).1
     refine Prod.ext ?_ ?_
     · simp only
-      rw [T.host_vx j.2, T.π_vx j.2]
+      rw [T.host_vx j.2, T.π_vx]
     · simp only
-      rw [hd, T.π_co j.2]
+      rw [hd, T.π_co]
   obtain ⟨e, s, hx, h1, -, h3⟩ := seg_chan hν
   subst h1
   rcases h3 with ⟨h5, -, h7⟩ | ⟨h5, -, h7⟩
@@ -111,7 +111,7 @@ section Plan
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 /-- Alive units with a target are given. -/
-theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
+theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
     (hd : tgU R FL Pl u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
   classical
   set L := load R ch FL lhat (nn n) (oo R FL Pl o) with hL
@@ -126,7 +126,7 @@ theorem exists_cons (hh : 0 < h) {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n
     · intro e hτ
       exact one (.fin e) trivial trivial hτ
     · intro e hτ
-      obtain ⟨i, hi⟩ := exists_isMin hh L j.castSucc
+      obtain ⟨i, hi⟩ := exists_isMin L j.castSucc
       by_cases ht : T.ty e = i
       · refine one (.mid j e 0) ⟨fun h3 => absurd h3 (by decide), fun h3 => absurd h3 (by decide)⟩ (fun _ => ?_) ?_
         · rw [ht]; exact hi
@@ -210,14 +210,14 @@ theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
     simpa [seen0] using h1
 
 /-- **The current units in the end**: alive units between a node and its parent, and dead units. -/
-theorem cur_end (hh : 0 < h) {u : Un R FL Pl U0 U1}
+theorem cur_end {u : Un R FL Pl U0 U1}
     (hu : u ∈ (plan R FL Pl lhat U0 U1).cur n o (Fintype.card (Mv T R ch FL))) :
     u ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv T R ch FL)) ∧
       (AlU R FL Pl lhat n o u → tgU R FL Pl u = .done) := by
   rw [Plan.cur, mem_sdiff] at hu
   refine ⟨hu.1, fun ha => ?_⟩
   by_contra hd
-  obtain ⟨z, hz⟩ := exists_cons hh ha hd
+  obtain ⟨z, hz⟩ := exists_cons ha hd
   apply hu.2
   unfold Plan.used
   rw [mem_biUnion]
