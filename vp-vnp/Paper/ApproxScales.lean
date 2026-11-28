@@ -35,9 +35,8 @@ structure LargeScale (h cB U : ℕ) : Prop where
 /-- The bound of all logarithmic quantities. -/
 theorem cube_le {h cB U u X : ℕ} (hL : LargeScale h cB U) (hu : U ≤ u) (hX : X ≤ 3 * cB * lg u ^ 3) :
     1000 * X ^ 3 ≤ u := by
-  calc 1000 * X ^ 3 ≤ 1000 * (3 * cB * lg u ^ 3) ^ 3 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hX 3)
-    _ = 1000 * (3 * cB) ^ 3 * lg u ^ 9 := by ring
-    _ ≤ u := hL.poly u hu
+  grw [hX, ← hL.poly u hu]
+  exact (by ring : _ = _).le
 
 /-- **Paper: proof of Proposition prop:approx-acc, One round, repeated from a scale to its fifth power.** "The time again
 has a factor u to spare." The new constants inherit every property of the old ones that rescaling keeps. -/
@@ -60,9 +59,7 @@ theorem prop_approx_acc_step {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (hC : �
   have a4 := hI.ht_lin
   rw [hl] at hl2 a1 a2 a3 a4
   have hl3 : l ≤ l ^ 3 := Nat.le_self_pow (by norm_num) l
-  have h8 : 8 ≤ l ^ 3 := by
-    calc 8 = 2 ^ 3 := by norm_num
-      _ ≤ l ^ 3 := Nat.pow_le_pow_left hl2 3
+  have h8 : 8 ≤ l ^ 3 := Nat.pow_le_pow_left hl2 3
   generalize hJ : (80 * h + 1) * l = J
   have hJ1 : J ≤ 81 * h * l := by rw [← hJ]; exact Nat.mul_le_mul_right _ (by omega)
   have hcl : 2000 * h * l ≤ cB * l ^ 3 := (Nat.mul_le_mul_right _ hcB).trans (Nat.mul_le_mul_left _ hl3)
@@ -75,24 +72,16 @@ theorem prop_approx_acc_step {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (hC : �
   generalize hX : B + (2 * 5 + 2) * (J + 1) + K.ht + K.ht + 10 = X
   have hX6 : X ≤ 3 * (2 * cB) * l ^ 3 := by omega
   obtain ⟨K', D', hD', hs', hn', hh', hsp, hth⟩ := prop_approx_acc_next hh (α := 5) le_rfl (hC u hu) hcs hI.acc
-    (by
-      calc K.nds * (4 * 5 + 5) ≤ u * u := Nat.mul_le_mul hI.nds (by omega)
-        _ = u ^ 2 := (pow_two u).symm
-        _ ≤ u ^ (h * 5) := pow_le_pow hu1 (by omega))
+    (by grw [hI.nds, ← pow_le_pow hu1 (show 2 ≤ h * 5 by omega), pow_two,
+      show 4 * 5 + 5 ≤ u by omega])
     (hI.size.trans (pow_le_pow hu1 (by omega))) hI.span (Nat.two_pow_pos _) (J := J) (by
       have : 16 * h * 5 + 1 = 80 * h + 1 := by ring
       rw [this, ← hJ, Nat.mul_comm (80 * h + 1) l, pow_mul, ← hl]
       exact Nat.pow_lt_pow_left (lt_two_pow_lg u) (by omega)) hX.le (cube_le hL hu (by rw [hl]; exact hX6))
   have hlg : 4 * l ≤ lg (u ^ 5) := hl ▸ le_lg_four (by omega)
-  have hlg3 : 64 * l ^ 3 ≤ lg (u ^ 5) ^ 3 := by
-    calc 64 * l ^ 3 = (4 * l) ^ 3 := by ring
-      _ ≤ _ := Nat.pow_le_pow_left hlg 3
-  have hc64 : 64 * (cB * l ^ 3) ≤ cB * lg (u ^ 5) ^ 3 := by
-    calc 64 * (cB * l ^ 3) = cB * (64 * l ^ 3) := by ring
-      _ ≤ _ := Nat.mul_le_mul_left _ hlg3
-  have hd64 : 64 * (cΔ * l ^ 3) ≤ cΔ * lg (u ^ 5) ^ 3 := by
-    calc 64 * (cΔ * l ^ 3) = cΔ * (64 * l ^ 3) := by ring
-      _ ≤ _ := Nat.mul_le_mul_left _ hlg3
+  have hlg3 : 64 * l ^ 3 ≤ lg (u ^ 5) ^ 3 := by grw [← hlg]; exact (by ring : _ = _).le
+  have hc64 : 64 * (cB * l ^ 3) ≤ cB * lg (u ^ 5) ^ 3 := by grw [← hlg3, mul_left_comm]
+  have hd64 : 64 * (cΔ * l ^ 3) ≤ cΔ * lg (u ^ 5) ^ 3 := by grw [← hlg3, mul_left_comm]
   have hlin : 2000 * h * l + 2000 * (h * l) ≤ 2000 * h * lg (u ^ 5) := by
     have := Nat.mul_le_mul_left (2000 * h) (show 2 * l ≤ lg (u ^ 5) by omega)
     linarith
@@ -103,15 +92,12 @@ theorem prop_approx_acc_step {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (hC : �
     exact pow_le_pow hu1 (by omega)
   refine ⟨K', _, D', ⟨h17.mono (pow_le_pow (by omega) (by omega)) le_rfl, hu.trans hu5, ?_, hs', by omega, by omega,
     by omega, by omega, ?_, hth _ (fun r c hc => hc.rescale r) hI.thin⟩, h17, hth⟩
-  · calc K'.nds ≤ K.nds * (4 * 5 + 5) := hn'
-      _ ≤ u * u ^ 4 := Nat.mul_le_mul hI.nds (le_trans (by omega) (Nat.le_self_pow (by norm_num) u))
-      _ = u ^ 5 := by ring
+  · grw [hn', hI.nds, pow_succ' u 4, ← Nat.le_self_pow (by norm_num) u, show 4 * 5 + 5 ≤ u by omega]
   · refine hsp.imp fun c hc => hc.mono ?_
     rw [← pow_add, ← pow_mul, hl]
     refine Nat.pow_le_pow_right (by norm_num) ?_
-    have : 4 * (cB * l ^ 3) ≤ cΔ * l ^ 3 := by
-      calc 4 * (cB * l ^ 3) = 4 * cB * l ^ 3 := by ring
-        _ ≤ _ := Nat.mul_le_mul_right _ hcΔ
+    have := Nat.mul_le_mul_right (l ^ 3) hcΔ
+    rw [mul_assoc] at this
     omega
 
 /-- Arbitrarily large scales, with one power of time to spare; the constants inherit what rescaling keeps. -/
@@ -130,8 +116,7 @@ theorem prop_approx_acc_all_scales {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) (h
     refine ⟨u' ^ 5, K'', B'', D'', ?_, hI'', hA, fun P hP h => hK' P hP (hK P hP h)⟩
     have h4 : 4 ≤ u' := hL.two.trans hI'.big
     have : u' * 4 ≤ u' ^ 5 := by
-      calc u' * 4 ≤ u' * u' ^ 4 := Nat.mul_le_mul_left _ (h4.trans (Nat.le_self_pow (by norm_num) u'))
-        _ = u' ^ 5 := by ring
+      grw [pow_succ' u' 4, ← Nat.le_self_pow (by norm_num) u', h4]
     omega
 
 /-- **Paper: proof of Proposition prop:approx-acc, Back to exact values, with the sizes.** At a scale that is large against the numbers of the invariant there is an
@@ -167,14 +152,11 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
   have hZ3 : Z ≤ Z ^ 3 := Nat.le_self_pow (by norm_num) Z
   have hZ2 : Z ^ 2 ≤ Z ^ 3 := Nat.pow_le_pow_right (by omega) (by norm_num)
   have hJpow : u ^ (16 * h - 17) < 2 ^ J := by
-    calc u ^ (16 * h - 17) ≤ u ^ (16 * h) := pow_le_pow hu1 (by omega)
-      _ < (2 ^ l) ^ (16 * h) := Nat.pow_lt_pow_left hltu (by omega)
-      _ = 2 ^ J := by rw [← hJ, ← pow_mul]; congr 1; ring
+    rw [← hJ, ← mul_assoc, mul_comm (16 * h), pow_mul]
+    exact (Nat.pow_le_pow_right hu1 (by omega)).trans_lt (Nat.pow_lt_pow_left hltu (by omega))
   generalize hnB : (K.expand B).nds = nB
   have hnB2 : nB ≤ u ^ 2 := by
-    calc nB ≤ K.nds * (2 * B + 1) := hnB ▸ KT.nds_expand B K
-      _ ≤ u * u := Nat.mul_le_mul hI.nds (by omega)
-      _ = u ^ 2 := (pow_two u).symm
+    grw [← hnB, KT.nds_expand B K, hI.nds, pow_two, show 2 * B + 1 ≤ u by omega]
   have pbig := pow_big hu
   have hu2l : u ^ 2 < 2 ^ (2 * l) := by
     rw [Nat.mul_comm, pow_mul]
@@ -215,8 +197,8 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
             ≤ (60 * (K.ht + B + J + 1) + 42 + 1) * u ^ (16 * h - 17) := by
               have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 1 (u ^ (16 * h - 17))
               omega
-        _ ≤ u * u ^ (16 * h - 17) := Nat.mul_le_mul_right _ m1
-        _ = u ^ (16 * h - 16) := by rw [← pow_succ']; congr 1; omega)
+        _ ≤ u ^ (16 * h - 17 + 1) := pow_succ' u _ ▸ Nat.mul_le_mul_right _ m1
+        _ = _ := by congr 1; omega)
   rw [hnB] at hn' hs'
   have h2l : ∀ k, 2 ^ (k * l) ≤ u ^ (2 * k) := by
     intro k
@@ -229,21 +211,17 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
     rw [pow_two]
     omega
   have hJm : 2 ^ (J + m + 1) ≤ u ^ (4400 * h) := by
-    calc 2 ^ (J + m + 1) ≤ 2 ^ (2200 * h * l) := Nat.pow_le_pow_right (by norm_num) (by
-          have e : 2200 * h * l = 2200 * (h * l) := by ring
-          omega)
-      _ ≤ u ^ (2 * (2200 * h)) := h2l _
-      _ = _ := by congr 1; ring
+    grw [show 4400 * h = 2 * (2200 * h) by ring, ← h2l, mul_assoc]
+    exact Nat.pow_le_pow_right (by norm_num) (by omega)
   have hn6 : K'.nds ≤ u ^ (4400 * h + 6) := by
-    calc K'.nds ≤ nB * 2 ^ (J + m + 1) := hn'
-      _ ≤ u ^ 2 * u ^ (4400 * h) := Nat.mul_le_mul hnB2 hJm
-      _ ≤ _ := by rw [← pow_add]; exact pow_le_pow hu1 (by omega)
+    grw [hn', hnB2, hJm, ← pow_add]
+    exact pow_le_pow hu1 (by omega)
   have hs6 : D'.size ≤ u ^ (4400 * h + 6) := by
     have p1 : nB * (2 ^ (J + m) * (8 * (K.ht + B + J + m + W) + xcst + 31)) ≤ u ^ (4400 * h + 4) := by
-      calc _ ≤ u ^ 2 * (u ^ (4400 * h) * u) := Nat.mul_le_mul hnB2 (Nat.mul_le_mul
-            ((Nat.pow_le_pow_right (by norm_num) (Nat.le_succ _)).trans hJm) (by omega))
-        _ = u ^ (4400 * h + 3) := by rw [pow_add]; ring
-        _ ≤ _ := pow_le_pow hu1 (by omega)
+      grw [hnB2, Nat.pow_le_pow_right (by norm_num) (Nat.le_succ (J + m)), hJm,
+        show 8 * (K.ht + B + J + m + W) + xcst + 31 ≤ u by omega,
+        ← Nat.pow_le_pow_right hu1 (show 2 + (4400 * h + 1) ≤ _ by omega), pow_add, pow_add,
+        pow_one]
     have p2 : D.size ≤ u ^ (4400 * h + 4) := hI.size.trans (pow_le_pow hu1 (by omega))
     have p3 : xcst ≤ u ^ (4400 * h + 4) := (by omega : xcst ≤ u).trans (Nat.le_self_pow (by omega) u)
     have p4 := pbig (4400 * h + 4)
@@ -260,9 +238,8 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
     linarith
   refine ⟨K', 1, D', hacc, hn6, hs6, ?_, ?_⟩
   · rw [hY, pow_two]
-    calc K'.ht ≤ K.ht + B + J + m := hh'
-      _ ≤ 9 * Y := by omega
-      _ ≤ Y * Y := Nat.mul_le_mul_right _ (by omega)
+    calc _ ≤ 9 * Y := by omega
+      _ ≤ _ := Nat.mul_le_mul_right _ (by omega)
   · rw [hY]
     exact Nat.one_le_pow _ _ (by omega)
 
@@ -307,13 +284,8 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     omega
   have hP2 : P ≤ P ^ 2 := Nat.le_self_pow (by norm_num) P
   have hP3 : P ^ 2 ≤ P ^ 3 := Nat.pow_le_pow_right hPpos (by norm_num)
-  have hB3 : B ≤ 4096 * P ^ 3 := by
-    calc B ≤ (16 * P) ^ 3 := hB.trans (Nat.pow_le_pow_left hVs 3)
-      _ = 4096 * P ^ 3 := by ring
-  have hK3 : K.ht ≤ 256 * P ^ 3 := by
-    calc K.ht ≤ (16 * P) ^ 2 := hKh.trans (Nat.pow_le_pow_left hVs 2)
-      _ = 256 * P ^ 2 := by ring
-      _ ≤ 256 * P ^ 3 := Nat.mul_le_mul_left _ hP3
+  have hB3 : B ≤ 4096 * P ^ 3 := by grw [hB, hVs]; exact (by ring : _ = _).le
+  have hK3 : K.ht ≤ 256 * P ^ 3 := by grw [hKh, hVs, ← hP3]; exact (by ring : _ = _).le
   generalize hJ : (16 * h * α + 1) * l = J
   have hJP : J ≤ 17 * P := by
     rw [← hJ]
@@ -326,9 +298,8 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     have : α * 1 ≤ 17 * α * l := Nat.mul_le_mul (by omega) hl1
     omega
   have hJ2 : (2 * α + 2) * (J + 1) ≤ 54 * P ^ 3 := by
-    calc (2 * α + 2) * (J + 1) ≤ 3 * P * (18 * P) := Nat.mul_le_mul (by omega) (by omega)
-      _ = 54 * P ^ 2 := by ring
-      _ ≤ 54 * P ^ 3 := Nat.mul_le_mul_left _ hP3
+    grw [show 2 * α + 2 ≤ 3 * P by omega, show J + 1 ≤ 18 * P by omega, ← hP3]
+    exact (by ring : _ = _).le
   generalize hX : B + (2 * α + 2) * (J + 1) + K.ht + K.ht + 10 = X
   have hX7 : X ≤ 7000 * P ^ 3 := by
     have : 1 ≤ P ^ 3 := Nat.one_le_pow _ _ hPpos
@@ -338,12 +309,9 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
     omega
   have hK4 : K.nds * (4 * α + 5) ≤ v ^ α := by
-    calc K.nds * (4 * α + 5) ≤ v ^ a * v := Nat.mul_le_mul hKn (by
-          have : (2 * α + 2) * 1 ≤ (2 * α + 2) * (J + 1) := Nat.mul_le_mul_left _ (by omega)
-          have h3 : 1000 * X ≤ 1000 * X ^ 3 := Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) X)
-          omega)
-      _ = v ^ (a + 1) := (pow_succ _ _).symm
-      _ ≤ v ^ α := pow_le_pow hv1 haα
+    have : (2 * α + 2) * 1 ≤ (2 * α + 2) * (J + 1) := Nat.mul_le_mul_left _ (by omega)
+    have h3 : 1000 * X ≤ 1000 * X ^ 3 := Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) X)
+    grw [hKn, ← Nat.pow_le_pow_right hv1 haα, pow_succ, show 4 * α + 5 ≤ v by omega]
   have hαh : α ≤ h * α := Nat.le_mul_of_pos_left _ (by omega)
   obtain ⟨K', D', hacc', hs', hn', hh', hsp, hth⟩ := prop_approx_acc_next hh hα5 hcut hcs hD
     (hK4.trans (pow_le_pow hv1 hαh)) (hDs.trans (pow_le_pow hv1 (by omega))) (M' := 2 ^ Δ)
@@ -357,12 +325,11 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     rw [hl] at h1
     omega
   have hP8 : P ^ 3 ≤ 8 * h ^ 3 * lg (v ^ α) ^ 3 := by
-    calc P ^ 3 = h ^ 3 * (α * l) ^ 3 := by rw [← hP]; ring
-      _ ≤ h ^ 3 * (2 * lg (v ^ α)) ^ 3 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hlgα 3)
-      _ = 8 * h ^ 3 * lg (v ^ α) ^ 3 := by ring
+    grw [← hP, mul_assoc, mul_pow, hlgα]
+    exact (by ring : _ = _).le
   have hcBP : 12500 * P ^ 3 ≤ cB * lg (v ^ α) ^ 3 := by
-    calc 12500 * P ^ 3 ≤ 12500 * (8 * h ^ 3 * lg (v ^ α) ^ 3) := Nat.mul_le_mul_left _ hP8
-      _ = cB * lg (v ^ α) ^ 3 := by rw [← hcB]; ring
+    grw [hP8, ← hcB]
+    exact (by ring : _ = _).le
   have hvα : v ≤ v ^ α := Nat.le_self_pow (by omega) v
   have hJ3 : (2 * α + 1) * J ≤ (2 * α + 2) * (J + 1) := Nat.mul_le_mul (by omega) (by omega)
   generalize hcΔ : 4 * cB + (3 * X + Δ) * (2 * α + 1) = cΔ
@@ -438,8 +405,6 @@ theorem prop_approx_acc_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut
     refine (Nat.pow_le_pow_right hl1 ?_).trans hlog
     have : C * α = C₀ * (2 * α) + 40 * α := by rw [← hCdef]; ring
     omega)
-  obtain ⟨Δ, cΔ, b₀, K, B, D, hcΔ, hI⟩ := prop_approx_acc_first (U := U) hh hcutv (by omega) (by omega)
-    (hL.cst_le.trans hUv) hUv (by rw [hl]; exact hbig) hacc
   obtain ⟨Δ, cΔ, b₀, K', B', D', hcΔ, hI, hK⟩ := prop_approx_acc_first (U := U) hh hcutv (by omega) (by omega)
     (hL.cst_le.trans hUv) hUv (by rw [hl]; exact hbig) hacc
   rw [hcB] at hI hcΔ
@@ -484,8 +449,7 @@ theorem thm_noacc {h : ℕ} (hh : 17 ≤ h) [Algebra.FiniteType ℤ A] {C₀ v�
   refine thm_noacc_diagonal hh hI.acc.toT (by omega) hn hI.size hM hred (J := 16 * h * L)
     (X := K₂.ht + max B' M + 16 * h * L + 10) ?_ (by omega) (by omega) ?_
   · rw [Nat.mul_comm (16 * h) L, pow_mul]
-    calc u ^ (16 * h - 15) ≤ u ^ (16 * h) := pow_le_pow hu1 (by omega)
-      _ < (2 ^ L) ^ (16 * h) := Nat.pow_lt_pow_left hlt (by omega)
+    exact (Nat.pow_le_pow_right hu1 (by omega)).trans_lt (Nat.pow_lt_pow_left hlt (by omega))
   · refine le_trans (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (m := 3 * (100000 * h ^ 3) * L ^ 3) ?_ 3))
       (le_trans (le_of_eq ?_) hsmall)
     · have h1 : 17 * (h * L) ≤ 100000 * (h ^ 3 * L ^ 3) :=
