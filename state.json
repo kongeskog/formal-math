@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T06:05:05.407318935Z",
+  "updated_at": "2026-11-28T06:09:34.999879480Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 112,
     "rejected": 4,
-    "open": 1,
+    "open": 2,
     "contributors": 2,
-    "ideas_open": 1
+    "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 105,
-      "attempts": 110,
+      "attempts": 111,
       "saved": 126734
     },
     {
@@ -96,11 +96,11 @@
     {
       "number": 199,
       "title": "Idea: restructure(Paper/Approximate): the hub decomposition over the Laurent polynomials; no second cut-off",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
-      "pr": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-28T09:08:26Z",
+      "pr": 200,
       "result_delta": null,
       "created_at": "2026-11-28T06:04:13Z",
       "url": "https://github.com/kongeskog/formal-math/issues/199",
@@ -1287,6 +1287,93 @@
       "reason": null,
       "technique": "restructure",
       "scope": "Nc/Dl"
+    },
+    {
+      "pr": 200,
+      "title": "restructure(Paper/Approximate): the hub decomposition over the Laurent polynomials; no second cut-off",
+      "author": "kongeskog",
+      "head_sha": "48b48a2bb4c8952fdbc6f8677312c7a411778ebc",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-28T06:08:37Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "added_lines",
+          "label": "Added lines are clean",
+          "status": "pending"
+        },
+        {
+          "key": "deleted_names",
+          "label": "No deleted name still mentioned",
+          "status": "pending"
+        },
+        {
+          "key": "conduct",
+          "label": "Automation within the stated limits",
+          "status": "pending"
+        },
+        {
+          "key": "comments",
+          "label": "Added text within limits",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        }
+      ],
+      "idea": 199,
+      "url": "https://github.com/kongeskog/formal-math/pull/200",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Paper/Approximate"
     }
   ],
   "top_files": [
