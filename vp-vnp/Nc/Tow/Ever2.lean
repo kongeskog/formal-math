@@ -113,7 +113,7 @@ theorem sum_mid2 (j : Fin J) (c : T.X (j + 1)) :
       rw [dif_pos (ok_mid2 j e)]
       exact (alv_relay hg ⟨.mid j e 2, ok_mid2 j e⟩ false).symm
     rw [h2]
-    have hne := π_ne j.2 e
+    have hne := π_ne e
     have h3 := T.π_ends e
     have h4 : (T.e0 (T.πE e) = c ∨ T.e1 (T.πE e) = c) ↔ (T.π (T.e0 e) = c ∨ T.π (T.e1 e) = c) := by
       have h5 : ∀ x y : T.X (j + 1), (x = c ∨ y = c) ↔ c ∈ s(x, y) := fun x y => by

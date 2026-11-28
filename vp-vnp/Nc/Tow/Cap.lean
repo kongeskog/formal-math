@@ -62,7 +62,7 @@ theorem tmin_real_le (l : LMv T FL) : (tmin FL (load R ch FL lhat n o) l : ℝ) 
   have h1 : (FL.a₁ : ℝ) * tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) ≤
       √(vN2 b (T.nEnd i nf ω)) + FL.a₁ := tmin_le _ _ fun q => seg_le j i ω q
   have hX : 0 < Fintype.card (T.X (j.1 + 1)) := by
-    rw [← Tower.card_V (Nat.succ_le_of_lt j.2) i]
+    rw [← Tower.card_V i]
     exact Nat.mul_pos (Fintype.card_pos_iff.2 ⟨ω⟩) T.b_pos
   have hXR : (1 : ℝ) ≤ Fintype.card (T.X (j.1 + 1)) := by exact_mod_cast hX
   have h2 := Tower.end_norm (T := T) j.2 (i := i) (n := nf)

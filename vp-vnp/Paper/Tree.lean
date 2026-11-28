@@ -347,7 +347,7 @@ theorem valid_of (n : Fin AA → Fin AA → Fin (N + 1)) (h : ∀ a, ∑ c, ((n 
   · exact le_rfl
 
 /-- Every unit of the end is dead or lies between a chamber and its parent. -/
-theorem cur_tree (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
+theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
     (hv : Valid N (nn n)) {o : (sys R FL Pl).N → Fin U1} (hg : ∀ x, (plan R FL Pl N N U1).good n o x)
     {u : Un R FL Pl N U1} (hu : u ∈ (plan R FL Pl N N U1).cur n o (Fintype.card (Mv T R ch FL)))
     (hd : u ∉ deadU R FL Pl N o) (hloop : hold0 (sys R FL Pl).np u ≠ hold1 (sys R FL Pl).np u) :
@@ -673,7 +673,7 @@ theorem tree_node_le (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
     obtain ⟨hu1, hu2⟩ := mem_filter.1 hu
     obtain ⟨hu1, hu4⟩ := mem_filter.1 hu1
     obtain ⟨hu1, hu3⟩ := mem_sdiff.1 hu1
-    obtain ⟨s, hs1, hs2⟩ := cur_tree hH hv hg hu1 hu3 hu4
+    obtain ⟨s, hs1, hs2⟩ := cur_tree hv hg hu1 hu3 hu4
     refine mem_biUnion.2 ⟨s, mem_filter.2 ⟨mem_univ _, ?_⟩, hs1⟩
     have h2 : p ∈ s(Pl.pt (some s), treePar R FL Pl n o (Pl.pt (some s))) := by
       rw [← hs2, Sym2.mem_iff]
@@ -777,7 +777,7 @@ open Classical in
 the units that it has in the end ...": relays leave copies here, so what a node ever holds, zeros in slots included, is at
 most a constant times the loads at it and its children, plus (1+8m)N at a given node (m bounds the words) and twice the
 dead units at it. -/
-theorem thm_tree_copies (hH : THypR FL ρ) {n : Fin AA → Fin AA → Fin (N + 1)}
+theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
     (hv : ∀ a, ∑ c, ((n a c).1 + (n c a).1) ≤ N) {o : (sys R FL Pl).N → Fin U1}
     (hg : ∀ x, (Tow.plan R FL Pl N N U1).good n o x) {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm)
     (p : Fin (AA + A')) :
@@ -1223,14 +1223,14 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       exact hC.mem _
   · obtain ⟨hu, hl'⟩ := mem_filter.1 hu
     obtain ⟨hu, hd⟩ := mem_sdiff.1 hu
-    obtain ⟨s, -, hs⟩ := cur_tree hH (valid_of n hv) hg hu hd hl'
+    obtain ⟨s, -, hs⟩ := cur_tree (valid_of n hv) hg hu hd hl'
     exact ⟨_, fun e => Option.some_ne_none s (Pl.pt.injective e), hs⟩
   · -- the units at one node
     exact (Nat.cast_le.2 (tree_node_le (R := R) (FL := FL) (Pl := Pl) hH (valid_of n hv) hg hC.b_le hC.bot p)).trans hnode
   · exact (Nat.cast_le.2 (tree_up_node hH n o hC.b_le hC.bot p)).trans hnode
   · exact (tree_up_total hH n o).trans htot
   · -- copies
-    refine (thm_tree_copies (R := R) (FL := FL) (Pl := Pl) hH hv hg hC.sl_le p).trans ?_
+    refine (thm_tree_copies (R := R) (FL := FL) (Pl := Pl) hv hg hC.sl_le p).trans ?_
     refine Nat.add_le_add (Nat.add_le_add (Nat.mul_le_mul_right _ ?_) ?_) (Nat.mul_le_mul_right _ (by omega))
     · refine le_trans ?_ hC8
       have a1 := hC.nr_le

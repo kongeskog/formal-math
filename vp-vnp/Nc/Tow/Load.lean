@@ -43,7 +43,7 @@ theorem kap_sq {j : ℕ} (n : T.Ed j → ℕ) :
     T.kap n ^ 2 = Fintype.card (T.X j) / 2 * ∑ e, (n e : ℝ) ^ 2 :=
   Real.sq_sqrt (mul_nonneg (by positivity) (Finset.sum_nonneg fun e _ => sq_nonneg _))
 
-theorem card_V {j : ℕ} (hj : j ≤ J) (i : Fin h) : Fintype.card (T.V j i) * b = Fintype.card (T.X j) := by
+theorem card_V {j : ℕ} (i : Fin h) : Fintype.card (T.V j i) * b = Fintype.card (T.X j) := by
   rw [Fintype.card_of_bijective (T.vx_co i), Fintype.card_prod, T.card_fl]
 
 /-- Cauchy–Schwarz for a sum over few elements. -/
@@ -87,7 +87,7 @@ theorem mid_le (hj : j < J) {n' : T.Ed (j + 1) → ℕ}
     rw [T.π_ty e, he]
 
 /-- Units at chambers. -/
-theorem sum_be_sq (hj : j ≤ J) : ∑ c, (T.be i n c : ℝ) ^ 2 ≤
+theorem sum_be_sq : ∑ c, (T.be i n c : ℝ) ^ 2 ≤
     2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 := by
   have h1 : ∀ c, (T.be i n c : ℝ) ^ 2 ≤
       ∑ e, if T.ty e = i ∧ (T.e0 e = c ∨ T.e1 e = c) then (n e : ℝ) ^ 2 else 0 := by
@@ -217,7 +217,7 @@ theorem end_norm {j : ℕ} (hj : j < J) {i : Fin h} {n : T.Ed j → ℕ} :
   have hcX : (Fintype.card (T.X j) : ℝ) = b * Fintype.card (T.X (j + 1)) := by exact_mod_cast T.card_X j hj
   rw [hcX]
   have h6 := sum_end_sq (T := T) (n := n) (i := i) hj
-  have h7 := sum_be_sq (T := T) (n := n) (i := i) hj.le
+  have h7 := sum_be_sq (T := T) (n := n) (i := i)
   set Pn : ℝ := ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 with hP
   set x : ℝ := (Fintype.card (T.X (j + 1)) : ℝ) with hx
   have h1 : ∀ ω, √(vN2 b (T.nEnd i n ω)) ^ 2 ≤ (b : ℝ) ^ 2 / 2 * ∑ q : Sym2 T.Fl, (T.nEnd i n ω q : ℝ) ^ 2 := by
@@ -265,7 +265,7 @@ theorem other_le {j : ℕ} (hj : j < J) {i : Fin h}
   rw [← hN2] at hfsq
   set x : ℝ := (Fintype.card (T.X (j + 1)) : ℝ) with hx
   have hcV : (Fintype.card (T.V (j + 1) i) : ℝ) = x / b := by
-    rw [hx, eq_div_iff hbR.ne']; exact_mod_cast card_V hj' i
+    rw [hx, eq_div_iff hbR.ne']; exact_mod_cast card_V i
   have hxb : 0 ≤ x / b := by positivity
   set f : T.V (j + 1) i → ℝ := fun ω => √(vN2 b (T.nEnd i n ω)) with hf
   have e1 : ∑ e' ∈ univ.filter (fun e' : T.Ed (j + 1) => ¬ T.ty e' = i), (n' e' : ℝ) ^ 2 =

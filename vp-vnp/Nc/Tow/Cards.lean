@@ -41,7 +41,7 @@ theorem card_X_le : ∀ j ≤ J, Fintype.card (T.X j) ≤ Fintype.card (T.X 0) :
     rw [T.card_X j (by omega)]
     exact Nat.le_mul_of_pos_left _ T.b_pos
 
-theorem two_card_ed {j : ℕ} (hj : j ≤ J) : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
+theorem two_card_ed {j : ℕ} : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
   have h1 : Fintype.card (T.Ed j) = ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i).card := by
     rw [← card_univ]
     exact card_eq_sum_card_fiberwise (fun _ _ => mem_coe.2 (mem_univ _))
@@ -49,7 +49,7 @@ theorem two_card_ed {j : ℕ} (hj : j ≤ J) : 2 * Fintype.card (T.Ed j) = h * F
   simp
 
 theorem card_ed_le {j : ℕ} (hj : j ≤ J) : Fintype.card (T.Ed j) ≤ h * Fintype.card (T.X 0) := by
-  have h1 := two_card_ed (T := T) hj
+  have h1 := two_card_ed (T := T) (j := j)
   have h2 : h * Fintype.card (T.X j) ≤ h * Fintype.card (T.X 0) :=
     Nat.mul_le_mul_left _ (card_X_le j hj)
   omega
@@ -62,7 +62,7 @@ theorem card_V_le {j : ℕ} (hj : j ≤ J) (i : Fin h) :
   rw [← h1]
   exact Nat.le_mul_of_pos_right _ T.b_pos
 
-theorem card_V_Nr {j : ℕ} (hj : j ≤ J) (i : Fin h) :
+theorem card_V_Nr {j : ℕ} (i : Fin h) :
     Fintype.card (T.V j i) * Fintype.card T.Nr ≤ Fintype.card (T.Ed j) := by
   rw [← Fintype.card_prod, ← Fintype.card_congr (T.nr i)]
   exact Fintype.card_subtype_le _
@@ -149,7 +149,7 @@ theorem card_N_le : Fintype.card (sys R FL Pl).N ≤ rmN h m J AA (Fintype.card 
     rw [h1]
     calc _ ≤ ∑ _j : Fin J, ∑ _i : Fin h, h * Fintype.card (T.X 0) * Fintype.card FL.Di :=
           Finset.sum_le_sum fun j _ => Finset.sum_le_sum fun i _ => Nat.mul_le_mul_right _
-            ((Tower.card_V_Nr j.2 i).trans (Tower.card_ed_le j.2))
+            ((Tower.card_V_Nr i).trans (Tower.card_ed_le j.2))
       _ = _ := by simp
 
 /-- Slots. -/

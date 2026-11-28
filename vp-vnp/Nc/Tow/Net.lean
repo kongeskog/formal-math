@@ -102,7 +102,7 @@ theorem inj3 {α : Type*} {x y z : α} (h1 : x ≠ y) (h2 : x ≠ z) (h3 : y ≠
 
 variable {T R ch}
 
-theorem π_ne {j : ℕ} (hj : j < J) (e : T.Ed j) : T.π (T.e0 e) ≠ T.π (T.e1 e) := by
+theorem π_ne {j : ℕ} (e : T.Ed j) : T.π (T.e0 e) ≠ T.π (T.e1 e) := by
   intro heq
   have h1 := T.π_ends e
   rw [heq, Sym2.eq_iff] at h1
@@ -130,7 +130,7 @@ theorem tri_inj {x : RM T m AA} (hx : okR T R ch x) : Function.Injective (tri T 
         exact hx.1 rfl
       · change nd T (j + 1) j.2 (T.π (T.e0 e)) ≠ nd T (j + 1) j.2 (T.π (T.e1 e))
         rw [Ne, nd_inj]
-        exact π_ne j.2 e
+        exact π_ne e
       · change nd T (j + 1) j.2 (T.π (T.e1 e)) ≠ nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e))
         rw [Ne, nd_inj]
         exact hx.2 rfl
