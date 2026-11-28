@@ -282,13 +282,8 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     omega
   have hP2 : P ≤ P ^ 2 := Nat.le_self_pow (by norm_num) P
   have hP3 : P ^ 2 ≤ P ^ 3 := Nat.pow_le_pow_right hPpos (by norm_num)
-  have hB3 : B ≤ 4096 * P ^ 3 := by
-    calc B ≤ (16 * P) ^ 3 := hB.trans (Nat.pow_le_pow_left hVs 3)
-      _ = 4096 * P ^ 3 := by ring
-  have hK3 : K.ht ≤ 256 * P ^ 3 := by
-    calc K.ht ≤ (16 * P) ^ 2 := hKh.trans (Nat.pow_le_pow_left hVs 2)
-      _ = 256 * P ^ 2 := by ring
-      _ ≤ 256 * P ^ 3 := Nat.mul_le_mul_left _ hP3
+  have hB3 : B ≤ 4096 * P ^ 3 := by grw [hB, hVs]; exact (by ring : _ = _).le
+  have hK3 : K.ht ≤ 256 * P ^ 3 := by grw [hKh, hVs, ← hP3]; exact (by ring : _ = _).le
   generalize hJ : (16 * h * α + 1) * l = J
   have hJP : J ≤ 17 * P := by
     rw [← hJ]
@@ -301,9 +296,8 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     have : α * 1 ≤ 17 * α * l := Nat.mul_le_mul (by omega) hl1
     omega
   have hJ2 : (2 * α + 2) * (J + 1) ≤ 54 * P ^ 3 := by
-    calc (2 * α + 2) * (J + 1) ≤ 3 * P * (18 * P) := Nat.mul_le_mul (by omega) (by omega)
-      _ = 54 * P ^ 2 := by ring
-      _ ≤ 54 * P ^ 3 := Nat.mul_le_mul_left _ hP3
+    grw [show 2 * α + 2 ≤ 3 * P by omega, show J + 1 ≤ 18 * P by omega, ← hP3]
+    exact (by ring : _ = _).le
   generalize hX : B + (2 * α + 2) * (J + 1) + K.ht + K.ht + 10 = X
   have hX7 : X ≤ 7000 * P ^ 3 := by
     have : 1 ≤ P ^ 3 := Nat.one_le_pow _ _ hPpos
@@ -313,12 +307,9 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     have : X ≤ X ^ 3 := Nat.le_self_pow (by norm_num) X
     omega
   have hK4 : K.nds * (4 * α + 5) ≤ v ^ α := by
-    calc K.nds * (4 * α + 5) ≤ v ^ a * v := Nat.mul_le_mul hKn (by
-          have : (2 * α + 2) * 1 ≤ (2 * α + 2) * (J + 1) := Nat.mul_le_mul_left _ (by omega)
-          have h3 : 1000 * X ≤ 1000 * X ^ 3 := Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) X)
-          omega)
-      _ = v ^ (a + 1) := (pow_succ _ _).symm
-      _ ≤ v ^ α := pow_le_pow hv1 haα
+    have : (2 * α + 2) * 1 ≤ (2 * α + 2) * (J + 1) := Nat.mul_le_mul_left _ (by omega)
+    have h3 : 1000 * X ≤ 1000 * X ^ 3 := Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) X)
+    grw [hKn, ← Nat.pow_le_pow_right hv1 haα, pow_succ, show 4 * α + 5 ≤ v by omega]
   have hαh : α ≤ h * α := Nat.le_mul_of_pos_left _ (by omega)
   obtain ⟨K', D', hacc', hs', hn', hh', hsp, hth⟩ := prop_approx_acc_next hh hα5 hcut hcs hD
     (hK4.trans (pow_le_pow hv1 hαh)) (hDs.trans (pow_le_pow hv1 (by omega))) (M' := 2 ^ Δ)
@@ -332,12 +323,11 @@ theorem prop_approx_acc_first {h : ℕ} (hh : 17 ≤ h) {v a α U : ℕ} (hcut :
     rw [hl] at h1
     omega
   have hP8 : P ^ 3 ≤ 8 * h ^ 3 * lg (v ^ α) ^ 3 := by
-    calc P ^ 3 = h ^ 3 * (α * l) ^ 3 := by rw [← hP]; ring
-      _ ≤ h ^ 3 * (2 * lg (v ^ α)) ^ 3 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hlgα 3)
-      _ = 8 * h ^ 3 * lg (v ^ α) ^ 3 := by ring
+    grw [← hP, mul_assoc, mul_pow, hlgα]
+    exact (by ring : _ = _).le
   have hcBP : 12500 * P ^ 3 ≤ cB * lg (v ^ α) ^ 3 := by
-    calc 12500 * P ^ 3 ≤ 12500 * (8 * h ^ 3 * lg (v ^ α) ^ 3) := Nat.mul_le_mul_left _ hP8
-      _ = cB * lg (v ^ α) ^ 3 := by rw [← hcB]; ring
+    grw [hP8, ← hcB]
+    exact (by ring : _ = _).le
   have hvα : v ≤ v ^ α := Nat.le_self_pow (by omega) v
   have hJ3 : (2 * α + 1) * J ≤ (2 * α + 2) * (J + 1) := Nat.mul_le_mul (by omega) (by omega)
   generalize hcΔ : 4 * cB + (3 * X + Δ) * (2 * α + 1) = cΔ
@@ -413,8 +403,6 @@ theorem prop_approx_acc_scales {h : ℕ} (hh : 17 ≤ h) {C₀ v₀ : ℕ} (hcut
     refine (Nat.pow_le_pow_right hl1 ?_).trans hlog
     have : C * α = C₀ * (2 * α) + 40 * α := by rw [← hCdef]; ring
     omega)
-  obtain ⟨Δ, cΔ, b₀, K, B, D, hcΔ, hI⟩ := prop_approx_acc_first (U := U) hh hcutv (by omega) (by omega)
-    (hL.cst_le.trans hUv) hUv (by rw [hl]; exact hbig) hacc
   obtain ⟨Δ, cΔ, b₀, K', B', D', hcΔ, hI, hK⟩ := prop_approx_acc_first (U := U) hh hcutv (by omega) (by omega)
     (hL.cst_le.trans hUv) hUv (by rw [hl]; exact hbig) hacc
   rw [hcB] at hI hcΔ
@@ -459,8 +447,7 @@ theorem thm_noacc {h : ℕ} (hh : 17 ≤ h) [Algebra.FiniteType ℤ A] {C₀ v�
   refine thm_noacc_diagonal hh hI.acc.toT (by omega) hn hI.size hM hred (J := 16 * h * L)
     (X := K₂.ht + max B' M + 16 * h * L + 10) ?_ (by omega) (by omega) ?_
   · rw [Nat.mul_comm (16 * h) L, pow_mul]
-    calc u ^ (16 * h - 15) ≤ u ^ (16 * h) := pow_le_pow hu1 (by omega)
-      _ < (2 ^ L) ^ (16 * h) := Nat.pow_lt_pow_left hlt (by omega)
+    exact (Nat.pow_le_pow_right hu1 (by omega)).trans_lt (Nat.pow_lt_pow_left hlt (by omega))
   · refine le_trans (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (m := 3 * (100000 * h ^ 3) * L ^ 3) ?_ 3))
       (le_trans (le_of_eq ?_) hsmall)
     · have h1 : 17 * (h * L) ≤ 100000 * (h ^ 3 * L ^ 3) :=
