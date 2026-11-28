@@ -1,6 +1,15 @@
 {
-  "claims": {},
-  "comments_seen_until": "2026-11-28T12:47:42Z",
+  "claims": {
+    "211": {
+      "login": "kongeskog",
+      "at": "2026-11-28T13:30:25Z"
+    },
+    "212": {
+      "login": "kongeskog",
+      "at": "2026-11-28T13:30:32Z"
+    }
+  },
+  "comments_seen_until": "2026-11-28T13:30:32Z",
   "dispatched": {},
   "lines": {},
   "line_bases": {},
@@ -12,7 +21,22 @@
     109,
     131
   ],
-  "judged": {},
+  "judged": {
+    "213@cc4822f3e3838b9a9723af47c5f3bd121b5663a5": {
+      "at": "2026-11-28T13:31:41Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    },
+    "214@2b6989719056b0e4a03d631a1fe87c6b2a190ae5": {
+      "at": "2026-11-28T13:31:43Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    }
+  },
   "told": [],
   "turn": null,
   "turns_voided": {},
