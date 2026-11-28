@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T04:44:24.113005635Z",
+  "updated_at": "2026-11-28T04:48:51.476434555Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 2,
     "contributors": 2,
-    "ideas_open": 1
+    "ideas_open": 0
   },
   "leaderboard": [
     {
@@ -96,10 +96,10 @@
     {
       "number": 191,
       "title": "Idea: restructure(Nc/Tow): facts that hold for the one tower are fields of Tower, not hypotheses of every lemma",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T06:57:41Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 193,
       "result_delta": -2181,
       "created_at": "2026-11-28T03:52:00Z",
@@ -152,10 +152,10 @@
     {
       "number": 187,
       "title": "Idea: restructure(Nc/Tow): context arguments fixed by a later argument's type become implicit",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-28T07:47:49Z",
       "pr": null,
       "result_delta": null,
       "created_at": "2026-11-28T03:10:29Z",
@@ -1272,7 +1272,7 @@
           "key": "fresh",
           "label": "Verified on current main",
           "status": "pending",
-          "detail": "Main moved. Changes are verified again one at a time, the oldest first; #193 is being verified now, and this one follows"
+          "detail": "Main moved; re-verifying on the new main"
         }
       ],
       "idea": 188,
@@ -1370,15 +1370,15 @@
       "technique": "shorten",
       "scope": "Paper",
       "warnings": [
-        "touches files reserved by idea #191 (claimed by @kongeskog): `vp-vnp/Paper/Tree.lean`; coordinate there or expect to merge main after it lands"
+        "touches files reserved by idea #187 (claimed by @kongeskog): `vp-vnp/Paper/Tree.lean`; coordinate there or expect to merge main after it lands"
       ]
     }
   ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 19430,
-      "loc": 1142
+      "tokens": 19099,
+      "loc": 1147
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -1392,7 +1392,7 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 12013,
+      "tokens": 11993,
       "loc": 743
     },
     {
@@ -1487,8 +1487,8 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Load2.lean",
-      "tokens": 5711,
-      "loc": 406
+      "tokens": 5694,
+      "loc": 404
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeScript.lean",
@@ -1502,13 +1502,13 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
-      "tokens": 5515,
-      "loc": 330
+      "tokens": 5454,
+      "loc": 332
     },
     {
       "path": "vp-vnp/Nc/Tow/Load0.lean",
-      "tokens": 5475,
-      "loc": 417
+      "tokens": 5447,
+      "loc": 412
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
@@ -1517,13 +1517,13 @@
     },
     {
       "path": "vp-vnp/Nc/Tow/Load.lean",
-      "tokens": 5395,
-      "loc": 312
+      "tokens": 5291,
+      "loc": 314
     },
     {
-      "path": "vp-vnp/Nc/Tow/Ever3.lean",
-      "tokens": 5273,
-      "loc": 346
+      "path": "vp-vnp/Paper/Means.lean",
+      "tokens": 5228,
+      "loc": 292
     }
   ]
 }
