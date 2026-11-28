@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T14:37:05.602366166Z",
+  "updated_at": "2026-11-28T14:38:20.917939565Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -110,10 +110,10 @@
     {
       "number": 215,
       "title": "Idea: restructure(NS1): the check of names against a budget as one weighted list",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T17:21:47Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 216,
       "result_delta": -4414,
       "created_at": "2026-11-28T14:20:31Z",
@@ -1355,8 +1355,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 8963,
-      "loc": 545
+      "tokens": 8961,
+      "loc": 546
     },
     {
       "path": "vp-vnp/NS1/Lists.lean",
@@ -1405,13 +1405,8 @@
     },
     {
       "path": "vp-vnp/NS1/Guess.lean",
-      "tokens": 6301,
+      "tokens": 6313,
       "loc": 439
-    },
-    {
-      "path": "vp-vnp/NS1/Postpone.lean",
-      "tokens": 6225,
-      "loc": 492
     },
     {
       "path": "vp-vnp/Nc/G/Move.lean",
@@ -1432,6 +1427,11 @@
       "path": "vp-vnp/Paper/Rate.lean",
       "tokens": 5842,
       "loc": 353
+    },
+    {
+      "path": "vp-vnp/NS1/Util.lean",
+      "tokens": 5481,
+      "loc": 346
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
