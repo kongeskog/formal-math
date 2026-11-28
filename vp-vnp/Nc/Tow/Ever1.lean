@@ -16,7 +16,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J}
 
 /-- Sums over relays. -/
 theorem sum_RM {M : Type*} [AddCommMonoid M] (g : RM T m AA → M) : ∑ x, g x =

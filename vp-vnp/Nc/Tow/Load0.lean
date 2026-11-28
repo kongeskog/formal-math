@@ -15,12 +15,12 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
 /-- The number of units of a batch. -/
-noncomputable def Bt (T : Tower h b D J) (ch : Fin AA ↪ T.X 0) (lhat : ℕ) (n : Fin AA → Fin AA → ℕ) (a c : Fin AA)
+noncomputable def Bt (T : Tower h b J) (ch : Fin AA ↪ T.X 0) (lhat : ℕ) (n : Fin AA → Fin AA → ℕ) (a c : Fin AA)
     (γ : T.X 0) : ℕ :=
   if Valid lhat n then ((range (n a c)).filter fun k => gam T ch a k = γ).card else 0
 

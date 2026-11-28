@@ -19,7 +19,7 @@ open Finset Nc.G
 
 section Tree
 
-variable {h b D J AA : ℕ} {T : Tower h b D J} {Lf : ∀ j, T.Ed j → ℕ}
+variable {h b J AA : ℕ} {T : Tower h b J} {Lf : ∀ j, T.Ed j → ℕ}
 
 /-- Units between the children of a chamber and the chamber. -/
 noncomputable def chF (Lf : ∀ j, T.Ed j → ℕ) : ∀ j, T.X j → ℕ
@@ -30,7 +30,7 @@ end Tree
 
 section Ever
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
   {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 

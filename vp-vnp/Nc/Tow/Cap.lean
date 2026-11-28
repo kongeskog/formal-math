@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
@@ -180,41 +180,41 @@ theorem sum_bet_le_YhN : ∑ j : Fin (J + 1), ∑ c, T.bet (lds R ch FL lhat n o
 omit hH in
 /-- **The gain of the tower.** -/
 theorem bhat_pow_le (hρ : 0 < ρ) (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hpq : 2 ≤ q)
-    (hgain : ρ ^ q * (D : ℝ) ≤ 1) :
+    (hgain : ρ ^ q * (b : ℝ) ≤ 1) :
     bhat FL Uu AA lhat ρ ^ q * (Fintype.card (T.X 0) : ℝ) ≤ (2 * (h : ℝ)) ^ q * kbar FL Uu AA lhat ^ q := by
-  have hD := T.D_pos
-  have hDR : (1 : ℝ) ≤ D := by exact_mod_cast T.D_pos
+  have hD := T.b_pos
+  have hDR : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have hh1 : (1 : ℝ) ≤ 2 * h := by
     have : (1 : ℝ) ≤ h := by exact_mod_cast T.h_pos
     linarith
   have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
   have hXJ : (1 : ℝ) ≤ Fintype.card (T.X J) := by exact_mod_cast hX
-  have hX0 : (Fintype.card (T.X 0) : ℝ) = (D : ℝ) ^ J * Fintype.card (T.X J) := card_X_pow J le_rfl
+  have hX0 : (Fintype.card (T.X 0) : ℝ) = (b : ℝ) ^ J * Fintype.card (T.X J) := card_X_pow J le_rfl
   set x : ℝ := (Fintype.card (T.X 0) : ℝ) with hx
-  have hDJ : (D : ℝ) ^ J ≤ x := by
+  have hDJ : (b : ℝ) ^ J ≤ x := by
     rw [hX0]
     exact le_mul_of_one_le_right (by positivity) hXJ
-  have hDJ1 : (1 : ℝ) ≤ (D : ℝ) ^ J := one_le_pow₀ hDR
+  have hDJ1 : (1 : ℝ) ≤ (b : ℝ) ^ J := one_le_pow₀ hDR
   have hx1 : 1 ≤ x := hDJ1.trans hDJ
   have hx0 : 0 < x := by linarith
-  set M : ℝ := max 1 (√D * ρ) with hM
+  set M : ℝ := max 1 (√b * ρ) with hM
   -- the square of the base
-  have hMq : (M ^ 2) ^ q ≤ (D : ℝ) ^ (q - 2) := by
-    have e1 : 1 ≤ (D : ℝ) ^ (q - 2) := one_le_pow₀ hDR
-    rcases le_total (√D * ρ) 1 with hle | hle
+  have hMq : (M ^ 2) ^ q ≤ (b : ℝ) ^ (q - 2) := by
+    have e1 : 1 ≤ (b : ℝ) ^ (q - 2) := one_le_pow₀ hDR
+    rcases le_total (√b * ρ) 1 with hle | hle
     · rw [hM, max_eq_left hle]
       simpa using e1
     · rw [hM, max_eq_right hle, mul_pow, Real.sq_sqrt (by linarith), mul_pow]
-      have e2 : (ρ ^ 2) ^ q * (D : ℝ) ^ 2 ≤ 1 := by
-        have : (ρ ^ 2) ^ q * (D : ℝ) ^ 2 = (ρ ^ q * (D : ℝ)) ^ 2 := by ring
+      have e2 : (ρ ^ 2) ^ q * (b : ℝ) ^ 2 ≤ 1 := by
+        have : (ρ ^ 2) ^ q * (b : ℝ) ^ 2 = (ρ ^ q * (b : ℝ)) ^ 2 := by ring
         rw [this]
         exact pow_le_one₀ (by positivity) hgain
-      have e3 : (D : ℝ) ^ q = (D : ℝ) ^ (q - 2) * (D : ℝ) ^ 2 := by
+      have e3 : (b : ℝ) ^ q = (b : ℝ) ^ (q - 2) * (b : ℝ) ^ 2 := by
         rw [← pow_add, Nat.sub_add_cancel hpq]
       rw [e3]
-      calc (D : ℝ) ^ (q - 2) * (D : ℝ) ^ 2 * (ρ ^ 2) ^ q =
-          (D : ℝ) ^ (q - 2) * ((ρ ^ 2) ^ q * (D : ℝ) ^ 2) := by ring
-        _ ≤ (D : ℝ) ^ (q - 2) * 1 := mul_le_mul_of_nonneg_left e2 (by positivity)
+      calc (b : ℝ) ^ (q - 2) * (b : ℝ) ^ 2 * (ρ ^ 2) ^ q =
+          (b : ℝ) ^ (q - 2) * ((ρ ^ 2) ^ q * (b : ℝ) ^ 2) := by ring
+        _ ≤ (b : ℝ) ^ (q - 2) * 1 := mul_le_mul_of_nonneg_left e2 (by positivity)
         _ = _ := mul_one _
   have hsq : (bhat FL Uu AA lhat ρ ^ q * x) ^ 2 ≤ ((2 * (h : ℝ)) ^ q * kbar FL Uu AA lhat ^ q) ^ 2 := by
     have e1 : (bhat FL Uu AA lhat ρ ^ q * x) ^ 2 =
@@ -227,8 +227,8 @@ theorem bhat_pow_le (hρ : 0 < ρ) (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hp
       rw [e3, e2]
     rw [e1]
     have e3 : ((M ^ 2) ^ q) ^ J ≤ x ^ (q - 2) := by
-      calc ((M ^ 2) ^ q) ^ J ≤ ((D : ℝ) ^ (q - 2)) ^ J := pow_le_pow_left₀ (by positivity) hMq J
-        _ = ((D : ℝ) ^ J) ^ (q - 2) := by rw [← pow_mul, ← pow_mul, Nat.mul_comm]
+      calc ((M ^ 2) ^ q) ^ J ≤ ((b : ℝ) ^ (q - 2)) ^ J := pow_le_pow_left₀ (by positivity) hMq J
+        _ = ((b : ℝ) ^ J) ^ (q - 2) := by rw [← pow_mul, ← pow_mul, Nat.mul_comm]
         _ ≤ _ := pow_le_pow_left₀ (by positivity) hDJ _
     have e4 : (2 * h / x) ^ q * x ^ (q - 2) * x ^ 2 = (2 * (h : ℝ)) ^ q := by
       have : x ^ (q - 2) * x ^ 2 = x ^ q := by

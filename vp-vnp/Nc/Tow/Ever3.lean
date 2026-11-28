@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J}
   {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
   {o : NM R FL (ch := ch) → ℕ}
 
@@ -33,7 +33,7 @@ theorem nR_start (a c : Fin AA) (γ : T.X 0) (s : Fin (2 * m)) : nR R ch FL lhat
 
 open Classical in
 /-- Quadruples of the start. -/
-abbrev Q4 (T : Tower h b D J) (m AA : ℕ) := Fin AA × Fin AA × T.X 0 × Fin (2 * m)
+abbrev Q4 (T : Tower h b J) (m AA : ℕ) := Fin AA × Fin AA × T.X 0 × Fin (2 * m)
 
 /-- The relay of a quadruple. -/
 def stR (q : Q4 T m AA) : RM T m AA := .start q.1 q.2.1 q.2.2.1 q.2.2.2

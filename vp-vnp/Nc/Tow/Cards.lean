@@ -26,7 +26,7 @@ theorem sum_inj_le {α β : Type*} [Fintype α] [Fintype β] {g : α → β} (hg
 
 end General
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J}
 
 namespace Tower
 
@@ -39,7 +39,7 @@ theorem card_X_le : ∀ j ≤ J, Fintype.card (T.X j) ≤ Fintype.card (T.X 0) :
     intro hj
     refine le_trans ?_ (ih (by omega))
     rw [T.card_X j (by omega)]
-    exact Nat.le_mul_of_pos_left _ T.D_pos
+    exact Nat.le_mul_of_pos_left _ T.b_pos
 
 theorem two_card_ed {j : ℕ} (hj : j ≤ J) : 2 * Fintype.card (T.Ed j) = h * Fintype.card (T.X j) := by
   have h1 : Fintype.card (T.Ed j) = ∑ i : Fin h, (univ.filter fun e : T.Ed j => T.ty e = i).card := by

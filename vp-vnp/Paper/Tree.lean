@@ -253,7 +253,7 @@ structure ThinTrees (R : Type) [CommRing R] (laws : List (G.Law R)) (AA N ℓ M 
 
 section Build
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' N U1 : ℕ} {T : Tower h b D J} (R : Routes T m Uu)
+variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 : ℕ} {T : Tower h b J} (R : Routes T m Uu)
   {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') {ρ : ℝ} {lhat : ℕ}
 
 /-- The stage of a node of the tree. -/
@@ -421,7 +421,7 @@ end Build
 
 section Good
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' N U1 ℓ : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 ℓ : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'}
 
 /-- "Every possible outcome is good, by Theorem thm:laws(b), the triangle inequality over the tℓ layers, and λ ≥ 1." -/
@@ -442,7 +442,7 @@ end Good
 
 section Program
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J}
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 variable {Inp ι : Type} {Dd Y p TM : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
 variable {nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)} {oI : Inp → (sys R FL Pl).N → Fin U1}
@@ -582,7 +582,7 @@ end Numbers
 
 section Lemmas
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' N U1 ℓ c : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' N U1 ℓ c : ℕ} {T : Tower h b J}
   {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {ρ : ℝ}
 
 /-- Units are few: the bounds in numbers. -/
@@ -955,7 +955,7 @@ end Lemmas
 section Towers
 
 /-- More generous routes. -/
-def _root_.Nc.Tow.Routes.mono {h b D J m Uu m' Uu' : ℕ} {T : Tower h b D J} (R : Routes T m Uu) (hm : m ≤ m')
+def _root_.Nc.Tow.Routes.mono {h b J m Uu m' Uu' : ℕ} {T : Tower h b J} (R : Routes T m Uu) (hm : m ≤ m')
     (hU : Uu ≤ Uu') : Routes T m' Uu' where
   rt := R.rt
   walk := R.walk
@@ -967,7 +967,7 @@ tower construction, whose sizes, bottom and words of bounded length give the siz
 theorem tree_towers {A : Type} [CommRing A] {h : ℕ} [NeZero h]
     (VL : VLaws A (cNear (h := h)) (dNear (h := h)) (2 ^ ee h)) (h3 : 3 ≤ h)
     (hgain : 1 + 8 * VL.C₁ ≤ (1 / 2 : ℝ) ^ 2 * h) (htwo : (2 : ℝ) ≤ 1 / 2 * ((2 ^ ee h : ℕ) : ℝ)) :
-    ∃ c, ∀ y, 1 ≤ y → ∃ (J m Uu : ℕ) (T : Tower h (2 ^ ee h) (2 ^ ee h) J) (_ : Routes T m Uu) (FL : FlagLaws A T),
+    ∃ c, ∀ y, 1 ≤ y → ∃ (J m Uu : ℕ) (T : Tower h (2 ^ ee h) J) (_ : Routes T m Uu) (FL : FlagLaws A T),
       TCst FL ((univ : Finset VL.Di).toList.map VL.L) c (1 / 2) (ee h) ∧
       y ≤ Fintype.card (T.X 0) ∧ Fintype.card (T.X 0) ≤ c * y ∧ 1 ≤ m ∧ m ≤ c * (J + 1) ^ 7 ∧
       Uu ≤ 2 * Fintype.card (T.X 0) * m := by
@@ -1086,7 +1086,7 @@ end Towers
 
 section Thm
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA N M ℓ : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA N M ℓ : ℕ} {T : Tower h b J}
 
 /-- The exponent of the trees of a tower with the constant c. -/
 def cTree (c : ℕ) : ℕ := (c + 4) * 200000 + cKap c * (2 * c + 1) + 7 + (4 + (2 * c * c + 1 + c) * c) * 8 +

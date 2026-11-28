@@ -17,7 +17,7 @@ namespace Nc.Tow
 
 open Finset Nc.G
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} {R : Routes T m Uu}
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
 
 /-- The bound for the units between a node and its parent, a natural number. -/
@@ -69,7 +69,7 @@ theorem fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL → ℕ} (j : ℕ) (h
 
 omit hH in
 /-- **The gain of the tower.** -/
-theorem BhN_pow_le (hρ : 0 < ρ) (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hpq : 2 ≤ q) (hgain : ρ ^ q * (D : ℝ) ≤ 1) :
+theorem BhN_pow_le (hρ : 0 < ρ) (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hpq : 2 ≤ q) (hgain : ρ ^ q * (b : ℝ) ≤ 1) :
     (BhN FL Uu AA lhat ρ : ℝ) ^ q * (Fintype.card (T.X 0) : ℝ) ≤
       (2 * (h : ℝ)) ^ q * kbar FL Uu AA lhat ^ q := by
   refine le_trans ?_ (bhat_pow_le hρ hX hpq hgain)

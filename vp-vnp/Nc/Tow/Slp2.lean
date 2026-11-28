@@ -15,7 +15,7 @@ namespace Nc.Tow
 
 open Finset Nc.G Unc
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA U0 U1 : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu AA U0 U1 : ℕ} {T : Tower h b J}
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T}
 variable {Inp ι : Type} {Dd Y p c : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
 variable (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R FL (ch := ch) → ℕ) (lhat : ℕ)

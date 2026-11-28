@@ -115,7 +115,7 @@ structure VLaws (F : Type) [CommRing F] {Fl Nr : Type} [Fintype Fl] [DecidableEq
 attribute [instance] VLaws.fD VLaws.dD
 
 /-- The laws at the vertices of a tower: the laws for its local structure. -/
-abbrev FlagLaws (F : Type) [CommRing F] {h b D J : ℕ} (T : Tower h b D J) := VLaws F T.cN T.dN b
+abbrev FlagLaws (F : Type) [CommRing F] {h b J : ℕ} (T : Tower h b J) := VLaws F T.cN T.dN b
 
 /-- A monotone enumeration of a finite set. -/
 theorem exists_mono_equiv {κ : Type} [Fintype κ] (time : κ → ℕ) :

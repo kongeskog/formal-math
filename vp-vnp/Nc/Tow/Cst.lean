@@ -25,7 +25,7 @@ namespace Nc.Tow
 open Finset Nc.G
 open NS1 (lg)
 
-variable {F : Type} [CommRing F] {h b D J m Uu : ℕ} {T : Tower h b D J}
+variable {F : Type} [CommRing F] {h b J m Uu : ℕ} {T : Tower h b J}
 
 /-- The roles of the relay and of finitely many laws. -/
 noncomputable def kindList (F : Type) [CommRing F] (laws : List (Law F)) : List (Σ L : Law F, L.Ro) :=
@@ -45,7 +45,7 @@ structure TCst (FL : FlagLaws F T) (laws : List (Law F)) (c : ℕ) (ρ : ℝ) (q
   cst : √h + √FL.C₁ * FL.a₁ ≤ c
   inv : 1 / (1 - ρ) ≤ c
   pq : 2 ≤ q
-  pow : ρ ^ q * (D : ℝ) ≤ 1
+  pow : ρ ^ q * (b : ℝ) ≤ 1
   mem : ∀ d, FL.L d ∈ laws
   len : ∀ L ∈ laws, L.Le c ∧ L.lam ≤ c
 
@@ -60,13 +60,13 @@ section
 variable {FL : FlagLaws F T} {laws : List (Law F)} {c q U0 : ℕ} {ρ : ℝ} (hC : TCst FL laws c ρ q)
 include hC
 
-theorem TCst.D_two : 2 ≤ D := by
+theorem TCst.D_two : 2 ≤ b := by
   have h1 := hC.two
   have h2 := hC.ρ_lt
   have h3 := hC.ρ_pos
   by_contra hcon
-  have h4 : D ≤ 1 := by omega
-  have h5 : (D : ℝ) ≤ 1 := by exact_mod_cast h4
+  have h4 : b ≤ 1 := by omega
+  have h5 : (b : ℝ) ≤ 1 := by exact_mod_cast h4
   nlinarith
 
 theorem TCst.X_pos : 0 < Fintype.card (T.X 0) := by
@@ -167,7 +167,7 @@ theorem card_Tg_le {V : ℕ} (hV : 1 ≤ V) (hh : h ≤ V) (hm : m ≤ V) (hJ : 
 section Numbers
 
 /-- The depth of a tower is logarithmic. -/
-theorem two_pow_le {h b D J : ℕ} {T : Tower h b D J} (hD : 2 ≤ D) (hX : 0 < Fintype.card (T.X J)) :
+theorem two_pow_le {h b J : ℕ} {T : Tower h b J} (hD : 2 ≤ b) (hX : 0 < Fintype.card (T.X J)) :
     2 ^ J ≤ Fintype.card (T.X 0) := by
   have key : ∀ n ≤ J, 2 ^ n * Fintype.card (T.X n) ≤ Fintype.card (T.X 0) := by
     intro n

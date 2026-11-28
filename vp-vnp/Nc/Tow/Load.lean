@@ -19,7 +19,7 @@ open Finset
 noncomputable def vN2 {Fl : Type} [Fintype Fl] [DecidableEq Fl] (b : ℕ) (n : Sym2 Fl → ℕ) : ℝ :=
   ((b : ℝ) * (b - 1) / 2) * ∑ q : Sym2 Fl, if q.IsDiag then 0 else (n q : ℝ) ^ 2
 
-variable {h b D J : ℕ} (T : Tower h b D J)
+variable {h b J : ℕ} (T : Tower h b J)
 
 namespace Tower
 
@@ -60,9 +60,9 @@ variable {j : ℕ} {i : Fin h} {n : T.Ed j → ℕ}
 theorem mid_le (hj : j < J) {n' : T.Ed (j + 1) → ℕ}
     (hmid : ∀ e', T.ty e' = i → n' e' ≤ ∑ e ∈ univ.filter (fun e => T.πE e = e'), n e) :
     ∑ e' ∈ univ.filter (fun e' => T.ty e' = i), (n' e' : ℝ) ^ 2 ≤
-      D * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 := by
+      b * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 := by
   have h1 : ∀ e' ∈ univ.filter (fun e' : T.Ed (j + 1) => T.ty e' = i), (n' e' : ℝ) ^ 2 ≤
-      D * ∑ e ∈ univ.filter (fun e => T.πE e = e'), (n e : ℝ) ^ 2 := by
+      b * ∑ e ∈ univ.filter (fun e => T.πE e = e'), (n e : ℝ) ^ 2 := by
     intro e' he'
     have h2 := hmid e' (mem_filter.1 he').2
     have h3 : (n' e' : ℝ) ≤ ∑ e ∈ univ.filter (fun e => T.πE e = e'), (n e : ℝ) := by exact_mod_cast h2
@@ -213,8 +213,8 @@ theorem end_norm {j : ℕ} (hj : j < J) {i : Fin h} {n : T.Ed j → ℕ} :
       8 * (Fintype.card (T.X j) / 2 * ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2) := by
   have hbR : (0 : ℝ) < b := by exact_mod_cast T.b_pos
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
-  have hDb : (b : ℝ) ≤ 2 * D := by exact_mod_cast T.bD
-  have hcX : (Fintype.card (T.X j) : ℝ) = D * Fintype.card (T.X (j + 1)) := by exact_mod_cast T.card_X j hj
+  have hDb : (b : ℝ) ≤ 2 * b := by linarith
+  have hcX : (Fintype.card (T.X j) : ℝ) = b * Fintype.card (T.X (j + 1)) := by exact_mod_cast T.card_X j hj
   rw [hcX]
   have h6 := sum_end_sq (T := T) (n := n) (i := i) hj
   have h7 := sum_be_sq (T := T) (n := n) (i := i) hj.le
@@ -246,7 +246,7 @@ theorem end_norm {j : ℕ} (hj : j < J) {i : Fin h} {n : T.Ed j → ℕ} :
     _ ≤ x * b / 2 * (2 * (2 * Pn)) :=
         mul_le_mul_of_nonneg_left (h6.trans (by linarith)) (by positivity)
     _ = 2 * (x * Pn) * b := by ring
-    _ ≤ 2 * (x * Pn) * (2 * D) := mul_le_mul_of_nonneg_left hDb (by positivity)
+    _ ≤ 2 * (x * Pn) * (2 * b) := mul_le_mul_of_nonneg_left hDb (by positivity)
     _ = _ := by ring
 
 /-- The new loads at the vertices. -/
@@ -321,7 +321,7 @@ theorem load_step {j : ℕ} (hj : j < J) {i : Fin h}
       C₁ * a₁ ^ 2 * (t ω : ℝ) ^ 2)
     (ht : ∀ ω, a₁ * t ω ≤ √(vN2 b (T.nEnd i n ω)) + a₁) :
     T.kap n' ≤ ρ * T.kap n + √C₁ * a₁ / b * Fintype.card (T.X (j + 1)) := by
-  have hcX : (Fintype.card (T.X j) : ℝ) = D * Fintype.card (T.X (j + 1)) := by exact_mod_cast T.card_X j hj
+  have hcX : (Fintype.card (T.X j) : ℝ) = b * Fintype.card (T.X (j + 1)) := by exact_mod_cast T.card_X j hj
   have hP0 : 0 ≤ ∑ e ∈ univ.filter (fun e => T.ty e = i), (n e : ℝ) ^ 2 := Finset.sum_nonneg fun e _ => sq_nonneg _
   have hA : (0 : ℝ) ≤ Fintype.card (T.X j) / 2 := by positivity
   have hN0 := Real.sqrt_nonneg (Fintype.card (T.X j) / 2 *

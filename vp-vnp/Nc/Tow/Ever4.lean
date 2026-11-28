@@ -80,7 +80,7 @@ theorem sum_sub_le {κ : Type*} [Fintype κ] (p : κ → Prop) [Fintype {x // p 
   rw [← Finset.sum_subtype (univ.filter p) (by simp) f]
   exact Finset.sum_le_sum_of_subset (subset_univ _)
 
-variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b D J} (R : Routes T m Uu)
+variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J} (R : Routes T m Uu)
   {ch : Fin AA ↪ T.X 0} (FL : FlagLaws F T) (Pl : Place T ch A') (lhat : ℕ)
   (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1)
 

@@ -20,7 +20,7 @@ open Finset
 /-- The first index with the smallest value. -/
 noncomputable def im {h : ℕ} (hh : 0 < h) (f : Fin h → ℕ) : Fin h := (exists_im hh f).choose
 
-variable {h b D J m AA : ℕ} {T : Tower h b D J} (ch : Fin AA ↪ T.X 0)
+variable {h b J m AA : ℕ} {T : Tower h b J} (ch : Fin AA ↪ T.X 0)
 
 /-- Loads by levels. -/
 def lev (L : Tg T m AA → ℕ) (j : ℕ) : T.Ed j → ℕ := fun e => if hj : j < J + 1 then L (.edge ⟨j, hj⟩ e) else 0
