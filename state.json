@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T13:12:58.854953379Z",
+  "updated_at": "2026-11-28T13:19:47.628891381Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -76,7 +76,7 @@
     "rejected": 4,
     "open": 0,
     "contributors": 2,
-    "ideas_open": 2
+    "ideas_open": 4
   },
   "leaderboard": [
     {
@@ -94,12 +94,40 @@
   ],
   "ideas": [
     {
+      "number": 212,
+      "title": "Idea: restructure(Nc/Tow/Load): the ends of a segment are given by edge ends",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-28T13:19:00Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/212",
+      "technique": "restructure",
+      "scope": "Nc/Tow/Load"
+    },
+    {
+      "number": 211,
+      "title": "Idea: dead-code(Nc/Tow/Slp4): the last stage of the plan's program computes only what is read",
+      "status": "open",
+      "author": "kongeskog",
+      "claimed_by": null,
+      "lease_expires": null,
+      "pr": null,
+      "result_delta": null,
+      "created_at": "2026-11-28T13:18:59Z",
+      "url": "https://github.com/kongeskog/formal-math/issues/211",
+      "technique": "dead-code",
+      "scope": "Nc/Tow/Slp4"
+    },
+    {
       "number": 209,
       "title": "Idea: restructure(Nc/Tow): carry the squared norm of the loads in natural numbers, no real roots",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T15:47:42Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 210,
       "result_delta": -7872,
       "created_at": "2026-11-28T12:46:30Z",
@@ -1274,8 +1302,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 17064,
-      "loc": 1063
+      "tokens": 17033,
+      "loc": 1060
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -1289,8 +1317,8 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 11333,
-      "loc": 711
+      "tokens": 11265,
+      "loc": 707
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
@@ -1364,13 +1392,13 @@
     },
     {
       "path": "vp-vnp/Paper/Cuts.lean",
-      "tokens": 6093,
+      "tokens": 6089,
       "loc": 397
     },
     {
       "path": "vp-vnp/Paper/Laws.lean",
-      "tokens": 5889,
-      "loc": 366
+      "tokens": 6042,
+      "loc": 373
     },
     {
       "path": "vp-vnp/Paper/Rate.lean",
@@ -1391,11 +1419,6 @@
       "path": "vp-vnp/Nc/Tow/Load0.lean",
       "tokens": 5398,
       "loc": 422
-    },
-    {
-      "path": "vp-vnp/Nc/Tow/Load.lean",
-      "tokens": 5291,
-      "loc": 314
     },
     {
       "path": "vp-vnp/Paper/Means.lean",
@@ -1421,6 +1444,11 @@
       "path": "vp-vnp/Nc/Tow/Ever2.lean",
       "tokens": 4998,
       "loc": 348
+    },
+    {
+      "path": "vp-vnp/Nc/Hc/Segments.lean",
+      "tokens": 4992,
+      "loc": 372
     }
   ]
 }
