@@ -349,7 +349,7 @@ theorem eq_Q_spectral {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) {I : Type} [Fint
     have c4 := hi u o' (Z := B) (c := q) (by linarith)
     have c5 := hi o o' (Z := Real.log (R j)) (c := r) (by linarith)
     refine le_of_mul_le_mul_right ?_ hs
-    nlinarith
+    linarith only [b1, b2, hj1, hJ, c1, c2, c3, c4, c5]
   have k2 : p * F.e x v + q * F.e y u ≤
       p * F.e x w + q * F.e u w + q * F.e y w' + p * F.e v w' + l * F.e w w' + δ := by
     have hj1 := hj.trans (add_le_add le_rfl (min_le_right _ _))
@@ -359,7 +359,7 @@ theorem eq_Q_spectral {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) {I : Type} [Fint
     have c4 := hi y w' (Z := B) (c := q) (by linarith)
     have c5 := hi w w' (Z := Real.log (L j)) (c := l) (by linarith)
     refine le_of_mul_le_mul_right ?_ hs
-    nlinarith
+    linarith only [b1, b2, hj1, hJ, c1, c2, c3, c4, c5]
   have am : ∀ a b : ℝ, a * b ≤ τ / 2 * a ^ 2 + b ^ 2 / (2 * τ) := by
     intro a b
     have e : τ / 2 * a ^ 2 + b ^ 2 / (2 * τ) - a * b = (τ * a - b) ^ 2 / (2 * τ) := by
