@@ -123,12 +123,7 @@ theorem segStepF_does (sep : List Bool) (c : ℕ) (hsep : sep.length ≤ c) (it 
         (Gives.cons (Gives.id _).hd.hd.tl (Gives.cons e2 (Gives.cons (Gives.id _).hd.tl (Gives.quote _ _)))))))).mono
         (by omega)
     have e4 := segB_does (θ := θ) sep c hsep (fs.length + l.length) f false (sep ++ accs.headD []) fs accs.tail l [] le_rfl hc
-    have e5 := Does.appT (p := (segB sep).code) (l := [((1 : A), ())])
-      (enc := fun _ => .cons (segB sep).code (segS f false (sep ++ accs.headD []) fs accs.tail l []))
-      (f := fun _ => encL (segL sep f false (sep ++ accs.headD []) fs accs.tail l [])) e3 (fun b _ => by
-        rw [Fm.ofTree_code]
-        exact e4)
-    rw [bindW_single] at e5
+    have e5 := Does.of_gives e3 e4
     have e6 : Does θ (app (segB sep).code (.cons (.quote (segB sep).code) (.cons (.hd (.hd (.hd .id))) (.cons (.quote .nil)
         (.cons (appF (.quote (ofBits sep)) (.hd (.tl .id))) (.cons (.tl (.hd (.hd .id))) (.cons (.tl (.tl .id))
         (.cons (.tl (.hd .id)) (.quote .nil))))))))) x

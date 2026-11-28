@@ -357,14 +357,10 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     obtain ⟨t₁, h1, h2⟩ := h
     obtain ⟨ka, hka, da⟩ := iha ht h1
     obtain ⟨kb, hkb, db⟩ := ihb (by rw [(Bt.ht_nds_decAll h1).1]; exact ht) h2
-    have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by
-      rwa [Fm.ofTree_code]
-    have eb : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) t'.enc kb := by
-      rwa [Fm.ofTree_code]
     refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (Dt.ite_false (.tl (.hd (.tl (.id _))))
       (Dt.ite_true (.hd (.hd (.tl (.id _)))) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
         (.cons (.tl (.hd (.hd (.tl (.id _))))) (Dt.run (.hd (.id _)) (.cons (.hd (.id _))
-          (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) ea))) eb)))⟩
+          (.cons (.hd (.hd (.hd (.tl (.id _))))) (.tl (.tl (.id _))))) da))) db)))⟩
     have e : (60 * H + 41) * (a.size + b.size + 1 + 1 + 1) =
         (60 * H + 41) * a.size + (60 * H + 41) * b.size + 3 * (60 * H + 41) := by ring
     simp only [Tree.size, e]
@@ -373,11 +369,9 @@ theorem CK_some {H : ℕ} (o : Tree) : ∀ {t t' : Bt}, t.ht ≤ H → Bt.decAll
     intro t t' ht h
     simp only [names, Bt.decAll, Option.bind_eq_some_iff, Option.some.injEq, exists_eq_right] at h
     obtain ⟨k, hk, d⟩ := DC_some (θ := θ) h
-    have e : Dt θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) t'.enc k := by
-      rwa [Fm.ofTree_code]
     refine ⟨_, ?_, Dt.ite_true (.hd (.tl (.id _))) (Dt.ite_true (.tl (.hd (.tl (.id _))))
       (Dt.run (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
-        (.tl (.tl (.id _))))) e))⟩
+        (.tl (.tl (.id _))))) d))⟩
     have e : (60 * H + 41) * (x.size + (u.size + v.size + 1) + 1) =
         (60 * H + 41) * x.size + (60 * H + 41) * (u.size + v.size) + 2 * (60 * H + 41) := by ring
     have := Nat.mul_le_mul_left (60 * H + 41) (Tree.size_pos x)
@@ -398,14 +392,12 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
       (Ev.ite_true_nil (.hd (.hd (.tl (.id _)))) ?_))
     cases h1 : Bt.decAll (names a) t with
     | none =>
-      have ea : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) [] := by
-        rw [Fm.ofTree_code]; exact iha h1
       have e1 := Ev.cons_nil_right (Dt.hd (Dt.id (θ := θ)
           (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc))))
         (Ev.cons_nil_right (Dt.tl (Dt.hd (Dt.hd (Dt.tl (Dt.id (θ := θ)
           (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))))))
           (Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _)))))
-              (.tl (.tl (.id _))))) ea))
+              (.tl (.tl (.id _))))) (iha h1)))
       have e2 := Ev.run' (Dt.hd (Dt.id (θ := θ)
           (.cons CK.code (.cons (.cons (.cons a b) .nil) t.enc)))) e1
         (by simp)
@@ -413,24 +405,18 @@ theorem CK_none (o : Tree) : ∀ {t : Bt}, Bt.decAll (names o) t = none →
     | some t₁ =>
       rw [h1, Option.bind_some] at h
       obtain ⟨ka, -, da⟩ := CK_some (θ := θ) (H := t.ht) a le_rfl h1
-      have ea : Dt θ (Fm.ofTree CK.code) (.cons CK.code (.cons a t.enc)) t₁.enc ka := by
-        rwa [Fm.ofTree_code]
-      have eb : Ev θ (Fm.ofTree CK.code) (.cons CK.code (.cons b t₁.enc)) [] := by
-        rw [Fm.ofTree_code]; exact ihb h
       exact Ev.run_nil (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.tl (.hd (.hd (.tl (.id _)))))
         (Dt.run (.hd (.id _)) (.cons (.hd (.id _)) (.cons (.hd (.hd (.hd (.tl (.id _)))))
-            (.tl (.tl (.id _))))) ea))) eb
+            (.tl (.tl (.id _))))) da))) (ihb h)
   | case4 x u v =>
     intro t h
     have h' : Bt.dec x.path t = none := by
       cases hd : Bt.dec x.path t with
       | none => rfl
       | some t' => simp [names, Bt.decAll, hd] at h
-    have e : Ev θ (Fm.ofTree DC.code) (.cons DC.code (.cons x t.enc)) [] := by
-      rw [Fm.ofTree_code]; exact DC_none h'
     exact Ev.ite_true_nil (.hd (.tl (.id _))) (Ev.ite_true_nil (.tl (.hd (.tl (.id _))))
       (Ev.run_nil (.quote _ _) (.cons (.quote _ _) (.cons (.hd (.hd (.tl (.id _))))
-        (.tl (.tl (.id _))))) e))
+        (.tl (.tl (.id _))))) (DC_none h')))
 
 section Weights
 

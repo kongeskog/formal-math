@@ -72,11 +72,10 @@ theorem addBr_dt {s c' c : Bool} {a b : Bool} {x y : List Bool} {o : Tree} {k : 
     (h : Dt θ AD (.cons AD.code (.cons (bit c') (.cons (ofBits x) (ofBits y)))) o k) :
     Dt θ (addBr s c') (.cons AD.code (.cons (bit c) (.cons (ofBits (a :: x)) (ofBits (b :: y)))))
       (.cons (bit s) o) (k + 21) := by
-  have h' : Dt θ (Fm.ofTree AD.code) (.cons AD.code (.cons (bit c') (.cons (ofBits x) (ofBits y)))) o k := by
-    rwa [Fm.ofTree_code]
   have := Dt.cons (Dt.quote (θ := θ) (bit s) (.cons AD.code (.cons (bit c) (.cons (ofBits (a :: x)) (ofBits (b :: y))))))
     (Dt.run (Dt.hd (Dt.id _)) (Dt.cons (Dt.hd (Dt.id _)) (Dt.cons (Dt.quote (bit c') _)
-      (Dt.cons (Dt.tl (Dt.hd (Dt.tl (Dt.tl (Dt.id _))))) (Dt.tl (Dt.tl (Dt.tl (Dt.tl (Dt.id _)))))))) h')
+      (Dt.cons (Dt.tl (Dt.hd (Dt.tl (Dt.tl (Dt.id _)))))
+        (Dt.tl (Dt.tl (Dt.tl (Dt.tl (Dt.id _)))))))) h)
   simp only [ofBits] at this ⊢
   convert this using 1
   · rfl
