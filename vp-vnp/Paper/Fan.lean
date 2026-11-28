@@ -460,21 +460,24 @@ def fanP (d : ℕ → FanPts Y → FanPts Y → ℝ) (x : Bool → Y) (T n : ℕ
 noncomputable def fanΛ₂ (d : ℕ → FanPts Y → FanPts Y → ℝ) (z : Y) : ℝ :=
   mean ((fun n b i _ => fanL d z n b i : Fn) * (fun n b i _ => fanL d z n b i : Fn))
 
-theorem fanW_price (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) : IsPrice K (fanW d T n) :=
+variable (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n))
+include hd
+
+theorem fanW_price (n : ℕ) : IsPrice K (fanW d T n) :=
   (hd n).fanDist_price
 
-theorem fanWs_lip (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 0 < T) :
+theorem fanWs_lip (hT : 0 < T) :
     Lip (fanWs d T) (2 * D + w z m) :=
   -- "As L_i ≤ D + |zm|, we may take Λ = 2D + |zm|."
   lem_means_lip (fanW_price hd) fun n => (hd n).lipschitz hT (max_one_pos n)
 
-theorem fan_w_nonneg (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (a b : Y) : 0 ≤ w a b := by
+theorem fan_w_nonneg (a b : Y) : 0 ≤ w a b := by
   rw [← (hd 0).old]
   exact (hd 0).price.nonneg _ _
 
-theorem fan_D_nonneg (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) : 0 ≤ D := (hd 0).D_nonneg (max_one_pos 0)
+theorem fan_D_nonneg : 0 ≤ D := (hd 0).D_nonneg (max_one_pos 0)
 
-theorem fanP_sub_le (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) (b : Bool) (P P' : ℤ × ℤ) :
+theorem fanP_sub_le (n : ℕ) (b : Bool) (P P' : ℤ × ℤ) :
     (n : ℝ) ^ 2 * (fanP d x T n b P - fanP d x T n b P') ≤ fanWs d T n b P P' := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · have h0 : 0 ≤ fanWs d T 0 b P P' := (fanW_price hd 0).nonneg (b, P) (b, P')
@@ -483,7 +486,7 @@ theorem fanP_sub_le (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) 
       (hd n).fanPot_sub_le b P P'
     rwa [max_eq_left hn] at this
 
-theorem fanL_step (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) (b : Bool) (i : ℤ) :
+theorem fanL_step (n : ℕ) (b : Bool) (i : ℤ) :
     |(n : ℝ) ^ 2 * (fanL d z n b (i + 1) - fanL d z n b i)| ≤ D := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simpa using fan_D_nonneg hd
@@ -491,19 +494,19 @@ theorem fanL_step (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) (b
       (hd n).fanLen_step (max_one_pos n) b i
     rwa [max_eq_left hn] at this
 
-theorem fanL_nonneg (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) (b : Bool) (i : ℤ) :
+theorem fanL_nonneg (n : ℕ) (b : Bool) (i : ℤ) :
     0 ≤ fanL d z n b i := (hd n).fanLen_nonneg b i
 
-theorem fanL_le (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) (b : Bool) (i : ℤ) :
+theorem fanL_le (n : ℕ) (b : Bool) (i : ℤ) :
     fanL d z n b i ≤ D + w z m := (hd n).fanLen_le (max_one_pos n) b i
 
-theorem fanL_bd (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) : Bd fun n b i _ => fanL d z n b i := by
+theorem fanL_bd : Bd fun n b i _ => fanL d z n b i := by
   refine ⟨D + w z m, fun n b i k => ?_⟩
   rw [abs_of_nonneg (fanL_nonneg hd n b i)]
   exact fanL_le hd n b i
 
 /-- "… so Λ₂ ≤ (D + |zm|)²". -/
-theorem thm_cn_Λ₂_le (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) : fanΛ₂ d z ≤ (D + w z m) ^ 2 := by
+theorem thm_cn_Λ₂_le : fanΛ₂ d z ≤ (D + w z m) ^ 2 := by
   have h1 := mean_le ((fanL_bd hd).mul (fanL_bd hd)) (Bd.const ((D + w z m) ^ 2)) (fun n b i k => by
     simp only [Pi.mul_apply]
     rw [sq]
@@ -511,7 +514,7 @@ theorem thm_cn_Λ₂_le (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) : fan�
   rwa [mean_const] at h1
 
 /-- **Claim (i)** of the proof of Theorem thm:cn: "N(1,0) ≥ D". -/
-theorem thm_cn_i (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T)
+theorem thm_cn_i (hT : 2 ≤ T)
     (hxx : w (x true) (x false) = 2 * D) : D ≤ meanNorm (fanW d T) (1, 0) := by
   have hT0 : 0 < T := by omega
   have hT' : (0 : ℝ) < T := by exact_mod_cast hT0
@@ -571,7 +574,7 @@ theorem thm_cn_i (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T
   exact (h7.trans (h4.symm.le.trans h5)).trans h6
 
 /-- **Claim (ii)** of the proof of Theorem thm:cn: "N(1,−1)² ≤ D²(1 − θ + θ²)". -/
-theorem thm_cn_ii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T) :
+theorem thm_cn_ii (hT : 2 ≤ T) :
     meanNorm (fanW d T) (1, -1) ^ 2 ≤ D ^ 2 * (1 - 1 / T + (1 / T : ℝ) ^ 2) := by
   have hT0 : 0 < T := by omega
   have hT' : (0 : ℝ) < T := by exact_mod_cast hT0
@@ -645,7 +648,7 @@ theorem thm_cn_ii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ 
   exact (pow_le_pow_left₀ (meanNorm_nonneg _ _) h3 2).trans h2
 
 /-- **Claim (iii)** of the proof of Theorem thm:cn: "N(0,1)² ≤ θ²Λ₂". -/
-theorem thm_cn_iii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T) :
+theorem thm_cn_iii (hT : 2 ≤ T) :
     meanNorm (fanW d T) (0, 1) ^ 2 ≤ (1 / T : ℝ) ^ 2 * fanΛ₂ d z := by
   have hT0 : 0 < T := by omega
   have H := fanWs_lip hd hT0
@@ -683,7 +686,7 @@ theorem thm_cn_iii (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤
   exact pow_le_pow_left₀ (meanNorm_nonneg _ _) ((meanNorm_le_meanLength _ _).trans h1) 2
 
 /-- "n²|L′² − L²| ≤ 2SD(D + |zm|)", for L′ = L_{i+S} and L = L_i. -/
-theorem thm_cn_iv_bound (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : ℕ) (b : Bool) (i : ℤ) (S : ℕ) :
+theorem thm_cn_iv_bound (n : ℕ) (b : Bool) (i : ℤ) (S : ℕ) :
     |(n : ℝ) ^ 2 * (fanL d z n b (i + S) ^ 2 - fanL d z n b i ^ 2)| ≤ 2 * (D + w z m) * (S * D) := by
   have hD0 := fan_D_nonneg hd
   have hB0 := fan_w_nonneg hd z m
@@ -701,13 +704,13 @@ theorem thm_cn_iv_bound (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (n : �
   rw [abs_of_nonneg (add_nonneg (fanL_nonneg hd n b _) (fanL_nonneg hd n b _))]
   linarith [fanL_le hd n b (i + S), fanL_le hd n b i]
 
-theorem fanL_sq_bd (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) :
+theorem fanL_sq_bd :
     Bd fun n b i _ => (n : ℝ) ^ 2 * (fanL d z n b (i + 1) ^ 2 - fanL d z n b i ^ 2) :=
   ⟨2 * (D + w z m) * ((1 : ℕ) * D), fun n b i _ => by simpa using thm_cn_iv_bound hd n b i 1⟩
 
 /-- "n²(L′² − L²) telescopes along i to the mean SΓ", with Γ = |mz|² − ½|xz|² − ½|vz|²: here for S = 1, and only that the mean
 is at least Γ, which is what claim (iv) uses. (Cat.mean_steps passes from S = 1 to any S.) -/
-theorem thm_cn_iv_telescope (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T) :
+theorem thm_cn_iv_telescope (hT : 2 ≤ T) :
     w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2 ≤
       mean (fun n b i _ => (n : ℝ) ^ 2 * (fanL d z n b (i + 1) ^ 2 - fanL d z n b i ^ 2)) := by
   have h := le_mean_tele (F := fun n b i _ => fanL d z n b i ^ 2) (fanL_sq_bd hd)
@@ -728,7 +731,7 @@ theorem thm_cn_iv_telescope (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (h
 /-- **Claim (iv)** of the proof of Theorem thm:cn: "N(1,−1−A)² ≥ A²θ²Λ₂ + AθΓ − O(Aθ²)", with
 Γ = |mz|² − ½|xz|² − ½|vz|² and with 4D(D + |zm|) for the constant in O, which depends on neither A nor θ. ("Divide by S²";
 "for lower bounds it is enough to prove them for ν(Sg)/S for every S".) -/
-theorem thm_cn_iv (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T) (A : ℕ) :
+theorem thm_cn_iv (hT : 2 ≤ T) (A : ℕ) :
     (A : ℝ) ^ 2 * ((1 / T : ℝ) ^ 2 * fanΛ₂ d z)
       + A * (1 / T * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2) - 4 * (1 / T : ℝ) ^ 2 * D * (D + w z m)) ≤
       meanNorm (fanW d T) (1, -1 - (A : ℤ)) ^ 2 := by
@@ -841,7 +844,7 @@ theorem thm_cn_iv (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ 
 /-- **The end** of the proof of Theorem thm:cn. "By Lemma lem:means the second differences of l ↦ N(1,−1−l)² are 2N(0,1)², so
 by (iii) ψ(l) = N(1,−1−l)² − l²θ²Λ₂ is concave on l = −1, 0, 1, …, so ψ(A) ≤ ψ(0) + A(ψ(0) − ψ(−1)). Insert (i), (ii), (iv),
 divide by A and let A → ∞: θΓ − O(θ²) ≤ D²(−θ + θ²) + θ²Λ₂." -/
-theorem thm_cn_end (hd : ∀ n, IsFan K w x m z D T (max n 1) (d n)) (hT : 2 ≤ T)
+theorem thm_cn_end (hT : 2 ≤ T)
     (hxx : w (x true) (x false) = 2 * D) :
     1 / T * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2) - 4 * (1 / T : ℝ) ^ 2 * D * (D + w z m) ≤
       D ^ 2 * (-(1 / T) + (1 / T : ℝ) ^ 2) + (1 / T : ℝ) ^ 2 * fanΛ₂ d z := by
