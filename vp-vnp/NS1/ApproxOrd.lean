@@ -110,8 +110,6 @@ theorem Span.ordGE {n : ℕ} (h : Span n P) : OrdGE (-(n : ℤ)) P := by
   have := h i hne
   omega
 
-theorem Span.zero (n : ℕ) : Span n (0 : E[T;T⁻¹]) := fun i hi => absurd (by simp) hi
-
 theorem Span.of_algebraMap (a : A) (n : ℕ) : Span n (algebraMap A E[T;T⁻¹] a) := fun i hi => by
   rw [coeff_algebraMap] at hi
   by_cases h : i = 0
@@ -121,12 +119,6 @@ theorem Span.of_algebraMap (a : A) (n : ℕ) : Span n (algebraMap A E[T;T⁻¹] 
 theorem Span.one (n : ℕ) : Span n (1 : E[T;T⁻¹]) := by
   have := Span.of_algebraMap (E := E) (1 : E) n
   rwa [map_one] at this
-
-theorem Span.add {n : ℕ} (h : Span n P) (h' : Span n Q) : Span n (P + Q) := by
-  intro i hi
-  by_cases h1 : P.coeff i = 0
-  · exact h' i (by simpa [h1] using hi)
-  · exact h i h1
 
 theorem Span.mul {n m : ℕ} (h : Span n P) (h' : Span m Q) : Span (n + m) (P * Q) := by
   intro i hi

@@ -147,10 +147,9 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
   have hlhl : l ≤ h * l := Nat.le_mul_of_pos_left _ (by omega)
   have e2 : 2000 * h * l = 2000 * (h * l) := by ring
   generalize hJ : 16 * (h * l) = J
-  generalize hm : B + J + l + 2 = m
-  generalize hW : 2 * l + J + B + cΔ * l ^ 3 + 1 = W
+  generalize hm : B + l + 2 = m
+  generalize hW : J + B + cΔ * l ^ 3 = W
   have hZ3 : Z ≤ Z ^ 3 := Nat.le_self_pow (by norm_num) Z
-  have hZ2 : Z ^ 2 ≤ Z ^ 3 := Nat.pow_le_pow_right (by omega) (by norm_num)
   have hJpow : u ^ (16 * h - 17) < 2 ^ J := by
     rw [← hJ, ← mul_assoc, mul_comm (16 * h), pow_mul]
     exact (Nat.pow_le_pow_right hu1 (by omega)).trans_lt (Nat.pow_lt_pow_left hltu (by omega))
@@ -158,46 +157,27 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
   have hnB2 : nB ≤ u ^ 2 := by
     grw [← hnB, KT.nds_expand B K, hI.nds, pow_two, show 2 * B + 1 ≤ u by omega]
   have pbig := pow_big hu
-  have hu2l : u ^ 2 < 2 ^ (2 * l) := by
-    rw [Nat.mul_comm, pow_mul]
-    exact Nat.pow_lt_pow_left hltu (by norm_num)
-  obtain ⟨K', D', hacc, hn', hh', hs'⟩ := prop_approx_acc_exact hA (t' := u ^ (16 * h - 16)) hJpow hI.thin hspan (m := m) (W := W)
+  obtain ⟨K', D', hacc, hn', hh', hs'⟩ := prop_approx_acc_exact hA (t' := u ^ (16 * h - 16))
+    hI.thin hspan (m := m) (W := W)
     (by
-      have h1 : 2 * (2 ^ (B + J) * Δ) + 1 ≤ 4 * (2 ^ (B + J) * 2 ^ l) := by
-        have h2 : Δ ≤ 2 ^ l := (Nat.lt_two_pow_self.le).trans (Nat.pow_le_pow_right (by norm_num) hΔ)
-        have h3 := Nat.mul_le_mul_left (2 ^ (B + J)) h2
-        have h4 : 1 ≤ 2 ^ (B + J) * 2 ^ l := Nat.one_le_iff_ne_zero.2 (by positivity)
-        omega
-      refine h1.trans (le_of_eq ?_)
-      rw [← hm, pow_add _ (B + J + l) 2, pow_add _ (B + J) l]
+      have h2 : Δ ≤ 2 ^ l := (Nat.lt_two_pow_self.le).trans (Nat.pow_le_pow_right (by norm_num) hΔ)
+      have h3 := Nat.mul_le_mul_left (2 ^ B) h2
+      have h4 : 1 ≤ 2 ^ B * 2 ^ l := Nat.one_le_iff_ne_zero.2 (by positivity)
+      refine (by omega : _ ≤ 4 * (2 ^ B * 2 ^ l)).trans (le_of_eq ?_)
+      rw [← hm, pow_add _ (B + l) 2, pow_add _ B l]
       ring)
     (by
-      rw [hnB]
-      calc nB * 2 ^ J * (2 ^ B * 2 ^ (cΔ * l ^ 3)) < 2 ^ (2 * l) * 2 ^ J * (2 ^ B * 2 ^ (cΔ * l ^ 3)) :=
-            Nat.mul_lt_mul_of_pos_right (Nat.mul_lt_mul_of_pos_right (hnB2.trans_lt hu2l) (Nat.two_pow_pos _))
-              (by positivity)
-        _ = 2 ^ (2 * l + J + B + cΔ * l ^ 3) := by rw [pow_add, pow_add, pow_add]; ring
-        _ ≤ _ := Nat.pow_le_pow_right (by norm_num) (by omega))
+      rw [← hW, pow_add, pow_add, mul_assoc]
+      exact Nat.mul_lt_mul_of_pos_right hJpow (by positivity))
     (by
-      rw [hnB]
-      have m1 : 60 * (K.ht + B + J + 1) + 42 + 1 ≤ u := by omega
-      have m2 : 2 * (nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200)) +
-          40 * (nB * (J + 1)) + 40 * (W + 1) + 140 ≤ u ^ (16 * h - 17) := by
-        have s1 : nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200) ≤ u ^ 2 * u :=
-          Nat.mul_le_mul hnB2 (by omega)
-        have s2 : nB * (J + 1) ≤ u ^ 2 * u := Nat.mul_le_mul hnB2 (by omega)
-        have s3 : u ^ 2 * u = u ^ 3 := by ring
-        have s4 : 40 * (W + 1) + 140 ≤ u ^ 3 :=
-          (by omega : _ ≤ u).trans (Nat.le_self_pow (by norm_num) u)
-        have s5 : 2000 * u ^ 3 ≤ u ^ (3 + 1) := pbig 3
-        have s6 : u ^ (3 + 1) ≤ u ^ (16 * h - 17) := pow_le_pow hu1 (by omega)
-        omega
-      calc 2 * (nB * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200)) + 40 * (W + 1) +
-            ((60 * (K.ht + B + J + 1) + 42) * u ^ (16 * h - 17) + 40 * (nB * (J + 1)) + 80) + 60
-            ≤ (60 * (K.ht + B + J + 1) + 42 + 1) * u ^ (16 * h - 17) := by
-              have := Nat.add_mul (60 * (K.ht + B + J + 1) + 42) 1 (u ^ (16 * h - 17))
-              omega
-        _ ≤ u ^ (16 * h - 17 + 1) := pow_succ' u _ ▸ Nat.mul_le_mul_right _ m1
+      have m1 : 51 * m + 15 * W + 202 + 1 ≤ u := by omega
+      have m2 : 20 * W + 60 ≤ u ^ (16 * h - 17) :=
+        (by omega : _ ≤ u).trans (Nat.le_self_pow (by omega) u)
+      calc u ^ (16 * h - 17) * (51 * m + 15 * W + 202) + 20 * W + 60
+          ≤ u ^ (16 * h - 17) * (51 * m + 15 * W + 202 + 1) := by
+            have := Nat.mul_add_one (u ^ (16 * h - 17)) (51 * m + 15 * W + 202)
+            omega
+        _ ≤ u ^ (16 * h - 17 + 1) := pow_succ u _ ▸ Nat.mul_le_mul_left _ m1
         _ = _ := by congr 1; omega)
   rw [hnB] at hn' hs'
   have h2l : ∀ k, 2 ^ (k * l) ≤ u ^ (2 * k) := by
@@ -210,20 +190,21 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
     have h4 : 2 * u ≤ u * u := Nat.mul_le_mul_right _ (by omega)
     rw [pow_two]
     omega
-  have hJm : 2 ^ (J + m + 1) ≤ u ^ (4400 * h) := by
+  have hJm : 2 ^ (m + 1) ≤ u ^ (4400 * h) := by
     grw [show 4400 * h = 2 * (2200 * h) by ring, ← h2l, mul_assoc]
     exact Nat.pow_le_pow_right (by norm_num) (by omega)
   have hn6 : K'.nds ≤ u ^ (4400 * h + 6) := by
     grw [hn', hnB2, hJm, ← pow_add]
     exact pow_le_pow hu1 (by omega)
   have hs6 : D'.size ≤ u ^ (4400 * h + 6) := by
-    have p1 : nB * (2 ^ (J + m) * (8 * (K.ht + B + J + m + W) + xcst + 31)) ≤ u ^ (4400 * h + 4) := by
-      grw [hnB2, Nat.pow_le_pow_right (by norm_num) (Nat.le_succ (J + m)), hJm,
-        show 8 * (K.ht + B + J + m + W) + xcst + 31 ≤ u by omega,
+    have p1 : 2 * (nB * (2 ^ m * (4 * W + 6))) ≤ u ^ (4400 * h + 4) := by
+      grw [show 2 * (nB * (2 ^ m * (4 * W + 6))) = nB * (2 ^ m * (8 * W + 12)) by ring, hnB2,
+        Nat.pow_le_pow_right (by norm_num) (Nat.le_succ m), hJm, show 8 * W + 12 ≤ u by omega,
         ← Nat.pow_le_pow_right hu1 (show 2 + (4400 * h + 1) ≤ _ by omega), pow_add, pow_add,
         pow_one]
     have p2 : D.size ≤ u ^ (4400 * h + 4) := hI.size.trans (pow_le_pow hu1 (by omega))
-    have p3 : xcst ≤ u ^ (4400 * h + 4) := (by omega : xcst ≤ u).trans (Nat.le_self_pow (by omega) u)
+    have p3 : 100 * m + 4 * W + xcst ≤ u ^ (4400 * h + 4) :=
+      (by omega : _ ≤ u).trans (Nat.le_self_pow (by omega) u)
     have p4 := pbig (4400 * h + 4)
     have p5 : u ^ (4400 * h + 4 + 1) ≤ u ^ (4400 * h + 6) := pow_le_pow hu1 (by omega)
     omega
