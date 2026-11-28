@@ -29,7 +29,22 @@
     109,
     131
   ],
-  "judged": {},
+  "judged": {
+    "192@a9db9bb02282e935cefc901dedf6b276f6b1ef92": {
+      "at": "2026-11-28T04:11:47Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    },
+    "193@7e37381f50db9b6e7e7be927917ecfdc4ff31adc": {
+      "at": "2026-11-28T04:11:49Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    }
+  },
   "told": [],
   "turn": null,
   "turns_voided": {},

@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T03:58:20.892053267Z",
+  "updated_at": "2026-11-28T04:11:36.704286506Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 107,
     "rejected": 4,
-    "open": 0,
+    "open": 2,
     "contributors": 2,
     "ideas_open": 1
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 100,
-      "attempts": 104,
+      "attempts": 106,
       "saved": 111512
     },
     {
@@ -100,7 +100,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T06:57:41Z",
-      "pr": null,
+      "pr": 193,
       "result_delta": null,
       "created_at": "2026-11-28T03:52:00Z",
       "url": "https://github.com/kongeskog/formal-math/issues/191",
@@ -114,7 +114,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T06:58:08Z",
-      "pr": null,
+      "pr": 192,
       "result_delta": null,
       "created_at": "2026-11-28T03:34:23Z",
       "url": "https://github.com/kongeskog/formal-math/issues/190",
@@ -1172,7 +1172,186 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 192,
+      "title": "restructure(*): repeated first binders of ten files stated once in variable blocks",
+      "author": "kongeskog",
+      "head_sha": "a9db9bb02282e935cefc901dedf6b276f6b1ef92",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-28T04:10:39Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "added_lines",
+          "label": "Added lines are clean",
+          "status": "pending"
+        },
+        {
+          "key": "deleted_names",
+          "label": "No deleted name still mentioned",
+          "status": "pending"
+        },
+        {
+          "key": "conduct",
+          "label": "Automation within the stated limits",
+          "status": "pending"
+        },
+        {
+          "key": "comments",
+          "label": "Added text within limits",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        }
+      ],
+      "idea": 190,
+      "url": "https://github.com/kongeskog/formal-math/pull/192",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "*"
+    },
+    {
+      "pr": 193,
+      "title": "restructure(Nc/Tow): facts that hold for the one tower are fields of Tower, not hypotheses",
+      "author": "kongeskog",
+      "head_sha": "7e37381f50db9b6e7e7be927917ecfdc4ff31adc",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-28T04:10:49Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "added_lines",
+          "label": "Added lines are clean",
+          "status": "pending"
+        },
+        {
+          "key": "deleted_names",
+          "label": "No deleted name still mentioned",
+          "status": "pending"
+        },
+        {
+          "key": "conduct",
+          "label": "Automation within the stated limits",
+          "status": "pending"
+        },
+        {
+          "key": "comments",
+          "label": "Added text within limits",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        }
+      ],
+      "idea": 191,
+      "url": "https://github.com/kongeskog/formal-math/pull/193",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/Tow",
+      "warnings": [
+        "touches files reserved by idea #190 (claimed by @kongeskog): `vp-vnp/Nc/Tower/Tower.lean`; coordinate there or expect to merge main after it lands",
+        "touches files reserved by idea #189 (claimed by @kongeskog): `vp-vnp/Paper/Pieces.lean`, `vp-vnp/Paper/Tree.lean`; coordinate there or expect to merge main after it lands"
+      ]
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
