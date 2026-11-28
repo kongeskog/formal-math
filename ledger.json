@@ -3,9 +3,13 @@
     "223": {
       "login": "kongeskog",
       "at": "2026-11-28T15:48:02Z"
+    },
+    "225": {
+      "login": "kongeskog",
+      "at": "2026-11-28T16:03:40Z"
     }
   },
-  "comments_seen_until": "2026-11-28T15:48:02Z",
+  "comments_seen_until": "2026-11-28T16:03:40Z",
   "dispatched": {
     "224@d406b46dd149f6b6655e3f2b4d6db765e2b0835d@18c317e7c08530636bc830f2609bd2fd6b05da06@": "2026-11-28T16:01:52.566266350Z"
   },
@@ -26,6 +30,13 @@
   "judged": {
     "224@d406b46dd149f6b6655e3f2b4d6db765e2b0835d": {
       "at": "2026-11-28T15:49:05Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    },
+    "226@4700be7fe24f39af455d7b5f8fcd1474524db9bb": {
+      "at": "2026-11-28T16:04:56Z",
       "names": null,
       "on": [],
       "contains": true,
