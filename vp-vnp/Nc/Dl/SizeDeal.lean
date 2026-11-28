@@ -49,10 +49,10 @@ theorem sum_le {α : Type*} {l : List α} {f : α → ℕ} {n b : ℕ} (hl : l.l
       omega
   exact h.trans (Nat.mul_le_mul_right _ hl)
 
-theorem size_listT_le {l : List Tree} {n b : ℕ} (hl : l.length ≤ n) (hb : ∀ t ∈ l, t.size ≤ b) :
-    (listT l).size ≤ n * (b + 1) + 1 := by
-  have h := sum_le hl hb
-  rw [size_listT, mul_add, mul_one]
+theorem size_listT_le {α : Type*} {l : List α} {f : α → Tree} {n b : ℕ} (hl : l.length ≤ n)
+    (hb : ∀ a ∈ l, (f a).size ≤ b) : (listT (l.map f)).size ≤ n * (b + 1) + 1 := by
+  have h : (l.map (Tree.size ∘ f)).sum ≤ n * b := sum_le hl hb
+  rw [size_listT, List.map_map, List.length_map, mul_add, mul_one]
   omega
 
 theorem size_c (t : Tree) : (Tm.c t).tree.size = t.size + 2 := by
@@ -240,19 +240,14 @@ theorem size_pickS {α : Type} {opts : List α} {o : α → List (NmT S M U0 U1 
     (ho : ∀ a ∈ opts, (o a).length ≤ 4 ∧ ∀ b ∈ o a, b.2.size ≤ 19 * (X * Lc)) :
     (pickS C opts o).tree.size ≤ 120 * (X * Lc) ^ 2 := by
   obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
-  have h1 : ∀ t ∈ opts.map fun a => optT C.nm (o a), t.size ≤ 105 * (X * Lc) := by
-    intro t ht
-    rw [List.mem_map] at ht
-    obtain ⟨a, ha, rfl⟩ := ht
+  have h2 := size_listT_le (f := fun a => optT C.nm (o a)) (b := 105 * (X * Lc)) hopts
+    fun a ha => by
     obtain ⟨h2, h3⟩ := ho a ha
-    refine (size_listT_le (n := 4) (b := 25 * (X * Lc)) (by rw [List.length_map]; exact h2) ?_).trans (by omega)
-    intro t ht
-    obtain ⟨b, hb, rfl⟩ := List.mem_map.1 ht
+    refine (size_listT_le (b := 25 * (X * Lc)) h2 fun b hb => ?_).trans (by omega)
     have h4 := h3 b hb
     have h5 := size_bits (H.nm b.1)
     simp only [Tree.size]
     omega
-  have h2 := size_listT_le (n := X) (b := 105 * (X * Lc)) (by rw [List.length_map]; exact hopts) h1
   have h3 := size_bits (H.nm .zero)
   rw [pickS, size_pick]
   simp only [Tree.size]
@@ -306,18 +301,47 @@ theorem size_trie2 {α : Type} [Fintype α] {code : α → List Bool} (hc : ∀ 
 theorem size_keysL {α : Type} {l : List α} {f : α → List Bool} (hl : l.length ≤ X) (hf : ∀ a, (f a).length ≤ Lc) :
     (listT (l.map fun a => ofBits (f a))).size ≤ 19 * (X * Lc) := by
   obtain ⟨f1, f2, f3, f4⟩ := H.facts
-  refine (size_listT_le (n := X) (b := 4 * Lc + 1) (by rw [List.length_map]; exact hl) ?_).trans ?_
-  · intro t ht
-    obtain ⟨a, -, rfl⟩ := List.mem_map.1 ht
-    exact size_bits (hf a)
+  refine (size_listT_le (b := 4 * Lc + 1) hl fun a _ => size_bits (hf a)).trans ?_
+  linarith
+
+/-- The values that the choices write are small. -/
+theorem size_flagT (d : RowData (K + K)) : (flagT d).size ≤ 19 * (X * Lc) := by
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
+  refine (size_listT_le (n := X) (b := 5) (by simpa using H.hK2) fun k hk => ?_).trans (by omega)
+  rw [List.mem_reverse, List.mem_ofFn] at hk
+  obtain ⟨b, rfl⟩ := hk
+  rw [size_num]
+  unfold Grp.rowFlag
+  split_ifs <;> omega
+
+theorem size_kRT (a b : Fin (K + K)) (n : Fin (U0 + 1)) : (kRT C a b n).size ≤ 19 * (X * Lc) :=
+  size_keysL H (length_filter_finRange ((Nat.le_succ _).trans H.hU0) _) fun _ => H.key _
+
+theorem size_kCT (a b : Fin (K + K)) (n : Fin (U0 + 1)) :
+    (kCT C a b n).size ≤ 19 * (X * Lc) := by
+  refine size_keysL H (length_filter_finRange ((Nat.le_succ _).trans H.hU0) _) fun k => ?_
+  split_ifs
+  · exact H.dkey _
+  · exact H.key _
+
+theorem size_dgT (a : Fin (K + K)) (n : Fin (U0 + 1)) : (dgT C a n).size ≤ 19 * (X * Lc) := by
+  obtain ⟨f1, f2, f3, f4⟩ := H.facts
+  refine (size_listT_le (b := 8 * Lc + 9)
+    (length_filter_finRange ((Nat.le_succ _).trans H.hU0) _) fun k _ => ?_).trans ?_
+  · have k1 := size_bits (H.key (Fin.castAdd A' a, .init a a k))
+    have k2 := size_bits (H.dkey (a, k))
+    simp only [Grp.Ins.tree, Tree.size, size_num]
+    omega
   · linarith
+
+theorem size_chT (ν : M.N) (d : Bool) (j : Fin U1) : (chT C ν d j).size ≤ 19 * (X * Lc) :=
+  size_keysL H (length_filter_finRange H.hU1 _) fun _ => H.key _
 
 /-- Every step is small. -/
 theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤ 120 * (X * Lc) ^ 2 := by
   obtain ⟨f1, f2, f3, f4⟩ := H.facts
   have hX1 := H.X1
   have hLc := H.hLc
-  have hUX : U0 ≤ X := (Nat.le_succ _).trans H.hU0
   have hdt : ∀ d, (C.dt d).size ≤ 5 * (X * Lc) := fun d => (size_dt H d).trans (by omega)
   have hbit : ∀ b : Bool, (bit b).size ≤ 5 * (X * Lc) := fun b => (size_bit b).trans (by omega)
   intro st hst
@@ -342,16 +366,7 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
     refine size_pickS H (by rw [Finset.length_toList, Finset.card_univ]; exact H.row) fun d _ => ⟨by simp, fun b hb => ?_⟩
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hb
     rcases hb with rfl | rfl
-    · simp only [flagT]
-      refine (size_listT_le (n := X) (b := 5) (by simpa using H.hK2) ?_).trans (by omega)
-      intro t ht
-      rw [List.mem_map] at ht
-      obtain ⟨k, hk, rfl⟩ := ht
-      rw [List.mem_reverse, List.mem_ofFn] at hk
-      obtain ⟨b, rfl⟩ := hk
-      rw [size_num]
-      unfold Grp.rowFlag
-      split_ifs <;> omega
+    · exact size_flagT H d
     · have := size_bits (H.rc d)
       simp only
       omega
@@ -363,27 +378,15 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
     · intro b hb
       simp only [o3, List.mem_cons] at hb
       rcases hb with rfl | rfl | rfl | hb
-      · exact size_keysL H (length_filter_finRange hUX _) fun k => H.key _
-      · refine size_keysL H (length_filter_finRange hUX _) fun k => ?_
-        split_ifs
-        · exact H.dkey _
-        · exact H.key _
+      · exact size_kRT H ..
+      · exact size_kCT H ..
       · have := hdt (digN hU0 n)
         simp only
         omega
       · split_ifs at hb
         · rw [List.mem_singleton] at hb
           subst hb
-          simp only [dgT]
-          refine (size_listT_le (n := X) (b := 8 * Lc + 9) (by
-            rw [List.length_map]; exact length_filter_finRange hUX _) ?_).trans ?_
-          · intro t ht
-            obtain ⟨k, -, rfl⟩ := List.mem_map.1 ht
-            have k1 := size_bits (H.key (Fin.castAdd A' a.1, .init a.1 a.1 k))
-            have k2 := size_bits (H.dkey (a.1, k))
-            simp only [Grp.Ins.tree, Tree.size, size_num]
-            omega
-          · linarith
+          exact size_dgT H ..
         · simp at hb
   · rw [steps4, List.mem_map] at h
     obtain ⟨ν, -, rfl⟩ := h
@@ -394,8 +397,8 @@ theorem size_steps18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤
     · have := hdt (digO hU1 j)
       simp only
       omega
-    · exact size_keysL H (length_filter_finRange H.hU1 _) fun k => H.key _
-    · exact size_keysL H (length_filter_finRange H.hU1 _) fun k => H.key _
+    · exact size_chT H ..
+    · exact size_chT H ..
   · rw [steps5, List.mem_map] at h
     obtain ⟨a, -, rfl⟩ := h
     have hb : ∀ b : Bool, (bit b).size ≤ 4 * Lc + 1 := fun b => (size_bit b).trans (by omega)
@@ -477,20 +480,12 @@ theorem size_bodyTm (p : Fin (K + K)) : (bodyTm C p).tree.size ≤ 75 * (X * Lc)
     refine (size_listTm_le hl hb).trans ?_
     linarith
   have h1 := h ((univ : Finset (Option S)).toList.map fun s => gN C (.flag s p)) (by
-    rw [List.length_map, Finset.length_toList, Finset.card_univ]; exact H.hS) (by
-      intro t ht
-      rw [List.mem_map] at ht
-      obtain ⟨s, -, rfl⟩ := ht
-      exact size_gN H _)
-  have h2 := h (List.ofFn fun b => gN C (.kR p b)) (by rw [List.length_ofFn]; exact H.hK2) (by
-      intro t ht
-      rw [List.mem_ofFn] at ht
-      obtain ⟨s, rfl⟩ := ht
-      exact size_gN H _)
-  have h3 := h (List.ofFn fun b => gN C (.kC b p)) (by rw [List.length_ofFn]; exact H.hK2) (by
-      intro t ht
-      obtain ⟨s, rfl⟩ := List.mem_ofFn.1 ht
-      exact size_gN H _)
+    rw [List.length_map, Finset.length_toList, Finset.card_univ]; exact H.hS)
+    (List.forall_mem_map.2 fun s _ => size_gN H _)
+  have h2 := h (List.ofFn fun b => gN C (.kR p b)) (by rw [List.length_ofFn]; exact H.hK2)
+    (List.forall_mem_ofFn_iff.2 fun s => size_gN H _)
+  have h3 := h (List.ofFn fun b => gN C (.kC b p)) (by rw [List.length_ofFn]; exact H.hK2)
+    (List.forall_mem_ofFn_iff.2 fun s => size_gN H _)
   rw [bodyTm, size_tmCons, size_tmCons]
   omega
 
@@ -538,10 +533,9 @@ theorem size_slotTm (z : M.Z) (a : Fin (K + K + A')) : (slotTm C tab d1 z a).tre
   obtain ⟨f1, f2, f3, f4⟩ := H.facts
   rw [slotTm]
   refine (size_catTm_le (n := X) (b := 12 * Lc + 21) (by
-    rw [List.length_map, List.length_reverse]; exact length_allIds H) ?_).trans ?_
-  · intro t ht
-    obtain ⟨id, -, rfl⟩ := List.mem_map.1 ht
-    have h1 := size_bits (H.nm (.slp (tab.kcons z id)))
+    rw [List.length_map, List.length_reverse]; exact length_allIds H)
+    (List.forall_mem_map.2 fun id _ => ?_)).trans ?_
+  · have h1 := size_bits (H.nm (.slp (tab.kcons z id)))
     have h2 := size_bits (H.key (a, id))
     rw [size_ifTm, size_c]
     simp only [listT, Tree.size]
@@ -552,17 +546,12 @@ theorem size_roleTm (r : M.R) : (roleTm C tab tg d1 r).tree.size ≤ 120 * (X * 
   obtain ⟨f1, f2, f3, f4, f5⟩ := H.facts
   have h1 := size_listTm_le (ts := (univ : Finset ((M.kind r.1).SlAt r.2)).toList.map fun e =>
     slotTm C tab d1 ⟨r.1, e.1⟩ (M.rp r)) (n := X) (b := 50 * (X * Lc)) (by
-      rw [List.length_map, Finset.length_toList, Finset.card_univ]; exact H.Sl r) (by
-      intro t ht
-      rw [List.mem_map] at ht
-      obtain ⟨e, -, rfl⟩ := ht
-      exact size_slotTm tab H hd1 _ _)
+      rw [List.length_map, Finset.length_toList, Finset.card_univ]; exact H.Sl r)
+    (List.forall_mem_map.2 fun e _ => size_slotTm tab H hd1 _ _)
   have h2 := size_listTm_le (ts := (univ : Finset ((M.kind r.1).CnAt r.2)).toList.map fun ν =>
     gN C (.ch ⟨r.1, ν.1⟩ (decide ((M.kind r.1).c ν.1 ≠ r.2)))) (n := X) (b := 4 * Lc + 5) (by
-      rw [List.length_map, Finset.length_toList, Finset.card_univ]; exact H.Cn r) (by
-      intro t ht
-      obtain ⟨e, -, rfl⟩ := List.mem_map.1 ht
-      exact size_gN H _)
+      rw [List.length_map, Finset.length_toList, Finset.card_univ]; exact H.Cn r)
+    (List.forall_mem_map.2 fun e _ => size_gN H _)
   have h3 := size_gN H (.num r.1)
   have h4 := H.htg r
   rw [roleTm, size_tmCons, size_tmCons, size_tmCons, size_c, size_num]
@@ -608,10 +597,8 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
   have k2 := size_bits hbub
   have h1 := sum_le (l := (List.finRange (K + K)).map fun p =>
       ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (basesTm C p)) (f := fun t => t.tree.size) (n := X)
-      (b := 170 * (X * Lc)) (by rw [List.length_map, List.length_finRange]; exact H.hK2) (by
-        intro t ht
-        rw [List.mem_map] at ht
-        obtain ⟨p, -, rfl⟩ := ht
+      (b := 170 * (X * Lc)) (by rw [List.length_map, List.length_finRange]; exact H.hK2)
+      (List.forall_mem_map.2 fun p _ => by
         have a1 := size_bits (H.nm (.slp (tab.kgrp (Fin.castAdd A' p))))
         have a2 := size_basesTm H p
         have a3 := hgt g
@@ -619,10 +606,8 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
         omega)
   have h2 := sum_le (l := (Grp.allRoles M).map fun r =>
       ifTm (C.nm (.slp (tab.kgrp (M.rp r)))) (gt g) (listTm [roleTm C tab tg d1 r])) (f := fun t => t.tree.size) (n := X)
-      (b := 160 * (X * Lc) ^ 2) (by rw [List.length_map]; exact length_allRoles H) (by
-        intro t ht
-        rw [List.mem_map] at ht
-        obtain ⟨r, -, rfl⟩ := ht
+      (b := 160 * (X * Lc) ^ 2) (by rw [List.length_map]; exact length_allRoles H)
+      (List.forall_mem_map.2 fun r _ => by
         have a1 := size_bits (H.nm (.slp (tab.kgrp (M.rp r))))
         have a2 := size_roleTm tab H hd1 r
         have a3 := hgt g
@@ -630,10 +615,8 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
         simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_singleton]
         omega)
   have h3 := sum_le (l := (G.allIds (K + K) U0 M.N U1).map (endTm C tab gt d1 g)) (f := fun t => t.tree.size) (n := X)
-      (b := 300 * (X * Lc)) (by rw [List.length_map]; exact length_allIds H) (by
-        intro t ht
-        obtain ⟨id, -, rfl⟩ := List.mem_map.1 ht
-        exact size_endTm tab H hd1 hgt g id)
+      (b := 300 * (X * Lc)) (by rw [List.length_map]; exact length_allIds H)
+      (List.forall_mem_map.2 fun id _ => size_endTm tab H hd1 hgt g id)
   have l1 : ((List.finRange (K + K)).map fun p =>
       ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (basesTm C p)).length ≤ X := by
     rw [List.length_map, List.length_finRange]; exact H.hK2
@@ -684,29 +667,19 @@ theorem size_dealProg : (dealProg C tab qn tg bT bub nl nub gt d1 gp cb b0 b1 i 
       (List.finRange K).map fun κ => ofBits (C.nm (.part κ)) := by
     rw [List.map_map]
     rfl
-  have s2 := size_listT_le (l := (steps18 C tab qn i e hU0 hU1).map DStep.tree) (n := 11 * X ^ 2)
-    (b := 120 * (X * Lc) ^ 2) (by rw [List.length_map]; exact length_steps18 tab i e hU0 hU1 H) (by
-      intro t ht
-      rw [List.mem_map] at ht
-      obtain ⟨st, hst, rfl⟩ := ht
-      exact size_steps18 tab i e hU0 hU1 H st hst)
-  have s3 := size_listT_le (l := (steps9 C).map DStep.tree) (n := X) (b := 8 * Lc + 9) (by
-      rw [List.length_map, steps9, List.length_map, Finset.length_toList, Finset.card_univ]; exact H.hId) (by
-      intro t ht
-      rw [List.mem_map] at ht
-      obtain ⟨st, hst, rfl⟩ := ht
-      rw [steps9, List.mem_map] at hst
-      obtain ⟨id, -, rfl⟩ := hst
+  have s2 := size_listT_le (f := DStep.tree) (length_steps18 tab i e hU0 hU1 H)
+    (size_steps18 tab i e hU0 hU1 H)
+  have s3 := size_listT_le (l := steps9 C) (f := DStep.tree) (n := X) (b := 8 * Lc + 9) (by
+      rw [steps9, List.length_map, Finset.length_toList, Finset.card_univ]; exact H.hId) (by
+      rw [steps9]
+      refine List.forall_mem_map.2 fun id _ => ?_
       have a1 := size_bits (H.nm (.cut id))
       have a2 := size_bits (H.nm (.cont id))
       rw [size_dbits]
       omega)
-  have s4 := size_listT_le (l := ((List.finRange mm).map (instTm C tab tg bT bub gt d1 gp)).map Tm.tree) (n := X)
-    (b := 740 * (X * Lc) ^ 3) (by rw [List.length_map, List.length_map, List.length_finRange]; exact hmm) (by
-      intro t ht
-      obtain ⟨tm, htm, rfl⟩ := List.mem_map.1 ht
-      obtain ⟨g, -, rfl⟩ := List.mem_map.1 htm
-      exact size_instTm tab H hd1 hgt hbT hbub hgp g)
+  have s4 := size_listT_le (l := (List.finRange mm).map (instTm C tab tg bT bub gt d1 gp))
+    (f := Tm.tree) (by simpa using hmm)
+    (List.forall_mem_map.2 fun g _ => size_instTm tab H hd1 hgt hbT hbub hgp g)
   have h := size_dealF (lT cb b0) (lT cb b1) ((List.finRange K).map fun κ => C.nm (.part κ)) nl nub
     (steps18 C tab qn i e hU0 hU1) (steps9 C) ((List.finRange mm).map (instTm C tab tg bT bub gt d1 gp))
   rw [s1'] at h

@@ -104,19 +104,18 @@ theorem time {κ : ℕ} (hκ : κ ≤ m) : κ * (2 * (Lc + 1) * (T + ub + 2) + �
     Nat.le_mul_of_pos_right (τ * m) (Nat.pow_pos hm (n := 7))]
 
 /-- **Size of the pieces.** -/
-theorem size : (X + 1 + (200 * X ^ 3 * Lc + ιb * ℓ * (4 * c + 2) + bd * (4 * ub))) * k * v ^ 256 ≤
+theorem size : (14800 * (X * Lc) ^ 4 + ιb * ℓ * (4 * c + 2) + bd * (4 * ub)) * k * v ^ 256 ≤
     (s * v ^ 256 + τ * k) * m ^ 10 := by
   have hk := h.k_pos
   have hL := h.Lc_le
   have B1 : ιb * ℓ * k ≤ m * s + m * K := by
     grw [h.ℓeq, mul_right_comm, h.ιb_le, mul_add, mul_assoc, Nat.mul_div_le, mul_one]
-  have S1 : (X + 1 + 200 * X ^ 3 * Lc) * k + m * K * m ≤ X ^ 6 * m ^ 20 := by
-    have hXm : ∀ a b, a ≤ 4 → b ≤ 2 → X ^ a * m ^ b ≤ X ^ 4 * m ^ 2 := fun a b ha hb =>
-      Nat.mul_le_mul (h.Xpow ha) (h.mpow hb)
-    grw [h.kK, h.K_X, ← h.Xm_le (show 4 ≤ 6 by norm_num) (show 3 ≤ 20 by norm_num),
-      ← h.mc (X ^ 4) 2 3 203 (by norm_num) (by norm_num), show Lc ≤ m by omega]
-    linarith [hXm 2 0 (by norm_num) (by norm_num), hXm 1 0 (by norm_num) (by norm_num),
-      hXm 4 1 (by norm_num) (by norm_num), hXm 1 2 (by norm_num) (by norm_num)]
+  have S1 : 14800 * (X * Lc) ^ 4 * k + m * K * m ≤ X ^ 6 * m ^ 20 := by
+    grw [h.kK, h.K_X, ← h.Xm_le (show 5 ≤ 6 by norm_num) (show 6 ≤ 20 by norm_num),
+      ← h.mc (X ^ 5) 5 6 10000 (by norm_num) (by norm_num),
+      ← h.mc (X ^ 5) 4 5 2 (by norm_num) (by norm_num), show Lc ≤ m by omega]
+    linarith [Nat.mul_le_mul (h.Xpow (show 1 ≤ 5 by norm_num)) (h.mpow (show 2 ≤ 4 by norm_num)),
+      Nat.zero_le (X ^ 5 * m ^ 4)]
   have S2 : ιb * ℓ * (4 * c + 2) * k ≤ (m * s + m * K) * m := by
     grw [mul_right_comm, B1, show 4 * c + 2 ≤ m by have := h.c_le; omega]
   have S3 : bd * (4 * ub) * k * v ^ 256 ≤ 4 * (τ * k) := by
