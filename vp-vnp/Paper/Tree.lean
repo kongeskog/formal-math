@@ -860,8 +860,8 @@ theorem tree_computed (hH : THypR FL ρ) {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V)
       (∀ y, (fun x => (Tow.plan R FL Pl N N U1).num x.1 x.2 y) ∈ H) ∧
       (∀ p, (fun x => treeUp R FL Pl x.1 x.2 p) ∈ H) ∧
       ∀ y, (ind fun x => (Tow.plan R FL Pl N N U1).good x.1 x.2 y) ∈ H := by
-  obtain ⟨n1, n2, n3, n4, n5, n6⟩ := cards_le (R := R) (ch := ch) (FL := FL) (Pl := Pl) (U0 := N) (U1 := U1) hD
-    hH.b_pos (by omega : 1 ≤ V) hh hm (show J ≤ V by omega) hAA hX hdd hbV hS hN hU1
+  obtain ⟨n1, n2, n4, n5, n6⟩ := cards_le (R := R) (ch := ch) (FL := FL) (Pl := Pl) (U0 := N) (U1 := U1) hD
+    hH.b_pos (by omega : 1 ≤ V) hh hm (show J ≤ V by omega) hAA hX hdd hS hN hU1
   have n7 := card_Tg_le (T := T) (m := m) (AA := AA) hD hH.b_pos (by omega : 1 ≤ V) hh hm (show J ≤ V by omega) hAA hX
     hfl
   generalize hY : 20 * V ^ 9 = Y
@@ -1194,7 +1194,7 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     · exact Nat.le_of_lt (show j.1 < J + 1 from j.2)
   · obtain ⟨n1', -⟩ := cards_le (R := R) (ch := ch) (FL := FL) (Pl := Pl) (U0 := 0) (U1 := 0)
       (show 0 < D by have := hC.D_two; omega) hC.b_pos (show 1 ≤ W by omega) (hC.h_le.trans a1) a2
-      (show J ≤ W by omega) (show AA ≤ W by omega) a3 (hC.di_le.trans a1) (hC.b_le.trans a1)
+      (show J ≤ W by omega) (show AA ≤ W by omega) a3 (hC.di_le.trans a1)
       (fun d => (hC.sl_le d).trans a1) (Nat.zero_le _) (Nat.zero_le _)
     refine (card_image_le.trans (le_of_eq card_univ)).trans (n1'.trans ?_)
     rw [← hW, ← pow_mul]

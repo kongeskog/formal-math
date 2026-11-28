@@ -35,15 +35,13 @@ theorem Ev.app {p x : Tree} {e : Fm} {le : List (Run A)} (he : Ev θ e x le)
 theorem mem_app {p : Tree} {le : List (Run A)} {u : Run A}
     (h : u ∈ le.flatMap fun s => (NS1.evl θ (Fm.ofTree p) s.out).map fun t =>
       ((Run.det 1 p).seq s).seq t |>.tick t.out) :
-    ∃ s ∈ le, ∃ t ∈ NS1.evl θ (Fm.ofTree p) s.out, u.cost = s.cost + t.cost + 2 ∧ u.out = t.out ∧
-      u.th = s.th * t.th := by
+    ∃ s ∈ le, ∃ t ∈ NS1.evl θ (Fm.ofTree p) s.out, u.cost = s.cost + t.cost + 2 ∧ u.out = t.out := by
   rw [List.mem_flatMap] at h
   obtain ⟨s, hs, h⟩ := h
   obtain ⟨t, ht, rfl⟩ := List.mem_map.1 h
-  refine ⟨s, hs, t, ht, ?_, rfl, ?_⟩
-  · simp only [Run.seq, Run.tick, Run.det]
-    omega
-  · simp [Run.seq, Run.tick, Run.det]
+  refine ⟨s, hs, t, ht, ?_, rfl⟩
+  simp only [Run.seq, Run.tick, Run.det]
+  omega
 
 end App
 

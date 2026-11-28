@@ -165,19 +165,6 @@ theorem card_Z_le (hD : 0 < D) (hb : 0 < b) {S : ℕ} (hS : ∀ d, Fintype.card 
   · rw [Nat.mul_one, Finset.sum_const, card_univ, smul_eq_mul]
     exact Nat.add_le_add (card_RM_le hD) (Nat.mul_le_mul_right _ (card_LMv_le hD hb))
 
-/-- Roles. -/
-theorem card_R_le (hD : 0 < D) (hb : 0 < b) : Fintype.card (sys R FL Pl).R ≤
-    rmN h m J AA (Fintype.card (T.X 0)) * 3 + lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) * b := by
-  have e : Fintype.card (sys R FL Pl).R = ∑ mv : Mv T R ch FL, Fintype.card (kindM R ch FL mv).Ro := by
-    rw [Fintype.card_sigma]
-    exact sum_moves fun mv => Fintype.card (kindM R ch FL mv).Ro
-  rw [e]
-  refine (sum_mv_le (a := 3) (g := fun _ => b) _ (fun x => ?_) fun l => ?_).trans ?_
-  · exact le_of_eq ((Fintype.card_congr (Equiv.refl (Fin 3))).trans (Fintype.card_fin 3))
-  · exact le_of_eq ((Fintype.card_congr (FL.ro l.2.2.2)).trans T.card_fl)
-  · rw [Finset.sum_const, card_univ, smul_eq_mul]
-    exact Nat.add_le_add (Nat.mul_le_mul_right _ (card_RM_le hD)) (Nat.mul_le_mul_right _ (card_LMv_le hD hb))
-
 /-- Units. -/
 theorem card_Un : Fintype.card (Un R FL Pl U0 U1) = AA * AA * U0 + Fintype.card (sys R FL Pl).N * U1 := by
   rw [← Fintype.card_congr (proxy_equiv% (Un R FL Pl U0 U1))]
@@ -224,10 +211,10 @@ variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : P
 
 /-- Channels, slots, roles, names of units. -/
 theorem cards_le (hD : 0 < D) (hb : 0 < b) (hV : 1 ≤ V) (hh : h ≤ V) (hm : m ≤ V) (hJ : J ≤ V)
-    (hAA : AA ≤ V) (hX : Fintype.card (T.X 0) ≤ V) (hdd : Fintype.card FL.Di ≤ V) (hbV : b ≤ V)
+    (hAA : AA ≤ V) (hX : Fintype.card (T.X 0) ≤ V) (hdd : Fintype.card FL.Di ≤ V)
     (hS : ∀ d, Fintype.card (FL.L d).Sl ≤ V) (hU0 : U0 ≤ V) (hU1 : U1 ≤ V) :
     Fintype.card (sys R FL Pl).N ≤ 17 * V ^ 6 ∧ Fintype.card (sys R FL Pl).Z ≤ 9 * V ^ 5 ∧
-      Fintype.card (sys R FL Pl).R ≤ 25 * V ^ 5 ∧ Fintype.card (Un R FL Pl U0 U1) ≤ 18 * V ^ 7 ∧
+      Fintype.card (Un R FL Pl U0 U1) ≤ 18 * V ^ 7 ∧
       Fintype.card (Mv T R ch FL) ≤ 9 * V ^ 5 ∧ Fintype.card (Nd T) ≤ 3 * V ^ 2 := by
   have h1 := rmN_le (X0 := Fintype.card (T.X 0)) hV hh hm hJ hAA hX
   have h2 := lmN_le (X0 := Fintype.card (T.X 0)) hh hJ hX hdd
@@ -239,13 +226,9 @@ theorem cards_le (hD : 0 < D) (hb : 0 < b) (hV : 1 ≤ V) (hh : h ≤ V) (hm : m
     have h3 := card_N_le (R := R) (FL := FL) (Pl := Pl) hD
     have h4 : J * (h * (h * Fintype.card (T.X 0) * Fintype.card FL.Di)) ≤ V * (V * (V * V * V)) := by gcongr
     linarith
-  refine ⟨hN, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨hN, ?_, ?_, ?_, ?_⟩
   · have h3 := card_Z_le (R := R) (FL := FL) (Pl := Pl) hD hb hS
     have h4 := Nat.mul_le_mul_right V h2
-    have h5 : V ^ 4 * V = V ^ 5 := by ring
-    omega
-  · have h3 := card_R_le (R := R) (FL := FL) (Pl := Pl) hD hb
-    have h4 : lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) * b ≤ V ^ 4 * V := Nat.mul_le_mul h2 hbV
     have h5 : V ^ 4 * V = V ^ 5 := by ring
     omega
   · rw [card_Un]

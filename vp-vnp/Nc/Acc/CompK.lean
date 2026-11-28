@@ -161,7 +161,7 @@ theorem app {p : Tree} {Q : List (A × Tree)} {ω : Tree → R} (hF : Does θ F 
     exact hG q hq
   refine ⟨_, Ev.app e1 fun s hs => (hG' s hs).hl, ?_, ?_⟩
   · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h3, -⟩ := mem_app hu
+    obtain ⟨s, hs, t, ht, h1, h3⟩ := mem_app hu
     obtain ⟨a2, -⟩ := e2 s hs
     obtain ⟨b1, b2⟩ := (hG' s hs).evl.1 t ht
     rw [h3]
@@ -232,7 +232,7 @@ theorem app_ev {p : Tree} {l : List (Run A)} {ω : Run A → R} (he : Ev θ F x 
     KV θ κ S (NS1.app p F) x (l.map fun s => algebraMap A R s.th * ω s).sum (c + d + 2) := by
   refine ⟨_, Ev.app he fun s hs => (hG s hs).hl, ?_, ?_⟩
   · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h3, -⟩ := mem_app hu
+    obtain ⟨s, hs, t, ht, h1, h3⟩ := mem_app hu
     obtain ⟨b1, b2⟩ := (hG s hs).evl.1 t ht
     have := hc s hs
     rw [h3]

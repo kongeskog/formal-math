@@ -179,7 +179,7 @@ theorem app {p : Tree} {R : Tree → List (A × Tree)} (hF : Does θ F x Q c)
     exact hG q hq
   refine ⟨_, Ev.app e1 fun s hs => (hG' s hs).hl, ?_, fun φ => ?_⟩
   · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h3, -⟩ := mem_app hu
+    obtain ⟨s, hs, t, ht, h1, h3⟩ := mem_app hu
     obtain ⟨a2, q, hq, a3⟩ := e2 s hs
     obtain ⟨b2, r, hr, b3⟩ := (hG' s hs).evl.1 t ht
     rw [← a3] at hr
