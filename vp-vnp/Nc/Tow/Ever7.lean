@@ -83,27 +83,27 @@ open Classical in
 and a constant times the loads at the chamber and below its children. -/
 theorem held_node_le
     -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-    (hg : ∀ mv, GoodMv lhat (nn n) (oo R FL Pl o) mv)
+    (hg : ∀ mv, GoodMv lhat (nn n) (oo o) mv)
     {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) {ℓf : ℕ}
     (P : Nd T) (hini : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
     heldN R FL Pl n o (Pl.pt P) +
       (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) ≤
       isB ch P * (ℓf + 8 * m * lhat) + chanN R FL Pl (Pl.pt P) +
         (4 + (2 * Fintype.card T.Nr * FL.G₁ + 1 + Sm) * Fintype.card FL.Di) *
-          onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x
-            + 3 * chF (LfO R ch FL Pl lhat n o) j x)
-            (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
-  set Lf := LfO R ch FL Pl lhat n o with hLf
+          onN (fun j x => 8 * fb (LfO lhat n o) j x
+            + 3 * chF (LfO lhat n o) j x)
+            (∑ e : T.Ed J, LfO lhat n o J e) P := by
+  set Lf := LfO lhat n o with hLf
   set f : ∀ j, T.X j → ℕ := fun j x => 8 * fb Lf j x + 3 * chF Lf j x with hf
   set f0 := ∑ e : T.Ed J, Lf J e with hf0
   set c1 := 2 * Fintype.card T.Nr * FL.G₁ with hc1
   have a1 : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n (Pl.pt P) + chanN R FL Pl (Pl.pt P) +
-      2 * NR lhat (nn n) (oo R FL Pl o) P + c1 * NL lhat (nn n) (oo R FL Pl o) P :=
+      2 * NR lhat (nn n) (oo o) P + c1 * NL lhat (nn n) (oo o) P :=
     held_le hg P
   have a2 := pads_node (R := R) (Pl := Pl) (lhat := lhat) (n := n) (o := o) hSm P
-  have a3 : NR lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
+  have a3 : NR lhat (nn n) (oo o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
     NR_onN hg P
-  have a4 : NL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di * onN f f0 P :=
+  have a4 : NL lhat (nn n) (oo o) P ≤ Fintype.card FL.Di * onN f f0 P :=
     NL_onN hg P
   have a5 := initN_le (Pl := Pl) (n := n) (ℓf := ℓf) P hini
   generalize NR lhat (nn n) (oo o) P = NRv at a1 a2 a3

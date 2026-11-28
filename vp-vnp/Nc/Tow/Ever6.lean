@@ -36,7 +36,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
 
 variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-  (hg : ∀ mv, GoodMv lhat (nn n) (oo R FL Pl o) mv)
+  (hg : ∀ mv, GoodMv lhat (nn n) (oo o) mv)
 
 variable (lhat n o) in
 /-- The loads. -/
@@ -49,9 +49,9 @@ noncomputable def isB (P : Nd T) : ℕ := if ∃ a, P = nd T 0 (Nat.zero_le _) (
 
 include hg in
 open Classical in
-theorem NR_onN (P : Nd T) : NR lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) +
-    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF (LfO R ch FL Pl lhat n o) j x)
-      (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
+theorem NR_onN (P : Nd T) : NR lhat (nn n) (oo o) P ≤ isB ch P * (2 * m * lhat) +
+    onN (fun j x => 8 * fb (LfO lhat n o) j x + 3 * chF (LfO lhat n o) j x)
+      (∑ e : T.Ed J, LfO lhat n o J e) P := by
   rcases nd_cases P with rfl | ⟨j, hj, c, rfl⟩
   · exact (NR_none hg).trans (Nat.le_add_left _ _)
   · rw [onN_nd]
@@ -71,9 +71,9 @@ theorem NR_onN (P : Nd T) : NR lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * 
 
 include hg in
 open Classical in
-theorem NL_onN (P : Nd T) : NL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di *
-    onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF (LfO R ch FL Pl lhat n o) j x)
-      (∑ e : T.Ed J, LfO R ch FL Pl lhat n o J e) P := by
+theorem NL_onN (P : Nd T) : NL lhat (nn n) (oo o) P ≤ Fintype.card FL.Di *
+    onN (fun j x => 8 * fb (LfO lhat n o) j x + 3 * chF (LfO lhat n o) j x)
+      (∑ e : T.Ed J, LfO lhat n o J e) P := by
   rcases nd_cases P with rfl | ⟨j, hj, c, rfl⟩
   · rw [NL_none]
     exact Nat.zero_le _

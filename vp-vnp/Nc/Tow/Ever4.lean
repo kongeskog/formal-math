@@ -115,7 +115,7 @@ theorem law_le (l : LMv T FL) (ν : (FL.L l.2.2.2).Cn) :
   have h3 : (oo o ⟨.inr l, ν⟩) ^ 2 ≤ FL.G₁ * t ^ 2 := by
     refine h2.trans (le_trans ?_ h1)
     exact Nat.le_mul_of_pos_left _ T.b_pos
-  have h4 : (oo R FL Pl o ⟨.inr l, ν⟩) ^ 2 ≤ (FL.G₁ * t) ^ 2 := by
+  have h4 : (oo o ⟨.inr l, ν⟩) ^ 2 ≤ (FL.G₁ * t) ^ 2 := by
     refine h3.trans ?_
     rw [mul_pow]
     refine Nat.mul_le_mul_right _ ?_
@@ -128,14 +128,14 @@ open Classical in
 /-- The units of a law move at a node. -/
 theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d : Bool,
     if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
-      oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ 2 * Fintype.card T.Nr * FL.G₁ *
+      oo o ⟨.inr l, ν⟩ else 0) ≤ 2 * Fintype.card T.Nr * FL.G₁ *
     ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then
-      num lhat (nn n) (oo R FL Pl o) (.inr l) else 0 := by
-  set t := num lhat (nn n) (oo R FL Pl o) (.inr l) with ht
+      num lhat (nn n) (oo o) (.inr l) else 0 := by
+  set t := num lhat (nn n) (oo o) (.inr l) with ht
   set S := ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then t else 0 with hS
   have h5 : ∀ (ν : (FL.L l.2.2.2).Cn) (d : Bool),
       (if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d)))
-          = P then oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ FL.G₁ * S := by
+          = P then oo o ⟨.inr l, ν⟩ else 0) ≤ FL.G₁ * S := by
     intro ν d
     split_ifs with hP
     · refine (law_le hg l ν).trans (Nat.mul_le_mul_left _ ?_)

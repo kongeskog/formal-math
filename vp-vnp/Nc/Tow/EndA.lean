@@ -111,8 +111,8 @@ section Plan
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 /-- Alive units with a target are given. -/
-theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU R FL Pl lhat n o u)
-    (hd : tgU R FL Pl u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM R FL Pl lhat n o z := by
+theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
+    (hd : tgU u ≠ .done) : ∃ z : ZM R FL (ch := ch), u ∈ consM lhat n o z := by
   classical
   set L := load lhat (nn n) (oo o) with hL
   have one : ∀ x : RM T m AA, okR T R ch x → ActR L x → tgU u = inpR T x →
