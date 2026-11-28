@@ -131,7 +131,7 @@ theorem num_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.
     ¬ Pick (load lhat n o) l) : num lhat n o (.inr l) = 0 := by
   classical
   rcases hl with hl | hl
-  · have h1 : tmin FL (load lhat n o) l = 0 := tmin_zero fun q => seg_zero hl _ q
+  · have h1 : tmin (load lhat n o) l = 0 := tmin_zero fun q => seg_zero hl _ q
     have := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     omega
   · rw [num_eq, numF, if_neg hl]
@@ -205,7 +205,7 @@ theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (�
 
 /-- Loads on the edges at vertices. -/
 theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
-    (d : FL.Di) (hd : Pick FL (load lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
+    (d : FL.Di) (hd : Pick (load lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
     load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) ≤
       alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch)) := by
   classical
@@ -236,7 +236,7 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.cast
       have hpk : Pick (load lhat n o) ⟨j', i', ω', d'⟩ := by
         by_contra hcon
         exact hne (alv_inr_zero (Or.inr hcon) ν')
-      have hdd : d' = d := pick_eq _ (l := ⟨j', i', ω', d'⟩) hpk hd
+      have hdd : d' = d := pick_eq (l := ⟨j', i', ω', d'⟩) hpk hd
       subst hdd
       have h8 : ν' = (FL.cn d').symm ν := by
         rw [← h7]
@@ -255,7 +255,7 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
   obtain ⟨i, hi⟩ := exists_isMin (load lhat n o) j.castSucc
   obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
   refine Tower.load_step j.2 FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
-    (fun ω => tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)) ?_ ?_
+    (fun ω => tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL)) ?_ ?_
   · exact isMin_le hi
   · intro e' he'
     exact mid_load_le j hi e' he'
@@ -272,7 +272,7 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
       (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv FL)) 2)))
     have h6 : (b : ℝ) * ∑ ν : T.Nr,
           (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
-        FL.G₁ * (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ) ^ 2 := by
+        FL.G₁ * (tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ) ^ 2 := by
       exact_mod_cast h5
     linarith [mul_le_mul_of_nonneg_right FL.G₁_le
       (sq_nonneg (tmin (load lhat n o) (⟨j, i, ω, d0⟩ : LMv FL) : ℝ))]

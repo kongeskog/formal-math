@@ -102,7 +102,7 @@ theorem fits_mono {L : Tg T m AA → ℕ} {l : LMv FL} {s t : ℕ} (hst : s ≤ 
 
 /-- The number of units at a vertex is not large. -/
 theorem tmin_lt {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R ch FL U0 U1) (l : LMv FL) :
-    tmin FL L l < b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1 + 2 := by
+    tmin L l < b * Fintype.card (Sym2 T.Fl) * Wb R ch FL U0 U1 + 2 := by
   set w := Wb R ch FL U0 U1 with hw
   set s := Fintype.card (Sym2 T.Fl) with hs
   have h1 := tmin_le L l (n' := fun _ => w) fun q => hL _

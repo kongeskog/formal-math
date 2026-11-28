@@ -73,7 +73,7 @@ theorem py_fits {s : Inp → ℕ} {a : ℕ} (hm : ∀ τ, (fun x => L x τ) ∈ 
   have h1 : PY Dd H Y (a + 1 + 2) fun x => ∀ q ∈ univ.filter (fun q : Sym2 T.Fl => ¬ q.IsDiag),
       L x (.seg l.1 l.2.1 l.2.2.1 q) ≤ slo l.2.2.2 q * s x :=
     PY.forall_mem hA _ ((card_filter_le _ _).trans hB.fl) fun q _ =>
-      PY.rel hA (fun u t => u ≤ slo FL l.2.2.2 q * t) (CY.base (hm _)) hs
+      PY.rel hA (fun u t => u ≤ slo l.2.2.2 q * t) (CY.base (hm _)) hs
   refine h1.congr fun x => ?_
   unfold Fits
   simp
@@ -82,10 +82,10 @@ theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv FL) : CY Dd H Y 
   have h1 : ∀ s ∈ range Y, PY Dd H Y 6 fun x => ¬ ∃ d, Fits (L x) (withD l d) s := by
     intro s hs
     refine PY.not hA (PY.exists_univ hA hB.di fun d => ?_)
-    exact py_fits hA hB hm (withD FL l d) (CY.const s (hA.lt_of_le (mem_range.1 hs).le))
-  have hlt : ∀ x, tmin FL (L x) l < Y := fun x =>
+    exact py_fits hA hB hm (withD l d) (CY.const s (hA.lt_of_le (mem_range.1 hs).le))
+  have hlt : ∀ x, tmin (L x) l < Y := fun x =>
     lt_of_lt_of_le (tmin_lt (fun τ => hL x τ) l) hB.tt
-  have e : ∀ x, tmin FL (L x) l = ∑ s ∈ range Y, ind (fun x => ¬ ∃ d, Fits FL (L x) (withD FL l d) s) x := by
+  have e : ∀ x, tmin (L x) l = ∑ s ∈ range Y, ind (fun x => ¬ ∃ d, Fits (L x) (withD l d) s) x := by
     intro x
     rw [tmin_sum (hlt x)]
     refine Finset.sum_congr rfl fun s _ => ?_
@@ -96,12 +96,12 @@ theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv FL) : CY Dd H Y 
   exact hA.lt_of_le (hlt x).le
 
 omit hL in
-theorem py_pick (hm : ∀ τ, (fun x => L x τ) ∈ H) (ht : ∀ l : LMv FL, (fun x => tmin FL (L x) l) ∈ H) (l : LMv FL) :
-    PY Dd H Y 7 fun x => Pick FL (L x) l := by
+theorem py_pick (hm : ∀ τ, (fun x => L x τ) ∈ H) (ht : ∀ l : LMv FL, (fun x => tmin (L x) l) ∈ H) (l : LMv FL) :
+    PY Dd H Y 7 fun x => Pick (L x) l := by
   have hY := hA.pos
-  have h1 : ∀ d, PY Dd H Y 3 fun x => Fits FL (L x) (withD FL l d) (tmin FL (L x) l) := fun d =>
-    py_fits hA hB hm (withD FL l d) (CY.base (ht l))
-  have h0 : PY Dd H Y 3 fun x => Fits FL (L x) l (tmin FL (L x) l) :=
+  have h1 : ∀ d, PY Dd H Y 3 fun x => Fits (L x) (withD l d) (tmin (L x) l) := fun d =>
+    py_fits hA hB hm (withD l d) (CY.base (ht l))
+  have h0 : PY Dd H Y 3 fun x => Fits (L x) l (tmin (L x) l) :=
     py_fits hA hB hm l (CY.base (ht l))
   have h2 : PY Dd H Y 6 fun x => ∀ d ∈ univ.filter
       (fun d => Fintype.equivFin FL.Di d < Fintype.equivFin FL.Di l.2.2.2),
@@ -166,7 +166,7 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (κ := Fin (J + 1) × Fin h) (fun q => ind fun x => IsMin (L x) q.1 q.2)
     (a := 7) (e := 2) hjh (fun q => py_isMin hA hB (fun j i => f1 (j, i)) q.1 q.2) (by omega)
   have m2 : ∀ τ, (fun x => L x τ) ∈ H2 := fun τ => u2 (u1 (hm τ))
-  obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := LMv FL) (fun l x => tmin FL (L x) l) (a := 8) (e := 1) hl
+  obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := LMv FL) (fun l x => tmin (L x) l) (a := 8) (e := 1) hl
     (fun l => cy_tmin hA hB hL m2 l) (by omega)
   have m3 : ∀ τ, (fun x => L x τ) ∈ H3 := fun τ => u3 (m2 τ)
   obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := LMv FL) (fun l => ind fun x => Pick (L x) l) (a := 7) (e := 1) hl
@@ -202,7 +202,7 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
     obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := Mv R ch FL)
       (fun mv x => numS lhat (nx x) (ox x) (t + 1) mv) (a := 0) (e := 1) (by simpa using hB.mv)
       (fun mv => by
-        by_cases ht : timeM R ch FL mv = t
+        by_cases ht : timeM mv = t
         · refine (CY.base (f2.numF mv)).congr fun x => ?_
           rw [numS, if_pos ht]
         · refine (CY.base (u2 (u1 (f0 mv)))).congr fun x => ?_

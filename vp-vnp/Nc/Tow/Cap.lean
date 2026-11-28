@@ -59,7 +59,7 @@ theorem tmin_real_le (l : LMv FL) : (tmin (load lhat n o) l : ℝ) ≤ 3 * b * k
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have ha1 : (1 : ℝ) ≤ FL.a₁ := by exact_mod_cast FL.a₁_pos
   set nf : T.Ed j → ℕ := lds lhat n o j.castSucc with hnf
-  have h1 : (FL.a₁ : ℝ) * tmin FL (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) ≤
+  have h1 : (FL.a₁ : ℝ) * tmin (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) ≤
       √(vN2 b (T.nEnd i nf ω)) + FL.a₁ := tmin_le _ _ fun q => seg_le j i ω q
   have hX : 0 < Fintype.card (T.X (j.1 + 1)) := by
     rw [← Tower.card_V i]
@@ -134,7 +134,7 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
     · exact (num_inl _).trans (hedge (Fin.last J) e)
   · have h1 := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     have h2 := tmin_real_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH l
-    have h3 : (tmin FL (load lhat n o) l : ℝ) ≤ ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
+    have h3 : (tmin (load lhat n o) l : ℝ) ≤ ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
       push_cast
       linarith
     have h4 : tmin (load lhat n o) l ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 := by exact_mod_cast h3

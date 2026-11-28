@@ -110,7 +110,7 @@ theorem card_consM (z : ZM R FL (ch := ch)) :
 theorem lt_of_time {mv : Mv R ch FL} {x : Fin (Fintype.card (Mv R ch FL))}
     (h : timeM mv < timeM (eE R FL x)) : (eE R FL).symm mv < x := by
   rw [← (eE R FL).symm_apply_apply x]
-  exact (exists_mono_equiv (timeM)).choose_spec _ _ h
+  exact (exists_mono_equiv timeM).choose_spec _ _ h
 
 section Causal
 
@@ -118,7 +118,7 @@ variable {o' : (sys R FL Pl).N → Fin U1} {t : ℕ}
 
 /-- The units given at a slot depend only on the outcomes of earlier moves. -/
 theorem consM_congr (z : ZM R FL (ch := ch))
-    (hag : ∀ mv' : Mv R ch FL, timeM R ch FL mv' < timeM R ch FL z.1 →
+    (hag : ∀ mv' : Mv R ch FL, timeM mv' < timeM z.1 →
       ∀ c, oo o ⟨mv', c⟩ = oo o' ⟨mv', c⟩) :
     (consM lhat n o z : Finset (Un R FL Pl U0 U1)) = consM lhat n o' z := by
   -- whether a unit that is due by then is allowed

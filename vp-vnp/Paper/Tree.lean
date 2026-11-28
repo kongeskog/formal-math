@@ -408,8 +408,8 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
         omega
       obtain ⟨j, hj, c, h1, h2⟩ := done_hold hx (β := β) hdone hnum
       refine ⟨⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩, hmem _ ⟨⟨x, hx⟩, β, rfl, hdone, h1⟩, ?_⟩
-      have h3 : s(partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β false),
-          partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
+      have h3 : s(partM (.inl ⟨x, hx⟩) ((kindM FL (.inl ⟨x, hx⟩)).cnEnd β false),
+          partM (.inl ⟨x, hx⟩) ((kindM FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
           s(nd hj c, parN (lev (load N (nn n) (oo o))) j c) := h2
       have h4 := congrArg (Sym2.map Pl.pt) h3
       simp only [Sym2.map_mk] at h4
