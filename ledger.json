@@ -23,21 +23,9 @@
     109,
     131
   ],
-  "judged": {
-    "214@2b6989719056b0e4a03d631a1fe87c6b2a190ae5": {
-      "at": "2026-11-28T13:31:43Z",
-      "names": null,
-      "on": [],
-      "contains": true,
-      "has_merged": null
-    }
-  },
+  "judged": {},
   "told": [],
-  "turn": {
-    "id": "214@2b6989719056b0e4a03d631a1fe87c6b2a190ae5",
-    "tree": "a071da5936cd170e9bd6076f5d95d44d2d83102d",
-    "at": "2026-11-28T13:44:23.852828294Z"
-  },
+  "turn": null,
   "turns_voided": {},
   "turns_lost": {}
 }
