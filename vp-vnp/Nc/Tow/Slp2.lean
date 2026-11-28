@@ -171,12 +171,12 @@ theorem cy_ld (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ}
   have hle : ∀ x, ld lhat (nx x) (ox x) (Nf x) τ ≤ Y := fun x =>
     (ld_le (hR.n x) (hR.o x) _ _).trans hB.w
   have e : ∀ x, ld lhat (nx x) (ox x) (Nf x) τ = bt R ch lhat (nx x) τ +
-      ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM R ch FL ν.1 ν.2 = τ),
+      ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM ν.1 ν.2 = τ),
         alvN (ox x) ν (Nf x ν.1) := by
     intro x
     rw [Finset.sum_filter]
     rfl
-  have h1 : CY Dd H Y 2 fun x => ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM R ch FL ν.1 ν.2 = τ),
+  have h1 : CY Dd H Y 2 fun x => ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM ν.1 ν.2 = τ),
         alvN (ox x) ν (Nf x ν.1) := by
     refine CY.sum hA _ ((card_filter_le _ _).trans hB.nm) (fun ν _ => CY.base (ha ν))
       fun x => hA.lt_of_le ?_

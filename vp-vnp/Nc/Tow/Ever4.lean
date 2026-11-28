@@ -172,7 +172,7 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
     split_ifs <;> omega
   have h2 : (∑ ν : (sys R FL Pl).N, ∑ d : Bool, if (sys R FL Pl).np ν d = Pl.pt P then (o ν).1 else 0) =
       ∑ ν : NM R FL (ch := ch), ∑ d : Bool,
-        if partM R ch FL ν.1 ((kindM R ch FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0 := by
+        if partM ν.1 ((kindM FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0 := by
     rw [← Equiv.sum_comp (eN R FL Pl)]
     refine Finset.sum_congr rfl fun ν _ => Finset.sum_congr rfl fun d _ => ?_
     have h3 : oo o (eN R FL Pl ν) = (o ν).1 := by
@@ -184,11 +184,11 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
     exact Pl.pt.injective.eq_iff
   rw [h1, h2]
   have h4 : (∑ ν : NM R FL (ch := ch), ∑ d : Bool,
-      if partM R ch FL ν.1 ((kindM R ch FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0) ≤
+      if partM ν.1 ((kindM FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0) ≤
       2 * NR lhat (nn n) (oo o) P +
       2 * Fintype.card T.Nr * FL.G₁ * NL lhat (nn n) (oo o) P := by
-    change (∑ ν : (Σ mv : Mv R ch FL, (kindM R ch FL mv).Cn), ∑ d : Bool,
-      if partM R ch FL ν.1 ((kindM R ch FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0) ≤ _
+    change (∑ ν : (Σ mv : Mv R ch FL, (kindM FL mv).Cn), ∑ d : Bool,
+      if partM ν.1 ((kindM FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0) ≤ _
     rw [Fintype.sum_sigma, Fintype.sum_sum_type]
     refine add_le_add ?_ ?_
     · -- relays

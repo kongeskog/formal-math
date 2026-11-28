@@ -85,7 +85,7 @@ theorem nxt_ok_B {a c : Fin AA} {k : ℕ} {y : RM T m AA} (he : tgB R ch a c k =
 
 /-- End segments join different chambers. -/
 theorem seg_nondiag {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
-    {ν : NM R FL (ch := ch)} (hν : tgM R ch FL ν.1 ν.2 = .seg j i ω q) : ¬ q.IsDiag := by
+    {ν : NM R FL (ch := ch)} (hν : tgM ν.1 ν.2 = .seg j i ω q) : ¬ q.IsDiag := by
   have key : ∀ c : T.X j, T.host i (T.vx i c) ≠ T.π c → ¬ (s(T.co i (T.host i (T.vx i c)), T.co i c) : Sym2 T.Fl).IsDiag := by
     intro c hne hd
     rw [Sym2.mk_isDiag_iff] at hd
@@ -136,7 +136,7 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
       cases u with
       | init a c k => exact nxt_ok_B hτ
       | new ν k =>
-        have hτ : tgM R ch FL (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .nxt x := hτ
+        have hτ : tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2 = .nxt x := hτ
         revert hτ
         generalize eN R FL Pl ν = w
         intro hτ
@@ -154,24 +154,24 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
       | new ν k => exact seg_nondiag (ν := eN R FL Pl ν) hτ
     obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
     obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv FL)
-    have hd : Pick FL L (⟨j, i, ω, d⟩ : LMv FL) := hd
-    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv FL)) = tmin FL L (⟨j, i, ω, d⟩ : LMv FL) := by
+    have hd : Pick L (⟨j, i, ω, d⟩ : LMv FL) := hd
+    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv FL)) = tmin L (⟨j, i, ω, d⟩ : LMv FL) := by
       rw [num_eq, numF, if_pos hd]
-    set t := tmin FL L (⟨j, i, ω, d⟩ : LMv FL) with ht
+    set t := tmin L (⟨j, i, ω, d⟩ : LMv FL) with ht
     have hfit := hd.1 q hq
     have hrk : rkU lhat n o u < L (.seg j i ω q) := by
       rw [hL, load_eq]
       have := rk_lt (idx := ix) (key := tgU) (mem_Al.2 hu)
       rw [hτ] at this
       exact this
-    have hlt : rkU lhat n o u < slo FL d q * t := lt_of_lt_of_le hrk hfit
+    have hlt : rkU lhat n o u < slo d q * t := lt_of_lt_of_le hrk hfit
     have htpos : 0 < t := by
       rcases Nat.eq_zero_or_pos t with h0 | h0
       · rw [h0, Nat.mul_zero] at hlt
         exact absurd hlt (Nat.not_lt_zero _)
       · exact h0
-    have hw : rkU lhat n o u / t < slo FL d q := Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hlt)
-    obtain ⟨e, -, he1, he2⟩ := exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr FL d)
+    have hw : rkU lhat n o u / t < slo d q := Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hlt)
+    obtain ⟨e, -, he1, he2⟩ := exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr d)
       (fun a b hab => (Fintype.equivFin (FL.L d).Sl).injective (Fin.ext hab)) univ q hw
     have he2 : su d e = rkU lhat n o u / t := he2
     refine ⟨⟨.inr ⟨j, i, ω, d⟩, e⟩, (consM_inr (⟨j, i, ω, d⟩ : LMv FL) e u).2 ⟨hd, hu, ?_, ?_, ?_⟩⟩

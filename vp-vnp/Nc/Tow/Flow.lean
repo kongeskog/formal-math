@@ -24,7 +24,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} (R : Ro
 
 noncomputable instance : DecidableEq (NM R FL (ch := ch)) := Classical.decEq _
 
-noncomputable instance : Fintype (NM R FL (ch := ch)) := inferInstanceAs (Fintype (Σ mv : Mv R ch FL, (kindM R ch FL mv).Cn))
+noncomputable instance : Fintype (NM R FL (ch := ch)) := inferInstanceAs (Fintype (Σ mv : Mv R ch FL, (kindM FL mv).Cn))
 
 /-- Every base party has at most `lhat` units at the beginning. -/
 def Valid : Prop := ∀ a, ∑ c, (if c = a then 0 else n a c + n c a) ≤ lhat
@@ -50,7 +50,7 @@ def alvN : NM R FL (ch := ch) → ℕ → ℕ
 
 /-- The number of alive units with target `τ`. -/
 noncomputable def ld (N : Mv R ch FL → ℕ) (τ : Tg T m AA) : ℕ :=
-  bt R ch lhat n τ + ∑ ν : NM R FL (ch := ch), if tgM R ch FL ν.1 ν.2 = τ then alvN o ν (N ν.1) else 0
+  bt R ch lhat n τ + ∑ ν : NM R FL (ch := ch), if tgM ν.1 ν.2 = τ then alvN o ν (N ν.1) else 0
 
 /-- The squares of the loads of a type. -/
 def sqs (L : Tg T m AA → ℕ) (j : Fin (J + 1)) (i : Fin h) : ℕ :=
@@ -79,50 +79,46 @@ def ActR (L : Tg T m AA → ℕ) : RM T m AA → Prop
   | .mid j e s => s = 0 → IsMin L j.castSucc (T.ty e)
   | _ => True
 
-variable (FL)
-
 /-- The pair of a slot. -/
 def pr (d : FL.Di) (e : (FL.L d).Sl) : Sym2 T.Fl := s(FL.ro d ((FL.L d).a e), FL.ro d ((FL.L d).b e))
 
 /-- The number of slots on a pair. -/
-def slo (d : FL.Di) (q : Sym2 T.Fl) : ℕ := (univ.filter fun e : (FL.L d).Sl => pr FL d e = q).card
+def slo (d : FL.Di) (q : Sym2 T.Fl) : ℕ := (univ.filter fun e : (FL.L d).Sl => pr d e = q).card
 
 /-- The end segments fit into `t` units at every slot. -/
 def Fits (L : Tg T m AA → ℕ) (l : LMv FL) (t : ℕ) : Prop :=
-  ∀ q : Sym2 T.Fl, ¬ q.IsDiag → L (.seg l.1 l.2.1 l.2.2.1 q) ≤ slo FL l.2.2.2 q * t
+  ∀ q : Sym2 T.Fl, ¬ q.IsDiag → L (.seg l.1 l.2.1 l.2.2.1 q) ≤ slo l.2.2.2 q * t
 
 /-- The same vertex with another kind of law. -/
 def withD (l : LMv FL) (d : FL.Di) : LMv FL := ⟨l.1, l.2.1, l.2.2.1, d⟩
 
 /-- The number of units at a vertex. -/
-noncomputable def tmin (L : Tg T m AA → ℕ) (l : LMv FL) : ℕ := sInf {t | ∃ d, Fits FL L (withD FL l d) t}
+noncomputable def tmin (L : Tg T m AA → ℕ) (l : LMv FL) : ℕ := sInf {t | ∃ d, Fits L (withD l d) t}
 
 /-- The kind of law that is used at a vertex. -/
 def Pick (L : Tg T m AA → ℕ) (l : LMv FL) : Prop :=
-  Fits FL L l (tmin FL L l) ∧ ∀ d, (Fintype.equivFin FL.Di d) < (Fintype.equivFin FL.Di l.2.2.2) →
-    ¬ Fits FL L (withD FL l d) (tmin FL L l)
+  Fits L l (tmin L l) ∧ ∀ d, (Fintype.equivFin FL.Di d) < (Fintype.equivFin FL.Di l.2.2.2) →
+    ¬ Fits L (withD l d) (tmin L l)
 
 /-- The chosen kind of law is unique. -/
-theorem pick_eq {L : Tg T m AA → ℕ} {l : LMv FL} {d : FL.Di} (h1 : Pick FL L l)
-    (h2 : Pick FL L (withD FL l d)) : l.2.2.2 = d := by
+theorem pick_eq {L : Tg T m AA → ℕ} {l : LMv FL} {d : FL.Di} (h1 : Pick L l)
+    (h2 : Pick L (withD l d)) : l.2.2.2 = d := by
   rcases lt_trichotomy (Fintype.equivFin FL.Di d) (Fintype.equivFin FL.Di l.2.2.2) with
       hlt | heq | hlt
   · exact absurd h2.1 (h1.2 d hlt)
   · exact ((Fintype.equivFin FL.Di).injective heq).symm
   · exact absurd h1.1 (h2.2 l.2.2.2 hlt)
 
-variable {FL}
-
 open Classical in
 /-- The number of units of a move, from the loads. -/
 noncomputable def numF (L : Tg T m AA → ℕ) : Mv R ch FL → ℕ
   | .inl x => if ActR L x.1 then L (inpR x.1) else 0
-  | .inr l => if Pick FL L l then tmin FL L l else 0
+  | .inr l => if Pick L l then tmin L l else 0
 
 /-- The numbers of units of the moves with times less than `τ`. -/
 noncomputable def numS : ℕ → Mv R ch FL → ℕ
   | 0, _ => 0
-  | τ + 1, mv => if timeM R ch FL mv = τ then numF (ld lhat n o (numS τ)) mv else numS τ mv
+  | τ + 1, mv => if timeM mv = τ then numF (ld lhat n o (numS τ)) mv else numS τ mv
 
 /-- The end of time. -/
 def tend (J m : ℕ) : ℕ := 2 * m + 6 * J + 1
@@ -138,24 +134,24 @@ noncomputable def load (τ : Tg T m AA) : ℕ := ld lhat n o (num lhat n o) τ
 
 /-- The outcome of a move is good: exact for relays; not too long and not too short for laws. -/
 def GoodMv : Mv R ch FL → Prop
-  | .inl x => ∀ ν : (kindM R ch FL (.inl x)).Cn, o ⟨.inl x, ν⟩ = num lhat n o (.inl x)
+  | .inl x => ∀ ν : (kindM FL (.inl x)).Cn, o ⟨.inl x, ν⟩ = num lhat n o (.inl x)
   | .inr l => GoodL o l (num lhat n o (.inr l)) ∧
-      ∀ ν : (kindM R ch FL (.inr l)).Cn, num lhat n o (.inr l) ≤ o ⟨.inr l, ν⟩
+      ∀ ν : (kindM FL (.inr l)).Cn, num lhat n o (.inr l) ≤ o ⟨.inr l, ν⟩
 
 variable {lhat n o}
 
-theorem alvN_inl (x : {x : RM T m AA // okR R ch x}) (ν : (kindM R ch FL (.inl x)).Cn) (t : ℕ) :
+theorem alvN_inl (x : {x : RM T m AA // okR R ch x}) (ν : (kindM FL (.inl x)).Cn) (t : ℕ) :
     alvN o ⟨.inl x, ν⟩ t = if o ⟨.inl x, ν⟩ = t then t else 0 := rfl
 
-theorem alvN_inr (l : LMv FL) (ν : (kindM R ch FL (.inr l)).Cn) (t : ℕ) :
+theorem alvN_inr (l : LMv FL) (ν : (kindM FL (.inr l)).Cn) (t : ℕ) :
     alvN o ⟨.inr l, ν⟩ t = if GoodL o l t then o ⟨.inr l, ν⟩ else min (o ⟨.inr l, ν⟩) t := rfl
 
 theorem goodMv_inl (x : {x : RM T m AA // okR R ch x}) : GoodMv lhat n o (.inl x) ↔
-    ∀ ν : (kindM R ch FL (.inl x)).Cn, o ⟨.inl x, ν⟩ = num lhat n o (.inl x) := Iff.rfl
+    ∀ ν : (kindM FL (.inl x)).Cn, o ⟨.inl x, ν⟩ = num lhat n o (.inl x) := Iff.rfl
 
 theorem goodMv_inr (l : LMv FL) : GoodMv lhat n o (.inr l) ↔
     GoodL o l (num lhat n o (.inr l)) ∧
-      ∀ ν : (kindM R ch FL (.inr l)).Cn, num lhat n o (.inr l) ≤ o ⟨.inr l, ν⟩ := Iff.rfl
+      ∀ ν : (kindM FL (.inr l)).Cn, num lhat n o (.inr l) ≤ o ⟨.inr l, ν⟩ := Iff.rfl
 
 theorem alv_inr (l : LMv FL) (ν : (FL.L l.2.2.2).Cn) : alv lhat n o ⟨.inr l, ν⟩ =
     if GoodL o l (num lhat n o (.inr l)) then o ⟨.inr l, ν⟩
@@ -191,7 +187,7 @@ theorem alvN_zero (ν : NM R FL (ch := ch)) : alvN o ν 0 = 0 := by
       exact pow_eq_zero_iff (by norm_num) |>.1 h3
     · exact Nat.min_zero _
 
-theorem timeM_lt (mv : Mv R ch FL) : timeM R ch FL mv < tend J m := by
+theorem timeM_lt (mv : Mv R ch FL) : timeM mv < tend J m := by
   unfold tend
   rcases mv with ⟨x, hx⟩ | l
   · change timeR x < _
@@ -203,27 +199,27 @@ theorem timeM_lt (mv : Mv R ch FL) : timeM R ch FL mv < tend J m := by
   · have := l.1.2
     simp only [timeM]; omega
 
-theorem numS_zero_of_le {τ : ℕ} {mv : Mv R ch FL} (h : τ ≤ timeM R ch FL mv) : numS lhat n o τ mv = 0 := by
+theorem numS_zero_of_le {τ : ℕ} {mv : Mv R ch FL} (h : τ ≤ timeM mv) : numS lhat n o τ mv = 0 := by
   induction τ with
   | zero => rfl
   | succ τ ih =>
     rw [numS, if_neg (by omega)]
     exact ih (by omega)
 
-theorem numS_stable {τ : ℕ} {mv : Mv R ch FL} (h : timeM R ch FL mv < τ) :
+theorem numS_stable {τ : ℕ} {mv : Mv R ch FL} (h : timeM mv < τ) :
     numS lhat n o τ mv =
-      numF (ld lhat n o (numS lhat n o (timeM R ch FL mv))) mv := by
+      numF (ld lhat n o (numS lhat n o (timeM mv))) mv := by
   induction τ with
   | zero => omega
   | succ τ ih =>
     rw [numS]
-    by_cases h1 : timeM R ch FL mv = τ
+    by_cases h1 : timeM mv = τ
     · rw [if_pos h1, h1]
     · rw [if_neg h1]
       exact ih (by omega)
 
 theorem numS_eq (τ : ℕ) (mv : Mv R ch FL) :
-    numS lhat n o τ mv = if timeM R ch FL mv < τ then num lhat n o mv else 0 := by
+    numS lhat n o τ mv = if timeM mv < τ then num lhat n o mv else 0 := by
   split_ifs with h
   · rw [numS_stable h, num, numS_stable (timeM_lt mv)]
   · exact numS_zero_of_le (not_lt.1 h)
@@ -240,7 +236,7 @@ theorem edgeO_time (e : Option (T.Ed 0)) : 2 * m ≤ tgTime (edgeO e : Tg T m AA
   · simp only [edgeO, tgTime, tend]; omega
   · simp [edgeO, tgTime]
 
-theorem tg_time (ν : NM R FL (ch := ch)) : timeM R ch FL ν.1 < tgTime (tgM R ch FL ν.1 ν.2) := by
+theorem tg_time (ν : NM R FL (ch := ch)) : timeM ν.1 < tgTime (tgM ν.1 ν.2) := by
   rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
   · change timeR x < tgTime (tgR R ch x ν)
     rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e
@@ -319,24 +315,24 @@ theorem isMin_congr {j : Fin (J + 1)} (hL : ∀ e, L (.edge j e) = L' (.edge j e
 
 theorem fits_congr {l : LMv FL}
     (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) (s : ℕ) :
-    Fits FL L l s ↔ Fits FL L' l s := by
+    Fits L l s ↔ Fits L' l s := by
   unfold Fits
   simp only [hL]
 
 theorem tmin_congr {l : LMv FL}
-    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : tmin FL L l = tmin FL L' l := by
+    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : tmin L l = tmin L' l := by
   unfold tmin
   congr 1
   ext s
   simp only [Set.mem_setOf_eq]
-  exact exists_congr fun d => fits_congr (l := withD FL l d) hL s
+  exact exists_congr fun d => fits_congr (l := withD l d) hL s
 
 theorem pick_congr {l : LMv FL}
-    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : Pick FL L l ↔ Pick FL L' l := by
+    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : Pick L l ↔ Pick L' l := by
   unfold Pick
   rw [tmin_congr hL, fits_congr hL]
   refine and_congr_right fun _ => forall_congr' fun d => imp_congr_right fun _ => not_congr ?_
-  exact fits_congr (l := withD FL l d) hL _
+  exact fits_congr (l := withD l d) hL _
 
 theorem actR_congr {x : RM T m AA}
     (hL : ∀ τ, tgTime τ ≤ timeR x → L τ = L' τ) : ActR L x ↔ ActR L' x := by
@@ -347,7 +343,7 @@ theorem actR_congr {x : RM T m AA}
   · exact Iff.rfl
 
 theorem numF_congr {mv : Mv R ch FL}
-    (hL : ∀ τ, tgTime τ ≤ timeM R ch FL mv → L τ = L' τ) : numF L mv = numF L' mv := by
+    (hL : ∀ τ, tgTime τ ≤ timeM mv → L τ = L' τ) : numF L mv = numF L' mv := by
   classical
   rcases mv with ⟨x, hx⟩ | l
   · unfold numF

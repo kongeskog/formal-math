@@ -20,7 +20,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Ro
 
 /-- The nodes that hold the units of a channel. -/
 noncomputable def hN (ν : NM R FL (ch := ch)) : Sym2 (Nd T) :=
-  s(partM R ch FL ν.1 ((kindM R ch FL ν.1).c ν.2), partM R ch FL ν.1 ((kindM R ch FL ν.1).d ν.2))
+  s(partM ν.1 ((kindM FL ν.1).c ν.2), partM ν.1 ((kindM FL ν.1).d ν.2))
 
 /-- The nodes that hold an initial unit. -/
 def hB (ch : Fin AA ↪ T.X 0) (a c : Fin AA) : Sym2 (Nd T) := s(nd (Nat.zero_le _) (ch a), nd (Nat.zero_le _) (ch c))
@@ -80,7 +80,7 @@ theorem seg_hold {j : ℕ} (hj : j < J) (i : Fin h) (c : T.X j) :
   simp only [h1, h2]
 
 /-- Units of channels. -/
-theorem hN_eq (ν : NM R FL) (hd : tgM R ch FL ν.1 ν.2 ≠ .done) : hN ν = hT R ch (tgM R ch FL ν.1 ν.2) := by
+theorem hN_eq (ν : NM R FL (ch := ch)) (hd : tgM ν.1 ν.2 ≠ .done) : hN ν = hT R ch (tgM ν.1 ν.2) := by
   rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
   · revert hd
     revert ν

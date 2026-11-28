@@ -187,17 +187,17 @@ theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv R ch FL) :
     PY Dd H Y 4 fun x => GoodMv lhat (nX nI x) (oX oI x) mv := by
   have hY := hA.pos
   rcases mv with y | l
-  · have hc : Fintype.card (kindM R ch FL (.inl y)).Cn ≤ Y := by
+  · have hc : Fintype.card (kindM FL (.inl y)).Cn ≤ Y := by
       refine (Fintype.card_le_of_injective
-        (fun ν : (kindM R ch FL (.inl y)).Cn => (⟨Sum.inl y, ν⟩ : NM R FL)) ?_).trans hB.nm
+        (fun ν : (kindM FL (.inl y)).Cn => (⟨Sum.inl y, ν⟩ : NM R FL)) ?_).trans hB.nm
       intro ν ν' he
       exact eq_of_heq (Sigma.mk.inj he).2
-    have h1 : PY Dd H Y 3 fun x => ∀ ν : (kindM R ch FL (.inl y)).Cn, oX oI x ⟨.inl y, ν⟩ =
+    have h1 : PY Dd H Y 3 fun x => ∀ ν : (kindM FL (.inl y)).Cn, oX oI x ⟨.inl y, ν⟩ =
         Tow.num lhat (nX nI x) (oX oI x) (.inl y) :=
       PY.forall_univ hA hc fun ν => PY.rel hA (fun s t => s = t) (CY.base (ha.o _))
         (CY.base (ha.num _))
     exact h1.mono hY (by omega)
-  · have hc : Fintype.card (kindM R ch FL (.inr l)).Cn ≤ Y := card_cn hB l
+  · have hc : Fintype.card (FL.L l.2.2.2).Cn ≤ Y := card_cn hB l
     have h1 : PY Dd H Y 1 fun x => GoodL (oX oI x) l (Tow.num lhat (nX nI x) (oX oI x) (.inr l)) :=
       PY.rel hA (fun q t => b * q ≤ FL.G₁ * t ^ 2) (CY.base (ha.q l)) (CY.base (ha.num (.inr l)))
     have h2 : PY Dd H Y 3 fun x => ∀ ν : (kindM R ch FL (.inr l)).Cn,

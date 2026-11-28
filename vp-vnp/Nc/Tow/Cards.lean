@@ -131,9 +131,9 @@ theorem card_Mv_le : Fintype.card (Mv R ch FL) ≤
 /-- Channels. -/
 theorem card_N_le : Fintype.card (sys R FL Pl).N ≤ rmN h m J AA (Fintype.card (T.X 0)) * 2 +
     J * (h * (h * Fintype.card (T.X 0) * Fintype.card FL.Di)) := by
-  have e : Fintype.card (sys R FL Pl).N = ∑ mv : Mv R ch FL, Fintype.card (kindM R ch FL mv).Cn := by
+  have e : Fintype.card (sys R FL Pl).N = ∑ mv : Mv R ch FL, Fintype.card (kindM FL mv).Cn := by
     rw [Fintype.card_sigma]
-    exact sum_moves fun mv => Fintype.card (kindM R ch FL mv).Cn
+    exact sum_moves fun mv => Fintype.card (kindM FL mv).Cn
   rw [e]
   refine (sum_mv_le (a := 2) (g := fun _ => Fintype.card T.Nr) _ (fun x => ?_) fun l => ?_).trans ?_
   · exact le_of_eq (Fintype.card_congr (Equiv.refl Bool))
@@ -157,9 +157,9 @@ theorem card_N_le : Fintype.card (sys R FL Pl).N ≤ rmN h m J AA (Fintype.card 
 theorem card_Z_le {S : ℕ} (hS : ∀ d, Fintype.card (FL.L d).Sl ≤ S) :
     Fintype.card (sys R FL Pl).Z ≤ rmN h m J AA (Fintype.card (T.X 0)) +
       lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) * S := by
-  have e : Fintype.card (sys R FL Pl).Z = ∑ mv : Mv R ch FL, Fintype.card (kindM R ch FL mv).Sl := by
+  have e : Fintype.card (sys R FL Pl).Z = ∑ mv : Mv R ch FL, Fintype.card (kindM FL mv).Sl := by
     rw [Fintype.card_sigma]
-    exact sum_moves fun mv => Fintype.card (kindM R ch FL mv).Sl
+    exact sum_moves fun mv => Fintype.card (kindM FL mv).Sl
   rw [e]
   refine (sum_mv_le (a := 1) (g := fun _ => S) _ (fun x => ?_) fun l => hS l.2.2.2).trans ?_
   · exact le_of_eq (Fintype.card_congr (Equiv.refl Unit))
@@ -169,9 +169,9 @@ theorem card_Z_le {S : ℕ} (hS : ∀ d, Fintype.card (FL.L d).Sl ≤ S) :
 /-- Roles. -/
 theorem card_R_le : Fintype.card (sys R FL Pl).R ≤
     rmN h m J AA (Fintype.card (T.X 0)) * 3 + lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) * b := by
-  have e : Fintype.card (sys R FL Pl).R = ∑ mv : Mv R ch FL, Fintype.card (kindM R ch FL mv).Ro := by
+  have e : Fintype.card (sys R FL Pl).R = ∑ mv : Mv R ch FL, Fintype.card (kindM FL mv).Ro := by
     rw [Fintype.card_sigma]
-    exact sum_moves fun mv => Fintype.card (kindM R ch FL mv).Ro
+    exact sum_moves fun mv => Fintype.card (kindM FL mv).Ro
   rw [e]
   refine (sum_mv_le (a := 3) (g := fun _ => b) _ (fun x => ?_) fun l => ?_).trans ?_
   · exact le_of_eq ((Fintype.card_congr (Equiv.refl (Fin 3))).trans (Fintype.card_fin 3))
