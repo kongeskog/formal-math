@@ -456,128 +456,47 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
   exact hps.trans (size_rounds hh hα hu4 (by omega))
 
 /-- **Paper: proof of Proposition prop:approx-acc, back to exact values.** "Its value is the coefficient of ε⁰ in the
-value of D, that is, pv(z) on plain instances": the coefficients of the powers are new constants with B = 1. -/
+value of D, that is, pv(z) on plain instances": the coefficients of the terms of the named powers are new constants
+with B = 1. The program runs D and, for every name in the value, guesses a term of the named power, names its
+coefficient and adds its exponent to a counter, which has to be 0 at the end (`extF`). -/
 theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D : Tree} (hD : IsAccA θ H v t K B D)
-    {J m W Δ M : ℕ} (hJ : t < 2 ^ J) (hT : K.All (Thin Δ)) (hM : K.All (Span M))
-    (hm : 2 * (2 ^ (B + J) * Δ) + 1 ≤ 2 ^ m) (hW : (K.expand B).nds * 2 ^ J * (2 ^ B * M) < 2 ^ W)
-    (ht : 2 * ((K.expand B).nds * (70 * W + 4 * (K.ht + B + J + m + 1) + 7 * (J + m) + 200)) +
-        40 * (W + 1) +
-        ((60 * (K.ht + B + J + 1) + 42) * t + 40 * ((K.expand B).nds * (J + 1)) + 80) + 60 ≤ t') :
-    ∃ (K' : KT E) (D' : Tree), IsAccT θ H v t' K' 1 D' ∧ K'.nds ≤ (K.expand B).nds * 2 ^ (J + m + 1) ∧
-      K'.ht ≤ K.ht + B + J + m ∧
-      D'.size ≤ (K.expand B).nds * (2 ^ (J + m) * (8 * (K.ht + B + J + m + W) + xcst + 31)) + D.size + xcst := by
-  classical
+    {m W Δ M : ℕ} (hT : K.All (Thin Δ)) (hM : K.All (Span M))
+    (hm : 2 * (2 ^ B * Δ) + 1 ≤ 2 ^ m) (hW : t * (2 ^ B * M) < 2 ^ W)
+    (ht : t * (51 * m + 15 * W + 202) + 20 * W + 60 ≤ t') :
+    ∃ (K' : KT E) (D' : Tree), IsAccT θ H v t' K' 1 D' ∧ K'.nds ≤ (K.expand B).nds * 2 ^ (m + 1) ∧
+      K'.ht ≤ K.ht + B + m ∧
+      D'.size ≤ D.size + 2 * ((K.expand B).nds * (2 ^ m * (4 * W + 6))) + 100 * m + 4 * W + xcst := by
   obtain ⟨K₂, hK₂⟩ : ∃ K₂, K₂ = K.expand B := ⟨_, rfl⟩
-  rw [← hK₂] at hW ht ⊢
-  have hh2 : K₂.ht ≤ K.ht + B := hK₂ ▸ KT.ht_expand B K
-  have hsupp : K₂.All fun c => ∀ n < 2 ^ J, (c ^ n).coeff.support.card ≤ 2 ^ m := by
+  rw [← hK₂]
+  have hc1 : K₂.All fun c => c.coeff.support.card ≤ 2 ^ m := by
     rw [hK₂]
-    refine hT.expand fun c hc b hb n hn => ?_
-    rw [← pow_mul]
-    refine (hc _).trans (le_trans ?_ hm)
-    have : 2 ^ b * n ≤ 2 ^ (B + J) := by
-      rw [pow_add]
-      exact Nat.mul_le_mul (Nat.pow_le_pow_right (by norm_num) hb.le) hn.le
-    have := Nat.mul_le_mul_right Δ this
+    refine hT.expand fun c hc b hb => (hc _).trans (le_trans ?_ hm)
+    have := Nat.mul_le_mul_right Δ (Nat.pow_le_pow_right (show 0 < 2 by norm_num) hb.le)
     omega
-  obtain ⟨K', hK'⟩ : ∃ K', K' = coefK J m K₂ := ⟨_, rfl⟩
-  obtain ⟨g, hg⟩ : ∃ g, g = xF J m W K₂ [] := ⟨_, rfl⟩
-  refine ⟨K', (extF D g).code, ⟨?_, ?_⟩, hK' ▸ nds_coefK J m K₂,
-    hK' ▸ (ht_coefK J m K₂).trans (by omega), ?_⟩
-  rotate_left 2
-  · have h1 := size_xF J m W K₂ []
-    rw [← hg, List.length_nil] at h1
-    have h2 : K₂.nds * (2 ^ (J + m) * (4 * (0 + K₂.ht) + 8 * (J + m + W) + xcst + 31)) ≤
-        K₂.nds * (2 ^ (J + m) * (8 * (K.ht + B + J + m + W) + xcst + 31)) :=
-      Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ (by omega))
-    have h3 := size_extF D g
-    omega
-  all_goals
-    have key : ∀ z : Tree, z.size ≤ v ^ (H - 32) → KV θ K'.lk {p | K'.InB 1 p} (extF D g) z
-        ((xL J m W K₂).map fun q => q.2.1 * ((if KT.val q.2.2 = 0 then 1 else 0) *
-          algebraMap A E (pv θ (zq D z q.1)))).sum t' := by
-      intro z hz
-      obtain ⟨hD1, hD2⟩ := hD.run z hz
-      obtain ⟨lx, ex, rx⟩ := xF_ev (θ := θ) (κ := K'.lk)
-        (S := {p | K'.InB 1 p}) (L := K.ht + B + J + m + 1) z K₂ []
-        fun p hp => by
-          subst hK'
-          have := hp.length_le
-          have := ht_coefK J m K₂
-          exact ⟨rfl, hp, by simp only [List.nil_append]; omega⟩
-      rw [← hg] at ex
-      refine (extF_kv (τ := (60 * (K.ht + B + J + 1) + 42) * t + 40 * (K₂.nds * (J + 1)) + 80) ex rx
-          fun q hq => ⟨(zq_plain hD1.ev (fun r hr => (hD2 r hr).1)
-        ((bt_xL q hq).1.trans (by omega : K₂.ht + J + 1 ≤ K.ht + B + J + 1)) le_rfl).1.of_le ?_,
-          length_xL q hq⟩).mono ?_
-      · have := Nat.mul_le_mul_left 40 (bt_xL q hq).2
-        omega
-      · omega
-  · intro z hz
-    rw [Fm.ofTree_code]
-    exact ⟨(key z hz).hl, fun r hr => (key z hz).evl.1 r hr⟩
-  · intro z hz hpl
-    rw [Fm.ofTree_code, (key z hz).evl.2]
+  have hc2 : K₂.All (Span (2 ^ B * M)) := by
+    rw [hK₂]
+    exact hM.expand fun _ hc _ hb =>
+      (hc.pow _).mono (Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by norm_num) hb.le))
+  have key : ∀ z : Tree, z.size ≤ v ^ (H - 32) → KV θ (coefK m K₂).lk {p | (coefK m K₂).InB 1 p}
+      (extF D W m (expT W m K₂)) z ((NS1.val K.lk (evl θ (Fm.ofTree D) z)).coeff 0) t' := by
+    intro z hz
     obtain ⟨hD1, hD2⟩ := hD.run z hz
-    have hv := hD.val z hz hpl
-    obtain ⟨l, hl⟩ : ∃ l, l = evl θ (Fm.ofTree D) z := ⟨_, rfl⟩
-    rw [← hl] at hD2 hv
-    obtain ⟨hsum₀, hze⟩ := lem_postpone D z hJ hD1 (fun r hr => (hD2 r (hl ▸ hr)).1) (K.expand B) K.lk
-      fun r hr p hp => KT.lookup_expand ((hD2 r (hl ▸ hr)).2 p hp)
-    have hbud : NS1.val K.lk l = (((K.expand B).budg J).map fun q => q.2 *
-        algebraMap A E[T;T⁻¹] (pv θ (zq D z q.1))).sum := by
-      rw [hl, hsum₀]
-      rfl
-    rw [← hK₂] at hbud
-    obtain ⟨s, hs⟩ : ∃ s : Bt → A, s = fun b => pv θ (zq D z b) := ⟨_, rfl⟩
-    have hs' : ∀ b, pv θ (zq D z b) = s b := fun b => by rw [hs]
-    simp only [hs'] at hbud ⊢
-    have hsum := sum_xL (A := A) (W := W) hsupp fun b => algebraMap A (AddMonoidAlgebra E (ZMod (2 ^ W))) (s b)
-    -- the right side is the image of the approximate value
-    have hR : ((K₂.budg J).map fun q => algebraMap A (AddMonoidAlgebra E (ZMod (2 ^ W))) (s q.1) * wrap A W q.2).sum =
-        wrap A W (NS1.val K.lk l) := by
-      rw [hbud, map_list_sum, List.map_map]
-      congr 1
-      refine List.map_congr_left fun q _ => ?_
-      rw [Function.comp_apply, map_mul, AlgHom.commutes, mul_comm]
-    -- the left side at 0 is the value of the program
-    have hL : ∀ L : List (Bt × E × List Bool), (∀ q ∈ L, q.2.2.length = W) →
-        (L.map fun q : Bt × E × List Bool => algebraMap A (AddMonoidAlgebra E (ZMod (2 ^ W))) (s q.1) *
-          mark W q.2.2 q.2.1).sum.coeff 0 =
-          (L.map fun q => q.2.1 * ((if KT.val q.2.2 = 0 then 1 else 0) * algebraMap A E (s q.1))).sum := by
-      intro L hL
-      induction L with
-      | nil => simp
-      | cons q L ih =>
-        have h0 : (((KT.val q.2.2 : ℕ) : ZMod (2 ^ W)) = 0) ↔ KT.val q.2.2 = 0 := by
-          rw [ZMod.natCast_eq_zero_iff]
-          exact ⟨fun h => Nat.eq_zero_of_dvd_of_lt h (val_lt_of_length (hL q List.mem_cons_self)), fun h => h ▸ dvd_zero _⟩
-        simp only [List.map_cons, List.sum_cons, AddMonoidAlgebra.coeff_add, Finsupp.add_apply,
-          ih fun x hx => hL x (List.mem_cons_of_mem _ hx)]
-        congr 1
-        rw [mark, AddMonoidAlgebra.coe_algebraMap, Function.comp_apply, AddMonoidAlgebra.single_mul_single, zero_add,
-          AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
-        by_cases h : KT.val q.2.2 = 0
-        · rw [if_pos (h0.2 h), if_pos h, one_mul, mul_comm]
-        · rw [if_neg (mt h0.1 h), if_neg h, zero_mul, mul_zero]
-    rw [← hL _ length_xL, hsum, hR]
-    have hspan : Span (K₂.nds * 2 ^ J * (2 ^ B * M)) (NS1.val K.lk l) := by
-      rw [hbud]
-      have hq : ∀ q ∈ K₂.budg J, Span (K₂.nds * 2 ^ J * (2 ^ B * M)) q.2 := by
-        subst hK₂
-        exact fun q hq => span_expand_budg hM hq
-      revert hq
-      generalize K₂.budg J = L
-      intro hq
-      induction L with
-      | nil => simpa using Span.zero _
-      | cons q L ih =>
-        rw [List.map_cons, List.sum_cons]
-        refine Span.add ?_ (ih fun x hx => hq x (List.mem_cons_of_mem _ hx))
-        simpa using (hq q List.mem_cons_self).mul (Span.of_algebraMap (s q.1) 0)
-    rw [coeff_wrap_zero hspan hW]
-    have := hv 0 zero_lt_one
-    simp only [AddMonoidAlgebra.coeff_sub, Finsupp.sub_apply, sub_eq_zero, coeff_algebraMap, if_true] at this
+    refine (extF_kv (κ := K.lk) hD1.ev (fun r hr => (hD2 r hr).1) (fun r hr x hx => ?_) hW).mono ht
+    have hin : K.InB B x.path := (hD2 r hr).2 _ (by rw [names_eq]; exact List.mem_map_of_mem hx)
+    have hlf : K₂.Leaf x.path := hK₂ ▸ KT.leaf_expand hin
+    rw [KT.lookup_expand hin, ← hK₂]
+    exact ⟨hc1.lookup hlf, hc2.lookup hlf, fun w hw => ⟨tget_expT hlf hw, lk_coefK hlf hw⟩⟩
+  refine ⟨coefK m K₂, (extF D W m (expT W m K₂)).code, ⟨fun z hz => ?_, fun z hz hpl => ?_⟩,
+    nds_coefK m K₂, (ht_coefK m K₂).trans (by have := KT.ht_expand B K; rw [hK₂]; omega), ?_⟩
+  · rw [Fm.ofTree_code]
+    exact ⟨(key z hz).hl, (key z hz).evl.1⟩
+  · rw [Fm.ofTree_code, (key z hz).evl.2]
+    have := hD.val z hz hpl 0 zero_lt_one
+    simp only [AddMonoidAlgebra.coeff_sub, Finsupp.sub_apply, sub_eq_zero, coeff_algebraMap, if_true]
+      at this
     exact this
+  · have h1 := size_extF D W m (expT W m K₂)
+    have h2 := size_expT W m K₂
+    omega
 
 end Paper

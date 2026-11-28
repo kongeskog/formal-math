@@ -169,4 +169,42 @@ theorem extF_kv {κ : List Bool → E[T;T⁻¹]} {κ' : List Bool → E} {S : Se
   · rw [List.map_map, val, coeff_list_sum, List.map_map]
     exact congrArg List.sum (List.map_congr_left fun r _ => (coeff_algebraMap_mul _ _ _).symm)
 
+theorem nds_coefK (m : ℕ) (K : KT E[T;T⁻¹]) : (coefK m K).nds ≤ K.nds * 2 ^ (m + 1) := by
+  induction K with
+  | none => simpa [coefK, KT.nds] using Nat.one_le_two_pow
+  | leaf c =>
+    have := KT.nds_full m fun w => termCoef c (KT.val w)
+    simp only [coefK, KT.nds]
+    omega
+  | node l r ihl ihr =>
+    simp only [coefK, KT.nds]
+    have := Nat.one_le_two_pow (n := m + 1)
+    linarith
+
+theorem ht_coefK (m : ℕ) (K : KT E[T;T⁻¹]) : (coefK m K).ht ≤ K.ht + m := by
+  induction K with
+  | none => simp [coefK, KT.ht]
+  | leaf c => simp [coefK, KT.ht, KT.ht_full]
+  | node l r ihl ihr =>
+    simp only [coefK, KT.ht]
+    omega
+
+/-- The sizes of the fixed programs of the extraction. -/
+def xcst : ℕ := 4 * AD.code.size + 4 * getB.code.size + 2 * flatB.code.size + 2 * nzB.code.size + 20000
+
+theorem xcst_def :
+    xcst = 4 * AD.code.size + 4 * getB.code.size + 2 * flatB.code.size + 2 * nzB.code.size + 20000 :=
+  rfl
+
+theorem size_extF (D : Tree) (W m : ℕ) (T : Tree) :
+    (extF D W m T).code.size ≤ D.size + 2 * T.size + 100 * m + 4 * W + xcst := by
+  have hf : Fm.fail.code.size = 19 := rfl
+  have hb : (ofBits [false]).size = 3 := rfl
+  have hw := size_ofBits (List.replicate W false)
+  rw [List.length_replicate] at hw
+  rw [xcst_def, extF, termF, finF]
+  simp only [foldF, foldB, appF, getF, node, leaf, size_lett, size_app, size_quote, size_cons, size_hd,
+    size_tl, size_id, size_ite, size_run, size_gwd, hf, Tree.size]
+  omega
+
 end NS1
