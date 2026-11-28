@@ -102,8 +102,8 @@ theorem roleEnd_does (ub : ℕ) (t y sl ins : Tree) (c0 : Tree) (keys : List (Li
     Does θ roleEnd (.cons (.cons (num ub) (.cons t (.cons y (.cons sl (keysT keys)))))
         (.cons c0 (.cons ins (listT (outs.map ofBits)))))
       (encT (putsL ub keys (outs.map fun w => w.reverse ++ [true]) t))
-      (outs.length * (m * 31 + 100) + ((keys.map fun ks => (ks.map fun k => ub * 330 + k.length * 60
-          + 330).sum + 200).sum + 200)) := by
+      (outs.length * (m * 31 + 100) + ((keys.map fun ks =>
+        (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 200).sum + 200)) := by
   set x : Tree := .cons (.cons (num ub) (.cons t (.cons y (.cons sl (keysT keys)))))
     (.cons c0 (.cons ins (listT (outs.map ofBits))))
   have h1 := mapF_gives (θ := θ) (x := x) (step := foldF .id (.quote (ofBits [true])) (.tl .id)) (ef := .quote .nil)
@@ -134,8 +134,8 @@ theorem ex_role (L : G.Law A) (p : L.Ro) : ∃ F κ, ∀ (ub : ℕ) (ct : List B
     Does θ F (.cons (num ub) (.cons t (.cons (num tt) (.cons (keysT slots)
         (keysT keys))))) (roleSem θ L p ub ct tt slots keys t)
       (κ * (tt * (ub + 1) + (slots.map fun es => (es.map fun k => ub * 62 + k.length * 60 + 330).sum + 240).sum +
-        (keys.map fun ks => (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 200).sum + 1)) :=
-            by
+        (keys.map fun ks =>
+          (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 200).sum + 1)) := by
   obtain ⟨F, κ, hF⟩ := ex_run (θ := θ) bit (roleTab θ L p)
   obtain ⟨κ', hκ'⟩ := exists_runL_length (θ := θ) (roleTab θ L p)
   set nO := (cnList L p).length
@@ -178,9 +178,8 @@ theorem ex_role (L : G.Law A) (p : L.Ro) : ∃ F κ, ∀ (ub : ℕ) (ct : List B
   have h6 := Does.lettE (G := F) (f := fun _ => runL θ (roleTab θ L p) (tt * ub) s₀) (enc' := encS bit)
     (d := κ * (tt * ub + 1)) h5 (fun _ _ => hF (tt * ub) s₀)
   have h7 := Does.letkT (G := roleEnd) (f := fun s => encT (putsL ub keys (List.ofFn fun j => (s.2.2 j).reverse ++ [true]) t))
-    (d := nO * (κ' * (tt * ub) * 31 + 100) + ((keys.map fun ks => (ks.map fun k => ub * 330 +
-        k.length * 60 + 330).sum + 200).sum
-      + 200)) h6 (by
+    (d := nO * (κ' * (tt * ub) * 31 + 100) + ((keys.map fun ks =>
+      (ks.map fun k => ub * 330 + k.length * 60 + 330).sum + 200).sum + 200)) h6 (by
       intro b hb
       obtain ⟨a, ha, r, hr, hbr, -⟩ := mem_bindW hb
       have h8 := hκ' (tt * ub) s₀ (fun j => rfl) r hr

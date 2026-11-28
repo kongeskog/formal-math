@@ -56,15 +56,14 @@ theorem exists_group (mu : Letter S Unit Γ → Matrix Q Q A) (cb : Option Γ �
     (htab : ∀ z ∈ kinds, ∀ i y h, ∃ e : WE, e.val θ = z.1.tab z.2 i y h) :
     ∃ (GROUP : Fm) (κ : ℕ), Nc.Dl.GroupOK θ mu cb kinds (fun z => (qn Q z : ℕ)) GROUP κ := by
   obtain ⟨F, κ, hF⟩ := ex_group (S := S) (θ := θ) mu cb kinds (by simp [sepOf])
-  refine ⟨F, κ, fun {A' K E U0 U1 Gr} _ _ {M} P q x ρ n o grp g key tg bT bub b hkey hub hx hρ hkind
-      => ?_⟩
-  have h1 := hF bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key tg b) (insOk_script
-      hkind b)
+  refine ⟨F, κ,
+    fun {A' K E U0 U1 Gr} _ _ {M} P q x ρ n o grp g key tg bT bub b hkey hub hx hρ hkind => ?_⟩
+  have h1 := hF bT bub (script (fun z => (qn Q z : ℕ)) cb P q x ρ n o grp g key tg b)
+    (insOk_script hkind b)
   have htab' : ∀ (r : M.R) i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h := fun r =>
     htab ⟨M.kind r.1, r.2⟩ (List.mem_of_getElem? (hkind r))
   have h2 := wsum_script (cb := cb) (kinds := kinds) (tg := tg) (P := P) hkey hub hmu hx hρ hkind
-      htab' (q := q)
-    (o := o) (n := n) (grp := grp) (g := g) b
+    htab' (q := q) (o := o) (n := n) (grp := grp) (g := g) b
   obtain ⟨p1, p2⟩ := h1.plain
   refine ⟨p1, ?_⟩
   rw [p2, ← h2, wsum, List.map_map]

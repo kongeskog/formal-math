@@ -23,8 +23,8 @@ def FitsAll (ub : ℕ) (P : List (List (List Bool) × List Bool)) (t : Tree) : P
 
 open Classical in
 theorem putsL_eq {ub : ℕ} (hub : 0 < ub) (P : List (List (List Bool) × List Bool)) (t : Tree) :
-    putsL ub (P.map Prod.fst) (P.map fun p => p.2 ++ [true]) t = if FitsAll ub P t then [t] else []
-        := by
+    putsL ub (P.map Prod.fst) (P.map fun p => p.2 ++ [true]) t =
+      if FitsAll ub P t then [t] else [] := by
   induction P with
   | nil => simp [putsL, FitsAll]
   | cons p P ih =>
@@ -96,7 +96,7 @@ theorem wsum_script_prod (T ub : ℕ) (l : List Ins) (t : Tree) (Ψ : Tree → A
   induction l with
   | nil => rw [wsum_script_nil, List.map_nil, List.prod_nil, one_mul]
   | cons i l ih =>
-    rw [wsum_script_cons, wsum_out (insSem_out mu cb kinds), ih, List.map_cons, List.prod_cons,
-        mul_assoc]
+    rw [wsum_script_cons, wsum_out (insSem_out mu cb kinds), ih, List.map_cons,
+      List.prod_cons, mul_assoc]
 
 end Nc.Grp

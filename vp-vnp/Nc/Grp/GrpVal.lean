@@ -23,19 +23,17 @@ variable {F : Type} [CommRing F] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
   {o : M.N → Fin U1} {grp : Fin (K + K + A') → Gr} {g : Gr}
 
 /-- A cell of the group is a cell of a base party, for a unit that it writes or reads, or a cell of
-a role, for a
-new unit. -/
+a role, for a new unit. -/
 theorem dom_cases {c : Cell M U0 U1} (hc : c ∈ dom n o grp g) :
-    (∃ p b, ∃ i : Fin U0, grp (Fin.castAdd A' p) = g ∧ i.1 < (n p b).1 ∧ c = (Fin.castAdd A' p,
-        .init p b i)) ∨
-    (∃ p b, ∃ i : Fin U0, grp (Fin.castAdd A' p) = g ∧ i.1 < (n b p).1 ∧ c = (Fin.castAdd A' p,
-        .init b p i)) ∨
+    (∃ p b, ∃ i : Fin U0, grp (Fin.castAdd A' p) = g ∧ i.1 < (n p b).1 ∧
+      c = (Fin.castAdd A' p, .init p b i)) ∨
+    (∃ p b, ∃ i : Fin U0, grp (Fin.castAdd A' p) = g ∧ i.1 < (n b p).1 ∧
+      c = (Fin.castAdd A' p, .init b p i)) ∨
     ∃ (r : M.R) (ν : (M.kind r.1).CnAt r.2) (i : Fin U1), grp (M.rp r) = g ∧ i ≤ o ⟨r.1, ν.1⟩ ∧
       c = (M.rp r, .new ⟨r.1, ν.1⟩ i) := by
   obtain ⟨a, id⟩ := c
-  obtain ⟨h1, h2, h3⟩ : grp a = g ∧ id ∈ G.Plan.seenAt n o E ∧ Holds (G.hold0 M.np) (G.hold1 M.np) a
-      id :=
-    mem_dom.1 hc
+  obtain ⟨h1, h2, h3⟩ : grp a = g ∧ id ∈ G.Plan.seenAt n o E ∧
+      Holds (G.hold0 M.np) (G.hold1 M.np) a id := mem_dom.1 hc
   cases id with
   | init a' b' k =>
     have hk := G.Plan.init_mem_seenAt.1 h2
@@ -54,17 +52,17 @@ theorem dom_cases {c : Cell M U0 U1} (hc : c ∈ dom n o grp g) :
     exact Or.inr (Or.inr ⟨M.nr ν d, ⟨ν.2, by cases d <;> simp [Sys.nr, Law.cnEnd]⟩, k, h1, hk, rfl⟩)
 
 /-- The product of the tables of the base parties and of the roles of a group is the product of the
-tables of its
-parties. -/
+tables of its parties. -/
 theorem prod_tab (y : Cell M U0 U1 → UW ub) :
-    ((baseList grp g).map fun p => G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p
+    ((baseList grp g).map fun p =>
+      G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p
         fun id => y (Fin.castAdd A' p, id)).prod *
       ((roleList grp g M).map fun r => G.roleAt P n o r fun id => y (M.rp r, id)).prod =
       ∏ a ∈ univ.filter (fun a => grp a = g), G.tabFinal mu T cb P q x ρ n o a fun id => y (a, id) := by
   classical
-  have e1 : ((baseList grp g).map fun p => G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a
-      b).1) p
-      fun id => y (Fin.castAdd A' p, id)).prod =
+  have e1 : ((baseList grp g).map fun p =>
+      G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p
+        fun id => y (Fin.castAdd A' p, id)).prod =
       ∏ p ∈ univ.filter (fun p => grp (Fin.castAdd A' p) = g),
         G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p fun id => y (Fin.castAdd A' p, id) := by
     rw [← List.prod_toFinset _ nodup_baseList]

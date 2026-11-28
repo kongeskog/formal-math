@@ -123,8 +123,8 @@ theorem TOk.tset {ub : ℕ} {t : Tree} (h : TOk ub t) (k w : List Bool) (hw : w.
   · exact ⟨w, rfl, hw⟩
   · exact h k'
 
-theorem putL_out {ub : ℕ} {keys : List (List Bool)} {r : List Bool} {t : Tree} : ∀ t' ∈ putL ub keys
-    r t, t' = t := by
+theorem putL_out {ub : ℕ} {keys : List (List Bool)} {r : List Bool} {t : Tree} :
+    ∀ t' ∈ putL ub keys r t, t' = t := by
   induction keys generalizing r with
   | nil =>
     intro t' ht'
@@ -166,8 +166,8 @@ theorem pack_out {sep : List Bool} {ub : ℕ} {B : Body} {o : Outs S} {t : Tree}
   rw [e1, e2, e3, putsL_out _ (mem_encT hr''), putsL_out _ (mem_encT hb)]
 
 /-- An instruction does not change the trie. -/
-theorem insSem_out {T ub : ℕ} {i : Ins} {t : Tree} : ∀ q ∈ insSem θ mu cb kinds T ub i t, q.2 = t :=
-    by
+theorem insSem_out {T ub : ℕ} {i : Ins} {t : Tree} :
+    ∀ q ∈ insSem θ mu cb kinds T ub i t, q.2 = t := by
   intro q hq
   cases i with
   | block q₁ q₂ B =>
@@ -202,8 +202,8 @@ def insG (ub : ℕ) : Ins → Tree → List (A × Tree)
   | _, t => [(1, t)]
 
 theorem length_gBits (n : ℕ) : ∀ q ∈ gBits A n, q.2.length = n := by
-  have := mem_foldL_induct (A := A) (f := fun (_ : Unit) (w : List Bool) => [((1 : A), true :: w),
-      (1, false :: w)])
+  have := mem_foldL_induct (A := A)
+    (f := fun (_ : Unit) (w : List Bool) => [((1 : A), true :: w), (1, false :: w)])
     (Inv := fun m w => w.length = m) (xs := List.replicate n ()) (s := []) (m := 0)
     (fun _ _ s m hs q hq => by
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hq
@@ -222,8 +222,8 @@ theorem TOk.gKss {ub : ℕ} {kss : List (List (List Bool))} {t : Tree} (h : TOk 
       · rw [List.mem_singleton.1 hq]
         exact hs) hs q hq) h
 
-theorem TOk.insG {ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) : ∀ q ∈ insG A ub i t, TOk ub q.2 :=
-    by
+theorem TOk.insG {ub : ℕ} {i : Ins} {t : Tree} (h : TOk ub t) :
+    ∀ q ∈ insG A ub i t, TOk ub q.2 := by
   intro q hq
   cases i with
   | block _ _ B | input _ B =>
@@ -261,8 +261,8 @@ theorem ex_kinds : ∃ (Fs : List Fm) (κ : ℕ), ∀ (j : ℕ) (z : Σ L : G.La
         unfold putCost
         rw [← List.sum_map_mul_left]
         refine List.sum_le_sum fun es _ => ?_
-        have : (es.map fun k => ub * 62 + k.length * 60 + 330).sum ≤ (es.map fun k => ub * 330 +
-            k.length * 60 + 330).sum :=
+        have : (es.map fun k => ub * 62 + k.length * 60 + 330).sum ≤
+            (es.map fun k => ub * 330 + k.length * 60 + 330).sum :=
           List.sum_le_sum fun k _ => by omega
         omega
       change κ' * (_ + _ + putCost ub keys + 1) ≤ _
@@ -454,25 +454,24 @@ theorem ex_ins (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (T ub : ℕ) (i : 
 
 /-- The guessing program of one instruction: argument (instruction, (T, (yardstick, trie))). -/
 def insGF : Fm := .cons (.hd (.tl .id)) (.ite (.tl (.hd (.hd .id)))
-  (.ite (.tl (.tl (.tl (.hd (.hd .id))))) (gKssF (.tl (.tl .id)) (.tl (.tl (.tl (.hd .id))))) (.tl
-      (.tl .id)))
+  (.ite (.tl (.tl (.tl (.hd (.hd .id)))))
+    (gKssF (.tl (.tl .id)) (.tl (.tl (.tl (.hd .id))))) (.tl (.tl .id)))
   (lett (.cons .id (gKssF (.tl (.tl .id)) (.hd (.tl (.tl (.tl (.hd .id)))))))
     (gKssF (.tl .id) (.tl (.tl (.tl (.tl (.hd (.hd .id)))))))))
 
 theorem insGF_does (T ub : ℕ) (i : Ins) (t : Tree) :
     Does θ insGF (.cons i.tree (encG T ub t)) ((insG A ub i t).map (Prod.map id (encG T ub)))
       (2 * insCost T ub i + 100) := by
-  refine ((Does.cons (Gives.id _).tl.hd (?_ : Does θ _ _
-    ((insG A ub i t).map (Prod.map id fun t => .cons (num ub) t)) (2 * insCost T ub i +
-        90))).replace ?_).mono
-    (by omega)
+  refine ((Does.cons (Gives.id _).tl.hd
+    (?_ : Does θ _ _ ((insG A ub i t).map (Prod.map id fun t => .cons (num ub) t))
+      (2 * insCost T ub i + 90))).replace ?_).mono (by omega)
   · cases i with
     | block _ _ B | input _ B =>
       refine (Does.ite_false (Gives.id _).hd.hd.tl ((Does.letkT
         (f := fun t1 => (gKss A ub B.kC t1).map (Prod.map id fun t => .cons (num ub) t))
         (gKssF_does (θ := θ) ub B.kR t (Gives.id _).tl.tl (Gives.id _).hd.tl.tl.tl.hd)
         fun b _ => gKssF_does ub B.kC b.2 (Gives.id _).tl (Gives.id _).hd.hd.tl.tl.tl.tl).replace
-          (bindW_map _ _ _))).mono ?_
+        (bindW_map _ _ _))).mono ?_
       simp only [insCost, bodyCost]
       omega
     | both | one =>
@@ -495,43 +494,44 @@ noncomputable def scriptSem (T ub : ℕ) (l : List Ins) (t : Tree) : List (A × 
 /-- **The program GROUP**: it guesses the contents at all keys, then every instruction compares. -/
 theorem ex_group (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (bT bub : List Bool) (l : List Ins),
     (∀ i ∈ l, InsOk S Q c kinds i) →
-    Does θ F (scriptT bT bub l) ((bindW (foldL (insG A (bval bub)) l .nil)
-      (scriptSem θ mu cb kinds (bval bT) (bval bub) l)).map (Prod.map id (encG (bval bT) (bval
-          bub))))
+    Does θ F (scriptT bT bub l)
+      ((bindW (foldL (insG A (bval bub)) l .nil)
+          (scriptSem θ mu cb kinds (bval bT) (bval bub) l)).map
+        (Prod.map id (encG (bval bT) (bval bub))))
       (κ * ((bT.length + 1) * (bval bT + 1) + (bub.length + 1) * (bval bub + 1) +
         (l.map (insCost (bval bT) (bval bub))).sum + l.length)) := by
   obtain ⟨F, κ, hF⟩ := ex_ins (θ := θ) mu cb kinds hc
-  refine ⟨lett (.cons .id (foldF insGF (.cons (unF (.hd (.hd .id))) (.cons (unF (.tl (.hd .id)))
-      (.quote .nil))) (.tl .id)))
+  refine ⟨lett
+    (.cons .id (foldF insGF
+      (.cons (unF (.hd (.hd .id))) (.cons (unF (.tl (.hd .id))) (.quote .nil))) (.tl .id)))
     (foldF F (.tl .id) (.tl (.hd .id))), κ + 500, fun bT bub l hl => ?_⟩
   have g1 : Gives θ (.hd (.hd .id)) (scriptT bT bub l) (ofBits bT) 3 := (Gives.id _).hd.hd
   have g2 : Gives θ (.tl (.hd .id)) (scriptT bT bub l) (ofBits bub) 3 := (Gives.id _).hd.tl
   have h0 := Gives.cons (unF_gives g1) (Gives.cons (unF_gives g2) (Gives.quote .nil (scriptT bT bub l)))
   have h1 := foldT (θ := θ) (enc := encG (bval bT) (bval bub)) (s₀ := .nil) (f := insG A (bval bub))
     (Inv := fun _ _ => True) (d := fun i => 2 * insCost (bval bT) (bval bub) i + 100) (l := .tl .id)
-    (x := scriptT bT bub l) h0 (Gives.id _).tl (fun i _ t _ _ => ⟨insGF_does _ _ i t, fun _ _ =>
-        trivial⟩) trivial
+    (x := scriptT bT bub l) h0 (Gives.id _).tl
+    (fun i _ t _ _ => ⟨insGF_does _ _ i t, fun _ _ => trivial⟩) trivial
   have hok : ∀ b ∈ foldL (insG A (bval bub)) l .nil, TOk (bval bub) b.2 := by
-    have := mem_foldL_induct (f := insG A (bval bub)) (Inv := fun _ t => TOk (bval bub) t) (xs := l)
-        (m := 0)
-      (fun i _ s _ hs q hq => hs.insG q hq) (tOk_nil _)
+    have := mem_foldL_induct (f := insG A (bval bub)) (Inv := fun _ t => TOk (bval bub) t)
+      (xs := l) (m := 0) (fun i _ s _ hs q hq => hs.insG q hq) (tOk_nil _)
     exact this
   have h2 := Does.letkT (G := foldF F (.tl .id) (.tl (.hd .id)))
-    (f := fun t => (scriptSem θ mu cb kinds (bval bT) (bval bub) l t).map (Prod.map id (encG (bval
-        bT) (bval bub))))
-    (d := 2 + 3 + (l.map fun i => κ * insCost (bval bT) (bval bub) i + 0 + 30).sum + 20) h1 (fun b
-        hb =>
-      foldT (θ := θ) (enc := encG (bval bT) (bval bub)) (s₀ := b.2) (f := insSem θ mu cb kinds (bval
-          bT) (bval bub))
+    (f := fun t => (scriptSem θ mu cb kinds (bval bT) (bval bub) l t).map
+      (Prod.map id (encG (bval bT) (bval bub))))
+    (d := 2 + 3 + (l.map fun i => κ * insCost (bval bT) (bval bub) i + 0 + 30).sum + 20) h1
+    (fun b hb =>
+      foldT (θ := θ) (enc := encG (bval bT) (bval bub)) (s₀ := b.2)
+        (f := insSem θ mu cb kinds (bval bT) (bval bub))
         (Inv := fun _ t => TOk (bval bub) t) (d := fun i => κ * insCost (bval bT) (bval bub) i + 0)
         (Gives.id _).tl (Gives.id _).hd.tl
         (fun i _ t hi ht => ⟨hF _ _ i t (hl i hi) ht, fun q hq => insSem_out mu cb kinds q hq ▸ ht⟩)
-            (hok b hb))
+        (hok b hb))
   rw [bindW_map] at h2
   refine h2.mono ?_
-  have hs : ∀ (a b : ℕ) (l : List Ins), (l.map fun i => a * insCost (bval bT) (bval bub) i + b +
-      30).sum =
-      a * (l.map (insCost (bval bT) (bval bub))).sum + (b + 30) * l.length := by
+  have hs : ∀ (a b : ℕ) (l : List Ins),
+      (l.map fun i => a * insCost (bval bT) (bval bub) i + b + 30).sum =
+        a * (l.map (insCost (bval bT) (bval bub))).sum + (b + 30) * l.length := by
     intro a b l
     induction l with
     | nil => simp
@@ -545,8 +545,8 @@ theorem ex_group (hc : (sepOf cb).length ≤ c) : ∃ F κ, ∀ (bT bub : List B
   have p1 : bT.length * (bval bT * 62 + 130) ≤ 130 * P := by rw [hP]; nlinarith
   have p2 : bub.length * (bval bub * 62 + 130) ≤ 130 * R := by rw [hR]; nlinarith
   have p3 : 1 ≤ P := Nat.succ_le_of_lt (by positivity)
-  have p4 : (κ + 500) * (P + R + Sm + l.length) = κ * (P + R + l.length) + κ * Sm + 500 * (P + R +
-      Sm + l.length) := by ring
+  have p4 : (κ + 500) * (P + R + Sm + l.length) =
+      κ * (P + R + l.length) + κ * Sm + 500 * (P + R + Sm + l.length) := by ring
   omega
 
 end group

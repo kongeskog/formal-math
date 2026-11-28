@@ -128,8 +128,8 @@ noncomputable def PR (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (key : C
 /-- The list of what is read. -/
 noncomputable def PC (n : Fin (K + K) → Fin (K + K) → Fin (U0 + 1)) (key : Cell M U0 U1 → List Bool)
     (cb : Option Γ → Fin c → Bool) (p : Fin (K + K)) (C : Option S → Fin (K + K) → List Γ) :
-    List (List (List Bool) × List Bool) := List.ofFn fun b => (kCl n key p b, strOf cb fun s => C s
-        b)
+    List (List (List Bool) × List Bool) :=
+  List.ofFn fun b => (kCl n key p b, strOf cb fun s => C s b)
 
 theorem sum_segs_equiv {m : ℕ} (f : (Fin (nT S) → Fin m → Wt Γ T) → A) :
     ∑ X, f X = ∑ X : Segs S Γ m T, f fun i => X ((tapes S).get i) :=
@@ -157,8 +157,8 @@ theorem wsum_pack (hub : 0 < ub) (hK : 0 < K + K) {p : Fin (K + K)}
     wsum (packSem A (sepOf cb) ub (bodyOf ρ n key p) out t) Ψ =
       ∑ R : Segs S Γ (K + K) T, ∑ C : Segs S Γ (K + K) T,
         if (∀ s, cat (R.words s) = wl s) ∧ (∀ s, cat (C.words s) = rl s) ∧ (∀ s, RowOk (ρ s p) (R.words s)) ∧
-          FitsAll ub (PR n key cb p R.words) t ∧ FitsAll ub (PC n key cb p C.words) t then Ψ t else
-              0 := by
+          FitsAll ub (PR n key cb p R.words) t ∧ FitsAll ub (PC n key cb p C.words) t then Ψ t
+        else 0 := by
   have hm : (bodyOf ρ n key p).kR.length = K + K := by simp [bodyOf]
   have hrep : List.replicate (K + K) [true] = (List.ofFn fun _ : Fin (K + K) => [true]).reverse := by
     rw [List.ofFn_const, List.reverse_replicate]

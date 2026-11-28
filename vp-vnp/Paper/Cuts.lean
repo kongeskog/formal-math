@@ -348,8 +348,8 @@ theorem thm_onecut {θ : List Bool → A} (hθ : Generates θ) {h : ℕ} [NeZero
         simp at h1
       omega) (by omega) hnums.mmX (by have := pc.c_le; omega) (fun q x ρ n o b g hx hn ho => by
         have := hGtime pc.plan pc.ok q x ρ n o (pc.grp n o) g Cd.key tg (Nc.Dl.bitsN Lc T).reverse
-          (Nc.Dl.bitsN Lc pc.ub).reverse b (Lc := Lc) (X := X) (ιb := ιb) (lh := pc.load) (ev := ev)
-              hx hCd.key
+          (Nc.Dl.bitsN Lc pc.ub).reverse b (Lc := Lc) (X := X) (ιb := ιb) (lh := pc.load)
+          (ev := ev) hx hCd.key
           t3.le u3.le hSX hK2 hcR hcId (fun y => by have := hlaw' y; omega) (fun y => by have := hlaw' y; omega)
           (hbase n o hn ho g) hnums.ιbX (fun p _ => (pc.tab_valid n).1 hn p) (hevle n o hn ho g)
         refine this.trans (le_of_eq ?_)

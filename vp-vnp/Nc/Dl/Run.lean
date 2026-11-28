@@ -39,8 +39,8 @@ def kRT (a b : Fin (K + K)) (n : Fin (U0 + 1)) : Tree :=
 
 /-- Keys of units read. -/
 def kCT (a b : Fin (K + K)) (n : Fin (U0 + 1)) : Tree :=
-  listT (((List.finRange U0).filter fun k => k.1 < n.1).map fun k => ofBits (C.key (Fin.castAdd A'
-      b, .init a b k)))
+  listT (((List.finRange U0).filter fun k => k.1 < n.1).map fun k =>
+    ofBits (C.key (Fin.castAdd A' b, .init a b k)))
 
 /-- Keys of new units. -/
 def chT (ν : M.N) (d : Bool) (j : Fin U1) : Tree :=

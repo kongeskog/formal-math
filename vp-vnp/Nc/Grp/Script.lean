@@ -103,8 +103,8 @@ noncomputable def bodyOf (p : Fin (K + K)) : Body where
 noncomputable def baseIns (p : Fin (K + K)) : Ins :=
   Fin.addCases (motive := fun _ => Ins)
     (fun κ => .block (qn (q κ.castSucc)) (qn (q κ.succ)) (bodyOf ρ n key (Fin.castAdd K κ)))
-    (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse (bodyOf ρ n key
-        (Fin.natAdd K κ))) p
+    (fun κ => .input ((x κ).map fun a => List.ofFn (cb (some a))).reverse
+      (bodyOf ρ n key (Fin.natAdd K κ))) p
 
 /-- The instruction of a role. -/
 noncomputable def roleIns (r : M.R) : Ins :=

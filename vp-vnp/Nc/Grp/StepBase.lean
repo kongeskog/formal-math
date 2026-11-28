@@ -59,20 +59,19 @@ theorem uwBits_injective (hub : 0 < ub) : Function.Injective (uwBits (ub := ub))
     · exact G.uwBits_inj hv hw h
 
 /-- The units of a string are the contents at the keys of the cells `f k`, `k < d`, and there are
-`d` of them: the
-contents of all cells `f k` are the units. -/
-theorem fits_iff (hub : 0 < ub) {t : Tree} {σ : Cell M U0 U1 → UW ub} (h : Rep ub key t σ) {U d : ℕ}
-    (hd : d ≤ U)
-    (f : Fin U → Cell M U0 U1) (hf : ∀ k : Fin U, d ≤ k.1 → σ (f k) = none) (L : List Bool) :
+`d` of them: the contents of all cells `f k` are the units. -/
+theorem fits_iff (hub : 0 < ub) {t : Tree} {σ : Cell M U0 U1 → UW ub} (h : Rep ub key t σ)
+    {U d : ℕ} (hd : d ≤ U) (f : Fin U → Cell M U0 U1)
+    (hf : ∀ k : Fin U, d ≤ k.1 → σ (f k) = none) (L : List Bool) :
     (ucount ub L = (((List.finRange U).filter fun k => k.1 < d).map fun k => key (f k)).length ∧
       Fits (((List.finRange U).filter fun k => k.1 < d).map fun k => key (f k))
-        (fun i => uwBits (unitsOf ub L i)) t) ↔ ucount ub L = d ∧ ∀ k : Fin U, σ (f k) = unitsOf ub
-            L k := by
+        (fun i => uwBits (unitsOf ub L i)) t) ↔
+      ucount ub L = d ∧ ∀ k : Fin U, σ (f k) = unitsOf ub L k := by
   have hlen : (((List.finRange U).filter fun k => k.1 < d).map fun k => key (f k)).length = d := by
     rw [List.length_map, filter_finRange hd, List.length_ofFn]
   have hget : ∀ (k : Fin U) (hk : k.1 < d),
-      (((List.finRange U).filter fun k => k.1 < d).map fun k => key (f k))[k.1]'(lt_of_lt_of_eq hk
-          hlen.symm) = key (f k) := by
+      (((List.finRange U).filter fun k => k.1 < d).map fun k =>
+        key (f k))[k.1]'(lt_of_lt_of_eq hk hlen.symm) = key (f k) := by
     intro k hk
     have := getElem_map_filter hd (fun k => key (f k)) k hk
     rw [List.getElem?_eq_getElem (lt_of_lt_of_eq hk hlen.symm)] at this
@@ -92,8 +91,8 @@ theorem fits_iff (hub : 0 < ub) {t : Tree} {σ : Cell M U0 U1 → UW ub} (h : Re
 
 open Classical in
 /-- What a base party does with given letters. -/
-theorem base_core (hub : 0 < ub) {p : Fin (K + K)} (hρ : ∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s
-    p).2.2)
+theorem base_core (hub : 0 < ub) {p : Fin (K + K)}
+    (hρ : ∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2)
     {wl rl : Option S → List Γ} (hwl : ∀ s, (wl s).length ≤ T) (hrl : ∀ s, (rl s).length ≤ T) {out : Outs S}
     (h1 : ∀ i, out (Fin.castAdd (nT S) i) = ((wl ((tapes S).get i)).map (code cb)).reverse)
     (h2 : ∀ i, out (Fin.natAdd (nT S) i) = ((rl ((tapes S).get i)).map (code cb)).reverse) {t : Tree}
@@ -101,32 +100,32 @@ theorem base_core (hub : 0 < ub) {p : Fin (K + K)} (hρ : ∀ s, (ρ s p).1 = fa
     (hσ : ∀ a b (k : Fin U0), (n a b).1 ≤ k.1 → σ (Fin.castAdd A' p, .init a b k) = none) :
     wsum (packSem A (sepOf cb) ub (bodyOf ρ n key p) out t) (fun _ => 1) =
       ∑ R : Segs S Γ (K + K) T, ∑ C : Segs S Γ (K + K) T,
-        if (∀ s, cat (R.words s) = wl s) ∧ (∀ s, cat (C.words s) = rl s) ∧ (∀ s, RowOk (ρ s p)
-            (R.words s)) ∧
+        if (∀ s, cat (R.words s) = wl s) ∧ (∀ s, cat (C.words s) = rl s) ∧
+          (∀ s, RowOk (ρ s p) (R.words s)) ∧
           (∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b ∧
-            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init p b k) = unitsOf ub (strOf cb fun s => R.words
-                s b) k) ∧
+            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init p b k) =
+              unitsOf ub (strOf cb fun s => R.words s b) k) ∧
           (∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p ∧
-            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init b p k) = unitsOf ub (strOf cb fun s => C.words
-                s b) k)
+            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init b p k) =
+              unitsOf ub (strOf cb fun s => C.words s b) k)
         then 1 else 0 := by
   have hK : 0 < K + K := Nat.lt_of_le_of_lt (Nat.zero_le _) p.2
   rw [wsum_pack hub hK hρ hwl hrl h1 h2]
   refine Finset.sum_congr rfl fun R _ => Finset.sum_congr rfl fun C _ => if_congr ?_ rfl rfl
-  have eR : FitsAll ub (PR n key cb p R.words) t ↔ ∀ b, ucount ub (strOf cb fun s => R.words s b) =
-      n p b ∧
-      ∀ k : Fin U0, σ (Fin.castAdd A' p, .init p b k) = unitsOf ub (strOf cb fun s => R.words s b) k
-          := by
+  have eR : FitsAll ub (PR n key cb p R.words) t ↔
+      ∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b ∧
+        ∀ k : Fin U0, σ (Fin.castAdd A' p, .init p b k) =
+          unitsOf ub (strOf cb fun s => R.words s b) k := by
     rw [FitsAll, PR, List.forall_mem_ofFn_iff]
-    exact forall_congr' fun b => fits_iff hub h (by have := (n p b).2; omega) _ (fun k hk => hσ p b
-        k hk) _
-  have eC : FitsAll ub (PC n key cb p C.words) t ↔ ∀ b, ucount ub (strOf cb fun s => C.words s b) =
-      n b p ∧
-      ∀ k : Fin U0, σ (Fin.castAdd A' p, .init b p k) = unitsOf ub (strOf cb fun s => C.words s b) k
-          := by
+    exact forall_congr' fun b => fits_iff hub h (by have := (n p b).2; omega) _
+      (fun k hk => hσ p b k hk) _
+  have eC : FitsAll ub (PC n key cb p C.words) t ↔
+      ∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p ∧
+        ∀ k : Fin U0, σ (Fin.castAdd A' p, .init b p k) =
+          unitsOf ub (strOf cb fun s => C.words s b) k := by
     rw [FitsAll, PC, List.forall_mem_ofFn_iff]
-    exact forall_congr' fun b => fits_iff hub h (by have := (n b p).2; omega) _ (fun k hk => hσ b p
-        k hk) _
+    exact forall_congr' fun b => fits_iff hub h (by have := (n b p).2; omega) _
+      (fun k hk => hσ b p k hk) _
   rw [eR, eC]
 
 theorem length_wr (w : List (Letter S Unit Γ)) (s : Option S) : (wr w s).length ≤ w.length := by
@@ -160,36 +159,36 @@ theorem emit_eq_vec {m : ℕ} (w : List (Letter S Unit Γ)) (R C : Option S → 
       | some s => exact (congrFun h2 (.tp s true)).symm
 
 open Classical in
-/-- **The instruction of a base party** sums to the table of the party at the contents of the trie.
--/
-theorem wsum_base (hub : 0 < ub) (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q') (hx : ∀ κ, (x
-    κ).length ≤ T)
-    {p : Fin (K + K)} (hρ : ∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) {t : Tree}
+/-- **The instruction of a base party** sums to the table of the party at the contents of the
+trie. -/
+theorem wsum_base (hub : 0 < ub) (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z q q')
+    (hx : ∀ κ, (x κ).length ≤ T) {p : Fin (K + K)}
+    (hρ : ∀ s, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2) {t : Tree}
     {σ : Cell M U0 U1 → UW ub} (h : Rep ub key t σ)
     (hσ : ∀ a b (k : Fin U0), (n a b).1 ≤ k.1 → σ (Fin.castAdd A' p, .init a b k) = none) :
-    wsum (insSem θ mu cb kinds T ub (baseIns (fun z => (qn Q z : ℕ)) cb q x ρ n key p) t) (fun _ =>
-        1) =
-      G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p fun id => σ (Fin.castAdd A' p,
-          id) := by
+    wsum (insSem θ mu cb kinds T ub (baseIns (fun z => (qn Q z : ℕ)) cb q x ρ n key p) t)
+        (fun _ => 1) =
+      G.tabInit mu T cb q x (fun s => ρ s p) (fun a b => (n a b).1) p
+        fun id => σ (Fin.castAdd A' p, id) := by
   have hL : wsum (insSem θ mu cb kinds T ub (baseIns (fun z => (qn Q z : ℕ)) cb q x ρ n key p) t)
-      (fun _ => 1) =
+        (fun _ => 1) =
       ∑ R : Segs S Γ (K + K) T, ∑ C : Segs S Γ (K + K) T,
         if (∀ s, RowOk (ρ s p) (R.words s)) ∧
           (∀ b, ucount ub (strOf cb fun s => R.words s b) = n p b ∧
-            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init p b k) = unitsOf ub (strOf cb fun s => R.words
-                s b) k) ∧
+            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init p b k) =
+              unitsOf ub (strOf cb fun s => R.words s b) k) ∧
           (∀ b, ucount ub (strOf cb fun s => C.words s b) = n b p ∧
-            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init b p k) = unitsOf ub (strOf cb fun s => C.words
-                s b) k)
+            ∀ k : Fin U0, σ (Fin.castAdd A' p, .init b p k) =
+              unitsOf ub (strOf cb fun s => C.words s b) k)
         then partyW mu T q x p R.words C.words else 0 := by
     unfold baseIns
     induction p using Fin.addCases with
     | left κ =>
-      rw [Fin.addCases_left, insSem, dif_pos ⟨(qn Q _).2, (qn Q _).2⟩, wsum_bindW, wsum_simSem mu cb
-          hmu]
-      have h1 : ∀ w : Fin T → Letter S Unit Γ, wsum (packSem A (sepOf cb) ub (bodyOf ρ n key
-          (Fin.castAdd K κ))
-          (outsOf cb (List.ofFn w)) t) (fun _ => 1) = _ :=
+      rw [Fin.addCases_left, insSem, dif_pos ⟨(qn Q _).2, (qn Q _).2⟩, wsum_bindW,
+        wsum_simSem mu cb hmu]
+      have h1 : ∀ w : Fin T → Letter S Unit Γ,
+          wsum (packSem A (sepOf cb) ub (bodyOf ρ n key (Fin.castAdd K κ))
+            (outsOf cb (List.ofFn w)) t) (fun _ => 1) = _ :=
         fun w => base_core hub hρ (T := T) (wl := wr (List.ofFn w)) (rl := rdr (List.ofFn w))
           (fun s => (length_wr _ s).trans (by simp)) (fun s => (length_rdr _ s).trans (by simp))
           (outsOf_left cb _) (outsOf_right cb _) h hσ
@@ -212,17 +211,16 @@ theorem wsum_base (hub : 0 < ub) (hmu : ∀ z q q', ∃ e : WE, e.val θ = mu z 
         rw [if_neg fun hh => hi hh.2.2, mul_zero]
     | right κ =>
       rw [Fin.addCases_right, insSem]
-      refine (base_core hub hρ (T := T) (wl := fun s => if s = none then x κ else []) (rl := fun _
-          => [])
-        (out := inOuts (S := S) ((x κ).map (code cb)).reverse)
+      refine (base_core hub hρ (T := T) (wl := fun s => if s = none then x κ else [])
+        (rl := fun _ => []) (out := inOuts (S := S) ((x κ).map (code cb)).reverse)
         (fun s => by split_ifs; exacts [hx κ, Nat.zero_le _]) (fun s => Nat.zero_le _)
         (fun i => inOuts_left cb (x κ) i) (fun i => inOuts_right cb (x κ) i) h hσ).trans ?_
       refine Finset.sum_congr rfl fun R _ => Finset.sum_congr rfl fun C _ => ?_
       rw [partyW_input]
-      have he : ((∀ s, cat (R.words s) = if s = none then x κ else []) ∧ ∀ s, cat (C.words s) = [])
-          ↔
-          (∀ s b, R.words (some s) b = []) ∧ (∀ s b, C.words s b = []) ∧ cat (R.words none) = x κ :=
-              by
+      have he : ((∀ s, cat (R.words s) = if s = none then x κ else []) ∧
+            ∀ s, cat (C.words s) = []) ↔
+          (∀ s b, R.words (some s) b = []) ∧ (∀ s b, C.words s b = []) ∧
+            cat (R.words none) = x κ := by
         constructor
         · rintro ⟨a, b⟩
           refine ⟨fun s => cat_eq_nil.1 ?_, fun s => cat_eq_nil.1 (b s), ?_⟩

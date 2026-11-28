@@ -43,9 +43,10 @@ theorem padTake_eq (ub : ℕ) (r : List Bool) :
 
 open Classical in
 theorem putL_gen {ub : ℕ} (hub : 0 < ub) (keys : List (List Bool)) (r : List Bool) (t : Tree) :
-    putL ub keys r t = if (r.length + ub - 1) / ub = keys.length ∧
-      Fits keys (fun k => List.ofFn fun b : Fin ub => r.getD (k * ub + b) false) t then [t] else []
-          := by
+    putL ub keys r t =
+      if (r.length + ub - 1) / ub = keys.length ∧
+          Fits keys (fun k => List.ofFn fun b : Fin ub => r.getD (k * ub + b) false) t then [t]
+      else [] := by
   induction keys generalizing r with
   | nil =>
     simp only [putL, List.length_nil]
@@ -90,16 +91,17 @@ theorem putL_gen {ub : ℕ} (hub : 0 < ub) (keys : List (List Bool)) (r : List B
 
 open Classical in
 theorem putL_eq {ub : ℕ} (hub : 0 < ub) (keys : List (List Bool)) (L : List Bool) (t : Tree) :
-    putL ub keys (L ++ [true]) t = if ucount ub L = keys.length ∧
-      Fits keys (fun k => uwBits (unitsOf ub L k)) t then [t] else [] := by
+    putL ub keys (L ++ [true]) t =
+      if ucount ub L = keys.length ∧ Fits keys (fun k => uwBits (unitsOf ub L k)) t then [t]
+      else [] := by
   rw [putL_gen hub]
   have hc : ((L ++ [true]).length + ub - 1) / ub = ucount ub L := by
     have e : (L ++ [true]).length + ub - 1 = L.length + ub := by simp
     rw [e, Nat.add_div_right _ hub, ucount]
   rw [hc]
   refine if_congr (and_congr_right fun h => forall₂_congr fun i hi => ?_) rfl rfl
-  have : uwBits (unitsOf ub L i) = List.ofFn fun b : Fin ub => (L ++ [true]).getD (i * ub + b) false
-      := by
+  have : uwBits (unitsOf ub L i) =
+      List.ofFn fun b : Fin ub => (L ++ [true]).getD (i * ub + b) false := by
     rw [unitsOf, if_pos (by omega)]
     rfl
   show _ = ofBits (List.ofFn fun b : Fin ub => (L ++ [true]).getD (i * ub + b) false) ↔

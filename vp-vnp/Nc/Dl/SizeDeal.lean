@@ -569,8 +569,8 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
   have k1 := size_bits hbT
   have k2 := size_bits hbub
   have h1 := sum_le (l := (List.finRange (K + K)).map fun p =>
-      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (listTm [baseTm C p])) (f := fun t =>
-          t.tree.size) (n := X)
+      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (listTm [baseTm C p]))
+      (f := fun t => t.tree.size) (n := X)
       (b := 170 * (X * Lc)) (by rw [List.length_map, List.length_finRange]; exact H.hK2)
       (List.forall_mem_map.2 fun p _ => by
         have a1 := size_bits (H.nm (.slp (tab.kgrp (Fin.castAdd A' p))))
@@ -593,8 +593,8 @@ theorem size_scriptTm (g : Fin mm) : (scriptTm C tab tg bT bub gt d1 g).tree.siz
       (b := 300 * (X * Lc)) (by rw [List.length_map]; exact length_allIds H)
       (List.forall_mem_map.2 fun id _ => size_endTm tab H hd1 hgt g id)
   have l1 : ((List.finRange (K + K)).map fun p =>
-      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g) (listTm [baseTm C p])).length ≤ X :=
-          by
+      ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g)
+        (listTm [baseTm C p])).length ≤ X := by
     rw [List.length_map, List.length_finRange]; exact H.hK2
   have l2 : ((Grp.allRoles M).map fun r =>
       ifTm (C.nm (.slp (tab.kgrp (M.rp r)))) (gt g) (listTm [roleTm C tab tg d1 r])).length ≤ X := by

@@ -163,16 +163,15 @@ theorem expand_bodyTm (p : Fin (K + K)) :
       rfl
 
 theorem expand_baseTm (hpt : ∀ κ, pt κ = listT (((x κ).map fun a => ofBits (List.ofFn (cb (some a)))).reverse))
-    (p : Fin (K + K)) : (baseTm C p).expand (byPath C.nm st) = (Grp.baseIns qn cb q x ρ n C.key
-        p).tree := by
+    (p : Fin (K + K)) : (baseTm C p).expand (byPath C.nm st) =
+      (Grp.baseIns qn cb q x ρ n C.key p).tree := by
   rw [Grp.baseIns]
   refine Fin.addCases (fun κ => ?_) (fun κ => ?_) p
   · rw [baseTm, Fin.addCases_left, Fin.addCases_left]
     simp only [Tm.expand, expand_gN, h.q, expand_bodyTm h, Grp.Ins.tree]
   · rw [baseTm, Fin.addCases_right, Fin.addCases_right]
-    simp only [Tm.expand, expand_gN, h.part, expand_bodyTm h, Grp.Ins.tree, hpt, List.map_reverse,
-        List.map_map,
-      Function.comp_def]
+    simp only [Tm.expand, expand_gN, h.part, expand_bodyTm h, Grp.Ins.tree, hpt,
+      List.map_reverse, List.map_map, Function.comp_def]
 
 theorem expand_slotTm {d1 : Tree} (hd1 : ∀ d : Fin D, C.dt d = d1 ↔ d.1 = 1) (z : M.Z) (a : Fin (K + K + A')) :
     (slotTm C tab d1 z a).expand (byPath C.nm st) =
@@ -273,9 +272,9 @@ theorem expand_scriptTm {d1 : Tree} {gt : Fin mm → Tree} (hd1 : ∀ d : Fin D,
   congr 1
   · congr 1
     · have e : ∀ p : Fin (K + K), ((ifTm (C.nm (.slp (tab.kgrp (Fin.castAdd A' p)))) (gt g)
-          (listTm [baseTm C p])).expand (byPath C.nm st)).toList = if grp n o (Fin.castAdd A' p) = g
-              then
-          [(Grp.baseIns qn cb q x ρ n C.key p).tree] else [] := by
+          (listTm [baseTm C p])).expand (byPath C.nm st)).toList =
+          if grp n o (Fin.castAdd A' p) = g then
+            [(Grp.baseIns qn cb q x ρ n C.key p).tree] else [] := by
         intro p
         rw [expand_ifTm, hslp, expand_listTm, toList_listT]
         refine if_congr (hg _) ?_ rfl

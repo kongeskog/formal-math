@@ -57,11 +57,10 @@ def bkEquiv (L : Law A) (p : L.Ro) (B : ℕ) : (Fin B → Bk L p) ≃
 open Classical in
 /-- **The instruction of a role** sums to the table of the role at the contents of the trie. -/
 theorem wsum_roleIns (hub : 0 < ub) {r : M.R} (hkind : kinds[tg r]? = some ⟨M.kind r.1, r.2⟩)
-    (htab : ∀ i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h) {t : Tree} {σ : Cell M U0 U1 →
-        UW ub}
-    (h : Rep ub key t σ)
-    (hσ : ∀ (ν : (M.kind r.1).CnAt r.2) (k : Fin U1), (o ⟨r.1, ν.1⟩).1 < k.1 → σ (M.rp r, .new ⟨r.1,
-        ν.1⟩ k) = none) :
+    (htab : ∀ i y h, ∃ e : WE, e.val θ = (M.kind r.1).tab r.2 i y h) {t : Tree}
+    {σ : Cell M U0 U1 → UW ub} (h : Rep ub key t σ)
+    (hσ : ∀ (ν : (M.kind r.1).CnAt r.2) (k : Fin U1), (o ⟨r.1, ν.1⟩).1 < k.1 →
+      σ (M.rp r, .new ⟨r.1, ν.1⟩ k) = none) :
     wsum (insSem (S := S) θ mu cb kinds T ub (roleIns P n o key tg r) t) (fun _ => 1) =
       G.roleAt P n o r fun id => σ (M.rp r, id) := by
   rw [roleIns, insSem, hkind]
@@ -80,15 +79,15 @@ theorem wsum_roleIns (hub : 0 < ub) {r : M.R} (hkind : kinds[tg r]? = some ⟨M.
   swap
   · rw [roleSem, if_neg fun h => hp (hpres.1 h), wsum_nil, if_neg hp]
   rw [roleSem, if_pos (hpres.2 hp), wsum_bindW, wsum_role _ _ htab, if_pos hp]
-  have hsig := Finset.sum_sigma' (univ : Finset (Fin (P.num n o r.1 * ub) → (M.kind r.1).I)) (fun _
-      => univ)
+  have hsig := Finset.sum_sigma' (univ : Finset (Fin (P.num n o r.1 * ub) → (M.kind r.1).I))
+    (fun _ => univ)
     (fun i (g : ∀ k, ∀ ν : (M.kind r.1).CnAt r.2, Fin ((M.kind r.1).len (i k) ν) → Bool) =>
       if ∀ ν : (M.kind r.1).CnAt r.2, ChOk ⟨r.1, ν.1⟩ (o ⟨r.1, ν.1⟩).1
-          (chString (M.kind r.1).lab (fun j => (M.kind r.1).len j ν) i fun k => g k ν) (fun id => σ
-              (M.rp r, id))
-        then ∏ k : Fin (P.num n o r.1 * ub), (M.kind r.1).tab r.2 (i k) (fun e =>
-          (slotBits (P.num n o r.1) (P.ids n o ⟨r.1, e.1⟩) fun id => σ (M.rp r, id)).getD k false)
-              (g k) else 0)
+          (chString (M.kind r.1).lab (fun j => (M.kind r.1).len j ν) i fun k => g k ν)
+          (fun id => σ (M.rp r, id))
+        then ∏ k : Fin (P.num n o r.1 * ub), (M.kind r.1).tab r.2 (i k)
+          (fun e => (slotBits (P.num n o r.1) (P.ids n o ⟨r.1, e.1⟩)
+            fun id => σ (M.rp r, id)).getD k false) (g k) else 0)
   rw [hsig, Finset.univ_sigma_univ]
   refine Fintype.sum_equiv (bkEquiv (M.kind r.1) r.2 (P.num n o r.1 * ub)) _ _ fun f => ?_
   -- the streams
@@ -125,18 +124,16 @@ theorem wsum_roleIns (hub : 0 < ub) {r : M.R} (hkind : kinds[tg r]? = some ⟨M.
       simp
   simp only [hins]
   rw [hkeys, hstr, putsL_eq hub]
-  have hfit : FitsAll ub (PN o key r f) t ↔ ∀ ν : (M.kind r.1).CnAt r.2, ChOk ⟨r.1, ν.1⟩ (o ⟨r.1,
-      ν.1⟩).1
-      (chS (M.kind r.1) r.2 f ν) (fun id => σ (M.rp r, id)) := by
-    have hν : ∀ ν : (M.kind r.1).CnAt r.2, (ucount ub (chS (M.kind r.1) r.2 f ν) = (kNew o key r
-        ν).length ∧
-        Fits (kNew o key r ν) (fun i => uwBits (unitsOf ub (chS (M.kind r.1) r.2 f ν) i)) t) ↔
+  have hfit : FitsAll ub (PN o key r f) t ↔ ∀ ν : (M.kind r.1).CnAt r.2,
+      ChOk ⟨r.1, ν.1⟩ (o ⟨r.1, ν.1⟩).1 (chS (M.kind r.1) r.2 f ν) (fun id => σ (M.rp r, id)) := by
+    have hν : ∀ ν : (M.kind r.1).CnAt r.2,
+        (ucount ub (chS (M.kind r.1) r.2 f ν) = (kNew o key r ν).length ∧
+          Fits (kNew o key r ν) (fun i => uwBits (unitsOf ub (chS (M.kind r.1) r.2 f ν) i)) t) ↔
         ChOk ⟨r.1, ν.1⟩ (o ⟨r.1, ν.1⟩).1 (chS (M.kind r.1) r.2 f ν) (fun id => σ (M.rp r, id)) := by
       intro ν
       rw [kNew_eq]
-      exact fits_iff hub h (by have := (o ⟨r.1, ν.1⟩).2; omega) (fun k => (M.rp r, .new ⟨r.1, ν.1⟩
-          k))
-        (fun k hk => hσ ν k hk) _
+      exact fits_iff hub h (by have := (o ⟨r.1, ν.1⟩).2; omega)
+        (fun k => (M.rp r, .new ⟨r.1, ν.1⟩ k)) (fun k hk => hσ ν k hk) _
     rw [FitsAll, PN, List.forall_mem_map]
     exact ⟨fun h ν => (hν ν).1 (h ν (mem_cnList ν)), fun h ν _ => (hν ν).2 (h ν)⟩
   by_cases hc : FitsAll ub (PN o key r f) t

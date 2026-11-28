@@ -41,7 +41,7 @@ theorem exists_codes {A : Type} [CommRing A] {S : Type} [Fintype S] [DecidableEq
   obtain ⟨f3, i3, l3⟩ := exists_code _ h3
   obtain ⟨f4, i4, l4⟩ := exists_code _ h4
   exact ⟨⟨f1, i1, f2, i2, f3, i3, f4⟩, fun y => (l1 y).le, fun y => (l2 y).le, fun y => (l3 y).le,
-      fun y => (l4 _).le, i4⟩
+    fun y => (l4 _).le, i4⟩
 
 variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [Fintype S] [DecidableEq S] [Fintype Q]
   [DecidableEq Q] {θ : List Bool → A} {K A' E U0 U1 mm D pS c ℓ : ℕ} {M : Sys A (K + K + A') E} {P : G.Plan M U0 U1}
@@ -146,9 +146,8 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s bd ιb X Lc
       have := hρ s p
       rw [if_neg (by simp [hf])] at this
       exact this.2
-    obtain ⟨h1, h2⟩ := hGR P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key tg bT bub b hC.inj
-        hub hx hρ'
-      hkind
+    obtain ⟨h1, h2⟩ := hGR P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key tg bT bub b
+      hC.inj hub hx hρ' hkind
     refine ⟨?_, ?_, h2⟩
     · -- the script is the expansion of its template in a final state
       obtain ⟨st, hst, -⟩ := sum_allSteps (ub := Grp.bval bub) C tab

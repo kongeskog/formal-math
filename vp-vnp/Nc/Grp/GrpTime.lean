@@ -31,8 +31,8 @@ theorem putCost_le {ub Lc : ℕ} (kss : List (List (List Bool))) (h : ∀ ks ∈
   | nil => simp
   | cons ks kss ih =>
     have h1 := ih fun ks' hks => h ks' (by simp [hks])
-    have h2 : (ks.map fun k => ub * 330 + k.length * 60 + 330).sum ≤ ks.length * (330 * (ub + Lc +
-        1)) := by
+    have h2 : (ks.map fun k => ub * 330 + k.length * 60 + 330).sum ≤
+        ks.length * (330 * (ub + Lc + 1)) := by
       refine sum_le_length_mul _ _ _ fun k hk => ?_
       have := h ks (by simp) k hk
       omega
@@ -250,8 +250,8 @@ theorem cost_body {Lc X : ℕ} (hk : ∀ c, (key c).length ≤ Lc)
 
 theorem cost_base {T Lc X : ℕ} (hx : ∀ κ, (x κ).length ≤ T) (hk : ∀ c, (key c).length ≤ Lc)
     (hS : Fintype.card (Option S) ≤ X) (hA : K + K ≤ X) (p : Fin (K + K)) :
-    insCost T ub (baseIns qn cb q x ρ n key p) ≤ T + (inN n p * (330 * (ub + Lc + 1)) + X * X + 401
-        * X + 1) := by
+    insCost T ub (baseIns qn cb q x ρ n key p) ≤
+      T + (inN n p * (330 * (ub + Lc + 1)) + X * X + 401 * X + 1) := by
   unfold baseIns
   refine Fin.addCases (fun κ => ?_) (fun κ => ?_) p
   · rw [Fin.addCases_left]
@@ -284,12 +284,11 @@ theorem script_time_le {cap T Lc X ιb lh ev pd : ℕ} {bT bub : List Bool} (hT 
   have c1 : (((baseList grp g).map (baseIns qn cb q x ρ n key)).map (insCost T ub)).sum ≤
       ιb * (T + (lh * (330 * (ub + Lc + 1)) + X * X + 401 * X + 1)) := by
     rw [List.map_map]
-    refine (sum_le_length_mul _ _ (T + (lh * (330 * (ub + Lc + 1)) + X * X + 401 * X + 1)) fun p hp
-        => ?_).trans
-      (Nat.mul_le_mul_right _ hι)
+    refine (sum_le_length_mul _ _ (T + (lh * (330 * (ub + Lc + 1)) + X * X + 401 * X + 1))
+      fun p hp => ?_).trans (Nat.mul_le_mul_right _ hι)
     have h2 : inN n p ≤ lh := hlh p (mem_baseList.1 hp)
     refine (cost_base (qn := qn) (cb := cb) (q := q) (ρ := ρ) (n := n) (ub := ub) (X := X) hx hk hS
-        hA p).trans ?_
+      hA p).trans ?_
     gcongr
   have l1 : ((baseList grp g).map (baseIns qn cb q x ρ n key)).length ≤ ιb := by
     rw [List.length_map]

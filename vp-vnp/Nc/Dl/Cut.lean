@@ -171,14 +171,13 @@ theorem deal_cut (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)]
       (o : M.N → Fin U1) (b : G.Uid (K + K) U0 M.N U1 → UW ub) (g : Fin mm), ValidRows ρ → tab.valid n →
       (∀ x, P.good n o x) →
       (∀ id, b id ≠ none ↔ id ∈ cutUnits (G.hold0 M.np) (G.hold1 M.np) (grp n o) (P.cur n o E)) →
-      (Tree.cons gp (Grp.scriptT bT bub (Grp.script qn cb P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n
-          o) g C.key
-        tg b))).size ≤ s' ∧
-      Plain θ τ' (.cons gp (Grp.scriptT bT bub (Grp.script qn cb P q (parts ℓ (wordG b0 b1 z)) ρ n o
-          (grp n o) g C.key tg b))) ∧
-      pv θ (.cons gp (Grp.scriptT bT bub (Grp.script qn cb P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp
-          n o) g C.key tg b))) = G.grpVal mu T cb P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g b)
-          :
+      (Tree.cons gp (Grp.scriptT bT bub
+        (Grp.script qn cb P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key tg b))).size ≤ s' ∧
+      Plain θ τ' (.cons gp (Grp.scriptT bT bub
+        (Grp.script qn cb P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key tg b))) ∧
+      pv θ (.cons gp (Grp.scriptT bT bub
+        (Grp.script qn cb P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g C.key tg b))) =
+        G.grpVal mu T cb P q (parts ℓ (wordG b0 b1 z)) ρ n o (grp n o) g b) :
     CutD θ τ s τ' s' mm t (dealProg C tab qn tg bT bub nl nub gt d1 gp cb b0 b1 i e hU0 hU1).code := by
   classical
   intro z hz

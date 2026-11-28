@@ -24,8 +24,8 @@ def GrpTimeOK (A : Type) [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq 
   ∀ {K A' E U0 U1 cap mm : ℕ} {M : Sys A (K + K + A') E} (P : G.Plan M U0 U1) (_ : P.Ok cap) (q : Fin (K + 1) → Q)
     (x : Fin K → List Γ) (ρ : Option S → Fin (K + K) → RowData (K + K)) (n : NN K U0) (o : M.N → Fin U1)
     (grp : Fin (K + K + A') → Fin mm) (g : Fin mm) (key : Grp.Cell M U0 U1 → List Bool)
-    (tg : M.R → ℕ) (bT bub : List Bool) (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub)) {Lc X ιb
-        lh ev : ℕ},
+    (tg : M.R → ℕ) (bT bub : List Bool) (b : G.Uid (K + K) U0 M.N U1 → UW (Grp.bval bub))
+    {Lc X ιb lh ev : ℕ},
     (∀ κ, (x κ).length ≤ Grp.bval bT) → (∀ a, (key a).length ≤ Lc) → bT.length ≤ Lc →
     bub.length ≤ Lc → Fintype.card (Option S) ≤ X → K + K + 1 ≤ X → Fintype.card M.R ≤ X →
     Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X → (∀ y, Fintype.card (M.kind y).Sl ≤ X) →
@@ -103,8 +103,7 @@ variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
 theorem grpTimeOK (cb : Option Γ → Fin c → Bool) (qn : Q → ℕ) : GrpTimeOK (S := S) A cb qn := by
   classical
   intro K A' E U0 U1 cap mm M P hP q x ρ n o grp g key tg bT bub b Lc X ιb lh ev hx hk hbT hbub hS
-      hK hR hId hSl hCn hι
-    hιX hlh hev
+    hK hR hId hSl hCn hι hιX hlh hev
   have e1 : Grp.evG n o grp g = evG (fun _ _ => grp) n o g := by
     unfold Grp.evG evG
     refine Finset.sum_congr ?_ fun p _ => ?_
@@ -122,10 +121,9 @@ theorem grpTimeOK (cb : Option Γ → Fin c → Bool) (qn : Q → ℕ) : GrpTime
     ext p
     simp
   have h := Grp.script_time_le (qn := qn) (cb := cb) (q := q) (x := x) (ρ := ρ) (n := n) (o := o) (grp := grp) (g := g)
-    (key := key) (tg := tg) (Lc := Lc) (X := X) (ιb := ιb) (lh := lh) (ev := evG (fun _ _ => grp) n
-        o g)
-    (pd := pdG P (fun _ _ => grp) n o g) (bT := bT) (bub := bub) rfl rfl hbT hbub hP hx hk hS (by
-        omega) hR
+    (key := key) (tg := tg) (Lc := Lc) (X := X) (ιb := ιb) (lh := lh)
+    (ev := evG (fun _ _ => grp) n o g) (pd := pdG P (fun _ _ => grp) n o g) (bT := bT) (bub := bub)
+    rfl rfl hbT hbub hP hx hk hS (by omega) hR
     (fun r => (Fintype.card_subtype_le _).trans (hSl _)) (fun r => (Fintype.card_subtype_le _).trans (hCn _)) hbase hιX hlh
     e1.le e2.le b
   have hX1 : 1 ≤ X := by omega
