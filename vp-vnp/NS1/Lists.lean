@@ -285,14 +285,7 @@ theorem foldT {step s l : Fm} {x : Tree} {encE : ε → Tree} {enc : β → Tree
           ys q.2)
     (h0 : Inv xs s₀) : Does θ (foldF step s l) x ((foldL f xs s₀).map (Prod.map id enc))
       (cs + cl + (xs.map fun x => d x + 30).sum + 20) := by
-  have h1 := Gives.cons (Gives.quote (θ := θ) (foldB step).code x) (Gives.cons hs hl)
-  have h2 := Does.appT (p := (foldB step).code) (l := [((1 : A), ())])
-    (enc := fun _ => .cons (foldB step).code (.cons (enc s₀) (listT (xs.map encE))))
-    (f := fun _ => (foldL f xs s₀).map (Prod.map id enc)) h1 (fun b _ => by
-      rw [Fm.ofTree_code]
-      exact foldB_doesT h h0)
-  rw [bindW_single] at h2
-  exact h2.mono (by omega)
+  exact (Does.of_gives (Gives.cons (Gives.quote _ _) (Gives.cons hs hl)) (foldB_doesT h h0)).mono (by omega)
 
 theorem foldL_det (g : ε → β → β) (xs : List ε) (s : β) :
     foldL (A := A) (fun x s => [(1, g x s)]) xs s = [(1, xs.foldl (fun s x => g x s) s)] := by
