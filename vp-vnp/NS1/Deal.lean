@@ -112,9 +112,11 @@ theorem bitsB_does (n : ℕ) : ∀ (w : List Bool) (acc : List Bool), KT.val w =
     obtain ⟨Q1, d1, q1, v1⟩ := ih w' (true :: acc) (by omega)
     obtain ⟨Q0, d0, q0, v0⟩ := ih w' (false :: acc) (by omega)
     rw [hl] at d1 d0
-    have r1 := Does.self ((Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))).hd.cons
+    have r1 := Does.self ((Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits
+        acc)))).hd.cons
       (Gives.cons hd (Gives.cons (Gives.quote one _) (Gives.id _).tl.tl))) d1
-    have r0 := Does.self ((Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits acc)))).hd.cons
+    have r0 := Does.self ((Gives.id (θ := θ) (.cons bitsB.code (.cons (ofBits w) (ofBits
+        acc)))).hd.cons
       (Gives.cons hd (Gives.cons (Gives.quote .nil _) (Gives.id _).tl.tl))) d0
     refine ⟨Q1 ++ Q0, (Does.ite_true hnz e (Does.either r1 r0)).mono ?_, ?_, ?_⟩
     · have : max (2 + (2 + (1 + 3 + 1 + 20 * w.length + 2 + (1 + 3 + 1) + 1) + 1) + (n + 1) * (60 * w.length + 100) + 1)
@@ -139,7 +141,8 @@ theorem bitsF_does (n : List Bool) (x : Tree) : ∃ Q, Does θ (bitsF n) x Q ((K
     (∀ q ∈ Q, ∃ u ∈ allBits (KT.val n), q.2 = ofBits u.reverse) ∧
     ∀ φ : Tree → A, wsum Q φ = ((allBits (KT.val n)).map fun u => φ (ofBits u.reverse)).sum := by
   obtain ⟨Q, d, h1, h2⟩ := bitsB_does (θ := θ) (KT.val n) n [] rfl
-  refine ⟨Q, (Does.of_gives (Gives.quote (.cons bitsB.code (.cons (ofBits n) .nil)) x) d).mono (by omega), ?_, ?_⟩
+  refine ⟨Q, (Does.of_gives (Gives.quote (.cons bitsB.code (.cons (ofBits n) .nil)) x) d).mono (by
+      omega), ?_, ?_⟩
   · intro q hq
     obtain ⟨u, hu, h⟩ := h1 q hq
     exact ⟨u, hu, by simpa using h⟩

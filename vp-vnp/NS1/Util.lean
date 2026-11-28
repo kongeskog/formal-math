@@ -51,7 +51,8 @@ theorem wordB_gives (t0 t1 z : Tree) (acc : List Tree) :
     rw [wordT, List.cons_append, List.append_assoc]
     refine Does.mono ((Gives.id _).tl.hd.ite_true (by simp) (Gives.cons (Gives.quote t1 _)
       (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.hd.cons
-        (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl)) (ihb acc))))
+        (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl)) (ihb
+            acc))))
         (iha _)))) ?_
     simp only [Tree.size]
     omega
@@ -60,7 +61,8 @@ theorem wordF_gives {t0 t1 : Tree} {zf : Fm} {x z : Tree} {cz : ℕ} (hz : Gives
     Gives θ (wordF t0 t1 zf) x (listT (wordT t0 t1 z)) (cz + 60 * z.size + 10) := by
   have h := wordB_gives (θ := θ) t0 t1 z []
   rw [List.append_nil] at h
-  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons hz (Gives.quote (listT []) _))) h).mono (by omega)
+  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons hz (Gives.quote (listT []) _)))
+      h).mono (by omega)
 
 end Word
 
@@ -117,7 +119,8 @@ theorem takeB_gives (w : List Bool) (acc l : List Tree) :
     omega
   | cons a l ih =>
     have hnz := Gives.lett (Gives.cons (Gives.quote (θ := θ) nzB.code
-      (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l)))))) (Gives.id _).tl.hd) (nzB_gives w)
+      (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l)))))) (Gives.id
+          _).tl.hd) (nzB_gives w)
     rcases decw_val w with ⟨h1, h2⟩ | ⟨w', h1, h2⟩
     · have e : bit (decide (KT.val w ≠ 0)) = .nil := by simp [h2, bit]
       rw [e] at hnz
@@ -134,7 +137,8 @@ theorem takeB_gives (w : List Bool) (acc l : List Tree) :
       obtain ⟨k, hk, hdw⟩ := DW_some (θ := θ) h1
       have hd : Gives θ (app DW.code (.cons (.quote DW.code) (.hd (.tl .id))))
           (.cons takeB.code (.cons (ofBits w) (.cons (listT acc) (listT (a :: l))))) (ofBits w') (1 + 3 + 1 + 20 * w.length + 2) :=
-        Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) ((Does.of_dt hdw).mono hk)
+        Gives.lett (Gives.cons (Gives.quote DW.code _) (Gives.id _).tl.hd) ((Does.of_dt hdw).mono
+            hk)
       have hl : w'.length = w.length := length_decw h1
       have ih' := ih w' (a :: acc)
       rw [hl] at ih'

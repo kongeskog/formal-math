@@ -152,7 +152,8 @@ theorem _root_.Paper.thm_cut_compose {τ s τ₁ s₁ P₁ t₁ τ₂ s₂ P₂ 
   · intro p hp
     obtain ⟨q, hq, r, hr, h1, -⟩ := mem_bindW hp
     rw [h1]
-    have hinv : ∀ r ∈ foldL f q.2.toList .nil, (r.2.toList.length + ([] : List Tree).length * P₂ ≤ P₁ * P₂ ∧
+    have hinv : ∀ r ∈ foldL f q.2.toList .nil, (r.2.toList.length + ([] : List Tree).length * P₂ ≤
+        P₁ * P₂ ∧
         ∀ y ∈ r.2.toList, y.size ≤ s₂) ∧ ∀ y ∈ ([] : List Tree), y.size ≤ s₁ := by
       refine mem_foldW (f := f) (Inv := fun ys σ => (σ.toList.length + ys.length * P₂ ≤ P₁ * P₂ ∧
         ∀ y ∈ σ.toList, y.size ≤ s₂) ∧ ∀ y ∈ ys, y.size ≤ s₁) ?_ ?_

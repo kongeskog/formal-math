@@ -90,7 +90,8 @@ theorem partsF_gives {lf : Fm} {x : Tree} {cl : ℕ} {l : List Tree} (hl : Gives
           (partFun (KT.val n) (ofBits p) (.cons W (.cons (ofBits n) (listT l)))) _ :=
         Gives.lett (Gives.cons (Gives.id _).tl.tl.hd (Gives.id _).tl.hd) hstep
       rw [e] at e1
-      have r := Does.self ((Gives.id (θ := θ) (.cons (foldB partStep).code (.cons (.cons W (.cons (ofBits n) (listT l)))
+      have r := Does.self ((Gives.id (θ := θ) (.cons (foldB partStep).code (.cons (.cons W (.cons
+          (ofBits n) (listT l)))
         (listT ((p :: ps).map ofBits))))).hd.cons (Gives.cons e1 (Gives.id _).tl.tl.tl))
         (ih _ _ fun q hq => hps q (List.mem_cons_of_mem _ hq))
       rw [List.map_cons, List.foldl_cons, e]

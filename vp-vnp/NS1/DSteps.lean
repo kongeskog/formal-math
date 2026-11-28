@@ -274,7 +274,8 @@ theorem dstepsF_does (n : List Bool) (sts : List DStep) {wf : Fm} {x W : Tree} {
     obtain ⟨st', h1, h2⟩ := hF st
     rw [h2, hinj _ _ h1]
   have hsum : ∀ (sts : List DStep) (W : Tree) (Φ : (List Bool → Tree) → A),
-      wsum (foldL F (sts.map DStep.tree) W) (fun o => Φ (gets o)) = ((execAll (KT.val n) sts (gets W)).map Φ).sum := by
+      wsum (foldL F (sts.map DStep.tree) W) (fun o => Φ (gets o)) = ((execAll (KT.val n) sts (gets
+          W)).map Φ).sum := by
     intro sts
     induction sts with
     | nil =>
@@ -454,7 +455,8 @@ def tmF (t w : Fm) : Fm := app tmB.code (.cons (.quote tmB.code) (.cons t w))
 
 theorem tmF_gives {tf wf : Fm} {x W : Tree} {ct cw : ℕ} {t : Tm} (ht : Gives θ tf x t.tree ct) (hw : Gives θ wf x W cw) :
     Gives θ (tmF tf wf) x (t.expand (gets W)) (ct + cw + t.cost (gets W) + 10) := by
-  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons ht hw)) (tmB_gives t W)).mono (by omega)
+  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons ht hw)) (tmB_gives t W)).mono (by
+      omega)
 
 /-- Fill in all templates of a list. -/
 def tmsF (ts : List Tm) (w : Fm) : Fm := mapF (tmF (.tl .id) (.hd .id)) w (.quote (listT (ts.map Tm.tree)))

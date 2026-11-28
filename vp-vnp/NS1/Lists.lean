@@ -39,14 +39,16 @@ theorem listT_ofBits (w : List Bool) : listT (w.map bit) = ofBits w := by
 
 section Fold
 
-/-- Fold over a list with a state. The argument is (this program, (state, list)); `step` is applied to
+/-- Fold over a list with a state. The argument is (this program, (state, list)); `step` is applied
+    to
 (element, state). -/
 def foldB (step : Fm) : Fm := .ite (.tl (.tl .id))
   (.run (.hd .id) (.cons (.hd .id) (.cons (lett (.cons (.hd (.tl (.tl .id))) (.hd (.tl .id))) step)
     (.tl (.tl (.tl .id)))))) (.hd (.tl .id))
 
 /-- Fold: `s` gives the state at the beginning, `l` the list. -/
-def foldF (step s l : Fm) : Fm := app (foldB step).code (.cons (.quote (foldB step).code) (.cons s l))
+def foldF (step s l : Fm) : Fm := app (foldB step).code (.cons (.quote (foldB step).code) (.cons s
+    l))
 
 end Fold
 
@@ -77,7 +79,8 @@ theorem bindW_single (a : α) (f : α → List (A × β)) : bindW [((1 : A), a)]
 
 theorem bindW_assoc (l : List (A × α)) (f : α → List (A × β)) (g : β → List (A × γ)) :
     bindW (bindW l f) g = bindW l fun a => bindW (f a) g := by
-  simp only [bindW, List.flatMap_assoc, List.flatMap_map, List.map_flatMap, List.map_map, Function.comp_def, mul_assoc]
+  simp only [bindW, List.flatMap_assoc, List.flatMap_map, List.map_flatMap, List.map_map,
+      Function.comp_def, mul_assoc]
 
 theorem bindW_pure (l : List α) (g : α → β) (f : β → List (A × γ)) :
     bindW (l.map fun t => ((1 : A), g t)) f = l.flatMap fun t => f (g t) := by
@@ -89,18 +92,21 @@ theorem bindW_map (l : List (A × α)) (f : α → List (A × β)) (e : β → �
   rfl
 
 /-- The weighted sums are determined by the program. -/
-theorem _root_.NS1.Does.wsum_unique {F : Fm} {x : Tree} {Q Q' : List (A × Tree)} {c d : ℕ} (h : Does θ F x Q c)
+theorem _root_.NS1.Does.wsum_unique {F : Fm} {x : Tree} {Q Q' : List (A × Tree)} {c d : ℕ} (h :
+    Does θ F x Q c)
     (h' : Does θ F x Q' d) (φ : Tree → A) : wsum Q φ = wsum Q' φ := by
   rw [← h.evl.2 φ, ← h'.evl.2 φ]
 
 /-- Replace the list. -/
-theorem _root_.NS1.Does.replace {F : Fm} {x : Tree} {Q Q' : List (A × Tree)} {c : ℕ} (h : Does θ F x Q c) (hQ : Q = Q') :
+theorem _root_.NS1.Does.replace {F : Fm} {x : Tree} {Q Q' : List (A × Tree)} {c : ℕ} (h : Does θ F
+    x Q c) (hQ : Q = Q') :
     Does θ F x Q' c := hQ ▸ h
 
 section
 
 -- Typed values: the weighted list `l` of values encoded by `enc`, each mapped to `f`.
-variable {F G : Fm} {x p : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)} {c d : ℕ}
+variable {F G : Fm} {x p : Tree} {l : List (A × β)} {enc : β → Tree} {f : β → List (A × Tree)} {c d
+    : ℕ}
 
 /-- A rule for lists of trees with a function `R` on trees gives the rule for typed values. -/
 theorem exists_untyped (hG : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) d) :
@@ -148,7 +154,8 @@ theorem _root_.NS1.Does.lettT (hF : Does θ F x (l.map (Prod.map id enc)) c)
   Does.appT (p := G.code) hF (by rw [Fm.ofTree_code]; exact hG)
 
 /-- The first of two formulas has the empty value: go on with the second one. -/
-theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Does θ F x [(a, .nil)] c)
+theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Does θ F x [(a, .nil)]
+    c)
     (hH : Does θ H x Q d) : Does θ (.ite F G H) x (Q.map fun r => (a * r.1, r.2)) (c + d + 1) := by
   obtain ⟨l, e1, e2, e3⟩ := hF
   obtain ⟨l', f1, f2, f3⟩ := hH
@@ -158,7 +165,8 @@ theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Do
     rw [List.mem_singleton] at hq
     subst hq
     exact h.symm
-  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => absurd (hout r hr) h) (fun r _ _ => f1), ?_, fun φ => ?_⟩
+  refine ⟨_, Ev.ite (L := fun _ => l') e1 (fun r hr h => absurd (hout r hr) h) (fun r _ _ => f1),
+      ?_, fun φ => ?_⟩
   · intro u hu
     simp only [List.mem_flatMap, List.mem_map] at hu
     obtain ⟨r, hr, s, hs, rfl⟩ := hu
@@ -168,7 +176,8 @@ theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Do
     simp only [Run.seq, Run.tick]
     omega
   · rw [sum_flatMap_map]
-    have h1 : ∀ r ∈ l, ((l'.map fun s => (r.seq s).tick s.out).map fun u => u.th * φ u.out).sum = r.th * wsum Q φ := by
+    have h1 : ∀ r ∈ l, ((l'.map fun s => (r.seq s).tick s.out).map fun u => u.th * φ u.out).sum =
+        r.th * wsum Q φ := by
       intro r _
       rw [List.map_map, ← f3 φ, ← List.sum_map_mul_left]
       congr 1
@@ -181,8 +190,10 @@ theorem _root_.NS1.Does.ite_nil {H : Fm} {a : A} {Q : List (A × Tree)} (hF : Do
     exact (wsum_map_mul a Q φ).symm
 
 /-- Apply a program that is a value to typed values. -/
-theorem _root_.NS1.Does.runT {e : ℕ} (hF : Gives θ F x p c) (hG : Does θ G x (l.map (Prod.map id enc)) d)
-    (h : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) e) : Does θ (.run F G) x (bindW l f) (c + d + e + 1) := by
+theorem _root_.NS1.Does.runT {e : ℕ} (hF : Gives θ F x p c) (hG : Does θ G x (l.map (Prod.map id
+    enc)) d)
+    (h : ∀ b ∈ l, Does θ (Fm.ofTree p) (enc b.2) (f b.2) e) : Does θ (.run F G) x (bindW l f) (c +
+        d + e + 1) := by
   obtain ⟨R, h1, h2⟩ := exists_untyped h
   exact h2 (Does.runW hF hG h1)
 
@@ -199,7 +210,8 @@ theorem _root_.NS1.Does.letkT (hF : Does θ F x (l.map (Prod.map id enc)) c)
 end
 
 /-- `let` with typed values and typed results. -/
-theorem _root_.NS1.Does.lettE {F G : Fm} {x : Tree} {l : List (A × β)} {enc : β → Tree} {enc' : γ → Tree}
+theorem _root_.NS1.Does.lettE {F G : Fm} {x : Tree} {l : List (A × β)} {enc : β → Tree} {enc' : γ →
+    Tree}
     {f : β → List (A × γ)} {c d : ℕ} (hF : Does θ F x (l.map (Prod.map id enc)) c)
     (hG : ∀ b ∈ l, Does θ G (enc b.2) ((f b.2).map (Prod.map id enc')) d) :
     Does θ (lett F G) x ((bindW l f).map (Prod.map id enc')) (c + d + 2) := by
@@ -217,7 +229,8 @@ def foldL (f : ε → β → List (A × β)) : List ε → β → List (A × β)
 
 theorem foldB_doesT {step : Fm} {encE : ε → Tree} {enc : β → Tree} {f : ε → β → List (A × β)}
     {Inv : List ε → β → Prop} {d : ε → ℕ} {xs : List ε} (h : ∀ x ys s, x ∈ xs → Inv (x :: ys) s →
-      Does θ step (.cons (encE x) (enc s)) ((f x s).map (Prod.map id enc)) (d x) ∧ ∀ q ∈ f x s, Inv ys q.2)
+      Does θ step (.cons (encE x) (enc s)) ((f x s).map (Prod.map id enc)) (d x) ∧ ∀ q ∈ f x s, Inv
+          ys q.2)
     {s : β} (hs : Inv xs s) :
     Does θ (foldB step) (.cons (foldB step).code (.cons (enc s) (listT (xs.map encE))))
       ((foldL f xs s).map (Prod.map id enc)) ((xs.map fun x => d x + 30).sum + 10) := by
@@ -227,17 +240,24 @@ theorem foldB_doesT {step : Fm} {encE : ε → Tree} {enc : β → Tree} {f : ε
     obtain ⟨h1, h2⟩ := h x xs s List.mem_cons_self hs
     rw [List.map_cons]
     have e1 : Does θ (lett (.cons (.hd (.tl (.tl .id))) (.hd (.tl .id))) step)
-        (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map encE)))) ((f x s).map (Prod.map id enc))
+        (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map encE)))) ((f x s).map
+            (Prod.map id enc))
         (8 + d x + 2) :=
       Does.of_gives (Gives.cons (Gives.id _).tl.tl.hd (Gives.id _).tl.hd) h1
-    have e2 := Does.cons (Gives.id (θ := θ) (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map encE))))).hd
-      (Does.cons e1 (Gives.id (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map encE))))).tl.tl.tl)
-    have e3 : Does θ (.cons (.hd .id) (.cons (lett (.cons (.hd (.tl (.tl .id))) (.hd (.tl .id))) step)
-        (.tl (.tl (.tl .id))))) (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map encE))))
-        ((f x s).map (Prod.map id fun s' => .cons (foldB step).code (.cons (enc s') (listT (xs.map encE)))))
+    have e2 := Does.cons (Gives.id (θ := θ) (.cons (foldB step).code (.cons (enc s) (listT (encE x
+        :: xs.map encE))))).hd
+      (Does.cons e1 (Gives.id (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map
+          encE))))).tl.tl.tl)
+    have e3 : Does θ (.cons (.hd .id) (.cons (lett (.cons (.hd (.tl (.tl .id))) (.hd (.tl .id)))
+        step)
+        (.tl (.tl (.tl .id))))) (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map
+            encE))))
+        ((f x s).map (Prod.map id fun s' => .cons (foldB step).code (.cons (enc s') (listT (xs.map
+            encE)))))
         (8 + d x + 2 + 8) := by
       refine (e2.replace ?_).mono (by omega)
-      simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_cons, List.map_nil, one_mul, mul_one,
+      simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.map_cons, List.map_nil,
+          one_mul, mul_one,
         List.map_map, flatMap_single]
       rfl
     -- apply the program to the new state
@@ -248,17 +268,21 @@ theorem foldB_doesT {step : Fm} {encE : ε → Tree} {enc : β → Tree} {f : ε
       rw [Fm.ofTree_code]
       exact ih (fun y ys s hy => h y ys s (List.mem_cons_of_mem _ hy)) (h2 b hb)
     have e4 := Does.runT (f := fun s' => (foldL f xs s').map (Prod.map id enc))
-      (Gives.id (θ := θ) (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map encE))))).hd e3 hR
+      (Gives.id (θ := θ) (.cons (foldB step).code (.cons (enc s) (listT (encE x :: xs.map
+          encE))))).hd e3 hR
     rw [bindW_map] at e4
     refine (Does.ite_true (Gives.id _).tl.tl (by simp [listT]) e4).mono ?_
     simp only [List.map_cons, List.sum_cons]
     omega
 
 /-- A fold with a typed state. -/
-theorem foldT {step s l : Fm} {x : Tree} {encE : ε → Tree} {enc : β → Tree} {f : ε → β → List (A × β)}
-    {Inv : List ε → β → Prop} {d : ε → ℕ} {xs : List ε} {cs cl : ℕ} {s₀ : β} (hs : Gives θ s x (enc s₀) cs)
+theorem foldT {step s l : Fm} {x : Tree} {encE : ε → Tree} {enc : β → Tree} {f : ε → β → List (A ×
+    β)}
+    {Inv : List ε → β → Prop} {d : ε → ℕ} {xs : List ε} {cs cl : ℕ} {s₀ : β} (hs : Gives θ s x (enc
+        s₀) cs)
     (hl : Gives θ l x (listT (xs.map encE)) cl) (h : ∀ x ys s, x ∈ xs → Inv (x :: ys) s →
-      Does θ step (.cons (encE x) (enc s)) ((f x s).map (Prod.map id enc)) (d x) ∧ ∀ q ∈ f x s, Inv ys q.2)
+      Does θ step (.cons (encE x) (enc s)) ((f x s).map (Prod.map id enc)) (d x) ∧ ∀ q ∈ f x s, Inv
+          ys q.2)
     (h0 : Inv xs s₀) : Does θ (foldF step s l) x ((foldL f xs s₀).map (Prod.map id enc))
       (cs + cl + (xs.map fun x => d x + 30).sum + 20) := by
   have h1 := Gives.cons (Gives.quote (θ := θ) (foldB step).code x) (Gives.cons hs hl)
@@ -278,12 +302,14 @@ theorem foldL_det (g : ε → β → β) (xs : List ε) (s : β) :
 
 /-- A deterministic fold with a typed state. -/
 theorem foldTG {step s l : Fm} {x : Tree} {encE : ε → Tree} {enc : β → Tree} {g : ε → β → β}
-    {Inv : List ε → β → Prop} {d : ε → ℕ} {xs : List ε} {cs cl : ℕ} {s₀ : β} (hs : Gives θ s x (enc s₀) cs)
+    {Inv : List ε → β → Prop} {d : ε → ℕ} {xs : List ε} {cs cl : ℕ} {s₀ : β} (hs : Gives θ s x (enc
+        s₀) cs)
     (hl : Gives θ l x (listT (xs.map encE)) cl) (h : ∀ x ys s, x ∈ xs → Inv (x :: ys) s →
       Gives θ step (.cons (encE x) (enc s)) (enc (g x s)) (d x) ∧ Inv ys (g x s)) (h0 : Inv xs s₀) :
     Gives θ (foldF step s l) x (enc (xs.foldl (fun s x => g x s) s₀))
       (cs + cl + (xs.map fun x => d x + 30).sum + 20) := by
-  have := foldT (θ := θ) (f := fun x s => [((1 : A), g x s)]) (enc := enc) hs hl (fun x ys s hx hs => by
+  have := foldT (θ := θ) (f := fun x s => [((1 : A), g x s)]) (enc := enc) hs hl (fun x ys s hx hs
+      => by
     obtain ⟨h1, h2⟩ := h x ys s hx hs
     refine ⟨h1, fun q hq => ?_⟩
     rw [List.mem_singleton] at hq
@@ -320,7 +346,8 @@ theorem foldF_does {f : Tree → Tree → List (A × Tree)} (hs : Gives θ s x �
 theorem foldF_gives {g : Tree → Tree → Tree} (hs : Gives θ s x σ cs)
     (hl : Gives θ l x (listT xs) cl) (h : ∀ x ys σ, x ∈ xs → Inv (x :: ys) σ →
       Gives θ step (.cons x σ) (g x σ) (d x) ∧ Inv ys (g x σ)) (hσ : Inv xs σ) :
-    Gives θ (foldF step s l) x (xs.foldl (fun σ x => g x σ) σ) (cs + cl + (xs.map fun x => d x + 30).sum + 20) :=
+    Gives θ (foldF step s l) x (xs.foldl (fun σ x => g x σ) σ) (cs + cl + (xs.map fun x => d x +
+        30).sum + 20) :=
   foldTG (encE := id) (enc := id) hs (by rwa [List.map_id]) h hσ
 
 end
@@ -392,7 +419,8 @@ theorem mapB_gives {step : Fm} {e : Tree} {g : Tree → Tree} {d : Tree → ℕ}
 theorem mapF_gives {step ef l : Fm} {x e : Tree} {ce cl : ℕ} {g : Tree → Tree} {d : Tree → ℕ} {xs : List Tree}
     (he : Gives θ ef x e ce) (hl : Gives θ l x (listT xs) cl) (h : ∀ x ∈ xs, Gives θ step (.cons e x) (g x) (d x)) :
     Gives θ (mapF step ef l) x (listT (xs.map g)) (ce + cl + (xs.map fun x => d x + 40).sum + 20) := by
-  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons he hl)) (mapB_gives h)).mono (by omega)
+  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons he hl)) (mapB_gives h)).mono (by
+      omega)
 
 end Map
 
@@ -427,14 +455,16 @@ theorem eqB_gives (a b : Tree) : Gives θ eqB (.cons eqB.code (.cons a b)) (bit 
       simp only [size]
       omega
     | cons b1 b2 =>
-      have r1 := Does.self ((Gives.id (θ := θ) (.cons eqB.code (.cons (.cons a1 a2) (.cons b1 b2)))).hd.cons
+      have r1 := Does.self ((Gives.id (θ := θ) (.cons eqB.code (.cons (.cons a1 a2) (.cons b1
+          b2)))).hd.cons
         ((Gives.id _).tl.hd.hd.cons (Gives.id _).tl.tl.hd)) (ih1 b1)
       by_cases hab : a1 = b1
       · have hb : bit (decide (a1 = b1)) ≠ .nil := by simp [hab, bit, one]
         have e : decide (Tree.cons a1 a2 = Tree.cons b1 b2) = decide (a2 = b2) := by simp [hab]
         rw [e]
         refine ((Gives.id _).tl.hd.ite_true (by simp) ((Gives.id _).tl.tl.ite_true (by simp)
-          (Gives.ite_true r1 hb (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl.tl))
+          (Gives.ite_true r1 hb (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons
+              (Gives.id _).tl.tl.tl))
             (ih2 b2))))).mono ?_
         simp only [size]
         omega
@@ -449,7 +479,8 @@ theorem eqB_gives (a b : Tree) : Gives θ eqB (.cons eqB.code (.cons a b)) (bit 
 
 theorem eqF_gives {a b : Fm} {x u v : Tree} {ca cb : ℕ} (ha : Gives θ a x u ca) (hb : Gives θ b x v cb) :
     Gives θ (eqF a b) x (bit (decide (u = v))) (ca + cb + 60 * u.size + 10) := by
-  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons ha hb)) (eqB_gives u v)).mono (by omega)
+  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons ha hb)) (eqB_gives u v)).mono (by
+      omega)
 
 end Eq
 
@@ -467,7 +498,8 @@ theorem pickB_does (xs : List Tree) :
   induction xs with
   | nil => exact (Does.ite_false (Gives.id _).tl (Does.fail _)).mono (by simp)
   | cons x xs ih =>
-    refine Does.mono (Does.ite_true (Gives.id _).tl (by simp [listT]) (Does.either (Gives.id _).tl.hd
+    refine Does.mono (Does.ite_true (Gives.id _).tl (by simp [listT]) (Does.either (Gives.id
+        _).tl.hd
       (Does.self ((Gives.id _).hd.cons (Gives.id _).tl.tl) ih))) ?_
     simp only [List.length_cons]
     omega
@@ -526,20 +558,25 @@ theorem getB_gives (p : Tree) (t : Tree) :
   | cons a p _ ih =>
     by_cases ha : a = .nil
     · subst ha
-      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_false (Gives.id _).tl.hd.hd
-        (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl.tl.hd)) (ih _)))) ?_
+      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_false (Gives.id
+          _).tl.hd.hd
+        (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl.tl.hd)) (ih
+            _)))) ?_
       simp only [len]
       omega
     · have e : tget (Tree.cons a p).path t = tget p.path t.tl.tl := by simp [path, ha, tget]
       rw [e]
-      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_true (Gives.id _).tl.hd.hd (by simpa using ha)
-        (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl.tl.tl)) (ih _)))) ?_
+      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_true (Gives.id
+          _).tl.hd.hd (by simpa using ha)
+        (Does.self ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons (Gives.id _).tl.tl.tl.tl)) (ih
+            _)))) ?_
       simp only [len]
       omega
 
 theorem getF_gives {pf tf : Fm} {x p t : Tree} {cp ct : ℕ} (hp : Gives θ pf x p cp) (ht : Gives θ tf x t ct) :
     Gives θ (getF pf tf) x (tget p.path t) (cp + ct + 30 * p.len + 20) := by
-  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons hp ht)) (getB_gives p t)).mono (by omega)
+  exact (Gives.lett (Gives.cons (Gives.quote _ _) (Gives.cons hp ht)) (getB_gives p t)).mono (by
+      omega)
 
 /-- Write a value. The argument is (this program, (path, (value, trie))). -/
 def setB : Fm := .ite (.hd (.tl .id))
@@ -564,16 +601,20 @@ theorem setB_gives (p v t : Tree) :
   | cons a p _ ih =>
     by_cases ha : a = .nil
     · subst ha
-      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_false (Gives.id _).tl.hd.hd
+      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_false (Gives.id
+          _).tl.hd.hd
         (Gives.cons (Gives.id _).tl.tl.tl.hd (Gives.cons (Does.self ((Gives.id _).hd.cons
-          ((Gives.id _).tl.hd.tl.cons ((Gives.id _).tl.tl.hd.cons (Gives.id _).tl.tl.tl.tl.hd))) (ih _))
+          ((Gives.id _).tl.hd.tl.cons ((Gives.id _).tl.tl.hd.cons (Gives.id _).tl.tl.tl.tl.hd)))
+              (ih _))
           (Gives.id _).tl.tl.tl.tl.tl)))) ?_
       simp only [len]
       omega
-    · have e : tset (Tree.cons a p).path v t = .cons t.hd (.cons t.tl.hd (tset p.path v t.tl.tl)) := by
+    · have e : tset (Tree.cons a p).path v t = .cons t.hd (.cons t.tl.hd (tset p.path v t.tl.tl))
+        := by
         simp [path, ha, tset]
       rw [e]
-      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_true (Gives.id _).tl.hd.hd (by simpa using ha)
+      refine Does.mono (Gives.ite_true (Gives.id _).tl.hd (by simp) (Gives.ite_true (Gives.id
+          _).tl.hd.hd (by simpa using ha)
         (Gives.cons (Gives.id _).tl.tl.tl.hd (Gives.cons (Gives.id _).tl.tl.tl.tl.hd (Does.self
           ((Gives.id _).hd.cons ((Gives.id _).tl.hd.tl.cons ((Gives.id _).tl.tl.hd.cons
             (Gives.id _).tl.tl.tl.tl.tl))) (ih _)))))) ?_

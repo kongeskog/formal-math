@@ -199,12 +199,14 @@ theorem runW {p : Tree} {R : Tree → List (A × Tree)} {e : ℕ}
     omega
   · rw [sum_flatMap_map, wsum_bindW]
     have h1 : ∀ r ∈ l, ((l'.flatMap fun s => (NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
-        ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum = r.th * wsum Q fun o => wsum (R o) φ := by
+        ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum = r.th * wsum Q fun o =>
+            wsum (R o) φ := by
       intro r hr
       rw [sum_flatMap_map, ← f3 fun o => wsum (R o) φ, ← List.sum_map_mul_left]
       congr 1
       refine List.map_congr_left fun s hs => ?_
-      rw [ho r hr, List.map_map, ← (hG' s hs).evl.2 φ, ← List.sum_map_mul_left, ← List.sum_map_mul_left]
+      rw [ho r hr, List.map_map, ← (hG' s hs).evl.2 φ, ← List.sum_map_mul_left, ←
+          List.sum_map_mul_left]
       congr 1
       refine List.map_congr_left fun t _ => ?_
       simp only [Function.comp_apply, Run.seq, Run.tick]
@@ -216,7 +218,8 @@ theorem runW {p : Tree} {R : Tree → List (A × Tree)} {e : ℕ}
 
 /-- Apply a fixed program to the value. -/
 theorem app {p : Tree} {R : Tree → List (A × Tree)} (hF : Does θ F x Q c)
-    (hG : ∀ q ∈ Q, Does θ (Fm.ofTree p) q.2 (R q.2) d) : Does θ (app p F) x (bindW Q R) (c + d + 2) :=
+    (hG : ∀ q ∈ Q, Does θ (Fm.ofTree p) q.2 (R q.2) d) : Does θ (app p F) x (bindW Q R) (c + d + 2)
+        :=
   (runW (of_dt (Dt.quote p x)) hF hG).mono (by omega)
 
 /-- `let`. -/
