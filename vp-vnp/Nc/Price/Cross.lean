@@ -8,8 +8,8 @@ import Paper.Prices
 /-!
 # Lemmas for the crossing inequality
 
-For Proposition prop:crossing (Paper/Crossing.lean): tensors with four legs, the two wires among them, and the compact set of the
-pairs (r, l).
+For Proposition prop:crossing (Paper/Crossing.lean): tensors with four legs and the two wires among
+them.
 -/
 
 namespace Nc.Price
@@ -94,34 +94,5 @@ theorem rpow_le_exp (r : ℕ) (z : ℝ) : (r : ℝ) ^ z ≤ Real.exp (Real.log r
   · simp only [Nat.cast_zero, Real.log_zero, zero_mul, Real.exp_zero]
     exact Real.zero_rpow_le_one z
   · rw [Real.rpow_def_of_pos (by exact_mod_cast hr)]
-
-/-- The quarter disc of radius √ρ. -/
-def quarter (ρ : ℝ) : Set (ℝ × ℝ) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 ^ 2 + p.2 ^ 2 ≤ ρ}
-
-theorem isCompact_quarter (ρ : ℝ) : IsCompact (quarter ρ) := by
-  have h1 : IsCompact (Set.Icc (0 : ℝ) (ρ + 1) ×ˢ Set.Icc (0 : ℝ) (ρ + 1)) :=
-    isCompact_Icc.prod isCompact_Icc
-  refine h1.of_isClosed_subset ?_ ?_
-  · have h2 : IsClosed {p : ℝ × ℝ | 0 ≤ p.1} := isClosed_le continuous_const continuous_fst
-    have h3 : IsClosed {p : ℝ × ℝ | 0 ≤ p.2} := isClosed_le continuous_const continuous_snd
-    have h4 : IsClosed {p : ℝ × ℝ | p.1 ^ 2 + p.2 ^ 2 ≤ ρ} :=
-      isClosed_le (by fun_prop) continuous_const
-    exact h2.inter (h3.inter h4)
-  · rintro ⟨r, l⟩ ⟨hr, hl, h⟩
-    simp only at hr hl h
-    refine ⟨⟨hr, ?_⟩, ⟨hl, ?_⟩⟩ <;> nlinarith [sq_nonneg (r - 1), sq_nonneg (l - 1)]
-
-/-- If X ≤ min(A + r·s, B + l·t) + δ for all δ > 0 with some (r, l) in the quarter disc, then also for
-δ = 0. -/
-theorem exists_quarter {ρ X A B s t : ℝ} (hρ : 0 ≤ ρ)
-    (h : ∀ δ : ℝ, 0 < δ → ∃ p ∈ quarter ρ, X ≤ min (A + p.1 * s) (B + p.2 * t) + δ) :
-    ∃ p ∈ quarter ρ, X ≤ min (A + p.1 * s) (B + p.2 * t) := by
-  obtain ⟨p, hp, hmax⟩ := (isCompact_quarter ρ).exists_isMaxOn
-    (f := fun p : ℝ × ℝ => min (A + p.1 * s) (B + p.2 * t))
-    ⟨(0, 0), le_rfl, le_rfl, by simpa using hρ⟩ (by fun_prop)
-  refine ⟨p, hp, le_of_forall_pos_le_add fun δ hδ => ?_⟩
-  obtain ⟨p', hp', h'⟩ := h δ hδ
-  have hm : min (A + p'.1 * s) (B + p'.2 * t) ≤ min (A + p.1 * s) (B + p.2 * t) := hmax hp'
-  linarith
 
 end Nc.Price
