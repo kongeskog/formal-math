@@ -157,7 +157,8 @@ theorem prop_approx_acc_hasAcc {h cB U Δ cΔ b₀ : ℕ} (hh : 17 ≤ h) {u : �
   have hnB2 : nB ≤ u ^ 2 := by
     grw [← hnB, KT.nds_expand B K, hI.nds, pow_two, show 2 * B + 1 ≤ u by omega]
   have pbig := pow_big hu
-  obtain ⟨K', D', hacc, hn', hh', hs'⟩ := prop_approx_acc_exact hA (t' := u ^ (16 * h - 16)) hI.thin hspan (m := m) (W := W)
+  obtain ⟨K', D', hacc, hn', hh', hs'⟩ := prop_approx_acc_exact hA (t' := u ^ (16 * h - 16))
+    hI.thin hspan (m := m) (W := W)
     (by
       have h2 : Δ ≤ 2 ^ l := (Nat.lt_two_pow_self.le).trans (Nat.pow_le_pow_right (by norm_num) hΔ)
       have h3 := Nat.mul_le_mul_left (2 ^ B) h2

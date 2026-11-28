@@ -84,7 +84,8 @@ theorem extF_kv {κ : List Bool → E[T;T⁻¹]} {κ' : List Bool → E} {S : Se
     KV θ κ' S (extF D W m T) z ((val κ l).coeff 0)
       (t * (51 * m + 15 * W + 202) + 20 * W + 60) := by
   have he := Ev.run_det (Dt.quote (θ := θ) D z) (Dt.id z) hD
-  refine ((KV.app_ev (κ := κ') (S := S) (c := t + 3) (d := t * (51 * m + 15 * W + 201) + 20 * W + 55)
+  refine ((KV.app_ev (κ := κ') (S := S) (c := t + 3)
+    (d := t * (51 * m + 15 * W + 201) + 20 * W + 55)
     (ω := fun s => ((names s.out).map κ).prod.coeff 0) he ?_ ?_).mono ?_).congr ?_
   · intro s hs
     obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hs
@@ -155,7 +156,8 @@ theorem extF_kv {κ : List Bool → E[T;T⁻¹]} {κ' : List Bool → E} {S : Se
           obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hP
           exact (hno x hx).2.1
         rwa [List.length_map] at this
-      simp only [coeff_list_sum, List.map_map, names, List.map_nil, List.prod_nil, e0, one_mul] at e2
+      simp only [coeff_list_sum, List.map_map, names, List.map_nil, List.prod_nil, e0, one_mul]
+        at e2
       rw [show (nmT o).map (fun x => κ x.path) = (names o).map κ by
         rw [names_eq, List.map_map]; rfl, coeff_wrap_zero hsp (lt_of_le_of_lt
           (Nat.mul_le_mul_right N ((length_names_le o).trans hto)) hW)] at e2
@@ -190,11 +192,11 @@ theorem ht_coefK (m : ℕ) (K : KT E[T;T⁻¹]) : (coefK m K).ht ≤ K.ht + m :=
     omega
 
 /-- The sizes of the fixed programs of the extraction. -/
-def xcst : ℕ := 4 * AD.code.size + 4 * getB.code.size + 2 * flatB.code.size + 2 * nzB.code.size + 20000
+def xcst : ℕ :=
+  4 * AD.code.size + 4 * getB.code.size + 2 * flatB.code.size + 2 * nzB.code.size + 20000
 
-theorem xcst_def :
-    xcst = 4 * AD.code.size + 4 * getB.code.size + 2 * flatB.code.size + 2 * nzB.code.size + 20000 :=
-  rfl
+theorem xcst_def : xcst =
+    4 * AD.code.size + 4 * getB.code.size + 2 * flatB.code.size + 2 * nzB.code.size + 20000 := rfl
 
 theorem size_extF (D : Tree) (W m : ℕ) (T : Tree) :
     (extF D W m T).code.size ≤ D.size + 2 * T.size + 100 * m + 4 * W + xcst := by
@@ -203,8 +205,8 @@ theorem size_extF (D : Tree) (W m : ℕ) (T : Tree) :
   have hw := size_ofBits (List.replicate W false)
   rw [List.length_replicate] at hw
   rw [xcst_def, extF, termF, finF]
-  simp only [foldF, foldB, appF, getF, node, leaf, size_lett, size_app, size_quote, size_cons, size_hd,
-    size_tl, size_id, size_ite, size_run, size_gwd, hf, Tree.size]
+  simp only [foldF, foldB, appF, getF, node, leaf, size_lett, size_app, size_quote, size_cons,
+    size_hd, size_tl, size_id, size_ite, size_run, size_gwd, hf, Tree.size]
   omega
 
 end NS1

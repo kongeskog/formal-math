@@ -456,16 +456,18 @@ theorem prop_approx_acc_next {h : ℕ} (hh : 17 ≤ h) {u α : ℕ} (hα : 5 ≤
   exact hps.trans (size_rounds hh hα hu4 (by omega))
 
 /-- **Paper: proof of Proposition prop:approx-acc, back to exact values.** "Its value is the coefficient of ε⁰ in the
-value of D, that is, pv(z) on plain instances": the coefficients of the terms of the named powers are new constants
-with B = 1. The program runs D and, for every name in the value, guesses a term of the named power, names its
-coefficient and adds its exponent to a counter, which has to be 0 at the end (`extF`). -/
+value of D, that is, pv(z) on plain instances": the coefficients of the terms of the named powers
+are new constants with B = 1. The program runs D and, for every name in the value, guesses a term
+of the named power, names its coefficient and adds its exponent to a counter, which has to be 0 at
+the end (`extF`). -/
 theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D : Tree} (hD : IsAccA θ H v t K B D)
     {m W Δ M : ℕ} (hT : K.All (Thin Δ)) (hM : K.All (Span M))
     (hm : 2 * (2 ^ B * Δ) + 1 ≤ 2 ^ m) (hW : t * (2 ^ B * M) < 2 ^ W)
     (ht : t * (51 * m + 15 * W + 202) + 20 * W + 60 ≤ t') :
     ∃ (K' : KT E) (D' : Tree), IsAccT θ H v t' K' 1 D' ∧ K'.nds ≤ (K.expand B).nds * 2 ^ (m + 1) ∧
       K'.ht ≤ K.ht + B + m ∧
-      D'.size ≤ D.size + 2 * ((K.expand B).nds * (2 ^ m * (4 * W + 6))) + 100 * m + 4 * W + xcst := by
+      D'.size ≤
+        D.size + 2 * ((K.expand B).nds * (2 ^ m * (4 * W + 6))) + 100 * m + 4 * W + xcst := by
   obtain ⟨K₂, hK₂⟩ : ∃ K₂, K₂ = K.expand B := ⟨_, rfl⟩
   rw [← hK₂]
   have hc1 : K₂.All fun c => c.coeff.support.card ≤ 2 ^ m := by
@@ -492,8 +494,8 @@ theorem prop_approx_acc_exact {H v t t' : ℕ} {K : KT E[T;T⁻¹]} {B : ℕ} {D
     exact ⟨(key z hz).hl, (key z hz).evl.1⟩
   · rw [Fm.ofTree_code, (key z hz).evl.2]
     have := hD.val z hz hpl 0 zero_lt_one
-    simp only [AddMonoidAlgebra.coeff_sub, Finsupp.sub_apply, sub_eq_zero, coeff_algebraMap, if_true]
-      at this
+    simp only [AddMonoidAlgebra.coeff_sub, Finsupp.sub_apply, sub_eq_zero, coeff_algebraMap,
+      if_true] at this
     exact this
   · have h1 := size_extF D W m (expT W m K₂)
     have h2 := size_expT W m K₂

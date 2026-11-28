@@ -10,10 +10,10 @@ import Nc.Acc.Loop
 /-!
 # Back to equality
 
-A program runs an approximate accelerator and goes through the names of its value. For every name it guesses one
-term of the constant, names the coefficient of the term, an element of the ring E, and adds the exponent of ε on a
-counter. It accepts only if the counter is 0. So its value is the coefficient of ε^0 of an approximate value: the
-exact one.
+A program runs an approximate accelerator and goes through the names of its value. For every name
+it guesses one term of the constant, names the coefficient of the term, an element of the ring E,
+and adds the exponent of ε on a counter. It accepts only if the counter is 0. So its value is the
+coefficient of ε^0 of an approximate value: the exact one.
 -/
 
 set_option linter.unusedSectionVars false
@@ -112,7 +112,8 @@ theorem KT.leaf_comb (c : R) {B b : ℕ} (h : b < B) : (KT.comb c B).Leaf (KT.pw
     | succ B => exact ih _ (by omega)
 
 /-- The name of a power of a constant is a leaf of the trie of the powers. -/
-theorem KT.leaf_expand {B : ℕ} {K : KT R} {p : List Bool} (h : K.InB B p) : (K.expand B).Leaf p := by
+theorem KT.leaf_expand {B : ℕ} {K : KT R} {p : List Bool} (h : K.InB B p) :
+    (K.expand B).Leaf p := by
   induction K generalizing p with
   | none => exact h.elim
   | leaf c =>
@@ -171,7 +172,8 @@ theorem lk_coefK {m : ℕ} {K : KT E[T;T⁻¹]} {p w : List Bool} (hp : K.Leaf p
 /-- A trie, as `tget` reads it, with the value `f w` at every name `w` of length `n`. -/
 def fullT : ℕ → (List Bool → Tree) → Tree
   | 0, f => .cons (f []) .nil
-  | n + 1, f => .cons .nil (.cons (fullT n fun w => f (false :: w)) (fullT n fun w => f (true :: w)))
+  | n + 1, f =>
+    .cons .nil (.cons (fullT n fun w => f (false :: w)) (fullT n fun w => f (true :: w)))
 
 theorem tget_fullT {n : ℕ} (f : List Bool → Tree) {w : List Bool} (h : w.length = n) :
     tget w (fullT n f) = f w := by
@@ -205,7 +207,8 @@ noncomputable def expT (W m : ℕ) : KT E[T;T⁻¹] → Tree
   | .leaf c => fullT m fun w => ofBits (expBits W (termExp c (KT.val w)))
   | .node l r => .cons .nil (.cons (expT W m l) (expT W m r))
 
-theorem tget_expT {W m : ℕ} {K : KT E[T;T⁻¹]} {p w : List Bool} (hp : K.Leaf p) (hw : w.length = m) :
+theorem tget_expT {W m : ℕ} {K : KT E[T;T⁻¹]} {p w : List Bool} (hp : K.Leaf p)
+    (hw : w.length = m) :
     tget (p ++ w) (expT W m K) = ofBits (expBits W (termExp (K.lookup p) (KT.val w))) := by
   induction K generalizing p with
   | none => exact hp.elim
@@ -220,7 +223,8 @@ theorem tget_expT {W m : ℕ} {K : KT E[T;T⁻¹]} {p w : List Bool} (hp : K.Lea
       | true => exact ihr hp
       | false => exact ihl hp
 
-theorem size_expT (W m : ℕ) (K : KT E[T;T⁻¹]) : (expT W m K).size + 3 ≤ K.nds * (2 ^ m * (4 * W + 6)) := by
+theorem size_expT (W m : ℕ) (K : KT E[T;T⁻¹]) :
+    (expT W m K).size + 3 ≤ K.nds * (2 ^ m * (4 * W + 6)) := by
   induction K with
   | none =>
     have := Nat.mul_le_mul (Nat.one_le_two_pow (n := m)) (Nat.le_add_left 6 (4 * W))
@@ -307,7 +311,8 @@ theorem termF_does {m : ℕ} {T x : Tree} {s : List Bool × Tree} {e : List Bool
           (Gives.quote .nil y))
       have hk := appF_gives (θ := θ) (xs := x.toList) (ys := w.map bit)
         (x := .cons (.cons x (.cons (ofBits s.1) s.2)) (ofBits w))
-        (by rw [listT_toList]; exact (Gives.id _).hd.hd) (by rw [listT_ofBits]; exact (Gives.id _).tl)
+        (by rw [listT_toList]; exact (Gives.id _).hd.hd)
+        (by rw [listT_ofBits]; exact (Gives.id _).tl)
       rw [hy] at h2
       have h3 := Gives.lett (Gives.cons (Gives.id _) hk) h2
       rw [List.append_assoc] at h3
@@ -347,8 +352,8 @@ theorem sum_foldL_term {W m : ℕ} {κ : List Bool → E[T;T⁻¹]} {κ' : List 
         (x.path ++ (w ++ [false])) :: names s.2 := by
       rw [termS, names, names, path_listT_append]
       rfl
-    rw [e, List.map_cons, List.prod_cons, h2 w (length_of_mem_wd hw), mul_comm (termCoef _ _), termS,
-      mark_addc hs (length_expBits _ _)]
+    rw [e, List.map_cons, List.prod_cons, h2 w (length_of_mem_wd hw), mul_comm (termCoef _ _),
+      termS, mark_addc hs (length_expBits _ _)]
 
 /-- The states of the walk: the counter keeps its length, the names are names of coefficients, and
 the tree of names grows by the name and twelve nodes more for every name. -/
