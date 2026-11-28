@@ -477,8 +477,7 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     have e3 : 3 ^ 3 * Y ≤ Y ^ 3 * Y := Nat.mul_le_mul_right _ e2
     omega
   have h5 : (0 + 11 + 8 * Y + 9 + 1 + 1) * Y ^ 12 ≤ Y ^ 16 := by
-    calc _ ≤ Y ^ 4 * Y ^ 12 := Nat.mul_le_mul_right _ h4
-      _ = Y ^ 16 := by ring
+    grw [h4, ← pow_add]
   exact Nat.add_le_add_left h5 p
 
 /-- Parents are computed: the indicator of "q is the parent of p". -/
@@ -539,10 +538,7 @@ theorem lg_two {M : ℕ} (hM : 2 ≤ M) : 2 ≤ lg M := by
 
 /-- A constant times a power is a higher power. -/
 theorem const_mul_pow_le {L : ℕ} (hL : 2 ≤ L) {k e C : ℕ} (h : k + e ≤ C) : k * L ^ e ≤ L ^ C := by
-  calc k * L ^ e ≤ L ^ k * L ^ e :=
-        Nat.mul_le_mul_right _ ((Nat.lt_two_pow_self).le.trans (Nat.pow_le_pow_left hL k))
-    _ = L ^ (k + e) := (pow_add _ _ _).symm
-    _ ≤ L ^ C := Nat.pow_le_pow_right (by omega) h
+  grw [← Nat.pow_le_pow_right (by omega) h, pow_add, ← Nat.pow_le_pow_left hL k, ← Nat.lt_two_pow_self]
 
 /-- The constant in front of the bounds for loads. -/
 def cKap (c : ℕ) : ℕ := 2 * c * (c * (c * (2 * c + 1) ^ 7 * c * (1 + 2 * c ^ 2)))
@@ -607,37 +603,23 @@ theorem tree_nums {c M N X J m : ℕ} (hc : 1 ≤ c) (hM : 2 ≤ M) (hN : 1 ≤ 
   have hG9 : G0 ≤ G0 ^ 9 := Nat.le_self_pow (by norm_num) _
   have hG30 : G ≤ G ^ 30 := Nat.le_self_pow (by norm_num) _
   have hm8 : m ≤ G0 ^ 8 := by
-    calc m ≤ c * (J + 1) ^ 7 := hm
-      _ ≤ G0 * G0 ^ 7 := Nat.mul_le_mul (by omega) (Nat.pow_le_pow_left (hJ.trans hXG) 7)
-      _ = G0 ^ 8 := by ring
+    grw [hm, hJ, hXG, pow_succ' G0 7, show c ≤ G0 by omega]
   refine ⟨by omega, hm8.trans (q 8 9 (by norm_num)), by omega, by omega,
     (Nat.pow_le_pow_left hG0G 9).trans (p 9 30 (by norm_num)), by omega, ?_⟩
   have hm8' : m ≤ G ^ 8 := hm8.trans (Nat.pow_le_pow_left hG0G 8)
   have h1 : kapB c m X N ≤ G ^ 15 := by
     unfold kapB
-    calc c * (m * X * (N + 2 * X ^ 2)) ≤ G * (G ^ 8 * G * (G + G * G ^ 2)) := by
-          gcongr <;> omega
-      _ = G ^ 11 + G ^ 13 := by ring
-      _ ≤ G ^ 13 + G ^ 13 := Nat.add_le_add_right (p 11 13 (by norm_num)) _
-      _ = 2 * G ^ 13 := by ring
-      _ ≤ G * G ^ 13 := Nat.mul_le_mul_right _ (by omega)
-      _ = G ^ 14 := by ring
-      _ ≤ G ^ 15 := p 14 15 (by norm_num)
+    grw [hm8', show X ≤ G by omega, hNG, show c ≤ G by omega]
+    linarith [p 11 13 (by norm_num), p 12 13 (by norm_num), p 14 15 (by norm_num),
+      Nat.mul_le_mul_right (G ^ 13) (show 3 ≤ G by omega)]
   have h2 : capB c m X N N ≤ G ^ 18 := by
     unfold capB
     have e1 : G ≤ G ^ 17 := Nat.le_self_pow (by norm_num) _
-    calc N + 2 + 3 * c * kapB c m X N ≤ G + G + G * G * G ^ 15 := by gcongr <;> omega
-      _ = G + G + G ^ 17 := by ring
-      _ ≤ G ^ 17 + G ^ 17 + G ^ 17 := by omega
-      _ = 3 * G ^ 17 := by ring
-      _ ≤ G * G ^ 17 := Nat.mul_le_mul_right _ (by omega)
-      _ = G ^ 18 := by ring
-  calc capB c m X N N * (c + c) + 1 ≤ G ^ 18 * (G + G) + G ^ 19 := by
-        gcongr <;> first | omega | exact Nat.one_le_pow _ _ (by omega)
-    _ = 3 * G ^ 19 := by ring
-    _ ≤ G * G ^ 19 := Nat.mul_le_mul_right _ (by omega)
-    _ = G ^ 20 := by ring
-    _ ≤ G ^ 30 := p 20 30 (by norm_num)
+    grw [h1, hNG, show 3 * c ≤ G * G by nlinarith]
+    linarith [Nat.mul_le_mul_right (G ^ 17) (show 3 ≤ G by omega)]
+  grw [h2, show c ≤ G by omega]
+  linarith [Nat.mul_le_mul_right (G ^ 19) (show 3 ≤ G by omega), p 20 30 (by norm_num),
+    Nat.one_le_pow 19 G (by omega)]
 
 open Classical in
 /-- The children of a node are few. -/
@@ -1159,10 +1141,8 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     have h2 : cKap c * c * lg M ^ 7 ≤ lg M ^ C := const_mul_pow_le hl (by
       have : cKap c * c ≤ cKap c * (2 * c + 1) := Nat.mul_le_mul_left _ (by omega)
       omega)
-    calc YhN FL Uu AA N ρ ≤ 2 * c * kapB c m (Fintype.card (T.X 0)) N * c := h1
-      _ ≤ cKap c * (lg M ^ 7 * M * (N + M ^ 2)) * c := Nat.mul_le_mul_right _ hkap
-      _ = cKap c * c * lg M ^ 7 * M * (N + M ^ 2) := by ring
-      _ ≤ _ := by gcongr
+    grw [h1, hkap, ← h2]
+    exact (by ring : _ = _).le
   have hne : ∀ p, p ≠ Pl.pt none → Pl.pt.symm p ≠ none := fun p hp e => hp (by
     rw [← Equiv.apply_symm_apply Pl.pt p, e])
   have hV3 : 3 ≤ V := hV ▸ (le_trans (Nat.le_add_left 3 c)
@@ -1218,12 +1198,9 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
       (fun d => (hC.sl_le d).trans a1) (Nat.zero_le _) (Nat.zero_le _)
     refine (card_image_le.trans (le_of_eq card_univ)).trans (n1'.trans ?_)
     rw [← hW, ← pow_mul]
-    calc 17 * ((c + 3) * M) ^ (9 * 6) ≤ ((c + 3) * M) ^ 3 * ((c + 3) * M) ^ (9 * 6) := by
-          refine Nat.mul_le_mul_right _ ?_
-          have := Nat.pow_le_pow_left (le_trans (Nat.le_add_left 3 c) (Nat.le_mul_of_pos_right (c + 3) (show 0 < M by omega))) 3
-          omega
-      _ = ((c + 3) * M) ^ 57 := by rw [← pow_add]
-      _ ≤ M ^ C := const_pow_le hM (by omega)
+    have := Nat.pow_le_pow_left (le_trans (Nat.le_add_left 3 c) (Nat.le_mul_of_pos_right (c + 3)
+      (show 0 < M by omega))) 3
+    grw [← const_pow_le (c := c) (a := 3 + 9 * 6) hM (by omega), pow_add, show 17 ≤ ((c + 3) * M) ^ 3 by omega]
   · change if (eE R FL x).isRight = true then kindM R ch FL (eE R FL x) ∈ laws else kindM R ch FL (eE R FL x) = relay F
     rcases eE R FL x with y | l
     · simp [kindM]
@@ -1248,10 +1225,8 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     · split_ifs
       · refine Nat.mul_le_mul_right _ ?_
         have h1 : 1 ≤ lg M ^ 7 := Nat.one_le_pow _ _ (by omega)
-        calc 1 + 8 * m ≤ lg M ^ 7 + 8 * (c * ((2 * c + 1) ^ 7 * lg M ^ 7)) :=
-              Nat.add_le_add h1 (Nat.mul_le_mul_left _ (m_le hm hdep))
-          _ = (1 + 8 * (c * (2 * c + 1) ^ 7)) * lg M ^ 7 := by ring
-          _ ≤ lg M ^ C := const_mul_pow_le hl hC9
+        grw [← const_mul_pow_le hl hC9, m_le hm hdep]
+        linarith
       · exact le_rfl
   · -- the program
     have hpow : ∀ e, e ≤ 200000 → ((c + 3) * (M * N)) ^ e ≤ (M * N) ^ C := fun e he =>
@@ -1261,18 +1236,15 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
     generalize hG : (c + 3) * (M * N) = G at hV hpow hG3
     have hYG : 20 * V ^ 9 ≤ G ^ 273 := by
       rw [← hV, ← pow_mul]
-      calc 20 * G ^ (30 * 9) ≤ G ^ 3 * G ^ (30 * 9) := Nat.mul_le_mul_right _ (by
-            have := Nat.pow_le_pow_left hG3 3; omega)
-        _ = G ^ 273 := by rw [← pow_add]
+      have := Nat.pow_le_pow_left hG3 3
+      grw [pow_add G 3 270, show 20 ≤ G ^ 3 by omega]
     have hyp : 20 * V ^ 9 ≤ (M * N) ^ C := hYG.trans (hpow 273 (by norm_num))
     refine ⟨_, steps, inp, H, ?_, ?_, ?_, b2.trans hyp, ?_, b3.trans hyp, b4, b5, b6, b7, b8, b9, b10, b11, b12⟩
     · refine (Nat.pow_le_pow_left hYG 4).trans ?_
       rw [← pow_mul]
       exact hpow _ (by norm_num)
     · refine b0.trans ?_
-      calc 3 * (20 * V ^ 9) ^ 16 ≤ G * (G ^ 273) ^ 16 := Nat.mul_le_mul hG3 (Nat.pow_le_pow_left hYG 16)
-        _ = G ^ 4369 := by rw [← pow_mul, ← pow_succ']
-        _ ≤ _ := hpow _ (by norm_num)
+      grw [hYG, hG3, ← hpow 4369 (by norm_num), ← pow_mul, ← pow_succ']
     · rw [card_party Pl]
       exact b1.trans hyp
     · refine a7.trans (le_trans ?_ hyp)
