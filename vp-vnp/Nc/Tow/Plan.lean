@@ -28,19 +28,19 @@ def nn (n : Fin AA → Fin AA → Fin (U0 + 1)) : Fin AA → Fin AA → ℕ := f
 variable {R FL Pl}
 
 /-- Outcomes. -/
-noncomputable def oo (o : (sys R FL Pl).N → Fin U1) : NM R ch FL → ℕ := fun ν => (o ((eN R FL Pl).symm ν)).1
+noncomputable def oo (o : (sys R FL Pl).N → Fin U1) : NM R ch FL → ℕ := fun ν => (o ((eN (Pl := Pl)).symm ν)).1
 
 /-- The target of a unit. -/
 noncomputable def tgU : Un R FL Pl U0 U1 → Tg T m AA
   | .init a c k => tgB R ch a c k
-  | .new ν _ => tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2
+  | .new ν _ => tgM (eN ν).1 (eN ν).2
 
 variable (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1)
 
 /-- Alive units. -/
 def AlU : Un R FL Pl U0 U1 → Prop
   | .init a c k => Valid lhat (nn n) ∧ k.1 < (n a c).1
-  | .new ν k => k.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν)
+  | .new ν k => k.1 < alv lhat (nn n) (oo o) (eN ν)
 
 open Classical in
 /-- The set of alive units. -/
@@ -69,7 +69,7 @@ noncomputable def consM : ZM R ch FL → Finset (Un R FL Pl U0 U1)
 variable (R FL Pl) in
 /-- **The plan.** -/
 noncomputable def plan (U0 U1 : ℕ) : Plan (sys R FL Pl) U0 U1 where
-  cons n o z := consM lhat n o (eZ R FL Pl z)
+  cons n o z := consM lhat n o (eZ z)
   num n o x := num lhat (nn n) (oo o) (eE R FL x)
   good n o x := GoodMv lhat (nn n) (oo o) (eE R FL x)
 
@@ -129,17 +129,17 @@ theorem load_eq (τ : Tg T m AA) : load lhat (nn n) (oo o) τ =
       refine Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun k _ => if_neg ?_
       rintro ⟨⟨h1, -⟩, -⟩
       exact hv h1
-  · rw [← Equiv.sum_comp (eN R FL Pl) fun ν : NM R ch FL => if tgM ν.1 ν.2 = τ then
+  · rw [← Equiv.sum_comp (eN (Pl := Pl)) fun ν : NM R ch FL => if tgM ν.1 ν.2 = τ then
       alvN (oo o) ν (num lhat (nn n) (oo o) ν.1) else 0]
     refine Finset.sum_congr rfl fun ν _ => ?_
-    have hle : alv lhat (nn n) (oo o) (eN R FL Pl ν) ≤ U1 := by
+    have hle : alv lhat (nn n) (oo o) (eN ν) ≤ U1 := by
       refine (alvN_le _ _).trans ?_
       exact (o _).2.le
-    by_cases hν : tgM (eN R FL Pl ν).1 (eN R FL Pl ν).2 = τ
+    by_cases hν : tgM (eN ν).1 (eN ν).2 = τ
     · rw [if_pos hν]
       have e2 : (∑ k : Fin U1, if AlU lhat n o (.new ν k) ∧ tgU (.new ν k : Un R FL Pl U0 U1) = τ
           then 1 else 0) = ((univ : Finset (Fin U1)).filter fun k => k.1 <
-            alv lhat (nn n) (oo o) (eN R FL Pl ν)).card := by
+            alv lhat (nn n) (oo o) (eN ν)).card := by
         rw [card_filter]
         refine Finset.sum_congr rfl fun k _ => ?_
         refine if_congr ?_ rfl rfl

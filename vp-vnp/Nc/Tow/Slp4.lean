@@ -67,10 +67,10 @@ theorem mem_cur (u : Un R FL Pl U0 U1) :
     rw [mem_biUnion]
     constructor
     · rintro ⟨z, -, hz⟩
-      exact ⟨eZ R FL Pl z, hz⟩
+      exact ⟨eZ z, hz⟩
     · rintro ⟨z, hz⟩
-      refine ⟨(eZ R FL Pl).symm z, mem_filter.2 ⟨mem_univ _, ((eZ R FL Pl).symm z).1.2⟩, ?_⟩
-      change u ∈ consM lhat n o (eZ R FL Pl ((eZ R FL Pl).symm z))
+      refine ⟨(eZ (Pl := Pl)).symm z, mem_filter.2 ⟨mem_univ _, ((eZ (Pl := Pl)).symm z).1.2⟩, ?_⟩
+      change u ∈ consM lhat n o (eZ ((eZ (Pl := Pl)).symm z))
       rw [Equiv.apply_symm_apply]
       exact hz
 

@@ -108,11 +108,11 @@ open Classical in
 noncomputable def AsU (lhat : ℕ)
     (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) (s : Σ j : Fin (J + 1), T.X j) : Finset (Un R FL Pl U0 U1) :=
   univ.filter fun u => ∃ (ν : (sys R FL Pl).N) (kk : Fin U1), u = Uid.new ν kk ∧
-    kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ∧ IsCh (eN R FL Pl ν) s
+    kk.1 < alv lhat (nn n) (oo o) (eN ν) ∧ IsCh (eN ν) s
 
 theorem mem_AsU_new {ν : (sys R FL Pl).N} {kk : Fin U1} {s : Σ j : Fin (J + 1), T.X j} :
     (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o s ↔
-      kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) ∧ IsCh (eN R FL Pl ν) s := by
+      kk.1 < alv lhat (nn n) (oo o) (eN ν) ∧ IsCh (eN ν) s := by
   classical
   unfold AsU
   rw [mem_filter]
@@ -144,18 +144,18 @@ theorem card_AsU (s : Σ j : Fin (J + 1), T.X j) :
   rw [h2, Nat.zero_add]
   refine le_trans ?_ (sum_child (n := nn n) (o := oo o) j.1
     (Nat.le_of_lt_succ j.2) c)
-  rw [← Equiv.sum_comp (eN R FL Pl)]
+  rw [← Equiv.sum_comp (eN (Pl := Pl))]
   refine Finset.sum_le_sum fun ν _ => ?_
-  have hle : alv lhat (nn n) (oo o) (eN R FL Pl ν) ≤ U1 := (alvN_le _ _).trans (o _).2.le
-  by_cases hc : IsCh (eN R FL Pl ν) ⟨j, c⟩
+  have hle : alv lhat (nn n) (oo o) (eN ν) ≤ U1 := (alvN_le _ _).trans (o _).2.le
+  by_cases hc : IsCh (eN ν) ⟨j, c⟩
   · refine le_trans ?_ (le_of_eq (if_pos hc).symm)
     calc (∑ kk : Fin U1, if (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0) ≤
-        ∑ kk : Fin U1, if kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν) then 1 else 0 := by
+        ∑ kk : Fin U1, if kk.1 < alv lhat (nn n) (oo o) (eN ν) then 1 else 0 := by
           refine Finset.sum_le_sum fun kk _ => ?_
           by_cases h3 : (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩
           · rw [if_pos h3, if_pos (mem_AsU_new.1 h3).1]
           · rw [if_neg h3]; exact Nat.zero_le _
-      _ = ((univ : Finset (Fin U1)).filter fun kk => kk.1 < alv lhat (nn n) (oo o) (eN R FL Pl ν)).card := by
+      _ = ((univ : Finset (Fin U1)).filter fun kk => kk.1 < alv lhat (nn n) (oo o) (eN ν)).card := by
           rw [card_filter]
       _ ≤ _ := (card_fin_lt' _ _ hle).le
   · refine le_trans (le_of_eq ?_) (Nat.zero_le _)
