@@ -17,10 +17,10 @@ open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J}
   {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
-  {o : NM R FL (ch := ch) → ℕ}
+  {o : NM R ch FL → ℕ}
 
 /-- Alive units of some channels with a target. -/
-theorem sum_alv_le {κ : Type*} (τ : Tg T m AA) (s : Finset κ) (f : κ → NM R FL)
+theorem sum_alv_le {κ : Type*} (τ : Tg T m AA) (s : Finset κ) (f : κ → NM R ch FL)
     (hf : Set.InjOn f s) (hτ : ∀ x ∈ s, tgM (f x).1 (f x).2 = τ) :
     ∑ x ∈ s, alv lhat n o (f x) ≤ load lhat n o τ := by
   classical
@@ -60,7 +60,7 @@ theorem nR_mid3 (j : Fin J) (e : T.Ed j) : nR lhat n o (.mid j e 3) ≤ nR lhat 
   rw [dif_pos (ok_mid2 j e)]
   split_ifs with hx
   · refine (num_inl _).trans ?_
-    refine (load_le_sum {(⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, true⟩ : NM R FL)} (bt_mid j e 3) ?_).trans ?_
+    refine (load_le_sum {(⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, true⟩ : NM R ch FL)} (bt_mid j e 3) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       · obtain ⟨h1, h2⟩ := tgR_mid (ν := ν) hν
         have h3 : x = .mid j e 2 := by
@@ -91,7 +91,7 @@ theorem nR_mid1 (j : Fin J) (e : T.Ed j) : nR lhat n o (.mid j e 1) ≤ nR lhat 
         exact absurd hh (by decide)
     rw [h1, ← alv_relay hg ⟨.mid j e 1, hx⟩ true]
     have h2 := sum_alv_le (lhat := lhat) (n := n) (o := o) (.nxt (.mid j e 2)) ({()} : Finset Unit)
-      (fun _ => (⟨.inl ⟨.mid j e 1, hx⟩, true⟩ : NM R FL)) (fun _ _ _ _ _ => rfl) (fun _ _ => rfl)
+      (fun _ => (⟨.inl ⟨.mid j e 1, hx⟩, true⟩ : NM R ch FL)) (fun _ _ _ _ _ => rfl) (fun _ _ => rfl)
     rw [Finset.sum_singleton] at h2
     exact h2
   · exact Nat.zero_le _
@@ -105,10 +105,10 @@ theorem sum_mid2 (j : Fin J) (c : T.X (j + 1)) :
   have h1 : ∀ e : T.Ed j, (if T.π (T.e0 e) = c then nR lhat n o (.mid j e 2) else 0) +
       (if T.π (T.e1 e) = c then nR lhat n o (.mid j e 2) else 0) =
       if T.e0 (T.πE e) = c ∨ T.e1 (T.πE e) = c then alv lhat n o
-        (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R FL) else 0 := by
+        (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R ch FL) else 0 := by
     intro e
     have h2 : nR lhat n o (.mid j e 2) = alv lhat n o
-        (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R FL) := by
+        (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R ch FL) := by
       unfold nR
       rw [dif_pos (ok_mid2 j e)]
       exact (alv_relay hg ⟨.mid j e 2, ok_mid2 j e⟩ false).symm
@@ -138,7 +138,7 @@ theorem sum_mid2 (j : Fin J) (c : T.X (j + 1)) :
   split_ifs with hc
   · rw [← lev_succ, ← Finset.sum_filter]
     refine sum_alv_le (.edge j.succ ē) (univ.filter fun e : T.Ed j => T.πE e = ē)
-      (fun e => (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R FL)) ?_ ?_
+      (fun e => (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R ch FL)) ?_ ?_
     · intro e _ e' _ hee
       have h2 : (Sum.inl ⟨.mid j e 2, ok_mid2 j e⟩ : Mv R ch FL) = .inl ⟨.mid j e' 2, ok_mid2 j e'⟩ :=
         congrArg Sigma.fst hee

@@ -171,7 +171,7 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
     refine Finset.sum_congr rfl fun d _ => ?_
     split_ifs <;> omega
   have h2 : (∑ ν : (sys R FL Pl).N, ∑ d : Bool, if (sys R FL Pl).np ν d = Pl.pt P then (o ν).1 else 0) =
-      ∑ ν : NM R FL (ch := ch), ∑ d : Bool,
+      ∑ ν : NM R ch FL, ∑ d : Bool,
         if partM ν.1 ((kindM FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0 := by
     rw [← Equiv.sum_comp (eN R FL Pl)]
     refine Finset.sum_congr rfl fun ν _ => Finset.sum_congr rfl fun d _ => ?_
@@ -183,7 +183,7 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
     rw [np_eq]
     exact Pl.pt.injective.eq_iff
   rw [h1, h2]
-  have h4 : (∑ ν : NM R FL (ch := ch), ∑ d : Bool,
+  have h4 : (∑ ν : NM R ch FL, ∑ d : Bool,
       if partM ν.1 ((kindM FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0) ≤
       2 * NR lhat (nn n) (oo o) P +
       2 * Fintype.card T.Nr * FL.G₁ * NL lhat (nn n) (oo o) P := by

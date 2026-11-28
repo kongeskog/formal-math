@@ -454,12 +454,12 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat TM H' ∧
       HostOk (fun x => load lhat (nn (nI x)) (oo (oI x))) H' ∧
       ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load lhat (nn (nI x)) (oo (oI x)))) j c) ∈ H' := by
-  have hR : Rng (nX nI) (oX oI : Inp → NM R FL → ℕ) U0 U1 := rng
+  have hR : Rng (nX nI) (oX oI : Inp → NM R ch FL → ℕ) U0 U1 := rng
   have hS0 : SY inp Y p 0 H := by
     unfold SY
     rw [Nat.zero_mul, Nat.add_zero]
     exact hS
-  have hb0 : Base (nX nI) (oX oI : Inp → NM R FL → ℕ) H := ⟨hn, fun ν => ho _⟩
+  have hb0 : Base (nX nI) (oX oI : Inp → NM R ch FL → ℕ) H := ⟨hn, fun ν => ho _⟩
   obtain ⟨H1, s1, f1⟩ := after_stage hA hB hR hS0 hb0
   obtain ⟨H2, s2, u2, f2⟩ := units_stage hA hB hB2 s1 f1
   obtain ⟨H3, s3, u3, f3⟩ :=
@@ -898,8 +898,8 @@ theorem tree_computed {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V) (hJ : J + 1 ≤ V)
   have p7 := pw 7 (by omega)
   have p1 : V ≤ V ^ 9 := Nat.le_self_pow (by norm_num) V
   have hA : Alph (Y ^ 4) Y := ⟨by omega, le_rfl⟩
-  have hNM : Fintype.card (NM R FL (ch := ch)) = Fintype.card (sys R FL Pl).N := Fintype.card_congr (eN R FL Pl).symm
-  have hZM : Fintype.card (ZM R FL (ch := ch)) = Fintype.card (sys R FL Pl).Z := Fintype.card_congr (eZ R FL Pl).symm
+  have hNM : Fintype.card (NM R ch FL) = Fintype.card (sys R FL Pl).N := Fintype.card_congr (eN R FL Pl).symm
+  have hZM : Fintype.card (ZM R ch FL) = Fintype.card (sys R FL Pl).Z := Fintype.card_congr (eZ R FL Pl).symm
   have hWb : Wb R ch FL N U1 = Fintype.card (Un R FL Pl N U1) := by
     rw [card_Un]
     unfold Wb

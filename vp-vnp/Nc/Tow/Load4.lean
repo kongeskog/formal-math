@@ -18,7 +18,7 @@ open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Routes T m Uu}
   {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
-  {o : NM R FL (ch := ch) → ℕ}
+  {o : NM R ch FL → ℕ}
 
 namespace Tower
 
@@ -122,7 +122,7 @@ end Tower
 
 /-- Loads of a stage. -/
 noncomputable def lds (lhat : ℕ) (n : Fin AA → Fin AA → ℕ)
-    (o : NM R FL (ch := ch) → ℕ) (j : Fin (J + 1)) : T.Ed j → ℕ := fun e => load lhat n o (.edge j e)
+    (o : NM R ch FL → ℕ) (j : Fin (J + 1)) : T.Ed j → ℕ := fun e => load lhat n o (.edge j e)
 
 /-- The bound for the loads after the start. -/
 def nhat (T : Tower h b J) (Uu AA lhat : ℕ) : ℕ := Uu * (lhat / Fintype.card (T.X 0) + 2 * AA)

@@ -18,14 +18,14 @@ open Finset Nc.G Unc
 variable {F : Type} [CommRing F] {h b J m Uu AA U0 U1 : ℕ} {T : Tower h b J}
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T}
 variable {Inp ι : Type} {Dd Y p c : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
-variable (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R FL (ch := ch) → ℕ) (lhat : ℕ)
+variable (nx : Inp → Fin AA → Fin AA → ℕ) (ox : Inp → NM R ch FL → ℕ) (lhat : ℕ)
 
 /-- What is available at the beginning. -/
 structure Base (H : Set (Inp → ℕ)) : Prop where
   n : ∀ a c, (fun x => nx x a c) ∈ H
   o : ∀ ν, (fun x => ox x ν) ∈ H
 
-theorem Base.weaken {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R FL (ch := ch) → ℕ} {H H' : Set (Inp → ℕ)}
+theorem Base.weaken {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R ch FL → ℕ} {H H' : Set (Inp → ℕ)}
     (hb : Base nx ox H) (hH : H ⊆ H') : Base nx ox H' :=
   ⟨fun a c => hH (hb.n a c), fun ν => hH (hb.o ν)⟩
 
@@ -35,7 +35,7 @@ structure Stat (H : Set (Inp → ℕ)) : Prop extends Base nx ox H where
   bt : ∀ τ : Tg T m AA, (fun x => bt R ch lhat (nx x) τ) ∈ H
   q : ∀ l : LMv FL, (fun x => ∑ ν : (FL.L l.2.2.2).Cn, ox x ⟨Sum.inr l, ν⟩ ^ 2) ∈ H
 
-theorem Stat.weaken {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R FL (ch := ch) → ℕ} {lhat : ℕ}
+theorem Stat.weaken {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R ch FL → ℕ} {lhat : ℕ}
     {H H' : Set (Inp → ℕ)} (hb : Stat nx ox lhat H) (hH : H ⊆ H') : Stat nx ox lhat H' :=
   ⟨hb.toBase.weaken hH, hH hb.valid, fun τ => hH (hb.bt τ), fun l => hH (hb.q l)⟩
 
@@ -48,7 +48,7 @@ variable {nx ox lhat} (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hR : Rng nx o
 include hB in
 theorem card_cn (l : LMv FL) : Fintype.card (FL.L l.2.2.2).Cn ≤ Y := by
   refine (Fintype.card_le_of_injective
-    (fun ν : (FL.L l.2.2.2).Cn => (⟨Sum.inr l, ν⟩ : NM R FL (ch := ch))) ?_).trans hB.nm
+    (fun ν : (FL.L l.2.2.2).Cn => (⟨Sum.inr l, ν⟩ : NM R ch FL)) ?_).trans hB.nm
   intro ν ν' he
   have := eq_of_heq (Sigma.mk.inj he).2
   exact this
@@ -118,7 +118,7 @@ theorem cy_q (hb : Base nx ox H) (l : LMv FL) :
     CY Dd H Y 3 fun x => ∑ ν : (FL.L l.2.2.2).Cn, ox x ⟨Sum.inr l, ν⟩ ^ 2 := by
   have hY := hA.pos
   have h1 : ∀ x (ν : (FL.L l.2.2.2).Cn), ox x ⟨Sum.inr l, ν⟩ ^ 2 ≤ Y ^ 2 := fun x ν =>
-    Nat.pow_le_pow_left ((hR.o x _).trans (hB.u1 (⟨Sum.inr l, ν⟩ : NM R FL))) 2
+    Nat.pow_le_pow_left ((hR.o x _).trans (hB.u1 (⟨Sum.inr l, ν⟩ : NM R ch FL))) 2
   refine CY.sum hA univ (card_cn hB l) (fun ν _ => ?_) fun x => hA.lt_of_le3 ?_
   · refine CY.op1 hA (fun s => s ^ 2) (CY.base (hb.o _)) fun x => hA.lt_of_le3 ((h1 x ν).trans ?_)
     have : Y ^ 2 ≤ Y ^ 3 := Nat.pow_le_pow_right hY (by omega)
@@ -146,7 +146,7 @@ theorem stat_stage (hS : SY inp Y p c H) (hb : Base nx ox H) :
 
 /-- Alive units from numbers of units. -/
 theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ} (hN : ∀ mv, (fun x => Nf x mv) ∈ H)
-    (ν : NM R FL (ch := ch)) : CY Dd H Y 3 fun x => alvN (ox x) ν (Nf x ν.1) := by
+    (ν : NM R ch FL) : CY Dd H Y 3 fun x => alvN (ox x) ν (Nf x ν.1) := by
   have hY := hA.pos
   have hlt : ∀ x, alvN (ox x) ν (Nf x ν.1) ≤ Y := fun x =>
     ((alvN_le _ _).trans (hR.o x ν)).trans (hB.u1 ν)
@@ -166,17 +166,17 @@ theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ} (hN :
 
 /-- Loads from alive units. -/
 theorem cy_ld (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ}
-    (ha : ∀ ν : NM R FL, (fun x => alvN (ox x) ν (Nf x ν.1)) ∈ H) (τ : Tg T m AA) :
+    (ha : ∀ ν : NM R ch FL, (fun x => alvN (ox x) ν (Nf x ν.1)) ∈ H) (τ : Tg T m AA) :
     CY Dd H Y 3 fun x => ld lhat (nx x) (ox x) (Nf x) τ := by
   have hle : ∀ x, ld lhat (nx x) (ox x) (Nf x) τ ≤ Y := fun x =>
     (ld_le (hR.n x) (hR.o x) _ _).trans hB.w
   have e : ∀ x, ld lhat (nx x) (ox x) (Nf x) τ = bt R ch lhat (nx x) τ +
-      ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM ν.1 ν.2 = τ),
+      ∑ ν ∈ univ.filter (fun ν : NM R ch FL => tgM ν.1 ν.2 = τ),
         alvN (ox x) ν (Nf x ν.1) := by
     intro x
     rw [Finset.sum_filter]
     rfl
-  have h1 : CY Dd H Y 2 fun x => ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM ν.1 ν.2 = τ),
+  have h1 : CY Dd H Y 2 fun x => ∑ ν ∈ univ.filter (fun ν : NM R ch FL => tgM ν.1 ν.2 = τ),
         alvN (ox x) ν (Nf x ν.1) := by
     refine CY.sum hA _ ((card_filter_le _ _).trans hB.nm) (fun ν _ => CY.base (ha ν))
       fun x => hA.lt_of_le ?_
@@ -192,9 +192,9 @@ theorem cy_ld (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ}
 /-- Alive units and loads. -/
 theorem ld_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ}
     (hN : ∀ mv, (fun x => Nf x mv) ∈ H) : ∃ H', SY inp Y p (c + 2) H' ∧ H ⊆ H' ∧
-      (∀ ν : NM R FL, (fun x => alvN (ox x) ν (Nf x ν.1)) ∈ H') ∧
+      (∀ ν : NM R ch FL, (fun x => alvN (ox x) ν (Nf x ν.1)) ∈ H') ∧
       ∀ τ, (fun x => ld lhat (nx x) (ox x) (Nf x) τ) ∈ H' := by
-  obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := NM R FL)
+  obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := NM R ch FL)
     (fun ν x => alvN (ox x) ν (Nf x ν.1)) (a := 3) (e := 1) (by simpa using hB.nm)
     (fun ν => cy_alvN hA hB hR hs hN ν) (by omega)
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (κ := Tg T m AA)

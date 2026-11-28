@@ -20,11 +20,11 @@ open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} (R : Routes T m Uu)
   (ch : Fin AA ↪ T.X 0) (FL : FlagLaws F T) (lhat : ℕ) (n : Fin AA → Fin AA → ℕ)
-  (o : NM R FL (ch := ch) → ℕ)
+  (o : NM R ch FL → ℕ)
 
-noncomputable instance : DecidableEq (NM R FL (ch := ch)) := Classical.decEq _
+noncomputable instance : DecidableEq (NM R ch FL) := Classical.decEq _
 
-noncomputable instance : Fintype (NM R FL (ch := ch)) := inferInstanceAs (Fintype (Σ mv : Mv R ch FL, (kindM FL mv).Cn))
+noncomputable instance : Fintype (NM R ch FL) := inferInstanceAs (Fintype (Σ mv : Mv R ch FL, (kindM FL mv).Cn))
 
 /-- Every base party has at most `lhat` units at the beginning. -/
 def Valid : Prop := ∀ a, ∑ c, (if c = a then 0 else n a c + n c a) ≤ lhat
@@ -44,13 +44,13 @@ def GoodL (l : LMv FL) (t : ℕ) : Prop :=
 instance (l : LMv FL) (t : ℕ) : Decidable (GoodL o l t) := by unfold GoodL; infer_instance
 
 /-- The number of alive units of a channel, if `t` units are given in its move. -/
-def alvN : NM R FL (ch := ch) → ℕ → ℕ
+def alvN : NM R ch FL → ℕ → ℕ
   | ⟨.inl x, ν⟩, t => if o ⟨.inl x, ν⟩ = t then t else 0
   | ⟨.inr l, ν⟩, t => if GoodL o l t then o ⟨.inr l, ν⟩ else min (o ⟨.inr l, ν⟩) t
 
 /-- The number of alive units with target `τ`. -/
 noncomputable def ld (N : Mv R ch FL → ℕ) (τ : Tg T m AA) : ℕ :=
-  bt R ch lhat n τ + ∑ ν : NM R FL (ch := ch), if tgM ν.1 ν.2 = τ then alvN o ν (N ν.1) else 0
+  bt R ch lhat n τ + ∑ ν : NM R ch FL, if tgM ν.1 ν.2 = τ then alvN o ν (N ν.1) else 0
 
 /-- The squares of the loads of a type. -/
 def sqs (L : Tg T m AA → ℕ) (j : Fin (J + 1)) (i : Fin h) : ℕ :=
@@ -127,7 +127,7 @@ def tend (J m : ℕ) : ℕ := 2 * m + 6 * J + 1
 noncomputable def num (mv : Mv R ch FL) : ℕ := numS lhat n o (tend J m) mv
 
 /-- The number of alive units of a channel. -/
-noncomputable def alv (ν : NM R FL (ch := ch)) : ℕ := alvN o ν (num lhat n o ν.1)
+noncomputable def alv (ν : NM R ch FL) : ℕ := alvN o ν (num lhat n o ν.1)
 
 /-- The number of alive units with target `τ`. -/
 noncomputable def load (τ : Tg T m AA) : ℕ := ld lhat n o (num lhat n o) τ
@@ -160,7 +160,7 @@ theorem alv_inr (l : LMv FL) (ν : (FL.L l.2.2.2).Cn) : alv lhat n o ⟨.inr l, 
 theorem inpR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : inpR (.mid j e s : RM T m AA) =
     if s = 0 then .edge j.castSucc e else .nxt (.mid j e s) := rfl
 
-theorem alvN_le (ν : NM R FL (ch := ch)) (t : ℕ) : alvN o ν t ≤ o ν := by
+theorem alvN_le (ν : NM R ch FL) (t : ℕ) : alvN o ν t ≤ o ν := by
   rcases ν with ⟨x | l, ν⟩
   · rw [alvN_inl]
     split_ifs with h
@@ -171,7 +171,7 @@ theorem alvN_le (ν : NM R FL (ch := ch)) (t : ℕ) : alvN o ν t ≤ o ν := by
     · exact le_rfl
     · exact min_le_left _ _
 
-theorem alvN_zero (ν : NM R FL (ch := ch)) : alvN o ν 0 = 0 := by
+theorem alvN_zero (ν : NM R ch FL) : alvN o ν 0 = 0 := by
   rcases ν with ⟨x | l, ν⟩
   · rw [alvN_inl]
     split_ifs <;> rfl
@@ -236,7 +236,7 @@ theorem edgeO_time (e : Option (T.Ed 0)) : 2 * m ≤ tgTime (edgeO e : Tg T m AA
   · simp only [edgeO, tgTime, tend]; omega
   · simp [edgeO, tgTime]
 
-theorem tg_time (ν : NM R FL (ch := ch)) : timeM ν.1 < tgTime (tgM ν.1 ν.2) := by
+theorem tg_time (ν : NM R ch FL) : timeM ν.1 < tgTime (tgM ν.1 ν.2) := by
   rcases ν with ⟨⟨x, hx⟩ | l, ν⟩
   · change timeR x < tgTime (tgR R ch x ν)
     rcases x with ⟨a, c, γ, s⟩ | ⟨j, i, e⟩ | ⟨j, e, s⟩ | e
@@ -362,9 +362,9 @@ theorem num_eq (mv : Mv R ch FL) :
 
 section Causal
 
-variable {o' : NM R FL (ch := ch) → ℕ}
+variable {o' : NM R ch FL → ℕ}
 
-theorem alvN_congr {ν : NM R FL (ch := ch)} (hν : ∀ c, o ⟨ν.1, c⟩ = o' ⟨ν.1, c⟩) (t : ℕ) :
+theorem alvN_congr {ν : NM R ch FL} (hν : ∀ c, o ⟨ν.1, c⟩ = o' ⟨ν.1, c⟩) (t : ℕ) :
     alvN o ν t = alvN o' ν t := by
   rcases ν with ⟨x | l, ν⟩
   · rw [alvN_inl, alvN_inl, hν]
