@@ -35,31 +35,19 @@ theorem lem_postpone (p z : Tree) {T J : ℕ} (hJ : T < 2 ^ J) (hh : Hl θ (Fm.o
     (hκ : ∀ r ∈ evl θ (Fm.ofTree p) z, ∀ n ∈ names r.out, κ n = L.lookup n) :
     val κ (evl θ (Fm.ofTree p) z) = ((L.budg J).map fun e => e.2 * algebraMap A R (pv θ (postponed p z e.1))).sum ∧
       ∀ e ∈ L.budg J,
-        Plain θ ((60 * (L.ht + J + 1) + 42) * T + 40 * (L.nds * (J + 1)) + 80) (postponed p z e.1) ∧
-        (postponed p z e.1).size ≤ WN.code.size + p.size + z.size + 4 * (L.nds * (J + 1)) + 3 ∧
-        pv θ (postponed p z e.1) =
-          ((evl θ (Fm.ofTree p) z).map fun r =>
-            if ok e.1 (names r.out) = true then r.th else 0).sum ∧
-        (evl θ (Fm.ofTree (postponed p z e.1).hd) (postponed p z e.1).tl).map Run.th =
-          ((evl θ (Fm.ofTree p) z).filter fun r => ok e.1 (names r.out)).map Run.th := by
+        Plain θ ((60 * (L.ht + J + 1) + 42) * T + 40 * (L.nds * (J + 1)) + 80) (postponed p z e.1) := by
   have hp : ∀ e ∈ L.budg J,
       Plain θ ((60 * (L.ht + J + 1) + 42) * T + 40 * (L.nds * (J + 1)) + 80) (zq p z e.1) ∧
       pv θ (zq p z e.1) = ((evl θ (Fm.ofTree p) z).map fun r =>
-        if ok e.1 (names r.out) = true then r.th else 0).sum ∧
-      (evl θ (Fm.ofTree (zq p z e.1).hd) (zq p z e.1).tl).map Run.th =
-        ((evl θ (Fm.ofTree p) z).filter fun r => ok e.1 (names r.out)).map Run.th :=
+        if ok e.1 (names r.out) = true then r.th else 0).sum ∧ _ :=
     fun e he => zq_plain hh.ev hc (KT.ht_nds_budg he).1 (by
       have := Nat.mul_le_mul_left 40 (KT.ht_nds_budg he).2
       omega)
-  refine ⟨?_, fun e he => ⟨(hp e he).1, ?_, (hp e he).2⟩⟩
+  refine ⟨?_, fun e he => (hp e he).1⟩
   · rw [val_eq_sum_budg (J := J) (K := L) (fun r hr => lt_of_le_of_lt ((length_names_le r.out).trans
       (by have := hc r hr; omega)) hJ) hκ]
     refine congrArg List.sum (List.map_congr_left fun e he => ?_)
     rw [← (hp e he).2.1]
     rfl
-  · have h1 := Bt.size_enc e.1
-    have h2 := (KT.ht_nds_budg he).2
-    simp only [postponed, zq, Tree.size]
-    omega
 
 end Paper

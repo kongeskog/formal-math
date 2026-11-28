@@ -205,7 +205,7 @@ theorem thm_noacc_diagonal {h : ℕ} (hh : 17 ≤ h) [Nontrivial R] {v : ℕ} {K
   rw [ep.evl] at hsum
   have hpl : ∀ q ∈ (K.expand B').budg J, Plain θ (v ^ (16 * h)) (zq p p q.1) := by
     intro q hq
-    obtain ⟨pl, -, -⟩ := hze q hq
+    have pl := hze q hq
     refine Plain.of_le pl ?_
     have hht := KT.ht_expand B' K
     -- the factor of the plain instances is below v, as (K.expand B').ht + J + 1 ≤ X ≤ v
