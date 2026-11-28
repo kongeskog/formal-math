@@ -218,15 +218,14 @@ noncomputable def NL (P : Nd T) : ℕ := ∑ l : LMv T FL, ∑ f : T.Fl,
 variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
   (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
-  (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f)
-include hg hnr
+include hg
 
 /-- The units of a law move lie on edges at its chambers. -/
 theorem num_law_le (j : Fin J) (i : Fin h) (x : T.X (j + 1)) (d : FL.Di) :
     num R ch FL lhat n o (.inr ⟨j, i, T.vx i x, d⟩) ≤ fb (ldL R ch FL lhat n o) (j + 1) x := by
   classical
   set l : LMv T FL := ⟨j, i, T.vx i x, d⟩ with hl
-  obtain ⟨ν, hν⟩ := hnr (T.co i x)
+  obtain ⟨ν, hν⟩ := T.near (T.co i x)
   set ν' : (FL.L d).Cn := (FL.cn d).symm ν with hν'
   have h1 : alv R ch FL lhat n o ⟨.inr l, ν'⟩ = o ⟨.inr l, ν'⟩ := by
     unfold alv
@@ -296,7 +295,7 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL R ch FL lhat
   set j : Fin J := ⟨k, hk⟩ with hj
   rw [Finset.sum_eq_single (imin (ldL R ch FL lhat n o) k)]
   · calc _ ≤ ∑ _d : FL.Di, fb (ldL R ch FL lhat n o) (k + 1) x :=
-          Finset.sum_le_sum fun d _ => num_law_le hg hnr j _ x d
+          Finset.sum_le_sum fun d _ => num_law_le hg j _ x d
       _ = _ := by rw [Finset.sum_const, card_univ, smul_eq_mul]
   · intro i _ hi
     refine Finset.sum_eq_zero fun d _ => ?_
@@ -304,13 +303,13 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL R ch FL lhat
     exact (isMin_iff _ j.castSucc i).1 hm
   · intro hn; exact absurd (mem_univ _) hn
 
-omit hg hnr in
+omit hg in
 open Classical in
 theorem NL_zero (x : T.X 0) : NL R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) = 0 := by
   unfold NL
   exact Finset.sum_eq_zero fun l _ => Finset.sum_eq_zero fun f _ => if_neg (nd_ne (Nat.succ_ne_zero _))
 
-omit hg hnr in
+omit hg in
 open Classical in
 theorem NL_none : NL R ch FL lhat n o none = 0 := by
   unfold NL

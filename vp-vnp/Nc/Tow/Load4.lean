@@ -133,7 +133,7 @@ noncomputable def kbar (FL : FlagLaws F T) (Uu AA lhat : ℕ) : ℝ :=
 
 section
 
-variable (hbD : b ≤ 2 * D) {ρ : ℝ} (hρ : 0 < ρ)
+variable {ρ : ℝ} (hρ : 0 < ρ)
   (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h) (hρD : 2 ≤ ρ * D)
 
 theorem kbar_nonneg : 0 ≤ kbar FL Uu AA lhat := by
@@ -157,7 +157,7 @@ theorem kap_zero_le : T.kap (lds R ch FL lhat n o 0) ≤ √h * (Fintype.card (T
   refine (mul_le_mul_of_nonneg_left h2 hA).trans (le_of_eq ?_)
   ring
 
-include hbD hρ hρ1 hρD in
+include hρ hρ1 hρD in
 /-- **The norms of the loads.** -/
 theorem kap_le : ∀ j : ℕ, ∀ hj : j < J + 1, T.kap (lds R ch FL lhat n o ⟨j, hj⟩) +
     √FL.C₁ * FL.a₁ / b * Fintype.card (T.X j) ≤ ρ ^ j * kbar FL Uu AA lhat := by
@@ -173,7 +173,7 @@ theorem kap_le : ∀ j : ℕ, ∀ hj : j < J + 1, T.kap (lds R ch FL lhat n o �
     intro hj
     have h1 := ih (by omega)
     have hjJ : j < J := by omega
-    have h2 := Paper.thm_tree_kappa (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hbD hρ.le hρ1 ⟨j, hjJ⟩
+    have h2 := Paper.thm_tree_kappa (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ.le hρ1 ⟨j, hjJ⟩
     have hcX : (Fintype.card (T.X j) : ℝ) = D * Fintype.card (T.X (j + 1)) := by exact_mod_cast T.card_X j hjJ
     set c : ℝ := √FL.C₁ * FL.a₁ / b with hc
     have hc0 : 0 ≤ c := by
@@ -189,9 +189,9 @@ theorem kap_le : ∀ j : ℕ, ∀ hj : j < J + 1, T.kap (lds R ch FL lhat n o �
     rw [pow_succ]
     linarith
 
-include hbD hρ hρ1 hρD in
+include hρ hρ1 hρD in
 theorem kap_le' (j : Fin (J + 1)) : T.kap (lds R ch FL lhat n o j) ≤ ρ ^ j.1 * kbar FL Uu AA lhat := by
-  have h1 := kap_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hbD hρ hρ1 hρD j.1 j.2
+  have h1 := kap_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ1 hρD j.1 j.2
   have : 0 ≤ √FL.C₁ * FL.a₁ / b * Fintype.card (T.X j.1) := by
     have := Real.sqrt_nonneg FL.C₁
     positivity
@@ -217,15 +217,15 @@ theorem sqrt_pow' {x : ℝ} (hx : 0 ≤ x) (j : ℕ) : √(x ^ j) = √x ^ j := 
 noncomputable def bhat (FL : FlagLaws F T) (Uu AA lhat : ℕ) (ρ : ℝ) : ℝ :=
   √(2 * h / Fintype.card (T.X 0)) * (max 1 (√D * ρ)) ^ J * kbar FL Uu AA lhat
 
-include hbD hρ hρ1 hρD in
+include hρ hρ1 hρD in
 /-- **Units between a node and its parent.** -/
 theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
     (T.bet (lds R ch FL lhat n o j) c : ℝ) ≤ bhat FL Uu AA lhat ρ := by
   have hX : 0 < Fintype.card (T.X j.1) := Fintype.card_pos_iff.2 ⟨c⟩
-  have hDpos : 0 < D := by have := T.b_pos; omega
+  have hDpos := T.D_pos
   have hjJ : j.1 ≤ J := Nat.le_of_lt_succ j.2
   have h1 := T.bet_le hjJ (lds R ch FL lhat n o j) c
-  have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hbD hρ hρ1 hρD j
+  have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ1 hρD j
   have h0 := card_X_pow (T := T) j.1 hjJ
   have hk := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
   have e1 : √(2 * h / Fintype.card (T.X j.1)) = √(2 * h / Fintype.card (T.X 0)) * √D ^ j.1 := by
@@ -243,12 +243,12 @@ theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
         calc (√D * ρ) ^ j.1 ≤ (max 1 (√D * ρ)) ^ j.1 := pow_le_pow_left₀ (by positivity) (le_max_right _ _) _
           _ ≤ _ := pow_le_pow_right₀ (le_max_left _ _) hjJ
 
-include hbD hρ hρ1 hρD in
+include hρ hρ1 hρD in
 /-- **Units of a stage.** -/
 theorem sum_bet_le_kbar (j : Fin (J + 1)) :
     ((∑ c, T.bet (lds R ch FL lhat n o j) c : ℕ) : ℝ) ≤ 2 * √h * ρ ^ j.1 * kbar FL Uu AA lhat := by
   have h1 := T.sum_bet_le (Nat.le_of_lt_succ j.2) (lds R ch FL lhat n o j)
-  have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hbD hρ hρ1 hρD j
+  have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ1 hρD j
   refine h1.trans ?_
   have := mul_le_mul_of_nonneg_left h2 (by positivity : 0 ≤ 2 * √h)
   linarith

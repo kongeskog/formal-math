@@ -84,7 +84,7 @@ and a constant times the loads at the chamber and below its children. -/
 theorem held_node_le
     -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
     (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
-    (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f) {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) {ℓf : ℕ}
+    {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) {ℓf : ℕ}
     (P : Nd T) (hini : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
     heldN R FL Pl n o (Pl.pt P) +
       (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR R ch FL Pl lhat n o r' else 0) ≤
@@ -103,7 +103,7 @@ theorem held_node_le
   have a3 : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
     NR_onN hg P
   have a4 : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di * onN f f0 P :=
-    NL_onN hg hnr P
+    NL_onN hg P
   have a5 := initN_le (Pl := Pl) (n := n) (ℓf := ℓf) P hini
   generalize NR R ch FL lhat (nn n) (oo R FL Pl o) P = NRv at a1 a2 a3
   generalize NL R ch FL lhat (nn n) (oo R FL Pl o) P = NLv at a1 a2 a4

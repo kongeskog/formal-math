@@ -246,14 +246,14 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
   · rw [Finset.sum_singleton]
 
 /-- **Paper: Theorem thm:tree, One stage.** "κ_{j+1} ≤ κ_j/2 + c'|X^(j+1)|", with ρ for 1/2, where 1 + 8C₁ ≤ ρ²h. -/
-theorem _root_.Paper.thm_tree_kappa (hbD : b ≤ 2 * D) {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h) (j : Fin J) :
+theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h) (j : Fin J) :
     T.kap (fun e : T.Ed (j + 1) => load R ch FL lhat n o (.edge j.succ e)) ≤
       ρ * T.kap (fun e : T.Ed j => load R ch FL lhat n o (.edge j.castSucc e)) +
         √FL.C₁ * FL.a₁ / b * Fintype.card (T.X (j + 1)) := by
   classical
   obtain ⟨i, hi⟩ := exists_isMin (load R ch FL lhat n o) j.castSucc
   obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
-  refine Tower.load_step j.2 hbD FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
+  refine Tower.load_step j.2 FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
     (fun ω => tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)) ?_ ?_
   · exact isMin_le hi
   · intro e' he'

@@ -48,10 +48,17 @@ noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (J
   vx_co := fun _ i => vert_cor_bijective _ i
   card_fl := card_U h
   b_pos := by positivity
+  D_pos := by positivity
+  bD := by omega
   h_pos := by omega
   cN := fun ν => ν.1.2
   dN := fun ν => x h ν.1.1 * ν.1.2
   n_ne := fun ν e => x_ne_one ν.1.1 (by simpa using e.symm)
+  near := fun f => by
+    have h4 := npair_sym (⟨0, by omega⟩ : Fin (h - 1)) f
+    rcases Sym2.eq_iff.1 h4 with ⟨e1, -⟩ | ⟨e1, -⟩
+    · exact ⟨npair ⟨0, by omega⟩ f, Or.inl e1.symm⟩
+    · exact ⟨npair ⟨0, by omega⟩ f, Or.inr e1.symm⟩
   nr := fun _ i => Equiv.ofBijective _ (nearFun_bijective h2 _ i)
   nr_vx0 := fun _ i e => rfl
   nr_vx1 := fun _ i e => by

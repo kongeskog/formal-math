@@ -35,14 +35,14 @@ theorem lev_eq (L : Tg T m AA → ℕ) (j : Fin (J + 1)) : lev L j.1 = fun e => 
 
 section
 
-variable (hbD : b ≤ 2 * D) {ρ : ℝ} (hρ : 0 < ρ) (hρ' : ρ < 1)
+variable {ρ : ℝ} (hρ : 0 < ρ) (hρ' : ρ < 1)
   (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h) (hρD : 2 ≤ ρ * D)
 
-include hbD hρ hρ' hρ1 hρD
+include hρ hρ' hρ1 hρD
 
 /-- **The plan obeys the rules.** -/
 theorem plan_ok_cap : (plan R FL Pl lhat U0 U1).Ok (capN FL U0 Uu AA lhat) :=
-  plan_ok fun n _ mv => num_le_cap hbD hρ hρ'.le hρ1 hρD
+  plan_ok fun n _ mv => num_le_cap hρ hρ'.le hρ1 hρD
     (fun a c => Nat.le_of_lt_succ (n a c).2) mv
 
 /-- All units of the tree. -/
@@ -50,7 +50,7 @@ theorem sum_fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL → ℕ} :
     ∑ i ∈ range (J + 1), ∑ c, fb (lev (load R ch FL lhat n o)) i c ≤ YhN FL Uu AA lhat ρ := by
   rw [Finset.sum_range]
   refine le_trans (le_of_eq ?_) (sum_bet_le_YhN (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o)
-    hbD hρ hρ' hρ1 hρD)
+    hρ hρ' hρ1 hρD)
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun c _ => ?_
   unfold fb
   rw [lev_eq]
@@ -61,7 +61,7 @@ omit hρ' in
 theorem fb_le {n : Fin AA → Fin AA → ℕ} {o : NM R FL → ℕ} (j : ℕ) (hj : j ≤ J) (c : T.X j) :
     fb (lev (load R ch FL lhat n o)) j c ≤ BhN FL Uu AA lhat ρ := by
   refine Nat.le_floor ?_
-  have h1 := bet_le_bhat (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hbD hρ hρ1 hρD
+  have h1 := bet_le_bhat (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hρ hρ1 hρD
     ⟨j, Nat.lt_succ_of_le hj⟩ c
   refine le_trans (le_of_eq ?_) h1
   unfold fb
@@ -74,7 +74,7 @@ omit hρ' hρ1 hρD in
 theorem BhN_pow_le (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hpq : 2 ≤ q) (hgain : ρ ^ q * (D : ℝ) ≤ 1) :
     (BhN FL Uu AA lhat ρ : ℝ) ^ q * (Fintype.card (T.X 0) : ℝ) ≤
       (2 * (h : ℝ)) ^ q * kbar FL Uu AA lhat ^ q := by
-  refine le_trans ?_ (bhat_pow_le hbD hρ hX hpq hgain)
+  refine le_trans ?_ (bhat_pow_le hρ hX hpq hgain)
   refine mul_le_mul_of_nonneg_right ?_ (by positivity)
   exact pow_le_pow_left₀ (Nat.cast_nonneg _) (Nat.floor_le (bhat_nonneg ρ)) q
 

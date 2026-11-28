@@ -29,12 +29,10 @@ variable {F : Type} [CommRing F] {h b D J m Uu : ℕ} {T : Tower h b D J}
 
 /-- The conditions on the tower and the laws. -/
 structure THypR (FL : FlagLaws F T) (ρ : ℝ) : Prop where
-  bD : b ≤ 2 * D
   ρ_pos : 0 < ρ
   ρ_lt : ρ < 1
   gain : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h
   two : 2 ≤ ρ * D
-  near : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f
 
 /-- The roles of the relay and of finitely many laws. -/
 noncomputable def kindList (F : Type) [CommRing F] (laws : List (Law F)) : List (Σ L : Law F, L.Ro) :=
@@ -79,8 +77,7 @@ theorem TCst.D_two : 2 ≤ D := by
   nlinarith
 
 theorem TCst.X_pos : 0 < Fintype.card (T.X 0) := by
-  have hD := hC.D_two
-  have h1 := Tower.card_X_le (T := T) (by omega : 0 < D) J le_rfl
+  have h1 := Tower.card_X_le (T := T) J le_rfl
   have := hC.bot_pos
   omega
 
@@ -128,7 +125,7 @@ theorem BhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 
     BhN FL Uu AA lh ρ ^ q * Fintype.card (T.X 0) ≤ (2 * c * kapB c m (Fintype.card (T.X 0)) lh) ^ q := by
   have h1 := kbar_kapB (lh := lh) hC hm hUu hAA
   have h0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh)
-  have h2 := BhN_pow_le (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh) hC.bD hC.ρ_pos hC.bot_pos
+  have h2 := BhN_pow_le (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh) hC.ρ_pos hC.bot_pos
     hC.pq hC.pow
   have hh : (h : ℝ) ≤ c := by exact_mod_cast hC.h_le
   have h3 : (2 * (h : ℝ)) ^ q * kbar FL Uu AA lh ^ q ≤
@@ -141,7 +138,7 @@ theorem BhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 
 end
 
 /-- Names of targets. -/
-theorem card_Tg_le {V : ℕ} (hD : 0 < D) (hV : 1 ≤ V) (hh : h ≤ V) (hm : m ≤ V) (hJ : J ≤ V)
+theorem card_Tg_le {V : ℕ} (hV : 1 ≤ V) (hh : h ≤ V) (hm : m ≤ V) (hJ : J ≤ V)
     {AA : ℕ} (hAA : AA ≤ V) (hX : Fintype.card (T.X 0) ≤ V) (hfl : Fintype.card (Sym2 T.Fl) ≤ V) :
     Fintype.card (Tg T m AA) ≤ 12 * V ^ 5 := by
   rw [← Fintype.card_congr (proxy_equiv% (Tg T m AA)), Fintype.card_sum, Fintype.card_sum, Fintype.card_sum, Fintype.card_unit,
@@ -149,12 +146,12 @@ theorem card_Tg_le {V : ℕ} (hD : 0 < D) (hV : 1 ≤ V) (hh : h ≤ V) (hm : m 
   have h1 : ∑ j : Fin (J + 1), Fintype.card (T.Ed j) ≤ 2 * V ^ 3 := by
     calc _ ≤ ∑ _j : Fin (J + 1), V * V := by
           refine Finset.sum_le_sum fun j _ => ?_
-          refine (Tower.card_ed_le hD (Nat.le_of_lt_succ j.2)).trans ?_
+          refine (Tower.card_ed_le (Nat.le_of_lt_succ j.2)).trans ?_
           gcongr
       _ = (J + 1) * (V * V) := by simp
       _ ≤ (2 * V) * (V * V) := Nat.mul_le_mul_right _ (by omega)
       _ = 2 * V ^ 3 := by ring
-  have h2 := (card_RM_le (T := T) (m := m) (AA := AA) hD).trans
+  have h2 := (card_RM_le (T := T) (m := m) (AA := AA)).trans
     (rmN_le (X0 := Fintype.card (T.X 0)) hV hh hm hJ hAA hX)
   have h3 : ∑ j : Fin J, Fintype.card (Σ i : Fin h, Σ _ : T.V (j + 1) i, Sym2 T.Fl) ≤ V ^ 4 := by
     calc _ ≤ ∑ _j : Fin J, V * (V * V) := by
@@ -163,7 +160,7 @@ theorem card_Tg_le {V : ℕ} (hD : 0 < D) (hV : 1 ≤ V) (hh : h ≤ V) (hm : m 
           calc _ ≤ ∑ _i : Fin h, V * V := by
                 refine Finset.sum_le_sum fun i _ => ?_
                 rw [Fintype.card_sigma, sum_const, card_univ, smul_eq_mul]
-                exact Nat.mul_le_mul ((Tower.card_V_le hD j.2 i).trans hX) hfl
+                exact Nat.mul_le_mul ((Tower.card_V_le j.2 i).trans hX) hfl
             _ = h * (V * V) := by simp
             _ ≤ V * (V * V) := Nat.mul_le_mul_right _ hh
       _ = J * (V * (V * V)) := by simp

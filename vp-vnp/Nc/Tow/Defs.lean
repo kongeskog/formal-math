@@ -54,12 +54,15 @@ structure Tower (h b D J : ℕ) where
   vx_co : ∀ {j}, j ≤ J → ∀ i, Function.Bijective fun c : X j => (vx i c, co i c)
   card_fl : Fintype.card Fl = b
   b_pos : 0 < b
+  D_pos : 0 < D
+  bD : b ≤ 2 * D
   h_pos : 0 < h
   /-- the ends of a near pair -/
   cN : Nr → Fl
   /-- the ends of a near pair -/
   dN : Nr → Fl
   n_ne : ∀ ν, cN ν ≠ dN ν
+  near : ∀ f, ∃ ν, cN ν = f ∨ dN ν = f
   /-- the edges of types other than `i` are the near pairs at the vertices of type `i` -/
   nr : ∀ {j}, j ≤ J → ∀ i, {e : Ed j // ty e ≠ i} ≃ V j i × Nr
   nr_vx0 : ∀ {j} (hj : j ≤ J) i (e : {e : Ed j // ty e ≠ i}), vx i (e0 e.1) = (nr hj i e).1

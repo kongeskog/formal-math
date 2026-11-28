@@ -37,7 +37,6 @@ variable {F : Type} [CommRing F] {h b D J m Uu AA A' U0 U1 : ℕ} {T : Tower h b
 variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
   (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
-  (hnr : ∀ f : T.Fl, ∃ ν, T.cN ν = f ∨ T.dN ν = f)
 
 variable (R ch FL Pl lhat n o) in
 /-- The loads. -/
@@ -70,7 +69,7 @@ theorem NR_onN (P : Nd T) : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P
       refine (NR_succ hg hj c).trans (le_trans (le_of_eq ?_) (Nat.le_add_left _ _))
       rfl
 
-include hg hnr in
+include hg in
 open Classical in
 theorem NL_onN (P : Nd T) : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di *
     onN (fun j x => 8 * fb (LfO R ch FL Pl lhat n o) j x + 3 * chF (LfO R ch FL Pl lhat n o) j x)
@@ -84,7 +83,7 @@ theorem NL_onN (P : Nd T) : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.
       rw [NL_zero]
       exact Nat.zero_le _
     | succ j =>
-      refine (NL_succ hg hnr hj c).trans (Nat.mul_le_mul_left _ ?_)
+      refine (NL_succ hg hj c).trans (Nat.mul_le_mul_left _ ?_)
       linarith
 
 open Classical in
