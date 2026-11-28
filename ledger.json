@@ -10,9 +10,15 @@
     }
   },
   "comments_seen_until": "2026-11-28T16:13:25Z",
-  "dispatched": {},
-  "lines": {},
-  "line_bases": {},
+  "dispatched": {
+    "226@4700be7fe24f39af455d7b5f8fcd1474524db9bb@622dd908e42f6a5ea0bdbc33b9e32345f1dccc8b@": "2026-11-28T16:17:12.434320339Z"
+  },
+  "lines": {
+    "226@4700be7fe24f39af455d7b5f8fcd1474524db9bb": []
+  },
+  "line_bases": {
+    "226@4700be7fe24f39af455d7b5f8fcd1474524db9bb": "21475cc36c2c14d6f1322558c6ad2bd95e8d9f6b"
+  },
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],
@@ -38,7 +44,11 @@
     }
   },
   "told": [],
-  "turn": null,
+  "turn": {
+    "id": "226@4700be7fe24f39af455d7b5f8fcd1474524db9bb",
+    "tree": "622dd908e42f6a5ea0bdbc33b9e32345f1dccc8b",
+    "at": "2026-11-28T16:17:12.434320339Z"
+  },
   "turns_voided": {},
   "turns_lost": {}
 }

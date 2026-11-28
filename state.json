@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T16:15:36.778487083Z",
+  "updated_at": "2026-11-28T16:17:12.434320339Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1402,13 +1402,27 @@
       "title": "restructure(Paper/Crossing): prove the crossing inequality as it is read; one limit, no compactness",
       "author": "kongeskog",
       "head_sha": "4700be7fe24f39af455d7b5f8fcd1474524db9bb",
-      "base_sha": null,
-      "status": "verifying",
+      "base_sha": "8b52c195b0f96030cf0d03379ffe5ee8801995f0",
+      "status": "stale",
       "created_at": "2026-11-28T16:03:43Z",
       "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
+      "metrics": {
+        "tokens": 751524,
+        "loc": 49594,
+        "decls": 4163,
+        "files": 312,
+        "bytes": 2861694,
+        "build_seconds": 216
+      },
+      "base_metrics": {
+        "tokens": 752765,
+        "loc": 49658,
+        "decls": 4167,
+        "files": 312,
+        "bytes": 2865768,
+        "build_seconds": null
+      },
+      "delta": -1241,
       "gates": [
         {
           "key": "format",
@@ -1416,69 +1430,78 @@
           "status": "pass"
         },
         {
+          "key": "quota",
+          "label": "Within the open-change limit",
+          "status": "pass"
+        },
+        {
           "key": "frozen",
           "label": "Frozen files untouched",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "scope",
           "label": "Changes stay in scope",
-          "status": "pending"
+          "status": "pass",
+          "detail": "2 files changed"
         },
         {
           "key": "deny",
           "label": "No banned constructs",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "no_increase",
           "label": "No more long lines or exceptions",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "added_lines",
           "label": "Added lines are clean",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "deleted_names",
           "label": "No deleted name still mentioned",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "conduct",
           "label": "Automation within the stated limits",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "comments",
           "label": "Added text within limits",
-          "status": "pending"
+          "status": "pass",
+          "detail": "the added lines hold 984 characters of comments and strings"
         },
         {
           "key": "improves",
           "label": "Score improves",
-          "status": "pending"
+          "status": "pass",
+          "detail": "tokens 752765 → 751524 (-1241)"
         },
         {
           "key": "compiles",
           "label": "Project compiles",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "same_theorems",
           "label": "Same theorems proved",
-          "status": "pending"
+          "status": "pass"
         },
         {
           "key": "fresh",
           "label": "Verified on current main",
-          "status": "pending"
+          "status": "pending",
+          "detail": "Main moved; re-verifying on the new main"
         }
       ],
       "idea": 225,
       "url": "https://github.com/kongeskog/formal-math/pull/226",
-      "run_url": null,
+      "run_url": "https://github.com/kongeskog/formal-math/actions/runs/46163124108",
       "merge_sha": null,
       "reason": null,
       "technique": "restructure",
