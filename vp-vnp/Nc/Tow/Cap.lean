@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import Nc.Tow.Load4
 
 /-!
-# The number of units of a move; numbers
+# The number of units of a move; all units between nodes and their parents
 -/
 
 set_option linter.unusedSectionVars false
