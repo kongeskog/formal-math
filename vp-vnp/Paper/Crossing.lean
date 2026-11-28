@@ -304,19 +304,22 @@ theorem prop_crossing_tensors (K : Type) [Field K] {p q : ℝ} (hp : 0 ≤ p) (h
       Real.sq_sqrt (Nat.cast_nonneg (N : ℕ)), Real.sq_sqrt hn0.le, ← add_div, div_le_iff₀ hn0, Nat.cast_sub hN, sub_add_cancel]
     exact hH
 
-/-- Proof of Proposition prop:crossing: "So it suffices to treat d_φ for a spectral point φ"; this is the statement for d_φ. "A limit
-of (r, l) along a subsequence proves the first statement." -/
-theorem prop_crossing_spectral {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) {I : Type} [Fintype I]
-    [DecidableEq I] (F : Spec K I) (x y v u o o' w w' : I) :
-    ∃ z ∈ quarter (2 * (p ^ 2 + q ^ 2)), p * F.e x v + q * F.e y u ≤
-      min (p * F.e x o + q * F.e y o + p * F.e v o' + q * F.e u o' + z.1 * F.e o o')
-        (p * F.e x w + q * F.e u w + q * F.e y w' + p * F.e v w' + z.2 * F.e w w') := by
-  refine exists_quarter (by positivity) fun δ hδ => ?_
+/-- Proof of Proposition prop:crossing: "So it suffices to treat d_φ for a spectral point φ"; this
+is the display eq:Q for d_φ. For every δ > 0 the tensors give r, l ≥ 0 with r² + l² ≤ 2(p² + q²) and
+the two bounds of the proposition up to δ. "Add the two bounds and use rλ ≤ (τ/2)r² + λ²/(2τ)":
+then r and l are gone, and δ → 0 needs no limit of the pairs (r, l). -/
+theorem eq_Q_spectral {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) {I : Type} [Fintype I]
+    [DecidableEq I] (F : Spec K I) (x v y u o o' w w' : I) (τ : ℝ) (hτ : 0 < τ) :
+    2 * (p * F.e x v + q * F.e y u) ≤
+      p * (F.e x o + F.e v o' + F.e x w + F.e v w') +
+        q * (F.e y o + F.e u o' + F.e u w + F.e y w') +
+        τ * (p ^ 2 + q ^ 2) + (F.e o o' ^ 2 + F.e w w' ^ 2) / (2 * τ) := by
+  refine le_of_forall_pos_le_add fun η hη => ?_
+  obtain ⟨δ, hδ, rfl⟩ : ∃ δ, 0 < δ ∧ η = 2 * δ := ⟨η / 2, by positivity, by ring⟩
   obtain ⟨α, β, J, _, _, _, _, _, _, _, Ψ, R, L, s, hs, hR, hL, hΨ, hJ, hα, hβ, hrl⟩ :=
     prop_crossing_tensors K hp hq (δ := δ / 8) (by positivity)
   obtain ⟨j, hj⟩ := prop_crossing_term F Ψ R L hR hL hΨ x y v u o o' w w'
   obtain ⟨r, l, hr, hl, hrl, h1, h2⟩ := hrl j
-  refine ⟨(r, l), ⟨hr, hl, hrl⟩, ?_⟩
   set A := Real.log (Fintype.card α)
   set B := Real.log (Fintype.card β)
   obtain ⟨hα1, hα2⟩ := abs_le.1 hα
@@ -337,107 +340,63 @@ theorem prop_crossing_spectral {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) {I : Ty
     nlinarith
   have b1 := lo x v (Z := A) (c := p) (by linarith)
   have b2 := lo y u (Z := B) (c := q) (by linarith)
-  rw [← min_add_add_right]
-  refine le_min ?_ ?_
-  · have hj1 := hj.trans (add_le_add le_rfl (min_le_left _ _))
+  have k1 : p * F.e x v + q * F.e y u ≤
+      p * F.e x o + q * F.e y o + p * F.e v o' + q * F.e u o' + r * F.e o o' + δ := by
+    have hj1 := hj.trans (add_le_add le_rfl (min_le_left _ _))
     have c1 := hi x o (Z := A) (c := p) (by linarith)
     have c2 := hi y o (Z := B) (c := q) (by linarith)
     have c3 := hi v o' (Z := A) (c := p) (by linarith)
     have c4 := hi u o' (Z := B) (c := q) (by linarith)
     have c5 := hi o o' (Z := Real.log (R j)) (c := r) (by linarith)
     refine le_of_mul_le_mul_right ?_ hs
-    simp only
     nlinarith
-  · have hj1 := hj.trans (add_le_add le_rfl (min_le_right _ _))
+  have k2 : p * F.e x v + q * F.e y u ≤
+      p * F.e x w + q * F.e u w + q * F.e y w' + p * F.e v w' + l * F.e w w' + δ := by
+    have hj1 := hj.trans (add_le_add le_rfl (min_le_right _ _))
     have c1 := hi x w (Z := A) (c := p) (by linarith)
     have c2 := hi u w (Z := B) (c := q) (by linarith)
     have c3 := hi v w' (Z := A) (c := p) (by linarith)
     have c4 := hi y w' (Z := B) (c := q) (by linarith)
     have c5 := hi w w' (Z := Real.log (L j)) (c := l) (by linarith)
     refine le_of_mul_le_mul_right ?_ hs
-    simp only
     nlinarith
-
-/-- Proposition prop:crossing, the first statement. "Pull the price back to eight distinct points; this covers coincidences. Both
-inequalities are homogeneous in the distances, and the pairs (r, l) lie in a compact set, so they pass to limits." -/
-theorem prop_crossing_first {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w w' : Y)
-    {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) :
-    ∃ r l : ℝ, r ^ 2 + l ^ 2 ≤ 2 * (p ^ 2 + q ^ 2) ∧
-      p * d x v + q * d y u ≤ p * d x o + q * d y o + p * d v o' + q * d u o' + r * d o o' ∧
-      p * d x v + q * d y u ≤ p * d x w + q * d u w + q * d y w' + p * d v w' + l * d w w' := by
-  set ρ := 2 * (p ^ 2 + q ^ 2)
-  have hρ0 : 0 ≤ ρ := by positivity
-  obtain ⟨z, ⟨-, -, h3⟩, h⟩ : ∃ z ∈ quarter ρ, p * d x v + q * d y u ≤
-      min (p * d x o + q * d y o + p * d v o' + q * d u o' + z.1 * d o o')
-        (p * d x w + q * d u w + q * d y w' + p * d v w' + z.2 * d w w') := by
-    refine exists_quarter hρ0 fun δ hδ => ?_
-    set T := 3 * (p + q) + ρ + 1
-    have hT0 : 0 < T := by positivity
-    set η := δ / T with hη
-    have hη0 : 0 < η := by positivity
-    have hηT : η * T = δ := by rw [hη]; field_simp
-    obtain ⟨F, c, hc, hF⟩ := hd.exists_spec ![x, y, v, u, o, o', w, w'] hη0
-    obtain ⟨z, hz, h⟩ := prop_crossing_spectral hp hq F 0 1 2 3 4 5 6 7
-    refine ⟨z, hz, ?_⟩
-    obtain ⟨hz1, hz2, hz3⟩ := hz
-    have q1 : z.1 ≤ ρ + 1 := by nlinarith [sq_nonneg (z.1 - 1)]
-    have q2 : z.2 ≤ ρ + 1 := by nlinarith [sq_nonneg (z.2 - 1)]
-    have lo : ∀ (i j : Fin 8) {t : ℝ}, 0 ≤ t →
-        t * (c * F.e i j) ≤ t * d (![x, y, v, u, o, o', w, w'] i) (![x, y, v, u, o, o', w, w'] j) +
-          t * η := by
-      intro i j t ht
-      rw [← mul_add]
-      exact mul_le_mul_of_nonneg_left (by linarith [(abs_lt.1 (hF i j)).1]) ht
-    have hi : ∀ (i j : Fin 8) {t : ℝ}, 0 ≤ t →
-        t * d (![x, y, v, u, o, o', w, w'] i) (![x, y, v, u, o, o', w, w'] j) ≤
-          t * (c * F.e i j) + t * η := by
-      intro i j t ht
-      rw [← mul_add]
-      exact mul_le_mul_of_nonneg_left (by linarith [(abs_lt.1 (hF i j)).2]) ht
-    have a1 : p * d x v ≤ p * (c * F.e 0 2) + p * η := hi 0 2 hp
-    have a2 : q * d y u ≤ q * (c * F.e 1 3) + q * η := hi 1 3 hq
-    have a3 : p * (c * F.e 0 4) ≤ p * d x o + p * η := lo 0 4 hp
-    have a4 : q * (c * F.e 1 4) ≤ q * d y o + q * η := lo 1 4 hq
-    have a5 : p * (c * F.e 2 5) ≤ p * d v o' + p * η := lo 2 5 hp
-    have a6 : q * (c * F.e 3 5) ≤ q * d u o' + q * η := lo 3 5 hq
-    have a7 : z.1 * (c * F.e 4 5) ≤ z.1 * d o o' + z.1 * η := lo 4 5 hz1
-    have a8 : p * (c * F.e 0 6) ≤ p * d x w + p * η := lo 0 6 hp
-    have a9 : q * (c * F.e 3 6) ≤ q * d u w + q * η := lo 3 6 hq
-    have b1 : q * (c * F.e 1 7) ≤ q * d y w' + q * η := lo 1 7 hq
-    have b2 : p * (c * F.e 2 7) ≤ p * d v w' + p * η := lo 2 7 hp
-    have b3 : z.2 * (c * F.e 6 7) ≤ z.2 * d w w' + z.2 * η := lo 6 7 hz2
-    have c1 : z.1 * η ≤ (ρ + 1) * η := mul_le_mul_of_nonneg_right q1 hη0.le
-    have c2 : z.2 * η ≤ (ρ + 1) * η := mul_le_mul_of_nonneg_right q2 hη0.le
-    rw [← min_add_add_right]
-    refine le_min ?_ ?_
-    · have h4 := mul_le_mul_of_nonneg_left (h.trans (min_le_left _ _)) hc
-      linarith
-    · have h4 := mul_le_mul_of_nonneg_left (h.trans (min_le_right _ _)) hc
-      linarith
-  exact ⟨z.1, z.2, h3, le_min_iff.1 h⟩
-
-/-- **Paper: display eq:Q**, the second statement of Proposition prop:crossing. "Let x, v, y, u, o, o′, w, w′ be points of
-a price and p, q ≥ 0. There are r, l ≥ 0 with r² + l² ≤ 2(p² + q²) such that p|xv| + q|yu| is at most each of
-p|xo| + q|yo| + p|vo′| + q|uo′| + r|oo′|, p|xw| + q|uw| + q|yw′| + p|vw′| + l|ww′|. In particular, for every τ > 0,
-2(p|xv| + q|yu|) ≤ p(|xo| + |vo′| + |xw| + |vw′|) + q(|yo| + |uo′| + |uw| + |yw′|) + τ(p² + q²) + (|oo′|² + |ww′|²)/(2τ)."
-The first statement is prop_crossing_first; for this one, "add the two bounds and use rλ ≤ (τ/2)r² + λ²/(2τ)". -/
-theorem eq_Q {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w w' : Y)
-    {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) (τ : ℝ) (hτ : 0 < τ) :
-    2 * (p * d x v + q * d y u) ≤
-      p * (d x o + d v o' + d x w + d v w') + q * (d y o + d u o' + d u w + d y w') +
-        τ * (p ^ 2 + q ^ 2) + (d o o' ^ 2 + d w w' ^ 2) / (2 * τ) := by
-  obtain ⟨r, l, hrl, h1, h2⟩ := prop_crossing_first hd x v y u o o' w w' hp hq
   have am : ∀ a b : ℝ, a * b ≤ τ / 2 * a ^ 2 + b ^ 2 / (2 * τ) := by
     intro a b
     have e : τ / 2 * a ^ 2 + b ^ 2 / (2 * τ) - a * b = (τ * a - b) ^ 2 / (2 * τ) := by
       field_simp
       ring
-    nlinarith [div_nonneg (sq_nonneg (τ * a - b)) (by positivity : (0 : ℝ) ≤ 2 * τ)]
-  have a1 := am r (d o o')
-  have a2 := am l (d w w')
+    rw [← sub_nonneg, e]
+    positivity
+  have a1 := am r (F.e o o')
+  have a2 := am l (F.e w w')
   have a3 : τ / 2 * (r ^ 2 + l ^ 2) ≤ τ / 2 * (2 * (p ^ 2 + q ^ 2)) :=
     mul_le_mul_of_nonneg_left hrl (by positivity)
   rw [add_div]
-  nlinarith
+  linarith only [k1, k2, a1, a2, a3]
+
+/-- **Paper: display eq:Q**, the second statement of Proposition prop:crossing, which is the one
+that is used. "Let x, v, y, u, o, o′, w, w′ be points of a price and p, q ≥ 0. […] For every τ > 0,
+2(p|xv| + q|yu|) ≤ p(|xo| + |vo′| + |xw| + |vw′|) + q(|yo| + |uo′| + |uw| + |yw′|) + τ(p² + q²)
++ (|oo′|² + |ww′|²)/(2τ)." "Pull the price back to eight distinct points; this covers coincidences."
+The display is a closed condition on the distances, and for c·d_φ it is the display for d_φ with
+τ/c for τ, multiplied by c. -/
+theorem eq_Q {Y : Type} {d : Y → Y → ℝ} (hd : IsPrice K d) (x v y u o o' w w' : Y)
+    {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) (τ : ℝ) (hτ : 0 < τ) :
+    2 * (p * d x v + q * d y u) ≤
+      p * (d x o + d v o' + d x w + d v w') + q * (d y o + d u o' + d u w + d y w') +
+        τ * (p ^ 2 + q ^ 2) + (d o o' ^ 2 + d w w' ^ 2) / (2 * τ) := by
+  have h : (fun i j : Fin 8 => d (![x, v, y, u, o, o', w, w'] i) (![x, v, y, u, o, o', w, w'] j)) ∈
+      {D : Fin 8 → Fin 8 → ℝ | 2 * (p * D 0 1 + q * D 2 3) ≤
+        p * (D 0 4 + D 1 5 + D 0 6 + D 1 7) + q * (D 2 4 + D 3 5 + D 3 6 + D 2 7) +
+          τ * (p ^ 2 + q ^ 2) + (D 4 5 ^ 2 + D 6 7 ^ 2) / (2 * τ)} :=
+    prices_induction (hd 8 _) (isClosed_le (by fun_prop) (by fun_prop)) fun φ c hc => by
+      rcases hc.eq_or_lt with rfl | hc0
+      · have h0 : 0 ≤ τ * (p ^ 2 + q ^ 2) := by positivity
+        simpa using h0
+      · have h := mul_le_mul_of_nonneg_left
+          (eq_Q_spectral hp hq φ 0 1 2 3 4 5 6 7 (τ / c) (by positivity)) hc
+        refine (le_of_eq (by ring)).trans (h.trans_eq ?_)
+        field_simp
+  exact h
 
 end Paper
