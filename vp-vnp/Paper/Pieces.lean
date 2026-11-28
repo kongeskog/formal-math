@@ -624,6 +624,10 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
           Nonempty (PieceCut (kindList A ((univ : Finset VL.Di).toList.map VL.L)) mu v K T k C) := by
   classical
   -- the tree theorem (thm:tree): towers for the nodes, then thin trees on one of them
+  have he2 : 2 ≤ ee h := by
+    unfold Nc.Tower.ee
+    have : 3 * 2 ≤ h * (h - 1) := Nat.mul_le_mul h3 (by omega)
+    omega
   obtain ⟨ct, htow⟩ := tree_towers VL h3 hgain
   generalize hC₀ : cTree ct = C₀
   generalize he : 300 * ee h + 64 = e
