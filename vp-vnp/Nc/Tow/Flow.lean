@@ -175,7 +175,7 @@ theorem alvN_le (ν : NM R FL (ch := ch)) (t : ℕ) : alvN o ν t ≤ o ν := by
     · exact le_rfl
     · exact min_le_left _ _
 
-theorem alvN_zero (ν : NM R FL (ch := ch)) : alvN R ch FL o ν 0 = 0 := by
+theorem alvN_zero (ν : NM R FL (ch := ch)) : alvN o ν 0 = 0 := by
   rcases ν with ⟨x | l, ν⟩
   · rw [alvN_inl]
     split_ifs <;> rfl
@@ -393,7 +393,7 @@ theorem ld_congr {N : Mv T R ch FL → ℕ}
 
 theorem numS_congr {t : ℕ} (ho : ∀ mv : Mv T R ch FL, timeM R ch FL mv < t →
     ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) :
-    numS R ch FL lhat n o t = numS R ch FL lhat n o' t := by
+    numS lhat n o t = numS lhat n o' t := by
   induction t with
   | zero => funext mv; rfl
   | succ t ih =>
@@ -410,7 +410,7 @@ theorem numS_congr {t : ℕ} (ho : ∀ mv : Mv T R ch FL, timeM R ch FL mv < t �
 
 theorem num_congr {mv : Mv T R ch FL}
     (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
-    num R ch FL lhat n o mv = num R ch FL lhat n o' mv := by
+    num lhat n o mv = num lhat n o' mv := by
   rw [num, num, numS_stable (timeM_lt mv), numS_stable (timeM_lt mv), numS_congr ho]
   refine numF_congr fun τ _ => ld_congr ?_ τ
   intro mv' hmv'
@@ -420,7 +420,7 @@ theorem num_congr {mv : Mv T R ch FL}
 
 theorem load_congr {τ : Tg T m AA} {t : ℕ} (hτ : tgTime τ ≤ t)
     (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < t → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩) :
-    load R ch FL lhat n o τ = load R ch FL lhat n o' τ := by
+    load lhat n o τ = load lhat n o' τ := by
   rw [← ld_numS hτ, ← ld_numS hτ, numS_congr ho]
   refine ld_congr ?_ τ
   intro mv' hmv'
@@ -430,7 +430,7 @@ theorem load_congr {τ : Tg T m AA} {t : ℕ} (hτ : tgTime τ ≤ t)
 
 theorem good_congr {mv : Mv T R ch FL}
     (ho : ∀ mv' : Mv T R ch FL, timeM R ch FL mv' < timeM R ch FL mv → ∀ c, o ⟨mv', c⟩ = o' ⟨mv', c⟩)
-    (ho' : ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) : GoodMv R ch FL lhat n o mv ↔ GoodMv R ch FL lhat n o' mv := by
+    (ho' : ∀ c, o ⟨mv, c⟩ = o' ⟨mv, c⟩) : GoodMv lhat n o mv ↔ GoodMv lhat n o' mv := by
   have hnum := num_congr (lhat := lhat) (n := n) ho
   rcases mv with x | l
   · simp only [goodMv_inl, hnum, ho']

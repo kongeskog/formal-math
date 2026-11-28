@@ -380,9 +380,9 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
     · exact h2.2
 
 theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)) (ν : Bool) :
-    alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load R ch FL lhat n o (.edge j.castSucc e) ∧
-    (¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) →
-      alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
+    alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load lhat n o (.edge j.castSucc e) ∧
+    (¬ IsMin (load lhat n o) j.castSucc (T.ty e) →
+      alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
   obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
   have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0
   have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) (⟨.mid j e s, hx⟩ : {x : RM T m AA // okR T R ch x}) ν

@@ -29,8 +29,8 @@ def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
   | .fin e, β => some ⟨Fin.last J, if β then T.e1 e else T.e0 e⟩
   | _, _ => none
 
-theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i e)) (hne : num R ch FL lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
-    i = imin (lev (load R ch FL lhat n o)) j.1 := by
+theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i e)) (hne : num lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
+    i = imin (lev (load lhat n o)) j.1 := by
   classical
   rw [num_eq, numF] at hne
   split_ifs at hne with ha
@@ -39,12 +39,12 @@ theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR T R ch (.inn j i 
 
 
 theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s))
-    (hne : num R ch FL lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
-    T.ty e = imin (lev (load R ch FL lhat n o)) j.1 := by
+    (hne : num lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
+    T.ty e = imin (lev (load lhat n o)) j.1 := by
   obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
   have h2 := (num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0).2
   by_contra hcon
-  have h3 : ¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) :=
+  have h3 : ¬ IsMin (load lhat n o) j.castSucc (T.ty e) :=
     fun hm => hcon ((isMin_iff _ j.castSucc _).1 hm)
   have := h2 h3
   omega
@@ -54,7 +54,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
     (hne : num lhat n o (.inl ⟨x, hx⟩) ≠ 0) :
     ∃ (j : ℕ) (hj : j ≤ J) (c : T.X j), chd x β = some ⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩ ∧
       hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
-        s(nd T j hj c, parN (lev (load R ch FL lhat n o)) j c) := by
+        s(nd T j hj c, parN (lev (load lhat n o)) j c) := by
   have e0 : ∀ β : Bool, hN (⟨.inl ⟨x, hx⟩, β⟩ : NM R FL) =
       if β then s(tri T R ch x 1, tri T R ch x 2) else s(tri T R ch x 0, tri T R ch x 1) := by
     intro β
@@ -71,7 +71,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       exact (edgeO_hold (R := R) (ch := ch) (AA := AA) (m := m) (c := ch a) (c' := ch c) (γ := γ) (s := s.1 + 1) hs).1 hd
   · have hi := num_inn j i e hx hne
     have hjJ := j.2
-    have hpar : ∀ c : T.X j.1, parN (lev (load R ch FL lhat n o)) j.1 c =
+    have hpar : ∀ c : T.X j.1, parN (lev (load lhat n o)) j.1 c =
         nd T (j + 1) j.2 (hst T i c) := by
       intro c
       unfold parN
@@ -92,7 +92,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
       rw [h2, Sym2.eq_swap]
   · have hi := num_mid j e s hx hne
     have hjJ := j.2
-    have hpar : ∀ c : T.X j.1, parN (lev (load R ch FL lhat n o)) j.1 c =
+    have hpar : ∀ c : T.X j.1, parN (lev (load lhat n o)) j.1 c =
         nd T (j + 1) j.2 (hst T (T.ty e) c) := by
       intro c
       unfold parN
@@ -119,7 +119,7 @@ theorem done_hold {x : RM T m AA} (hx : okR T R ch x) {β : Bool} (hd : tgR T R 
         rw [hq, Sym2.eq_swap]
       · change s(nd T (j + 1) j.2 (hst T (T.ty e) (T.e1 e)), nd T j j.2.le (T.e1 e)) = _
         rw [Sym2.eq_swap]
-  · have hpar : ∀ c : T.X J, parN (lev (load R ch FL lhat n o)) J c = none := by
+  · have hpar : ∀ c : T.X J, parN (lev (load lhat n o)) J c = none := by
       intro c
       unfold parN
       rw [dif_neg (by omega)]

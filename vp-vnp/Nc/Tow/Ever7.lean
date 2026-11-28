@@ -83,7 +83,7 @@ open Classical in
 and a constant times the loads at the chamber and below its children. -/
 theorem held_node_le
     -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-    (hg : ∀ mv, GoodMv R ch FL lhat (nn n) (oo R FL Pl o) mv)
+    (hg : ∀ mv, GoodMv lhat (nn n) (oo R FL Pl o) mv)
     {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) {ℓf : ℕ}
     (P : Nd T) (hini : ∀ a, P = nd T 0 (Nat.zero_le _) (ch a) → ∑ c, ((n a c).1 + (n c a).1) ≤ ℓf) :
     heldN R FL Pl n o (Pl.pt P) +
@@ -98,12 +98,12 @@ theorem held_node_le
   set f0 := ∑ e : T.Ed J, Lf J e with hf0
   set c1 := 2 * Fintype.card T.Nr * FL.G₁ with hc1
   have a1 : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n (Pl.pt P) + chanN R FL Pl (Pl.pt P) +
-      2 * NR R ch FL lhat (nn n) (oo R FL Pl o) P + c1 * NL R ch FL lhat (nn n) (oo R FL Pl o) P :=
+      2 * NR lhat (nn n) (oo R FL Pl o) P + c1 * NL lhat (nn n) (oo R FL Pl o) P :=
     held_le hg P
   have a2 := pads_node (R := R) (Pl := Pl) (lhat := lhat) (n := n) (o := o) hSm P
-  have a3 : NR R ch FL lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
+  have a3 : NR lhat (nn n) (oo R FL Pl o) P ≤ isB ch P * (2 * m * lhat) + onN f f0 P :=
     NR_onN hg P
-  have a4 : NL R ch FL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di * onN f f0 P :=
+  have a4 : NL lhat (nn n) (oo R FL Pl o) P ≤ Fintype.card FL.Di * onN f f0 P :=
     NL_onN hg P
   have a5 := initN_le (Pl := Pl) (n := n) (ℓf := ℓf) P hini
   generalize NR lhat (nn n) (oo R FL Pl o) P = NRv at a1 a2 a3

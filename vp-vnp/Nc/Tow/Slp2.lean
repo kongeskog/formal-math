@@ -154,7 +154,7 @@ theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ} (hN
   · refine CY.mono hY (a := 1) ((CY.op hA (fun s t => if s = t then t else 0) (CY.base (hs.o _))
       (CY.base (hN (.inl y))) fun x => hA.lt_of_le (hlt x)).congr fun x => ?_) (by omega)
     exact (alvN_inl y ν _).symm
-  · have hg : PY Dd H Y 1 fun x => GoodL R ch FL (ox x) l (Nf x (.inr l)) :=
+  · have hg : PY Dd H Y 1 fun x => GoodL (ox x) l (Nf x (.inr l)) :=
       PY.rel hA (fun q t => b * q ≤ FL.G₁ * t ^ 2) (CY.base (hs.q l)) (CY.base (hN (.inr l)))
     have ho : ∀ x, ox x ⟨.inr l, ν⟩ ≤ Y := fun x => (hR.o x _).trans (hB.u1 ⟨.inr l, ν⟩)
     have hm : CY Dd H Y 1 fun x => min (ox x ⟨.inr l, ν⟩) (Nf x (.inr l)) :=
@@ -166,9 +166,9 @@ theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ} (hN
 
 /-- Loads from alive units. -/
 theorem cy_ld (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ}
-    (ha : ∀ ν : NM R FL, (fun x => alvN R ch FL (ox x) ν (Nf x ν.1)) ∈ H) (τ : Tg T m AA) :
-    CY Dd H Y 3 fun x => ld R ch FL lhat (nx x) (ox x) (Nf x) τ := by
-  have hle : ∀ x, ld R ch FL lhat (nx x) (ox x) (Nf x) τ ≤ Y := fun x =>
+    (ha : ∀ ν : NM R FL, (fun x => alvN (ox x) ν (Nf x ν.1)) ∈ H) (τ : Tg T m AA) :
+    CY Dd H Y 3 fun x => ld lhat (nx x) (ox x) (Nf x) τ := by
+  have hle : ∀ x, ld lhat (nx x) (ox x) (Nf x) τ ≤ Y := fun x =>
     (ld_le (hR.n x) (hR.o x) _ _).trans hB.w
   have e : ∀ x, ld lhat (nx x) (ox x) (Nf x) τ = bt R ch lhat (nx x) τ +
       ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM R ch FL ν.1 ν.2 = τ),
@@ -177,7 +177,7 @@ theorem cy_ld (hs : Stat nx ox lhat H) {Nf : Inp → Mv T R ch FL → ℕ}
     rw [Finset.sum_filter]
     rfl
   have h1 : CY Dd H Y 2 fun x => ∑ ν ∈ univ.filter (fun ν : NM R FL => tgM R ch FL ν.1 ν.2 = τ),
-        alvN R ch FL (ox x) ν (Nf x ν.1) := by
+        alvN (ox x) ν (Nf x ν.1) := by
     refine CY.sum hA _ ((card_filter_le _ _).trans hB.nm) (fun ν _ => CY.base (ha ν))
       fun x => hA.lt_of_le ?_
     have := hle x

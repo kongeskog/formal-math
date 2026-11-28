@@ -164,7 +164,7 @@ end Causal
 /-- **The plan obeys the rules.** -/
 theorem plan_ok {cap : ℕ}
     (hcap : ∀ (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) mv,
-      num R ch FL lhat (nn n) (oo R FL Pl o) mv ≤ cap) : (plan R FL Pl lhat U0 U1).Ok cap where
+      num lhat (nn n) (oo R FL Pl o) mv ≤ cap) : (plan R FL Pl lhat U0 U1).Ok cap where
   causal n o o' z ho := consM_congr _ fun mv h => oo_congr (P := (· < z.1)) ho (lt_of_time h)
   causal' n o o' x ho := num_congr fun mv h => oo_congr (P := (· < x)) ho (lt_of_time h)
   causal'' n o o' x ho :=

@@ -147,8 +147,8 @@ theorem kbar_nonneg : 0 ≤ kbar FL Uu AA lhat := by
   have := Real.sqrt_nonneg FL.C₁
   positivity
 
-theorem kap_zero_le : T.kap (lds R ch FL lhat n o 0) ≤ √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by
-  have h1 : ∀ e : T.Ed 0, (lds R ch FL lhat n o 0 e : ℝ) ^ 2 ≤ (nhat T Uu AA lhat : ℝ) ^ 2 := by
+theorem kap_zero_le : T.kap (lds lhat n o 0) ≤ √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by
+  have h1 : ∀ e : T.Ed 0, (lds lhat n o 0 e : ℝ) ^ 2 ≤ (nhat T Uu AA lhat : ℝ) ^ 2 := by
     intro e
     refine pow_le_pow_left₀ (Nat.cast_nonneg _) ?_ 2
     exact_mod_cast Paper.thm_tree_start e
@@ -198,7 +198,7 @@ theorem kap_le : ∀ j : ℕ, ∀ hj : j < J + 1, T.kap (lds lhat n o ⟨j, hj�
     linarith
 
 include hH in
-theorem kap_le' (j : Fin (J + 1)) : T.kap (lds R ch FL lhat n o j) ≤ ρ ^ j.1 * kbar FL Uu AA lhat := by
+theorem kap_le' (j : Fin (J + 1)) : T.kap (lds lhat n o j) ≤ ρ ^ j.1 * kbar FL Uu AA lhat := by
   have h1 := kap_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j.1 j.2
   have : 0 ≤ √FL.C₁ * FL.a₁ / b * Fintype.card (T.X j.1) := by
     have := Real.sqrt_nonneg FL.C₁
@@ -233,7 +233,7 @@ theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
   have hX : 0 < Fintype.card (T.X j.1) := Fintype.card_pos_iff.2 ⟨c⟩
   have hDpos := T.b_pos
   have hjJ : j.1 ≤ J := Nat.le_of_lt_succ j.2
-  have h1 := T.bet_le (lds R ch FL lhat n o j) c
+  have h1 := T.bet_le (lds lhat n o j) c
   have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
   have h0 := card_X_pow (T := T) j.1 hjJ
   have hk := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
@@ -243,7 +243,7 @@ theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
     field_simp
   refine h1.trans ?_
   rw [e1]
-  calc √(2 * h / Fintype.card (T.X 0)) * √b ^ j.1 * T.kap (lds R ch FL lhat n o j) ≤
+  calc √(2 * h / Fintype.card (T.X 0)) * √b ^ j.1 * T.kap (lds lhat n o j) ≤
       √(2 * h / Fintype.card (T.X 0)) * √b ^ j.1 * (ρ ^ j.1 * kbar FL Uu AA lhat) :=
         mul_le_mul_of_nonneg_left h2 (by positivity)
     _ = √(2 * h / Fintype.card (T.X 0)) * (√b * ρ) ^ j.1 * kbar FL Uu AA lhat := by
@@ -257,8 +257,8 @@ theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
 include hH in
 /-- **Units of a stage.** -/
 theorem sum_bet_le_kbar (j : Fin (J + 1)) :
-    ((∑ c, T.bet (lds R ch FL lhat n o j) c : ℕ) : ℝ) ≤ 2 * √h * ρ ^ j.1 * kbar FL Uu AA lhat := by
-  have h1 := T.sum_bet_le (lds R ch FL lhat n o j)
+    ((∑ c, T.bet (lds lhat n o j) c : ℕ) : ℝ) ≤ 2 * √h * ρ ^ j.1 * kbar FL Uu AA lhat := by
+  have h1 := T.sum_bet_le (lds lhat n o j)
   have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
   refine h1.trans ?_
   have := mul_le_mul_of_nonneg_left h2 (by positivity : 0 ≤ 2 * √h)

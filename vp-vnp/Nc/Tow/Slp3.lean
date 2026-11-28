@@ -172,7 +172,7 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
   obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := LMv T FL) (fun l => ind fun x => Pick FL (L x) l) (a := 7) (e := 1) hl
     (fun l => py_pick hA hB m3 f3 l) (by omega)
   have m4 : ∀ τ, (fun x => L x τ) ∈ H4 := fun τ => u4 (m3 τ)
-  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv T R ch FL) (fun mv x => numF R ch FL (L x) mv) (a := 2) (e := 1)
+  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv T R ch FL) (fun mv x => numF (L x) mv) (a := 2) (e := 1)
     (by simpa using hB.mv) (fun mv => cy_numF hA hB hL m4 (fun j i => u4 (u3 (f2 (j, i))))
       (fun l => u4 (f3 l)) f4 mv)
     (by omega)
@@ -188,7 +188,7 @@ include hA hB hR
 /-- The loop over time. -/
 theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
     ∃ H', SY inp Y p (c + 1 + 8 * t) H' ∧ H ⊆ H' ∧
-      ∀ mv : Mv T R ch FL, (fun x => numS R ch FL lhat (nx x) (ox x) t mv) ∈ H' := by
+      ∀ mv : Mv T R ch FL, (fun x => numS lhat (nx x) (ox x) t mv) ∈ H' := by
   induction t with
   | zero =>
     obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Mv T R ch FL) (fun mv x => numS lhat (nx x) (ox x) 0 mv)
@@ -230,8 +230,8 @@ theorem after_stage (hS : SY inp Y p c H) (hbs : Base nx ox H) :
   obtain ⟨H1, s1, u1, f1⟩ := stat_stage hA hB hR hS hbs (lhat := lhat)
   obtain ⟨H2, s2, u2, f2⟩ := num_stage hA hB hR s1 f1 (tend J m)
   obtain ⟨H3, s3, u3, f3, g3⟩ := ld_stage hA hB hR s2 (f1.weaken u2)
-    (Nf := fun x => num R ch FL lhat (nx x) (ox x)) f2
-  obtain ⟨H4, s4, u4, f4⟩ := pick_stage (L := fun x => load R ch FL lhat (nx x) (ox x)) hA hB
+    (Nf := fun x => num lhat (nx x) (ox x)) f2
+  obtain ⟨H4, s4, u4, f4⟩ := pick_stage (L := fun x => load lhat (nx x) (ox x)) hA hB
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 g3
   refine ⟨H4, s4.le hA ?_, (f1.weaken (u2.trans (u3.trans u4))), f4,
     fun mv => u4 (u3 (f2 mv)), fun ν => u4 (f3 ν), fun τ => u4 (g3 τ)⟩

@@ -331,7 +331,7 @@ theorem ndStage_eq_top {ν : Nd T} : ndStage ν = J + 1 ↔ ν = none := by
 /-- The parent of a party. -/
 noncomputable def treePar (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1)
     (p : Fin (AA + A')) : Fin (AA + A') :=
-  Pl.pt (ndPar (lev (load R ch FL N (nn n) (oo R FL Pl o))) (Pl.pt.symm p))
+  Pl.pt (ndPar (lev (load N (nn n) (oo R FL Pl o))) (Pl.pt.symm p))
 
 /-- The load at a party: the number of units between it and its parent. -/
 noncomputable def treeUp (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL Pl).N → Fin U1) (p : Fin (AA + A')) : ℕ :=
@@ -355,8 +355,8 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
       s(hold0 (sys R FL Pl).np u, hold1 (sys R FL Pl).np u) =
         s(Pl.pt (some s), treePar R FL Pl n o (Pl.pt (some s))) := by
   classical
-  have hp : ∀ mv, GoodMv R ch FL N (nn n) (oo R FL Pl o) mv := fun mv => by
-    have h1 : GoodMv R ch FL N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
+  have hp : ∀ mv, GoodMv N (nn n) (oo R FL Pl o) mv := fun mv => by
+    have h1 : GoodMv N (nn n) (oo R FL Pl o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
   obtain ⟨hseen, hal⟩ := cur_end hu
   cases u with
@@ -410,7 +410,7 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
       refine ⟨⟨⟨j, Nat.lt_succ_of_le hj⟩, c⟩, hmem _ ⟨⟨x, hx⟩, β, rfl, hdone, h1⟩, ?_⟩
       have h3 : s(partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β false),
           partM R ch FL (.inl ⟨x, hx⟩) ((kindM R ch FL (.inl ⟨x, hx⟩)).cnEnd β true)) =
-          s(nd T j hj c, parN (lev (load R ch FL N (nn n) (oo R FL Pl o))) j c) := h2
+          s(nd T j hj c, parN (lev (load N (nn n) (oo R FL Pl o))) j c) := h2
       have h4 := congrArg (Sym2.map Pl.pt) h3
       simp only [Sym2.map_mk] at h4
       rw [h4, treePar, Equiv.symm_apply_apply]
@@ -452,8 +452,8 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     (hS : SlpN inp p H) (hn : ∀ a c, (fun x => ((nI x a c : Fin (U0 + 1)) : ℕ)) ∈ H)
     (ho : ∀ ν, (fun x => ((oI x ν : Fin U1) : ℕ)) ∈ H) (lhat : ℕ) :
     ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat TM H' ∧
-      HostOk (fun x => load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x))) H' ∧
-      ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load R ch FL lhat (nn (nI x)) (oo R FL Pl (oI x)))) j c) ∈ H' := by
+      HostOk (fun x => load lhat (nn (nI x)) (oo R FL Pl (oI x))) H' ∧
+      ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load lhat (nn (nI x)) (oo R FL Pl (oI x)))) j c) ∈ H' := by
   have hR : Rng (nX nI) (oX oI : Inp → NM R FL → ℕ) U0 U1 := rng
   have hS0 : SY inp Y p 0 H := by
     unfold SY
@@ -463,7 +463,7 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
   obtain ⟨H1, s1, f1⟩ := after_stage hA hB hR hS0 hb0
   obtain ⟨H2, s2, u2, f2⟩ := units_stage hA hB hB2 s1 f1
   obtain ⟨H3, s3, u3, f3⟩ :=
-    host_stage (L := fun x => load R ch FL lhat (nX nI x) (oX oI x)) hA hB s2
+    host_stage (L := fun x => load lhat (nX nI x) (oX oI x)) hA hB s2
     (fun j i => u2 (f1.isMin j i))
   obtain ⟨H4, s4, u4, f4⟩ := fb_stage (L := fun x => load lhat (nX nI x) (oX oI x)) hA hB
     (fun x τ => ld_le (hR.n x) (hR.o x) _ τ) s3 (fun τ => u3 (u2 (f1.load τ)))
@@ -482,7 +482,7 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
 
 /-- Parents are computed: the indicator of "q is the parent of p". -/
 theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 1)} {o' : Inp → (sys R FL Pl).N → Fin U1}
-    (hH : HostOk (fun x => load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))) H)
+    (hH : HostOk (fun x => load U0' (nn (n' x)) (oo R FL Pl (o' x))) H)
     (a q : Fin (AA + A')) :
     (ind fun x => treePar R FL Pl (n' x) (o' x) a = q) ∈ H ∪ {(fun _ => 0), (fun _ => 1)} := by
   classical
@@ -500,7 +500,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
   by_cases hjJ : j < J
   · -- the parent of a node of stage `j` is of stage `j + 1`
     have hoff : ndStage (Pl.pt.symm q) ≠ j + 1 →
-        ∀ x, ¬ (Pl.pt (ndPar (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+        ∀ x, ¬ (Pl.pt (ndPar (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x))))
           (nd T j hj c)) = q) :=
       fun hq x hx => hq (by rw [← hx, Equiv.symm_apply_apply, ndStage_par _ nd_ne_none]; rfl)
     rcases nd_cases (Pl.pt.symm q) with eq | ⟨i, hi, c', eq⟩
@@ -510,9 +510,9 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
     · by_cases hij : i = j + 1
       · subst hij
         refine Or.inl ?_
-        have e2 : (fun x => Pl.pt (ndPar (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+        have e2 : (fun x => Pl.pt (ndPar (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x))))
             (nd T j hj c)) = q) =
-            fun x => hostj (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x)))) c = c' := by
+            fun x => hostj (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x)))) c = c' := by
           funext x
           rw [← Equiv.eq_symm_apply, eq]
           simp only [ndPar, nd, parN, dif_pos (show j + 1 ≤ J by omega)]
@@ -522,7 +522,7 @@ theorem par_computed {U0' : ℕ} {n' : Inp → Fin AA → Fin AA → Fin (U0' + 
       · have := hoff (by rw [eq]; exact hij)
         -- `this` makes the predicate `False` for every `x`; `hconst` closes it
         simp_all
-  · have e2 : (fun x => Pl.pt (ndPar (lev (load R ch FL U0' (nn (n' x)) (oo R FL Pl (o' x))))
+  · have e2 : (fun x => Pl.pt (ndPar (lev (load U0' (nn (n' x)) (oo R FL Pl (o' x))))
       (nd T j hj c)) = q) =
         fun _ => Pl.pt none = q := by
       funext x
@@ -650,7 +650,7 @@ theorem card_treeChildren (n : Fin AA → Fin AA → Fin (N + 1)) (o : (sys R FL
   obtain ⟨ν, rfl⟩ := Pl.pt.surjective q
   have h1 : (univ.filter fun p => p ≠ Pl.pt none ∧ treePar R FL Pl n o p = Pl.pt ν).card ≤
       (univ.filter fun μ : Nd T => μ ≠ none ∧
-        ndPar (lev (load R ch FL N (nn n) (oo R FL Pl o))) μ = ν).card := by
+        ndPar (lev (load N (nn n) (oo R FL Pl o))) μ = ν).card := by
     refine card_le_card_of_injOn Pl.pt.symm ?_ Pl.pt.symm.injective.injOn
     intro p hp
     obtain ⟨-, h1, h2⟩ := mem_filter.1 (mem_coe.1 hp)
@@ -729,7 +729,7 @@ theorem tree_up_total (hH : THypR FL ρ) (n : Fin AA → Fin AA → Fin (N + 1))
   rw [Fintype.sum_option]
   simp only [onN, Nat.zero_add]
   rw [Fintype.sum_sigma, Fin.sum_univ_eq_sum_range
-    (fun j => ∑ x : T.X j, fb (lev (load R ch FL N (nn n) (oo R FL Pl o))) j x) (J + 1)]
+    (fun j => ∑ x : T.X j, fb (lev (load N (nn n) (oo R FL Pl o))) j x) (J + 1)]
   exact sum_fb_le hH
 
 /-- The loads at a chamber and below its children are those at the party and its children. -/

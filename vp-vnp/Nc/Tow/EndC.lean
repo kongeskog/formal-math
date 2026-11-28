@@ -132,7 +132,7 @@ theorem mem_AsU_init {a c : Fin AA} {kk : Fin U0} {s : Σ j : Fin (J + 1), T.X j
   cases he
 
 theorem card_AsU (s : Σ j : Fin (J + 1), T.X j) :
-    (AsU R FL Pl lhat n o s : Finset (Un R FL Pl U0 U1)).card ≤ fb (lev (load R ch FL lhat (nn n) (oo R FL Pl o))) s.1.1 s.2 := by
+    (AsU R FL Pl lhat n o s : Finset (Un R FL Pl U0 U1)).card ≤ fb (lev (load lhat (nn n) (oo R FL Pl o))) s.1.1 s.2 := by
   classical
   obtain ⟨j, c⟩ := s
   have h1 : (AsU R FL Pl lhat n o ⟨j, c⟩ : Finset (Un R FL Pl U0 U1)).card =

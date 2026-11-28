@@ -130,8 +130,8 @@ theorem law_node (l : LMv T FL) (P : Nd T) : (∑ ν : (FL.L l.2.2.2).Cn, ∑ d 
     if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d))) = P then
       oo R FL Pl o ⟨.inr l, ν⟩ else 0) ≤ 2 * Fintype.card T.Nr * FL.G₁ *
     ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then
-      num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) else 0 := by
-  set t := num R ch FL lhat (nn n) (oo R FL Pl o) (.inr l) with ht
+      num lhat (nn n) (oo R FL Pl o) (.inr l) else 0 := by
+  set t := num lhat (nn n) (oo R FL Pl o) (.inr l) with ht
   set S := ∑ f : T.Fl, if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then t else 0 with hS
   have h5 : ∀ (ν : (FL.L l.2.2.2).Cn) (d : Bool),
       (if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 (FL.ro l.2.2.2 ((FL.L l.2.2.2).cnEnd ν d)))

@@ -28,7 +28,7 @@ variable {ρ : ℝ} (hH : THypR FL ρ)
 
 include hH
 
-theorem kap_le_kbar (j : Fin (J + 1)) : T.kap (lds R ch FL lhat n o j) ≤ kbar FL Uu AA lhat := by
+theorem kap_le_kbar (j : Fin (J + 1)) : T.kap (lds lhat n o j) ≤ kbar FL Uu AA lhat := by
   refine (kap_le' hH j).trans ?_
   exact mul_le_of_le_one_left kbar_nonneg (pow_le_one₀ hH.ρ_pos.le hH.ρ_lt.le)
 
@@ -37,10 +37,10 @@ theorem load_edge_le (j : Fin (J + 1)) (e : T.Ed j) :
     (load lhat n o (.edge j e) : ℝ) ≤ 2 * kbar FL Uu AA lhat := by
   have hX : 0 < Fintype.card (T.X j.1) := Fintype.card_pos_iff.2 ⟨T.e0 e⟩
   have hk := kap_le_kbar (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
-  have hk0 : 0 ≤ T.kap (lds R ch FL lhat n o j) := Tower.kap_nonneg _
-  have h1 := Tower.sum_sq_eq hX (lds R ch FL lhat n o j)
-  have h2 : (load R ch FL lhat n o (.edge j e) : ℝ) ^ 2 ≤ ∑ e, (lds R ch FL lhat n o j e : ℝ) ^ 2 :=
-    Finset.single_le_sum (f := fun e => (lds R ch FL lhat n o j e : ℝ) ^ 2) (fun _ _ => sq_nonneg _) (mem_univ e)
+  have hk0 : 0 ≤ T.kap (lds lhat n o j) := Tower.kap_nonneg _
+  have h1 := Tower.sum_sq_eq hX (lds lhat n o j)
+  have h2 : (load lhat n o (.edge j e) : ℝ) ^ 2 ≤ ∑ e, (lds lhat n o j e : ℝ) ^ 2 :=
+    Finset.single_le_sum (f := fun e => (lds lhat n o j e : ℝ) ^ 2) (fun _ _ => sq_nonneg _) (mem_univ e)
   have h3 : (1 : ℝ) ≤ Fintype.card (T.X j.1) := by exact_mod_cast hX
   have h4 : (2 : ℝ) / Fintype.card (T.X j.1) ≤ 2 := by
     rw [div_le_iff₀ (by linarith)]
@@ -58,8 +58,8 @@ theorem tmin_real_le (l : LMv T FL) : (tmin FL (load lhat n o) l : ℝ) ≤ 3 * 
   have hbR : (0 : ℝ) < b := by exact_mod_cast T.b_pos
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have ha1 : (1 : ℝ) ≤ FL.a₁ := by exact_mod_cast FL.a₁_pos
-  set nf : T.Ed j → ℕ := lds R ch FL lhat n o j.castSucc with hnf
-  have h1 : (FL.a₁ : ℝ) * tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) ≤
+  set nf : T.Ed j → ℕ := lds lhat n o j.castSucc with hnf
+  have h1 : (FL.a₁ : ℝ) * tmin FL (load lhat n o) (⟨j, i, ω, d⟩ : LMv T FL) ≤
       √(vN2 b (T.nEnd i nf ω)) + FL.a₁ := tmin_le _ _ fun q => seg_le j i ω q
   have hX : 0 < Fintype.card (T.X (j.1 + 1)) := by
     rw [← Tower.card_V i]
@@ -108,14 +108,14 @@ theorem tmin_real_le (l : LMv T FL) : (tmin FL (load lhat n o) l : ℝ) ≤ 3 * 
 
 /-- **The numbers of units of the moves are bounded.** -/
 theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv T R ch FL) :
-    num R ch FL lhat n o mv ≤ capN FL U0 Uu AA lhat := by
+    num lhat n o mv ≤ capN FL U0 Uu AA lhat := by
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
   have hceil : (3 * (b : ℝ) * kbar FL Uu AA lhat) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := Nat.le_ceil _
   have hedge : ∀ (j : Fin (J + 1)) (e : T.Ed j), load lhat n o (.edge j e) ≤ capN FL U0 Uu AA lhat := by
     intro j e
     have h1 := load_edge_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j e
-    have h2 : (load R ch FL lhat n o (.edge j e) : ℝ) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := by
+    have h2 : (load lhat n o (.edge j e) : ℝ) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := by
       refine h1.trans (le_trans ?_ hceil)
       nlinarith
     have h3 : load lhat n o (.edge j e) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := by exact_mod_cast h2
@@ -134,7 +134,7 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv T R ch FL) :
     · exact (num_inl _).trans (hedge (Fin.last J) e)
   · have h1 := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     have h2 := tmin_real_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH l
-    have h3 : (tmin FL (load R ch FL lhat n o) l : ℝ) ≤ ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
+    have h3 : (tmin FL (load lhat n o) l : ℝ) ≤ ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
       push_cast
       linarith
     have h4 : tmin FL (load lhat n o) l ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 := by exact_mod_cast h3

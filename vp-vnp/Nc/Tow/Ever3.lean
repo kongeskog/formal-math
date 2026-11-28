@@ -213,11 +213,11 @@ variable (lhat n o) in
 open Classical in
 /-- The number of units given in law moves at a node. -/
 noncomputable def NL (P : Nd T) : ℕ := ∑ l : LMv T FL, ∑ f : T.Fl,
-  if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then num R ch FL lhat n o (.inr l) else 0
+  if nd T (l.1 + 1) l.1.2 (atv l.2.1 l.2.2.1 f) = P then num lhat n o (.inr l) else 0
 
 variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-  (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
+  (hg : ∀ mv, GoodMv lhat n o mv)
 include hg
 
 /-- The units of a law move lie on edges at its chambers. -/
@@ -276,7 +276,7 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL lhat n o (nd
     rw [Fintype.sum_sigma]
     have h2 : ∀ i, (∑ p : T.V (j + 1) i × FL.Di, ∑ f : T.Fl,
         if nd T (j + 1) j.2 (atv i p.1 f) = nd T (k + 1) hk x then
-          num R ch FL lhat n o (.inr ⟨j, i, p.1, p.2⟩) else 0) =
+          num lhat n o (.inr ⟨j, i, p.1, p.2⟩) else 0) =
         ∑ y : T.X (j + 1), if nd T (j + 1) j.2 y = nd T (k + 1) hk x then
           ∑ d, num lhat n o (.inr ⟨j, i, T.vx i y, d⟩) else 0 := by
       intro i
@@ -294,8 +294,8 @@ theorem NL_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NL lhat n o (nd
     simp
   rw [h1, sum_level_succ (fun j y => ∑ i, ∑ d, num lhat n o (.inr ⟨j, i, T.vx i y, d⟩)) k hk x]
   set j : Fin J := ⟨k, hk⟩ with hj
-  rw [Finset.sum_eq_single (imin (ldL R ch FL lhat n o) k)]
-  · calc _ ≤ ∑ _d : FL.Di, fb (ldL R ch FL lhat n o) (k + 1) x :=
+  rw [Finset.sum_eq_single (imin (ldL lhat n o) k)]
+  · calc _ ≤ ∑ _d : FL.Di, fb (ldL lhat n o) (k + 1) x :=
           Finset.sum_le_sum fun d _ => num_law_le hg j _ x d
       _ = _ := by rw [Finset.sum_const, card_univ, smul_eq_mul]
   · intro i _ hi
@@ -322,17 +322,17 @@ section Final
 
 variable
   -- every move is good (`GoodMv`): relays exact, laws neither too long nor too short
-  (hg : ∀ mv, GoodMv R ch FL lhat n o mv)
+  (hg : ∀ mv, GoodMv lhat n o mv)
 include hg
 
 open Classical in
-theorem NR_zero (x : T.X 0) : NR R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
-    (if ∃ c, ch c = x then 2 * m * lhat else 0) + 7 * fb (ldL R ch FL lhat n o) 0 x := by
+theorem NR_zero (x : T.X 0) : NR lhat n o (nd T 0 (Nat.zero_le _) x) ≤
+    (if ∃ c, ch c = x then 2 * m * lhat else 0) + 7 * fb (ldL lhat n o) 0 x := by
   refine (NR_le hg _).trans ?_
   have h1 := NR0_le hg x
-  have h2 := sum_level (fun j y => 5 * fb (ldL R ch FL lhat n o) j y) 0 (Nat.zero_le J) x
-  have h3 := sum_level_zero (fun j y => 3 * chs (ldL R ch FL lhat n o) j y +
-    2 * fb (ldL R ch FL lhat n o) (j + 1) y) x
+  have h2 := sum_level (fun j y => 5 * fb (ldL lhat n o) j y) 0 (Nat.zero_le J) x
+  have h3 := sum_level_zero (fun j y => 3 * chs (ldL lhat n o) j y +
+    2 * fb (ldL lhat n o) (j + 1) y) x
   rw [h2, h3, if_neg nd_ne_none.symm]
   have h4 : (∑ y : T.X J, if nd T J le_rfl y = nd T 0 (Nat.zero_le _) x then fb (ldL lhat n o) J y else 0) ≤
       fb (ldL lhat n o) 0 x := by
@@ -351,13 +351,13 @@ theorem NR_zero (x : T.X 0) : NR R ch FL lhat n o (nd T 0 (Nat.zero_le _) x) ≤
   linarith
 
 open Classical in
-theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR R ch FL lhat n o (nd T (k + 1) hk x) ≤
-    8 * fb (ldL R ch FL lhat n o) (k + 1) x + 3 * chs (ldL R ch FL lhat n o) k x := by
+theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR lhat n o (nd T (k + 1) hk x) ≤
+    8 * fb (ldL lhat n o) (k + 1) x + 3 * chs (ldL lhat n o) k x := by
   refine (NR_le hg _).trans ?_
-  have h1 : NR0 R ch FL lhat n o (nd T (k + 1) hk x) = 0 := NR0_succ hk x
-  have h2 := sum_level (fun j y => 5 * fb (ldL R ch FL lhat n o) j y) (k + 1) hk x
-  have h3 := sum_level_succ (fun j y => 3 * chs (ldL R ch FL lhat n o) j y +
-    2 * fb (ldL R ch FL lhat n o) (j + 1) y) k hk x
+  have h1 : NR0 lhat n o (nd T (k + 1) hk x) = 0 := NR0_succ hk x
+  have h2 := sum_level (fun j y => 5 * fb (ldL lhat n o) j y) (k + 1) hk x
+  have h3 := sum_level_succ (fun j y => 3 * chs (ldL lhat n o) j y +
+    2 * fb (ldL lhat n o) (j + 1) y) k hk x
   rw [h1, h2, h3, if_neg nd_ne_none.symm]
   have h4 : (∑ y : T.X J, if nd T J le_rfl y = nd T (k + 1) hk x then fb (ldL lhat n o) J y else 0) ≤
       fb (ldL lhat n o) (k + 1) x := by
@@ -377,13 +377,13 @@ theorem NR_succ {k : ℕ} (hk : k + 1 ≤ J) (x : T.X (k + 1)) : NR R ch FL lhat
   linarith
 
 open Classical in
-theorem NR_none : NR R ch FL lhat n o none ≤ ∑ e : T.Ed J, ldL R ch FL lhat n o J e := by
+theorem NR_none : NR lhat n o none ≤ ∑ e : T.Ed J, ldL lhat n o J e := by
   refine (NR_le hg _).trans ?_
-  have h1 : NR0 R ch FL lhat n o none = 0 := NR0_none
-  have h2 : (∑ j : Fin J, ∑ y : T.X j, if nd T j j.2.le y = none then 5 * fb (ldL R ch FL lhat n o) j y else 0) = 0 :=
+  have h1 : NR0 lhat n o none = 0 := NR0_none
+  have h2 : (∑ j : Fin J, ∑ y : T.X j, if nd T j j.2.le y = none then 5 * fb (ldL lhat n o) j y else 0) = 0 :=
     Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun y _ => if_neg nd_ne_none
   have h3 : (∑ j : Fin J, ∑ y : T.X (j + 1), if nd T (j + 1) j.2 y = none then
-      3 * chs (ldL R ch FL lhat n o) j y + 2 * fb (ldL R ch FL lhat n o) (j + 1) y else 0) = 0 :=
+      3 * chs (ldL lhat n o) j y + 2 * fb (ldL lhat n o) (j + 1) y else 0) = 0 :=
     Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun y _ => if_neg nd_ne_none
   have h4 : (∑ y : T.X J, if nd T J le_rfl y = none then fb (ldL lhat n o) J y else 0) = 0 :=
     Finset.sum_eq_zero fun y _ => if_neg nd_ne_none

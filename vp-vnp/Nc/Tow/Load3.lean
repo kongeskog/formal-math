@@ -131,7 +131,7 @@ theorem num_inr_zero {l : LMv T FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc 
     ¬ Pick FL (load lhat n o) l) : num lhat n o (.inr l) = 0 := by
   classical
   rcases hl with hl | hl
-  · have h1 : tmin FL (load R ch FL lhat n o) l = 0 := tmin_zero fun q => seg_zero hl _ q
+  · have h1 : tmin FL (load lhat n o) l = 0 := tmin_zero fun q => seg_zero hl _ q
     have := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     omega
   · rw [num_eq, numF, if_neg hl]
@@ -167,7 +167,7 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSu
       have h4 := ((T.nr i').symm (ω, FL.cn d ν)).2
       rw [h3, he'] at h4
       refine hne (alv_inr_zero (Or.inl fun hcon => ?_) ν)
-      have : IsMin (load R ch FL lhat n o) j'.castSucc i' := hcon
+      have : IsMin (load lhat n o) j'.castSucc i' := hcon
       exact h4 (firstMin_eq hi this)
   · refine Finset.sum_image_le_of_nonneg ?_ |>.trans ?_
     · intro _ _; exact Nat.zero_le _
@@ -204,10 +204,10 @@ theorem alive_sq (l : LMv T FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o 
       _ ≤ FL.G₁ * t ^ 2 := Nat.mul_le_mul_right _ h2
 
 /-- Loads on the edges at vertices. -/
-theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
-    (d : FL.Di) (hd : Pick FL (load R ch FL lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
-    load R ch FL lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) ≤
-      alv R ch FL lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch)) := by
+theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
+    (d : FL.Di) (hd : Pick FL (load lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
+    load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) ≤
+      alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch)) := by
   classical
   refine (load_le_sum {(⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R FL (ch := ch))} (bt_edge_succ j _) ?_).trans ?_
   · rintro ⟨⟨x, hx⟩ | l, ν'⟩ hν hne
@@ -248,21 +248,21 @@ theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load R ch FL lhat n o
 /-- **Paper: Theorem thm:tree, One stage.** "κ_{j+1} ≤ κ_j/2 + c'|X^(j+1)|", with ρ for 1/2, where 1 + 8C₁ ≤ ρ²h. -/
 theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * FL.C₁ ≤ ρ ^ 2 * h)
     (j : Fin J) :
-    T.kap (fun e : T.Ed (j + 1) => load R ch FL lhat n o (.edge j.succ e)) ≤
-      ρ * T.kap (fun e : T.Ed j => load R ch FL lhat n o (.edge j.castSucc e)) +
+    T.kap (fun e : T.Ed (j + 1) => load lhat n o (.edge j.succ e)) ≤
+      ρ * T.kap (fun e : T.Ed j => load lhat n o (.edge j.castSucc e)) +
         √FL.C₁ * FL.a₁ / b * Fintype.card (T.X (j + 1)) := by
   classical
-  obtain ⟨i, hi⟩ := exists_isMin (load R ch FL lhat n o) j.castSucc
+  obtain ⟨i, hi⟩ := exists_isMin (load lhat n o) j.castSucc
   obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
   refine Tower.load_step j.2 FL.C₁_nonneg (Nat.cast_nonneg _) hρ hρ1 (i := i) ?_ ?_
-    (fun ω => tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)) ?_ ?_
+    (fun ω => tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)) ?_ ?_
   · exact isMin_le hi
   · intro e' he'
     exact mid_load_le j hi e' he'
   · intro ω
-    obtain ⟨d, hd⟩ := exists_pick (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)
-    have h4 : ∑ ν : T.Nr, (load R ch FL lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1)) ^ 2 ≤
-        ∑ ν : (FL.L d).Cn, (alv R ch FL lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R FL (ch := ch))) ^ 2 := by
+    obtain ⟨d, hd⟩ := exists_pick (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL)
+    have h4 : ∑ ν : T.Nr, (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1)) ^ 2 ≤
+        ∑ ν : (FL.L d).Cn, (alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, ν⟩ : NM R FL (ch := ch))) ^ 2 := by
       rw [← Equiv.sum_comp (FL.cn d)]
       refine Finset.sum_le_sum fun ν _ => Nat.pow_le_pow_left ?_ 2
       have := other_load_le j hi ω d hd (FL.cn d ν)
@@ -271,8 +271,8 @@ theorem _root_.Paper.thm_tree_kappa {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : 1 + 8 * 
     have h5 := (Nat.mul_le_mul_left b h4).trans ((alive_sq _).trans
       (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (num_inr_le (⟨j, i, ω, d⟩ : LMv T FL)) 2)))
     have h6 : (b : ℝ) * ∑ ν : T.Nr,
-          (load R ch FL lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
-        FL.G₁ * (tmin FL (load R ch FL lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ) ^ 2 := by
+          (load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) : ℝ) ^ 2 ≤
+        FL.G₁ * (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ) ^ 2 := by
       exact_mod_cast h5
     linarith [mul_le_mul_of_nonneg_right FL.G₁_le
       (sq_nonneg (tmin FL (load lhat n o) (⟨j, i, ω, d0⟩ : LMv T FL) : ℝ))]

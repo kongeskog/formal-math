@@ -126,8 +126,8 @@ theorem lev_succ (j : Fin J) (e : T.Ed (j + 1)) : load lhat n o (.edge j.succ e)
   rw [dif_pos (Nat.succ_lt_succ j.2)]
   rfl
 
-theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn j i e) ≤
-    if i = imin (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
+theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR lhat n o (.inn j i e) ≤
+    if i = imin (ldL lhat n o) j then ldL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
@@ -139,8 +139,8 @@ theorem nR_inn (j : Fin J) (i : Fin h) (e : T.Ed j) : nR R ch FL lhat n o (.inn 
   · exact Nat.zero_le _
   · exact le_rfl
 
-theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR R ch FL lhat n o (.mid j e s) ≤
-    if T.ty e = imin (ldL R ch FL lhat n o) j then ldL R ch FL lhat n o j e else 0 := by
+theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR lhat n o (.mid j e s) ≤
+    if T.ty e = imin (ldL lhat n o) j then ldL lhat n o j e else 0 := by
   classical
   unfold nR
   split_ifs with hx h1 h1
