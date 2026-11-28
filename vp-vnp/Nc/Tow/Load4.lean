@@ -131,7 +131,7 @@ def nhat (T : Tower h b J) (Uu AA lhat : ℕ) : ℕ := Uu * (lhat / Fintype.card
 noncomputable def kbar (FL : FlagLaws F T) (Uu AA lhat : ℕ) : ℝ :=
   √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat + √FL.C₁ * FL.a₁ / b * Fintype.card (T.X 0)
 
-/-- The conditions on the tower and the laws. -/
+/-- The conditions on `ρ`: against the number of types, the degree and the laws. -/
 structure THypR (FL : FlagLaws F T) (ρ : ℝ) : Prop where
   ρ_pos : 0 < ρ
   ρ_lt : ρ < 1
