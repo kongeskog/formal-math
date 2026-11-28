@@ -26,7 +26,7 @@ noncomputable def meanLength (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ 
 
 /-- The paper's N(g) = inf ν(Sg)/S over integers S ≥ 1. -/
 noncomputable def meanNorm (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ × ℤ) → ℝ) (g : ℤ × ℤ) : ℝ :=
-  sInf {r : ℝ | ∃ S : ℕ, 0 < S ∧ r = meanLength W (S • g) / S}
+  Cat.homNorm (meanLength W) g
 
 section Norm
 
@@ -34,22 +34,18 @@ variable (W : ℕ → (Bool × ℤ × ℤ) → (Bool × ℤ × ℤ) → ℝ) (g 
 
 theorem meanLength_nonneg : 0 ≤ meanLength W g := Cat.nm_nonneg _
 
-theorem meanNorm_isGLB : IsGLB {r : ℝ | ∃ S : ℕ, 0 < S ∧ r = meanLength W (S • g) / S} (meanNorm W g) :=
-  isGLB_csInf ⟨_, 1, one_pos, rfl⟩
-    ⟨0, by rintro _ ⟨S, -, rfl⟩; exact div_nonneg (meanLength_nonneg _ _) (Nat.cast_nonneg _)⟩
-
-/-- "For upper bounds [on N it is enough to prove them] for one S." -/
-theorem meanNorm_le {S : ℕ} (hS : 0 < S) : meanNorm W g ≤ meanLength W (S • g) / S :=
-  (meanNorm_isGLB W g).1 ⟨S, hS, rfl⟩
-
-theorem meanNorm_le_meanLength : meanNorm W g ≤ meanLength W g := by
-  simpa using meanNorm_le W g one_pos
+/-- "For upper bounds [on N it is enough to prove them] for one S", here for S = 1. -/
+theorem meanNorm_le_meanLength : meanNorm W g ≤ meanLength W g :=
+  csInf_le ⟨0, by
+    rintro _ ⟨S, -, rfl⟩
+    exact div_nonneg (meanLength_nonneg _ _) (Nat.cast_nonneg _)⟩ ⟨1, Set.mem_Ici.2 le_rfl, by simp⟩
 
 /-- "For lower bounds [on N] it is enough to prove them for ν(Sg)/S for every S." -/
-theorem le_meanNorm {c : ℝ} (h : ∀ S : ℕ, 0 < S → c * S ≤ meanLength W (S • g)) : c ≤ meanNorm W g := by
-  refine (meanNorm_isGLB W g).2 ?_
+theorem le_meanNorm {c : ℝ} (h : ∀ S : ℕ, 0 < S → c * S ≤ meanLength W (S • g)) :
+    c ≤ meanNorm W g := by
+  refine le_csInf ⟨_, 1, Set.mem_Ici.2 le_rfl, rfl⟩ ?_
   rintro _ ⟨S, hS, rfl⟩
-  rw [le_div_iff₀ (by exact_mod_cast hS)]
+  rw [le_div_iff₀ (Nat.cast_pos.2 hS)]
   exact h S hS
 
 theorem meanNorm_nonneg : 0 ≤ meanNorm W g :=
@@ -85,7 +81,7 @@ theorem meanLength_len (hW : ∀ n, IsPrice K (W n))
 /-! ### The proof of Lemma lem:means
 
 The steps after "so does N" use of N only that it is even, subadditive and homogeneous and satisfies (Q). This is
-Cat.Len N and Cat.Homog N, and it holds for N = meanNorm W (shown at the start of
+Cat.Len N and Cat.Homog N, and it holds for N = meanNorm W (`Cat.Len.homNorm_len`, used in
 lem_means_norm). As in the paper c = a + b, e = a − b,
 f = N(c), f′ = N(e). -/
 
@@ -351,26 +347,15 @@ theorem lem_means_parallelogram_le (hN : Cat.Len N) (hh : Cat.Homog N) (a b : �
 
 end Parallelogram
 
-/-- **Paper: Lemma lem:means**, for N = meanNorm W: "N(a+b)² + N(a−b)² = 2N(a)² + 2N(b)² for all a, b ∈ ℤ²", for
-prices W_n on two sheets of ℤ² with W_n(P,P+g) ≤ Λ|g| for points of one sheet. -/
+/-- **Paper: Lemma lem:means**, for N = meanNorm W, in the direction that is used:
+"N(a+b)² + N(a−b)² ≤ 2N(a)² + 2N(b)² for all a, b ∈ ℤ²", for prices W_n on two sheets of ℤ² with
+W_n(P,P+g) ≤ Λ|g| for points of one sheet. (Applied to a+b, a−b it gives the equality of the paper.)
+N is an even subadditive function with (Q), and homogeneous (`Cat.Len.homNorm_len`). -/
 theorem lem_means_norm (hW : ∀ n, IsPrice K (W n))
-    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|)) (a b : ℤ × ℤ) :
-    meanNorm W (a + b) ^ 2 + meanNorm W (a - b) ^ 2 = 2 * meanNorm W a ^ 2 + 2 * meanNorm W b ^ 2 := by
-  -- N is an even subadditive function with (Q), and homogeneous
-  obtain ⟨N, hN, hom, hle, hgl⟩ := (meanLength_len hW hΛ).exists_homog
-  obtain rfl : N = meanNorm W := by
-    funext g
-    refine le_antisymm (le_meanNorm W g fun S _ => ?_) (hgl g _ fun S hS => ?_)
-    · rw [mul_comm, ← hom S g]
-      exact hle _
-    · have := meanNorm_le W g hS
-      rwa [le_div_iff₀ (by exact_mod_cast hS)] at this
-  refine le_antisymm (by linarith [lem_means_parallelogram_le hN hom a b]) ?_
-  -- "applied to a+b, a−b it gives equality"
-  have h := lem_means_parallelogram_le hN hom (a + b) (a - b)
-  rw [show a + b + (a - b) = (2 : ℕ) • a by rw [two_nsmul]; abel,
-    show a + b - (a - b) = (2 : ℕ) • b by rw [two_nsmul]; abel, hom, hom] at h
-  push_cast at h
-  linarith
+    (hΛ : ∀ n b (P g : ℤ × ℤ), W n (b, P) (b, P + g) ≤ Λ * (|(g.1 : ℝ)| + |(g.2 : ℝ)|))
+    (a b : ℤ × ℤ) :
+    meanNorm W (a + b) ^ 2 + meanNorm W (a - b) ^ 2 ≤
+      2 * (meanNorm W a ^ 2 + meanNorm W b ^ 2) :=
+  (meanLength_len hW hΛ).homNorm_len.elim fun hN hh => lem_means_parallelogram_le hN hh a b
 
 end Paper
