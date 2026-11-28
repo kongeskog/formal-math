@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-27T23:52:42.251537147Z",
+  "updated_at": "2026-11-28T00:08:17.782304710Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -60,30 +60,30 @@
     }
   },
   "current": {
-    "sha": "2399c3e4a58384994ebcae1f723cc7728aac3a86",
-    "at": "2026-11-27T23:38:56.912361533Z",
+    "sha": "50f849a6c9dbd201f0a92ad22aa0eb9f70c1e557",
+    "at": "2026-11-28T00:08:17.782304710Z",
     "metrics": {
-      "tokens": 807543,
-      "loc": 52102,
-      "decls": 4278,
+      "tokens": 806785,
+      "loc": 52073,
+      "decls": 4270,
       "files": 314,
-      "bytes": 3032669,
-      "build_seconds": 204
+      "bytes": 3030570,
+      "build_seconds": 366
     }
   },
   "counts": {
-    "merged": 106,
+    "merged": 107,
     "rejected": 4,
-    "open": 1,
+    "open": 0,
     "contributors": 2,
     "ideas_open": 0
   },
   "leaderboard": [
     {
       "login": "kongeskog",
-      "merged": 99,
+      "merged": 100,
       "attempts": 104,
-      "saved": 110754
+      "saved": 111512
     },
     {
       "login": "yidakra",
@@ -1102,95 +1102,7 @@
       "scope": "*"
     }
   ],
-  "open": [
-    {
-      "pr": 186,
-      "title": "restructure(*): inline 8 single-use lemmas; sumTo lemmas of Nc/Uni take the mode equation",
-      "author": "kongeskog",
-      "head_sha": "d0d2154ee017c0c226581b5ebd6379fca229eb12",
-      "base_sha": null,
-      "status": "verifying",
-      "created_at": "2026-11-27T23:51:37Z",
-      "decided_at": null,
-      "metrics": null,
-      "base_metrics": null,
-      "delta": null,
-      "gates": [
-        {
-          "key": "format",
-          "label": "Standard title and description",
-          "status": "pass"
-        },
-        {
-          "key": "frozen",
-          "label": "Frozen files untouched",
-          "status": "pending"
-        },
-        {
-          "key": "scope",
-          "label": "Changes stay in scope",
-          "status": "pending"
-        },
-        {
-          "key": "deny",
-          "label": "No banned constructs",
-          "status": "pending"
-        },
-        {
-          "key": "no_increase",
-          "label": "No more long lines or exceptions",
-          "status": "pending"
-        },
-        {
-          "key": "added_lines",
-          "label": "Added lines are clean",
-          "status": "pending"
-        },
-        {
-          "key": "deleted_names",
-          "label": "No deleted name still mentioned",
-          "status": "pending"
-        },
-        {
-          "key": "conduct",
-          "label": "Automation within the stated limits",
-          "status": "pending"
-        },
-        {
-          "key": "comments",
-          "label": "Added text within limits",
-          "status": "pending"
-        },
-        {
-          "key": "improves",
-          "label": "Score improves",
-          "status": "pending"
-        },
-        {
-          "key": "compiles",
-          "label": "Project compiles",
-          "status": "pending"
-        },
-        {
-          "key": "same_theorems",
-          "label": "Same theorems proved",
-          "status": "pending"
-        },
-        {
-          "key": "fresh",
-          "label": "Verified on current main",
-          "status": "pending"
-        }
-      ],
-      "idea": null,
-      "url": "https://github.com/kongeskog/formal-math/pull/186",
-      "run_url": null,
-      "merge_sha": null,
-      "reason": null,
-      "technique": "restructure",
-      "scope": "*"
-    }
-  ],
+  "open": [],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
