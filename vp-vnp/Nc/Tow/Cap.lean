@@ -30,7 +30,7 @@ include hH
 
 theorem kap_le_kbar (j : Fin (J + 1)) : T.kap (lds lhat n o j) ≤ kbar FL Uu AA lhat := by
   refine (kap_le' hH j).trans ?_
-  exact mul_le_of_le_one_left kbar_nonneg (pow_le_one₀ hH.ρ_pos.le hH.ρ_lt.le)
+  exact mul_le_of_le_one_left (kbar_nonneg _ _ _ _) (pow_le_one₀ hH.ρ_pos.le hH.ρ_lt.le)
 
 /-- Loads of edges. -/
 theorem load_edge_le (j : Fin (J + 1)) (e : T.Ed j) :
@@ -99,7 +99,7 @@ theorem tmin_real_le (l : LMv FL) : (tmin (load lhat n o) l : ℝ) ≤ 3 * b * k
   set t : ℝ := (tmin (load lhat n o) (⟨j, i, ω, d⟩ : LMv FL) : ℝ) with ht
   set Q : ℝ := 3 * b * kbar FL Uu AA lhat with hQ
   have hQ0 : 0 ≤ Q := by
-    have := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
+    have := kbar_nonneg Uu AA FL lhat
     positivity
   have h8 : (FL.a₁ : ℝ) * t ≤ FL.a₁ * (Q + 1) := by
     have h9 : Q ≤ FL.a₁ * Q := le_mul_of_one_le_left hQ0 ha1
@@ -110,7 +110,7 @@ theorem tmin_real_le (l : LMv FL) : (tmin (load lhat n o) l : ℝ) ≤ 3 * b * k
 theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
     num lhat n o mv ≤ capN FL U0 Uu AA lhat := by
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
-  have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
+  have hk0 := kbar_nonneg Uu AA FL lhat
   have hceil : (3 * (b : ℝ) * kbar FL Uu AA lhat) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := Nat.le_ceil _
   have hedge : ∀ (j : Fin (J + 1)) (e : T.Ed j), load lhat n o (.edge j e) ≤ capN FL U0 Uu AA lhat := by
     intro j e
@@ -129,7 +129,7 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
       unfold capN
       omega
     · exact (num_inl _).trans (hedge j.castSucc e)
-    · obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
+    · obtain ⟨hx0, h1⟩ := num_mid_le FL lhat n o j e s hx
       exact h1.trans ((num_mid0 j e hx0).1.trans (hedge j.castSucc e))
     · exact (num_inl _).trans (hedge (Fin.last J) e)
   · have h1 := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
@@ -164,7 +164,7 @@ theorem sum_bet_le_YhN : ∑ j : Fin (J + 1), ∑ c, T.bet (lds lhat n o j) c �
   have h1 : ((∑ j : Fin (J + 1), ∑ c, T.bet (lds lhat n o j) c : ℕ) : ℝ) ≤
       2 * √h * kbar FL Uu AA lhat / (1 - ρ) := by
     rw [Nat.cast_sum]
-    have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
+    have hk0 := kbar_nonneg Uu AA FL lhat
     calc ∑ j : Fin (J + 1), ((∑ c, T.bet (lds lhat n o j) c : ℕ) : ℝ) ≤
         ∑ j : Fin (J + 1), 2 * √h * kbar FL Uu AA lhat * ρ ^ j.1 := by
           refine Finset.sum_le_sum fun j _ => ?_
@@ -188,7 +188,7 @@ theorem bhat_pow_le (hρ : 0 < ρ) (hX : 0 < Fintype.card (T.X J)) {q : ℕ} (hp
   have hh1 : (1 : ℝ) ≤ 2 * h := by
     have : (1 : ℝ) ≤ h := by exact_mod_cast T.h_pos
     linarith
-  have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
+  have hk0 := kbar_nonneg Uu AA FL lhat
   have hXJ : (1 : ℝ) ≤ Fintype.card (T.X J) := by exact_mod_cast hX
   have hX0 : (Fintype.card (T.X 0) : ℝ) = (b : ℝ) ^ J * Fintype.card (T.X J) := card_X_pow J le_rfl
   set x : ℝ := (Fintype.card (T.X 0) : ℝ) with hx

@@ -142,6 +142,7 @@ section
 
 variable {ρ : ℝ} (hH : THypR FL ρ)
 
+variable (FL Uu AA lhat) in
 theorem kbar_nonneg : 0 ≤ kbar FL Uu AA lhat := by
   unfold kbar
   have := Real.sqrt_nonneg FL.C₁
@@ -236,7 +237,7 @@ theorem bet_le_bhat (j : Fin (J + 1)) (c : T.X j) :
   have h1 := T.bet_le (lds lhat n o j) c
   have h2 := kap_le' (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j
   have h0 := card_X_pow (T := T) j.1 hjJ
-  have hk := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
+  have hk := kbar_nonneg Uu AA FL lhat
   have e1 : √(2 * h / Fintype.card (T.X j.1)) = √(2 * h / Fintype.card (T.X 0)) * √b ^ j.1 := by
     rw [h0, ← sqrt_pow' (by positivity : (0 : ℝ) ≤ b), ← Real.sqrt_mul (by positivity)]
     congr 1

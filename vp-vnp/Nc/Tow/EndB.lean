@@ -41,7 +41,7 @@ theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR R ch (.inn j i e)
 theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s))
     (hne : num lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
     T.ty e = imin (lev (load lhat n o)) j.1 := by
-  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
+  obtain ⟨hx0, h1⟩ := num_mid_le FL lhat n o j e s hx
   have h2 := (num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0).2
   by_contra hcon
   have h3 : ¬ IsMin (load lhat n o) j.castSucc (T.ty e) :=

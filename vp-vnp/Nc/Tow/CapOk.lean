@@ -24,7 +24,7 @@ variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J
 noncomputable def BhN (FL : FlagLaws F T) (Uu AA lhat : ℕ) (ρ : ℝ) : ℕ := ⌊bhat FL Uu AA lhat ρ⌋₊
 
 theorem bhat_nonneg (ρ : ℝ) : 0 ≤ bhat FL Uu AA lhat ρ := by
-  have hk0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lhat)
+  have hk0 := kbar_nonneg Uu AA FL lhat
   unfold bhat
   positivity
 

@@ -144,10 +144,10 @@ theorem nR_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) : nR lhat n o (.mid j e s) �
   classical
   unfold nR
   split_ifs with hx h1 h1
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le FL lhat n o j e s hx
     refine h2.trans ((num_mid0 j e hx0).1.trans (le_of_eq ?_))
     exact lev_castSucc j e
-  · obtain ⟨hx0, h2⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) j e s hx
+  · obtain ⟨hx0, h2⟩ := num_mid_le FL lhat n o j e s hx
     refine h2.trans (le_of_eq ?_)
     refine (num_mid0 j e hx0).2 fun hm => h1 ?_
     exact (isMin_iff _ j.castSucc _).1 hm
