@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T04:34:18.305560708Z",
+  "updated_at": "2026-11-28T04:38:02.392788638Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,7 +74,7 @@
   "counts": {
     "merged": 108,
     "rejected": 4,
-    "open": 2,
+    "open": 3,
     "contributors": 2,
     "ideas_open": 1
   },
@@ -82,7 +82,7 @@
     {
       "login": "kongeskog",
       "merged": 101,
-      "attempts": 107,
+      "attempts": 108,
       "saved": 113747
     },
     {
@@ -128,7 +128,7 @@
       "author": "kongeskog",
       "claimed_by": "kongeskog",
       "lease_expires": "2026-11-28T06:57:52Z",
-      "pr": null,
+      "pr": 195,
       "result_delta": null,
       "created_at": "2026-11-28T03:34:22Z",
       "url": "https://github.com/kongeskog/formal-math/issues/189",
@@ -1396,6 +1396,96 @@
       "reason": null,
       "technique": "restructure",
       "scope": "NS1"
+    },
+    {
+      "pr": 195,
+      "title": "shorten(Paper): grw for the chains of monotone bound steps in four files",
+      "author": "kongeskog",
+      "head_sha": "8ef54d6d8bc07d2102b8c2124293ae920e6e6689",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-28T04:37:03Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "added_lines",
+          "label": "Added lines are clean",
+          "status": "pending"
+        },
+        {
+          "key": "deleted_names",
+          "label": "No deleted name still mentioned",
+          "status": "pending"
+        },
+        {
+          "key": "conduct",
+          "label": "Automation within the stated limits",
+          "status": "pending"
+        },
+        {
+          "key": "comments",
+          "label": "Added text within limits",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        }
+      ],
+      "idea": 189,
+      "url": "https://github.com/kongeskog/formal-math/pull/195",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "shorten",
+      "scope": "Paper",
+      "warnings": [
+        "touches files reserved by idea #191 (claimed by @kongeskog): `vp-vnp/Paper/Tree.lean`; coordinate there or expect to merge main after it lands"
+      ]
     }
   ],
   "top_files": [
