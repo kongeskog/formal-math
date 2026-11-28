@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T05:21:21.545971564Z",
+  "updated_at": "2026-11-28T05:30:38.289034884Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -1177,7 +1177,7 @@
       "pr": 196,
       "title": "restructure(Nc/Tow): context arguments fixed by a later argument's type become implicit",
       "author": "kongeskog",
-      "head_sha": "d5b7d382686563ce688bda5b428383346d5d0f0e",
+      "head_sha": "0dd78a20d766a25ff4f31f38ef4628144f2114a1",
       "base_sha": null,
       "status": "verifying",
       "created_at": "2026-11-28T05:19:26Z",
@@ -1267,8 +1267,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 19099,
-      "loc": 1147
+      "tokens": 18725,
+      "loc": 1124
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -1282,8 +1282,8 @@
     },
     {
       "path": "vp-vnp/Paper/Pieces.lean",
-      "tokens": 11993,
-      "loc": 743
+      "tokens": 11583,
+      "loc": 723
     },
     {
       "path": "vp-vnp/Paper/Alternative.lean",
@@ -1292,13 +1292,8 @@
     },
     {
       "path": "vp-vnp/Paper/ApproxRound.lean",
-      "tokens": 9333,
-      "loc": 566
-    },
-    {
-      "path": "vp-vnp/Paper/ApproxScales.lean",
-      "tokens": 9046,
-      "loc": 526
+      "tokens": 8963,
+      "loc": 545
     },
     {
       "path": "vp-vnp/NS1/Lists.lean",
@@ -1309,6 +1304,11 @@
       "path": "vp-vnp/Paper/Identity.lean",
       "tokens": 8762,
       "loc": 528
+    },
+    {
+      "path": "vp-vnp/Paper/ApproxScales.lean",
+      "tokens": 8484,
+      "loc": 490
     },
     {
       "path": "vp-vnp/Nc/Dl/SizeDeal.lean",

@@ -14,15 +14,9 @@
     }
   },
   "comments_seen_until": "2026-11-28T04:47:49Z",
-  "dispatched": {
-    "195@8ef54d6d8bc07d2102b8c2124293ae920e6e6689@7130aaf77a908c7c260e77ac42ee04616b8b435b@": "2026-11-28T05:04:06.749547417Z"
-  },
-  "lines": {
-    "195@8ef54d6d8bc07d2102b8c2124293ae920e6e6689": []
-  },
-  "line_bases": {
-    "195@8ef54d6d8bc07d2102b8c2124293ae920e6e6689": "0118e054712ed2d743935998d80a0e8de23ffb5e"
-  },
+  "dispatched": {},
+  "lines": {},
+  "line_bases": {},
   "alerts": [
     "main-broken@07e8bdb504860ac08e9b56a0b975ed5631864e9a"
   ],
@@ -32,6 +26,13 @@
     131
   ],
   "judged": {
+    "196@0dd78a20d766a25ff4f31f38ef4628144f2114a1": {
+      "at": "2026-11-28T05:30:50Z",
+      "names": null,
+      "on": [],
+      "contains": true,
+      "has_merged": null
+    },
     "196@d5b7d382686563ce688bda5b428383346d5d0f0e": {
       "at": "2026-11-28T05:20:27Z",
       "names": null,
