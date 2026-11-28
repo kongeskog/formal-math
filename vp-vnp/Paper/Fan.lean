@@ -844,9 +844,10 @@ theorem thm_cn_iv (hT : 2 ≤ T) (A : ℕ) :
   calc Q = √Q ^ 2 := (Real.sq_sqrt hQ).symm
     _ ≤ _ := pow_le_pow_left₀ (Real.sqrt_nonneg _) h1 2
 
-/-- **The end** of the proof of Theorem thm:cn. "By Lemma lem:means the second differences of l ↦ N(1,−1−l)² are 2N(0,1)², so
-by (iii) ψ(l) = N(1,−1−l)² − l²θ²Λ₂ is concave on l = −1, 0, 1, …, so ψ(A) ≤ ψ(0) + A(ψ(0) − ψ(−1)). Insert (i), (ii), (iv),
-divide by A and let A → ∞: θΓ − O(θ²) ≤ D²(−θ + θ²) + θ²Λ₂." -/
+/-- **The end** of the proof of Theorem thm:cn. "By Lemma lem:means the second differences of
+l ↦ N(1,−1−l)² are 2N(0,1)²" (used, and proved in `lem_means_norm`, as: at most 2N(0,1)²), "so by
+(iii) ψ(l) = N(1,−1−l)² − l²θ²Λ₂ is concave on l = −1, 0, 1, …, so ψ(A) ≤ ψ(0) + A(ψ(0) − ψ(−1)).
+Insert (i), (ii), (iv), divide by A and let A → ∞: θΓ − O(θ²) ≤ D²(−θ + θ²) + θ²Λ₂." -/
 theorem thm_cn_end (hT : 2 ≤ T)
     (hxx : w (x true) (x false) = 2 * D) :
     1 / T * (w z m ^ 2 - (w z (x true) ^ 2 + w z (x false) ^ 2) / 2) - 4 * (1 / T : ℝ) ^ 2 * D * (D + w z m) ≤

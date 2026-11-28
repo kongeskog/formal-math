@@ -9,7 +9,8 @@ import Mathlib
 # Length functions on `ℤ²` with the crossing inequality
 
 `Len N`: an even subadditive function on `ℤ²` with the inequality (Q). Its homogeneous version
-satisfies (Q), too. (That a homogeneous one satisfies the law of the parallelogram is Lemma lem:means, in Paper/Means.lean.)
+`homNorm N` satisfies (Q), too. (That a homogeneous one satisfies one half of the law of the
+parallelogram is Lemma lem:means, in Paper/Means.lean.)
 -/
 
 open Filter Topology Finset
@@ -37,18 +38,22 @@ theorem Len.subadditive {N : ℤ × ℤ → ℝ} (hN : Len N) (h : ℤ × ℤ) :
   simp only [add_smul]
   exact hN.add _ _
 
-/-- The homogeneous version of a length function. -/
-theorem Len.exists_homog {N : ℤ × ℤ → ℝ} (hN : Len N) :
-    ∃ N' : ℤ × ℤ → ℝ, Len N' ∧ Homog N' ∧ (∀ h, N' h ≤ N h) ∧
-      ∀ h (c : ℝ), (∀ S : ℕ, 0 < S → c * S ≤ N (S • h)) → c ≤ N' h := by
-  let N' : ℤ × ℤ → ℝ := fun h => (hN.subadditive h).lim
+/-- The homogeneous version of N: the infimum over S ≥ 1 of N(Sh)/S, which is also the limit
+(Fekete's lemma). -/
+noncomputable def homNorm (N : ℤ × ℤ → ℝ) (h : ℤ × ℤ) : ℝ :=
+  sInf ((fun S : ℕ => N (S • h) / S) '' Set.Ici 1)
+
+/-- The homogeneous version of a length function is a length function, and it is homogeneous. -/
+theorem Len.homNorm_len {N : ℤ × ℤ → ℝ} (hN : Len N) : Len (homNorm N) ∧ Homog (homNorm N) := by
+  set N' := homNorm N
   have hbdd : ∀ h, BddBelow (Set.range fun S : ℕ => N (S • h) / S) := by
     intro h
     refine ⟨0, ?_⟩
     rintro _ ⟨S, rfl⟩
     exact div_nonneg (hN.nonneg _) (Nat.cast_nonneg _)
-  have hT : ∀ h, Tendsto (fun S : ℕ => N (S • h) / S) atTop (𝓝 (N' h)) := fun h =>
-    (hN.subadditive h).tendsto_lim (hbdd h)
+  have hT : ∀ h, Tendsto (fun S : ℕ => N (S • h) / S) atTop (𝓝 (N' h)) := fun h => by
+    have := (hN.subadditive h).tendsto_lim (hbdd h)
+    rwa [Subadditive.lim] at this
   have hhom : Homog N' := by
     intro m h
     rcases Nat.eq_zero_or_pos m with rfl | hm
@@ -68,7 +73,7 @@ theorem Len.exists_homog {N : ℤ × ℤ → ℝ} (hN : Len N) :
       · simp
       · have hS' : (S : ℝ) ≠ 0 := by exact_mod_cast hS.ne'
         field_simp
-  refine ⟨N', ⟨?_, ?_, ?_, ?_, ?_⟩, hhom, ?_, ?_⟩
+  refine ⟨⟨?_, ?_, ?_, ?_, ?_⟩, hhom⟩
   · exact fun h => ge_of_tendsto' (hT h) fun S => div_nonneg (hN.nonneg _) (Nat.cast_nonneg _)
   · have := hhom 0 0
     simpa using this
@@ -108,14 +113,6 @@ theorem Len.exists_homog {N : ℤ × ℤ → ℝ} (hN : Len N) :
       refine le_trans (le_of_eq ?_) (h2.trans (le_of_eq ?_))
       · field_simp
       · field_simp
-  · exact fun h => by
-      have := (hN.subadditive h).lim_le_div (hbdd h) (n := 1) one_ne_zero
-      simpa using this
-  · intro h c hc
-    refine ge_of_tendsto (hT h) ?_
-    filter_upwards [eventually_gt_atTop 0] with S hS
-    rw [le_div_iff₀ (by exact_mod_cast hS)]
-    exact hc S hS
 
 section par
 
