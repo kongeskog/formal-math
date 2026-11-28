@@ -29,7 +29,7 @@ variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
 section Identity
 
 variable (mu : Nc.Letter S Unit Γ → Matrix Q Q A) {T c ub K N M b C : ℕ} (cb : Option Γ → Fin c → Bool)
-  {laws : List (G.Law A)} {γ : ℝ}
+  {laws : List (G.Law A)} {w : ℕ}
 
 /-- The contents of the units at a node, as copies of all units. -/
 def yOf {AA E U1 : ℕ} {sysN : Type} [Fintype sysN] [DecidableEq sysN] (n : Fin AA → Fin AA → Fin (N + 1)) (a : Fin AA)
@@ -38,7 +38,7 @@ def yOf {AA E U1 : ℕ} {sysN : Type} [Fintype sysN] [DecidableEq sysN] (n : Fin
   | .init p q k => if h : k.1 < (n p q).1 ∧ (p = a ∨ q = a) then some (w ⟨⟨p, q, ⟨k.1, h.1⟩⟩, h.2⟩) else none
   | .new _ _ => none
 
-variable (TT : ThinTrees A laws (K + K) N ub M b C γ) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
+variable (TT : ThinTrees A laws (K + K) N ub M b C w) (q : Fin (K + 1) → Q) (x : Fin K → List Γ)
   (ρ : Option S → Fin (K + K) → Nc.Cut.RowData (K + K)) (n : Dl.NN K N)
 
 /-- The tables of the blocks and parts, as tables of the units at them. -/
@@ -201,7 +201,7 @@ structure PieceCut (kinds : List (Σ L : G.Law A, L.Ro)) (mu : Nc.Letter S Unit 
 
 section Build
 
-variable {K N ℓ M b C : ℕ} {laws : List (G.Law A)} {γ : ℝ} (TT : ThinTrees A laws (K + K) N ℓ M b C γ)
+variable {K N ℓ M b C w : ℕ} {laws : List (G.Law A)} (TT : ThinTrees A laws (K + K) N ℓ M b C w)
 
 /-- The tree of the numbers of units and outcomes x. -/
 def treeAt (x : Dl.NN K N × (TT.sys.N → Fin TT.U1)) : Staged (K + K + TT.A') where
@@ -282,32 +282,33 @@ theorem piece_blocks (hk' : k ≤ 4 * M) (g : Fin (pieceNum TT k)) :
   refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_)) (Nat.le_add_right _ _)
   simp [given]
 
-variable {w : ℕ} (hkw : k ≤ w)
-  (hnode : ∀ X : ℕ, (X : ℝ) ≤ (lg M ^ C : ℕ) * (M : ℝ) ^ (1 - γ) * (N + (M : ℝ) ^ 2) → X * w ≤ yhat N M C)
-include hkw hnode
-
 open Classical in
-/-- "By (b) of the theorem a piece has at most ΛM^(1−γ)Nℓ bits in cut units, besides the dead ones." -/
+/-- "By (b) of the theorem a piece has at most ΛM^(1−γ)Nℓ bits in cut units, besides the dead
+ones": the cut units of a piece are dead or among the units that one node ever holds. -/
 theorem piece_cut (g : Fin (pieceNum TT k)) :
     ((TT.plan.cur n o TT.E).filter (Nc.Plus.OneIn (hold0 TT.sys.np) (hold1 TT.sys.np) (pieceFin TT k n o) g)).card * w ≤
-      yhat N M C + M ^ C * w := by
+      C * yhat N M C + (lg M ^ C * N + (C + 1) * M ^ C) * w := by
   obtain ⟨x, hx⟩ := Staged.piece_boundary (T := treeAt TT (n, o)) (giv := given K TT.A') (u := TT.up n o)
     (Y := yhat N M C) g.val
-  refine le_trans (Nat.mul_le_mul_right w (card_le_card (t := (cutUnits (hold0 TT.sys.np) (hold1 TT.sys.np) id
-    (TT.plan.cur n o TT.E \ TT.dead o)).filter (Holds (hold0 TT.sys.np) (hold1 TT.sys.np) x) ∪ TT.dead o) ?_)) ?_
+  have hc := (Nat.le_add_right _ _).trans (TT.copies_le n hn o hg x)
+  have hu := TT.up_node n hn o hg x
+  have hd := (card_filter_le (TT.dead o) (Holds (hold0 TT.sys.np) (hold1 TT.sys.np) x)).trans
+    (TT.dead_le o)
+  have hi : (if (x : ℕ) < K + K then lg M ^ C * N else 0) ≤ lg M ^ C * N := by split_ifs <;> omega
+  generalize TT.up n o x + ∑ q ∈ univ.filter (fun q => q ≠ TT.root ∧ TT.par n o q = x),
+    TT.up n o q = U at hc hu
+  refine le_trans (Nat.mul_le_mul_right w ((card_le_card (t := (Plan.seenAt n o TT.E).filter
+    (Holds (hold0 TT.sys.np) (hold1 TT.sys.np) x) ∪ TT.dead o) ?_).trans (card_union_le _ _))) ?_
   · intro id hid
     obtain ⟨hcur, hone⟩ := mem_filter.1 hid
     by_cases hd : id ∈ TT.dead o
     · exact mem_union_right _ hd
-    refine mem_union_left _ ?_
+    refine mem_union_left _ (mem_filter.2 ⟨(mem_sdiff.1 hcur).1, ?_⟩)
     have hl : hold0 TT.sys.np id ≠ hold1 TT.sys.np id := fun e => by
       unfold Nc.Plus.OneIn at hone
       rw [e] at hone
       tauto
-    have hu : id ∈ cutUnits (hold0 TT.sys.np) (hold1 TT.sys.np) _root_.id (TT.plan.cur n o TT.E \ TT.dead o) :=
-      mem_filter.2 ⟨mem_sdiff.2 ⟨hcur, hd⟩, hl⟩
-    refine mem_filter.2 ⟨hu, ?_⟩
-    obtain ⟨q, hq, he⟩ := TT.edge n hn o hg id hu
+    obtain ⟨q, hq, he⟩ := TT.edge n hn o hg id (mem_filter.2 ⟨mem_sdiff.2 ⟨hcur, hd⟩, hl⟩)
     have hne : ¬ (pieceAt TT k n o q = g.val ↔ pieceAt TT k n o (TT.par n o q) = g.val) := by
       rw [← pieceFin_iff hn hg hK hM hk, ← pieceFin_iff hn hg hK hM hk]
       unfold Nc.Plus.OneIn at hone
@@ -317,13 +318,15 @@ theorem piece_cut (g : Fin (pieceNum TT k)) :
       rw [he, Sym2.mem_iff]
       exact (hx q hq hne).imp Eq.symm Eq.symm
     exact (Sym2.mem_iff.1 hxm)
-  · refine (Nat.mul_le_mul_right _ (card_union_le _ _)).trans ?_
-    rw [add_mul]
-    exact Nat.add_le_add (hnode _ (TT.node_le n hn o hg x)) (Nat.mul_le_mul_right _ (TT.dead_le o))
+  · have h3 := TT.dead_le o
+    calc _ ≤ (C * U + (lg M ^ C * N + (C + 1) * M ^ C)) * w :=
+          Nat.mul_le_mul_right w (by linarith [Nat.mul_le_mul_left C hd])
+      _ = C * (U * w) + (lg M ^ C * N + (C + 1) * M ^ C) * w := by ring
+      _ ≤ _ := Nat.add_le_add_right (Nat.mul_le_mul_left C hu) _
 
 open Classical in
 /-- "Units used up and zeros in slots change this by a constant factor only": the bits in all. -/
-theorem piece_all (hk' : k ≤ 4 * M) (g : Fin (pieceNum TT k)) :
+theorem piece_all (hkw : k ≤ w) (hk' : k ≤ 4 * M) (g : Fin (pieceNum TT k)) :
     (evG (fun n o => pieceFin TT k n o) n o g + pdG TT.plan (fun n o => pieceFin TT k n o) n o g) * k ≤
       C * (4 * yhat N M C) + 4 * M * (lg M ^ C * N) + 2 * C * M ^ C * k := by
   set S := univ.filter fun p => pieceFin TT k n o p = g with hS
@@ -347,8 +350,8 @@ theorem piece_all (hk' : k ≤ 4 * M) (g : Fin (pieceNum TT k)) :
     refine Nat.mul_le_mul_left _ ?_
     rw [hS, Finset.filter_congr fun p _ => pieceFin_iff hn hg hK hM hk p g]
     refine Staged.piece_sum_le _ _ (fun p => ?_) (fun y hy => ?_) _
-    · refine (Nat.mul_le_mul_left _ hkw).trans ((hnode _ ?_).trans (Nat.le_mul_of_pos_left _ (by norm_num)))
-      exact TT.up_node n hn o hg p
+    · exact (Nat.mul_le_mul_left _ hkw).trans
+        ((TT.up_node n hn o hg p).trans (Nat.le_mul_of_pos_left _ (by norm_num)))
     · have h2 := (Staged.light_le (by omega) (yhat_pos hn hg hK hM hk) hy).2
       have h3 := Staged.below_kids (T := treeAt TT (n, o)) (TT.up n o) y
       have e : (treeAt TT (n, o)).below (fun p => (TT.up n o p + (treeAt TT (n, o)).kids (TT.up n o) p) * k) y =
@@ -419,7 +422,7 @@ theorem slp_inputs {Inp ι : Type} [Fintype ι] {D p : ℕ} {inp : ι → Inp �
   rw [coe_univ, Set.image_univ, card_univ] at h2
   exact h2
 
-variable {K N ℓ M b C : ℕ} {laws : List (G.Law A)} {γ : ℝ} (TT : ThinTrees A laws (K + K) N ℓ M b C γ)
+variable {K N ℓ M b C w : ℕ} {laws : List (G.Law A)} (TT : ThinTrees A laws (K + K) N ℓ M b C w)
 
 open Classical in
 /-- "The units, the pieces and what each table does are computed from the numbers of units and the outcomes": the
@@ -597,23 +600,6 @@ theorem pieces_numbers {c σ v e M C₀ a' T : ℕ} (hc : 1 ≤ c) (hσ : 1 ≤ 
       Nat.div_le_div_right (Nat.mul_le_mul_right _ (Nat.add_le_add_left (Nat.le_mul_of_pos_left _ hM1) _))
     omega
 
-/-- The gain: units at one node against all units. -/
-theorem pieces_gain {M q w Λ R X : ℕ} (hq : 0 < q) (hM : 0 < M) (hw : w ^ q ≤ M)
-    (hX : (X : ℝ) ≤ (Λ : ℝ) * (M : ℝ) ^ (1 - 1 / (q : ℝ)) * R) : X * w ≤ Λ * M * R := by
-  have hM0 : (0 : ℝ) < M := by exact_mod_cast hM
-  have h1 : (w : ℝ) ≤ (M : ℝ) ^ (1 / (q : ℝ)) := by
-    have h2 : (w : ℝ) ^ q ≤ (M : ℝ) := by exact_mod_cast hw
-    have h3 := Real.rpow_le_rpow (by positivity) h2 (show (0 : ℝ) ≤ (q : ℝ)⁻¹ by positivity)
-    rw [Real.pow_rpow_inv_natCast (Nat.cast_nonneg w) hq.ne'] at h3
-    rwa [one_div]
-  have h4 : ((X * w : ℕ) : ℝ) ≤ ((Λ * M * R : ℕ) : ℝ) := by
-    push_cast
-    refine (mul_le_mul hX h1 (Nat.cast_nonneg _) (by positivity)).trans (le_of_eq ?_)
-    calc (Λ : ℝ) * (M : ℝ) ^ (1 - 1 / (q : ℝ)) * R * (M : ℝ) ^ (1 / (q : ℝ)) =
-        Λ * ((M : ℝ) ^ (1 - 1 / (q : ℝ)) * (M : ℝ) ^ (1 / (q : ℝ))) * R := by ring
-      _ = _ := by rw [← Real.rpow_add hM0, sub_add_cancel, Real.rpow_one]
-  exact_mod_cast h4
-
 set_option maxHeartbeats 1600000 in
 /-- **Paper: Proposition prop:pieces.** "For every tape automaton over A there are constants a, e, C (a and e do not
 depend on the automaton) such that for all large v there is K with v^e ≤ K ≤ Cv^e and the following holds for all
@@ -681,20 +667,15 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   have hload1 : 1 ≤ load := (Nat.le_add_left 1 _).trans b7
   obtain ⟨J, m, Uu, Tw, Rt, FL, hct, hX1, hX2, hm1, hm2, hUu⟩ := htow (K + K) (by omega)
   obtain ⟨TT⟩ := exists_thinTrees Rt FL hct hC₀.le hm1 hm2 hUu (by omega) hX1 hX2 le_rfl hload1 b1
+    (g := v ^ 300) (by
+      rw [← pow_mul]
+      exact (vp (show 300 * ee h ≤ e by omega)).trans (by omega))
   -- the tower facts are not used below, and they slow the later `omega` calls
   clear htow Rt FL hct hX1 hX2 hm1 hm2 hUu htwo Tw
   have hk64 : k ≤ v ^ 300 := hk'.trans (vp (by norm_num))
   have hkM : k ≤ 4 * (K + K) := by
     have : v ^ 64 ≤ K := hK ▸ vp (by omega)
     omega
-  have hnode : ∀ X : ℕ, (X : ℝ) ≤ (lg (K + K) ^ C₀ : ℕ) *
-      ((K + K : ℕ) : ℝ) ^ (1 - 1 / (ee h : ℝ)) * (load + ((K + K : ℕ) : ℝ) ^ 2) →
-      X * v ^ 300 ≤ yhat load (K + K) C₀ := by
-    intro X hX
-    refine pieces_gain (q := ee h) (by omega) (by omega) ?_ (R := load + (K + K) ^ 2)
-      (by push_cast at hX ⊢; exact hX)
-    rw [← pow_mul]
-    exact (vp (show 300 * ee h ≤ e by omega)).trans (by omega)
   -- bits
   generalize hL : lg v = L
   have hL2 : 2 ≤ L := hL ▸ lg_two (by omega)
@@ -795,13 +776,18 @@ theorem prop_pieces {h : ℕ} [NeZero h] (VL : VLaws A (cNear (h := h)) (dNear (
   · refine (piece_blocks hn hg hK0 le_rfl (by omega) hkM g).trans ?_
     linarith only [Nat.mul_le_mul_right K (show 8 ≤ C by omega)]
   · refine hWC _ ?_
-    have h1 := piece_cut hn hg hK0 le_rfl (by omega) hk64 hnode g
-    grw [mul_right_comm, h1, add_mul, b5, hYub]
+    have h1 := piece_cut hn hg hK0 le_rfl (by omega) g
+    have h3 : v ^ 300 ≤ K := hK ▸ vp (by omega)
+    grw [mul_right_comm, h1]
+    refine le_of_eq_of_le (by ring : _ = C₀ * (yhat load (K + K) C₀ * ub) +
+      lg (K + K) ^ C₀ * (load * ub) * v ^ 300 + (C₀ + 1) * ((K + K) ^ C₀ * v ^ 300 * ub)) ?_
+    grw [b5, hYub, hPL, b3, h3]
     linarith only [Nat.mul_le_mul_right (L ^ C₀ * (K * T))
-        (show 2 * (4 * c + 5) * Ee + 1 ≤ W by rw [← hW]; nlinarith),
-      hKT.trans (Nat.le_mul_of_pos_left _ hL1)]
+        (show 2 * C₀ * (4 * c + 5) * Ee + (4 * c + 4) * Ee + C₀ + 1 ≤ W by
+          rw [← hW]; nlinarith [Nat.zero_le (C₀ * c * Ee)]),
+      Nat.mul_le_mul_left (C₀ + 1) (hKT.trans (Nat.le_mul_of_pos_left _ hL1))]
   · refine hWC _ ?_
-    have h1 := piece_all hn hg hK0 le_rfl (by omega) hk64 hnode hkM g
+    have h1 := piece_all hn hg hK0 le_rfl (by omega) hk64 hkM g
     have h2 : (K + K) ^ C₀ * k * ub ≤ T := (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ hk64)).trans b5
     grw [mul_right_comm, h1]
     refine le_of_eq_of_le (by ring : _ = 4 * C₀ * (yhat load (K + K) C₀ * ub) +

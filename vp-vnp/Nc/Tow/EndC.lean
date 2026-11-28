@@ -107,67 +107,6 @@ end
 variable {n : Fin AA → Fin AA → Fin (U0 + 1)} {o : (sys R FL Pl).N → Fin U1}
 
 open Classical in
-/-- The alive units between a chamber and its parent. -/
-noncomputable def AsU (lhat : ℕ)
-    (n : Fin AA → Fin AA → Fin (U0 + 1)) (o : (sys R FL Pl).N → Fin U1) (s : Σ j : Fin (J + 1), T.X j) : Finset (Un R FL Pl U0 U1) :=
-  univ.filter fun u => ∃ (ν : (sys R FL Pl).N) (kk : Fin U1), u = Uid.new ν kk ∧
-    kk.1 < alv lhat (nn n) (oo o) (eN ν) ∧ IsCh (eN ν) s
-
-theorem mem_AsU_new {ν : (sys R FL Pl).N} {kk : Fin U1} {s : Σ j : Fin (J + 1), T.X j} :
-    (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o s ↔
-      kk.1 < alv lhat (nn n) (oo o) (eN ν) ∧ IsCh (eN ν) s := by
-  classical
-  unfold AsU
-  rw [mem_filter]
-  constructor
-  · rintro ⟨-, ν', k', he, h1, h2⟩
-    obtain ⟨rfl, rfl⟩ := Uid.new.inj he
-    exact ⟨h1, h2⟩
-  · rintro ⟨h1, h2⟩
-    exact ⟨mem_univ _, ν, kk, rfl, h1, h2⟩
-
-theorem mem_AsU_init {a c : Fin AA} {kk : Fin U0} {s : Σ j : Fin (J + 1), T.X j} :
-    (Uid.init a c kk : Un R FL Pl U0 U1) ∉ AsU lhat n o s := by
-  classical
-  unfold AsU
-  rw [mem_filter]
-  rintro ⟨-, ν', k', he, -⟩
-  cases he
-
-theorem card_AsU (s : Σ j : Fin (J + 1), T.X j) :
-    (AsU lhat n o s : Finset (Un R FL Pl U0 U1)).card ≤
-        fb (lev (load lhat (nn n) (oo o))) s.1.1 s.2 := by
-  classical
-  obtain ⟨j, c⟩ := s
-  have h1 : (AsU lhat n o ⟨j, c⟩ : Finset (Un R FL Pl U0 U1)).card =
-      ∑ u : Un R FL Pl U0 U1, if u ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0 := by
-    rw [← card_filter, filter_mem_eq_inter, univ_inter]
-  rw [h1, sum_units]
-  have h2 : (∑ a, ∑ c', ∑ kk,
-      if (Uid.init a c' kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0) = 0 :=
-    Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c' _ => Finset.sum_eq_zero fun kk _ => if_neg mem_AsU_init
-  rw [h2, Nat.zero_add]
-  refine le_trans ?_ (sum_child (n := nn n) (o := oo o) j.1
-    (Nat.le_of_lt_succ j.2) c)
-  rw [← Equiv.sum_comp eN]
-  refine Finset.sum_le_sum fun ν _ => ?_
-  have hle : alv lhat (nn n) (oo o) (eN ν) ≤ U1 := (alvN_le _ _).trans (o _).2.le
-  by_cases hc : IsCh (eN ν) ⟨j, c⟩
-  · refine le_trans ?_ (le_of_eq (if_pos hc).symm)
-    calc (∑ kk : Fin U1, if (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0) ≤
-        ∑ kk : Fin U1, if kk.1 < alv lhat (nn n) (oo o) (eN ν) then 1 else 0 := by
-          refine Finset.sum_le_sum fun kk _ => ?_
-          by_cases h3 : (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩
-          · rw [if_pos h3, if_pos (mem_AsU_new.1 h3).1]
-          · rw [if_neg h3]; exact Nat.zero_le _
-      _ = ((univ : Finset (Fin U1)).filter fun kk => kk.1 <
-          alv lhat (nn n) (oo o) (eN ν)).card := by
-          rw [card_filter]
-      _ ≤ _ := (card_fin_lt' _ _ hle).le
-  · refine le_trans (le_of_eq ?_) (Nat.zero_le _)
-    exact Finset.sum_eq_zero fun kk _ => if_neg fun hm => hc (mem_AsU_new.1 hm).2
-
-open Classical in
 /-- Dead units of good outcomes: the last unit of every channel. -/
 noncomputable def deadU (U0 : ℕ) (o : (sys R FL Pl).N → Fin U1) :
     Finset (Un R FL Pl U0 U1) := univ.image fun ν => Uid.new ν (o ν)
