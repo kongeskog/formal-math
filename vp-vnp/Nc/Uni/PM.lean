@@ -78,6 +78,7 @@ def wts [CommMonoid A] (tr : List P.Step) : A := (tr.map fun st => P.wt st.1).pr
 
 variable (P)
 
+variable (M K) in
 /-- States. -/
 structure State where
   /-- mode -/
@@ -94,7 +95,7 @@ structure State where
 variable {P}
 
 /-- A step is possible. -/
-structure Fire (σ : State (M := M) (K := K)) (st : P.Step) : Prop where
+structure Fire (σ : State M K) (st : P.Step) : Prop where
   src : P.src st.1 = σ.mode
   regs : ∀ i, st.2 (rv i) = σ.regs i
   fresh : st.2 8 = σ.n + 1
@@ -102,7 +103,7 @@ structure Fire (σ : State (M := M) (K := K)) (st : P.Step) : Prop where
   read : (P.rd st.1).toList <+: σ.inp
 
 /-- The state after a step. -/
-def nxt (σ : State (M := M) (K := K)) (st : P.Step) : State (M := M) (K := K) where
+def nxt (σ : State M K) (st : P.Step) : State M K where
   mode := P.dst st.1
   regs i := st.2 (P.dr st.1 i)
   heap := σ.heap ++ [al st]
@@ -111,12 +112,12 @@ def nxt (σ : State (M := M) (K := K)) (st : P.Step) : State (M := M) (K := K) w
 
 variable (P) in
 /-- Accepting runs. -/
-def Seq : State (M := M) (K := K) → List P.Step → Prop
+def Seq : State M K → List P.Step → Prop
   | σ, [] => σ.mode = P.mh ∧ σ.inp = []
   | σ, st :: tr => Fire σ st ∧ Seq (nxt σ st) tr
 
 /-- Runs that are checked globally: loads may refer to any record. -/
-structure GV (σ : State (M := M) (K := K)) (tr : List P.Step) : Prop where
+structure GV (σ : State M K) (tr : List P.Step) : Prop where
   modes : σ.mode :: tr.map (fun st => P.dst st.1) = tr.map (fun st => P.src st.1) ++ [P.mh]
   regs : ∀ i, ∃ fin, σ.regs i :: tr.map (fun st => st.2 (P.dr st.1 i)) = tr.map (fun st => st.2 (rv i)) ++ [fin]
   fresh : tr.map (fun st => st.2 8) = (List.range tr.length).map fun j => σ.n + 1 + j
@@ -124,7 +125,7 @@ structure GV (σ : State (M := M) (K := K)) (tr : List P.Step) : Prop where
   load : ∀ st ∈ tr, ld st ∈ σ.heap ++ tr.map al
 
 /-- The heap is closed. -/
-structure Closed (σ : State (M := M) (K := K)) : Prop where
+structure Closed (σ : State M K) : Prop where
   le : ∀ c ∈ σ.heap, ∀ i, c.2 i ≤ σ.n
   ex : ∀ j ≤ σ.n, ∃ c ∈ σ.heap, c.2 0 = j
   reg : ∀ i, σ.regs i ≤ σ.n
@@ -143,7 +144,7 @@ theorem env_cases (p : Fin 9 → Prop) (h : ∀ i : Fin 5, p (rv i)) (h5 : p 5) 
   · exact h7
   · exact h8
 
-theorem Closed.env {σ : State (M := M) (K := K)} (hσ : Closed σ) {st : P.Step} (hf : Fire σ st) :
+theorem Closed.env {σ : State M K} (hσ : Closed σ) {st : P.Step} (hf : Fire σ st) :
     ∀ i, st.2 i ≤ σ.n + 1 := by
   have hl := hσ.le _ hf.load
   refine env_cases _ (fun i => ?_) ?_ ?_ ?_ ?_
@@ -154,7 +155,7 @@ theorem Closed.env {σ : State (M := M) (K := K)} (hσ : Closed σ) {st : P.Step
   · exact (hl 3).trans (Nat.le_succ _)
   · exact hf.fresh.le
 
-theorem Closed.nxt {σ : State (M := M) (K := K)} (hσ : Closed σ) {st : P.Step} (hf : Fire σ st) :
+theorem Closed.nxt {σ : State M K} (hσ : Closed σ) {st : P.Step} (hf : Fire σ st) :
     Closed (Mach.nxt σ st) := by
   have he := hσ.env hf
   constructor
@@ -183,7 +184,7 @@ theorem Closed.nxt {σ : State (M := M) (K := K)} (hσ : Closed σ) {st : P.Step
     exact he _
 
 /-- The global check is the same as the check step by step, if the heap is closed. -/
-theorem gv_iff {σ : State (M := M) (K := K)} (hσ : Closed σ) (tr : List P.Step) : GV σ tr ↔ Seq P σ tr := by
+theorem gv_iff {σ : State M K} (hσ : Closed σ) (tr : List P.Step) : GV σ tr ↔ Seq P σ tr := by
   induction tr generalizing σ with
   | nil =>
     constructor
@@ -275,7 +276,7 @@ theorem gv_iff {σ : State (M := M) (K := K)} (hσ : Closed σ) (tr : List P.Ste
           simpa using this
 
 /-- All values of the variables are at most the number of steps. -/
-theorem Seq.le {σ : State (M := M) (K := K)} (hσ : Closed σ) {tr : List P.Step} (h : Seq P σ tr) :
+theorem Seq.le {σ : State M K} (hσ : Closed σ) {tr : List P.Step} (h : Seq P σ tr) :
     ∀ st ∈ tr, ∀ i, st.2 i ≤ σ.n + tr.length := by
   induction tr generalizing σ with
   | nil => simp
@@ -295,15 +296,15 @@ variable [CommRing A]
 
 variable (P) in
 /-- The accepting runs from a state are finitely many; their weights have the sum S, their lengths are at most B. -/
-def SumTo {A M K : Type*} [CommRing A] (P : Mach A M K) (σ : State (M := M) (K := K)) (S : A) (B : ℤ) : Prop :=
+def SumTo {A M K : Type*} [CommRing A] (P : Mach A M K) (σ : State M K) (S : A) (B : ℤ) : Prop :=
   ∃ R : Finset (List P.Step), (∀ tr, tr ∈ R ↔ Seq P σ tr) ∧ ∑ tr ∈ R, wts tr = S ∧ ∀ tr ∈ R, (tr.length : ℤ) ≤ B
 
-theorem SumTo.mono {σ : State (M := M) (K := K)} {S : A} {B B' : ℤ} (h : SumTo P σ S B) (hB : B ≤ B') : SumTo P σ S B' := by
+theorem SumTo.mono {σ : State M K} {S : A} {B B' : ℤ} (h : SumTo P σ S B) (hB : B ≤ B') : SumTo P σ S B' := by
   obtain ⟨R, h1, h2, h3⟩ := h
   exact ⟨R, h1, h2, fun tr htr => (h3 tr htr).trans hB⟩
 
 /-- The end. -/
-theorem SumTo.halt {σ : State (M := M) (K := K)} (hm : σ.mode = P.mh) (hi : σ.inp = []) (hP : ∀ r, P.src r ≠ P.mh) :
+theorem SumTo.halt {σ : State M K} (hm : σ.mode = P.mh) (hi : σ.inp = []) (hP : ∀ r, P.src r ≠ P.mh) :
     SumTo P σ 1 0 := by
   classical
   refine ⟨{[]}, fun tr => ?_, by simp [wts], by simp⟩
@@ -317,7 +318,7 @@ theorem SumTo.halt {σ : State (M := M) (K := K)} (hm : σ.mode = P.mh) (hi : σ
     · exact absurd (h.1.src.trans hm) (hP _)
 
 /-- One step: finitely many possibilities. -/
-theorem SumTo.fin {σ : State (M := M) (K := K)} (hm : σ.mode ≠ P.mh) (F : Finset P.Step) (hF : ∀ st, st ∈ F ↔ Fire σ st)
+theorem SumTo.fin {σ : State M K} (hm : σ.mode ≠ P.mh) (F : Finset P.Step) (hF : ∀ st, st ∈ F ↔ Fire σ st)
     (S : P.Step → A) (B : ℤ) (h : ∀ st ∈ F, SumTo P (nxt σ st) (S st) B) :
     SumTo P σ (∑ st ∈ F, P.wt st.1 * S st) (B + 1) := by
   classical
@@ -359,7 +360,7 @@ theorem SumTo.fin {σ : State (M := M) (K := K)} (hm : σ.mode ≠ P.mh) (F : Fi
     omega
 
 /-- No step. -/
-theorem SumTo.none {σ : State (M := M) (K := K)} (hm : σ.mode ≠ P.mh) (h : ∀ st : P.Step, ¬ Fire σ st) (B : ℤ) :
+theorem SumTo.none {σ : State M K} (hm : σ.mode ≠ P.mh) (h : ∀ st : P.Step, ¬ Fire σ st) (B : ℤ) :
     SumTo P σ 0 B := by
   have h1 := SumTo.fin hm (∅ : Finset P.Step) (by simpa using h) (fun _ => 0) 0 (by simp)
   refine ⟨∅, ?_, by simp, by simp⟩
@@ -372,7 +373,7 @@ theorem SumTo.none {σ : State (M := M) (K := K)} (hm : σ.mode ≠ P.mh) (h : �
   · exact h st htr.1
 
 /-- Exactly one step. -/
-theorem SumTo.one {σ : State (M := M) (K := K)} (hm : σ.mode ≠ P.mh) (st : P.Step) (hst : ∀ st', Fire σ st' ↔ st' = st)
+theorem SumTo.one {σ : State M K} (hm : σ.mode ≠ P.mh) (st : P.Step) (hst : ∀ st', Fire σ st' ↔ st' = st)
     {S : A} {B : ℤ} (h : SumTo P (nxt σ st) S B) : SumTo P σ (P.wt st.1 * S) (B + 1) := by
   have h1 := SumTo.fin hm {st} (fun st' => by rw [Finset.mem_singleton, hst]) (fun _ => S) B (by
     intro st' hst'
@@ -382,7 +383,7 @@ theorem SumTo.one {σ : State (M := M) (K := K)} (hm : σ.mode ≠ P.mh) (st : P
   simpa using h1
 
 /-- Exactly two steps. -/
-theorem SumTo.two {σ : State (M := M) (K := K)} (hm : σ.mode ≠ P.mh) (st st₁ : P.Step) (hne : st ≠ st₁)
+theorem SumTo.two {σ : State M K} (hm : σ.mode ≠ P.mh) (st st₁ : P.Step) (hne : st ≠ st₁)
     (hst : ∀ st', Fire σ st' ↔ st' = st ∨ st' = st₁) {S S₁ : A} {B : ℤ} (h : SumTo P (nxt σ st) S B)
     (h₁ : SumTo P (nxt σ st₁) S₁ B) : SumTo P σ (P.wt st.1 * S + P.wt st₁.1 * S₁) (B + 1) := by
   classical

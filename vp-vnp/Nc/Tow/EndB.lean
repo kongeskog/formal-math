@@ -43,7 +43,7 @@ include hb hh
 theorem num_mid (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s))
     (hne : num R ch FL lhat n o (.inl ⟨.mid j e s, hx⟩) ≠ 0) :
     T.ty e = imin hh (lev (load R ch FL lhat n o)) j.1 := by
-  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
+  obtain ⟨hx0, h1⟩ := num_mid_le FL lhat n o hb j e s hx
   have h2 := (num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0).2
   by_contra hcon
   have h3 : ¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) := fun hm => hcon ((isMin_iff hh _ j.castSucc _).1 hm)

@@ -117,7 +117,7 @@ theorem src_ne (r : Ru supp) : (rule θ supp r).src ≠ .Z := by
   all_goals simp [rule, rl]
 
 /-- States of the universal machine. -/
-abbrev St (supp : Finset (List Bool)) := Mach.State (M := Md (Nm supp)) (K := Kd)
+abbrev St (supp : Finset (List Bool)) := Mach.State (Md (Nm supp)) Kd
 
 /-- A heap that can be used. -/
 structure OKs (σ : St supp) : Prop where

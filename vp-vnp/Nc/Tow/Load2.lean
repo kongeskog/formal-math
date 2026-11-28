@@ -321,6 +321,7 @@ theorem num_mid0 (j : Fin J) (e : T.Ed j) (hx : okR T R ch (.mid j e 0)) :
 variable (hb : 0 < b)
 include hb
 
+variable (FL lhat n o) in
 /-- The relays of an edge are given at most what is on the edge. -/
 theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j e s)) :
     ∃ hx0 : okR T R ch (.mid j e 0), num R ch FL lhat n o (.inl ⟨.mid j e s, hx⟩) ≤
@@ -385,7 +386,7 @@ theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR T R ch (.mid j
     alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) ≤ load R ch FL lhat n o (.edge j.castSucc e) ∧
     (¬ IsMin (load R ch FL lhat n o) j.castSucc (T.ty e) →
       alv R ch FL lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R FL (ch := ch)) = 0) := by
-  obtain ⟨hx0, h1⟩ := num_mid_le (FL := FL) (lhat := lhat) (n := n) (o := o) hb j e s hx
+  obtain ⟨hx0, h1⟩ := num_mid_le FL lhat n o hb j e s hx
   have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0
   have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) (⟨.mid j e s, hx⟩ : {x : RM T m AA // okR T R ch x}) ν
   refine ⟨h3.trans (h1.trans h2.1), fun hn => ?_⟩

@@ -98,7 +98,7 @@ theorem kbar_kapB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T
 theorem capN_capB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) :
     capN FL U0 Uu AA lh ≤ capB c m (Fintype.card (T.X 0)) lh U0 := by
   have h1 := kbar_kapB (lh := lh) hC hm hUu hAA
-  have h0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh)
+  have h0 := kbar_nonneg Uu AA FL lh
   unfold capN capB
   refine Nat.add_le_add_left (Nat.ceil_le.2 ?_) _
   push_cast
@@ -109,7 +109,7 @@ theorem capN_capB {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T
 theorem YhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) :
     YhN FL Uu AA lh ρ ≤ 2 * c * kapB c m (Fintype.card (T.X 0)) lh * c := by
   have h1 := kbar_kapB (lh := lh) hC hm hUu hAA
-  have h0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh)
+  have h0 := kbar_nonneg Uu AA FL lh
   unfold YhN
   refine Nat.ceil_le.2 ?_
   push_cast
@@ -129,7 +129,7 @@ theorem YhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 
 theorem BhN_le {AA lh : ℕ} (hm : 1 ≤ m) (hUu : Uu ≤ 2 * Fintype.card (T.X 0) * m) (hAA : AA ≤ Fintype.card (T.X 0)) :
     BhN FL Uu AA lh ρ ^ q * Fintype.card (T.X 0) ≤ (2 * c * kapB c m (Fintype.card (T.X 0)) lh) ^ q := by
   have h1 := kbar_kapB (lh := lh) hC hm hUu hAA
-  have h0 := kbar_nonneg (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh)
+  have h0 := kbar_nonneg Uu AA FL lh
   have h2 := BhN_pow_le (FL := FL) (Uu := Uu) (AA := AA) (lhat := lh) hC.b_pos hC.h_pos hC.bD hC.ρ_pos hC.bot_pos
     hC.pq hC.pow
   have hh : (h : ℝ) ≤ c := by exact_mod_cast hC.h_le

@@ -94,7 +94,7 @@ def nst (s : P.Rl × List (Fin 9 → Bool)) : P.Step := (s.1, fun i => bv (cw s.
 
 variable (P) in
 /-- The first state. -/
-def σi (bits : List Bool) : Mach.State (M := M) (K := K) := ⟨P.m0, fun _ => 0, [(P.kN, ![0, 0, 0, 0])], 0, bits⟩
+def σi (bits : List Bool) : Mach.State M K := ⟨P.m0, fun _ => 0, [(P.kN, ![0, 0, 0, 0])], 0, bits⟩
 
 /-- The content of a record of numbers. -/
 def cN (L : ℕ) (ρ : Rec K) : List (Bl K) := cont ρ.1 (unb L ρ.2)
