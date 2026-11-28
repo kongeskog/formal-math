@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T05:45:15.487646213Z",
+  "updated_at": "2026-11-28T05:46:53.623675399Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -166,10 +166,10 @@
     {
       "number": 187,
       "title": "Idea: restructure(Nc/Tow): context arguments fixed by a later argument's type become implicit",
-      "status": "claimed",
+      "status": "done",
       "author": "kongeskog",
-      "claimed_by": "kongeskog",
-      "lease_expires": "2026-11-28T07:47:49Z",
+      "claimed_by": null,
+      "lease_expires": null,
       "pr": 196,
       "result_delta": -4814,
       "created_at": "2026-11-28T03:10:29Z",
@@ -1190,8 +1190,8 @@
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
-      "tokens": 18725,
-      "loc": 1124
+      "tokens": 18391,
+      "loc": 1131
     },
     {
       "path": "vp-vnp/Paper/Groups.lean",
@@ -1299,11 +1299,6 @@
       "loc": 353
     },
     {
-      "path": "vp-vnp/Nc/Tow/Load2.lean",
-      "tokens": 5694,
-      "loc": 404
-    },
-    {
       "path": "vp-vnp/Nc/Dl/SizeScript.lean",
       "tokens": 5568,
       "loc": 361
@@ -1314,19 +1309,19 @@
       "loc": 332
     },
     {
-      "path": "vp-vnp/Nc/Tow/Ever2.lean",
-      "tokens": 5454,
-      "loc": 332
-    },
-    {
-      "path": "vp-vnp/Nc/Tow/Load0.lean",
-      "tokens": 5447,
-      "loc": 412
+      "path": "vp-vnp/Nc/Tow/Load2.lean",
+      "tokens": 5505,
+      "loc": 413
     },
     {
       "path": "vp-vnp/Paper/Prices.lean",
       "tokens": 5446,
       "loc": 304
+    },
+    {
+      "path": "vp-vnp/Nc/Tow/Load0.lean",
+      "tokens": 5398,
+      "loc": 422
     },
     {
       "path": "vp-vnp/Nc/Tow/Load.lean",
@@ -1337,6 +1332,11 @@
       "path": "vp-vnp/NS1/Comp.lean",
       "tokens": 5242,
       "loc": 318
+    },
+    {
+      "path": "vp-vnp/Paper/Means.lean",
+      "tokens": 5228,
+      "loc": 292
     }
   ]
 }
