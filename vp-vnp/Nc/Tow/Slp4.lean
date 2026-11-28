@@ -76,14 +76,14 @@ theorem mem_cur (u : Un R FL Pl U0 U1) :
 
 end Mem
 
-variable {Inp ι : Type} {Dd Y p c TM : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
+variable {Inp ι : Type} {Dd Y p c : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
 variable {nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)} {oI : Inp → (sys R FL Pl).N → Fin U1}
 
 /-- More bounds. -/
-structure Bnd2 (R : Routes T m Uu) (FL : FlagLaws F T) (Pl : Place T ch A') (U0 U1 Y TM : ℕ) : Prop where
+structure Bnd2 (R : Routes T m Uu) (FL : FlagLaws F T) (Pl : Place T ch A') (U0 U1 Y : ℕ) :
+    Prop where
   zm : Fintype.card (ZM R ch FL) ≤ Y
   un : Fintype.card (Un R FL Pl U0 U1) ≤ Y
-  tm : TM ≤ Y
 
 /-- The numbers of initial units. -/
 def nX (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (x : Inp) : Fin AA → Fin AA → ℕ := nn (nI x)
@@ -96,25 +96,20 @@ theorem rng : Rng (nX nI) (oX oI : Inp → NM R ch FL → ℕ) U0 U1 where
   o x _ := (oI x _).2.le
 
 /-- What is known about units. -/
-structure Units (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (oI : Inp → (sys R FL Pl).N → Fin U1) (lhat TM : ℕ)
-    (H : Set (Inp → ℕ)) : Prop where
+structure Units (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (oI : Inp → (sys R FL Pl).N → Fin U1)
+    (lhat : ℕ) (H : Set (Inp → ℕ)) : Prop where
   cons : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H
   num : ∀ mv : Mv R ch FL, (fun x => num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  lt : ∀ (mv : Mv R ch FL) (τ : Fin TM),
-      ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  pad : ∀ (z : ZM R ch FL) (τ : Fin TM), ind (fun x => (consM lhat (nI x) (oI x) z).card ≤ τ.1 ∧
-    τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) z.1) ∈ H
   cur : ∀ u, ind (fun x => u ∈
       (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL))) ∈ H
   good : ∀ mv : Mv R ch FL, ind (fun x => GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  good' : ind (fun x => ∀ mv : Mv R ch FL, GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  valid : ind (fun x => Valid lhat (nn (nI x))) ∈ H
 
-theorem Units.weaken {H H' : Set (Inp → ℕ)} (hu : Units nI oI lhat TM H) (hH : H ⊆ H') : Units nI oI lhat TM H' :=
-  ⟨fun z u => hH (hu.cons z u), fun mv => hH (hu.num mv), fun mv τ => hH (hu.lt mv τ), fun z τ => hH (hu.pad z τ),
-    fun u => hH (hu.cur u), fun mv => hH (hu.good mv), hH hu.good', hH hu.valid⟩
+theorem Units.weaken {H H' : Set (Inp → ℕ)} (hu : Units nI oI lhat H) (hH : H ⊆ H') :
+    Units nI oI lhat H' :=
+  ⟨fun z u => hH (hu.cons z u), fun mv => hH (hu.num mv), fun u => hH (hu.cur u),
+    fun mv => hH (hu.good mv)⟩
 
-variable (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl U0 U1 Y TM)
+variable (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl U0 U1 Y)
 include hA hB hB2
 
 theorem py_al (ha : After (nX nI) (oX oI) lhat H) (u : Un R FL Pl U0 U1) :
@@ -212,14 +207,8 @@ theorem py_good (ha : After (nX nI) (oX oI) lhat H) (mv : Mv R ch FL) :
     exact PY.and hA (h1.mono hY (by omega)) h2
 
 theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
-    ∃ H', SY inp Y p (c + 9) H' ∧ H ⊆ H' ∧ Units nI oI lhat TM H' := by
+    ∃ H', SY inp Y p (c + 5) H' ∧ H ⊆ H' ∧ Units nI oI lhat H' := by
   have hun : Fintype.card (Un R FL Pl U0 U1) ≤ Y ^ 1 := by simpa using hB2.un
-  have hzt : Fintype.card (ZM R ch FL × Fin TM) ≤ Y ^ 2 := by
-    rw [Fintype.card_prod, Fintype.card_fin, pow_two]
-    exact Nat.mul_le_mul hB2.zm hB2.tm
-  have hmt : Fintype.card (Mv R ch FL × Fin TM) ≤ Y ^ 2 := by
-    rw [Fintype.card_prod, Fintype.card_fin, pow_two]
-    exact Nat.mul_le_mul hB.mv hB2.tm
   have hzu : Fintype.card (ZM R ch FL × Un R FL Pl U0 U1) ≤ Y ^ 2 := by
     rw [Fintype.card_prod, pow_two]
     exact Nat.mul_le_mul hB2.zm hB2.un
@@ -234,56 +223,16 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
     (fun q => ind fun x => q.2 ∈ consM lhat (nI x) (oI x) q.1) (a := 5) (e := 2) hzu
     (fun q => py_cons hA hB hB2 a2 (fun u => u2 (f1 u)) f2 q.1 q.2) (by omega)
   have a3 := a2.weaken u3
-  have c3 : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H3 := fun z u => f3 (z, u)
-  obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := ZM R ch FL)
-    (fun z x => (consM lhat (nI x) (oI x) z).card) (a := 2) (e := 1) (by simpa using hB2.zm)
-    (fun z => by
-      classical
-      have e : ∀ x, (consM lhat (nI x) (oI x) z).card =
-          ∑ u ∈ univ, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) x := by
-        intro x
-        have h1 : ∀ u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) x =
-            if u ∈ consM lhat (nI x) (oI x) z then 1 else 0 := by
-          intro u
-          by_cases hu : u ∈ consM lhat (nI x) (oI x) z
-          · rw [if_pos hu, ind_true (P := fun x => u ∈ consM lhat (nI x) (oI x) z) hu]
-          · rw [if_neg hu, ind_false (P := fun x => u ∈ consM lhat (nI x) (oI x) z) hu]
-        rw [Finset.sum_congr rfl fun u _ => h1 u, ← Finset.card_filter]
-        congr 1
-        ext u
-        simp
-      refine CY.congr ?_ fun x => (e x).symm
-      refine CY.sum hA univ hB2.un (fun u _ => CY.base (c3 z u)) fun x => hA.lt_of_le ?_
-      refine (Finset.sum_le_card_nsmul _ _ 1 fun v _ => ind_le _ _).trans ?_
-      rw [smul_eq_mul, mul_one]
-      exact hB2.un) (by omega)
-  have a4 := a3.weaken u4
-  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv R ch FL × Fin TM)
-    (fun q => ind fun x => q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1) (a := 1) (e := 2) hmt
-    (fun q => PY.rel1 hA (fun s => q.2.1 < s) (CY.base (a4.num q.1))) (by omega)
-  obtain ⟨H6, s6, u6, f6⟩ := s5.add hA (κ := ZM R ch FL × Fin TM)
-    (fun q => ind fun x => (consM lhat (nI x) (oI x) q.1).card ≤ q.2.1 ∧
-      q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1.1) (a := 2) (e := 2) hzt
-    (fun q => PY.and hA (PY.rel1 hA (fun s => s ≤ q.2.1) (CY.base (u5 (f4 q.1))))
-      (PY.rel1 hA (fun s => q.2.1 < s) (CY.base (u5 (a4.num q.1.1))))) (by omega)
-  have c6 : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H6 :=
-    fun z u => u6 (u5 (u4 (c3 z u)))
-  have a6 := a4.weaken (u5.trans u6)
-  obtain ⟨H7, s7, u7, f7⟩ := s6.add hA (κ := Un R FL Pl U0 U1)
+  obtain ⟨H7, s7, u7, f7⟩ := s3.add hA (κ := Un R FL Pl U0 U1)
     (fun u => ind fun x => u ∈
         (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL)))
-    (a := 4) (e := 1) hun (fun u => py_cur hA hB hB2 a6 c6 u) (by omega)
-  have a7 := a6.weaken u7
+    (a := 4) (e := 1) hun (fun u => py_cur hA hB hB2 a3 (fun z u => f3 (z, u)) u) (by omega)
+  have a7 := a3.weaken u7
   obtain ⟨H8, s8, u8, f8⟩ := s7.add hA (κ := Mv R ch FL)
     (fun mv => ind fun x => GoodMv lhat (nX nI x) (oX oI x) mv) (a := 4) (e := 1)
     (by simpa using hB.mv)
     (fun mv => py_good hA hB hB2 a7 mv) (by omega)
-  obtain ⟨H9, s9, u9, f9⟩ := s8.add hA (κ := Unit)
-    (fun _ => ind fun x => ∀ mv, GoodMv lhat (nX nI x) (oX oI x) mv) (a := 2) (e := 0) (by simp)
-    (fun _ => PY.forall_univ hA hB.mv fun mv => PY.base (f8 mv)) (by omega)
-  have v79 := u8.trans u9
-  refine ⟨H9, s9, ?_, ⟨fun z u => v79 (u7 (c6 z u)), fun mv => v79 (a7.num mv), fun mv τ => v79 (u7 (u6 (f5 (mv, τ)))),
-    fun z τ => v79 (u7 (f6 (z, τ))), fun u => v79 (f7 u), fun mv => u9 (f8 mv), f9 (), v79 a7.valid⟩⟩
-  exact u1.trans (u2.trans (u3.trans (u4.trans (u5.trans (u6.trans (u7.trans v79))))))
+  exact ⟨H8, s8, u1.trans (u2.trans (u3.trans (u7.trans u8))),
+    fun z u => u8 (u7 (f3 (z, u))), fun mv => u8 (a7.num mv), fun u => u8 (f7 u), f8⟩
 
 end Nc.Tow

@@ -439,14 +439,14 @@ section Program
 
 variable {F : Type} [CommRing F] {h b J m Uu AA A' U0 U1 : ℕ} {T : Tower h b J}
 variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {Pl : Place T ch A'} {lhat : ℕ}
-variable {Inp ι : Type} {Dd Y p TM : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
+variable {Inp ι : Type} {Dd Y p : ℕ} {inp : ι → Inp → Fin Dd} {H : Set (Inp → ℕ)}
 variable {nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)} {oI : Inp → (sys R FL Pl).N → Fin U1}
 
 /-- The program of the tower plan, with the parents and the loads. -/
-theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl U0 U1 Y TM)
+theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl U0 U1 Y)
     (hS : SlpN inp p H) (hn : ∀ a c, (fun x => ((nI x a c : Fin (U0 + 1)) : ℕ)) ∈ H)
     (ho : ∀ ν, (fun x => ((oI x ν : Fin U1) : ℕ)) ∈ H) (lhat : ℕ) :
-    ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat TM H' ∧
+    ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat H' ∧
       HostOk (fun x => load lhat (nn (nI x)) (oo (oI x))) H' ∧
       ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j),
           (fun x => fb (lev (load lhat (nn (nI x)) (oo (oI x)))) j c) ∈ H' := by
@@ -466,12 +466,12 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
   refine ⟨H4, ?_, (f2.weaken u3).weaken u4, fun j hj c c' => u4 (f3 j hj c c'), f4⟩
   refine SlpN.le hA.zero_lt ?_ s4
   have h3 := hA.three
-  have h4 : 0 + 11 + 8 * Y + 9 + 1 + 1 ≤ Y ^ 4 := by
+  have h4 : 0 + 11 + 8 * Y + 5 + 1 + 1 ≤ Y ^ 4 := by
     have e1 : Y ^ 4 = Y ^ 3 * Y := by ring
     have e2 : 3 ^ 3 ≤ Y ^ 3 := Nat.pow_le_pow_left h3 3
     have e3 : 3 ^ 3 * Y ≤ Y ^ 3 * Y := Nat.mul_le_mul_right _ e2
     omega
-  have h5 : (0 + 11 + 8 * Y + 9 + 1 + 1) * Y ^ 12 ≤ Y ^ 16 := by
+  have h5 : (0 + 11 + 8 * Y + 5 + 1 + 1) * Y ^ 12 ≤ Y ^ 16 := by
     grw [h4, ← pow_add]
   exact Nat.add_le_add_left h5 p
 
@@ -855,10 +855,9 @@ theorem tree_computed {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V) (hJ : J + 1 ≤ V)
       have h1 : b * Fintype.card (Sym2 T.Fl) * Fintype.card (Un R FL Pl N U1) ≤ V * V * (18 * V ^ 7) := by gcongr
       have h2 : V * V * (18 * V ^ 7) = 18 * V ^ 9 := by ring
       omega }
-  have hB2 : Bnd2 R FL Pl N U1 Y 0 := {
+  have hB2 : Bnd2 R FL Pl N U1 Y := {
     zm := by rw [hZM]; omega
-    un := by omega
-    tm := Nat.zero_le _ }
+    un := by omega }
   have hYY : Y < Y ^ 4 := by
     calc Y = Y ^ 1 := (pow_one Y).symm
       _ < Y ^ 4 := Nat.pow_lt_pow_right (by omega) (by norm_num)
