@@ -168,31 +168,59 @@ theorem cons {R : List (A × Tree)} (hF : Does θ F x Q c) (hG : Does θ G x R d
     refine List.map_congr_left fun p _ => ?_
     simp only [Function.comp_apply, mul_assoc]
 
+/-- Apply the program that is the value of a formula to the values of another one. -/
+theorem runW {p : Tree} {R : Tree → List (A × Tree)} {e : ℕ}
+    (hF : Gives θ F x p c) (hG : Does θ G x Q d) (h : ∀ q ∈ Q, Does θ (Fm.ofTree p) q.2 (R q.2) e) :
+    Does θ (.run F G) x (bindW Q R) (c + d + e + 1) := by
+  obtain ⟨l, e1, e2, e3⟩ := hF
+  obtain ⟨l', f1, f2, f3⟩ := hG
+  have ho : ∀ r ∈ l, r.out = p := by
+    intro r hr
+    obtain ⟨-, q, hq, h⟩ := e2 r hr
+    rw [List.mem_singleton] at hq
+    subst hq
+    exact h.symm
+  have hG' : ∀ s ∈ l', Does θ (Fm.ofTree p) s.out (R s.out) e := by
+    intro s hs
+    obtain ⟨-, q, hq, h'⟩ := f2 s hs
+    rw [← h']
+    exact h q hq
+  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [ho r hr]; exact (hG' s hs).hl, ?_, fun φ => ?_⟩
+  · intro u hu
+    simp only [List.mem_flatMap, List.mem_map] at hu
+    obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu
+    rw [ho r hr] at ht
+    obtain ⟨a2, -⟩ := e2 r hr
+    obtain ⟨b2, q, hq, b3⟩ := f2 s hs
+    obtain ⟨c2, q', hq', c3⟩ := (hG' s hs).evl.1 t ht
+    rw [← b3] at hq'
+    refine ⟨?_, (q.1 * q'.1, q'.2), mem_bindW_of hq hq', c3⟩
+    simp only [Run.seq, Run.tick]
+    omega
+  · rw [sum_flatMap_map, wsum_bindW]
+    have h1 : ∀ r ∈ l, ((l'.flatMap fun s => (NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
+        ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum =
+          r.th * wsum Q fun o => wsum (R o) φ := by
+      intro r hr
+      rw [sum_flatMap_map, ← f3 fun o => wsum (R o) φ, ← List.sum_map_mul_left]
+      congr 1
+      refine List.map_congr_left fun s hs => ?_
+      rw [ho r hr, List.map_map, ← (hG' s hs).evl.2 φ, ← List.sum_map_mul_left,
+        ← List.sum_map_mul_left]
+      congr 1
+      refine List.map_congr_left fun t _ => ?_
+      simp only [Function.comp_apply, Run.seq, Run.tick]
+      ring
+    rw [List.map_congr_left h1]
+    have := e3 fun _ => wsum Q fun o => wsum (R o) φ
+    rw [this]
+    simp [wsum]
+
 /-- Apply a fixed program to the value. -/
 theorem app {p : Tree} {R : Tree → List (A × Tree)} (hF : Does θ F x Q c)
-    (hG : ∀ q ∈ Q, Does θ (Fm.ofTree p) q.2 (R q.2) d) : Does θ (app p F) x (bindW Q R) (c + d + 2) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF
-  have hG' : ∀ s ∈ l, Does θ (Fm.ofTree p) s.out (R s.out) d := by
-    intro s hs
-    obtain ⟨-, q, hq, h⟩ := e2 s hs
-    rw [← h]
-    exact hG q hq
-  refine ⟨_, Ev.app e1 fun s hs => (hG' s hs).hl, ?_, fun φ => ?_⟩
-  · intro u hu
-    obtain ⟨s, hs, t, ht, h1, h3, -⟩ := mem_app hu
-    obtain ⟨a2, q, hq, a3⟩ := e2 s hs
-    obtain ⟨b2, r, hr, b3⟩ := (hG' s hs).evl.1 t ht
-    rw [← a3] at hr
-    refine ⟨by omega, (q.1 * r.1, r.2), mem_bindW_of hq hr, ?_⟩
-    rw [h3, ← b3]
-  · rw [wsum_bindW, sum_flatMap_map, ← wsum_congr (φ := fun o => ((NS1.evl θ (Fm.ofTree p) o).map fun t =>
-      t.th * φ t.out).sum) (fun q hq => (hG q hq).evl.2 φ), ← e3]
-    congr 1
-    refine List.map_congr_left fun s _ => ?_
-    rw [List.map_map, ← List.sum_map_mul_left]
-    congr 1
-    refine List.map_congr_left fun t _ => ?_
-    simp only [Function.comp_apply, Run.seq, Run.tick, Run.det, one_mul, mul_assoc]
+    (hG : ∀ q ∈ Q, Does θ (Fm.ofTree p) q.2 (R q.2) d) :
+    Does θ (app p F) x (bindW Q R) (c + d + 2) :=
+  (runW (of_dt (Dt.quote p x)) hF hG).mono (by omega)
 
 /-- `let`. -/
 theorem lett {R : Tree → List (A × Tree)} (hF : Does θ F x Q c) (hG : ∀ q ∈ Q, Does θ G q.2 (R q.2) d) :
@@ -220,36 +248,12 @@ theorem letk {R : Tree → List (A × Tree)} (hF : Does θ F x Q c) (hG : ∀ q 
 /-- Apply a program that is the value of a formula. -/
 theorem run {p y : Tree} {R : List (A × Tree)} {e : ℕ} (hF : Gives θ F x p c) (hG : Gives θ G x y d)
     (h : Does θ (Fm.ofTree p) y R e) : Does θ (.run F G) x R (c + d + e + 1) := by
-  obtain ⟨l, e1, e2, e3⟩ := hF.runs
-  obtain ⟨l', f1, f2, f3⟩ := hG.runs
-  refine ⟨_, Ev.run' e1 f1 fun r hr s hs => by rw [(e2 r hr).2, (f2 s hs).2]; exact h.hl, ?_,
-    fun φ => ?_⟩
-  · intro u hu
-    simp only [List.mem_flatMap, List.mem_map] at hu
-    obtain ⟨r, hr, s, hs, t, ht, rfl⟩ := hu
-    obtain ⟨a2, a3⟩ := e2 r hr
-    obtain ⟨b2, b3⟩ := f2 s hs
-    rw [a3, b3] at ht
-    obtain ⟨c2, c3⟩ := h.evl.1 t ht
-    refine ⟨?_, c3⟩
-    simp only [Run.seq, Run.tick]
-    omega
-  · rw [sum_flatMap_map]
-    have h1 : ∀ r ∈ l, ((l'.flatMap fun s => (NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
-        ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum = r.th * wsum R φ := by
-      intro r hr
-      rw [sum_flatMap_map]
-      have h2 : ∀ s ∈ l', (((NS1.evl θ (Fm.ofTree r.out) s.out).map fun t =>
-          ((r.seq s).seq t).tick t.out).map fun u => u.th * φ u.out).sum = s.th * (r.th * wsum R φ) := by
-        intro s hs
-        rw [(e2 r hr).2, (f2 s hs).2, List.map_map, ← h.evl.2 φ, ← List.sum_map_mul_left,
-          ← List.sum_map_mul_left]
-        congr 1
-        refine List.map_congr_left fun t _ => ?_
-        simp only [Function.comp_apply, Run.seq, Run.tick]
-        ring
-      rw [List.map_congr_left h2, List.sum_map_mul_right, f3, one_mul]
-    rw [List.map_congr_left h1, List.sum_map_mul_right, e3, one_mul]
+  have := runW (R := fun _ => R) hF hG (by
+    intro q hq
+    rw [List.mem_singleton] at hq
+    subst hq
+    exact h)
+  simpa [bindW] using this
 
 /-- An `ite` whose test gives `o` costs the test plus the branch `K`: the then-branch when `o ≠ nil`, the
 else-branch when `o = nil`. -/
@@ -400,5 +404,11 @@ theorem Does.of_gives {F G : Fm} {x o : Tree} {Q : List (A × Tree)} {c d : ℕ}
     subst hq
     exact h')
   simpa [bindW] using this
+
+/-- A program calls itself: its argument is (this program, data). -/
+theorem Does.self {B G : Fm} {z y : Tree} {Q : List (A × Tree)} {c d : ℕ}
+    (hG : Gives θ G (.cons B.code z) (.cons B.code y) c) (h : Does θ B (.cons B.code y) Q d) :
+    Does θ (.run (.hd .id) G) (.cons B.code z) Q (c + d + 3) :=
+  (Does.run (Gives.id _).hd hG (by rw [hd_cons, Fm.ofTree_code]; exact h)).mono (by omega)
 
 end NS1

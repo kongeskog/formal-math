@@ -300,15 +300,11 @@ theorem combF_dt {W : ℕ} {t t' : Bt} {o o' : List Bool} (h : o.length = W)
     ∃ k ≤ 60 * W + 90, Dt θ combF (.cons u w) (.cons (Bt.node t t').enc (ofBits
         (addc false o o'))) k := by
   obtain ⟨k, hk, hd⟩ := AD_dt (θ := θ) false (h.trans h'.symm)
-  have hd' : Dt θ (Fm.ofTree AD.code) (.cons AD.code (.cons .nil (.cons (ofBits o) (ofBits o'))))
-      (ofBits (addc false o o')) k := by
-    rw [Fm.ofTree_code]
-    exact hd
   have := Dt.cons (Dt.cons (Dt.cons (Dt.hd (Dt.hd (Dt.hd (Dt.id (θ := θ) (.cons u w)))))
     (Dt.hd (Dt.hd (Dt.tl (Dt.id _))))) (Dt.quote .nil _))
     (Dt.run (Dt.quote AD.code _) (Dt.cons (Dt.quote AD.code _) (Dt.cons (Dt.quote .nil _)
       (Dt.cons (Dt.tl (Dt.hd (Dt.hd (Dt.id _))))
-          (Dt.tl (Dt.hd (Dt.tl (Dt.id _))))))) (by simpa [hu, hw] using hd'))
+          (Dt.tl (Dt.hd (Dt.tl (Dt.id _))))))) (by simpa [hu, hw, bit] using hd))
   simp only [hd_cons, tl_cons, hu, hw, Bt.enc] at this ⊢
   exact ⟨_, by omega, this⟩
 

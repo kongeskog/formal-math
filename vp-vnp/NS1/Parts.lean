@@ -31,9 +31,9 @@ def partFun (m : ℕ) (x σ : Tree) : Tree :=
 theorem partStep_gives (x W : Tree) (w : List Bool) (l : List Tree) :
     Gives θ partStep (.cons x (.cons W (.cons (ofBits w) (listT l)))) (partFun (KT.val w) x (.cons W (.cons (ofBits w) (listT l))))
       (((l.take (KT.val w)).length + 1) * (60 * w.length + 100) + 60 * x.len + 100) := by
-  have h1 := Gives.app (p := takeB.code) (Gives.cons (Gives.quote (θ := θ) takeB.code
+  have h1 := Gives.lett (Gives.cons (Gives.quote (θ := θ) takeB.code
     (.cons x (.cons W (.cons (ofBits w) (listT l))))) (Gives.cons (Gives.id _).tl.tl.hd
-      (Gives.cons (Gives.quote (listT []) _) (Gives.id _).tl.tl.tl))) (by rw [Fm.ofTree_code]; exact takeB_gives w [] l)
+      (Gives.cons (Gives.quote (listT []) _) (Gives.id _).tl.tl.tl))) (takeB_gives w [] l)
   have h2 := Gives.cons h1 (Gives.id (θ := θ) (.cons x (.cons W (.cons (ofBits w) (listT l)))))
   rw [List.append_nil] at h2
   have h3 := setF_gives (Gives.id (θ := θ) (.cons (.cons (listT (l.take (KT.val w)).reverse) (listT (l.drop (KT.val w))))
@@ -89,16 +89,11 @@ theorem partsF_gives {lf : Fm} {x : Tree} {cl : ℕ} {l : List Tree} (hl : Gives
           (.cons (foldB partStep).code (.cons (.cons W (.cons (ofBits n) (listT l))) (listT ((p :: ps).map ofBits))))
           (partFun (KT.val n) (ofBits p) (.cons W (.cons (ofBits n) (listT l)))) _ :=
         Gives.lett (Gives.cons (Gives.id _).tl.tl.hd (Gives.id _).tl.hd) hstep
-      have ih' : Gives θ (Fm.ofTree (foldB partStep).code) (.cons (foldB partStep).code
-          (.cons (.cons (tset p (listT (l.take (KT.val n)).reverse) W) (.cons (ofBits n) (listT (l.drop (KT.val n)))))
-          (listT (ps.map ofBits)))) ((ps.map ofBits).foldl (fun σ x => partFun (KT.val n) x σ)
-          (.cons (tset p (listT (l.take (KT.val n)).reverse) W) (.cons (ofBits n) (listT (l.drop (KT.val n))))))
-          (((l.drop (KT.val n)).length + ps.length) * (60 * n.length + 100) + ps.length * (60 * Ln + 130) + 10) := by
-        rw [Fm.ofTree_code]
-        exact ih _ _ fun q hq => hps q (List.mem_cons_of_mem _ hq)
       rw [e] at e1
-      have r := Gives.run (Gives.id (θ := θ) (.cons (foldB partStep).code (.cons (.cons W (.cons (ofBits n) (listT l)))
-        (listT ((p :: ps).map ofBits))))).hd (Gives.cons (Gives.id _).hd (Gives.cons e1 (Gives.id _).tl.tl.tl)) ih'
+      have r := Does.self ((Gives.id (θ := θ) (.cons (foldB partStep).code
+        (.cons (.cons W (.cons (ofBits n) (listT l))) (listT ((p :: ps).map ofBits))))).hd.cons
+        (Gives.cons e1 (Gives.id _).tl.tl.tl))
+        (ih _ _ fun q hq => hps q (List.mem_cons_of_mem _ hq))
       rw [List.map_cons, List.foldl_cons, e]
       refine (Gives.ite_true (Gives.id _).tl.tl (by simp [listT]) r).mono ?_
       have hp := hps p List.mem_cons_self
@@ -112,8 +107,8 @@ theorem partsF_gives {lf : Fm} {x : Tree} {cl : ℕ} {l : List Tree} (hl : Gives
       have e4 : (ps.length + 1) * (60 * Ln + 130) = ps.length * (60 * Ln + 130) + (60 * Ln + 130) := by ring
       omega
   have h0 := Gives.cons (Gives.quote (θ := θ) .nil x) (Gives.cons (Gives.quote (ofBits n) x) hl)
-  have h1 := Gives.app (p := (foldB partStep).code) (Gives.cons (Gives.quote (θ := θ) (foldB partStep).code x)
-    (Gives.cons h0 (Gives.quote (listT (names.map ofBits)) x))) (by rw [Fm.ofTree_code]; exact key names .nil l hn)
+  have h1 := Gives.lett (Gives.cons (Gives.quote (θ := θ) (foldB partStep).code x)
+    (Gives.cons h0 (Gives.quote (listT (names.map ofBits)) x))) (key names .nil l hn)
   have h2 := Gives.hd h1
   rw [foldl_partFun] at h2
   exact h2.mono (by omega)
