@@ -144,7 +144,7 @@ theorem card_AsU (s : Σ j : Fin (J + 1), T.X j) :
   rw [h2, Nat.zero_add]
   refine le_trans ?_ (sum_child (n := nn n) (o := oo o) j.1
     (Nat.le_of_lt_succ j.2) c)
-  rw [← Equiv.sum_comp (eN (Pl := Pl))]
+  rw [← Equiv.sum_comp eN]
   refine Finset.sum_le_sum fun ν _ => ?_
   have hle : alv lhat (nn n) (oo o) (eN ν) ≤ U1 := (alvN_le _ _).trans (o _).2.le
   by_cases hc : IsCh (eN ν) ⟨j, c⟩

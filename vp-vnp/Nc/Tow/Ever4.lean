@@ -173,7 +173,7 @@ theorem held_le (P : Nd T) : heldN R FL Pl n o (Pl.pt P) ≤ initN (A' := A') n 
   have h2 : (∑ ν : (sys R FL Pl).N, ∑ d : Bool, if (sys R FL Pl).np ν d = Pl.pt P then (o ν).1 else 0) =
       ∑ ν : NM R ch FL, ∑ d : Bool,
         if partM ν.1 ((kindM FL ν.1).cnEnd ν.2 d) = P then oo o ν else 0 := by
-    rw [← Equiv.sum_comp (eN (Pl := Pl))]
+    rw [← Equiv.sum_comp eN]
     refine Finset.sum_congr rfl fun ν _ => Finset.sum_congr rfl fun d _ => ?_
     have h3 : oo o (eN ν) = (o ν).1 := by
       unfold oo

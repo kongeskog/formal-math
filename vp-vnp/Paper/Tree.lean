@@ -898,8 +898,8 @@ theorem tree_computed {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V) (hJ : J + 1 ≤ V)
   have p7 := pw 7 (by omega)
   have p1 : V ≤ V ^ 9 := Nat.le_self_pow (by norm_num) V
   have hA : Alph (Y ^ 4) Y := ⟨by omega, le_rfl⟩
-  have hNM : Fintype.card (NM R ch FL) = Fintype.card (sys R FL Pl).N := Fintype.card_congr (eN (Pl := Pl)).symm
-  have hZM : Fintype.card (ZM R ch FL) = Fintype.card (sys R FL Pl).Z := Fintype.card_congr (eZ (Pl := Pl)).symm
+  have hNM : Fintype.card (NM R ch FL) = Fintype.card (sys R FL Pl).N := Fintype.card_congr eN.symm
+  have hZM : Fintype.card (ZM R ch FL) = Fintype.card (sys R FL Pl).Z := Fintype.card_congr eZ.symm
   have hWb : Wb R ch FL N U1 = Fintype.card (Un R FL Pl N U1) := by
     rw [card_Un]
     unfold Wb

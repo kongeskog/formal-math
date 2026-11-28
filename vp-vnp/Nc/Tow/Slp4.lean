@@ -69,8 +69,8 @@ theorem mem_cur (u : Un R FL Pl U0 U1) :
     · rintro ⟨z, -, hz⟩
       exact ⟨eZ z, hz⟩
     · rintro ⟨z, hz⟩
-      refine ⟨(eZ (Pl := Pl)).symm z, mem_filter.2 ⟨mem_univ _, ((eZ (Pl := Pl)).symm z).1.2⟩, ?_⟩
-      change u ∈ consM lhat n o (eZ ((eZ (Pl := Pl)).symm z))
+      refine ⟨eZ.symm z, mem_filter.2 ⟨mem_univ _, (eZ.symm z).1.2⟩, ?_⟩
+      change u ∈ consM lhat n o (eZ (eZ.symm z))
       rw [Equiv.apply_symm_apply]
       exact hz
 

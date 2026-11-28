@@ -221,8 +221,8 @@ theorem cur_end {u : Un R FL Pl U0 U1}
   apply hu.2
   unfold Plan.used
   rw [mem_biUnion]
-  refine ⟨(eZ (Pl := Pl)).symm z, mem_filter.2 ⟨mem_univ _, ((eZ (Pl := Pl)).symm z).1.2⟩, ?_⟩
-  change u ∈ consM lhat n o (eZ ((eZ (Pl := Pl)).symm z))
+  refine ⟨eZ.symm z, mem_filter.2 ⟨mem_univ _, (eZ.symm z).1.2⟩, ?_⟩
+  change u ∈ consM lhat n o (eZ (eZ.symm z))
   rw [Equiv.apply_symm_apply]
   exact hz
 

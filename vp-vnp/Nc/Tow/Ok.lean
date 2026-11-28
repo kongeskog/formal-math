@@ -203,7 +203,7 @@ theorem plan_ok {cap : ℕ}
       obtain ⟨z', hz', hu'⟩ := mem_biUnion.1 hmem
       have hlt := (mem_filter.1 hz').2
       have hu' : u ∈ consM lhat n o (eZ z') := hu'
-      rw [(eZ (Pl := Pl)).injective (consM_unique hu hu')] at hlt
+      rw [eZ.injective (consM_unique hu hu')] at hlt
       exact lt_irrefl _ hlt
   hold n o z u hu := by
     -- both pairs are the ends of the target of the unit, put in place
