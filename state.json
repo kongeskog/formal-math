@@ -46,7 +46,7 @@
       }
     ]
   },
-  "updated_at": "2026-11-28T10:06:47.119171754Z",
+  "updated_at": "2026-11-28T10:39:35.192978290Z",
   "baseline": {
     "sha": "0b4130288a66fa4c0451f239ff9f7a3c236acc97",
     "at": "2026-11-24T00:00:46.348761212Z",
@@ -74,15 +74,15 @@
   "counts": {
     "merged": 117,
     "rejected": 4,
-    "open": 0,
+    "open": 1,
     "contributors": 2,
-    "ideas_open": 3
+    "ideas_open": 2
   },
   "leaderboard": [
     {
       "login": "kongeskog",
       "merged": 110,
-      "attempts": 114,
+      "attempts": 115,
       "saved": 142628
     },
     {
@@ -96,11 +96,11 @@
     {
       "number": 207,
       "title": "Idea: restructure(Nc/Grp): GROUP guesses the contents of all cells first, then every instruction compares",
-      "status": "open",
+      "status": "claimed",
       "author": "kongeskog",
-      "claimed_by": null,
-      "lease_expires": null,
-      "pr": null,
+      "claimed_by": "kongeskog",
+      "lease_expires": "2026-11-28T13:38:55Z",
+      "pr": 208,
       "result_delta": null,
       "created_at": "2026-11-28T10:05:53Z",
       "url": "https://github.com/kongeskog/formal-math/issues/207",
@@ -1256,7 +1256,95 @@
       "scope": "*"
     }
   ],
-  "open": [],
+  "open": [
+    {
+      "pr": 208,
+      "title": "restructure(Nc/Grp): GROUP guesses the contents of all cells first, then every instruction compares",
+      "author": "kongeskog",
+      "head_sha": "1006bce52aaed6d7e116a2baee0011ac5fb2d523",
+      "base_sha": null,
+      "status": "verifying",
+      "created_at": "2026-11-28T10:38:57Z",
+      "decided_at": null,
+      "metrics": null,
+      "base_metrics": null,
+      "delta": null,
+      "gates": [
+        {
+          "key": "format",
+          "label": "Standard title and description",
+          "status": "pass"
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen files untouched",
+          "status": "pending"
+        },
+        {
+          "key": "scope",
+          "label": "Changes stay in scope",
+          "status": "pending"
+        },
+        {
+          "key": "deny",
+          "label": "No banned constructs",
+          "status": "pending"
+        },
+        {
+          "key": "no_increase",
+          "label": "No more long lines or exceptions",
+          "status": "pending"
+        },
+        {
+          "key": "added_lines",
+          "label": "Added lines are clean",
+          "status": "pending"
+        },
+        {
+          "key": "deleted_names",
+          "label": "No deleted name still mentioned",
+          "status": "pending"
+        },
+        {
+          "key": "conduct",
+          "label": "Automation within the stated limits",
+          "status": "pending"
+        },
+        {
+          "key": "comments",
+          "label": "Added text within limits",
+          "status": "pending"
+        },
+        {
+          "key": "improves",
+          "label": "Score improves",
+          "status": "pending"
+        },
+        {
+          "key": "compiles",
+          "label": "Project compiles",
+          "status": "pending"
+        },
+        {
+          "key": "same_theorems",
+          "label": "Same theorems proved",
+          "status": "pending"
+        },
+        {
+          "key": "fresh",
+          "label": "Verified on current main",
+          "status": "pending"
+        }
+      ],
+      "idea": 207,
+      "url": "https://github.com/kongeskog/formal-math/pull/208",
+      "run_url": null,
+      "merge_sha": null,
+      "reason": null,
+      "technique": "restructure",
+      "scope": "Nc/Grp"
+    }
+  ],
   "top_files": [
     {
       "path": "vp-vnp/Paper/Tree.lean",
