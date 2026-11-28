@@ -24,7 +24,8 @@ variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} (R : Ro
 
 noncomputable instance : DecidableEq (NM R ch FL) := Classical.decEq _
 
-noncomputable instance : Fintype (NM R ch FL) := inferInstanceAs (Fintype (Σ mv : Mv R ch FL, (kindM FL mv).Cn))
+noncomputable instance : Fintype (NM R ch FL) :=
+  inferInstanceAs (Fintype (Σ mv : Mv R ch FL, (kindM FL mv).Cn))
 
 /-- Every base party has at most `lhat` units at the beginning. -/
 def Valid : Prop := ∀ a, ∑ c, (if c = a then 0 else n a c + n c a) ≤ lhat
@@ -320,7 +321,8 @@ theorem fits_congr {l : LMv FL}
   simp only [hL]
 
 theorem tmin_congr {l : LMv FL}
-    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : tmin L l = tmin L' l := by
+    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) :
+    tmin L l = tmin L' l := by
   unfold tmin
   congr 1
   ext s
@@ -328,7 +330,8 @@ theorem tmin_congr {l : LMv FL}
   exact exists_congr fun d => fits_congr (l := withD l d) hL s
 
 theorem pick_congr {l : LMv FL}
-    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) : Pick L l ↔ Pick L' l := by
+    (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = L' (.seg l.1 l.2.1 l.2.2.1 q)) :
+    Pick L l ↔ Pick L' l := by
   unfold Pick
   rw [tmin_congr hL, fits_congr hL]
   refine and_congr_right fun _ => forall_congr' fun d => imp_congr_right fun _ => not_congr ?_

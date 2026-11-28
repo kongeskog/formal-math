@@ -119,7 +119,8 @@ theorem sum_mv_le (f : Mv R ch FL → ℕ) {a : ℕ} {g : LMv FL → ℕ} (h1 : 
   rw [Fintype.sum_sum_type]
   simp
 
-theorem sum_moves (f : Mv R ch FL → ℕ) : ∑ x, f (eE R FL x) = ∑ mv, f mv := Equiv.sum_comp (eE R FL) f
+theorem sum_moves (f : Mv R ch FL → ℕ) : ∑ x, f (eE R FL x) = ∑ mv, f mv :=
+  Equiv.sum_comp (eE R FL) f
 
 theorem card_Mv_le : Fintype.card (Mv R ch FL) ≤
     rmN h m J AA (Fintype.card (T.X 0)) + lmN h J (Fintype.card (T.X 0)) (Fintype.card FL.Di) := by

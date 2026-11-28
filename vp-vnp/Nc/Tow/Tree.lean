@@ -76,6 +76,7 @@ def onN (f : ∀ j, T.X j → ℕ) (f0 : ℕ) : Nd T → ℕ
   | none => f0
   | some ⟨j, c⟩ => f j.1 c
 
-theorem onN_nd (f : ∀ j, T.X j → ℕ) (f0 : ℕ) {j : ℕ} (hj : j ≤ J) (c : T.X j) : onN f f0 (nd hj c) = f j c := rfl
+theorem onN_nd (f : ∀ j, T.X j → ℕ) (f0 : ℕ) {j : ℕ} (hj : j ≤ J) (c : T.X j) :
+    onN f f0 (nd hj c) = f j c := rfl
 
 end Nc.Tow

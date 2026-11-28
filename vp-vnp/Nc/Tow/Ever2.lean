@@ -60,7 +60,8 @@ theorem nR_mid3 (j : Fin J) (e : T.Ed j) : nR lhat n o (.mid j e 3) ≤ nR lhat 
   rw [dif_pos (ok_mid2 j e)]
   split_ifs with hx
   · refine (num_inl _).trans ?_
-    refine (load_le_sum {(⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, true⟩ : NM R ch FL)} (bt_mid j e 3) ?_).trans ?_
+    refine (load_le_sum {(⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, true⟩ : NM R ch FL)}
+      (bt_mid j e 3) ?_).trans ?_
     · rintro ⟨⟨x, hx'⟩ | l, ν⟩ hν -
       · obtain ⟨h1, h2⟩ := tgR_mid (ν := ν) hν
         have h3 : x = .mid j e 2 := by
@@ -84,14 +85,16 @@ theorem nR_mid1 (j : Fin J) (e : T.Ed j) : nR lhat n o (.mid j e 1) ≤ nR lhat 
   unfold nR
   rw [dif_pos (ok_mid2 j e)]
   split_ifs with hx
-  · have h1 : num lhat n o (.inl ⟨.mid j e 2, ok_mid2 j e⟩) = load lhat n o (.nxt (.mid j e 2)) := by
+  · have h1 : num lhat n o (.inl ⟨.mid j e 2, ok_mid2 j e⟩) =
+        load lhat n o (.nxt (.mid j e 2)) := by
       rw [num_eq, numF, if_pos]
       · rfl
       · intro hh
         exact absurd hh (by decide)
     rw [h1, ← alv_relay hg ⟨.mid j e 1, hx⟩ true]
     have h2 := sum_alv_le (lhat := lhat) (n := n) (o := o) (.nxt (.mid j e 2)) ({()} : Finset Unit)
-      (fun _ => (⟨.inl ⟨.mid j e 1, hx⟩, true⟩ : NM R ch FL)) (fun _ _ _ _ _ => rfl) (fun _ _ => rfl)
+      (fun _ => (⟨.inl ⟨.mid j e 1, hx⟩, true⟩ : NM R ch FL)) (fun _ _ _ _ _ => rfl)
+      (fun _ _ => rfl)
     rw [Finset.sum_singleton] at h2
     exact h2
   · exact Nat.zero_le _
@@ -140,7 +143,8 @@ theorem sum_mid2 (j : Fin J) (c : T.X (j + 1)) :
     refine sum_alv_le (.edge j.succ ē) (univ.filter fun e : T.Ed j => T.πE e = ē)
       (fun e => (⟨.inl ⟨.mid j e 2, ok_mid2 j e⟩, false⟩ : NM R ch FL)) ?_ ?_
     · intro e _ e' _ hee
-      have h2 : (Sum.inl ⟨.mid j e 2, ok_mid2 j e⟩ : Mv R ch FL) = .inl ⟨.mid j e' 2, ok_mid2 j e'⟩ :=
+      have h2 : (Sum.inl ⟨.mid j e 2, ok_mid2 j e⟩ : Mv R ch FL) =
+          .inl ⟨.mid j e' 2, ok_mid2 j e'⟩ :=
         congrArg Sigma.fst hee
       have h3 := congrArg Subtype.val (Sum.inl_injective h2)
       simp only [RM.mid.injEq, heq_eq_eq, true_and, and_true] at h3
@@ -158,7 +162,8 @@ section Node
 variable (lhat n o) in
 open Classical in
 /-- The number of units given in relays at a node. -/
-noncomputable def NR (P : Nd T) : ℕ := ∑ x : RM T m AA, ∑ q : Fin 3, if tri R ch x q = P then nR lhat n o x else 0
+noncomputable def NR (P : Nd T) : ℕ :=
+  ∑ x : RM T m AA, ∑ q : Fin 3, if tri R ch x q = P then nR lhat n o x else 0
 
 variable (lhat n o) in
 open Classical in
@@ -220,10 +225,12 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
         · rfl
     refine (Finset.sum_le_sum fun i _ => h1 i).trans ?_
     rw [Finset.sum_ite_eq', if_pos (mem_univ _), Finset.sum_add_distrib, Finset.sum_add_distrib,
-      sum_end (fun e => T.e0 e) (fun x => nd j.2.le x = P), sum_end (fun e => T.e1 e) (fun x => nd j.2.le x = P)]
+      sum_end (fun e => T.e0 e) (fun x => nd j.2.le x = P),
+          sum_end (fun e => T.e1 e) (fun x => nd j.2.le x = P)]
     rw [hfb _ j.2.le]
     omega
-  have hmid : ∀ j : Fin J, (∑ e : T.Ed j, ∑ s : Fin 4, ∑ q : Fin 3, if tri R ch (.mid j e s) q = P then
+  have hmid : ∀ j : Fin J, (∑ e : T.Ed j, ∑ s : Fin 4, ∑ q : Fin 3,
+      if tri R ch (.mid j e s) q = P then
       nR lhat n o (.mid j e s) else 0) ≤
       4 * (∑ x : T.X j, if nd j.2.le x = P then fb Lf j x else 0) +
       (2 * (∑ e : T.Ed j, if nd j.2 (hostj Lf (T.e0 e)) = P then Lf j e else 0) +
@@ -232,7 +239,8 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
     intro j
     have h1 : ∀ e : T.Ed j, (∑ s : Fin 4, ∑ q : Fin 3, if tri R ch (.mid j e s) q = P then
         nR lhat n o (.mid j e s) else 0) ≤
-        ((if nd j.2.le (T.e0 e) = P then Lf j e else 0) + 4 * if nd j.2.le (T.e1 e) = P then Lf j e else 0) +
+        ((if nd j.2.le (T.e0 e) = P then Lf j e else 0) +
+          4 * if nd j.2.le (T.e1 e) = P then Lf j e else 0) +
         (2 * (if nd j.2 (hostj Lf (T.e0 e)) = P then Lf j e else 0) +
           if nd j.2 (hostj Lf (T.e1 e)) = P then Lf j e else 0) +
         (2 * (if nd j.2 (T.π (T.e0 e)) = P then nR lhat n o (.mid j e 2) else 0) +
@@ -253,7 +261,8 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
       have h3 := nR_mid3 (lhat := lhat) (n := n) (o := o) (R := R) (ch := ch) (FL := FL) j e
       have h4 := nR_mid1 hg j e
       -- the chambers on the next level
-      have hH : ∀ s (c : T.X j), (if nd j.2 (hst (T.ty e) c) = P then nR lhat n o (.mid j e s) else 0) ≤
+      have hH : ∀ s (c : T.X j),
+          (if nd j.2 (hst (T.ty e) c) = P then nR lhat n o (.mid j e s) else 0) ≤
           if nd j.2 (hostj Lf c) = P then Lf j e else 0 := by
         intro s c
         by_cases ht : T.ty e = imin Lf j
@@ -270,7 +279,8 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
         split_ifs
         · exact (hs s).1
         · exact le_rfl
-      have hp : ∀ s (p : Prop) [Decidable p], s = 1 ∨ s = 2 ∨ s = 3 → (if p then nR lhat n o (.mid j e s) else 0) ≤
+      have hp : ∀ s (p : Prop) [Decidable p], s = 1 ∨ s = 2 ∨ s = 3 →
+          (if p then nR lhat n o (.mid j e s) else 0) ≤
           if p then nR lhat n o (.mid j e 2) else 0 := by
         intro s p _ hs'
         split_ifs
@@ -290,7 +300,8 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
       have c3 := hH 3 (T.e1 e)
       have d1 := hp 1 (nd j.2 (T.π (T.e0 e)) = P) (Or.inl rfl)
       have d4 := hp 3 (nd j.2 (T.π (T.e1 e)) = P) (Or.inr (Or.inr rfl))
-      change ((if nd j.2.le (T.e0 e) = P then _ else 0) + (if nd j.2 (hst (T.ty e) (T.e0 e)) = P then _ else 0) +
+      change ((if nd j.2.le (T.e0 e) = P then _ else 0) +
+          (if nd j.2 (hst (T.ty e) (T.e0 e)) = P then _ else 0) +
           if nd j.2.le (T.e1 e) = P then _ else 0) +
         ((if nd j.2 (hst (T.ty e) (T.e0 e)) = P then _ else 0) +
           (if nd j.2 (T.π (T.e0 e)) = P then _ else 0) + if nd j.2.le (T.e1 e) = P then _ else 0) +
@@ -320,10 +331,12 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
       · exact le_rfl
     rw [e0, e1, e2, e3, hfb _ j.2.le]
     omega
-  have hfin : (∑ e : T.Ed J, ∑ q : Fin 3, if tri R ch (.fin e) q = P then nR lhat n o (.fin e) else 0) ≤
+  have hfin : (∑ e : T.Ed J, ∑ q : Fin 3,
+      if tri R ch (.fin e) q = P then nR lhat n o (.fin e) else 0) ≤
       (∑ x : T.X J, if nd le_rfl x = P then fb Lf J x else 0) +
       if none = P then ∑ e : T.Ed J, Lf J e else 0 := by
-    have h1 : ∀ e : T.Ed J, (∑ q : Fin 3, if tri R ch (.fin e) q = P then nR lhat n o (.fin e) else 0) ≤
+    have h1 : ∀ e : T.Ed J, (∑ q : Fin 3,
+        if tri R ch (.fin e) q = P then nR lhat n o (.fin e) else 0) ≤
         (if nd le_rfl (T.e0 e) = P then Lf J e else 0) + (if none = P then Lf J e else 0) +
           if nd le_rfl (T.e1 e) = P then Lf J e else 0 := by
       intro e
@@ -332,7 +345,8 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
       refine add_le_add (add_le_add ?_ ?_) ?_ <;> split_ifs <;>
         first | exact h2 | exact le_rfl | contradiction
     refine (Finset.sum_le_sum fun e _ => h1 e).trans ?_
-    rw [Finset.sum_add_distrib, Finset.sum_add_distrib, sum_end (fun e => T.e0 e) (fun x => nd le_rfl x = P),
+    rw [Finset.sum_add_distrib, Finset.sum_add_distrib,
+        sum_end (fun e => T.e0 e) (fun x => nd le_rfl x = P),
       sum_end (fun e => T.e1 e) (fun x => nd le_rfl x = P)]
     rw [hfb J le_rfl, Finset.sum_ite_irrel, Finset.sum_const_zero]
     omega
@@ -353,8 +367,10 @@ theorem NR_le (P : Nd T) : NR lhat n o P ≤ NR0 lhat n o P +
       · exact fb_eq Lf j c
       · rfl
     · rfl
-  have hall : (∑ j, ∑ i, ∑ e, ∑ q : Fin 3, if tri R ch (.inn j i e) q = P then nR lhat n o (.inn j i e) else 0) +
-      (∑ j, ∑ e, ∑ s, ∑ q : Fin 3, if tri R ch (.mid j e s) q = P then nR lhat n o (.mid j e s) else 0) ≤
+  have hall : (∑ j, ∑ i, ∑ e, ∑ q : Fin 3,
+      if tri R ch (.inn j i e) q = P then nR lhat n o (.inn j i e) else 0) +
+      (∑ j, ∑ e, ∑ s, ∑ q : Fin 3,
+          if tri R ch (.mid j e s) q = P then nR lhat n o (.mid j e s) else 0) ≤
       (∑ j : Fin J, ∑ x : T.X j, if nd j.2.le x = P then 5 * fb Lf j x else 0) +
       ∑ j : Fin J, ∑ x : T.X (j + 1),
         if nd j.2 x = P then 3 * chs Lf j x + 2 * fb Lf (j + 1) x else 0 := by

@@ -60,7 +60,8 @@ theorem tgB_cases (a c : Fin AA) (k : ℕ) : (tgB R ch a c k = .done) ∨
     by_cases hs : 0 < 2 * m ∧ 1 < R.pl (ch a) (ch c) (gam ch a k)
     · rw [dif_pos hs]; exact Or.inr (Or.inl ⟨hs.1, rfl⟩)
     · rw [dif_neg hs]
-      rcases edgeO_cases (m := m) (AA := AA) ((R.path (ch a) (ch c) (gam ch a k))[0]?) with h1 | ⟨e, h1, h2⟩
+      rcases edgeO_cases (m := m) (AA := AA) ((R.path (ch a) (ch c) (gam ch a k))[0]?) with h1 | ⟨e,
+          h1, h2⟩
       · exact Or.inl h1
       · exact Or.inr (Or.inr ⟨e, h1, h2, hac, fun hh => hs ⟨by omega, hh⟩⟩)
 
@@ -127,8 +128,10 @@ theorem tgR_edge_succ {x : RM T m AA} {ν : Bool} {j : Fin J} {e' : T.Ed (j + 1)
 
 theorem tgR_seg {x : RM T m AA} {ν : Bool} {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl}
     (hx : tgR R ch x ν = .seg j i ω q) : ∃ e : T.Ed j, ν = false ∧ T.ty e = i ∧
-      ((x = .mid j e 1 ∧ (T.πV (T.vx i (T.e0 e)) : T.V (j + 1) i) = ω ∧ s(T.co i (hst i (T.e0 e)), T.co i (T.e0 e)) = q) ∨
-      (x = .mid j e 3 ∧ (T.πV (T.vx i (T.e1 e)) : T.V (j + 1) i) = ω ∧ s(T.co i (hst i (T.e1 e)), T.co i (T.e1 e)) = q)) := by
+      ((x = .mid j e 1 ∧ (T.πV (T.vx i (T.e0 e)) : T.V (j + 1) i) = ω ∧
+          s(T.co i (hst i (T.e0 e)), T.co i (T.e0 e)) = q) ∨
+      (x = .mid j e 3 ∧ (T.πV (T.vx i (T.e1 e)) : T.V (j + 1) i) = ω ∧
+          s(T.co i (hst i (T.e1 e)), T.co i (T.e1 e)) = q)) := by
   rcases x with ⟨a, c, γ, s⟩ | ⟨j', i', e⟩ | ⟨j', e, s⟩ | e
   · exfalso
     have : ∀ e : Option (T.Ed 0), (edgeO e : Tg T m AA) ≠ .seg j i ω q := by
@@ -324,7 +327,8 @@ variable (FL lhat n o) in
 theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s)) :
     ∃ hx0 : okR R ch (.mid j e 0), num lhat n o (.inl ⟨.mid j e s, hx⟩) ≤
       num lhat n o (.inl ⟨.mid j e 0, hx0⟩) := by
-  have hx0 : okR R ch (.mid j e 0) := ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
+  have hx0 : okR R ch (.mid j e 0) :=
+    ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
   refine ⟨hx0, ?_⟩
   -- The step shared by all relays: the load at relay `s` is at most the number at the one
   -- relay `y` that feeds it.
@@ -373,7 +377,8 @@ theorem num_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e
   · exact le_rfl
   · exact one hx
   · exact two hx
-  · have hx2 : okR R ch (.mid j e 2) := ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
+  · have hx2 : okR R ch (.mid j e 2) :=
+      ⟨fun hh => absurd hh (by decide), fun hh => absurd hh (by decide)⟩
     refine (num_inl _).trans ((key 3 _ hx2 fun x ν _ hν => ?_).trans (two hx2))
     rcases (tgR_mid hν).2 with h2 | h2 | h2
     · exact absurd h2.1 (by decide)
@@ -386,13 +391,15 @@ theorem alv_mid_le (j : Fin J) (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e
       alv lhat n o (⟨.inl ⟨.mid j e s, hx⟩, ν⟩ : NM R ch FL) = 0) := by
   obtain ⟨hx0, h1⟩ := num_mid_le FL lhat n o j e s hx
   have h2 := num_mid0 (FL := FL) (lhat := lhat) (n := n) (o := o) j e hx0
-  have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) (⟨.mid j e s, hx⟩ : {x : RM T m AA // okR R ch x}) ν
+  have h3 := alv_le_num (lhat := lhat) (n := n) (o := o) (⟨.mid j e s,
+      hx⟩ : {x : RM T m AA // okR R ch x}) ν
   refine ⟨h3.trans (h1.trans h2.1), fun hn => ?_⟩
   have := h2.2 hn
   omega
 
 /-- End segments, inactive types. -/
-theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
+theorem seg_zero {j : Fin J} {i : Fin h} (hn : ¬ IsMin (load lhat n o) j.castSucc i)
+    (ω : T.V (j + 1) i)
     (q : Sym2 T.Fl) : load lhat n o (.seg j i ω q) = 0 := by
   rw [load_def, bt_seg, Nat.zero_add]
   refine Finset.sum_eq_zero fun ν _ => ?_
@@ -407,7 +414,8 @@ open Classical in
 noncomputable def segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : Finset (NM R ch FL) :=
   if hx : okR R ch (.mid j e s) then {⟨.inl ⟨.mid j e s, hx⟩, false⟩} else ∅
 
-theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) : ∑ ν ∈ segS (R := R) (ch := ch) (FL := FL) j s e, alv lhat n o ν ≤
+theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) :
+    ∑ ν ∈ segS (R := R) (ch := ch) (FL := FL) j s e, alv lhat n o ν ≤
     load lhat n o (.edge j.castSucc e) := by
   unfold segS
   split_ifs with hx

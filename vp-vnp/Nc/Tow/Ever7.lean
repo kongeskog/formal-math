@@ -35,7 +35,8 @@ open Classical in
 theorem pads_node {Sm : ℕ} (hSm : ∀ d, Fintype.card (FL.L d).Sl ≤ Sm) (P : Nd T) :
     (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) ≤
       2 * NR lhat (nn n) (oo o) P + (1 + Sm) * NL lhat (nn n) (oo o) P := by
-  have h1 : (∑ r' : (sys R FL Pl).R, if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) =
+  have h1 : (∑ r' : (sys R FL Pl).R,
+      if (sys R FL Pl).rp r' = Pl.pt P then padR lhat n o r' else 0) =
       ∑ y : (Σ mv : Mv R ch FL, (kindM FL mv).Ro), if partM y.1 y.2 = P then
         (1 + Fintype.card ((kindM FL y.1).SlAt y.2)) * num lhat (nn n) (oo o) y.1 else 0 := by
     rw [← Equiv.sum_comp (eR R FL Pl)]

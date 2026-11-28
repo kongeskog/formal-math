@@ -148,7 +148,8 @@ theorem kbar_nonneg : 0 ≤ kbar FL Uu AA lhat := by
   have := Real.sqrt_nonneg FL.C₁
   positivity
 
-theorem kap_zero_le : T.kap (lds lhat n o 0) ≤ √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by
+theorem kap_zero_le : T.kap (lds lhat n o 0) ≤
+    √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by
   have h1 : ∀ e : T.Ed 0, (lds lhat n o 0 e : ℝ) ^ 2 ≤ (nhat T Uu AA lhat : ℝ) ^ 2 := by
     intro e
     refine pow_le_pow_left₀ (Nat.cast_nonneg _) ?_ 2
@@ -156,7 +157,8 @@ theorem kap_zero_le : T.kap (lds lhat n o 0) ≤ √h * (Fintype.card (T.X 0) / 
   have h0 : 0 ≤ √h * (Fintype.card (T.X 0) / 2) * nhat T Uu AA lhat := by positivity
   refine (abs_le_of_sq_le_sq' ?_ h0).2
   rw [Tower.kap_sq, mul_pow, mul_pow, Real.sq_sqrt (Nat.cast_nonneg h)]
-  have h2 : ∑ e : T.Ed 0, (lds lhat n o 0 e : ℝ) ^ 2 ≤ Fintype.card (T.Ed 0) * (nhat T Uu AA lhat : ℝ) ^ 2 := by
+  have h2 : ∑ e : T.Ed 0, (lds lhat n o 0 e : ℝ) ^ 2 ≤
+      Fintype.card (T.Ed 0) * (nhat T Uu AA lhat : ℝ) ^ 2 := by
     refine (Finset.sum_le_sum fun e _ => h1 e).trans (le_of_eq ?_)
     rw [Finset.sum_const, card_univ, nsmul_eq_mul]
   rw [Tower.card_ed_real] at h2

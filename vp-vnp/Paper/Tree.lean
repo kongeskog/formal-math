@@ -370,7 +370,8 @@ theorem cur_tree {n : Fin AA → Fin AA → Fin (N + 1)}
     unfold tgB at hdone
     rw [if_neg hne] at hdone
     split_ifs at hdone with hs
-    exact (edgeO_hold (R := R) (ch := ch) (AA := AA) (m := m) (c := ch a) (c' := ch c) (γ := gam ch a kk) (s := 0)
+    exact (edgeO_hold (R := R) (ch := ch) (AA := AA) (m := m) (c := ch a) (c' := ch c)
+      (γ := gam ch a kk) (s := 0)
       (R.pl_pos (fun e => hne (ch.injective e)) _)).1 hdone
   | new ν kk =>
     have hko := mem_seen_new.1 hseen
@@ -453,7 +454,8 @@ theorem tree_slp (hA : Alph Dd Y) (hB : Bnd R ch FL U0 U1 Y) (hB2 : Bnd2 R FL Pl
     (ho : ∀ ν, (fun x => ((oI x ν : Fin U1) : ℕ)) ∈ H) (lhat : ℕ) :
     ∃ H', SlpN inp (p + Y ^ 16) H' ∧ Units nI oI lhat TM H' ∧
       HostOk (fun x => load lhat (nn (nI x)) (oo (oI x))) H' ∧
-      ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j), (fun x => fb (lev (load lhat (nn (nI x)) (oo (oI x)))) j c) ∈ H' := by
+      ∀ (j : ℕ) (_ : j ≤ J) (c : T.X j),
+          (fun x => fb (lev (load lhat (nn (nI x)) (oo (oI x)))) j c) ∈ H' := by
   have hR : Rng (nX nI) (oX oI : Inp → NM R ch FL → ℕ) U0 U1 := rng
   have hS0 : SY inp Y p 0 H := by
     unfold SY
@@ -796,7 +798,8 @@ theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
           ∑ q ∈ univ.filter (fun q => q ≠ Pl.pt none ∧ treePar R FL Pl n o q = p),
             treeUp R FL Pl n o q) +
         (if (p : ℕ) < AA then (1 + 8 * m) * N else 0) +
-        2 * ((deadU N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
+        2 * ((deadU N o).filter
+          (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) p)).card := by
   have hgd : ∀ mv, GoodMv N (nn n) (oo o) mv := fun mv => by
     have h1 : GoodMv N (nn n) (oo o) (eE R FL ((eE R FL).symm mv)) := hg ((eE R FL).symm mv)
     rwa [Equiv.apply_symm_apply] at h1
@@ -812,7 +815,8 @@ theorem thm_tree_copies {n : Fin AA → Fin AA → Fin (N + 1)}
     · simp
     · simp
   have h3 : chanN R FL Pl (Pl.pt P) ≤
-      2 * ((deadU N o).filter (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) (Pl.pt P))).card := by
+      2 * ((deadU N o).filter
+        (Holds (hold0 (sys R FL Pl).np) (hold1 (sys R FL Pl).np) (Pl.pt P))).card := by
     unfold deadU chanN
     rw [Finset.filter_image, card_image_of_injective _ (fun ν ν' e => (Uid.new.inj e).1), card_filter, Finset.mul_sum]
     refine Finset.sum_le_sum fun ν _ => ?_
@@ -875,11 +879,13 @@ theorem tree_computed {V : ℕ} (hV : 3 ≤ V) (hm : m ≤ V) (hJ : J + 1 ≤ V)
     ∃ (steps : ℕ) (inp : (Fin AA × Fin AA) ⊕ (sys R FL Pl).N →
         (Fin AA → Fin AA → Fin (N + 1)) × ((sys R FL Pl).N → Fin U1) → Fin ((20 * V ^ 9) ^ 4))
       (H : Set ((Fin AA → Fin AA → Fin (N + 1)) × ((sys R FL Pl).N → Fin U1) → ℕ)),
-      steps ≤ 3 * (20 * V ^ 9) ^ 16 ∧ Fintype.card (Nd T) ≤ 20 * V ^ 9 ∧ Fintype.card (Mv R ch FL) ≤ 20 * V ^ 9 ∧
+      steps ≤ 3 * (20 * V ^ 9) ^ 16 ∧ Fintype.card (Nd T) ≤ 20 * V ^ 9 ∧
+          Fintype.card (Mv R ch FL) ≤ 20 * V ^ 9 ∧
       Fintype.card (Un R FL Pl N U1) ≤ 20 * V ^ 9 ∧
       (∀ a c x, (inp (.inl (a, c)) x : ℕ) = x.1 a c) ∧ (∀ ν x, (inp (.inr ν) x : ℕ) = x.2 ν) ∧ SlpN inp steps H ∧
       (∀ p q, (ind fun x => treePar R FL Pl x.1 x.2 p = q) ∈ H) ∧
-      (∀ u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cur x.1 x.2 (Fintype.card (Mv R ch FL))) ∈ H) ∧
+      (∀ u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cur x.1 x.2 (Fintype.card (Mv R ch FL))) ∈
+          H) ∧
       (∀ z u, (ind fun x => u ∈ (Tow.plan R FL Pl N N U1).cons x.1 x.2 z) ∈ H) ∧
       (∀ y, (fun x => (Tow.plan R FL Pl N N U1).num x.1 x.2 y) ∈ H) ∧
       (∀ p, (fun x => treeUp R FL Pl x.1 x.2 p) ∈ H) ∧
@@ -1229,7 +1235,8 @@ theorem exists_thinTrees (R : Routes T m Uu) (FL : FlagLaws F T) {laws : List (G
           omega
       _ = ((c + 3) * M) ^ 57 := by rw [← pow_add]
       _ ≤ M ^ C := const_pow_le hM (by omega)
-  · change if (eE R FL x).isRight = true then kindM FL (eE R FL x) ∈ laws else kindM FL (eE R FL x) = relay F
+  · change if (eE R FL x).isRight = true then kindM FL (eE R FL x) ∈ laws
+      else kindM FL (eE R FL x) = relay F
     rcases eE R FL x with y | l
     · simp [kindM]
     · simp only [Sum.isRight_inr, if_true]

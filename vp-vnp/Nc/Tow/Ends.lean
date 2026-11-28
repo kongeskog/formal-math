@@ -23,7 +23,8 @@ noncomputable def hN (ν : NM R ch FL) : Sym2 (Nd T) :=
   s(partM ν.1 ((kindM FL ν.1).c ν.2), partM ν.1 ((kindM FL ν.1).d ν.2))
 
 /-- The nodes that hold an initial unit. -/
-def hB (ch : Fin AA ↪ T.X 0) (a c : Fin AA) : Sym2 (Nd T) := s(nd (Nat.zero_le _) (ch a), nd (Nat.zero_le _) (ch c))
+def hB (ch : Fin AA ↪ T.X 0) (a c : Fin AA) : Sym2 (Nd T) :=
+  s(nd (Nat.zero_le _) (ch a), nd (Nat.zero_le _) (ch c))
 
 /-- The nodes that hold the units with a target. -/
 noncomputable def hT (R : Routes T m Uu) (ch : Fin AA ↪ T.X 0) : Tg T m AA → Sym2 (Nd T)
@@ -44,7 +45,8 @@ theorem edgeO_hold {c c' γ : T.X 0} {s : ℕ} (hs : s < R.pl c c' γ) :
   exact this
 
 /-- Initial units. -/
-theorem hB_eq {a c : Fin AA} {k : ℕ} (hd : tgB R ch a c k ≠ .done) : hB ch a c = hT R ch (tgB R ch a c k) := by
+theorem hB_eq {a c : Fin AA} {k : ℕ} (hd : tgB R ch a c k ≠ .done) :
+    hB ch a c = hT R ch (tgB R ch a c k) := by
   unfold tgB at hd ⊢
   by_cases hac : a = c
   · rw [if_pos hac] at hd

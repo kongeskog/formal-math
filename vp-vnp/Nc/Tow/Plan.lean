@@ -154,7 +154,8 @@ theorem load_eq (τ : Tg T m AA) : load lhat (nn n) (oo o) τ =
 
 /-! Membership in the consumers of a slot; used by `Ok` and `Slp4`. -/
 
-theorem consM_inl (x : {x : RM T m AA // okR R ch x}) (e : (kindM FL (.inl x)).Sl) (u : Un R FL Pl U0 U1) :
+theorem consM_inl (x : {x : RM T m AA // okR R ch x}) (e : (kindM FL (.inl x)).Sl)
+    (u : Un R FL Pl U0 U1) :
     u ∈ consM lhat n o ⟨.inl x, e⟩ ↔ ActR (load lhat (nn n) (oo o)) x.1 ∧
       AlU lhat n o u ∧ tgU u = inpR x.1 := by
   classical

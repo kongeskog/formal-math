@@ -45,11 +45,13 @@ include hg
 open Classical in
 /-- The paths at a chamber. -/
 theorem paths_at (x : T.X 0) :
-    (∑ q : Q4 T m AA, ((if R.pn (ch q.1) (ch q.2.1) q.2.2.1 q.2.2.2 = x then nR lhat n o (stR q) else 0) +
+    (∑ q : Q4 T m AA,
+      ((if R.pn (ch q.1) (ch q.2.1) q.2.2.1 q.2.2.2 = x then nR lhat n o (stR q) else 0) +
       if R.pn (ch q.1) (ch q.2.1) q.2.2.1 (q.2.2.2 + 1) = x then nR lhat n o (stR q) else 0)) ≤
       fb (ldL lhat n o) 0 x := by
   -- one step
-  have h1 : ∀ q : Q4 T m AA, ((if R.pn (ch q.1) (ch q.2.1) q.2.2.1 q.2.2.2 = x then nR lhat n o (stR q) else 0) +
+  have h1 : ∀ q : Q4 T m AA,
+      ((if R.pn (ch q.1) (ch q.2.1) q.2.2.1 q.2.2.2 = x then nR lhat n o (stR q) else 0) +
       if R.pn (ch q.1) (ch q.2.1) q.2.2.1 (q.2.2.2 + 1) = x then nR lhat n o (stR q) else 0) ≤
       ∑ e : T.Ed 0, if T.e0 e = x ∨ T.e1 e = x then
         (if okR R ch (stR q) ∧ (R.path (ch q.1) (ch q.2.1) q.2.2.1)[q.2.2.2.1]? = some e then
@@ -119,7 +121,8 @@ open Classical in
 /-- **The start at a chamber.** -/
 theorem NR0_le (x : T.X 0) : NR0 lhat n o (nd (Nat.zero_le _) x) ≤
     (if ∃ c, ch c = x then 2 * m * lhat else 0) + fb (ldL lhat n o) 0 x := by
-  have h0 : ∀ a c γ (s : Fin (2 * m)), (∑ q : Fin 3, if tri R ch (.start a c γ s) q = nd (Nat.zero_le _) x then
+  have h0 : ∀ a c γ (s : Fin (2 * m)),
+      (∑ q : Fin 3, if tri R ch (.start a c γ s) q = nd (Nat.zero_le _) x then
       nR lhat n o (.start a c γ s) else 0) =
       ((if R.pn (ch a) (ch c) γ s = x then nR lhat n o (.start a c γ s) else 0) +
       if R.pn (ch a) (ch c) γ (s + 1) = x then nR lhat n o (.start a c γ s) else 0) +
@@ -140,7 +143,8 @@ theorem NR0_le (x : T.X 0) : NR0 lhat n o (nd (Nat.zero_le _) x) ≤
   rw [h1, Nat.add_comm]
   refine add_le_add ?_ ?_
   · -- as the end of paths
-    have h2 : ∀ c, (∑ a, ∑ γ, ∑ s : Fin (2 * m), if ch c = x then nR lhat n o (.start a c γ s) else 0) ≤
+    have h2 : ∀ c, (∑ a, ∑ γ, ∑ s : Fin (2 * m),
+        if ch c = x then nR lhat n o (.start a c γ s) else 0) ≤
         if ch c = x then 2 * m * lhat else 0 := by
       intro c
       split_ifs with hc
@@ -175,7 +179,8 @@ theorem NR0_le (x : T.X 0) : NR0 lhat n o (nd (Nat.zero_le _) x) ≤
             omega
         · simp [hv]
       · simp
-    have h3 : (∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m), if ch c = x then nR lhat n o (.start a c γ s) else 0) =
+    have h3 : (∑ a, ∑ c, ∑ γ, ∑ s : Fin (2 * m),
+        if ch c = x then nR lhat n o (.start a c γ s) else 0) =
         ∑ c, ∑ a, ∑ γ, ∑ s : Fin (2 * m), if ch c = x then nR lhat n o (.start a c γ s) else 0 :=
       Finset.sum_comm
     rw [h3]
@@ -380,7 +385,8 @@ open Classical in
 theorem NR_none : NR lhat n o none ≤ ∑ e : T.Ed J, ldL lhat n o J e := by
   refine (NR_le hg _).trans ?_
   have h1 : NR0 lhat n o none = 0 := NR0_none
-  have h2 : (∑ j : Fin J, ∑ y : T.X j, if nd j.2.le y = none then 5 * fb (ldL lhat n o) j y else 0) = 0 :=
+  have h2 : (∑ j : Fin J, ∑ y : T.X j,
+      if nd j.2.le y = none then 5 * fb (ldL lhat n o) j y else 0) = 0 :=
     Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun y _ => if_neg nd_ne_none
   have h3 : (∑ j : Fin J, ∑ y : T.X (j + 1), if nd j.2 y = none then
       3 * chs (ldL lhat n o) j y + 2 * fb (ldL lhat n o) (j + 1) y else 0) = 0 :=

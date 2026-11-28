@@ -100,10 +100,12 @@ structure Units (nI : Inp → Fin AA → Fin AA → Fin (U0 + 1)) (oI : Inp → 
     (H : Set (Inp → ℕ)) : Prop where
   cons : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H
   num : ∀ mv : Mv R ch FL, (fun x => num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
-  lt : ∀ (mv : Mv R ch FL) (τ : Fin TM), ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
+  lt : ∀ (mv : Mv R ch FL) (τ : Fin TM),
+      ind (fun x => τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
   pad : ∀ (z : ZM R ch FL) (τ : Fin TM), ind (fun x => (consM lhat (nI x) (oI x) z).card ≤ τ.1 ∧
     τ.1 < Tow.num lhat (nn (nI x)) (oo (oI x)) z.1) ∈ H
-  cur : ∀ u, ind (fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL))) ∈ H
+  cur : ∀ u, ind (fun x => u ∈
+      (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL))) ∈ H
   good : ∀ mv : Mv R ch FL, ind (fun x => GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
   good' : ind (fun x => ∀ mv : Mv R ch FL, GoodMv lhat (nn (nI x)) (oo (oI x)) mv) ∈ H
   valid : ind (fun x => Valid lhat (nn (nI x))) ∈ H
@@ -148,7 +150,8 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
     PY Dd H Y 5 fun x => u ∈ consM lhat (nI x) (oI x) z := by
   have hY := hA.pos
   rcases z with ⟨y | l, e⟩
-  · have h1 : PY Dd H Y 0 fun x => ActR (load lhat (nX nI x) (oX oI x)) y.1 := py_actR hA hB ha.isMin y.1
+  · have h1 : PY Dd H Y 0 fun x => ActR (load lhat (nX nI x) (oX oI x)) y.1 :=
+      py_actR hA hB ha.isMin y.1
     have h2 := PY.and hA (h1.mono hY (Nat.zero_le 1)) (PY.and hA (PY.base (hal u))
       (PY.const hA (tgU u = inpR y.1)))
     exact (h2.congr fun x => (consM_inl y e u).symm).mono hY (by omega)
@@ -162,13 +165,15 @@ theorem py_cons (ha : After (nX nI) (oX oI) lhat H)
       PY.rel hA (fun s t => t < (su l.2.2.2 e + 1) * s) (CY.base (ha.num (.inr l)))
         (CY.base (hrk u))
     have h5 := PY.and hA (h1.mono hY (Nat.zero_le 4)) (PY.and hA (PY.base (hal u))
-      (PY.and hA ((PY.const hA (tgU u = .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e))).mono hY (Nat.zero_le 2))
+      (PY.and hA
+        ((PY.const hA (tgU u = .seg l.1 l.2.1 l.2.2.1 (pr l.2.2.2 e))).mono hY (Nat.zero_le 2))
         (PY.and hA h3 h4)))
     exact h5.congr fun x => (consM_inr l e u).symm
 
 theorem py_cur (ha : After (nX nI) (oX oI) lhat H)
     (hco : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H) (u : Un R FL Pl U0 U1) :
-    PY Dd H Y 4 fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL)) := by
+    PY Dd H Y 4 fun x =>
+      u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL)) := by
   have hY := hA.pos
   have h1 : PY Dd H Y 1 fun x => SeenU (nI x) (oI x) u := by
     rcases u with ⟨a, c, k⟩ | ⟨ν, k⟩
@@ -261,14 +266,17 @@ theorem units_stage (hS : SY inp Y p c H) (ha : After (nX nI) (oX oI) lhat H) :
       q.2.1 < Tow.num lhat (nX nI x) (oX oI x) q.1.1) (a := 2) (e := 2) hzt
     (fun q => PY.and hA (PY.rel1 hA (fun s => s ≤ q.2.1) (CY.base (u5 (f4 q.1))))
       (PY.rel1 hA (fun s => q.2.1 < s) (CY.base (u5 (a4.num q.1.1))))) (by omega)
-  have c6 : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H6 := fun z u => u6 (u5 (u4 (c3 z u)))
+  have c6 : ∀ z u, ind (fun x => u ∈ consM lhat (nI x) (oI x) z) ∈ H6 :=
+    fun z u => u6 (u5 (u4 (c3 z u)))
   have a6 := a4.weaken (u5.trans u6)
   obtain ⟨H7, s7, u7, f7⟩ := s6.add hA (κ := Un R FL Pl U0 U1)
-    (fun u => ind fun x => u ∈ (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL)))
+    (fun u => ind fun x => u ∈
+        (plan R FL Pl lhat U0 U1).cur (nI x) (oI x) (Fintype.card (Mv R ch FL)))
     (a := 4) (e := 1) hun (fun u => py_cur hA hB hB2 a6 c6 u) (by omega)
   have a7 := a6.weaken u7
   obtain ⟨H8, s8, u8, f8⟩ := s7.add hA (κ := Mv R ch FL)
-    (fun mv => ind fun x => GoodMv lhat (nX nI x) (oX oI x) mv) (a := 4) (e := 1) (by simpa using hB.mv)
+    (fun mv => ind fun x => GoodMv lhat (nX nI x) (oX oI x) mv) (a := 4) (e := 1)
+    (by simpa using hB.mv)
     (fun mv => py_good hA hB hB2 a7 mv) (by omega)
   obtain ⟨H9, s9, u9, f9⟩ := s8.add hA (κ := Unit)
     (fun _ => ind fun x => ∀ mv, GoodMv lhat (nX nI x) (oX oI x) mv) (a := 2) (e := 0) (by simp)

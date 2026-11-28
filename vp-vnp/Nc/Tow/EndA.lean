@@ -155,7 +155,8 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
     obtain ⟨d0, -⟩ := FL.L1 (fun _ => 0) 0 (by simp [vN2])
     obtain ⟨d, hd⟩ := exists_pick L (⟨j, i, ω, d0⟩ : LMv FL)
     have hd : Pick L (⟨j, i, ω, d⟩ : LMv FL) := hd
-    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv FL)) = tmin L (⟨j, i, ω, d⟩ : LMv FL) := by
+    have hnum : num lhat (nn n) (oo o) (.inr (⟨j, i, ω, d⟩ : LMv FL)) =
+        tmin L (⟨j, i, ω, d⟩ : LMv FL) := by
       rw [num_eq, numF, if_pos hd]
     set t := tmin L (⟨j, i, ω, d⟩ : LMv FL) with ht
     have hfit := hd.1 q hq
@@ -171,7 +172,8 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
         exact absurd hlt (Nat.not_lt_zero _)
       · exact h0
     have hw : rkU lhat n o u / t < slo d q := Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hlt)
-    obtain ⟨e, -, he1, he2⟩ := exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr d)
+    obtain ⟨e, -, he1, he2⟩ :=
+      exists_rk (idx := fun e => (Fintype.equivFin (FL.L d).Sl e).1) (key := pr d)
       (fun a b hab => (Fintype.equivFin (FL.L d).Sl).injective (Fin.ext hab)) univ q hw
     have he2 : su d e = rkU lhat n o u / t := he2
     refine ⟨⟨.inr ⟨j, i, ω, d⟩, e⟩, (consM_inr (⟨j, i, ω, d⟩ : LMv FL) e u).2 ⟨hd, hu, ?_, ?_, ?_⟩⟩
@@ -183,7 +185,8 @@ theorem exists_cons {u : Un R FL Pl U0 U1} (hu : AlU lhat n o u)
 
 /-- The units that are seen. -/
 theorem mem_seen_new {ν : (sys R FL Pl).N} {k : Fin U1} :
-    (Uid.new ν k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k ≤ o ν := by
+    (Uid.new ν k : Un R FL Pl U0 U1) ∈
+        Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k ≤ o ν := by
   unfold Plan.seenAt
   rw [mem_union, mem_biUnion]
   constructor
@@ -198,7 +201,8 @@ theorem mem_seen_new {ν : (sys R FL Pl).N} {k : Fin U1} :
     exact h1
 
 theorem mem_seen_init {a c : Fin AA} {k : Fin U0} :
-    (Uid.init a c k : Un R FL Pl U0 U1) ∈ Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k.1 < (n a c).1 := by
+    (Uid.init a c k : Un R FL Pl U0 U1) ∈
+        Plan.seenAt (M := sys R FL Pl) n o (Fintype.card (Mv R ch FL)) ↔ k.1 < (n a c).1 := by
   unfold Plan.seenAt
   rw [mem_union, mem_biUnion]
   constructor

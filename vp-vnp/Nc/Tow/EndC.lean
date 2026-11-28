@@ -30,7 +30,8 @@ section
 
 variable {n : Fin AA → Fin AA → ℕ} {o : NM R ch FL → ℕ} {ub : ℕ}
 
-theorem poss_inl (hub : 0 < ub) {x : {x : RM T m AA // okR R ch x}} (hp : PossM lhat n o ub (.inl x))
+theorem poss_inl (hub : 0 < ub) {x : {x : RM T m AA // okR R ch x}}
+    (hp : PossM lhat n o ub (.inl x))
     (ν : (kindM FL (.inl x)).Cn) : o ⟨.inl x, ν⟩ = num lhat n o (.inl x) := by
   obtain ⟨i, hi⟩ := hp
   rw [hi ν]
@@ -40,7 +41,8 @@ theorem poss_inl (hub : 0 < ub) {x : {x : RM T m AA // okR R ch x}} (hp : PossM 
 
 theorem poss_inr (hub : 0 < ub) {l : LMv FL} (hp : PossM lhat n o ub (.inr l)) :
     GoodL o l (num lhat n o (.inr l)) := by
-  obtain ⟨i, hi⟩ : ∃ i : Fin (num lhat n o (.inr l) * ub) → (FL.L l.2.2.2).I, ∀ ν : (FL.L l.2.2.2).Cn,
+  obtain ⟨i, hi⟩ : ∃ i : Fin (num lhat n o (.inr l) * ub) → (FL.L l.2.2.2).I,
+      ∀ ν : (FL.L l.2.2.2).Cn,
     o ⟨.inr l, ν⟩ = (∑ k, ((FL.L l.2.2.2).lam + (FL.L l.2.2.2).len (i k) ν)) / ub := hp
   unfold GoodL
   revert i
@@ -80,7 +82,8 @@ theorem poss_inr (hub : 0 < ub) {l : LMv FL} (hp : PossM lhat n o ub (.inr l)) :
   exact Nat.le_of_mul_le_mul_right h3 (by positivity)
 
 /-- Possible outcomes are good. -/
-theorem poss_good (hub : 0 < ub) {mv : Mv R ch FL} (hp : PossM lhat n o ub mv) : GoodMv lhat n o mv := by
+theorem poss_good (hub : 0 < ub) {mv : Mv R ch FL} (hp : PossM lhat n o ub mv) :
+    GoodMv lhat n o mv := by
   rcases mv with x | l
   · exact fun ν => poss_inl hub hp ν
   · refine ⟨poss_inr hub hp, fun ν => ?_⟩
@@ -132,14 +135,16 @@ theorem mem_AsU_init {a c : Fin AA} {kk : Fin U0} {s : Σ j : Fin (J + 1), T.X j
   cases he
 
 theorem card_AsU (s : Σ j : Fin (J + 1), T.X j) :
-    (AsU lhat n o s : Finset (Un R FL Pl U0 U1)).card ≤ fb (lev (load lhat (nn n) (oo o))) s.1.1 s.2 := by
+    (AsU lhat n o s : Finset (Un R FL Pl U0 U1)).card ≤
+        fb (lev (load lhat (nn n) (oo o))) s.1.1 s.2 := by
   classical
   obtain ⟨j, c⟩ := s
   have h1 : (AsU lhat n o ⟨j, c⟩ : Finset (Un R FL Pl U0 U1)).card =
       ∑ u : Un R FL Pl U0 U1, if u ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0 := by
     rw [← card_filter, filter_mem_eq_inter, univ_inter]
   rw [h1, sum_units]
-  have h2 : (∑ a, ∑ c', ∑ kk, if (Uid.init a c' kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0) = 0 :=
+  have h2 : (∑ a, ∑ c', ∑ kk,
+      if (Uid.init a c' kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩ then 1 else 0) = 0 :=
     Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun c' _ => Finset.sum_eq_zero fun kk _ => if_neg mem_AsU_init
   rw [h2, Nat.zero_add]
   refine le_trans ?_ (sum_child (n := nn n) (o := oo o) j.1
@@ -155,7 +160,8 @@ theorem card_AsU (s : Σ j : Fin (J + 1), T.X j) :
           by_cases h3 : (Uid.new ν kk : Un R FL Pl U0 U1) ∈ AsU lhat n o ⟨j, c⟩
           · rw [if_pos h3, if_pos (mem_AsU_new.1 h3).1]
           · rw [if_neg h3]; exact Nat.zero_le _
-      _ = ((univ : Finset (Fin U1)).filter fun kk => kk.1 < alv lhat (nn n) (oo o) (eN ν)).card := by
+      _ = ((univ : Finset (Fin U1)).filter fun kk => kk.1 <
+          alv lhat (nn n) (oo o) (eN ν)).card := by
           rw [card_filter]
       _ ≤ _ := (card_fin_lt' _ _ hle).le
   · refine le_trans (le_of_eq ?_) (Nat.zero_le _)

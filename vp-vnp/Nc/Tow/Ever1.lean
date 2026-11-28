@@ -108,7 +108,8 @@ variable {R : Routes T m Uu} {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat :
 variable (lhat n o) in
 open Classical in
 /-- The number of units given in a relay (0 if the relay does not exist). -/
-noncomputable def nR (x : RM T m AA) : ℕ := if hx : okR R ch x then num lhat n o (.inl ⟨x, hx⟩) else 0
+noncomputable def nR (x : RM T m AA) : ℕ :=
+  if hx : okR R ch x then num lhat n o (.inl ⟨x, hx⟩) else 0
 
 variable (lhat n o) in
 /-- The loads of the edges. -/

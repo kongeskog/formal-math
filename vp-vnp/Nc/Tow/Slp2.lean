@@ -25,7 +25,8 @@ structure Base (H : Set (Inp → ℕ)) : Prop where
   n : ∀ a c, (fun x => nx x a c) ∈ H
   o : ∀ ν, (fun x => ox x ν) ∈ H
 
-theorem Base.weaken {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R ch FL → ℕ} {H H' : Set (Inp → ℕ)}
+theorem Base.weaken {nx : Inp → Fin AA → Fin AA → ℕ} {ox : Inp → NM R ch FL → ℕ}
+    {H H' : Set (Inp → ℕ)}
     (hb : Base nx ox H) (hH : H ⊆ H') : Base nx ox H' :=
   ⟨fun a c => hH (hb.n a c), fun ν => hH (hb.o ν)⟩
 
@@ -98,7 +99,8 @@ theorem cy_bt (hb : Base nx ox H) (hv : ind (fun x => Valid lhat (nx x)) ∈ H) 
           rw [card_range]
           exact hR.n x a c
       _ = AA * AA * U0 := by simp; ring
-  have h1 : CY Dd H Y 5 fun x => ∑ a, ∑ c, ((range (nx x a c)).filter fun k => tgB R ch a c k = τ).card := by
+  have h1 : CY Dd H Y 5 fun x => ∑ a, ∑ c,
+      ((range (nx x a c)).filter fun k => tgB R ch a c k = τ).card := by
     refine CY.sum hA univ (by simpa using hB.aa1) (fun a _ => ?_) fun x => hA.lt_of_le (hb0 x)
     refine CY.sum hA univ (by simpa using hB.aa1) (fun c _ => ?_) fun x => hA.lt_of_le ?_
     · refine CY.op1 hA (fun s => ((range s).filter fun k => tgB R ch a c k = τ).card)
@@ -107,7 +109,8 @@ theorem cy_bt (hb : Base nx ox H) (hv : ind (fun x => Valid lhat (nx x)) ∈ H) 
       rw [card_range]
       exact (hR.n x a c).trans (hB.u0 a)
     · refine le_trans ?_ (hb0 x)
-      exact Finset.single_le_sum (f := fun a => ∑ c, ((range (nx x a c)).filter fun k => tgB R ch a c k = τ).card)
+      exact Finset.single_le_sum (f := fun a => ∑ c,
+          ((range (nx x a c)).filter fun k => tgB R ch a c k = τ).card)
         (fun _ _ => Nat.zero_le _) (mem_univ a)
   refine (CY.ite hA (PY.base hv) h1
     ((CY.const 0 hA.zero_lt).mono hY (Nat.zero_le 5)) (fun x => hA.lt_of_le (hb0 x)) fun _ => hA.zero_lt).congr
@@ -138,14 +141,16 @@ theorem stat_stage (hS : SY inp Y p c H) (hb : Base nx ox H) :
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (κ := Tg T m AA) (fun τ x => bt R ch lhat (nx x) τ) (a := 7) (e := 1)
     (by simpa using hB.tg) (fun τ => cy_bt hA hB hR hb1 (f1 ()) τ) (by omega)
   have hl : Fintype.card (LMv FL) ≤ Y := by
-    refine (Fintype.card_le_of_injective (fun l : LMv FL => (Sum.inr l : Mv R ch FL)) Sum.inr_injective).trans hB.mv
+    refine (Fintype.card_le_of_injective (fun l : LMv FL => (Sum.inr l : Mv R ch FL))
+      Sum.inr_injective).trans hB.mv
   obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := LMv FL)
     (fun l x => ∑ ν : (FL.L l.2.2.2).Cn, ox x ⟨Sum.inr l, ν⟩ ^ 2) (a := 3) (e := 1)
     (by simpa using hl) (fun l => cy_q hA hB hR (hb1.weaken u2) l) (by omega)
   exact ⟨H3, s3, u1.trans (u2.trans u3), (hb1.weaken u2).weaken u3, u3 (u2 (f1 ())), fun τ => u3 (f2 τ), f3⟩
 
 /-- Alive units from numbers of units. -/
-theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ} (hN : ∀ mv, (fun x => Nf x mv) ∈ H)
+theorem cy_alvN (hs : Stat nx ox lhat H) {Nf : Inp → Mv R ch FL → ℕ}
+    (hN : ∀ mv, (fun x => Nf x mv) ∈ H)
     (ν : NM R ch FL) : CY Dd H Y 3 fun x => alvN (ox x) ν (Nf x ν.1) := by
   have hY := hA.pos
   have hlt : ∀ x, alvN (ox x) ν (Nf x ν.1) ≤ Y := fun x =>

@@ -144,7 +144,8 @@ theorem tmin_lt {L : Tg T m AA → ℕ} (hL : ∀ τ, L τ ≤ Wb R ch FL U0 U1)
 theorem tmin_sum {L : Tg T m AA → ℕ} {l : LMv FL} {B : ℕ} (hlt : tmin L l < B) :
     tmin L l = ∑ s ∈ range B, ind (fun _ : Unit => ¬ ∃ d, Fits L (withD l d) s) () := by
   classical
-  have h1 : ∀ s, (ind (fun _ : Unit => ¬ ∃ d, Fits L (withD l d) s) ()) = if s < tmin L l then 1 else 0 := by
+  have h1 : ∀ s, (ind (fun _ : Unit => ¬ ∃ d, Fits L (withD l d) s) ()) = if s <
+      tmin L l then 1 else 0 := by
     intro s
     by_cases hs : s < tmin L l
     · rw [if_pos hs, ind_true]

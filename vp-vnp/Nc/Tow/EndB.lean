@@ -16,7 +16,8 @@ namespace Nc.Tow
 open Finset Nc.G
 
 variable {F : Type} [CommRing F] {h b J m Uu AA : ℕ} {T : Tower h b J} {R : Routes T m Uu}
-  {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ} {o : NM R ch FL → ℕ}
+  {ch : Fin AA ↪ T.X 0} {FL : FlagLaws F T} {lhat : ℕ} {n : Fin AA → Fin AA → ℕ}
+  {o : NM R ch FL → ℕ}
 
 /-- The parent of a chamber, as a node. -/
 noncomputable def parN (Lf : ∀ j, T.Ed j → ℕ) (j : ℕ) (c : T.X j) : Nd T :=
@@ -29,7 +30,8 @@ def chd : RM T m AA → Bool → Option (Σ j : Fin (J + 1), T.X j)
   | .fin e, β => some ⟨Fin.last J, if β then T.e1 e else T.e0 e⟩
   | _, _ => none
 
-theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR R ch (.inn j i e)) (hne : num lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
+theorem num_inn (j : Fin J) (i : Fin h) (e : T.Ed j) (hx : okR R ch (.inn j i e))
+    (hne : num lhat n o (.inl ⟨.inn j i e, hx⟩) ≠ 0) :
     i = imin (lev (load lhat n o)) j.1 := by
   classical
   rw [num_eq, numF] at hne
@@ -140,16 +142,19 @@ theorem sum_le_one {κ : Type*} (s : Finset κ) (f : κ → ℕ) (B : ℕ) (h1 :
 
 /-- The channel is between the chamber `s` and its parent. -/
 def IsCh (ν : NM R ch FL) (s : Σ j : Fin (J + 1), T.X j) : Prop :=
-  ∃ (x : {x : RM T m AA // okR R ch x}) (β : Bool), ν = ⟨.inl x, β⟩ ∧ tgR R ch x.1 β = .done ∧ chd x.1 β = some s
+  ∃ (x : {x : RM T m AA // okR R ch x}) (β : Bool), ν = ⟨.inl x, β⟩ ∧ tgR R ch x.1 β = .done ∧
+      chd x.1 β = some s
 
 /-- The relay belongs to an edge. -/
 def OfEd (j : Fin J) (e : T.Ed j) (x : RM T m AA) : Prop := (∃ i, x = .inn j i e) ∨ ∃ s, x = .mid j e s
 
 /-- At most one channel of an edge and an end has alive units. -/
-theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx : okR R ch x) (hx' : okR R ch x')
+theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx : okR R ch x)
+    (hx' : okR R ch x')
     (h1 : OfEd j e x) (h1' : OfEd j e x') (hd : tgR R ch x β = .done) (hd' : tgR R ch x' β = .done)
     (hn : num lhat n o (.inl ⟨x, hx⟩) ≠ 0) (hn' : num lhat n o (.inl ⟨x', hx'⟩) ≠ 0) : x = x' := by
-  have mm : ∀ s s' : Fin 4, okR R ch (.mid j e s) → okR R ch (.mid j e s') → tgR R ch (.mid j e s : RM T m AA) β = .done →
+  have mm : ∀ s s' : Fin 4, okR R ch (.mid j e s) → okR R ch (.mid j e s') →
+      tgR R ch (.mid j e s : RM T m AA) β = .done →
       tgR R ch (.mid j e s' : RM T m AA) β = .done → s = s' := by
     intro s s' hs hs' h2 h2'
     cases β
@@ -161,8 +166,10 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
         · simp [tgR] at hs
         · simp [tgR] at hs
       rw [h0 s h2, h0 s' h2']
-    · have h0 : ∀ s : Fin 4, tgR R ch (.mid j e s : RM T m AA) true = .done → okR R ch (.mid j e s) →
-          (s = 2 ∧ T.π (T.e1 e) = hst (T.ty e) (T.e1 e)) ∨ (s = 3 ∧ T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e)) := by
+    · have h0 : ∀ s : Fin 4, tgR R ch (.mid j e s : RM T m AA) true = .done →
+          okR R ch (.mid j e s) →
+          (s = 2 ∧ T.π (T.e1 e) = hst (T.ty e) (T.e1 e)) ∨
+              (s = 3 ∧ T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e)) := by
         intro s hs hok
         fin_cases s
         · exfalso
@@ -193,8 +200,10 @@ theorem ofEd_unique {j : Fin J} {e : T.Ed j} {β : Bool} {x x' : RM T m AA} (hx 
 
 open Classical in
 /-- The alive units of an edge at one end. -/
-theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) : ∑ ν ∈ (univ : Finset (NM R ch FL)).filter (fun ν =>
-      alv lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR R ch x}, ν = ⟨.inl x, β⟩ ∧ tgR R ch x.1 β = .done ∧ OfEd j e x.1),
+theorem sum_edge_end (j : Fin J) (e : T.Ed j) (β : Bool) :
+    ∑ ν ∈ (univ : Finset (NM R ch FL)).filter (fun ν =>
+      alv lhat n o ν ≠ 0 ∧ ∃ x : {x : RM T m AA // okR R ch x}, ν = ⟨.inl x, β⟩ ∧
+          tgR R ch x.1 β = .done ∧ OfEd j e x.1),
       alv lhat n o ν ≤ load lhat n o (.edge j.castSucc e) := by
   have hnz : ∀ (x : {x : RM T m AA // okR R ch x}), alv lhat n o (⟨.inl x, β⟩ : NM R ch FL) ≠ 0 →
       num lhat n o (.inl x) ≠ 0 := by

@@ -99,7 +99,8 @@ theorem tmin_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
       have := Nat.sInf_le (s := {t | ∃ d, Fits L (withD l d) t}) hcon
       change tmin L l ≤ _ at this
       omega
-    have h2 : ¬ √(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) ≤ (FL.a₁ : ℝ) * (tmin L l - 1 : ℕ) := by
+    have h2 : ¬ √(vN2 b fun q => L (.seg l.1 l.2.1 l.2.2.1 q)) ≤
+        (FL.a₁ : ℝ) * (tmin L l - 1 : ℕ) := by
       intro hcon
       obtain ⟨d, hd⟩ := FL.L1 _ _ hcon
       exact h1 ⟨d, hd⟩
@@ -109,7 +110,8 @@ theorem tmin_le (L : Tg T m AA → ℕ) (l : LMv FL) {n' : Sym2 T.Fl → ℕ}
     push_cast at h2
     linarith [not_le.1 h2]
 
-theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) : tmin L l = 0 := by
+theorem tmin_zero {L : Tg T m AA → ℕ} {l : LMv FL} (hL : ∀ q, L (.seg l.1 l.2.1 l.2.2.1 q) = 0) :
+    tmin L l = 0 := by
   have : (0 : ℕ) ∈ {t | ∃ d, Fits L (withD l d) t} := by
     refine ⟨l.2.2.2, fun q _ => ?_⟩
     change L (.seg l.1 l.2.1 l.2.2.1 q) ≤ _
@@ -144,7 +146,8 @@ theorem alv_inr_zero {l : LMv FL} (hl : ¬ IsMin (load lhat n o) l.1.castSucc l.
   exact alvN_zero _
 
 /-- Loads on middle segments. -/
-theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i) (e' : T.Ed (j + 1))
+theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i)
+    (e' : T.Ed (j + 1))
     (he' : T.ty e' = i) : load lhat n o (.edge j.succ e') ≤
       ∑ e ∈ univ.filter (fun e : T.Ed j => T.πE e = e'), load lhat n o (.edge j.castSucc e) := by
   classical
@@ -174,7 +177,8 @@ theorem mid_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSu
     · exact Finset.sum_le_sum fun e _ => (alv_mid_le j e 2 (hx2 e) false).1
 
 /-- Alive units at a vertex. -/
-theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R ch FL)) ^ 2 ≤
+theorem alive_sq (l : LMv FL) :
+    b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (⟨.inr l, ν⟩ : NM R ch FL)) ^ 2 ≤
     FL.G₁ * (num lhat n o (.inr l)) ^ 2 := by
   classical
   set t := num lhat n o (.inr l) with ht
@@ -204,12 +208,14 @@ theorem alive_sq (l : LMv FL) : b * ∑ ν : (FL.L l.2.2.2).Cn, (alv lhat n o (�
       _ ≤ FL.G₁ * t ^ 2 := Nat.mul_le_mul_right _ h2
 
 /-- Loads on the edges at vertices. -/
-theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i) (ω : T.V (j + 1) i)
+theorem other_load_le (j : Fin J) {i : Fin h} (hi : IsMin (load lhat n o) j.castSucc i)
+    (ω : T.V (j + 1) i)
     (d : FL.Di) (hd : Pick (load lhat n o) ⟨j, i, ω, d⟩) (ν : T.Nr) :
     load lhat n o (.edge j.succ ((T.nr i).symm (ω, ν)).1) ≤
       alv lhat n o (⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R ch FL) := by
   classical
-  refine (load_le_sum {(⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R ch FL)} (bt_edge_succ j _) ?_).trans ?_
+  refine (load_le_sum {(⟨.inr ⟨j, i, ω, d⟩, (FL.cn d).symm ν⟩ : NM R ch FL)}
+    (bt_edge_succ j _) ?_).trans ?_
   · rintro ⟨⟨x, hx⟩ | l, ν'⟩ hν hne
     · exfalso
       obtain ⟨e, h1, h2, h3⟩ := tgR_edge_succ (x := x) (ν := ν') hν

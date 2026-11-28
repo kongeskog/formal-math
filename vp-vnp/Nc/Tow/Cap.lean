@@ -40,7 +40,8 @@ theorem load_edge_le (j : Fin (J + 1)) (e : T.Ed j) :
   have hk0 : 0 ≤ T.kap (lds lhat n o j) := Tower.kap_nonneg _
   have h1 := Tower.sum_sq_eq hX (lds lhat n o j)
   have h2 : (load lhat n o (.edge j e) : ℝ) ^ 2 ≤ ∑ e, (lds lhat n o j e : ℝ) ^ 2 :=
-    Finset.single_le_sum (f := fun e => (lds lhat n o j e : ℝ) ^ 2) (fun _ _ => sq_nonneg _) (mem_univ e)
+    Finset.single_le_sum (f := fun e => (lds lhat n o j e : ℝ) ^ 2)
+      (fun _ _ => sq_nonneg _) (mem_univ e)
   have h3 : (1 : ℝ) ≤ Fintype.card (T.X j.1) := by exact_mod_cast hX
   have h4 : (2 : ℝ) / Fintype.card (T.X j.1) ≤ 2 := by
     rw [div_le_iff₀ (by linarith)]
@@ -53,7 +54,8 @@ theorem load_edge_le (j : Fin (J + 1)) (e : T.Ed j) :
   linarith
 
 /-- Numbers of units of law moves. -/
-theorem tmin_real_le (l : LMv FL) : (tmin (load lhat n o) l : ℝ) ≤ 3 * b * kbar FL Uu AA lhat + 1 := by
+theorem tmin_real_le (l : LMv FL) :
+    (tmin (load lhat n o) l : ℝ) ≤ 3 * b * kbar FL Uu AA lhat + 1 := by
   obtain ⟨j, i, ω, d⟩ := l
   have hbR : (0 : ℝ) < b := by exact_mod_cast T.b_pos
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
@@ -112,13 +114,15 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
   have hb1 : (1 : ℝ) ≤ b := by exact_mod_cast T.b_pos
   have hk0 := kbar_nonneg Uu AA FL lhat
   have hceil : (3 * (b : ℝ) * kbar FL Uu AA lhat) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := Nat.le_ceil _
-  have hedge : ∀ (j : Fin (J + 1)) (e : T.Ed j), load lhat n o (.edge j e) ≤ capN FL U0 Uu AA lhat := by
+  have hedge : ∀ (j : Fin (J + 1)) (e : T.Ed j),
+      load lhat n o (.edge j e) ≤ capN FL U0 Uu AA lhat := by
     intro j e
     have h1 := load_edge_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH j e
     have h2 : (load lhat n o (.edge j e) : ℝ) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := by
       refine h1.trans (le_trans ?_ hceil)
       nlinarith
-    have h3 : load lhat n o (.edge j e) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := by exact_mod_cast h2
+    have h3 : load lhat n o (.edge j e) ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ := by
+      exact_mod_cast h2
     unfold capN
     omega
   rcases mv with ⟨x, hx⟩ | l
@@ -134,10 +138,12 @@ theorem num_le_cap {U0 : ℕ} (hn : ∀ a c, n a c ≤ U0) (mv : Mv R ch FL) :
     · exact (num_inl _).trans (hedge (Fin.last J) e)
   · have h1 := num_inr_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) l
     have h2 := tmin_real_le (R := R) (ch := ch) (FL := FL) (lhat := lhat) (n := n) (o := o) hH l
-    have h3 : (tmin (load lhat n o) l : ℝ) ≤ ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
+    have h3 : (tmin (load lhat n o) l : ℝ) ≤
+        ((⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 : ℕ) : ℝ) := by
       push_cast
       linarith
-    have h4 : tmin (load lhat n o) l ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 := by exact_mod_cast h3
+    have h4 : tmin (load lhat n o) l ≤ ⌈3 * (b : ℝ) * kbar FL Uu AA lhat⌉₊ + 1 := by
+      exact_mod_cast h3
     unfold capN
     omega
 
@@ -160,7 +166,8 @@ variable {ρ : ℝ} (hH : THypR FL ρ)
 
 include hH in
 /-- All units between nodes and their parents. -/
-theorem sum_bet_le_YhN : ∑ j : Fin (J + 1), ∑ c, T.bet (lds lhat n o j) c ≤ YhN FL Uu AA lhat ρ := by
+theorem sum_bet_le_YhN : ∑ j : Fin (J + 1), ∑ c,
+    T.bet (lds lhat n o j) c ≤ YhN FL Uu AA lhat ρ := by
   have h1 : ((∑ j : Fin (J + 1), ∑ c, T.bet (lds lhat n o j) c : ℕ) : ℝ) ≤
       2 * √h * kbar FL Uu AA lhat / (1 - ρ) := by
     rw [Nat.cast_sum]

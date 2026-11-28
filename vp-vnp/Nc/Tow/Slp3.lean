@@ -67,7 +67,8 @@ theorem py_isMin (hq : ∀ j i, (fun x => sqs (L x) j i) ∈ H) (j : Fin (J + 1)
   simp
 
 omit hL in
-theorem py_fits {s : Inp → ℕ} {a : ℕ} (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv FL) (hs : CY Dd H Y a s) :
+theorem py_fits {s : Inp → ℕ} {a : ℕ} (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv FL)
+    (hs : CY Dd H Y a s) :
     PY Dd H Y (a + 3) fun x => Fits (L x) l (s x) := by
   classical
   have h1 : PY Dd H Y (a + 1 + 2) fun x => ∀ q ∈ univ.filter (fun q : Sym2 T.Fl => ¬ q.IsDiag),
@@ -78,7 +79,8 @@ theorem py_fits {s : Inp → ℕ} {a : ℕ} (hm : ∀ τ, (fun x => L x τ) ∈ 
   unfold Fits
   simp
 
-theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv FL) : CY Dd H Y 8 fun x => tmin (L x) l := by
+theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv FL) :
+    CY Dd H Y 8 fun x => tmin (L x) l := by
   have h1 : ∀ s ∈ range Y, PY Dd H Y 6 fun x => ¬ ∃ d, Fits (L x) (withD l d) s := by
     intro s hs
     refine PY.not hA (PY.exists_univ hA hB.di fun d => ?_)
@@ -96,7 +98,8 @@ theorem cy_tmin (hm : ∀ τ, (fun x => L x τ) ∈ H) (l : LMv FL) : CY Dd H Y 
   exact hA.lt_of_le (hlt x).le
 
 omit hL in
-theorem py_pick (hm : ∀ τ, (fun x => L x τ) ∈ H) (ht : ∀ l : LMv FL, (fun x => tmin (L x) l) ∈ H) (l : LMv FL) :
+theorem py_pick (hm : ∀ τ, (fun x => L x τ) ∈ H) (ht : ∀ l : LMv FL, (fun x => tmin (L x) l) ∈ H)
+    (l : LMv FL) :
     PY Dd H Y 7 fun x => Pick (L x) l := by
   have hY := hA.pos
   have h1 : ∀ d, PY Dd H Y 3 fun x => Fits (L x) (withD l d) (tmin (L x) l) := fun d =>
@@ -125,7 +128,8 @@ theorem py_actR (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H) (y : RM T m
   · exact PY.const hA True
 
 theorem cy_numF (hm : ∀ τ, (fun x => L x τ) ∈ H) (hi : ∀ j i, ind (fun x => IsMin (L x) j i) ∈ H)
-    (ht : ∀ l : LMv FL, (fun x => tmin (L x) l) ∈ H) (hp : ∀ l : LMv FL, ind (fun x => Pick (L x) l) ∈ H)
+    (ht : ∀ l : LMv FL, (fun x => tmin (L x) l) ∈ H)
+    (hp : ∀ l : LMv FL, ind (fun x => Pick (L x) l) ∈ H)
     (mv : Mv R ch FL) : CY Dd H Y 2 fun x => numF (L x) mv := by
   classical
   rcases mv with y | l
@@ -160,7 +164,8 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
     exact Nat.mul_le_mul hB.j hB.h
   have hl : Fintype.card (LMv FL) ≤ Y ^ 1 := by
     rw [pow_one]
-    exact (Fintype.card_le_of_injective (fun l : LMv FL => (Sum.inr l : Mv R ch FL)) Sum.inr_injective).trans hB.mv
+    exact (Fintype.card_le_of_injective (fun l : LMv FL => (Sum.inr l : Mv R ch FL))
+      Sum.inr_injective).trans hB.mv
   obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Fin (J + 1) × Fin h) (fun q x => sqs (L x) q.1 q.2) (a := 3) (e := 2)
     hjh (fun q => cy_sqs hA hB hL hm q.1 q.2) (by omega)
   obtain ⟨H2, s2, u2, f2⟩ := s1.add hA (κ := Fin (J + 1) × Fin h) (fun q => ind fun x => IsMin (L x) q.1 q.2)
@@ -169,10 +174,12 @@ theorem pick_stage (hS : SY inp Y p c H) (hm : ∀ τ, (fun x => L x τ) ∈ H) 
   obtain ⟨H3, s3, u3, f3⟩ := s2.add hA (κ := LMv FL) (fun l x => tmin (L x) l) (a := 8) (e := 1) hl
     (fun l => cy_tmin hA hB hL m2 l) (by omega)
   have m3 : ∀ τ, (fun x => L x τ) ∈ H3 := fun τ => u3 (m2 τ)
-  obtain ⟨H4, s4, u4, f4⟩ := s3.add hA (κ := LMv FL) (fun l => ind fun x => Pick (L x) l) (a := 7) (e := 1) hl
+  obtain ⟨H4, s4, u4, f4⟩ :=
+    s3.add hA (κ := LMv FL) (fun l => ind fun x => Pick (L x) l) (a := 7) (e := 1) hl
     (fun l => py_pick hA hB m3 f3 l) (by omega)
   have m4 : ∀ τ, (fun x => L x τ) ∈ H4 := fun τ => u4 (m3 τ)
-  obtain ⟨H5, s5, u5, f5⟩ := s4.add hA (κ := Mv R ch FL) (fun mv x => numF (L x) mv) (a := 2) (e := 1)
+  obtain ⟨H5, s5, u5, f5⟩ :=
+    s4.add hA (κ := Mv R ch FL) (fun mv x => numF (L x) mv) (a := 2) (e := 1)
     (by simpa using hB.mv) (fun mv => cy_numF hA hB hL m4 (fun j i => u4 (u3 (f2 (j, i))))
       (fun l => u4 (f3 l)) f4 mv)
     (by omega)
@@ -191,7 +198,8 @@ theorem num_stage (hS : SY inp Y p c H) (hs : Stat nx ox lhat H) (t : ℕ) :
       ∀ mv : Mv R ch FL, (fun x => numS lhat (nx x) (ox x) t mv) ∈ H' := by
   induction t with
   | zero =>
-    obtain ⟨H1, s1, u1, f1⟩ := hS.add hA (κ := Mv R ch FL) (fun mv x => numS lhat (nx x) (ox x) 0 mv)
+    obtain ⟨H1, s1, u1, f1⟩ :=
+      hS.add hA (κ := Mv R ch FL) (fun mv x => numS lhat (nx x) (ox x) 0 mv)
       (a := 0) (e := 1) (by simpa using hB.mv) (fun mv => CY.const 0 hA.zero_lt) (by omega)
     exact ⟨H1, s1, u1, f1⟩
   | succ t ih =>

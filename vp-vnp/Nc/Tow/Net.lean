@@ -80,7 +80,8 @@ abbrev hst {j : ℕ} (i : Fin h) (c : T.X j) : T.X (j + 1) := T.host i (T.vx i c
 
 /-- The three parties of a relay. -/
 def tri : RM T m AA → Fin 3 → Nd T
-  | .start a c γ s => ![nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ s), nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ (s + 1)),
+  | .start a c γ s => ![nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ s),
+      nd (Nat.zero_le _) (R.pn (ch a) (ch c) γ (s + 1)),
       nd (Nat.zero_le _) (ch c)]
   | .inn j i e => ![nd j.2.le (T.e0 e), nd j.2 (hst i (T.e0 e)), nd j.2.le (T.e1 e)]
   | .mid j e s =>
@@ -95,7 +96,8 @@ def tri : RM T m AA → Fin 3 → Nd T
 def okR : RM T m AA → Prop
   | .start a c γ s => a ≠ c ∧ s.1 + 1 < R.pl (ch a) (ch c) γ
   | .inn _ i e => T.ty e ≠ i
-  | .mid _ e s => (s = 1 → hst (T.ty e) (T.e0 e) ≠ T.π (T.e0 e)) ∧ (s = 3 → T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e))
+  | .mid _ e s => (s = 1 → hst (T.ty e) (T.e0 e) ≠ T.π (T.e0 e)) ∧
+      (s = 3 → T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e))
   | .fin _ => True
 
 theorem inj3 {α : Type*} {x y z : α} (h1 : x ≠ y) (h2 : x ≠ z) (h3 : y ≠ z) : Function.Injective ![x, y, z] := by
@@ -160,12 +162,16 @@ noncomputable def tgR : RM T m AA → Bool → Tg T m AA
     else edgeO ((R.path (ch a) (ch c) γ)[s.1 + 1]?)
   | .inn _ _ _, _ => .done
   | .mid j e s, false =>
-    ![.done, .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e0 e))) s(T.co (T.ty e) (hst (T.ty e) (T.e0 e)), T.co (T.ty e) (T.e0 e)),
+    ![.done,
+      .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e0 e)))
+        s(T.co (T.ty e) (hst (T.ty e) (T.e0 e)), T.co (T.ty e) (T.e0 e)),
       .edge j.succ (T.πE e),
-      .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e1 e))) s(T.co (T.ty e) (hst (T.ty e) (T.e1 e)), T.co (T.ty e) (T.e1 e))] s
+      .seg j (T.ty e) (T.πV (T.vx (T.ty e) (T.e1 e))) s(T.co (T.ty e) (hst (T.ty e) (T.e1 e)),
+          T.co (T.ty e) (T.e1 e))] s
   | .mid j e s, true =>
     ![if hst (T.ty e) (T.e0 e) ≠ T.π (T.e0 e) then .nxt (.mid j e 1) else .nxt (.mid j e 2),
-      .nxt (.mid j e 2), if T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e) then .nxt (.mid j e 3) else .done, .done] s
+      .nxt (.mid j e 2), if T.π (T.e1 e) ≠ hst (T.ty e) (T.e1 e) then .nxt (.mid j e 3) else .done,
+          .done] s
   | .fin _, _ => .done
 
 /-- The target whose units are given in a relay. -/
@@ -190,7 +196,8 @@ open Classical in
 /-- The target of an initial unit. -/
 noncomputable def tgB (a c : Fin AA) (k : ℕ) : Tg T m AA :=
   if a = c then .done
-  else if hs : 0 < 2 * m ∧ 1 < R.pl (ch a) (ch c) (gam ch a k) then .nxt (.start a c (gam ch a k) ⟨0, hs.1⟩)
+  else if hs : 0 < 2 * m ∧ 1 <
+      R.pl (ch a) (ch c) (gam ch a k) then .nxt (.start a c (gam ch a k) ⟨0, hs.1⟩)
   else edgeO ((R.path (ch a) (ch c) (gam ch a k))[0]?)
 
 /-- Names of law moves. -/
