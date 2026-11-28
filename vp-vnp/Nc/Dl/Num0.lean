@@ -126,7 +126,7 @@ theorem size : (X + 1 + (200 * X ^ 3 * Lc + ιb * ℓ * (4 * c + 2) + bd * (4 * 
     Nat.mul_le_mul_left (s * v ^ 256) (h.mpow (show 2 ≤ 10 by norm_num))]
 
 /-- **Time of the dealing program.** -/
-theorem deal : dealB Lc X K mm ub (mm * bd) (4 * (X * X) + 10 * X) s * v ^ 256 ≤
+theorem deal : dealB Lc X K mm ub (mm * bd) (11 * X ^ 2) s * v ^ 256 ≤
     (s * v ^ 256 + τ * k) * m ^ 10 := by
   have hm := h.m_pos
   have hk := h.k_pos
@@ -138,10 +138,10 @@ theorem deal : dealB Lc X K mm ub (mm * bd) (4 * (X * X) + 10 * X) s * v ^ 256 �
       h.mm_le]
     linarith [Nat.mul_le_mul_left (k * m ^ 2) h.bdub,
       h.mc (τ * k) 2 3 200 (by norm_num) (by norm_num)]
-  -- small things: with K, mm ≤ X a polynomial in X and Lc; each X ^ i * Lc is at most X ^ 4 * m and
-  -- each X ^ i at most X ^ 4, and the coefficients of the X ^ i * Lc sum to 9980, under 10000
+  -- small things: with K, mm ≤ X and Lc ≤ m a polynomial in X and m; each of its monomials is at
+  -- most X ^ 5 * m ^ 3, and its coefficients sum to less than 10000 ^ 2
   have D2 : (K * (60 * Lc + 100) + K * (60 * Lc + 130) +
-      (4 * (X * X) + 10 * X) * (stepB Lc X + 30) + X * (90 * Lc + 230) + mm * (tmB' Lc X + 60) +
+      11 * X ^ 2 * (stepB Lc X + 30) + X * (90 * Lc + 230) + mm * (tmB' Lc X + 60) +
       300) * v ^ 256 ≤ τ * k := by
     grw [← Nat.le_mul_of_pos_right τ (by omega : 0 < k), ← h.X6,
       ← h.Xm_le (show 5 ≤ 6 by norm_num) (show 5 ≤ 20 by norm_num), h.K_X, h.mmX]
@@ -150,10 +150,11 @@ theorem deal : dealB Lc X K mm ub (mm * bd) (4 * (X * X) + 10 * X) s * v ^ 256 �
       Nat.mul_le_mul (h.Xpow hi) (h.mpow hj)
     unfold stepB tmB'
     grw [show Lc ≤ m by omega]
-    linarith [f 0 0 (by norm_num) (by norm_num), f 1 0 (by norm_num) (by norm_num), f 1 1 (by norm_num) (by norm_num),
-      f 2 0 (by norm_num) (by norm_num), f 2 1 (by norm_num) (by norm_num), f 3 0 (by norm_num) (by norm_num),
-      f 3 1 (by norm_num) (by norm_num), f 4 3 (by norm_num) le_rfl,
-      h.mc (X ^ 5) 3 4 10000 (by norm_num) (by norm_num), h.mc (X ^ 5) 4 5 10000 (by norm_num) (by norm_num)]
+    linarith [f 0 0 (by norm_num) (by norm_num), f 1 0 (by norm_num) (by norm_num),
+      f 1 1 (by norm_num) (by norm_num), f 2 0 (by norm_num) (by norm_num),
+      f 4 2 (by norm_num) (by norm_num), f 4 3 (by norm_num) le_rfl,
+      h.mc (X ^ 5) 3 4 10000 (by norm_num) (by norm_num),
+      h.mc (X ^ 5) 4 5 10000 (by norm_num) (by norm_num)]
   unfold dealB
   linarith [Nat.mul_le_mul_left (s * v ^ 256) (show 60 * Lc + 160 ≤ m ^ 10 by
       nlinarith [h.mpow (show 2 ≤ 10 by norm_num)]),

@@ -15,7 +15,8 @@ namespace Nc.Dl
 
 open NS1 NS1.Tree Finset Nc.G Nc.Cut Codes
 
-theorem ok_listTm {σ : List Bool → Tree} {L : ℕ} {ts : List Tm} (h : ∀ t ∈ ts, t.Ok σ L) : (listTm ts).Ok σ L := by
+theorem ok_listTm {σ : List Bool → Tree} {L : ℕ} {ts : List Tm} (h : ∀ t ∈ ts, t.Ok σ L) :
+    (listTm ts).Ok σ L := by
   induction ts with
   | nil => trivial
   | cons t ts ih => exact ⟨h t List.mem_cons_self, ih fun s hs => h s (List.mem_cons_of_mem _ hs)⟩
@@ -25,7 +26,8 @@ theorem ok_catTm {σ : List Bool → Tree} {L : ℕ} {ts : List Tm}
   induction ts with
   | nil => trivial
   | cons t ts ih =>
-    exact ⟨(h t List.mem_cons_self).1, (h t List.mem_cons_self).2, ih fun s hs => h s (List.mem_cons_of_mem _ hs)⟩
+    exact ⟨(h t List.mem_cons_self).1, (h t List.mem_cons_self).2,
+      ih fun s hs => h s (List.mem_cons_of_mem _ hs)⟩
 
 variable {A : Type} [CommRing A] {S Q : Type} [Fintype S] [DecidableEq S] [Fintype Q] [DecidableEq Q]
   {K A' E U0 U1 ub mm D pS : ℕ} {M : Sys A (K + K + A') E} {P : G.Plan M U0 U1}
@@ -35,7 +37,8 @@ variable {A : Type} [CommRing A] {S Q : Type} [Fintype S] [DecidableEq S] [Finty
   {b : G.Uid (K + K) U0 M.N U1 → UW ub} {st : NmT S M U0 U1 pS → Tree} {tg : M.R → ℕ} {bT bub : List Bool}
   {gt : Fin mm → Tree} {d1 gp : Tree} {X : ℕ}
 
-/-- **The cost of the templates**: they append lists of at most `X` members, so the cost is linear in the size. -/
+/-- **The cost of the templates**: they append lists of at most `X` members, so the cost is
+linear in the size. -/
 theorem cost_instTm (hst : Final C tab qn pt q ρ n o b st) (hU0X : U0 + 1 ≤ X) (g : Fin mm) :
     (instTm C tab tg bT bub gt d1 gp g).cost (byPath C.nm st) ≤
       (instTm C tab tg bT bub gt d1 gp g).tree.size * (62 * X + 250) := by
@@ -53,14 +56,15 @@ theorem cost_instTm (hst : Final C tab qn pt q ρ n o b st) (hU0X : U0 + 1 ≤ X
   · refine ⟨?_, ⟨?_, trivial⟩, trivial⟩
     · rw [expand_ifTm]
       split_ifs
-      · simp only [basesTm, Tm.expand, expand_gN, hst.dg, dgT, NS1.Tree.toList, toList_listT, List.length_cons,
-          List.length_map]
+      · simp only [basesTm, Tm.expand, expand_gN, hst.dg, dgT, NS1.Tree.toList, toList_listT,
+          List.length_cons, List.length_map]
         have := List.length_filter_le (fun k : Fin U0 => decide (k.1 < (n p p).1)) (List.finRange U0)
         rw [List.length_finRange] at this
         omega
       · simp
     · have body : ∀ p, (bodyTm C p).Ok (byPath C.nm st) X := fun p =>
-        ⟨gets _ _, by rw [List.ofFn_eq_map]; exact gets _ _, by rw [List.ofFn_eq_map]; exact gets _ _⟩
+        ⟨gets _ _, by rw [List.ofFn_eq_map]; exact gets _ _,
+          by rw [List.ofFn_eq_map]; exact gets _ _⟩
       refine Fin.addCases (fun κ => ?_) (fun κ => ?_) p
       · rw [baseTm, Fin.addCases_left]
         exact ⟨trivial, ⟨trivial, trivial⟩, body _⟩
@@ -80,7 +84,8 @@ theorem cost_instTm (hst : Final C tab qn pt q ρ n o b st) (hU0X : U0 + 1 ≤ X
       split_ifs
       · simpa [Tm.expand] using hX
       · simp
-  · refine ⟨?_, ⟨⟨trivial, ⟨⟨trivial, trivial, trivial⟩, trivial⟩⟩, ⟨⟨trivial, trivial, trivial⟩, trivial⟩, trivial⟩, trivial⟩
+  · refine ⟨?_, ⟨⟨trivial, ⟨⟨trivial, trivial, trivial⟩, trivial⟩⟩,
+      ⟨⟨trivial, trivial, trivial⟩, trivial⟩, trivial⟩, trivial⟩
     rw [endTm, expand_ifTm]
     split_ifs
     · simp only [Tm.expand]

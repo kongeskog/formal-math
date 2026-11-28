@@ -22,6 +22,9 @@ variable {A : Type} [CommRing A] {Γ S Q : Type} [Fintype Γ] [DecidableEq Γ] [
   {qn : Q → ℕ} {tg : M.R → ℕ} {bT bub nl nub : List Bool} {gt : Fin mm → Tree} {d1 gp : Tree} {cb : Option Γ → Fin c → Bool}
   {b0 b1 : Γ} {i e : Q} {hU0 : U0 < D} {hU1 : U1 ≤ D} {Lc X : ℕ}
 
+/-- The bound for the cost of a step. -/
+def stepB (Lc X : ℕ) : ℕ := 130 * (120 * (X * Lc) ^ 2) + 200
+
 /-- The bound for the cost of a template. -/
 def tmB' (Lc X : ℕ) : ℕ := 740 * (X * Lc) ^ 3 * (62 * X + 250)
 
@@ -32,10 +35,9 @@ def dealB (Lc X K mm ub bd nS s : ℕ) : ℕ := 60 * s + (s + K) * (60 * Lc + 10
 
 theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl = ℓ) (hnub : KT.val nub = ub)
     (hnll : nl.length ≤ Lc) (hnubl : nub.length ≤ Lc)
-    (hnm : ∀ y, (C.nm y).length ≤ Lc) (hdc : ∀ d, (C.dc d).length ≤ Lc)
-    (hrc : ∀ d, (C.rc d).length ≤ Lc) (hLc : 1 ≤ Lc) (hXQ : Fintype.card Q + 1 ≤ X)
-    (hXr : Fintype.card (RowData (K + K)) ≤ X) (hU0X : U0 + 1 ≤ X) (hXU1 : U1 ≤ X)
+    (hnm : ∀ y, (C.nm y).length ≤ Lc) (hU0X : U0 + 1 ≤ X)
     (hId : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X)
+    (hsz18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, st.tree.size ≤ 120 * (X * Lc) ^ 2)
     (hsz : ∀ g, (instTm C tab tg bT bub gt d1 gp g).tree.size ≤ 740 * (X * Lc) ^ 3)
     {bd nS : ℕ} (hnS : (steps18 C tab qn i e hU0 hU1).length ≤ nS)
     (hbd : ∀ n o, tab.valid n → (∀ x, P.good n o x) →
@@ -51,12 +53,10 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
   classical
   have hparts := gets_parts C nl cb b0 b1 hnl z
   generalize hpt : ptT cb (parts (K := K) ℓ (wordG b0 b1 z)) = pt at hparts ⊢
-  have hshort : Short C Lc (byPath C.nm (S0 pt)) := by
-    intro y hy
-    rw [byPath_nm C.nm_inj]
-    cases y <;> simp_all [S0, Rdb, len]
-  obtain ⟨I, hI, hI0⟩ := okSteps_inv (m := KT.val nub) (mb := nub.length)
-    (okSteps18 tab qn i e hU0 hU1 hnm hdc hrc hLc hXQ hXr hU0X hXU1) hshort
+  have h18 : ∀ st ∈ steps18 C tab qn i e hU0 hU1, ∀ σ,
+      st.cost (KT.val nub) nub.length σ ≤ stepB Lc X :=
+    fun st hst σ => (DStep.cost_le (steps18_ne_bits C tab qn i e hU0 hU1 st hst) _ _ σ).trans
+      (Nat.add_le_add_right (Nat.mul_le_mul_left _ (hsz18 st hst)) _)
   have h9 : ∀ σ ∈ execAll (KT.val nub) (steps18 C tab qn i e hU0 hU1) (byPath C.nm (S0 pt)),
       (∃ I' : List DStep → (List Bool → Tree) → Prop, ∃ c' : DStep → ℕ,
         (∀ st sts'' σ, I' (st :: sts'') σ → st.cost (KT.val nub) nub.length σ ≤ c' st ∧
@@ -87,7 +87,10 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
     (fun p hp => by
       obtain ⟨κ, -, rfl⟩ := List.mem_map.1 hp
       exact hnm _) (c := fun _ => stepB Lc X) (ct := tmB' Lc X) (c9 := X * (90 * Lc + 230) + bd * ((ub + 1) * (60 * Lc + 100)))
-    hI (by rw [hparts]; exact hI0) (by rw [hparts]; exact h9)
+    (I := fun rest _ => ∀ st ∈ rest, ∀ σ, st.cost (KT.val nub) nub.length σ ≤ stepB Lc X)
+    (fun st _ σ h => ⟨h st List.mem_cons_self σ, fun _ _ s hs => h s (List.mem_cons_of_mem _ hs)⟩)
+    h18
+    (by rw [hparts]; exact h9)
   obtain ⟨Qs, d1', m1, s1⟩ := this
   rw [hparts, hnub, ← allSteps_eq] at m1 s1
   refine ⟨Qs, d1'.mono ?_, m1, s1⟩
@@ -96,17 +99,6 @@ theorem deal_does (hK : 0 < K) [Nonempty Q] [Nonempty (Fin U1)] (hnl : KT.val nl
   have a1 : (steps18 C tab qn i e hU0 hU1).length * (stepB Lc X + 30) ≤ nS * (stepB Lc X + 30) := Nat.mul_le_mul_right _ hnS
   have a2 : (z.size + K) * (60 * nl.length + 100) ≤ (s + K) * (60 * Lc + 100) := Nat.mul_le_mul (by omega) (by omega)
   unfold dealB
-  omega
-
-/-- The number of the steps 1 to 8. -/
-theorem length_steps18_le (hXQ : Fintype.card Q + 1 ≤ X) (hS : Fintype.card (Option S) ≤ X) (hK2 : K + K + 1 ≤ X)
-    (hN : Fintype.card M.N ≤ X) (hpS : pS ≤ X) (hE : E + 1 ≤ X) (hId : Fintype.card (G.Uid (K + K) U0 M.N U1) ≤ X) :
-    (steps18 C tab qn i e hU0 hU1).length ≤ 4 * (X * X) + 10 * X := by
-  have hm : Fintype.card (Option S) * (K + K) ≤ X * X := Nat.mul_le_mul hS (by omega)
-  have hkk : (K + K) * (K + K) ≤ X * X := Nat.mul_le_mul (by omega) (by omega)
-  simp only [steps18, steps1, steps2, steps3, steps4, steps5, steps6, steps7, steps8, List.length_append, List.length_map,
-    Finset.length_toList, Finset.card_univ, Fintype.card_prod, Fintype.card_fin, Fintype.card_sum, List.length_finRange]
-  rw [Fintype.card_option (α := Fin E), Fintype.card_fin]
   omega
 
 end Nc.Dl

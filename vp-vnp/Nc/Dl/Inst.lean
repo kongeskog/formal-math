@@ -122,7 +122,7 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
       grpT bT bub (Grp.script qn cb P q x ρ n o (grp n o) g C.key C.dkey tg b) ≤ tB) :
     ∃ G : Tree, G.size ≤ (dealC + 3000) * (X * Lc) ^ 4 ∧ CutD θ τ s (κ * tB)
       (X + 1 + (200 * X ^ 3 * Lc + ιb * ℓ * (4 * c + 2) + bd * (4 * Grp.bval bub))) mm
-      (dealB Lc X K mm (Grp.bval bub) (mm * bd) (4 * (X * X) + 10 * X) s) G := by
+      (dealB Lc X K mm (Grp.bval bub) (mm * bd) (11 * X ^ 2) s) G := by
   classical
   have : Nonempty (Fin U1) := ⟨⟨0, hU1p⟩⟩
   have hSlAt : ∀ r : M.R, Fintype.card ((M.kind r.1).SlAt r.2) ≤ X := fun r => (Fintype.card_subtype_le _).trans (hSl _)
@@ -150,8 +150,10 @@ theorem _root_.Paper.thm_onecut_program {i e : Q} {b0 b1 : Γ} {τ s cap bd ιb 
   refine deal_cut C tab qn tg bT bub nl nub gt d1 GROUP.code cb b0 b1 i e hU0D hU1D hK hd1 hgt hU
     hval ?_ ?_
   · intro z hz
-    exact deal_does hK hnl hnub hnll hnubl hC.nm hC.dc hC.rc hLc hQ hrow hU0X hU1X hId
-      (size_instTm tab hH (hdts _) (fun g => hdts _) hbT hbub hgp) (length_steps18_le hQ hS hK1 hN hpS hE hId) (fun n o hn ho => card_cutUnits_le (hbdle n o hn ho)) z hz
+    exact deal_does hK hnl hnub hnll hnubl hC.nm hU0X hId (size_steps18 tab i e hU0D hU1D hH)
+      (size_instTm tab hH (hdts _) (fun g => hdts _) hbT hbub hgp)
+      (length_steps18 tab i e hU0D hU1D hH)
+      (fun n o hn ho => card_cutUnits_le (hbdle n o hn ho)) z hz
   · intro z hz q ρ n o b g hρ hn ho hb
     have hx : ∀ κ : Fin K, (parts ℓ (wordG b0 b1 z) κ).length ≤ Grp.bval bT := fun κ => (length_parts_le _ _ _).trans hℓ
     have hρ' : ∀ s p, (ρ s p).1 = false → (ρ s p).2.1 ≤ (ρ s p).2.2 := by
