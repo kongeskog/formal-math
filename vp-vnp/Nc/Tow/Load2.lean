@@ -234,57 +234,6 @@ theorem sum_biUnion_le' {ι κ : Type*} [DecidableEq ι] [DecidableEq κ] (s : F
     rw [Finset.biUnion_insert, Finset.sum_insert hi]
     exact (sum_union_le _ _ _).trans (Nat.add_le_add_left ih _)
 
-/-- The end segments on a pair, by edges. -/
-theorem nEnd_eq {j : ℕ} {i : Fin h} (n : T.Ed j → ℕ) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) : T.nEnd i n ω q =
-    (∑ e : T.Ed j, if T.ty e = i ∧ T.πV (T.vx i (T.e0 e)) = ω ∧
-      s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q then n e else 0) +
-    ∑ e : T.Ed j, if T.ty e = i ∧ T.πV (T.vx i (T.e1 e)) = ω ∧
-      s(T.co i (T.host i (T.vx i (T.e1 e))), T.co i (T.e1 e)) = q then n e else 0 := by
-  unfold Tower.nEnd
-  have e2 : ∀ c : T.X j, (if T.πV (T.vx i c) = ω ∧ s(T.co i (T.host i (T.vx i c)), T.co i c) = q then T.be i n c else 0) =
-      ∑ e : T.Ed j, ((if T.e0 e = c then (if T.ty e = i ∧ T.πV (T.vx i (T.e0 e)) = ω ∧
-        s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q then n e else 0) else 0) +
-        if T.e1 e = c then (if T.ty e = i ∧ T.πV (T.vx i (T.e1 e)) = ω ∧
-        s(T.co i (T.host i (T.vx i (T.e1 e))), T.co i (T.e1 e)) = q then n e else 0) else 0) := by
-    intro c
-    unfold Tower.be
-    by_cases hc : T.πV (T.vx i c) = ω ∧ s(T.co i (T.host i (T.vx i c)), T.co i c) = q
-    · rw [if_pos hc]
-      refine Finset.sum_congr rfl fun e _ => ?_
-      have hne := T.e_ne e
-      by_cases h0 : T.e0 e = c
-      · have h1 : ¬ T.e1 e = c := fun hh => hne (h0.trans hh.symm)
-        subst h0
-        by_cases ht : T.ty e = i
-        · rw [if_pos ⟨ht, Or.inl rfl⟩, if_pos rfl, if_pos ⟨ht, hc⟩, if_neg h1, Nat.add_zero]
-        · rw [if_neg fun hh => ht hh.1, if_pos rfl, if_neg fun hh => ht hh.1, if_neg h1, Nat.add_zero]
-      · rw [if_neg h0, Nat.zero_add]
-        by_cases h1 : T.e1 e = c
-        · subst h1
-          by_cases ht : T.ty e = i
-          · rw [if_pos ⟨ht, Or.inr rfl⟩, if_pos rfl, if_pos ⟨ht, hc⟩]
-          · rw [if_neg fun hh => ht hh.1, if_pos rfl, if_neg fun hh => ht hh.1]
-        · rw [if_neg h1, if_neg]
-          rintro ⟨-, hh | hh⟩
-          · exact h0 hh
-          · exact h1 hh
-    · rw [if_neg hc]
-      symm
-      refine Finset.sum_eq_zero fun e _ => ?_
-      rw [Nat.add_eq_zero_iff]
-      constructor
-      · by_cases h0 : T.e0 e = c
-        · subst h0
-          rw [if_pos rfl, if_neg fun hh => hc hh.2]
-        · rw [if_neg h0]
-      · by_cases h0 : T.e1 e = c
-        · subst h0
-          rw [if_pos rfl, if_neg fun hh => hc hh.2]
-        · rw [if_neg h0]
-  rw [Finset.sum_congr rfl fun c _ => e2 c, Finset.sum_comm, ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun e _ => ?_
-  rw [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq, if_pos (mem_univ _), if_pos (mem_univ _)]
-
 /-- The channels of end segments. -/
 theorem seg_chan {j : Fin J} {i : Fin h} {ω : T.V (j + 1) i} {q : Sym2 T.Fl} {ν : NM R ch FL}
     (hν : tgM ν.1 ν.2 = .seg j i ω q) : ∃ (e : T.Ed j) (s : Fin 4) (hx : okR R ch (.mid j e s)),
@@ -428,7 +377,7 @@ theorem sum_segS (j : Fin J) (s : Fin 4) (e : T.Ed j) :
 theorem seg_le (j : Fin J) (i : Fin h) (ω : T.V (j + 1) i) (q : Sym2 T.Fl) :
     load lhat n o (.seg j i ω q) ≤ T.nEnd i (fun e => load lhat n o (.edge j.castSucc e)) ω q := by
   classical
-  rw [nEnd_eq]
+  unfold Tower.nEnd
   refine (load_le_sum
     (((univ.filter fun e : T.Ed j => T.ty e = i ∧ T.πV (T.vx i (T.e0 e)) = ω ∧
       s(T.co i (T.host i (T.vx i (T.e0 e))), T.co i (T.e0 e)) = q).biUnion (segS (R := R) (ch := ch) (FL := FL) j 1)) ∪
