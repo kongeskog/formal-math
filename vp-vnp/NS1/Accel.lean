@@ -71,26 +71,4 @@ theorem UF_ev {z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree z.hd) z.tl l) 
   simp [Run.delay, Run.seq, Run.tick, Run.det]
   omega
 
-/-- The instances that arise from budgets are plain, and their sums are those of the runs that use
-up the budgets. The time `(60 H + 42) T`: `WN_ev` gives `T` for the program, plus `(60 H + 41)` per
-unit of the size of its value (`CK_some`), and here the size is at most `T` too. -/
-theorem zq_plain {p z : Tree} {l : List (Run A)} (h : Ev θ (Fm.ofTree p) z l) {T H τ : ℕ}
-    (hT : ∀ r ∈ l, r.cost + r.out.size ≤ T) {t : Bt} (ht : t.ht ≤ H)
-    (hτ : (60 * H + 42) * T + 40 * t.nds + 80 ≤ τ) :
-    Plain θ τ (zq p z t) ∧
-      pv θ (zq p z t) = (l.map fun r => if ok t (names r.out) = true then r.th else 0).sum ∧
-      (evl θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl).map Run.th =
-        (l.filter fun r => ok t (names r.out)).map Run.th := by
-  obtain ⟨l', e, h1, h2⟩ := WN_ev (T := T) (S := T) h (fun r hr =>
-      ⟨by have := hT r hr; omega, by have := hT r hr; omega⟩) ht
-  have e' : Ev θ (Fm.ofTree (zq p z t).hd) (zq p z t).tl l' := by
-    show Ev θ (Fm.ofTree WN.code) _ l'
-    rw [Fm.ofTree_code]
-    exact e
-  refine ⟨⟨e'.hl, fun r hr => ?_⟩, ?_, by rw [e'.evl, h2]⟩
-  · rw [e'.evl] at hr
-    have := h1 r hr
-    nlinarith
-  · rw [pv, e'.evl, pval, h2, sum_filter_th]
-
 end NS1

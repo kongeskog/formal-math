@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import NS1.Guess
 
 /-!
-# Applying a fixed program; the plain instance of a budget
+# Applying a fixed program
 -/
 
 set_option linter.unusedSectionVars false
@@ -52,8 +52,5 @@ end App
 def LP (D : Tree) : Fm := .ite (.tl .id)
   (node (.run (.quote D) (.hd (.tl .id))) (.run (.hd .id)
       (.cons (.hd .id) (.tl (.tl .id))))) (.quote .nil)
-
-/-- The plain instance for a program `p`, an argument `z` and budgets `t`. -/
-def zq (p z : Tree) (t : Bt) : Tree := .cons WN.code (.cons p (.cons z t.enc))
 
 end NS1
