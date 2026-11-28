@@ -46,6 +46,8 @@ theorem exists_first {Q : Type*} [Finite Q] (i : Q → Q) (hi : ∀ q, i (i q) =
 
 variable {h n : ℕ} [NeZero h]
 
+variable (h2 : 2 ≤ h)
+
 /-- The image of the i-th unitriangular subgroup in SL_h(F₂). -/
 noncomputable def thQ (i : Fin h) : U h →* SL2 h := (evG : G h 0 →* SL2 h).comp (th i)
 
@@ -80,13 +82,14 @@ theorem x_mul_self (l : Fin (h - 1)) : x h l * x h l = 1 := by
   rw [show (1 : ZMod 2) + 1 = 0 from rfl, Matrix.transvection_zero]
   rfl
 
-theorem exists_other (h2 : 2 ≤ h) (k : Fin h) : ∃ i : Fin h, k ≠ i := by
+include h2 in
+theorem exists_other (k : Fin h) : ∃ i : Fin h, k ≠ i := by
   by_contra hc
   push Not at hc
   have h1 := hc (k - 1)
   exact sub_one_ne h2 k h1.symm
 
-theorem gen_ne (h2 : 2 ≤ h) (k : Fin h) : evG (gen h2 k : G h n) ≠ 1 := by
+theorem gen_ne (k : Fin h) : evG (gen h2 k : G h n) ≠ 1 := by
   obtain ⟨i, hi⟩ := exists_other h2 k
   obtain ⟨l, rfl⟩ := exists_sh hi
   rw [← th_x h2 i l]
@@ -94,21 +97,21 @@ theorem gen_ne (h2 : 2 ≤ h) (k : Fin h) : evG (gen h2 k : G h n) ≠ 1 := by
   exact x_ne_one l (evG_th_eq_one e)
 
 /-- The first chambers of the pairs of type k. -/
-theorem exists_firstQ (h2 : 2 ≤ h) (k : Fin h) :
+theorem exists_firstQ (k : Fin h) :
     ∃ F : SL2 h → Prop, ∀ q, F (evG (gen h2 k : G h 0) * q) ↔ ¬ F q := by
   refine exists_first _ (fun q => ?_) fun q e => ?_
   · rw [← mul_assoc, ← map_mul, gen_mul_self, map_one, one_mul]
   · exact gen_ne (n := 0) h2 k (by simpa using e)
 
 /-- The first chambers of the pairs of type k. -/
-def FQ (h2 : 2 ≤ h) (k : Fin h) : SL2 h → Prop := (exists_firstQ h2 k).choose
+def FQ (k : Fin h) : SL2 h → Prop := (exists_firstQ h2 k).choose
 
-theorem evG_gen (h2 : 2 ≤ h) (k : Fin h) : evG (gen h2 k : G h n) = evG (gen h2 k : G h 0) := by
+theorem evG_gen (k : Fin h) : evG (gen h2 k : G h n) = evG (gen h2 k : G h 0) := by
   obtain ⟨i, hi⟩ := exists_other h2 k
   obtain ⟨l, rfl⟩ := exists_sh hi
   rw [← th_x h2 i l, ← th_x h2 i l, evG_th, evG_th]
 
-theorem FQ_iff (h2 : 2 ≤ h) (k : Fin h) (q : SL2 h) : FQ h2 k (evG (gen h2 k : G h n) * q) ↔ ¬ FQ h2 k q := by
+theorem FQ_iff (k : Fin h) (q : SL2 h) : FQ h2 k (evG (gen h2 k : G h n) * q) ↔ ¬ FQ h2 k q := by
   rw [evG_gen]
   exact (exists_firstQ h2 k).choose_spec q
 

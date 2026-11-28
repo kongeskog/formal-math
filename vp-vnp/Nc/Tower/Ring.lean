@@ -31,7 +31,8 @@ noncomputable instance : Fintype (R m) := Fintype.ofFinite _
 noncomputable instance : DecidableEq (R m) := Classical.decEq _
 
 /-- The class of a polynomial. -/
-noncomputable def mkR : (ZMod 2)[X] →+* R m := Ideal.Quotient.mk (Ideal.span {(X : (ZMod 2)[X]) ^ m})
+noncomputable def mkR : (ZMod 2)[X] →+* R m :=
+  Ideal.Quotient.mk (Ideal.span {(X : (ZMod 2)[X]) ^ m})
 
 theorem mkR_surjective : Function.Surjective (mkR m) := Ideal.Quotient.mk_surjective
 

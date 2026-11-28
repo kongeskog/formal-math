@@ -282,7 +282,8 @@ theorem gen_idx (hk : k ≠ i) : (gen h2 k : G h n) = th i (x h (idx i k hk)) :=
   rw [th_x h2, sh_idx]
 
 /-- The edges of types other than i are the near pairs at the vertices of type i. -/
-noncomputable def nearFun (j : ℕ) (i : Fin h) (e : {e : EE h n h2 j // e.1.1 ≠ i}) : VV h n j i × NN h :=
+noncomputable def nearFun (j : ℕ) (i : Fin h) (e : {e : EE h n h2 j // e.1.1 ≠ i}) :
+    VV h n j i × NN h :=
   (vert i e.1.1.2, npair (idx i e.1.1.1 e.2) (cor i e.1.1.2))
 
 theorem nearFun_bijective (j : ℕ) (i : Fin h) : Function.Bijective (nearFun (n := n) h2 j i) := by
@@ -339,14 +340,16 @@ noncomputable def prE (e : EE h n h2 j) : EE h n h2 (j + 1) :=
   ⟨(e.1.1, pr e.1.2), by rw [evX_pr]; exact e.2⟩
 
 /-- The covering on vertices. -/
-noncomputable def prV {i : Fin h} (v : VV h n j i) : VV h n (j + 1) i := ⟨pr v.1, by rw [cor_pr, v.2]⟩
+noncomputable def prV {i : Fin h} (v : VV h n j i) : VV h n (j + 1) i :=
+  ⟨pr v.1, by rw [cor_pr, v.2]⟩
 
 theorem vert_pr : vert i (pr c) = prV (vert i c) := by
   refine Subtype.ext ?_
   rw [vert_val, cor_pr, ← Paper.prop_tower_equivariant]
   rfl
 
-theorem card_XX (hj : j ≤ JJ h n) : Fintype.card (XX h n j) * (2 ^ ee h) ^ j = Nat.card (G h n) := by
+theorem card_XX (hj : j ≤ JJ h n) :
+    Fintype.card (XX h n j) * (2 ^ ee h) ^ j = Nat.card (G h n) := by
   rw [Subgroup.card_eq_card_quotient_mul_card_subgroup (Gam h n j), card_Gam h n hj, Nat.card_eq_fintype_card]
 
 theorem card_XX_succ (hj : j < JJ h n) :

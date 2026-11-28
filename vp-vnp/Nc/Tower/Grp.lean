@@ -34,7 +34,8 @@ variable (i : Fin h)
 noncomputable def wt (i a : Fin h) : (R (n + 1))ˣ := if a < i then (tu n)⁻¹ else 1
 
 /-- Conjugation by the i-th power of the shift. -/
-noncomputable def shMat (A : Matrix (Fin h) (Fin h) (ZMod 2)) : Matrix (Fin h) (Fin h) (R (n + 1)) :=
+noncomputable def shMat (A : Matrix (Fin h) (Fin h) (ZMod 2)) :
+    Matrix (Fin h) (Fin h) (R (n + 1)) :=
   diagonal (fun a => ((wt i a : (R (n + 1))ˣ) : R (n + 1))) *
     ((A.map (cst (n + 1))).submatrix (Equiv.subRight i) (Equiv.subRight i) *
       diagonal (fun a => (((wt i a)⁻¹ : (R (n + 1))ˣ) : R (n + 1))))
@@ -103,7 +104,8 @@ theorem ev_wt_inv (i a : Fin h) : ev n (((wt i a)⁻¹ : (R (n + 1))ˣ) : R (n +
   rw [map_mul, ev_wt, one_mul, map_one] at h2
   exact h2
 
-theorem evG_th0 (A : SL2 h) (a b : Fin h) : (evG (th0 i A : G h n)).1 a b = A.1 (a - i) (b - i) := by
+theorem evG_th0 (A : SL2 h) (a b : Fin h) :
+    (evG (th0 i A : G h n)).1 a b = A.1 (a - i) (b - i) := by
   rw [evG_apply, th0_val, shMat_apply, map_mul, map_mul, ev_wt, ev_wt_inv, ev_cst, one_mul, mul_one]
 
 theorem evG_th0_injective : Function.Injective fun A : SL2 h => evG (th0 i A : G h n) := by
