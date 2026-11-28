@@ -28,6 +28,8 @@ theorem tu_val : ((tu n : (R (n + 1))ˣ) : R (n + 1)) = t (n + 1) := rfl
 
 variable {h n}
 
+variable (h2 : 2 ≤ h)
+
 /-- The weights of the shift by i: the places that were carried over. -/
 noncomputable def wt (i a : Fin h) : (R (n + 1))ˣ := if a < i then (tu n)⁻¹ else 1
 
@@ -127,7 +129,8 @@ variable (n) in
 /-- The entry of the generators. -/
 noncomputable def tt (k : Fin h) : R (n + 1) := if k = 0 then t (n + 1) else 1
 
-theorem sub_one_ne (h2 : 2 ≤ h) (k : Fin h) : k - 1 ≠ k := by
+include h2 in
+theorem sub_one_ne (k : Fin h) : k - 1 ≠ k := by
   intro e
   have : (1 : Fin h) = 0 := by
     have := congrArg (fun x => k - x) e
@@ -136,13 +139,14 @@ theorem sub_one_ne (h2 : 2 ≤ h) (k : Fin h) : k - 1 ≠ k := by
   rw [Fin.val_one', Fin.val_zero, Nat.mod_eq_of_lt (by omega)] at this
   omega
 
+include h2 in
 /-- The generators: involutions of type k. -/
-noncomputable def gen (h2 : 2 ≤ h) (k : Fin h) : G h n :=
+noncomputable def gen (k : Fin h) : G h n :=
   ⟨transvection (k - 1) k (tt n k), det_transvection_of_ne _ _ (sub_one_ne h2 k) _⟩
 
-theorem gen_val (h2 : 2 ≤ h) (k : Fin h) : (gen h2 k : G h n).1 = transvection (k - 1) k (tt n k) := rfl
+theorem gen_val (k : Fin h) : (gen h2 k : G h n).1 = transvection (k - 1) k (tt n k) := rfl
 
-theorem gen_mul_self (h2 : 2 ≤ h) (k : Fin h) : (gen h2 k : G h n) * gen h2 k = 1 := by
+theorem gen_mul_self (k : Fin h) : (gen h2 k : G h n) * gen h2 k = 1 := by
   refine Subtype.ext ((transvection_mul_transvection_same _ _ (sub_one_ne h2 k) (tt n k) (tt n k)).trans ?_)
   rw [add_self, transvection_zero]
   rfl
@@ -150,7 +154,8 @@ theorem gen_mul_self (h2 : 2 ≤ h) (k : Fin h) : (gen h2 k : G h n) * gen h2 k 
 /-- The type i + 1 + l. -/
 def sh (i : Fin h) (l : Fin (h - 1)) : Fin h := hi l + i
 
-theorem sh_sub_one (h2 : 2 ≤ h) (i : Fin h) (l : Fin (h - 1)) : sh i l - 1 = lo l + i := by
+include h2 in
+theorem sh_sub_one (i : Fin h) (l : Fin (h - 1)) : sh i l - 1 = lo l + i := by
   have : (hi l : Fin h) = lo l + 1 := by
     refine Fin.ext ?_
     rw [Fin.val_add, Fin.val_one', Nat.mod_eq_of_lt (show 1 < h by omega)]
@@ -185,7 +190,8 @@ theorem exists_sh {i k : Fin h} (hk : k ≠ i) : ∃ l, sh i l = k := by
     omega
   rw [sh, this, sub_add_cancel]
 
-theorem wt_sub_one (h2 : 2 ≤ h) {i k : Fin h} (hk : k ≠ i) :
+include h2 in
+theorem wt_sub_one {i k : Fin h} (hk : k ≠ i) :
     ((wt i (k - 1) : (R (n + 1))ˣ) : R (n + 1)) * ((wt i k)⁻¹ : (R (n + 1))ˣ) = tt n k := by
   by_cases h0 : k = 0
   · subst h0
@@ -217,7 +223,7 @@ theorem wt_sub_one (h2 : 2 ≤ h) {i k : Fin h} (hk : k ≠ i) :
       simp
 
 /-- The simple root elements of the i-th unitriangular subgroup are generators. -/
-theorem th_x (h2 : 2 ≤ h) (i : Fin h) (l : Fin (h - 1)) : (th i (x h l) : G h n) = gen h2 (sh i l) := by
+theorem th_x (i : Fin h) (l : Fin (h - 1)) : (th i (x h l) : G h n) = gen h2 (sh i l) := by
   refine Subtype.ext ?_
   have e1 : (th i (x h l) : G h n).1 = shMat i (1 + Matrix.single (lo l) (hi l) 1) := rfl
   rw [e1, gen_val, transvection, sh_sub_one h2]

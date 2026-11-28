@@ -20,8 +20,10 @@ attribute [-instance] Subtype.instBEq
 
 variable (h n : ℕ) [NeZero h]
 
+variable (h2 : 2 ≤ h)
+
 /-- **The tower.** -/
-noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (JJ h n) where
+noncomputable def tower : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (JJ h n) where
   X := XX h n
   Ed := EE h n h2
   V := VV h n
@@ -79,16 +81,16 @@ noncomputable def tower (h2 : 2 ≤ h) : Nc.Tow.Tower h (2 ^ ee h) (2 ^ ee h) (J
 variable {h n}
 
 /-- The edges along a list of types. -/
-noncomputable def path (h2 : 2 ≤ h) {j : ℕ} : List (Fin h) → XX h n j → List (EE h n h2 j)
+noncomputable def path {j : ℕ} : List (Fin h) → XX h n j → List (EE h n h2 j)
   | [], _ => []
-  | k :: l, c => edge h2 k c :: path h2 l ((gen h2 k : G h n) • c)
+  | k :: l, c => edge h2 k c :: path l ((gen h2 k : G h n) • c)
 
-theorem length_path (h2 : 2 ≤ h) {j : ℕ} (l : List (Fin h)) (c : XX h n j) : (path h2 l c).length = l.length := by
+theorem length_path {j : ℕ} (l : List (Fin h)) (c : XX h n j) : (path h2 l c).length = l.length := by
   induction l generalizing c with
   | nil => rfl
   | cons k l ih => rw [path, List.length_cons, ih, List.length_cons]
 
-theorem step_edge (h2 : 2 ≤ h) {j : ℕ} (k : Fin h) (c : XX h n j) :
+theorem step_edge {j : ℕ} (k : Fin h) (c : XX h n j) :
     (tower h n h2).step (edge h2 k c) c = (gen h2 k : G h n) • c := by
   have hu : (tower h n h2).step (edge h2 k c) c = if (edge h2 k c).1.2 = c then
       (gen h2 (edge h2 k c).1.1 : G h n) • (edge h2 k c).1.2 else (edge h2 k c).1.2 := rfl
@@ -99,7 +101,7 @@ theorem step_edge (h2 : 2 ≤ h) {j : ℕ} (k : Fin h) (c : XX h n j) :
     rw [e]
     exact gen_smul_ne h2 k c
 
-theorem walk_path (h2 : 2 ≤ h) {j : ℕ} (l : List (Fin h)) (c : XX h n j) :
+theorem walk_path {j : ℕ} (l : List (Fin h)) (c : XX h n j) :
     (tower h n h2).Walk c (path h2 l c) (((l.reverse.map (gen h2)).prod : G h n) • c : XX h n j) := by
   induction l generalizing c with
   | nil =>
@@ -117,7 +119,7 @@ theorem walk_path (h2 : 2 ≤ h) {j : ℕ} (l : List (Fin h)) (c : XX h n j) :
       rw [← mul_smul] at h3
       simpa using h3
 
-theorem count_path (h2 : 2 ≤ h) {j : ℕ} (l : List (Fin h)) (e : EE h n h2 j) :
+theorem count_path {j : ℕ} (l : List (Fin h)) (e : EE h n h2 j) :
     ∑ c : XX h n j, (path h2 l c).count e ≤ 2 * l.length := by
   induction l with
   | nil => simp [path]
@@ -160,15 +162,15 @@ theorem smul_bijective (c : XX h n 0) : Function.Bijective fun g : G h n => g �
     exact MulAction.exists_smul_eq (G h n) c d
 
 /-- The route. -/
-noncomputable def rte (h2 : 2 ≤ h) (w : G h n → List (Fin h)) (c c' : XX h n 0) : List (EE h n h2 0) :=
+noncomputable def rte (w : G h n → List (Fin h)) (c c' : XX h n 0) : List (EE h n h2 0) :=
   path h2 (w ((Equiv.ofBijective _ (smul_bijective c)).symm c')).reverse c
 
-theorem rte_length (h2 : 2 ≤ h) (w : G h n → List (Fin h)) {m : ℕ} (hw : ∀ g, (w g).length ≤ m) (c c' : XX h n 0) :
+theorem rte_length (w : G h n → List (Fin h)) {m : ℕ} (hw : ∀ g, (w g).length ≤ m) (c c' : XX h n 0) :
     (rte h2 w c c').length ≤ m := by
   rw [rte, length_path, List.length_reverse]
   exact hw _
 
-theorem rte_use (h2 : 2 ≤ h) (w : G h n → List (Fin h)) {m : ℕ} (hw : ∀ g, (w g).length ≤ m) (e : EE h n h2 0) :
+theorem rte_use (w : G h n → List (Fin h)) {m : ℕ} (hw : ∀ g, (w g).length ≤ m) (e : EE h n h2 0) :
     ∑ c, ∑ c', (rte h2 w c c').count e ≤ 2 * (Fintype.card (XX h n 0) * m) := by
   classical
   have h1 : ∀ c : XX h n 0, ∑ c' : XX h n 0, (rte h2 w c c').count e =
@@ -185,7 +187,7 @@ theorem rte_use (h2 : 2 ≤ h) (w : G h n → List (Fin h)) {m : ℕ} (hw : ∀ 
         ring
 
 /-- **Routes.** -/
-theorem exists_routes (h2 : 2 ≤ h) {m : ℕ} (hm : ∀ g : G h n, WL h2 g m) :
+theorem exists_routes {m : ℕ} (hm : ∀ g : G h n, WL h2 g m) :
     Nonempty (Nc.Tow.Routes (tower h n h2) m (2 * (Fintype.card (XX h n 0) * m))) := by
   choose w hw1 hw2 using hm
   exact ⟨{ rt := rte h2 w
@@ -237,7 +239,7 @@ section Numbers
 
 variable (h n)
 
-theorem card_XJ (h2 : 2 ≤ h) :
+theorem card_XJ :
     Fintype.card ((tower h n h2).X (JJ h n)) < Nat.card (SL2 h) * 2 ^ ee h := by
   have h1 := card_XX (j := JJ h n) le_rfl
   rw [card_G] at h1
